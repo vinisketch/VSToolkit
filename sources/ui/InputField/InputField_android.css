@@ -1,0 +1,30 @@
+.vs_ui_inputfield {
+  border: #CCC solid 1px;
+  -webkit-box-shadow:inset 0 1px 4px rgba(0,0,0,0.3);
+  height:35px;
+  font-size: 20px;
+}
+
+.vs_ui_inputfield.search {
+  -webkit-border-radius: 5px;
+}
+
+.vs_ui_inputfield.text, .vs_ui_inputfield.password {
+  -webkit-border-radius: 5px;
+}
+
+.vs_ui_inputfield.focus {
+  margin: 0px;
+  border: orange solid 3px;
+  background-position: 5px 8px;
+  -webkit-border-radius: 6px;
+}
+
+.vs_ui_inputfield.focus > input {
+  margin-top: 0px;
+  margin-left: -2px;
+}
+
+.vs_ui_inputfield .clear_button {
+  background-position: 5px 5px;
+}

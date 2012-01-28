@@ -1,0 +1,15 @@
+.vs_ui_popover.withHeader >.header {
+  height: 44px;
+}
+
+.vs_ui_popover.withHeader >.center {
+  top: 44px;
+}
+
+.vs_ui_popover.withFooter >.center {
+  bottom: 44px;
+}
+
+.vs_ui_popover.withFooter >.footer {
+  height: 44px;
+}

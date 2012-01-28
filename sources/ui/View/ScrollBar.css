@@ -1,0 +1,79 @@
+/**
+ @licence
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ 
+ The code include code from :
+  
+  Copyright (c) 2009 Matteo Spinelli, http://cubiq.org/
+  Released under MIT license
+  http://cubiq.org/dropbox/mit-license.txt
+  Version 3.4.5 - Last updated: 2010.07.04
+*/
+.scrollbar {
+  position:absolute;
+  top:0;left:0;
+  pointer-events:none;
+
+  -webkit-transition-timing-function:cubic-bezier(0,0,0.25,1);
+  -webkit-transition-duration:0;
+  -webkit-transition-delay:0;
+  -webkit-transition-property:-webkit-transform;
+
+  background:rgba(0,0,0,0.5);
+  -webkit-transform:translate3d(0,0,0);
+
+  -ms-transform:translate(0,0);
+  -ms-transition-timing-function:cubic-bezier(0,0,0.25,1);
+  -ms-transition-duration:0;
+  -ms-transition-delay:0;
+  -ms-transition-property:-webkit-transform;
+}
+
+.scrollbar.horizontal {
+  webkit-border-radius:3px 2px;
+  min-width:6px;
+  min-height:5px;
+}
+
+.scrollbar.vertical {
+  -webkit-border-radius:2px 3px;
+  min-width:5px;
+  min-height:6px;
+}
+
+.wrapper_scrollbar {
+  pointer-events:none;
+  overflow:hidden;
+  opacity:0;
+  -webkit-transition-delay:0;
+  -webkit-transition-property:opacity;
+  z-index:1000;
+}
+
+.wrapper_scrollbar.horizontal {
+  bottom:2px;
+  left:1px;
+  right:7px;
+  height:5px;
+}
+
+.wrapper_scrollbar.vertical {
+  top:1px;
+  right:2px;
+  bottom:7px;
+  width:5px;
+}

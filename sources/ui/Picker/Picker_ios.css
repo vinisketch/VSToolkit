@@ -1,0 +1,46 @@
+.vs_ui_picker
+{
+  height: 180px;
+  background-color: transparent;
+}
+
+.vs_ui_picker .slots {
+  top: 0px;
+  height: 180px;
+  background:#fcfcfc;
+}
+
+.vs_ui_picker .slots div {
+  height:100%;
+  padding-top:70px;
+  border-left:2px solid #0d0e0f;
+  background-color:#fcfcfc;
+  background-position: 0 0, 100% 0;
+  background-repeat: repeat-y;
+  background-image: url('iOSPicker_border.png');
+}
+
+.vs_ui_picker ul {
+  padding:0 0 53px 0;
+}
+
+.vs_ui_picker li {
+  font:bold 24px/44px Helvetica,sans-serif;
+  background: none;
+  color: black;
+}
+
+.vs_ui_picker .frame {
+  position:relative; z-index:1000;
+  top: -180px; left:0; right:0;
+  height:183px;
+  border-width:16px;
+  -webkit-border-image:url("iOSPicker.png") 16;
+}
+
+.vs_ui_picker .buttons_incr,
+.vs_ui_picker .buttons_decr {
+  display: none;
+}
+
+.vs_ui_picker .slots div.readonly { background:#ddd; }

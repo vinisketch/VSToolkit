@@ -1,0 +1,94 @@
+.vs_ui_scrollview {
+  overflow: hidden;
+}
+
+.vs_ui_scrollview > div:nth-child(1) {
+  min-width: 100%;
+  min-height: 0%;
+  
+  overflow: visible;
+  
+  padding: 0px;
+  margin: 0px;
+  top:0px;
+  position: relative;
+}
+
+.vs_ui_scrollview > div:nth-child(2) {
+  min-width: 100%;
+  min-height: 100%;
+  
+  padding: 0px;
+  margin: 0px;
+  position: relative;
+}
+
+.vs_ui_scrollview > div:nth-child(3) {
+  min-width: 100%;
+  min-height: 0%;
+
+  overflow: visible;
+  
+  padding: 0px;
+  margin: 0px;
+  bottom:0px;
+//  position: relative;
+}
+
+/********************************************************************
+                    Vertical Layout
+*********************************************************************/
+
+.vs_ui_scrollview > div.vertical_layout:nth-child(2) {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}
+
+.vs_ui_scrollview > div.vertical_layout:nth-child(2) > * {
+  -webkit-box-flex: 0;
+//  display: block;
+  position: relative;
+}
+
+/********************************************************************
+                    Horizontal Layout
+*********************************************************************/
+
+.vs_ui_scrollview > div.horizontal_layout:nth-child(2) {
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+}
+
+.vs_ui_scrollview > div.horizontal_layout:nth-child(2) > * {
+  -webkit-box-flex: 0;
+//  display: block;
+  position: relative;
+}
+
+/********************************************************************
+                    Flow Layout
+*********************************************************************/
+
+.vs_ui_scrollview > div.flow_layout:nth-child(2) {
+  display: block;
+}
+
+.vs_ui_scrollview > div.flow_layout:nth-child(2) > * {
+  display: inline-block;
+  position: relative;
+}
+
+/********************************************************************
+                    Absolute Layout
+*********************************************************************/
+
+.vs_ui_scrollview > div:nth-child(2),
+.vs_ui_scrollview > div.absolute_layout:nth-child(2) {
+  display: block;
+}
+
+.vs_ui_scrollview > div:nth-child(2),
+.vs_ui_scrollview > div.absolute_layout:nth-child(2) > * {
+  display: block;
+  position: absolute;
+}

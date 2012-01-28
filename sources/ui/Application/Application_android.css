@@ -1,0 +1,10 @@
+@font-face {
+  font-family: droid;
+  src: local(DroidSans), url(droidsans.ttf);
+}
+
+.application {
+  font-family: droid;
+  color: #f0f0f0;
+  background: #181818;
+}

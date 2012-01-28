@@ -1,0 +1,177 @@
+.vs_ui_list {
+  font-size: 20px;
+  color: white;
+}
+
+li.pressed
+{
+  background-image: -webkit-gradient(linear, left top, left bottom, 
+    from(#fea94b), to(#ef7217)) !important;
+  
+  color: black !important;
+}
+
+/********************************************************************
+                Default List Item CSS
+*********************************************************************/
+
+.vs_ui_list.DefaultList {
+  background-color: black;
+}
+
+.vs_ui_list.DefaultList > ul > li,
+.vs_ui_list.BlockList > ul > li > ul > li,
+.vs_ui_list.TabList > ul > li > ul > li
+{
+  padding: 12px 23px 10px 10px;
+  color: inherit;
+  min-height: 44px;  
+}
+
+.vs_ui_list.DefaultList > ul > li,
+.vs_ui_list.TabList > ul > li > ul > li
+{
+  color: inherit;
+  background: url(DefaultListAndroid.png) no-repeat bottom center;
+}
+
+.vs_ui_list.DefaultList > ul > li:last-child,
+.vs_ui_list.TabList > ul > li > ul > li:last-child
+{
+  background: none;
+}
+
+/********************************************************************
+                Tab List Item CSS
+*********************************************************************/
+
+
+.vs_ui_list.TabList {
+	background-color: black;
+  font-family: droid;
+}
+
+.vs_ui_list.TabList > ul > li > div {
+  font-weight: normal;
+
+  border: none;
+  padding: 1px 10px;
+
+  color: inherit;
+  text-shadow: rgba(0, 0, 0, 0.898438) 1px 1px 3px;
+  height: 18px;
+	opacity:1;
+
+  font-size: 0.7em;
+  background: url(DefaultListAndroid.png) no-repeat bottom center,
+    -webkit-gradient(linear, left top, left bottom, from(#9c9a9c), to(#848284));
+}
+
+.vs_ui_list.DefaultList > ul > li > div
+.vs_ui_list.TabList > ul > li > ul > li> div,
+.vs_ui_list.BlockList > ul > li > ul > li > div
+{
+  color: #385487;
+
+  left: 10px;
+  right: 10px;
+  top: 12px;
+  
+  font-weight: normal;
+}
+
+ul.pressed li > div
+{
+  color: black;
+}
+
+.vs_ui_list.DefaultList.arrow > ul > li:after,
+.vs_ui_list.TabList.arrow > ul > li > ul > li:after
+{
+  margin-top: -8px;
+  content:url(SimpleListNextSel.png);
+}
+
+.vs_ui_list.DefaultList.arrow > ul > li.pressed:after,
+.vs_ui_list.TabList.arrow > ul > li > ul > li.pressed:after
+{
+  content:url(SimpleListNext.png);
+}
+
+
+/********************************************************************
+                Block List Item CSS
+*********************************************************************/
+
+.vs_ui_list.BlockList.arrow > ul > li > ul > li:after
+{
+  margin-top: -8px;
+  content:url(SimpleListNext.png);
+}
+
+.vs_ui_list.BlockList.arrow > ul > li > ul > li.pressed:after
+{
+  content:url(SimpleListNextSel.png);
+}
+
+.vs_ui_list.BlockList {
+  background: #FFF;
+  border: 4px solid #181818;
+  border-position: inside;
+  -webkit-border-radius: 15px;
+}
+
+.vs_ui_list.BlockList > ul {
+  text-overflow: ellipsis;
+  text-shadow: none;
+  font-family: Helvetica;
+  
+  position: relative;
+  top: 0px;
+  padding-top: 10px;
+  right: 0px;
+  left: 0px;
+}
+
+.vs_ui_list.BlockList > ul > li {
+  margin-top: 0px;
+  margin-right: 10px;
+  margin-left: 10px;
+}
+
+.vs_ui_list.BlockList > ul > li > ul {
+  background-color: white;
+  border: 1px solid #999;
+  -webkit-border-radius: 10px;
+  margin: 0px 0px 10px 0;
+  padding: 0px;
+  position: relative;
+}
+
+.vs_ui_list.BlockList > ul > li > div {
+  margin: -7px -7px 10px -7px;
+  padding: 12px 0 12px 50px;
+  font-weight:  normal;
+  color: inherit;
+  text-shadow: none;
+  background: #424542 url(PanelTitle.png) no-repeat 10px center;
+  -webkit-border-top-left-radius:   10px;
+  -webkit-border-top-right-radius:  10px;
+}
+
+.vs_ui_list.BlockList > ul > li > ul > li {
+  color: black;
+  border-top: 1px solid #A8ABAD;
+}
+
+
+.vs_ui_list.BlockList > ul > li > ul > li:first-child {
+  border: none;
+  border-top-left-radius: 9px 9px;
+  border-top-right-radius: 9px 9px;
+}
+
+.vs_ui_list.BlockList > ul > li > ul > li:last-child {
+  border-bottom-left-radius: 9px 9px;
+  border-bottom-right-radius: 9px 9px;
+}

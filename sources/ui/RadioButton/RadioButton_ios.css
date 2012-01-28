@@ -1,0 +1,38 @@
+.vs_ui_radiobutton {
+  background-color: white;
+  font-family: Helvetica;
+
+  font-size: 18px;
+  color:black;
+}
+
+input[type="radio"]
+{
+  position: relative;
+  padding: 9px 35px 10px 10px;
+
+  color: inherit;
+  height: 40px;
+  
+  border: none;
+  border-top: 1px solid #E0E0E0;
+  background: none;
+  border-radius: 0px;
+}
+
+input[type="radio"].pressed
+{
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, from(#9DC3F3), color-stop(0.02, #5899EB), color-stop(0.3, #3985E7), color-stop(0.65, #1A70DD), to(#1559AF)) !important;
+  color: white;
+}
+
+input[type="radio"]:after
+{
+  content:url(iOSRadioButton.png);
+  margin-top: -13px;
+}
+
+input[type="radio"]:checked:after
+{
+  content:url(iOSRadioButton_sel.png);
+}

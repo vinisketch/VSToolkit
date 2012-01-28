@@ -1,0 +1,102 @@
+/*
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+.vs_ui_switch {
+  font-family: droid;
+  font-size: 17px;
+  font-weight: bold;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  
+  min-height: 35px;
+
+  -webkit-border-radius: 6px;
+  border: 1px solid #555;
+
+  -webkit-box-shadow: none;
+  -webkit-transition: none;
+
+  color: #424142;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4)) !important;
+  text-shadow: none;
+}
+
+.vs_ui_switch >div:first-child {
+  display:none;
+}
+
+.vs_ui_switch >div:nth-child(2) {
+  top:0px;
+  min-height: 35px;
+  -webkit-transition: none;
+}
+
+.vs_ui_switch .toggle_on {
+  color: inherit;
+  text-shadow: none;
+
+  right: 0px;
+  left: 0px;
+  padding: 5px;
+  padding-bottom: 10px;
+
+  display: none;
+}
+
+.vs_ui_switch .toggle_off {
+  color: inherit;
+  text-shadow: none;
+  left: 0px;
+  right: 0px;
+  padding: 5px;
+  padding-bottom: 10px;
+  -webkit-transform: none;
+  
+  display: block;
+}
+
+.vs_ui_switch.on .toggle_on {
+  display: block;
+}
+
+.vs_ui_switch.on .toggle_off {
+  display: none;
+}
+
+.vs_ui_switch .switch {
+  width: 50px;
+  height: 5px;
+  top:auto;
+  bottom: 5px;
+  right:auto;
+  left:-25px;
+  margin-left:50%;
+  border-radius: 4px;
+  border: 1px solid #888;
+}
+
+.vs_ui_switch.on .switch {
+  background-image: -webkit-gradient(linear, left top, left bottom, 
+    from(#ff6900), color-stop(0.1, #ff7500), color-stop(0.5, #ff9200),
+    color-stop(0.8, #ff9200), to(#ff6900)) !important;
+}
+
+.vs_ui_switch.selected
+{
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#E2E2E2), color-stop(2%,#E2E2E2), color-stop(2%,#9E9E9E), color-stop(100%,#D6D6D6)) !important;
+}

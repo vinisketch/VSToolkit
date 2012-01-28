@@ -1,0 +1,116 @@
+.vs_ui_picker
+{
+  height: 165px;
+  background-color: #0d0e0f;
+}
+
+.vs_ui_picker .slots {
+  top: 20px;
+  height: 44px;
+}
+
+.vs_ui_picker .slots div {
+  height: 40px;
+  padding-top:0px;
+  border-left:10px solid transparent;
+  background:transparent;
+}
+
+.vs_ui_picker ul {
+  padding:0;
+}
+
+.vs_ui_picker .slots div.readonly {  background:transparent; }
+
+.vs_ui_picker li {
+  font-family: Helvetica, Arial, sans-serif;
+  color: #333;
+  text-shadow: white 0px 1px 1px;
+  padding-top: 7px;
+  font-size: 28px;
+  font-weight: bold;
+  text-align:center;
+  -webkit-box-shadow: inset black 0px 0px 3px;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#DDD), to(#FFF));
+}
+
+.vs_ui_picker .frame {
+  display:none;
+}
+
+.vs_ui_picker .buttons_incr,
+.vs_ui_picker .buttons_decr {
+  position:relative; z-index:999;
+  top: 20px;
+  height: 40px;
+  padding:0 11px;
+  overflow:hidden;
+
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  width:100%;
+  background:transparent;
+}
+
+.vs_ui_picker .buttons_incr div,
+.vs_ui_picker .buttons_decr div{
+  height: 40px;
+  padding-top:0px;
+  border: none;
+  margin-left: 10px;
+  
+  color: #424142;
+
+  text-shadow: white 0px 1px 0px;
+
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 35px;
+  text-align: center;
+}
+
+.vs_ui_picker .buttons_incr div.readonly,
+.vs_ui_picker .buttons_decr div.readonly {
+  background-image: none;
+  margin-left: 0px;
+}
+
+.vs_ui_picker .slots div.readonly {
+  background: transparent;
+  border-left-width: 0px;
+}
+
+.vs_ui_picker .slots div.readonly li{
+  background: transparent;
+  -webkit-box-shadow: none;
+  color: white;
+  text-shadow: none;
+  padding-right: 0px;
+}
+
+.vs_ui_picker .buttons_incr div {
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
+  -webkit-border-top-left-radius : 8px;
+  -webkit-border-top-right-radius : 8px;
+}
+
+.vs_ui_picker .buttons_decr div {
+  background-image: -webkit-gradient(linear, 100% 100%, 100% 0%, from(#F4F4F4), to(#C4C4C4));
+  -webkit-border-bottom-left-radius : 8px;
+  -webkit-border-bottom-right-radius : 8px;
+}
+
+.vs_ui_picker .buttons_incr div.active, 
+.vs_ui_picker .buttons_decr div.active{
+  color: white;
+  -webkit-box-shadow: inset black 1px 1px 2px;
+  background-image: -webkit-gradient(linear, left top, left bottom, 
+      from(#ff6900),
+      color-stop(0.1, #ff7500),
+      color-stop(0.5, #ff9200),
+      color-stop(0.8, #ff9200),
+      to(#ff6900)
+    );
+}
+
+.vs_ui_picker .buttons_incr div:first-child { margin:0; }
+.vs_ui_picker .buttons_decr div:first-child { margin:0; }

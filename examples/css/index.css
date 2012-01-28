@@ -1,0 +1,136 @@
+body {
+  width: 100%;
+  background-image: url(background.png);
+  padding: 0;
+  margin: 0;
+  font-family: Arial,Helvetica,sans-serif;
+}
+
+* {
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+}
+
+h1 {
+  background-image: url(head.png);
+  height: 60px;
+  margin: 0;
+  font-size: 25px;
+  text-shadow: rgba(255, 255, 255, 0.5) 0px 1px 0px;
+  padding: 12px;
+}
+
+section {
+  padding: 5px;
+  margin: 20px;
+}
+
+section h2 {
+  color: #111;
+  font-weight: bold;
+  font-size: 21px;
+  text-shadow: rgba(255, 255, 255, 0.5) 0px 1px 0px;
+  margin: 0;
+  padding: 0;
+  border-bottom: solid #BBB 2px;
+  display: inline;
+  height: 25px;
+}
+
+section h2::before {
+  content: '';
+  top: 23px;
+  border-right: solid #BBB 2px;
+  position: relative;
+  left: 20px;
+}
+
+section p {
+  background-color: #DDD;
+  padding: 5px;
+  box-shadow: inset 0 0 2px rgba(0,0,0,0.5);
+  margin-top: 22px;
+}
+
+section p i {
+  font-size: 0.8em;
+}
+
+section p i:before {
+  content: 'Main technos:';
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+section p a {
+  color: rgb(220, 100, 40);
+  text-decoration: none;
+}
+
+section p a:before {
+  content: '☛';
+  margin-right: 5px;
+}
+
+.menu {
+  margin: 0 10px;
+  position: absolute;
+  top: 55px;
+  right: 0px;
+  text-align: right;
+}
+
+.menu::after {
+  content:url(menu.png);
+  top: -45px;
+  position: absolute;
+  right: 0px;
+}
+
+.menu a {
+  color: rgb(220, 100, 40);
+  text-decoration: none;
+  border: 2px solid #BBB;
+  border-radius: 12px;
+  padding: 5px 10px;
+  font-size: 15px;
+  height: 30px;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,white), color-stop(70%,#DDD), color-stop(100%,#EEE));
+  text-shadow: rgba(255, 255, 255, 0.5) 0px 1px 0px;
+  display:none;
+  margin-bottom: 5px;
+}
+
+.menu a:active {
+   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#DDD), color-stop(70%,#BBB), color-stop(100%,#CCC));
+}
+
+.menu:hover a, .menu:active a, h1:hover ~ div a, h1:active ~ div a {
+  display: inline-block;
+}
+
+.button_doc {
+  border-top: 1px solid #E3742B;
+  background: #B13027;
+  background: -webkit-linear-gradient(top, #CF4E1F, #B13027);
+  display: block;
+  border-radius: 8px;
+  box-shadow: rgba(0, 0, 0, 0.4) 0 1px 0;
+  text-shadow: rgba(0, 0, 0, 0.2) 0 -1px 0;
+  color: white;
+  text-decoration: none;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 16px;
+
+  padding: 8px 12px;
+  margin-left: 10px;
+  display: inline;
+}
+
+.button_doc:hover {
+  background: #CF4E1F;
+}
+.button_doc:active {
+  background: #B13027;
+}

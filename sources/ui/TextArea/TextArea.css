@@ -1,0 +1,24 @@
+.vs_ui_textarea {
+  min-height:30px;
+  min-width: 150px;
+  border: 0px;
+  margin: 0px;
+  padding: 5px;
+
+  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 4px inset;
+  border-radius: 10px;
+  overflow: hidden;
+  
+  background-color: white;
+}
+
+textarea {
+  -webkit-user-select: text;
+  -webkit-appearance: none;
+  resize: none;
+  font-size: inherit;
+}
+
+textarea:focus {
+  outline: none;
+}

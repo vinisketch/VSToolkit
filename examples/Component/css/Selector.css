@@ -1,0 +1,24 @@
+.Selector {
+  width: 250px;
+  height: 60px;
+}
+
+.Selector .barSegmentedButton2 {
+  top: 10px;
+  left: 10px;
+  bottom: auto;
+  right: auto;
+  width: 230px;
+  height: 30px;
+}
+
+.Selector .textlabel1 {
+  top: 42px;
+  left: 10px;
+  bottom: auto;
+  right: auto;
+  width: 240px;
+  height: 20px;
+  font-style: italic;
+  font-size: 0.8em;
+}

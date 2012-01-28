@@ -1,0 +1,295 @@
+/**
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ *  A vs.ui.CheckBox.
+ *  @class
+ *  The vs.ui.CheckBox class creates a vertical checkbox list which allow to 
+ *  select one or more options from a set of alternatives.
+ *  <p>
+ *  If only one option is to be selected at a time you should use vs.ui.RadioButton
+ *  instead
+ *  <p>
+ *  Events:
+ *  <ul>
+ *    <li />change, fired when a item is selected.
+ *          Event Data = index
+ *  <ul>
+ *  <p>
+ *
+ *  @author David Thevenin
+ * @name vs.ui.CheckBox
+ *
+ *  @extends vs.ui.AbstractList
+ *  @constructor
+ *   Creates a new vs.ui.CheckBox.
+ *
+ *  @example
+ *  var config = {}
+ *  config.data = ['item1, 'item2', 'item3'];
+ *  config.id = vs.core.createId ();
+ *
+ *  var object = vs.ui.CheckBox (config);
+ *  object.init ();
+ *
+ * @param {Object} config the configuration structure [mandatory]
+ */
+function CheckBox (config)
+{
+  this._items = new Array ();
+
+  this.parent = AbstractList;
+  this.parent (config);
+  this.constructor = CheckBox;
+  
+  this._selected_indexes = new Array ();
+}
+
+CheckBox.prototype = {
+
+  /**
+   * @private
+   * @type Array.<int>
+   */
+  _selected_indexes: null,
+
+  /**
+   * @private
+   * @type {Array.<HTMLImputElement>}
+   */
+  _items: null,
+
+  /*****************************************************************
+   *
+   ****************************************************************/
+   
+  /**
+   * This method select on unselect a item
+   *
+   * @name vs.ui.CheckBox#selectItem
+   * @function
+   * @param {int} index the item index to select/unselect
+   */
+  selectItem : function (index)
+  {
+    if (!util.isNumber (index)) { return; }
+    if (index < 0 || index >= this._items.length) { return; }
+    
+    var item = this._items [index];
+    if (!item) { return; }
+    
+    for (var i = 0; i < this._selected_indexes.length; i++)
+    {
+      if (this._selected_indexes [i] === index)
+      {
+        this._selected_indexes.remove (i);
+        item.checked = false;
+        return;
+      }
+    }
+    
+    // the item is not selected. Selected it.
+    this._selected_indexes.push (index);
+    item.checked = true;
+  },
+    
+  /*****************************************************************
+   *
+   ****************************************************************/
+    
+  /**
+   * @protected
+   * @function
+   */
+  clean_gui : function ()
+  {
+    var input;
+    
+    this.__scroll_start = 0;
+  
+    // removes all items;
+    this._list_items.innerHTML = '';
+  
+    while (this._items.length)
+    {
+      input = this._items [0];
+      
+      input.removeEventListener (core.POINTER_START, this);
+      input.removeEventListener ('click', this);
+      this._items.remove (0);
+    }
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  _renderData : function ()
+  {
+    if (!this._model) { return; }
+    
+    var i, div, title, button;
+    if (!this._list_items)
+    {
+      console.error ('vs.ui.RadioButton uncorrectly initialized.');
+      return;
+    }
+   
+    this._selected_indexes = [];
+    this.clean_gui ();
+    var os_device = window.deviceConfiguration.os;
+    
+    for (i = 0; i < this._model.length; i++)
+    {
+      input = document.createElement ('input');
+      input.type = 'checkbox';
+      input.name = this._id;
+      input.value = i;
+
+      this._list_items.appendChild (input);
+      this._items [i] = input;
+      
+      input.addEventListener (core.POINTER_START, this);
+      input.addEventListener ('click', this);
+
+      if (os_device == DeviceConfiguration.OS_WP7)
+      {
+        label = document.createElement ('label');
+        label.value = i;
+        label.addEventListener (core.POINTER_START, this);
+        label.addEventListener ('click', this);
+        util.setElementInnerText (label, this._model.item (i));
+        this._list_items.appendChild (label);
+      }
+      else
+      {
+        util.setElementInnerText (input, this._model.item (i));
+      }
+    }
+    
+    // select items
+    this.selectedItem = this._selected_indexes;
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  _touchItemFeedback : function (item)
+  {
+    util.addClassName (item, 'pressed');
+  },
+  
+  /**
+  * @private
+  */
+  _untouchItemFeedback : function (item)
+  {
+    util.removeClassName (item, 'pressed');
+  },
+      
+  /**
+   * @protected
+   * @function
+   */
+  _updateSelectItem : function (item)
+  {
+    var index = parseInt (item.value);
+    if (item._comp_ && item._comp_.didSelect) item._comp_.didSelect ();
+    
+    if (index >= 0 || index < this._items.length) 
+    {
+      this.selectItem (index);
+      this.propertyChange ();
+      
+      items = new Array ();
+      for (i = 0, l = this._selected_indexes.length; i < l; i ++)
+      {
+        items.push (this._model.item (this._selected_indexes [i]));
+      }
+      
+      this.propagate ('change',
+      {
+        indexes: this._selected_indexes.slice (),
+        items: items
+      });
+    }
+  }
+};
+util.extendClass (CheckBox, AbstractList);
+
+/********************************************************************
+                  Define class properties
+********************************************************************/
+
+util.defineClassProperty (CheckBox, "selectedIndexes", {
+  /** 
+   * Getter|Setter for items. Allow to select or get one or more items
+   * @name vs.ui.CheckBox#selectedIndexes
+   *
+   * @type {Array.<int>}
+   */ 
+  set : function (v)
+  {
+    if (!util.isArray (v)) { return; }
+    
+    var index, len, i, item;
+    
+    this._selected_indexes = [];
+    for (i = 0; i < v.length; i++)
+    {
+      index = v [i];
+      if (!util.isNumber (index)) { continue; }
+      
+      this._selected_indexes.push (index);
+    }
+    
+    for (i = 0; i < this._items.length; i ++)
+    {
+      var item = this._items [i];
+      if (item)
+      {
+        item.checked = false;
+      }
+    }
+    
+    len = this._selected_indexes.length;
+    for (i = 0; i < len; i++)
+    {
+      var item = this._items [this._selected_indexes[i]];
+      if (item)
+      {
+        item.checked = true;
+      }
+    }
+  },
+  
+  /**
+   * @ignore
+   * @type {Array.<int>}
+   */
+  get : function ()
+  {
+    return this._selected_indexes.slice ();
+  }
+});
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+ui.CheckBox = CheckBox;

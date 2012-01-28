@@ -1,0 +1,6067 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+		
+		<title>JsDoc Reference - vs.ui.ToolBar</title>
+
+		<style type="text/css">
+			/* default.css */
+body
+{
+	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	padding: 0px;
+	background-color: #F6F4F2;
+	margin: 0px;
+	overflow: hidden;
+}
+
+.header
+{
+	clear: both;
+	background-color: #ccc;
+	padding: 0px;
+}
+
+h1
+{
+	font-size: 150%;
+	font-weight: bold;
+	padding: 0;
+	margin: 1em 0 0 .3em;
+}
+
+hr
+{
+	border: none 0;
+	border-top: 1px solid #302F2D;
+	height: 1px;
+}
+
+pre.code
+{
+	display: block;
+	padding: 8px;
+	border: 1px dashed #ccc;
+}
+
+a {
+  text-decoration: none;
+  color: #D0410F;
+}
+
+a:hover {
+  color: #242220;
+}
+
+
+#index {
+  left: 0px;
+  margin-top: 0px;
+  padding: 0px;
+  top: 0px;
+  position: fixed;
+  width: 100%;
+  height: 32px;
+  overflow: hidden;
+  color: #F6F4F2;
+  z-index: 1;
+  border-bottom: 1px solid grey;
+  background-color: #F6F4F2;
+
+  text-shadow: #222 0px -1px 1px;
+  text-shadow: white 0px 1px 1px;
+}
+
+#index > .title {
+  background: #515151 -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0.2, #515151), color-stop(0.8, #302F2D));
+  height: 27px;
+  color: #F6F4F2;
+  padding-top: 5px;
+  padding-left: 8px;
+  font-size: 18px;
+}
+
+#index > .title a {
+  text-shadow: black 0px 1px 1px;
+  color: orange
+}
+
+#index > .title > h2 {
+  display: inline;
+  margin: 0px;
+  float: right;
+  margin: 2px;
+  margin-right: 10px;
+  text-shadow: black 0px 1px 1px;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+#index:hover {
+  height: auto;
+}
+
+#scrollable
+{
+  position: fixed;
+  top: 66px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+
+  overflow-y: scroll;
+}
+
+#content
+{
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #242220;
+  
+  padding-left: 15px;
+  padding-right: 15px;
+  font-size: 13px;
+}
+
+.classList
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 8px 8px 5px 8px;
+	font-family: arial, sans-serif;
+	font-size: 1em;
+	overflow: auto;
+	font-size: 14px;
+}
+
+.classList li
+{
+	padding: 0;
+	margin: 0 0 8px 8px;
+	padding: 0;
+	
+	display: inline-block;
+}
+
+.classList li > a
+{
+	padding-left: 8px;
+}
+
+.classList li:before {
+  content: '|';
+  color: grey;
+}
+.classList li:first-child:before {
+  content: '';
+  color: grey;
+}
+
+.summaryTable { width: 100%; }
+
+.classTitle
+{
+  position: fixed;
+  top: 33px;
+  left: 0px;
+  right: 0px;
+  height: 27px;
+  color: #242220;
+  text-shadow: white 0px 1px 1px;
+  font-size: 18px;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F9F9F9), to(#CBCBCB));
+  border-bottom: 1px solid gray;
+  padding-top: 5px;
+  text-align: center;
+}
+
+h2 { font-size: 110%; }
+caption, div.sectionTitle
+{
+	background-color: #302F2D;
+	color: #fff;
+	font-size:130%;
+	text-align: left;
+	padding: 2px 6px 2px 6px;
+	border: 1px #302F2D solid;
+}
+
+div.sectionTitle { margin-bottom: 8px; }
+.summaryTable thead { display: none; }
+
+.summaryTable td
+{
+	vertical-align: top;
+	padding: 4px;
+	border-bottom: 1px #302F2D solid;
+	border-right: 1px #302F2D solid;
+}
+
+/*col#summaryAttributes {}*/
+.summaryTable td.attributes
+{
+	border-left: 1px #302F2D solid;
+	width: 140px;
+	text-align: right;
+}
+
+td.attributes, .fixedFont
+{
+	line-height: 15px;
+	color: #302F2D;
+	font-family: "Courier New",Courier,monospace;
+	font-size: 13px;
+}
+
+.summaryTable td.nameDescription
+{
+	text-align: left;
+	font-size: 13px;
+	line-height: 15px;
+}
+
+.summaryTable td.nameDescription, .description
+{
+	line-height: 15px;
+	padding: 4px;
+	padding-left: 4px;
+}
+
+#content > .description:first-child {
+//  font-size: 1.1em;
+  font-size: 13px;
+  border-bottom: 1px solid grey;
+  padding-bottom: 10px;
+}
+
+.summaryTable { margin-bottom: 8px; }
+
+ul.inheritsList
+{
+	list-style: square;
+	margin-left: 20px;
+	padding-left: 0;
+}
+
+.detailList {
+	margin-left: 20px; 
+	line-height: 15px;
+}
+.detailList dt { margin-left: 20px; }
+
+.detailList .heading
+{
+	font-weight: bold;
+	padding-bottom: 6px;
+	margin-left: 0;
+}
+
+.light, td.attributes, .light a:link, .light a:visited
+{
+	color: #777;
+	font-style: italic;
+}
+
+#index_tree {
+  position: fixed;
+  top: 66px;
+  bottom: 0px;
+  width: 200px;
+  height: 1500px;
+  border: none;
+  border-right: 1px grey solid;
+  background-color: #ECEAE7;
+}
+
+.index #index_tree, .index #scrollable {
+  top: 33px;
+}
+
+.index #content .classTitle {
+  margin: 0px;
+  top: 0px;
+}
+
+.inheritsList > dd {
+  padding-bottom: 5px;
+}
+
+hr:last-child {
+  border:none;
+}
+
+#content .class_info {
+  width: 200px;
+  height: 100px;
+  display: inline-block;
+  padding: 0px 10px;
+  overflow: hidden;
+}
+
+.fineprint {
+	text-align: right;
+	font-size: 10px;
+
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: 190px;
+  z-index: 10;
+  
+  background-color: #302F2D;
+  color: #F6F4F2;
+  padding: 5px;
+}
+
+/********************************************************************
+              Main Scrollbar configuration
+********************************************************************/
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-corner {
+/*  background-color: transparent; */
+  background-color: white;
+}
+
+::-webkit-scrollbar-track-piece:disabled {
+  display: none !important;
+}
+
+::-webkit-scrollbar-button:disabled {
+  display: none !important;
+}
+ 
+::-webkit-scrollbar-track:disabled {
+  margin: 6px;
+}
+
+/* Vertical Scrollbar Styles */
+
+::-webkit-scrollbar-thumb:vertical {
+  min-height: 20px;
+//  border-top: 1px solid #fff;  
+  background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0% , from(rgb(240, 240, 240)), to(rgb(210, 210, 210)));  
+  -webkit-border-radius: 1ex;  
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .4);  
+}
+ 
+::-webkit-scrollbar-thumb:vertical:hover {
+  background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0% , from(rgb(140, 140, 140)), to(rgb(110, 110, 110)));  
+}
+ 
+::-webkit-scrollbar-thumb:vertical:active {
+  background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0% , from(rgb(140, 140, 140)), to(rgb(110, 110, 110)));  
+}
+ 
+::-webkit-scrollbar-thumb:vertical:window-inactive {
+  background: transparent;  
+}
+
+		</style>
+	</head>
+
+	<body>
+<!-- ============================== header ================================= -->	
+		<!-- begin static/header.html -->
+		<div id="header">
+</div>
+		<!-- end static/header.html -->
+
+<!-- ============================== classes index ============================ -->
+		<div id="index">
+			<!-- begin publish.classesIndex -->
+			<div class="title">
+<a href="../index.html">Class Index</a>
+<h2> View All Classes</h2>
+</div>
+<ul class="classList">
+	
+	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
+	
+	<li><a href="../symbols/Array.html">Array</a></li>
+	
+	<li><a href="../symbols/vs.html">vs</a></li>
+	
+	<li><a href="../symbols/vs.av.html">vs.av</a></li>
+	
+	<li><a href="../symbols/vs.av.Audio.html">vs.av.Audio</a></li>
+	
+	<li><a href="../symbols/vs.av.Video.html">vs.av.Video</a></li>
+	
+	<li><a href="../symbols/vs.core.html">vs.core</a></li>
+	
+	<li><a href="../symbols/vs.core.Array.html">vs.core.Array</a></li>
+	
+	<li><a href="../symbols/vs.core.DataStorage.html">vs.core.DataStorage</a></li>
+	
+	<li><a href="../symbols/vs.core.DeviceConfiguration.html">vs.core.DeviceConfiguration</a></li>
+	
+	<li><a href="../symbols/vs.core.Event.html">vs.core.Event</a></li>
+	
+	<li><a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a></li>
+	
+	<li><a href="../symbols/vs.core.Fsm.html">vs.core.Fsm</a></li>
+	
+	<li><a href="../symbols/vs.core.HTTPRequest.html">vs.core.HTTPRequest</a></li>
+	
+	<li><a href="../symbols/vs.core.LocalStorage.html">vs.core.LocalStorage</a></li>
+	
+	<li><a href="../symbols/vs.core.Model.html">vs.core.Model</a></li>
+	
+	<li><a href="../symbols/vs.core.Object.html">vs.core.Object</a></li>
+	
+	<li><a href="../symbols/vs.core.Task.html">vs.core.Task</a></li>
+	
+	<li><a href="../symbols/vs.core.Task_PAR.html">vs.core.Task_PAR</a></li>
+	
+	<li><a href="../symbols/vs.core.Task_SEQ.html">vs.core.Task_SEQ</a></li>
+	
+	<li><a href="../symbols/vs.core.TaskWait.html">vs.core.TaskWait</a></li>
+	
+	<li><a href="../symbols/vs.data.html">vs.data</a></li>
+	
+	<li><a href="../symbols/vs.data.GoogleSearch.html">vs.data.GoogleSearch</a></li>
+	
+	<li><a href="../symbols/vs.data.RSSFeed.html">vs.data.RSSFeed</a></li>
+	
+	<li><a href="../symbols/vs.data.RSSItem.html">vs.data.RSSItem</a></li>
+	
+	<li><a href="../symbols/vs.data.RSSRequester.html">vs.data.RSSRequester</a></li>
+	
+	<li><a href="../symbols/vs.data.URL.html">vs.data.URL</a></li>
+	
+	<li><a href="../symbols/vs.ext.html">vs.ext</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.html">vs.ext.ui</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.Accordion.html">vs.ext.ui.Accordion</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.Carousel.html">vs.ext.ui.Carousel</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.GMap.html">vs.ext.ui.GMap</a></li>
+	
+	<li><a href="../symbols/vs.fx.html">vs.fx</a></li>
+	
+	<li><a href="../symbols/vs.fx.Animation.html">vs.fx.Animation</a></li>
+	
+	<li><a href="../symbols/vs.fx.CardController.html">vs.fx.CardController</a></li>
+	
+	<li><a href="../symbols/vs.fx.Controller.html">vs.fx.Controller</a></li>
+	
+	<li><a href="../symbols/vs.fx.NavigationController.html">vs.fx.NavigationController</a></li>
+	
+	<li><a href="../symbols/vs.fx.OpacityAnimation.html">vs.fx.OpacityAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.RotateAnimation.html">vs.fx.RotateAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.RotateXYZAnimation.html">vs.fx.RotateXYZAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.ScaleAnimation.html">vs.fx.ScaleAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.SkewAnimation.html">vs.fx.SkewAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.SlideController.html">vs.fx.SlideController</a></li>
+	
+	<li><a href="../symbols/vs.fx.StackController.html">vs.fx.StackController</a></li>
+	
+	<li><a href="../symbols/vs.fx.TranslateAnimation.html">vs.fx.TranslateAnimation</a></li>
+	
+	<li><a href="../symbols/vs.ui.html">vs.ui</a></li>
+	
+	<li><a href="../symbols/vs.ui.AbstractList.html">vs.ui.AbstractList</a></li>
+	
+	<li><a href="../symbols/vs.ui.Application.html">vs.ui.Application</a></li>
+	
+	<li><a href="../symbols/vs.ui.Button.html">vs.ui.Button</a></li>
+	
+	<li><a href="../symbols/vs.ui.Canvas.html">vs.ui.Canvas</a></li>
+	
+	<li><a href="../symbols/vs.ui.CheckBox.html">vs.ui.CheckBox</a></li>
+	
+	<li><a href="../symbols/vs.ui.ComboBox.html">vs.ui.ComboBox</a></li>
+	
+	<li><a href="../symbols/vs.ui.ImageView.html">vs.ui.ImageView</a></li>
+	
+	<li><a href="../symbols/vs.ui.InputField.html">vs.ui.InputField</a></li>
+	
+	<li><a href="../symbols/vs.ui.List.html">vs.ui.List</a></li>
+	
+	<li><a href="../symbols/vs.ui.Picker.html">vs.ui.Picker</a></li>
+	
+	<li><a href="../symbols/vs.ui.PopOver.html">vs.ui.PopOver</a></li>
+	
+	<li><a href="../symbols/vs.ui.ProgressBar.html">vs.ui.ProgressBar</a></li>
+	
+	<li><a href="../symbols/vs.ui.RadioButton.html">vs.ui.RadioButton</a></li>
+	
+	<li><a href="../symbols/vs.ui.ScrollImageView.html">vs.ui.ScrollImageView</a></li>
+	
+	<li><a href="../symbols/vs.ui.ScrollView.html">vs.ui.ScrollView</a></li>
+	
+	<li><a href="../symbols/vs.ui.SegmentedButton.html">vs.ui.SegmentedButton</a></li>
+	
+	<li><a href="../symbols/vs.ui.Slider.html">vs.ui.Slider</a></li>
+	
+	<li><a href="../symbols/vs.ui.SplitView.html">vs.ui.SplitView</a></li>
+	
+	<li><a href="../symbols/vs.ui.SVGView.html">vs.ui.SVGView</a></li>
+	
+	<li><a href="../symbols/vs.ui.Switch.html">vs.ui.Switch</a></li>
+	
+	<li><a href="../symbols/vs.ui.TextArea.html">vs.ui.TextArea</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.html">vs.ui.ToolBar</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.Button.html">vs.ui.ToolBar.Button</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.Item.html">vs.ui.ToolBar.Item</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.Text.html">vs.ui.ToolBar.Text</a></li>
+	
+	<li><a href="../symbols/vs.ui.View.html">vs.ui.View</a></li>
+	
+	<li><a href="../symbols/vs.util.html">vs.util</a></li>
+	
+</ul>
+
+			<!-- end publish.classesIndex -->
+		</div>
+		
+<!-- ============================== class title ============================ -->
+    <div class="classTitle">
+      
+      Class vs.ui.ToolBar
+    </div>
+
+		<div id="scrollable">
+		<div id="content">
+
+<!-- ============================== class summary ========================== -->			
+			<p class="description">
+				
+				<b>Extends</b>
+					<a href="../symbols/vs.ui.View.html">vs.ui.View</a>.<br /><br />
+				
+			
+				The vs.ui.ToolBar class implements a control for selecting buttons.
+ The vs.ui.ToolBar class provides the ability for the user to customize the tab bar
+ by reordering, removing, and adding items to the bar.
+ <p>
+ When a tabbar button is selected the tabbar send an event named
+ 'itemselect'.
+ The event data contains the id of the selected button.
+	
+			</p>
+
+<!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.ui.ToolBar.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/vs.ui.ToolBar.html#constructor">vs.ui.ToolBar</a></b>(config)
+							</div>
+							<div class="description">The vs.ui.ToolBar class</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+
+<!-- ============================== properties summary ===================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.ui.ToolBar.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BLACK_TRANSLUCIDE_STYLE">BLACK_TRANSLUCIDE_STYLE</a></b>
+								</div>
+								<div class="description">Black translucide style tab bar</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BLUE_STYLE">BLUE_STYLE</a></b>
+								</div>
+								<div class="description">Blue style tab bar</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_ADD">BUTTON_ADD</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_ARROW_DOWN">BUTTON_ARROW_DOWN</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_ARROW_LEFT">BUTTON_ARROW_LEFT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_ARROW_RIGHT">BUTTON_ARROW_RIGHT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_ARROW_UP">BUTTON_ARROW_UP</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_ATTACH">BUTTON_ATTACH</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_AUCTION">BUTTON_AUCTION</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BELL">BUTTON_BELL</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BELL_OFF">BUTTON_BELL_OFF</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BLOG">BUTTON_BLOG</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BOOK">BUTTON_BOOK</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BOOK_MARKED">BUTTON_BOOK_MARKED</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BOOKMARK_ADD">BUTTON_BOOKMARK_ADD</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BOORMARK">BUTTON_BOORMARK</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BOX">BUTTON_BOX</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BOX_FULL">BUTTON_BOX_FULL</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BOX_MAIL">BUTTON_BOX_MAIL</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BRIGHTNESS">BUTTON_BRIGHTNESS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BRUSH">BUTTON_BRUSH</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BULB_OFF">BUTTON_BULB_OFF</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BULB_ON">BUTTON_BULB_ON</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_BUZZER">BUTTON_BUZZER</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CALCULATOR">BUTTON_CALCULATOR</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CALENDAR">BUTTON_CALENDAR</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CALL">BUTTON_CALL</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CANCEL">BUTTON_CANCEL</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CASE">BUTTON_CASE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CHECKMARK">BUTTON_CHECKMARK</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CIRCLE_ARROW_LEFT">BUTTON_CIRCLE_ARROW_LEFT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CIRCLE_ARROW_RIGHT">BUTTON_CIRCLE_ARROW_RIGHT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_COMMAND_LINE">BUTTON_COMMAND_LINE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_COMMENT_ADD">BUTTON_COMMENT_ADD</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_COMMENT_DELETE">BUTTON_COMMENT_DELETE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_COMMENT_OK">BUTTON_COMMENT_OK</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_COMPUTER_OFF">BUTTON_COMPUTER_OFF</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_COMPUTER_ON">BUTTON_COMPUTER_ON</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CONSTRAST">BUTTON_CONSTRAST</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CONTROL_1">BUTTON_CONTROL_1</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CONTROL_2">BUTTON_CONTROL_2</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CONTROL_3">BUTTON_CONTROL_3</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CONTROL_4">BUTTON_CONTROL_4</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CONTROL_5">BUTTON_CONTROL_5</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CONTROL_6">BUTTON_CONTROL_6</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CONTROL_7">BUTTON_CONTROL_7</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CONTROL_8">BUTTON_CONTROL_8</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_COPY">BUTTON_COPY</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_COURT">BUTTON_COURT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CREDIT_CARD">BUTTON_CREDIT_CARD</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_CUT">BUTTON_CUT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_DANGER">BUTTON_DANGER</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_DELETE">BUTTON_DELETE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_DISK">BUTTON_DISK</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_DOCUMENT">BUTTON_DOCUMENT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_DOCUMENT_BLANK">BUTTON_DOCUMENT_BLANK</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_DOLLAR">BUTTON_DOLLAR</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_DOWNLAOD">BUTTON_DOWNLAOD</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_ERROR">BUTTON_ERROR</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FAVORITIES">BUTTON_FAVORITIES</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FAVORITIES_ADD">BUTTON_FAVORITIES_ADD</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FAVORITIES_REMOVE">BUTTON_FAVORITIES_REMOVE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FILM">BUTTON_FILM</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FILMING">BUTTON_FILMING</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FIRST_AID">BUTTON_FIRST_AID</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FLAG">BUTTON_FLAG</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FLAG_BIS">BUTTON_FLAG_BIS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FLASH">BUTTON_FLASH</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FLASH_ARROW">BUTTON_FLASH_ARROW</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FOLDER">BUTTON_FOLDER</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FOLDER_BOOKMARCK">BUTTON_FOLDER_BOOKMARCK</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FOLDER_GOTO">BUTTON_FOLDER_GOTO</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FONT">BUTTON_FONT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FONT_CAPITAL">BUTTON_FONT_CAPITAL</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FONT_ITALIC">BUTTON_FONT_ITALIC</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FONT_REGULAR">BUTTON_FONT_REGULAR</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FONT_UNDERLINE">BUTTON_FONT_UNDERLINE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FONTS">BUTTON_FONTS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FORUM">BUTTON_FORUM</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_FRAME">BUTTON_FRAME</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_GRAPH_AREAS">BUTTON_GRAPH_AREAS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_GRAPH_BARS">BUTTON_GRAPH_BARS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_GRAPH_BARS_DOWN">BUTTON_GRAPH_BARS_DOWN</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_GRAPH_BARS_UP">BUTTON_GRAPH_BARS_UP</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_GRAPH_DOWN">BUTTON_GRAPH_DOWN</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_GRAPH_LINES">BUTTON_GRAPH_LINES</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_GRAPH_UP">BUTTON_GRAPH_UP</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_HAT">BUTTON_HAT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_HELP">BUTTON_HELP</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_HOME">BUTTON_HOME</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_INFORMATION">BUTTON_INFORMATION</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_KEY">BUTTON_KEY</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_KEYBOARD">BUTTON_KEYBOARD</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_LAPTOP">BUTTON_LAPTOP</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_LINK">BUTTON_LINK</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_LIST_BULLETS">BUTTON_LIST_BULLETS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_LIST_NUMBERS">BUTTON_LIST_NUMBERS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_LOCK">BUTTON_LOCK</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_MAGNIFY_GLASS">BUTTON_MAGNIFY_GLASS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_MAIL">BUTTON_MAIL</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_MANAGE">BUTTON_MANAGE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_MEASURE">BUTTON_MEASURE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_MEASURES">BUTTON_MEASURES</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_MIC">BUTTON_MIC</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_MIC_BIS">BUTTON_MIC_BIS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_MINUS">BUTTON_MINUS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_MUTE">BUTTON_MUTE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_PAINT">BUTTON_PAINT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_PAPER_PLANE">BUTTON_PAPER_PLANE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_PAPER_TRASH">BUTTON_PAPER_TRASH</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_PAPERCLIO">BUTTON_PAPERCLIO</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_PARAGRAPH">BUTTON_PARAGRAPH</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_PENCIL">BUTTON_PENCIL</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_PHOTO">BUTTON_PHOTO</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_PIECHART">BUTTON_PIECHART</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_POST">BUTTON_POST</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_PROFILE">BUTTON_PROFILE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_REFRESH">BUTTON_REFRESH</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_RESIZE">BUTTON_RESIZE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_RSS">BUTTON_RSS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_SAD_FACE">BUTTON_SAD_FACE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_SAFE">BUTTON_SAFE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_SAVE">BUTTON_SAVE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.BUTTON_SETTINGS">BUTTON_SETTINGS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.ui.ToolBar.html#configuration">configuration</a></b>
+								</div>
+								<div class="description">Set a vs.ui.ToolBar configuration
+<p>
+A configuration is an array of button specification.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.DEFAULT_STYLE">DEFAULT_STYLE</a></b>
+								</div>
+								<div class="description">Black style tab bar (defaut)</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.LEFT_POSITION">LEFT_POSITION</a></b>
+								</div>
+								<div class="description">Left Position for a button</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.RIGHT_POSITION">RIGHT_POSITION</a></b>
+								</div>
+								<div class="description">Right Position for a button</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.SHOPPING_BAG">SHOPPING_BAG</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.SHOPPING_CART">SHOPPING_CART</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.SHOPPING_HEAVY">SHOPPING_HEAVY</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.SIM">SIM</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.SMILE_FACE">SMILE_FACE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.SORT_AZ">SORT_AZ</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.SORT_ZA">SORT_ZA</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.STAR">STAR</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.STORAGE">STORAGE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.ui.ToolBar.html#style">style</a></b>
+								</div>
+								<div class="description">Getter|Setter for the tab bar style</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.SWITCH">SWITCH</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TAG">TAG</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TAG_ADD">TAG_ADD</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TAG_CANCEL">TAG_CANCEL</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TAG_DELETE">TAG_DELETE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TEXT_ALIGN_CENTER">TEXT_ALIGN_CENTER</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TEXT_ALIGN_JUSTIFY">TEXT_ALIGN_JUSTIFY</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TEXT_ALIGN_LEFT">TEXT_ALIGN_LEFT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TEXT_ALIGN_RIGHT">TEXT_ALIGN_RIGHT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TIME">TIME</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TIMER">TIMER</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TRASH">TRASH</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.TWG">TWG</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.UNLOCK">UNLOCK</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.UPLOAD">UPLOAD</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.USER">USER</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.USERS">USERS</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.VOLUME">VOLUME</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.VOLUME_DOWN">VOLUME_DOWN</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.VOLUME_UP">VOLUME_UP</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.WALLET">WALLET</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.WARNING">WARNING</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.WIFI">WIFI</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.WINDOW">WINDOW</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.WINDOW_ERROR">WINDOW_ERROR</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.WINDOW_GLOBE">WINDOW_GLOBE</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.WINDOW_LOCK">WINDOW_LOCK</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.ZOMM_OUT">ZOMM_OUT</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.ZOOM_IN">ZOOM_IN</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+				<dl class="inheritsList">
+				<dt>Fields borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#autosizing">autosizing</a>, <a href="../symbols/vs.ui.View.html#bubbling">bubbling</a>, <a href="../symbols/vs.ui.View.html#enable">enable</a>, <a href="../symbols/vs.ui.View.html#hideAnimation">hideAnimation</a>, <a href="../symbols/vs.ui.View.html#layout">layout</a>, <a href="../symbols/vs.ui.View.html#maxScale">maxScale</a>, <a href="../symbols/vs.ui.View.html#minScale">minScale</a>, <a href="../symbols/vs.ui.View.html#position">position</a>, <a href="../symbols/vs.ui.View.html#rotation">rotation</a>, <a href="../symbols/vs.ui.View.html#scaling">scaling</a>, <a href="../symbols/vs.ui.View.html#setHideAnimation">setHideAnimation</a>, <a href="../symbols/vs.ui.View.html#setShowAnimation">setShowAnimation</a>, <a href="../symbols/vs.ui.View.html#showAnimmation">showAnimmation</a>, <a href="../symbols/vs.ui.View.html#size">size</a>, <a href="../symbols/vs.ui.View.html#transformOrigin">transformOrigin</a>, <a href="../symbols/vs.ui.View.html#translation">translation</a>, <a href="../symbols/vs.ui.View.html#visible">visible</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
+				</dl>
+				
+			
+
+<!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.ui.ToolBar.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.ToolBar.html#addButton">addButton</a></b>(id, name, position)
+								</div>
+								<div class="description">Add a button to the ToolBar</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.ToolBar.html#addItem">addItem</a></b>(obj)
+								</div>
+								<div class="description">Add a generic vs.ui.ToolBar item to the ToolBar</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.ToolBar.html#removeItem">removeItem</a></b>(id)
+								</div>
+								<div class="description">Remove an item from the ToolBar</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+				<dl class="inheritsList">
+				<dt>Methods borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#add">add</a>, <a href="../symbols/vs.ui.View.html#addClassName">addClassName</a>, <a href="../symbols/vs.ui.View.html#addCssRule">addCssRule</a>, <a href="../symbols/vs.ui.View.html#addCssRules">addCssRules</a>, <a href="../symbols/vs.ui.View.html#animate">animate</a>, <a href="../symbols/vs.ui.View.html#bind">bind</a>, <a href="../symbols/vs.ui.View.html#clone">clone</a>, <a href="../symbols/vs.ui.View.html#createAndAddComponent">createAndAddComponent</a>, <a href="../symbols/vs.ui.View.html#getBorder">getBorder</a>, <a href="../symbols/vs.ui.View.html#getComputedStyle">getComputedStyle</a>, <a href="../symbols/vs.ui.View.html#getMargin">getMargin</a>, <a href="../symbols/vs.ui.View.html#getPadding">getPadding</a>, <a href="../symbols/vs.ui.View.html#getStyle">getStyle</a>, <a href="../symbols/vs.ui.View.html#hasClassName">hasClassName</a>, <a href="../symbols/vs.ui.View.html#hide">hide</a>, <a href="../symbols/vs.ui.View.html#init">init</a>, <a href="../symbols/vs.ui.View.html#isChild">isChild</a>, <a href="../symbols/vs.ui.View.html#notifyToParent">notifyToParent</a>, <a href="../symbols/vs.ui.View.html#redraw">redraw</a>, <a href="../symbols/vs.ui.View.html#remove">remove</a>, <a href="../symbols/vs.ui.View.html#removeAllChild">removeAllChild</a>, <a href="../symbols/vs.ui.View.html#removeClassName">removeClassName</a>, <a href="../symbols/vs.ui.View.html#rotate">rotate</a>, <a href="../symbols/vs.ui.View.html#scale">scale</a>, <a href="../symbols/vs.ui.View.html#setStyle">setStyle</a>, <a href="../symbols/vs.ui.View.html#setStyles">setStyles</a>, <a href="../symbols/vs.ui.View.html#setVisible">setVisible</a>, <a href="../symbols/vs.ui.View.html#show">show</a>, <a href="../symbols/vs.ui.View.html#translate">translate</a>, <a href="../symbols/vs.ui.View.html#unbind">unbind</a>, <a href="../symbols/vs.ui.View.html#viewDidAdd">viewDidAdd</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getProperties">getProperties</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a></dd>
+				</dl>
+				
+			
+<!-- ============================== events summary ======================== -->
+			
+
+<!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>vs.ui.ToolBar</b>(config)
+				</div>
+				
+				<div class="description">
+					The vs.ui.ToolBar class
+					<br /><i>Author: </i>David Thevenin.
+				</div>
+				
+				
+				
+				<pre class="code"> // Simple example: (the button will have the platform skin)
+ var config = {}
+ var config.id = 'bar';
+
+ var bar = vs.ui.ToolBar (config);
+ bar.init ();
+ bar.addButton ('attach', vs.ui.ToolBar.BUTTON_ATTACH);
+
+ bar.addButton ('right', 
+   vs.ui.ToolBar.BUTTON_ARROW_RIGHT,
+   vs.ui.ToolBar.RIGHT_POSITION);
+
+ bar.addButton ('left',
+   vs.ui.ToolBar.BUTTON_ARROW_LEFT,
+   vs.ui.ToolBar.LEFT_POSITION);
+
+ bar.bind ('itemselect', this);</pre>
+				
+				
+				
+				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								<span class="light fixedFont">{Object}</span>  <b>config</b>
+								
+							</dt>
+								<dd>the configuration structure [mandatory]</dd>
+						
+						</dl>
+					
+					
+					
+					
+					
+					
+					
+
+			</div>
+			
+
+<!-- ============================== field details ========================== -->		
+			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name=".BLACK_TRANSLUCIDE_STYLE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BLACK_TRANSLUCIDE_STYLE</b>
+					
+					</div>
+					<div class="description">
+						Black translucide style tab bar
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BLUE_STYLE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BLUE_STYLE</b>
+					
+					</div>
+					<div class="description">
+						Blue style tab bar
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_ADD"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_ADD</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_ARROW_DOWN"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_ARROW_DOWN</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_ARROW_LEFT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_ARROW_LEFT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_ARROW_RIGHT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_ARROW_RIGHT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_ARROW_UP"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_ARROW_UP</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_ATTACH"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_ATTACH</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_AUCTION"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_AUCTION</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BELL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BELL</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BELL_OFF"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BELL_OFF</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BLOG"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BLOG</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BOOK"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BOOK</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BOOK_MARKED"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BOOK_MARKED</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BOOKMARK_ADD"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BOOKMARK_ADD</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BOORMARK"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BOORMARK</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BOX"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BOX</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BOX_FULL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BOX_FULL</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BOX_MAIL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BOX_MAIL</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BRIGHTNESS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BRIGHTNESS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BRUSH"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BRUSH</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BULB_OFF"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BULB_OFF</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BULB_ON"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BULB_ON</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_BUZZER"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_BUZZER</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CALCULATOR"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CALCULATOR</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CALENDAR"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CALENDAR</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CALL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CALL</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CANCEL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CANCEL</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CASE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CASE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CHECKMARK"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CHECKMARK</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CIRCLE_ARROW_LEFT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CIRCLE_ARROW_LEFT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CIRCLE_ARROW_RIGHT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CIRCLE_ARROW_RIGHT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_COMMAND_LINE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_COMMAND_LINE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_COMMENT_ADD"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_COMMENT_ADD</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_COMMENT_DELETE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_COMMENT_DELETE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_COMMENT_OK"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_COMMENT_OK</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_COMPUTER_OFF"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_COMPUTER_OFF</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_COMPUTER_ON"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_COMPUTER_ON</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CONSTRAST"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CONSTRAST</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CONTROL_1"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CONTROL_1</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CONTROL_2"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CONTROL_2</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CONTROL_3"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CONTROL_3</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CONTROL_4"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CONTROL_4</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CONTROL_5"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CONTROL_5</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CONTROL_6"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CONTROL_6</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CONTROL_7"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CONTROL_7</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CONTROL_8"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CONTROL_8</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_COPY"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_COPY</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_COURT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_COURT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CREDIT_CARD"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CREDIT_CARD</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_CUT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_CUT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_DANGER"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_DANGER</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_DELETE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_DELETE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_DISK"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_DISK</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_DOCUMENT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_DOCUMENT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_DOCUMENT_BLANK"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_DOCUMENT_BLANK</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_DOLLAR"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_DOLLAR</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_DOWNLAOD"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_DOWNLAOD</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_ERROR"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_ERROR</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FAVORITIES"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FAVORITIES</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FAVORITIES_ADD"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FAVORITIES_ADD</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FAVORITIES_REMOVE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FAVORITIES_REMOVE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FILM"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FILM</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FILMING"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FILMING</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FIRST_AID"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FIRST_AID</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FLAG"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FLAG</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FLAG_BIS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FLAG_BIS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FLASH"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FLASH</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FLASH_ARROW"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FLASH_ARROW</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FOLDER"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FOLDER</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FOLDER_BOOKMARCK"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FOLDER_BOOKMARCK</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FOLDER_GOTO"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FOLDER_GOTO</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FONT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FONT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FONT_CAPITAL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FONT_CAPITAL</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FONT_ITALIC"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FONT_ITALIC</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FONT_REGULAR"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FONT_REGULAR</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FONT_UNDERLINE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FONT_UNDERLINE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FONTS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FONTS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FORUM"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FORUM</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_FRAME"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_FRAME</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_GRAPH_AREAS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_GRAPH_AREAS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_GRAPH_BARS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_GRAPH_BARS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_GRAPH_BARS_DOWN"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_GRAPH_BARS_DOWN</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_GRAPH_BARS_UP"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_GRAPH_BARS_UP</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_GRAPH_DOWN"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_GRAPH_DOWN</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_GRAPH_LINES"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_GRAPH_LINES</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_GRAPH_UP"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_GRAPH_UP</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_HAT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_HAT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_HELP"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_HELP</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_HOME"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_HOME</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_INFORMATION"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_INFORMATION</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_KEY"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_KEY</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_KEYBOARD"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_KEYBOARD</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_LAPTOP"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_LAPTOP</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_LINK"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_LINK</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_LIST_BULLETS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_LIST_BULLETS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_LIST_NUMBERS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_LIST_NUMBERS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_LOCK"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_LOCK</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_MAGNIFY_GLASS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_MAGNIFY_GLASS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_MAIL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_MAIL</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_MANAGE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_MANAGE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_MEASURE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_MEASURE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_MEASURES"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_MEASURES</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_MIC"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_MIC</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_MIC_BIS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_MIC_BIS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_MINUS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_MINUS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_MUTE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_MUTE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_PAINT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_PAINT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_PAPER_PLANE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_PAPER_PLANE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_PAPER_TRASH"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_PAPER_TRASH</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_PAPERCLIO"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_PAPERCLIO</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_PARAGRAPH"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_PARAGRAPH</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_PENCIL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_PENCIL</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_PHOTO"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_PHOTO</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_PIECHART"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_PIECHART</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_POST"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_POST</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_PROFILE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_PROFILE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_REFRESH"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_REFRESH</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_RESIZE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_RESIZE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_RSS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_RSS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_SAD_FACE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_SAD_FACE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_SAFE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_SAFE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_SAVE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_SAVE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BUTTON_SETTINGS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>BUTTON_SETTINGS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="configuration"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>configuration</b>
+					
+					</div>
+					<div class="description">
+						Set a vs.ui.ToolBar configuration
+<p>
+A configuration is an array of button specification.<br/>
+Q button specification is a array of 2 or 3 values:
+<ol>
+  <li>The button id (a String)
+  <li>The button type (a String).
+      <br/>Ex: vs.ui.ToolBar.BUTTON_BLOG, vs.ui.ToolBar.BUTTON_ARROW_RIGHT
+  <li> A optional position.
+      <br/>Ex: vs.ui.ToolBar.LEFT_POSITION or vs.ui.ToolBar.RIGHT_POSITION
+    <br/> The default value is vs.ui.ToolBar.LEFT_POSITION.
+</ol>
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".DEFAULT_STYLE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>DEFAULT_STYLE</b>
+					
+					</div>
+					<div class="description">
+						Black style tab bar (defaut)
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".LEFT_POSITION"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>LEFT_POSITION</b>
+					
+					</div>
+					<div class="description">
+						Left Position for a button
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".RIGHT_POSITION"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>RIGHT_POSITION</b>
+					
+					</div>
+					<div class="description">
+						Right Position for a button
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".SHOPPING_BAG"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>SHOPPING_BAG</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".SHOPPING_CART"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>SHOPPING_CART</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".SHOPPING_HEAVY"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>SHOPPING_HEAVY</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".SIM"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>SIM</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".SMILE_FACE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>SMILE_FACE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".SORT_AZ"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>SORT_AZ</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".SORT_ZA"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>SORT_ZA</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".STAR"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>STAR</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".STORAGE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>STORAGE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="style"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>style</b>
+					
+					</div>
+					<div class="description">
+						Getter|Setter for the tab bar style
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".SWITCH"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>SWITCH</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TAG"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TAG</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TAG_ADD"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TAG_ADD</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TAG_CANCEL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TAG_CANCEL</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TAG_DELETE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TAG_DELETE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TEXT_ALIGN_CENTER"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TEXT_ALIGN_CENTER</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TEXT_ALIGN_JUSTIFY"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TEXT_ALIGN_JUSTIFY</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TEXT_ALIGN_LEFT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TEXT_ALIGN_LEFT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TEXT_ALIGN_RIGHT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TEXT_ALIGN_RIGHT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TIME"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TIME</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TIMER"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TIMER</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TRASH"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TRASH</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".TWG"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>TWG</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".UNLOCK"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>UNLOCK</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".UPLOAD"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>UPLOAD</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".USER"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>USER</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".USERS"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>USERS</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".VOLUME"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>VOLUME</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".VOLUME_DOWN"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>VOLUME_DOWN</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".VOLUME_UP"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>VOLUME_UP</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".WALLET"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>WALLET</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".WARNING"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>WARNING</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".WIFI"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>WIFI</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".WINDOW"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>WINDOW</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".WINDOW_ERROR"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>WINDOW_ERROR</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".WINDOW_GLOBE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>WINDOW_GLOBE</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".WINDOW_LOCK"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>WINDOW_LOCK</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".ZOMM_OUT"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>ZOMM_OUT</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".ZOOM_IN"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.ToolBar.</span><b>ZOOM_IN</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
+
+<!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="addButton"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/vs.ui.ToolBar.Button.html">vs.ui.ToolBar.Button</a>}</span>
+					<b>addButton</b>(id, name, position)
+					
+					</div>
+					<div class="description">
+						Add a button to the ToolBar
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>id</b>
+									
+								</dt>
+								<dd>An unique identifier for the button. This id will be
+                send as event data if the button is pressed.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>name</b>
+									
+								</dt>
+								<dd>The identifier of the button to add.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>position</b>
+									
+								</dt>
+								<dd>The position of the button. (should be
+   vs.ui.ToolBar.LEFT_POSITION or vs.ui.ToolBar.RIGHT_POSITION)</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/vs.ui.ToolBar.Button.html">vs.ui.ToolBar.Button</a>}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="addItem"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>addItem</b>(obj)
+					
+					</div>
+					<div class="description">
+						Add a generic vs.ui.ToolBar item to the ToolBar
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{vs.ui.ToolBar.item}</span> <b>obj</b>
+									
+								</dt>
+								<dd>the item to add.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="removeItem"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>removeItem</b>(id)
+					
+					</div>
+					<div class="description">
+						Remove an item from the ToolBar
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>id</b>
+									
+								</dt>
+								<dd>the identifier for the item to remove.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
+			
+			
+<!-- ============================== event details ========================= -->		
+			
+			
+			<hr />
+		</div>
+    </div>
+	</body>
+</html>

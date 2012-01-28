@@ -1,0 +1,1240 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+		
+		<title>JsDoc Reference - vs.fx.NavigationController</title>
+
+		<style type="text/css">
+			/* default.css */
+body
+{
+	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	padding: 0px;
+	background-color: #F6F4F2;
+	margin: 0px;
+	overflow: hidden;
+}
+
+.header
+{
+	clear: both;
+	background-color: #ccc;
+	padding: 0px;
+}
+
+h1
+{
+	font-size: 150%;
+	font-weight: bold;
+	padding: 0;
+	margin: 1em 0 0 .3em;
+}
+
+hr
+{
+	border: none 0;
+	border-top: 1px solid #302F2D;
+	height: 1px;
+}
+
+pre.code
+{
+	display: block;
+	padding: 8px;
+	border: 1px dashed #ccc;
+}
+
+a {
+  text-decoration: none;
+  color: #D0410F;
+}
+
+a:hover {
+  color: #242220;
+}
+
+
+#index {
+  left: 0px;
+  margin-top: 0px;
+  padding: 0px;
+  top: 0px;
+  position: fixed;
+  width: 100%;
+  height: 32px;
+  overflow: hidden;
+  color: #F6F4F2;
+  z-index: 1;
+  border-bottom: 1px solid grey;
+  background-color: #F6F4F2;
+
+  text-shadow: #222 0px -1px 1px;
+  text-shadow: white 0px 1px 1px;
+}
+
+#index > .title {
+  background: #515151 -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0.2, #515151), color-stop(0.8, #302F2D));
+  height: 27px;
+  color: #F6F4F2;
+  padding-top: 5px;
+  padding-left: 8px;
+  font-size: 18px;
+}
+
+#index > .title a {
+  text-shadow: black 0px 1px 1px;
+  color: orange
+}
+
+#index > .title > h2 {
+  display: inline;
+  margin: 0px;
+  float: right;
+  margin: 2px;
+  margin-right: 10px;
+  text-shadow: black 0px 1px 1px;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+#index:hover {
+  height: auto;
+}
+
+#scrollable
+{
+  position: fixed;
+  top: 66px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+
+  overflow-y: scroll;
+}
+
+#content
+{
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #242220;
+  
+  padding-left: 15px;
+  padding-right: 15px;
+  font-size: 13px;
+}
+
+.classList
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 8px 8px 5px 8px;
+	font-family: arial, sans-serif;
+	font-size: 1em;
+	overflow: auto;
+	font-size: 14px;
+}
+
+.classList li
+{
+	padding: 0;
+	margin: 0 0 8px 8px;
+	padding: 0;
+	
+	display: inline-block;
+}
+
+.classList li > a
+{
+	padding-left: 8px;
+}
+
+.classList li:before {
+  content: '|';
+  color: grey;
+}
+.classList li:first-child:before {
+  content: '';
+  color: grey;
+}
+
+.summaryTable { width: 100%; }
+
+.classTitle
+{
+  position: fixed;
+  top: 33px;
+  left: 0px;
+  right: 0px;
+  height: 27px;
+  color: #242220;
+  text-shadow: white 0px 1px 1px;
+  font-size: 18px;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F9F9F9), to(#CBCBCB));
+  border-bottom: 1px solid gray;
+  padding-top: 5px;
+  text-align: center;
+}
+
+h2 { font-size: 110%; }
+caption, div.sectionTitle
+{
+	background-color: #302F2D;
+	color: #fff;
+	font-size:130%;
+	text-align: left;
+	padding: 2px 6px 2px 6px;
+	border: 1px #302F2D solid;
+}
+
+div.sectionTitle { margin-bottom: 8px; }
+.summaryTable thead { display: none; }
+
+.summaryTable td
+{
+	vertical-align: top;
+	padding: 4px;
+	border-bottom: 1px #302F2D solid;
+	border-right: 1px #302F2D solid;
+}
+
+/*col#summaryAttributes {}*/
+.summaryTable td.attributes
+{
+	border-left: 1px #302F2D solid;
+	width: 140px;
+	text-align: right;
+}
+
+td.attributes, .fixedFont
+{
+	line-height: 15px;
+	color: #302F2D;
+	font-family: "Courier New",Courier,monospace;
+	font-size: 13px;
+}
+
+.summaryTable td.nameDescription
+{
+	text-align: left;
+	font-size: 13px;
+	line-height: 15px;
+}
+
+.summaryTable td.nameDescription, .description
+{
+	line-height: 15px;
+	padding: 4px;
+	padding-left: 4px;
+}
+
+#content > .description:first-child {
+//  font-size: 1.1em;
+  font-size: 13px;
+  border-bottom: 1px solid grey;
+  padding-bottom: 10px;
+}
+
+.summaryTable { margin-bottom: 8px; }
+
+ul.inheritsList
+{
+	list-style: square;
+	margin-left: 20px;
+	padding-left: 0;
+}
+
+.detailList {
+	margin-left: 20px; 
+	line-height: 15px;
+}
+.detailList dt { margin-left: 20px; }
+
+.detailList .heading
+{
+	font-weight: bold;
+	padding-bottom: 6px;
+	margin-left: 0;
+}
+
+.light, td.attributes, .light a:link, .light a:visited
+{
+	color: #777;
+	font-style: italic;
+}
+
+#index_tree {
+  position: fixed;
+  top: 66px;
+  bottom: 0px;
+  width: 200px;
+  height: 1500px;
+  border: none;
+  border-right: 1px grey solid;
+  background-color: #ECEAE7;
+}
+
+.index #index_tree, .index #scrollable {
+  top: 33px;
+}
+
+.index #content .classTitle {
+  margin: 0px;
+  top: 0px;
+}
+
+.inheritsList > dd {
+  padding-bottom: 5px;
+}
+
+hr:last-child {
+  border:none;
+}
+
+#content .class_info {
+  width: 200px;
+  height: 100px;
+  display: inline-block;
+  padding: 0px 10px;
+  overflow: hidden;
+}
+
+.fineprint {
+	text-align: right;
+	font-size: 10px;
+
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: 190px;
+  z-index: 10;
+  
+  background-color: #302F2D;
+  color: #F6F4F2;
+  padding: 5px;
+}
+
+/********************************************************************
+              Main Scrollbar configuration
+********************************************************************/
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-corner {
+/*  background-color: transparent; */
+  background-color: white;
+}
+
+::-webkit-scrollbar-track-piece:disabled {
+  display: none !important;
+}
+
+::-webkit-scrollbar-button:disabled {
+  display: none !important;
+}
+ 
+::-webkit-scrollbar-track:disabled {
+  margin: 6px;
+}
+
+/* Vertical Scrollbar Styles */
+
+::-webkit-scrollbar-thumb:vertical {
+  min-height: 20px;
+//  border-top: 1px solid #fff;  
+  background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0% , from(rgb(240, 240, 240)), to(rgb(210, 210, 210)));  
+  -webkit-border-radius: 1ex;  
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .4);  
+}
+ 
+::-webkit-scrollbar-thumb:vertical:hover {
+  background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0% , from(rgb(140, 140, 140)), to(rgb(110, 110, 110)));  
+}
+ 
+::-webkit-scrollbar-thumb:vertical:active {
+  background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0% , from(rgb(140, 140, 140)), to(rgb(110, 110, 110)));  
+}
+ 
+::-webkit-scrollbar-thumb:vertical:window-inactive {
+  background: transparent;  
+}
+
+		</style>
+	</head>
+
+	<body>
+<!-- ============================== header ================================= -->	
+		<!-- begin static/header.html -->
+		<div id="header">
+</div>
+		<!-- end static/header.html -->
+
+<!-- ============================== classes index ============================ -->
+		<div id="index">
+			<!-- begin publish.classesIndex -->
+			<div class="title">
+<a href="../index.html">Class Index</a>
+<h2> View All Classes</h2>
+</div>
+<ul class="classList">
+	
+	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
+	
+	<li><a href="../symbols/Array.html">Array</a></li>
+	
+	<li><a href="../symbols/vs.html">vs</a></li>
+	
+	<li><a href="../symbols/vs.av.html">vs.av</a></li>
+	
+	<li><a href="../symbols/vs.av.Audio.html">vs.av.Audio</a></li>
+	
+	<li><a href="../symbols/vs.av.Video.html">vs.av.Video</a></li>
+	
+	<li><a href="../symbols/vs.core.html">vs.core</a></li>
+	
+	<li><a href="../symbols/vs.core.Array.html">vs.core.Array</a></li>
+	
+	<li><a href="../symbols/vs.core.DataStorage.html">vs.core.DataStorage</a></li>
+	
+	<li><a href="../symbols/vs.core.DeviceConfiguration.html">vs.core.DeviceConfiguration</a></li>
+	
+	<li><a href="../symbols/vs.core.Event.html">vs.core.Event</a></li>
+	
+	<li><a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a></li>
+	
+	<li><a href="../symbols/vs.core.Fsm.html">vs.core.Fsm</a></li>
+	
+	<li><a href="../symbols/vs.core.HTTPRequest.html">vs.core.HTTPRequest</a></li>
+	
+	<li><a href="../symbols/vs.core.LocalStorage.html">vs.core.LocalStorage</a></li>
+	
+	<li><a href="../symbols/vs.core.Model.html">vs.core.Model</a></li>
+	
+	<li><a href="../symbols/vs.core.Object.html">vs.core.Object</a></li>
+	
+	<li><a href="../symbols/vs.core.Task.html">vs.core.Task</a></li>
+	
+	<li><a href="../symbols/vs.core.Task_PAR.html">vs.core.Task_PAR</a></li>
+	
+	<li><a href="../symbols/vs.core.Task_SEQ.html">vs.core.Task_SEQ</a></li>
+	
+	<li><a href="../symbols/vs.core.TaskWait.html">vs.core.TaskWait</a></li>
+	
+	<li><a href="../symbols/vs.data.html">vs.data</a></li>
+	
+	<li><a href="../symbols/vs.data.GoogleSearch.html">vs.data.GoogleSearch</a></li>
+	
+	<li><a href="../symbols/vs.data.RSSFeed.html">vs.data.RSSFeed</a></li>
+	
+	<li><a href="../symbols/vs.data.RSSItem.html">vs.data.RSSItem</a></li>
+	
+	<li><a href="../symbols/vs.data.RSSRequester.html">vs.data.RSSRequester</a></li>
+	
+	<li><a href="../symbols/vs.data.URL.html">vs.data.URL</a></li>
+	
+	<li><a href="../symbols/vs.ext.html">vs.ext</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.html">vs.ext.ui</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.Accordion.html">vs.ext.ui.Accordion</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.Carousel.html">vs.ext.ui.Carousel</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.GMap.html">vs.ext.ui.GMap</a></li>
+	
+	<li><a href="../symbols/vs.fx.html">vs.fx</a></li>
+	
+	<li><a href="../symbols/vs.fx.Animation.html">vs.fx.Animation</a></li>
+	
+	<li><a href="../symbols/vs.fx.CardController.html">vs.fx.CardController</a></li>
+	
+	<li><a href="../symbols/vs.fx.Controller.html">vs.fx.Controller</a></li>
+	
+	<li><a href="../symbols/vs.fx.NavigationController.html">vs.fx.NavigationController</a></li>
+	
+	<li><a href="../symbols/vs.fx.OpacityAnimation.html">vs.fx.OpacityAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.RotateAnimation.html">vs.fx.RotateAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.RotateXYZAnimation.html">vs.fx.RotateXYZAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.ScaleAnimation.html">vs.fx.ScaleAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.SkewAnimation.html">vs.fx.SkewAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.SlideController.html">vs.fx.SlideController</a></li>
+	
+	<li><a href="../symbols/vs.fx.StackController.html">vs.fx.StackController</a></li>
+	
+	<li><a href="../symbols/vs.fx.TranslateAnimation.html">vs.fx.TranslateAnimation</a></li>
+	
+	<li><a href="../symbols/vs.ui.html">vs.ui</a></li>
+	
+	<li><a href="../symbols/vs.ui.AbstractList.html">vs.ui.AbstractList</a></li>
+	
+	<li><a href="../symbols/vs.ui.Application.html">vs.ui.Application</a></li>
+	
+	<li><a href="../symbols/vs.ui.Button.html">vs.ui.Button</a></li>
+	
+	<li><a href="../symbols/vs.ui.Canvas.html">vs.ui.Canvas</a></li>
+	
+	<li><a href="../symbols/vs.ui.CheckBox.html">vs.ui.CheckBox</a></li>
+	
+	<li><a href="../symbols/vs.ui.ComboBox.html">vs.ui.ComboBox</a></li>
+	
+	<li><a href="../symbols/vs.ui.ImageView.html">vs.ui.ImageView</a></li>
+	
+	<li><a href="../symbols/vs.ui.InputField.html">vs.ui.InputField</a></li>
+	
+	<li><a href="../symbols/vs.ui.List.html">vs.ui.List</a></li>
+	
+	<li><a href="../symbols/vs.ui.Picker.html">vs.ui.Picker</a></li>
+	
+	<li><a href="../symbols/vs.ui.PopOver.html">vs.ui.PopOver</a></li>
+	
+	<li><a href="../symbols/vs.ui.ProgressBar.html">vs.ui.ProgressBar</a></li>
+	
+	<li><a href="../symbols/vs.ui.RadioButton.html">vs.ui.RadioButton</a></li>
+	
+	<li><a href="../symbols/vs.ui.ScrollImageView.html">vs.ui.ScrollImageView</a></li>
+	
+	<li><a href="../symbols/vs.ui.ScrollView.html">vs.ui.ScrollView</a></li>
+	
+	<li><a href="../symbols/vs.ui.SegmentedButton.html">vs.ui.SegmentedButton</a></li>
+	
+	<li><a href="../symbols/vs.ui.Slider.html">vs.ui.Slider</a></li>
+	
+	<li><a href="../symbols/vs.ui.SplitView.html">vs.ui.SplitView</a></li>
+	
+	<li><a href="../symbols/vs.ui.SVGView.html">vs.ui.SVGView</a></li>
+	
+	<li><a href="../symbols/vs.ui.Switch.html">vs.ui.Switch</a></li>
+	
+	<li><a href="../symbols/vs.ui.TextArea.html">vs.ui.TextArea</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.html">vs.ui.ToolBar</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.Button.html">vs.ui.ToolBar.Button</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.Item.html">vs.ui.ToolBar.Item</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.Text.html">vs.ui.ToolBar.Text</a></li>
+	
+	<li><a href="../symbols/vs.ui.View.html">vs.ui.View</a></li>
+	
+	<li><a href="../symbols/vs.util.html">vs.util</a></li>
+	
+</ul>
+
+			<!-- end publish.classesIndex -->
+		</div>
+		
+<!-- ============================== class title ============================ -->
+    <div class="classTitle">
+      
+      Class vs.fx.NavigationController
+    </div>
+
+		<div id="scrollable">
+		<div id="content">
+
+<!-- ============================== class summary ========================== -->			
+			<p class="description">
+				
+				<b>Extends</b>
+					<a href="../symbols/vs.fx.Controller.html">vs.fx.Controller</a>.<br /><br />
+				
+			
+				The vs.fx.NavigationController class implements a controller for navigating
+ on hierarchical contents.
+ <p/>
+ The controller shows a first view (the initialComponent) and allows to
+ navigate from this first view to a second view and a third ... and back
+ to the previous one til the first view.
+ <p/>
+ The next picture shows a example of hierarchical contents navigation.
+
+ <pre>                 
+               
+  ⎡ˉˉˉˉˉˉ⎤    ⎡ˉˉˉˉˉˉ⎤   ⎡ˉˉˉˉˉˉ⎤
+  ⎟      ⎢__> ⎢      ⎢__>⎟      ⎢ 
+  ⎟  (1) ⎢    ⎢  (2) ⎢   ⎟  (3) ⎢
+  ⎟      ⎢<__ ⎢      ⎢<__⎟      ⎢
+  ⎣______⎦    ⎣______⎦   ⎣______⎦
+       | |   
+       | |    ⎡ˉˉˉˉˉˉ⎤   ⎡ˉˉˉˉˉˉ⎤
+       | ⎣__>⎢      ⎢-->⎟      ⎢
+       | |    ⎢  (4) ⎢   ⎟  (5) ⎢ 
+       | |<___⎢      ⎢<__⎟      ⎢
+       |      ⎣______⎦   ⎣______
+       |            |   
+       |            |    ⎡ˉˉˉˉˉˉ⎤
+       |            ⎣__>⎢      ⎢
+       |            |    ⎢  (6) ⎢
+       |            |<___⎢      ⎢
+       |                 ⎣______⎦
+       |   
+       |    ⎡ˉˉˉˉˉˉ⎤
+       ⎣__>⎢      ⎢
+       |    ⎢  (7) ⎢
+       |<___⎢      ⎢
+            ⎣______⎦
+
+
+ (1, ... ,7) : component's views managed by the SliderLayer
+
+ </pre>
+ The controller can manage a navigation bar during the user navigates.
+ For instance it can hides or shows components (button, label, ...) and/or
+ reconfigurate them. (for instance change the text value of a label.
+ <p/>
+ Example:
+ <pre class='code'>
+ this.controller = new vs.fx.NavigationController (this, this.navBar);
+ this.controller.init ();
+ 
+ // 1.1 put the first view into the controller
+ this.controller.push (this.firstView);
+ // 1.2 configure the navigation bar for the first view (nothing)
+ this.controller.configureNavigationBarState (this.firstView.id, []);
+ // 1.3 finally configure the first view as the initial component
+ this.controller.initialComponent = this.firstView.id;
+ 
+ var backId = this.navBar.backButton.id;
+ var titleId = this.navBar.title.id;
+
+ // 2.1 set the second view, with parameters
+ var id = this.controller.push ('PanelOne', {position: [0, 44]});
+ // 2.2 configure the navigation bar to show the back button, the title
+ //  and set the text title
+ this.controller.configureNavigationBarState
+   (id, [{comp: backId}, 
+         {comp: titleId, properties: {text: 'Panel One'}}]);    
+ // 2.3 configure the transition between the first and second view
+ this.controller.configureTransition (this.firstView.id, id, 'goToOne');
+ 
+ // 3 set the third view
+ id = this.controller.push ('PanelTwo', {position: [0, 44]});
+ this.controller.configureNavigationBarState
+   (id, [{comp: backId}, 
+         {comp: titleId, properties: {text: 'Panel Two'}}]);    
+ this.controller.configureTransition (this.firstView.id, id, 'goToTwo');
+ 
+ // 3 set the last view
+ id = this.controller.push ('PanelThree', {position: [0, 44]});
+ this.controller.configureNavigationBarState
+   (id, [{comp: backId}, 
+         {comp: titleId, properties: {text: 'Panel Three'}}]);    
+ this.controller.configureTransition (this.firstView.id, id, 'goToThree');
+
+ </pre>
+	
+			</p>
+
+<!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.fx.NavigationController.">
+				<caption>Class Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/vs.fx.NavigationController.html#constructor">vs.fx.NavigationController</a></b>(owner, extension, animationType)
+							</div>
+							<div class="description">The vs.fx.NavigationController class implements a controller for navigating
+ on hierarchical contents.</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+
+<!-- ============================== properties summary ===================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.fx.NavigationController.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.fx.NavigationController.<b><a href="../symbols/vs.fx.NavigationController.html#.CARD_ANIMATION">CARD_ANIMATION</a></b>
+								</div>
+								<div class="description">There is card animation during transition between two views.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.fx.NavigationController.<b><a href="../symbols/vs.fx.NavigationController.html#.DEFAULT_ANIMATION">DEFAULT_ANIMATION</a></b>
+								</div>
+								<div class="description">Select the default animation configuration (Slide animations)</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.fx.NavigationController.html#initialComponent">initialComponent</a></b>
+								</div>
+								<div class="description">Define the initiale component
+ Generate a exception if the component was not already registered</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.fx.NavigationController.<b><a href="../symbols/vs.fx.NavigationController.html#.NO_ANIMATION">NO_ANIMATION</a></b>
+								</div>
+								<div class="description">There is no animation during transition between two views.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.fx.NavigationController.<b><a href="../symbols/vs.fx.NavigationController.html#.SLIDE_ANIMATION">SLIDE_ANIMATION</a></b>
+								</div>
+								<div class="description">There is slide animation during transition between two views.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.fx.NavigationController.html#viewSize">viewSize</a></b>
+								</div>
+								<div class="description">Getter|Setter for view size.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+				<dl class="inheritsList">
+				<dt>Fields borrowed from class <a href="../symbols/vs.fx.Controller.html">vs.fx.Controller</a>: </dt><dd><a href="../symbols/vs.fx.Controller.html#delegate">delegate</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
+				</dl>
+				
+			
+
+<!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.fx.NavigationController.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.fx.NavigationController.html#configureNavigationBarState">configureNavigationBarState</a></b>(state, configurations)
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.fx.NavigationController.html#configureTransition">configureTransition</a></b>(from, to, on, output, anim)
+								</div>
+								<div class="description">Add a new transition from the state "from" to the state "to".</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.fx.NavigationController.html#push">push</a></b>(comp, config, bindings)
+								</div>
+								<div class="description">Add the a child component to the Navigation Controller
+ <p>
+ The component must be a graphic component (vs.ui.View).</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.fx.NavigationController.html#setNavigationBar">setNavigationBar</a></b>(navBar)
+								</div>
+								<div class="description">Defines the Navigation Bar</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+				<dl class="inheritsList">
+				<dt>Methods borrowed from class <a href="../symbols/vs.fx.Controller.html">vs.fx.Controller</a>: </dt><dd><a href="../symbols/vs.fx.Controller.html#addTransition">addTransition</a>, <a href="../symbols/vs.fx.Controller.html#clear">clear</a>, <a href="../symbols/vs.fx.Controller.html#componentBind">componentBind</a>, <a href="../symbols/vs.fx.Controller.html#getCurrentState">getCurrentState</a>, <a href="../symbols/vs.fx.Controller.html#isStateExit">isStateExit</a>, <a href="../symbols/vs.fx.Controller.html#remove">remove</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#bind">bind</a>, <a href="../symbols/vs.core.EventSource.html#clone">clone</a>, <a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a>, <a href="../symbols/vs.core.EventSource.html#unbind">unbind</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getProperties">getProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a></dd>
+				</dl>
+				
+			
+<!-- ============================== events summary ======================== -->
+			
+
+<!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Class Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>vs.fx.NavigationController</b>(owner, extension, animationType)
+				</div>
+				
+				<div class="description">
+					The vs.fx.NavigationController class implements a controller for navigating
+ on hierarchical contents.
+					<br /><i>Author: </i>David Thevenin.
+				</div>
+				
+				
+				
+				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								<span class="light fixedFont">{<a href="../symbols/vs.ui.View.html">vs.ui.View</a>}</span>  <b>owner</b>
+								
+							</dt>
+								<dd>the View using this Layer [mandatory]</dd>
+						
+							<dt>
+								<span class="light fixedFont">{String}</span>  <b>extension</b>
+								
+							</dt>
+								<dd>The hole into the vs.ui.View will be inserted. 
+    ['children' by default]</dd>
+						
+							<dt>
+								<span class="light fixedFont">{number}</span>  <b>animationType</b>
+								
+							</dt>
+								<dd>Select the animation use during transition. 
+    [optional]</dd>
+						
+						</dl>
+					
+					
+					
+					
+					
+					
+					
+
+			</div>
+			
+
+<!-- ============================== field details ========================== -->		
+			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name=".CARD_ANIMATION"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.fx.NavigationController.</span><b>CARD_ANIMATION</b>
+					
+					</div>
+					<div class="description">
+						There is card animation during transition between two views.
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".DEFAULT_ANIMATION"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.fx.NavigationController.</span><b>DEFAULT_ANIMATION</b>
+					
+					</div>
+					<div class="description">
+						Select the default animation configuration (Slide animations)
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="initialComponent"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>initialComponent</b>
+					
+					</div>
+					<div class="description">
+						Define the initiale component
+ Generate a exception if the component was not already registered
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".NO_ANIMATION"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.fx.NavigationController.</span><b>NO_ANIMATION</b>
+					
+					</div>
+					<div class="description">
+						There is no animation during transition between two views.
+ <br />
+ If the platform you are targeting does not support animations or
+ does not support accelerated animations, you should use this
+ configuration.
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".SLIDE_ANIMATION"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.fx.NavigationController.</span><b>SLIDE_ANIMATION</b>
+					
+					</div>
+					<div class="description">
+						There is slide animation during transition between two views.
+ <br />
+ This is the default configuration
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="viewSize"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>viewSize</b>
+					
+					</div>
+					<div class="description">
+						Getter|Setter for view size.
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
+
+<!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="configureNavigationBarState"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>configureNavigationBarState</b>(state, configurations)
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>state</b>
+									
+								</dt>
+								<dd>The state (component id)</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Array.html">Array</a>}</span> <b>configurations</b>
+									
+								</dt>
+								<dd>configuration parameters 
+    Structure have to follow : [{comp: vs.core.Object|String, properties:{prop_name: value}}</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="configureTransition"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>configureTransition</b>(from, to, on, output, anim)
+					
+					</div>
+					<div class="description">
+						Add a new transition from the state "from" to the state "to".
+  The states have to be already specified.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>from</b>
+									
+								</dt>
+								<dd>State from</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>to</b>
+									
+								</dt>
+								<dd>State to</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>on</b>
+									
+								</dt>
+								<dd>input lexem which cause the crossing of transition</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>output</b>
+									
+								</dt>
+								<dd>optional ouput lexem that will be produce by the 
+                 transition</dd>
+							
+								<dt>
+									<span class="light fixedFont">{string}</span> <b>anim</b>
+									
+								</dt>
+								<dd>optional animation name</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="push"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>push</b>(comp, config, bindings)
+					
+					</div>
+					<div class="description">
+						Add the a child component to the Navigation Controller
+ <p>
+ The component must be a graphic component (vs.ui.View).
+ It will be instantiated, init and added automaticaly
+ <p>
+ The component instantiation is a lazy algorithm. The component will
+ be instantiated and add into the DOM tree only when it has to be show
+ to the user.
+ <p>
+						
+					</div>
+					
+					
+					
+					<pre class="code"> var myComp = new MyComp (conf);
+ myComp.controller = new vs.fx.NavigationController (myComp);
+
+ // push a component name (the component will be instanciated when needs)
+ myComp.controller.push ('AComponent1', {id: 'comp1'});
+
+ // instanciate a component and push it 
+ var comp2 = myComp.createAndAddComponent ('AComponent1', {id: 'comp2'});
+ myComp.controller.push (comp2);
+
+ // create a button object and push it
+ var comp3 = new vs.ui.Button ({id: 'comp3', text: 'hello'});
+ myComp.controller.push (comp3);
+ myComp.controller.initComponent = comp2.id;</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String | vs.ui.View}</span> <b>comp</b>
+									
+								</dt>
+								<dd>The GUI component name to instanciate or 
+   the instance of the component</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>config</b>
+									
+								</dt>
+								<dd>Configuration structure need to build the 
+    component [optional]</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Array.html">Array</a>}</span> <b>bindings</b>
+									
+								</dt>
+								<dd>Bindings configuration [[spec, observer, method], ...]</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setNavigationBar"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setNavigationBar</b>(navBar)
+					
+					</div>
+					<div class="description">
+						Defines the Navigation Bar
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{vs.ui.NavigationBar}</span> <b>navBar</b>
+									
+								</dt>
+								<dd>the ab bar</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
+			
+			
+<!-- ============================== event details ========================= -->		
+			
+			
+			<hr />
+		</div>
+    </div>
+	</body>
+</html>

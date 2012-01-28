@@ -1,0 +1,25 @@
+.vs_ui_slider {
+  padding: 0px;
+  margin: 0px;
+}
+
+.vs_ui_slider.horizontal {
+  width: 200px;
+}
+
+.vs_ui_slider.vertical {
+  width: 23px;
+}
+
+.vs_ui_slider > div {
+  width: 100%;
+  height: 100%;
+  
+  position: relative;
+}
+
+.vs_ui_slider .line > div {
+  position: absolute;
+  top: 0px; bottom: 0px;
+  left: 0px;
+}

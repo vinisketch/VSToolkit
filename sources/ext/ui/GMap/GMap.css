@@ -1,0 +1,47 @@
+.vs_ext_ui_gmap {
+  overflow: hidden;
+  padding: 0px;
+  margin: 0px;
+}
+
+.vs_ext_ui_gmap input[type="checkbox"]
+{
+  width: 25px;
+  height: 25px;
+  padding: 0px;
+  margin: 0px;
+  border: none;
+}
+
+.vs_ext_ui_gmap input[type="checkbox"]:after
+{
+  top: -4px;
+  right: 0px;
+}
+
+.vs_ext_ui_gmap_info {
+  position: absolute;
+  display: none;
+}
+
+.vs_ext_ui_gmap_info::before {
+  display: block;
+  width: 0px;
+  height: 0px;
+  content: ' ';
+}
+
+.vs_ext_ui_gmap_info > div {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 280px;
+  overflow: hidden;
+}
+
+.vs_ext_ui_gmap_info > div:first-child {
+  font-weight: bold;
+}
+
+.vs_ext_ui_gmap_info > div:nth-child(2) {
+  font-size: 0.8em;
+}

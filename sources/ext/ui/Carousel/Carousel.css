@@ -1,0 +1,69 @@
+.vs_ext_ui_carousel
+{
+  overflow: hidden;
+  padding: 0px;
+  margin: 0px;
+  
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 10px;
+}
+/*
+
+.vs_ext_ui_carousel > div:nth-child(n+2)
+{
+  position: absolute;
+  top: 0px;
+  left: 0px;
+}
+*/
+
+.vs_ext_ui_carousel > *
+{
+  position: absolute;
+}
+
+.vs_ext_ui_carousel > .indicators
+{
+  padding: 0px;
+  margin: 0px;
+  position: absolute;
+  
+  display: -webkit-box;
+  -webkit-box-align: center;
+  -webkit-box-pack: center;
+  
+  z-index: 1001;
+}
+
+.vs_ext_ui_carousel > .indicators.horizontal
+{
+  width: 100%;
+  height: 10px;
+  -webkit-box-orient: horizontal;
+
+  bottom: 10px;
+}
+
+.vs_ext_ui_carousel > .indicators.vertical
+{
+  width: 10px; height: 100%;
+  top: 0px; right: 10px;
+
+  -webkit-box-orient: vertical;
+}
+
+.vs_ext_ui_carousel > .indicators > span
+{
+  background-color: rgba(100, 100, 100, 0.5);
+  border-radius:5px;
+  width: 9px;
+  height: 9px;
+  display: block;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+
+.vs_ext_ui_carousel > .indicators > span.selected
+{
+  background-color: rgba(10, 10, 10, 0.5);
+}

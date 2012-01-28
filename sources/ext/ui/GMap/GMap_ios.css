@@ -1,0 +1,26 @@
+.vs_ext_ui_gmap_info {
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(125,125,125,0.8)), color-stop(3%,rgba(103,107,114,0.8)), color-stop(42%,rgba(69,72,77,0.8)), color-stop(81%,rgba(0,0,0,0.8)));
+  border-radius: 6px;
+  padding: 4px 10px;
+  color: white;
+  text-shadow: -1px -1px 1px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(0,0,0,0.8);
+  border-bottom: none;
+
+  box-shadow: rgba(0, 0, 0, 0.6) 8px -5px 15px;
+}
+
+.vs_ext_ui_gmap_info::before {
+  border-color: rgba(0,0,0,0.8) transparent transparent transparent;
+  border-style: solid;
+  border-width: 10px 10px 0px 10px;
+  
+  bottom: -10px;
+  position: absolute;
+  left: 50%;
+  margin-left: -8px;
+}
+
+.vs_ext_ui_gmap_info.selected {
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(125,125,125,0.8)), color-stop(3%,rgba(0,0,0,0.8)), color-stop(81%,rgba(0,0,0,0.8)));
+}

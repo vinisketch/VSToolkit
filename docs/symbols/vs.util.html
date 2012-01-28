@@ -1,0 +1,2883 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+	<head>
+		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+		<meta name="generator" content="JsDoc Toolkit" />
+		
+		<title>JsDoc Reference - vs.util</title>
+
+		<style type="text/css">
+			/* default.css */
+body
+{
+	font: 12px "Lucida Grande", Tahoma, Arial, Helvetica, sans-serif;
+	font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+	padding: 0px;
+	background-color: #F6F4F2;
+	margin: 0px;
+	overflow: hidden;
+}
+
+.header
+{
+	clear: both;
+	background-color: #ccc;
+	padding: 0px;
+}
+
+h1
+{
+	font-size: 150%;
+	font-weight: bold;
+	padding: 0;
+	margin: 1em 0 0 .3em;
+}
+
+hr
+{
+	border: none 0;
+	border-top: 1px solid #302F2D;
+	height: 1px;
+}
+
+pre.code
+{
+	display: block;
+	padding: 8px;
+	border: 1px dashed #ccc;
+}
+
+a {
+  text-decoration: none;
+  color: #D0410F;
+}
+
+a:hover {
+  color: #242220;
+}
+
+
+#index {
+  left: 0px;
+  margin-top: 0px;
+  padding: 0px;
+  top: 0px;
+  position: fixed;
+  width: 100%;
+  height: 32px;
+  overflow: hidden;
+  color: #F6F4F2;
+  z-index: 1;
+  border-bottom: 1px solid grey;
+  background-color: #F6F4F2;
+
+  text-shadow: #222 0px -1px 1px;
+  text-shadow: white 0px 1px 1px;
+}
+
+#index > .title {
+  background: #515151 -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0.2, #515151), color-stop(0.8, #302F2D));
+  height: 27px;
+  color: #F6F4F2;
+  padding-top: 5px;
+  padding-left: 8px;
+  font-size: 18px;
+}
+
+#index > .title a {
+  text-shadow: black 0px 1px 1px;
+  color: orange
+}
+
+#index > .title > h2 {
+  display: inline;
+  margin: 0px;
+  float: right;
+  margin: 2px;
+  margin-right: 10px;
+  text-shadow: black 0px 1px 1px;
+  font-size: 18px;
+  font-weight: normal;
+}
+
+#index:hover {
+  height: auto;
+}
+
+#scrollable
+{
+  position: fixed;
+  top: 66px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+
+  overflow-y: scroll;
+}
+
+#content
+{
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #242220;
+  
+  padding-left: 15px;
+  padding-right: 15px;
+  font-size: 13px;
+}
+
+.classList
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 8px 8px 5px 8px;
+	font-family: arial, sans-serif;
+	font-size: 1em;
+	overflow: auto;
+	font-size: 14px;
+}
+
+.classList li
+{
+	padding: 0;
+	margin: 0 0 8px 8px;
+	padding: 0;
+	
+	display: inline-block;
+}
+
+.classList li > a
+{
+	padding-left: 8px;
+}
+
+.classList li:before {
+  content: '|';
+  color: grey;
+}
+.classList li:first-child:before {
+  content: '';
+  color: grey;
+}
+
+.summaryTable { width: 100%; }
+
+.classTitle
+{
+  position: fixed;
+  top: 33px;
+  left: 0px;
+  right: 0px;
+  height: 27px;
+  color: #242220;
+  text-shadow: white 0px 1px 1px;
+  font-size: 18px;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F9F9F9), to(#CBCBCB));
+  border-bottom: 1px solid gray;
+  padding-top: 5px;
+  text-align: center;
+}
+
+h2 { font-size: 110%; }
+caption, div.sectionTitle
+{
+	background-color: #302F2D;
+	color: #fff;
+	font-size:130%;
+	text-align: left;
+	padding: 2px 6px 2px 6px;
+	border: 1px #302F2D solid;
+}
+
+div.sectionTitle { margin-bottom: 8px; }
+.summaryTable thead { display: none; }
+
+.summaryTable td
+{
+	vertical-align: top;
+	padding: 4px;
+	border-bottom: 1px #302F2D solid;
+	border-right: 1px #302F2D solid;
+}
+
+/*col#summaryAttributes {}*/
+.summaryTable td.attributes
+{
+	border-left: 1px #302F2D solid;
+	width: 140px;
+	text-align: right;
+}
+
+td.attributes, .fixedFont
+{
+	line-height: 15px;
+	color: #302F2D;
+	font-family: "Courier New",Courier,monospace;
+	font-size: 13px;
+}
+
+.summaryTable td.nameDescription
+{
+	text-align: left;
+	font-size: 13px;
+	line-height: 15px;
+}
+
+.summaryTable td.nameDescription, .description
+{
+	line-height: 15px;
+	padding: 4px;
+	padding-left: 4px;
+}
+
+#content > .description:first-child {
+//  font-size: 1.1em;
+  font-size: 13px;
+  border-bottom: 1px solid grey;
+  padding-bottom: 10px;
+}
+
+.summaryTable { margin-bottom: 8px; }
+
+ul.inheritsList
+{
+	list-style: square;
+	margin-left: 20px;
+	padding-left: 0;
+}
+
+.detailList {
+	margin-left: 20px; 
+	line-height: 15px;
+}
+.detailList dt { margin-left: 20px; }
+
+.detailList .heading
+{
+	font-weight: bold;
+	padding-bottom: 6px;
+	margin-left: 0;
+}
+
+.light, td.attributes, .light a:link, .light a:visited
+{
+	color: #777;
+	font-style: italic;
+}
+
+#index_tree {
+  position: fixed;
+  top: 66px;
+  bottom: 0px;
+  width: 200px;
+  height: 1500px;
+  border: none;
+  border-right: 1px grey solid;
+  background-color: #ECEAE7;
+}
+
+.index #index_tree, .index #scrollable {
+  top: 33px;
+}
+
+.index #content .classTitle {
+  margin: 0px;
+  top: 0px;
+}
+
+.inheritsList > dd {
+  padding-bottom: 5px;
+}
+
+hr:last-child {
+  border:none;
+}
+
+#content .class_info {
+  width: 200px;
+  height: 100px;
+  display: inline-block;
+  padding: 0px 10px;
+  overflow: hidden;
+}
+
+.fineprint {
+	text-align: right;
+	font-size: 10px;
+
+  position: fixed;
+  bottom: 0px;
+  left: 0px;
+  width: 190px;
+  z-index: 10;
+  
+  background-color: #302F2D;
+  color: #F6F4F2;
+  padding: 5px;
+}
+
+/********************************************************************
+              Main Scrollbar configuration
+********************************************************************/
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-corner {
+/*  background-color: transparent; */
+  background-color: white;
+}
+
+::-webkit-scrollbar-track-piece:disabled {
+  display: none !important;
+}
+
+::-webkit-scrollbar-button:disabled {
+  display: none !important;
+}
+ 
+::-webkit-scrollbar-track:disabled {
+  margin: 6px;
+}
+
+/* Vertical Scrollbar Styles */
+
+::-webkit-scrollbar-thumb:vertical {
+  min-height: 20px;
+//  border-top: 1px solid #fff;  
+  background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0% , from(rgb(240, 240, 240)), to(rgb(210, 210, 210)));  
+  -webkit-border-radius: 1ex;  
+  -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, .4);  
+}
+ 
+::-webkit-scrollbar-thumb:vertical:hover {
+  background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0% , from(rgb(140, 140, 140)), to(rgb(110, 110, 110)));  
+}
+ 
+::-webkit-scrollbar-thumb:vertical:active {
+  background: #ccc -webkit-gradient(linear, 0% 0%, 100% 0% , from(rgb(140, 140, 140)), to(rgb(110, 110, 110)));  
+}
+ 
+::-webkit-scrollbar-thumb:vertical:window-inactive {
+  background: transparent;  
+}
+
+		</style>
+	</head>
+
+	<body>
+<!-- ============================== header ================================= -->	
+		<!-- begin static/header.html -->
+		<div id="header">
+</div>
+		<!-- end static/header.html -->
+
+<!-- ============================== classes index ============================ -->
+		<div id="index">
+			<!-- begin publish.classesIndex -->
+			<div class="title">
+<a href="../index.html">Class Index</a>
+<h2> View All Classes</h2>
+</div>
+<ul class="classList">
+	
+	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
+	
+	<li><a href="../symbols/Array.html">Array</a></li>
+	
+	<li><a href="../symbols/vs.html">vs</a></li>
+	
+	<li><a href="../symbols/vs.av.html">vs.av</a></li>
+	
+	<li><a href="../symbols/vs.av.Audio.html">vs.av.Audio</a></li>
+	
+	<li><a href="../symbols/vs.av.Video.html">vs.av.Video</a></li>
+	
+	<li><a href="../symbols/vs.core.html">vs.core</a></li>
+	
+	<li><a href="../symbols/vs.core.Array.html">vs.core.Array</a></li>
+	
+	<li><a href="../symbols/vs.core.DataStorage.html">vs.core.DataStorage</a></li>
+	
+	<li><a href="../symbols/vs.core.DeviceConfiguration.html">vs.core.DeviceConfiguration</a></li>
+	
+	<li><a href="../symbols/vs.core.Event.html">vs.core.Event</a></li>
+	
+	<li><a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a></li>
+	
+	<li><a href="../symbols/vs.core.Fsm.html">vs.core.Fsm</a></li>
+	
+	<li><a href="../symbols/vs.core.HTTPRequest.html">vs.core.HTTPRequest</a></li>
+	
+	<li><a href="../symbols/vs.core.LocalStorage.html">vs.core.LocalStorage</a></li>
+	
+	<li><a href="../symbols/vs.core.Model.html">vs.core.Model</a></li>
+	
+	<li><a href="../symbols/vs.core.Object.html">vs.core.Object</a></li>
+	
+	<li><a href="../symbols/vs.core.Task.html">vs.core.Task</a></li>
+	
+	<li><a href="../symbols/vs.core.Task_PAR.html">vs.core.Task_PAR</a></li>
+	
+	<li><a href="../symbols/vs.core.Task_SEQ.html">vs.core.Task_SEQ</a></li>
+	
+	<li><a href="../symbols/vs.core.TaskWait.html">vs.core.TaskWait</a></li>
+	
+	<li><a href="../symbols/vs.data.html">vs.data</a></li>
+	
+	<li><a href="../symbols/vs.data.GoogleSearch.html">vs.data.GoogleSearch</a></li>
+	
+	<li><a href="../symbols/vs.data.RSSFeed.html">vs.data.RSSFeed</a></li>
+	
+	<li><a href="../symbols/vs.data.RSSItem.html">vs.data.RSSItem</a></li>
+	
+	<li><a href="../symbols/vs.data.RSSRequester.html">vs.data.RSSRequester</a></li>
+	
+	<li><a href="../symbols/vs.data.URL.html">vs.data.URL</a></li>
+	
+	<li><a href="../symbols/vs.ext.html">vs.ext</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.html">vs.ext.ui</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.Accordion.html">vs.ext.ui.Accordion</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.Carousel.html">vs.ext.ui.Carousel</a></li>
+	
+	<li><a href="../symbols/vs.ext.ui.GMap.html">vs.ext.ui.GMap</a></li>
+	
+	<li><a href="../symbols/vs.fx.html">vs.fx</a></li>
+	
+	<li><a href="../symbols/vs.fx.Animation.html">vs.fx.Animation</a></li>
+	
+	<li><a href="../symbols/vs.fx.CardController.html">vs.fx.CardController</a></li>
+	
+	<li><a href="../symbols/vs.fx.Controller.html">vs.fx.Controller</a></li>
+	
+	<li><a href="../symbols/vs.fx.NavigationController.html">vs.fx.NavigationController</a></li>
+	
+	<li><a href="../symbols/vs.fx.OpacityAnimation.html">vs.fx.OpacityAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.RotateAnimation.html">vs.fx.RotateAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.RotateXYZAnimation.html">vs.fx.RotateXYZAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.ScaleAnimation.html">vs.fx.ScaleAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.SkewAnimation.html">vs.fx.SkewAnimation</a></li>
+	
+	<li><a href="../symbols/vs.fx.SlideController.html">vs.fx.SlideController</a></li>
+	
+	<li><a href="../symbols/vs.fx.StackController.html">vs.fx.StackController</a></li>
+	
+	<li><a href="../symbols/vs.fx.TranslateAnimation.html">vs.fx.TranslateAnimation</a></li>
+	
+	<li><a href="../symbols/vs.ui.html">vs.ui</a></li>
+	
+	<li><a href="../symbols/vs.ui.AbstractList.html">vs.ui.AbstractList</a></li>
+	
+	<li><a href="../symbols/vs.ui.Application.html">vs.ui.Application</a></li>
+	
+	<li><a href="../symbols/vs.ui.Button.html">vs.ui.Button</a></li>
+	
+	<li><a href="../symbols/vs.ui.Canvas.html">vs.ui.Canvas</a></li>
+	
+	<li><a href="../symbols/vs.ui.CheckBox.html">vs.ui.CheckBox</a></li>
+	
+	<li><a href="../symbols/vs.ui.ComboBox.html">vs.ui.ComboBox</a></li>
+	
+	<li><a href="../symbols/vs.ui.ImageView.html">vs.ui.ImageView</a></li>
+	
+	<li><a href="../symbols/vs.ui.InputField.html">vs.ui.InputField</a></li>
+	
+	<li><a href="../symbols/vs.ui.List.html">vs.ui.List</a></li>
+	
+	<li><a href="../symbols/vs.ui.Picker.html">vs.ui.Picker</a></li>
+	
+	<li><a href="../symbols/vs.ui.PopOver.html">vs.ui.PopOver</a></li>
+	
+	<li><a href="../symbols/vs.ui.ProgressBar.html">vs.ui.ProgressBar</a></li>
+	
+	<li><a href="../symbols/vs.ui.RadioButton.html">vs.ui.RadioButton</a></li>
+	
+	<li><a href="../symbols/vs.ui.ScrollImageView.html">vs.ui.ScrollImageView</a></li>
+	
+	<li><a href="../symbols/vs.ui.ScrollView.html">vs.ui.ScrollView</a></li>
+	
+	<li><a href="../symbols/vs.ui.SegmentedButton.html">vs.ui.SegmentedButton</a></li>
+	
+	<li><a href="../symbols/vs.ui.Slider.html">vs.ui.Slider</a></li>
+	
+	<li><a href="../symbols/vs.ui.SplitView.html">vs.ui.SplitView</a></li>
+	
+	<li><a href="../symbols/vs.ui.SVGView.html">vs.ui.SVGView</a></li>
+	
+	<li><a href="../symbols/vs.ui.Switch.html">vs.ui.Switch</a></li>
+	
+	<li><a href="../symbols/vs.ui.TextArea.html">vs.ui.TextArea</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.html">vs.ui.ToolBar</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.Button.html">vs.ui.ToolBar.Button</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.Item.html">vs.ui.ToolBar.Item</a></li>
+	
+	<li><a href="../symbols/vs.ui.ToolBar.Text.html">vs.ui.ToolBar.Text</a></li>
+	
+	<li><a href="../symbols/vs.ui.View.html">vs.ui.View</a></li>
+	
+	<li><a href="../symbols/vs.util.html">vs.util</a></li>
+	
+</ul>
+
+			<!-- end publish.classesIndex -->
+		</div>
+		
+<!-- ============================== class title ============================ -->
+    <div class="classTitle">
+      
+      Namespace vs.util
+    </div>
+
+		<div id="scrollable">
+		<div id="content">
+
+<!-- ============================== class summary ========================== -->			
+			<p class="description">
+				
+				
+			
+				Main ViniSketch utility elements.
+	
+			</p>
+
+<!-- ============================== constructor summary ==================== -->			
+			
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.util.">
+				<caption>Namespace Summary</caption>
+				<thead>
+					<tr>
+						<th scope="col">Constructor Attributes</th>
+						<th scope="col">Constructor Name and Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td class="attributes">&nbsp;</td>
+						<td class="nameDescription" >
+							<div class="fixedFont">
+								<b><a href="../symbols/vs.util.html#constructor">vs.util</a></b>
+							</div>
+							<div class="description">Contains a collections of facilities, internationalization, and miscellaneous
+utility classes and methods.</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+
+<!-- ============================== properties summary ===================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.util.">
+					<caption>Field Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Field Attributes</th>
+							<th scope="col">Field Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.util.<b><a href="../symbols/vs.util.html#.getElementTransform">getElementTransform</a></b>
+								</div>
+								<div class="description">get the CSS transformation to a element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.util.<b><a href="../symbols/vs.util.html#.setElementTransform">setElementTransform</a></b>
+								</div>
+								<div class="description">Set the CSS transformation to a element</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
+
+<!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.util.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.addClassName">addClassName</a></b>(className)
+								</div>
+								<div class="description">Adds a CSS classname to Element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.camelize">camelize</a></b>(str)
+								</div>
+								<div class="description">Converts a string separated by dashes into a camelCase equivalent</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.capitalize">capitalize</a></b>(str)
+								</div>
+								<div class="description">Converts a string separated by dashes into a camelCase equivalent</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.defineClassProperties">defineClassProperties</a></b>(the_class, properties)
+								</div>
+								<div class="description">Defines new or modifies existing properties directly on an 'class'.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.defineClassProperty">defineClassProperty</a></b>(the_class, prop_name, desc)
+								</div>
+								<div class="description">Defines a new property directly on the object's prototype, or modifies an 
+existing property on an object's prototype.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.defineProperty">defineProperty</a></b>(obj, prop_name, desc)
+								</div>
+								<div class="description">Defines a new property directly on an object, or modifies an existing
+property on an object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.extend">extend</a></b>(destination, source)
+								</div>
+								<div class="description">Copies all properties from the source to the destination object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.extendClass">extendClass</a></b>(destination, source)
+								</div>
+								<div class="description">Extends a the prototype of a object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.free">free</a></b>(obj)
+								</div>
+								<div class="description">Free a ViniSketch object</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.getElementAbsolutePosition">getElementAbsolutePosition</a></b>(element)
+								</div>
+								<div class="description">Compute the elements position in terms of the window viewport
+Returns a key/value object {x, y}</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.getElementDimensions">getElementDimensions</a></b>(elem)
+								</div>
+								<div class="description">Finds the computed width and height of `element` and returns them as
+ key/value pairs of an object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.getElementHeight">getElementHeight</a></b>(elem)
+								</div>
+								<div class="description">Returns the height of `element`.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.getElementOpacity">getElementOpacity</a></b>(elem)
+								</div>
+								<div class="description">Returns the opacity of the element.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.getElementStyle">getElementStyle</a></b>(elem, style)
+								</div>
+								<div class="description">Returns the given CSS property value of `element`.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.getElementWidth">getElementWidth</a></b>(elem)
+								</div>
+								<div class="description">Returns the width of `element`.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.hasClassName">hasClassName</a></b>(className, className)
+								</div>
+								<div class="description">Checks whether element has the given CSS className.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.htmlEncode">htmlEncode</a></b>(str)
+								</div>
+								<div class="description">HTML-encodes a string and returns the encoded string.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.importFile">importFile</a></b>(path, doc, clb, type)
+								</div>
+								<div class="description">Imports a JavaScript or css file into a document</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.isArray">isArray</a></b>(object)
+								</div>
+								<div class="description">Returns `true` if `object` is an [[Array]]; `false` otherwise.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.isElement">isElement</a></b>(object)
+								</div>
+								<div class="description">Returns `true` if `object` is a DOM node of type 1; `false` otherwise.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.isElementVisible">isElementVisible</a></b>(elem)
+								</div>
+								<div class="description">Return true if the element is visible, false otherwise</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.isFunction">isFunction</a></b>(object)
+								</div>
+								<div class="description">Returns `true` if `object` is an Function; `false` otherwise.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.isNumber">isNumber</a></b>(object)
+								</div>
+								<div class="description">Returns `true` if `object` is an Number; `false` otherwise.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.isString">isString</a></b>(object)
+								</div>
+								<div class="description">Returns `true` if `object` is an String; `false` otherwise.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.isUndefined">isUndefined</a></b>(object)
+								</div>
+								<div class="description">Returns `true` if `object` is of type `undefined`; `false` otherwise.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.preloadTemplate">preloadTemplate</a></b>(comp_name)
+								</div>
+								<div class="description">Preload GUI HTML template for the given component.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.removeAllElementChild">removeAllElementChild</a></b>(elem)
+								</div>
+								<div class="description">Remove all element children</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.removeClassName">removeClassName</a></b>(className)
+								</div>
+								<div class="description">Removes element’s CSS className
+
+ <p></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.setActiveStyleSheet">setActiveStyleSheet</a></b>(title)
+								</div>
+								<div class="description">Sets the active stylesheet for the HTML document according to the specified
+ title.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.setElementInnerText">setElementInnerText</a></b>(elem, txt)
+								</div>
+								<div class="description">Set inner content of a element</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.setElementOpacity">setElementOpacity</a></b>(elem, value)
+								</div>
+								<div class="description">Sets the visual opacity of an element while working around inconsistencies
+ in various browsers.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.setElementPos">setElementPos</a></b>(elem, x, y)
+								</div>
+								<div class="description">Set the absolute element position.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.setElementSize">setElementSize</a></b>(elem, w, w)
+								</div>
+								<div class="description">Set the element size</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.setElementStyle">setElementStyle</a></b>(elem, style)
+								</div>
+								<div class="description">Modifies `element`'s CSS style properties.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.setElementVisibility">setElementVisibility</a></b>(elem, v)
+								</div>
+								<div class="description">Set the element HTML visibility</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.strip">strip</a></b>(str)
+								</div>
+								<div class="description">Strips all leading and trailing whitespace from a string.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.toggleClassName">toggleClassName</a></b>(className, className)
+								</div>
+								<div class="description">Toggles element’s CSS className
+
+ <p></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.toJSON">toJSON</a></b>(value)
+								</div>
+								<div class="description">Returns a JSON string.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.underscore">underscore</a></b>(str)
+								</div>
+								<div class="description">Converts a camelized string into a series of words separated by an 
+ underscore (_).</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
+<!-- ============================== events summary ======================== -->
+			
+
+<!-- ============================== constructor details ==================== -->		
+			
+			<div class="details"><a name="constructor"> </a>
+				<div class="sectionTitle">
+					Namespace Detail
+				</div>
+				
+				<div class="fixedFont">
+						<b>vs.util</b>
+				</div>
+				
+				<div class="description">
+					Contains a collections of facilities, internationalization, and miscellaneous
+utility classes and methods.
+					
+				</div>
+				
+				
+				
+				
+					
+					
+					
+					
+					
+					
+					
+
+			</div>
+			
+
+<!-- ============================== field details ========================== -->		
+			
+				<div class="sectionTitle">
+					Field Detail
+				</div>
+				
+					<a name=".getElementTransform"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Transform}</span>
+					<span class="light">vs.util.</span><b>getElementTransform</b>
+					
+					</div>
+					<div class="description">
+						get the CSS transformation to a element
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setElementTransform"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>setElementTransform</b>
+					
+					</div>
+					<div class="description">
+						Set the CSS transformation to a element
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					
+				
+			
+
+<!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name=".addClassName"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>addClassName</b>(className)
+					
+					</div>
+					<div class="description">
+						Adds a CSS classname to Element.
+						
+					</div>
+					
+					
+					
+					<pre class="code"> elem.addClassName ('selected');</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>className</b>
+									
+								</dt>
+								<dd>the className to add</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".camelize"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{String}</span>
+					<span class="light">vs.util.</span><b>camelize</b>(str)
+					
+					</div>
+					<div class="description">
+						Converts a string separated by dashes into a camelCase equivalent
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>str</b>
+									
+								</dt>
+								<dd>String The string</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> the result</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".capitalize"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{String}</span>
+					<span class="light">vs.util.</span><b>capitalize</b>(str)
+					
+					</div>
+					<div class="description">
+						Converts a string separated by dashes into a camelCase equivalent
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>str</b>
+									
+								</dt>
+								<dd>String The string</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> the result</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".defineClassProperties"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>defineClassProperties</b>(the_class, properties)
+					
+					</div>
+					<div class="description">
+						Defines new or modifies existing properties directly on an 'class'.<br/><br/>
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>the_class</b>
+									
+								</dt>
+								<dd>The 'class' on which to define the property.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>properties</b>
+									
+								</dt>
+								<dd>An object whose own enumerable properties
+  constitute descriptors for the properties to be defined or modified.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/vs.util.html#.defineClassProperty">vs.util.defineClassProperty</a></dd>
+							
+							</dl>
+						
+
+					<hr />
+				
+					<a name=".defineClassProperty"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>defineClassProperty</b>(the_class, prop_name, desc)
+					
+					</div>
+					<div class="description">
+						Defines a new property directly on the object's prototype, or modifies an 
+existing property on an object's prototype.<br/><br/>
+
+Property descriptors present in objects come in two main flavors: data
+descriptors and accessor descriptors. A data descriptor is a property that
+has a value, which may or may not be writable. An accessor descriptor is a
+property described by a getter-setter pair of functions. A descriptor must be
+one of these two flavors; it cannot be both. All descriptors regardless of
+flavor include the configurable and enumerable fields.<br/><br/>
+
+A property descriptor is an object with the following fields:
+<ul>
+<ol> <b>value</b> The value associated with the property. (data descriptors
+only). <br/><i>Defaults to undefined.</i></ol>
+<ol> <b>writable</b> True if and only if the value associated with the
+property may be changed. (data descriptors only).<br/>
+<i>Defaults to false.</ol>
+<ol> <b>get</b> A function which serves as a getter for the property, or
+undefined if there is no getter. (accessor descriptors only).<br/>
+<i>Defaults to undefined.</i></ol>
+<ol> <b>set</b> A function which serves as a setter for the property, or
+undefined if there is no setter. (accessor descriptors only).<br/>
+<i>Defaults to undefined.</i></ol>
+<ol> <b>configurable</b> True if and only if the type of this property
+descriptor may be changed and if the property may be deleted from the
+corresponding object.<br/><i>Defaults to true.</i></ol>
+<ol> <b>enumerable</b> True if and only if this property shows up during
+enumeration of the properties on the corresponding object. <br/>
+Defaults to true.</i></ol></ul>
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>the_class</b>
+									
+								</dt>
+								<dd>The object's prototype on which to define the 
+property.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>prop_name</b>
+									
+								</dt>
+								<dd>The name of the property to be defined or modified.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>desc</b>
+									
+								</dt>
+								<dd>The descriptor for the property being defined or
+modified</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".defineProperty"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>defineProperty</b>(obj, prop_name, desc)
+					
+					</div>
+					<div class="description">
+						Defines a new property directly on an object, or modifies an existing
+property on an object.<br/><br/>
+
+Property descriptors present in objects come in two main flavors: data
+descriptors and accessor descriptors. A data descriptor is a property that
+has a value, which may or may not be writable. An accessor descriptor is a
+property described by a getter-setter pair of functions. A descriptor must be
+one of these two flavors; it cannot be both. All descriptors regardless of
+flavor include the configurable and enumerable fields.<br/><br/>
+
+A property descriptor is an object with the following fields:
+<ul>
+<ol> <b>value</b> The value associated with the property. (data descriptors
+only). <br/><i>Defaults to undefined.</i></ol>
+<ol> <b>writable</b> True if and only if the value associated with the
+property may be changed. (data descriptors only).<br/>
+<i>Defaults to false.</ol>
+<ol> <b>get</b> A function which serves as a getter for the property, or
+undefined if there is no getter. (accessor descriptors only).<br/>
+<i>Defaults to undefined.</i></ol>
+<ol> <b>set</b> A function which serves as a setter for the property, or
+undefined if there is no setter. (accessor descriptors only).<br/>
+<i>Defaults to undefined.</i></ol>
+<ol> <b>configurable</b> True if and only if the type of this property
+descriptor may be changed and if the property may be deleted from the
+corresponding object.<br/><i>Defaults to true.</i></ol>
+<ol> <b>enumerable</b> True if and only if this property shows up during
+enumeration of the properties on the corresponding object. <br/>
+Defaults to true.</i></ol></ul>
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>obj</b>
+									
+								</dt>
+								<dd>The object on which to define the property.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>prop_name</b>
+									
+								</dt>
+								<dd>The name of the property to be defined or modified.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>desc</b>
+									
+								</dt>
+								<dd>The descriptor for the property being defined or
+modified</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".extend"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>extend</b>(destination, source)
+					
+					</div>
+					<div class="description">
+						Copies all properties from the source to the destination object.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>destination</b>
+									
+								</dt>
+								<dd>The object to receive the new properties.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>source</b>
+									
+								</dt>
+								<dd>The object whose properties will be duplicated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".extendClass"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>extendClass</b>(destination, source)
+					
+					</div>
+					<div class="description">
+						Extends a the prototype of a object
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>destination</b>
+									
+								</dt>
+								<dd>The Class to receive the new properties.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>source</b>
+									
+								</dt>
+								<dd>The Class whose properties will be duplicated.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".free"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>free</b>(obj)
+					
+					</div>
+					<div class="description">
+						Free a ViniSketch object
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>obj</b>
+									
+								</dt>
+								<dd>the object to free</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getElementAbsolutePosition"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Object}</span>
+					<span class="light">vs.util.</span><b>getElementAbsolutePosition</b>(element)
+					
+					</div>
+					<div class="description">
+						Compute the elements position in terms of the window viewport
+Returns a key/value object {x, y}
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>element</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> the x,y absolute position of a element</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getElementDimensions"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Object}</span>
+					<span class="light">vs.util.</span><b>getElementDimensions</b>(elem)
+					
+					</div>
+					<div class="description">
+						Finds the computed width and height of `element` and returns them as
+ key/value pairs of an object.<br/>
+ <p/>
+ For backwards-compatibility, these dimensions represent the dimensions
+ of the element's "border box" (including CSS padding and border).<br/> This
+ is equivalent to the built-in `offsetWidth` and `offsetHeight`
+ browser properties.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> the key/value width & height</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getElementHeight"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Number}</span>
+					<span class="light">vs.util.</span><b>getElementHeight</b>(elem)
+					
+					</div>
+					<div class="description">
+						Returns the height of `element`.<br/>
+ 
+ This method returns correct values on elements whose display is set to
+ `none` either in an inline style rule or in an CSS stylesheet.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Number}</span> the height</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getElementOpacity"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Number}</span>
+					<span class="light">vs.util.</span><b>getElementOpacity</b>(elem)
+					
+					</div>
+					<div class="description">
+						Returns the opacity of the element.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Number}</span> value The opacity</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getElementStyle"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Object}</span>
+					<span class="light">vs.util.</span><b>getElementStyle</b>(elem, style)
+					
+					</div>
+					<div class="description">
+						Returns the given CSS property value of `element`.<br/> The property can be
+ specified in either its CSS form (`font-size`) or its camelized form
+ (`fontSize`).<br/>
+
+ This method looks up the CSS property of an element whether it was
+ applied inline or in a stylesheet. It works around browser inconsistencies
+ regarding `float`, `opacity`, which returns a value between `0`
+ (fully transparent) and `1` (fully opaque), position properties
+ (`left`, `top`, `right` and `bottom`) and when getting the dimensions
+ (`width` or `height`) of hidden elements.
+						
+					</div>
+					
+					
+					
+					<pre class="code"> 
+ getElementStyle (elem, 'fontSize');
+ // -> '12px'</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>style</b>
+									
+								</dt>
+								<dd>The style to find</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Object}</span> the key/value width & height</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".getElementWidth"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Number}</span>
+					<span class="light">vs.util.</span><b>getElementWidth</b>(elem)
+					
+					</div>
+					<div class="description">
+						Returns the width of `element`.<br/>
+ 
+ This method returns correct values on elements whose display is set to
+ `none` either in an inline style rule or in an CSS stylesheet.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Number}</span> the width</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".hasClassName"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Boolean}</span>
+					<span class="light">vs.util.</span><b>hasClassName</b>(className, className)
+					
+					</div>
+					<div class="description">
+						Checks whether element has the given CSS className.
+
+ <p>
+						
+					</div>
+					
+					
+					
+					<pre class="code"> elem.hasClassName ('selected');
+ // -> true | false</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>className</b>
+									
+								</dt>
+								<dd>the className to check</dd>
+							
+								<dt>
+									<b>className</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Boolean}</span> true if the element has the given className</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".htmlEncode"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>htmlEncode</b>(str)
+					
+					</div>
+					<div class="description">
+						HTML-encodes a string and returns the encoded string.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>str</b>
+									
+								</dt>
+								<dd>String The string</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".importFile"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>importFile</b>(path, doc, clb, type)
+					
+					</div>
+					<div class="description">
+						Imports a JavaScript or css file into a document
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>path</b>
+									
+								</dt>
+								<dd>The file path to import</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Document}</span> <b>doc</b>
+									
+								</dt>
+								<dd>The document into import the file</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>clb</b>
+									
+								</dt>
+								<dd>A function which will be called when the file is loaded</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>type</b>
+									
+								</dt>
+								<dd>The file type ['js', 'css']</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".isArray"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>isArray</b>(object)
+					
+					</div>
+					<div class="description">
+						Returns `true` if `object` is an [[Array]]; `false` otherwise.
+						
+					</div>
+					
+					
+					
+					<pre class="code"> 
+ vs.util.isArray([]);
+ //-> true
+     
+ vs.util.isArray({ });
+ //-> false</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>object</b>
+									
+								</dt>
+								<dd>The object to test.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".isElement"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>isElement</b>(object)
+					
+					</div>
+					<div class="description">
+						Returns `true` if `object` is a DOM node of type 1; `false` otherwise.
+						
+					</div>
+					
+					
+					
+					<pre class="code"> 
+ vs.util.isElement(new Element('div'));
+ //-> true
+
+ vs.util.isElement(document.createElement('div'));
+ //-> true
+     
+ vs.util.isElement(document.createTextNode('foo'));
+ //-> false</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>object</b>
+									
+								</dt>
+								<dd>The object to test.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".isElementVisible"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{boolean}</span>
+					<span class="light">vs.util.</span><b>isElementVisible</b>(elem)
+					
+					</div>
+					<div class="description">
+						Return true if the element is visible, false otherwise
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{boolean}</span> </dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".isFunction"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>isFunction</b>(object)
+					
+					</div>
+					<div class="description">
+						Returns `true` if `object` is an Function; `false` otherwise.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>object</b>
+									
+								</dt>
+								<dd>The object to test.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".isNumber"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>isNumber</b>(object)
+					
+					</div>
+					<div class="description">
+						Returns `true` if `object` is an Number; `false` otherwise.
+						
+					</div>
+					
+					
+					
+					<pre class="code"> 
+ vs.util.isNumber (123);
+ //-> true
+     
+ vs.util.isNumber (1.23);
+ //-> true
+     
+ vs.util.isNumber ("123");
+ //-> false</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>object</b>
+									
+								</dt>
+								<dd>The object to test.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".isString"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>isString</b>(object)
+					
+					</div>
+					<div class="description">
+						Returns `true` if `object` is an String; `false` otherwise.
+						
+					</div>
+					
+					
+					
+					<pre class="code"> 
+ vs.util.isString ("qwe");
+ //-> true
+     
+ vs.util.isString (123);
+ //-> false</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>object</b>
+									
+								</dt>
+								<dd>The object to test.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".isUndefined"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>isUndefined</b>(object)
+					
+					</div>
+					<div class="description">
+						Returns `true` if `object` is of type `undefined`; `false` otherwise.
+						
+					</div>
+					
+					
+					
+					<pre class="code"> 
+ vs.util.isUndefined ();
+ //-> true
+     
+ vs.util.isUndefined (undefined);
+ //-> true
+     
+ vs.util.isUndefined (null);
+ //-> false
+     
+ vs.util.isUndefined (0);
+ //-> false</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>object</b>
+									
+								</dt>
+								<dd>The object to test.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".preloadTemplate"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>preloadTemplate</b>(comp_name)
+					
+					</div>
+					<div class="description">
+						Preload GUI HTML template for the given component.
+ <p>
+ When the developer uses createAndAddComponent method, the system will
+ load the HTML GUI template associated to the component to create.
+ This process can take times.<br>
+ In order to minimize the latency, this class method allows to preload all 
+ data related to a component.<br>
+ This method should ne call when the application start.
+						
+					</div>
+					
+					
+					
+					<pre class="code"> vs.util.preloadTemplate ('GUICompOne');
+ vs.util.preloadTemplate ('GUICompTwo');
+ ...
+ myObject.createAndAddComponent ('GUICompOne', conf, 'children');</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>comp_name</b>
+									
+								</dt>
+								<dd>The GUI component name</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".removeAllElementChild"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>removeAllElementChild</b>(elem)
+					
+					</div>
+					<div class="description">
+						Remove all element children
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".removeClassName"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>removeClassName</b>(className)
+					
+					</div>
+					<div class="description">
+						Removes element’s CSS className
+
+ <p>
+						
+					</div>
+					
+					
+					
+					<pre class="code"> elem.removeClassName ('selected');</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>className</b>
+									
+								</dt>
+								<dd>the className to remove</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setActiveStyleSheet"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>setActiveStyleSheet</b>(title)
+					
+					</div>
+					<div class="description">
+						Sets the active stylesheet for the HTML document according to the specified
+ title.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>title</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setElementInnerText"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>setElementInnerText</b>(elem, txt)
+					
+					</div>
+					<div class="description">
+						Set inner content of a element
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>txt</b>
+									
+								</dt>
+								<dd>The text</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setElementOpacity"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>setElementOpacity</b>(elem, value)
+					
+					</div>
+					<div class="description">
+						Sets the visual opacity of an element while working around inconsistencies
+ in various browsers. The `opacity` argument should be a floating point
+ number, where the value of `0` is fully transparent and `1` is fully opaque.
+						
+					</div>
+					
+					
+					
+					<pre class="code"> // set to 50% transparency
+ setElementOpacity (element, 0.5);
+     
+ // these are equivalent, but allow for setting more than
+ // one CSS property at once:
+ setElementStyle (element, { opacity: 0.5 });
+ setElementStyle (element, "opacity: 0.5");</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>value</b>
+									
+								</dt>
+								<dd>The opacity</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setElementPos"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>setElementPos</b>(elem, x, y)
+					
+					</div>
+					<div class="description">
+						Set the absolute element position.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>x</b>
+									
+								</dt>
+								<dd>The element left position</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>y</b>
+									
+								</dt>
+								<dd>The element top position</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setElementSize"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>setElementSize</b>(elem, w, w)
+					
+					</div>
+					<div class="description">
+						Set the element size
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>w</b>
+									
+								</dt>
+								<dd>The element width</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Number}</span> <b>w</b>
+									
+								</dt>
+								<dd>The element height</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setElementStyle"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>setElementStyle</b>(elem, style)
+					
+					</div>
+					<div class="description">
+						Modifies `element`'s CSS style properties. Styles are passed as a hash of
+ property-value pairs in which the properties are specified in their
+ camelized form.
+						
+					</div>
+					
+					
+					
+					<pre class="code">setElementStyle ({color: 'red', display: 'block'});
+// add/set color and display properties
+setElementStyle ({color: undefined});
+// remove color property</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>style</b>
+									
+								</dt>
+								<dd>The style to modify</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".setElementVisibility"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>setElementVisibility</b>(elem, v)
+					
+					</div>
+					<div class="description">
+						Set the element HTML visibility
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Element}</span> <b>elem</b>
+									
+								</dt>
+								<dd>The element</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>v</b>
+									
+								</dt>
+								<dd>True if the element should be visible or false</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".strip"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>strip</b>(str)
+					
+					</div>
+					<div class="description">
+						Strips all leading and trailing whitespace from a string.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>str</b>
+									
+								</dt>
+								<dd>String The string</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".toggleClassName"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>toggleClassName</b>(className, className)
+					
+					</div>
+					<div class="description">
+						Toggles element’s CSS className
+
+ <p>
+						
+					</div>
+					
+					
+					
+					<pre class="code"> elem.toggleClassName ('selected');</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>className</b>
+									
+								</dt>
+								<dd>the className</dd>
+							
+								<dt>
+									<b>className</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".toJSON"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>toJSON</b>(value)
+					
+					</div>
+					<div class="description">
+						Returns a JSON string.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>value</b>
+									
+								</dt>
+								<dd>The object to be serialized.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".underscore"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{String}</span>
+					<span class="light">vs.util.</span><b>underscore</b>(str)
+					
+					</div>
+					<div class="description">
+						Converts a camelized string into a series of words separated by an 
+ underscore (_).
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>str</b>
+									
+								</dt>
+								<dd>String The string</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> the result</dd>
+							
+							</dl>
+						
+						
+						
+
+					
+				
+			
+			
+<!-- ============================== event details ========================= -->		
+			
+			
+			<hr />
+		</div>
+    </div>
+	</body>
+</html>

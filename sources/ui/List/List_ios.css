@@ -1,0 +1,124 @@
+.vs_ui_list {
+  font-size: 17px;
+  color: black;
+}
+
+li.pressed
+{
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, from(#9DC3F3), color-stop(0.02, #5899EB), color-stop(0.3, #3985E7), color-stop(0.65, #1A70DD), to(#1559AF)) !important;
+  color: white !important;
+}
+
+.vs_ui_list.DefaultList.arrow > ul > li::after,
+.vs_ui_list.BlockList.arrow > ul > li > ul > li::after,
+.vs_ui_list.TabList.arrow > ul > li > ul > li::after
+{
+  content:url(SimpleListNext.png);
+  margin-top: -8px;
+}
+
+.vs_ui_list.DefaultList.arrow > ul > li.pressed:after,
+.vs_ui_list.BlockList.arrow > ul > li > ul > li.pressed:after,
+.vs_ui_list.TabList.arrow > ul > li > ul > li.pressed:after
+{
+  content:url(SimpleListNextSel.png);
+}
+
+
+/********************************************************************
+                Default List Item CSS
+*********************************************************************/
+
+.vs_ui_list.DefaultList > ul > li,
+.vs_ui_list.BlockList > ul > li > ul > li,
+.vs_ui_list.TabList > ul > li > ul > li
+{
+  padding: 10px 23px 10px 10px;
+  color: inherit;
+  min-height: 40px;
+  
+  border-top: 1px solid #E0E0E0;
+}
+
+ul > li:first-child {
+  border: none !important;
+}
+
+/********************************************************************
+                Tab List Item CSS
+*********************************************************************/
+
+.vs_ui_list.DefaultList,
+.vs_ui_list.TabList {
+  background-color: white;
+  border: none;
+}
+
+.vs_ui_list.TabList > ul > li > div  {
+  font-weight: bold;
+ 
+  padding: 0px 10px;
+  border: none;
+  border-bottom: 1px solid #999;
+  border-top: 1px solid #7D7D7D;
+  color: white;
+  text-shadow: rgba(0, 0, 0, 0.398438) 0px 1px 0px;
+  
+  background:url('DefaultTabListTitle.png') repeat-x;
+
+  font-size: 0.8em;
+  
+  height: 20px;
+  opacity:0.7;
+}
+
+/********************************************************************
+                Block List Item CSS
+*********************************************************************/
+
+.vs_ui_list.BlockList {
+  background-color: #d0d0d0;
+  border: none;
+  -webkit-border-radius: 0px;
+}
+
+.vs_ui_list.BlockList > ul > li > div  {
+  margin-left: 10px;
+  margin-right: 10px;
+  margin-top: 0px;
+  margin-bottom: 4px;
+  font-weight: bold;
+  color: #385487;
+  text-shadow: #FAFAFA 0px 1px 0px;
+  border: none;
+  background: none;
+}
+
+.vs_ui_list.BlockList > ul {
+  margin: 10px 0 10px 0;
+}
+
+.vs_ui_list.BlockList > ul > li {
+  margin: 0px 10px 0 10px;
+}
+
+.vs_ui_list.BlockList > ul > li > ul {
+  -webkit-border-radius: 10px;
+  border: solid 1px blue;
+  background-color: white;
+  margin: 0px;
+  margin-top: 0px;
+  position: relative;
+  overflow:hidden;
+}
+
+.vs_ui_list.BlockList > ul > li > ul > li:first-child {
+  border: none;
+  border-top-left-radius: 9px 9px;
+  border-top-right-radius: 9px 9px;
+}
+
+.vs_ui_list.BlockList > ul > li > ul > li:last-child {
+  border-bottom-left-radius: 9px 9px;
+  border-bottom-right-radius: 9px 9px;
+}

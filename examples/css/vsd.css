@@ -1,0 +1,11 @@
+.cm-s-vsd { font:13px/1.4em Trebuchet, Verdana, sans-serif; }	/* - customized editor font - */
+
+.cm-s-vsd span.cm-comment { color: #a86; }
+.cm-s-vsd span.cm-keyword { font-weight: bold; color: blue; }
+.cm-s-vsd span.cm-string { color: #a22; }
+.cm-s-vsd span.cm-builtin { font-weight: bold; color: #077; }
+.cm-s-vsd span.cm-special { font-weight: bold; color: #0aa; }
+.cm-s-vsd span.cm-variable { color: black; }
+.cm-s-vsd span.cm-number, .cm-s-vsd span.cm-atom { color: #3a3; }
+.cm-s-vsd span.cm-meta {color: #555;}
+.cm-s-vsd span.cm-link { color: #3a3; }

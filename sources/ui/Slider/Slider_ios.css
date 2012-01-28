@@ -1,0 +1,60 @@
+.vs_ui_slider.horizontal {
+  height: 23px;
+}
+
+.vs_ui_slider.vertical {
+  width: 23px;
+}
+
+.vs_ui_slider .line {
+  position: absolute;
+  background-color: #F9F9F9;
+  -webkit-border-radius: 5px;
+}
+
+.vs_ui_slider.horizontal .line {
+  top: 6px;
+  left: 10px;
+  right: 10px;
+  height: 10px;
+  -webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.vs_ui_slider.vertical .line {
+  top: 10px;
+  bottom: 10px;
+  left: 6px;
+  width: 10px;
+  -webkit-box-shadow:inset 1px 0 3px rgba(0,0,0,0.5);
+}
+
+.vs_ui_slider .line > div {
+  -webkit-border-radius: 5px;
+}
+
+.vs_ui_slider.horizontal .line > div {
+  background-image: -webkit-gradient(
+    linear, left top,left bottom,
+    color-stop(0, rgb(37,89,186)),
+    color-stop(0.3, rgb(79,108,161)),
+    color-stop(0.8, rgb(140,192,255)));
+}
+
+.vs_ui_slider.vertical .line > div {
+  background-image: -webkit-gradient(
+    linear, left top, right top,
+    color-stop(0, rgb(37,89,186)),
+    color-stop(0.3, rgb(79,108,161)),
+    color-stop(0.8, rgb(140,192,255)));
+}
+
+.vs_ui_slider .handle {
+  position:absolute;
+  width: 23px;
+  height: 23px;
+  background-image: url('iOS_handler.png');
+}
+
+.vs_ui_slider .handle:active {
+  background-image: url('iOS_handler_pressed.png');
+}

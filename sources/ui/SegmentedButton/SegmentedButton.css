@@ -1,0 +1,28 @@
+.vs_ui_segmentedbutton
+{
+  padding: 0px;
+  margin: 0px;
+
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  -webkit-box-align: stretch;
+  
+  font-weight: normal;
+}
+
+.vs_ui_segmentedbutton > div
+{
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  -webkit-box-pack: center;
+  text-align: center;
+  display: -webkit-box;
+  -webkit-box-flex: 1;
+  height: 100%;
+}
+
+/***************************************************************************
+
+***************************************************************************/

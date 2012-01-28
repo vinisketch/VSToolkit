@@ -1,0 +1,109 @@
+.vs_ui_list {
+  padding: 0px;
+  margin: 0px;
+  overflow: hidden;
+}
+
+ul {
+  padding: 0px;
+  margin: 0px;
+}
+
+li {
+  position: relative;
+
+  border: none;
+  background: none;
+  border-radius: 0px;
+  
+  list-style-type: none;
+}
+
+.vs_ui_list.arrow ul li:after
+{
+  position: absolute;
+  right: 10px;
+  top: 50%;
+}
+
+/*
+.vs_ui_list.arrow ul li.selected:after
+{
+}
+*/
+
+.vs_ui_list.DefaultList > ul > li > div
+{
+  position: absolute;
+  color: #385487;
+  font-weight: normal !important;
+  text-align: right;
+
+  font-weight: bold;
+  left: 10px;
+  right: 10px;
+  top: 10px;
+}
+
+/*
+.vs_ui_list li.selected > div
+{
+  color: #DDD !important;
+}
+*/
+
+.vs_ui_list.DefaultList.arrow > ul > li > div
+{
+  right: 25px;
+}
+
+/********************************************************************
+                Default List Item CSS
+*********************************************************************/
+
+/********************************************************************
+                Tab List Item CSS
+*********************************************************************/
+
+.vs_ui_list.TabList > ul > li {
+  padding: 0px;
+}
+
+.vs_ui_list.TabList > ul > li > div {
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+  border: none;
+}
+
+.vs_ui_list.DefaultList > ul > li > span,
+.vs_ui_list.TabList > ul > li > ul > li > span,
+.vs_ui_list.BlockList > ul > li > ul > li > span
+{
+  font-weight: normal !important;
+  text-align: right;
+
+  font-weight: bold;
+  margin-right: 10px;
+  float: right;
+}
+
+.vs_ui_list.TabList.arrow > ul > li > ul > li > div,
+.vs_ui_list.BlockList.arrow > ul > li > ul > li > div
+{
+  right: 25px;
+}
+
+/********************************************************************
+                Block List Item CSS
+*********************************************************************/
+
+.vs_ui_list.BlockList > ul > li {
+  padding: 0px 0 10px 0;
+}
+
+.vs_ui_list.BlockList > ul > li > div {
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}

@@ -1,0 +1,31 @@
+.vs_ui_button
+{
+  overflow: hidden;
+  padding: 0px;
+  margin: 0px;
+
+  font-family: Helvetica;
+  font-size: 12px;
+  color: rgb(255, 255, 255);
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/***************************************************************************
+
+***************************************************************************/
+
+.vs_ui_button.default
+{
+  color: black;
+  opacity: 1;
+
+  padding: 0px;
+  font-weight: bold;
+}
+
+.vs_ui_button.default.disabled
+{ 
+  opacity: 0.7;
+}

@@ -1,0 +1,463 @@
+/**
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ *  The vs.ui.Slider class
+ *
+ *  @extends vs.ui.View
+ *  @class
+ *  An vs.ui.Slider is a control used to select a single value from a continuous
+ *  range of values. Sliders are horizontal or vertical.
+ *  <p/>
+ *  By default the range is include in [0, 100] and the value is a float.
+ *
+ *  <p>
+ *  Events:
+ *  <ul>
+ *    <li/> continuous_change: data [number]; propagate when during slide
+ *    <li/> change: data [number]: propagate at end of slide 
+ *  </ul>
+ *  <p>
+ *  @example
+ *  var config = {}
+ *  var config.id = 'mySlider';
+ *  var config.orientation = vs.ui.Slider.HORIZONTAL;
+ *  var config.value = 10;
+ *
+ *  var mySlider = vs.ui.Slider (config);
+ *  mySlider.init ();
+ * <p>
+ *
+ *  @author David Thevenin
+ * @name vs.ui.Slider 
+ *
+ *  @constructor
+ *   Creates a new vs.ui.Slider.
+ *
+ * @param {Object} config the configuration structure [mandatory]
+*/
+function Slider (config)
+{
+  this.parent = View;
+  this.parent (config);
+  this.constructor = Slider;
+  
+  this._range = [0, 100];
+}
+
+/** 
+ * Horizontal constant to configure a slider.
+ * <p/>A slider can be horizontal or vertical.
+ * Set the orientation property with this constant for a horizontal slider.
+ * By default a slider is horizontal.
+ * @see vs.ui.Slider#orientation
+ * @name vs.ui.Slider.HORIZONTAL
+ * @const
+ */
+Slider.HORIZONTAL = 0;
+
+/** 
+ * Vertical constant to configure a slider.
+ * <p/>A slider can be horizontal or vertical.
+ * Set the orientation property with this constant for a vertical slider.
+ * By default a slider is horizontal.
+ * @see vs.ui.Slider#orientation
+ * @name vs.ui.Slider.VERTICAL
+ * @const
+ */
+Slider.VERTICAL = 1;
+
+Slider.prototype = {
+
+  /*****************************************************************
+   *
+   ****************************************************************/
+  /**
+   * slider orientation (0: horizontal, 1: vertical)
+   * @protected
+   * @type {number}
+   */
+  _orientation : Slider.HORIZONTAL,
+
+  /**
+   * set default button position to 0
+   * @protected
+   * @type {number}
+   */
+  _value : 0,
+
+  /**
+   *
+   * @protected
+   * @type {Array.<number>}
+   */
+  _range: null,
+
+  /*****************************************************************
+   *
+   ****************************************************************/
+
+  /**
+   * @private
+   * @type {number}
+   */
+  __v : 0,
+
+  /**
+   * @private
+   * @type {number}
+   */
+  __drag_x : 0,
+
+  /**
+   * @private
+   * @type {number}
+   */
+  __drag_y : 0,
+
+  /**
+   * @private
+   * @type {HTMLDivElement}
+   */
+  __handle : null,
+  
+  /**
+   * @private
+   * @type {number}
+   */
+  __handle_width : 0,
+  
+  /**
+   * @private
+   * @type {HTMLDivElement}
+   */
+  __inset : null,
+  __inset_width: 10,
+   
+/********************************************************************
+                  setter and getter declarations
+********************************************************************/
+
+  /**
+   * @protected
+   * @function
+   */
+  destructor: function ()
+  {
+    this.__handle.removeEventListener (core.POINTER_START, this, true);
+    View.prototype.destructor.call (this);
+  },
+
+  /**
+   * @protected
+   * @function
+   */
+  initSkin : function ()
+  {
+    View.prototype.initSkin.call (this);
+    if (!this.view) { return; }
+    
+    //1) find first Div.
+    this.__handle = this.view.querySelector ('.handle');
+    this.__handle_width = this.__handle.offsetWidth;
+    this.__inset = this.view.querySelector ('.line > div');
+      
+    // top/bottom click listening
+    this.__handle.addEventListener (core.POINTER_START, this, true);
+    
+    this.orientation = this._orientation;
+    this.value = this._value;
+    
+    var os_device = window.deviceConfiguration.os;
+    if (os_device == DeviceConfiguration.OS_WP7)
+    {
+      this.__inset_width = 12;
+      this.__handle_width = 30;
+    }
+    else if (os_device == DeviceConfiguration.OS_SYMBIAN)
+    {
+      this.__inset_width = 8;
+    }
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  handleEvent : function (e)
+  {
+    var dec, delta, pageY, pageX;
+
+    if (e.type === core.POINTER_START)
+    {
+      // prevent multi touch events
+      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+
+      // prevent objet keep event => prevent propagation
+      e.stopPropagation ();
+      e.preventDefault();
+
+      pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY,
+      pageX = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
+
+      this.__drag_x = pageX;
+      this.__drag_y = pageY;
+      
+      this.__v = this._value;
+      
+      document.addEventListener (core.POINTER_MOVE, this, true);
+      document.addEventListener (core.POINTER_END, this, true);
+      this.__handle.addEventListener (core.POINTER_END, this, true);
+      
+      return false;
+    }
+    else if (e.type === core.POINTER_MOVE)
+    {
+      // prevent multi touch events
+      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+
+      // prevent objet keep event => prevent propagation
+      e.stopPropagation ();
+      e.preventDefault();
+
+      pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY,
+      pageX = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
+
+      if (this._orientation === 0)
+      {
+        dec = this.view.offsetWidth - this.__handle_width;
+        delta = this.__drag_x - pageX;
+      }
+      else
+      {
+        dec = this.view.offsetHeight - this.__handle_width;
+        delta = this.__drag_y - pageY;
+      }
+      
+      this.value = this.__v - delta * (this._range [1] - this._range [0]) / dec;
+
+      this.propertyChange ();
+      this.propagate ('continuous_change', this._value);
+      
+      return false;
+    }
+    else if (e.type === core.POINTER_END)
+    {
+      // prevent multi touch events
+      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+
+      // prevent objet keep event => prevent propagation
+      e.stopPropagation ();
+      e.preventDefault();
+
+      document.removeEventListener (core.POINTER_MOVE, this, true);
+      document.removeEventListener (core.POINTER_END, this, true);
+      this.__handle.removeEventListener (core.POINTER_END, this, true);
+ 
+      this.propagate ('change', this._value);
+      
+      return false;
+    }
+  },
+ 
+ /**********************************************************************
+ 
+ *********************************************************************/
+
+  /**
+   * @protected
+   * @function
+   */
+  refresh : function ()
+  {
+    // reconfigure handle size
+    this.__handle_width = this.__handle.offsetWidth;
+    // force GUI update
+    this.value = this._value;
+
+    View.prototype.refresh.call (this);
+  }
+};
+util.extendClass (Slider, View);
+
+/********************************************************************
+                  Define class properties
+********************************************************************/
+
+util.defineClassProperties (Slider, {
+  'value':{
+    /**
+     * Set the current slider value
+     * The value should be include in [0, 100]
+     * @name vs.ui.Slider#value 
+     * @type number
+     */
+    set : function (v)
+    {
+      var height, width, x, y;
+      
+      if (v < this._range [0]) { v = this._range [0]; }
+      if (v > this._range [1]) { v = this._range [1]; }
+      
+      this._value = v;
+      
+      if (this._orientation === 0)
+      {
+        width = this.view.offsetWidth - this.__handle_width,
+          x = Math.floor ((v - this._range [0]) * width /
+            (this._range [1] - this._range [0]));
+        
+        if (SUPPORT_3D_TRANSFORM)
+          setElementTransform (this.__handle, "translate3d(" + x + "px,0,0)");
+        else
+          setElementTransform (this.__handle, "translate(" + x + "px,0)");
+          
+        util.setElementSize (this.__inset, x, this.__inset_width);
+      }
+      else
+      {
+        height = this.view.offsetHeight - this.__handle_width,
+          y = Math.floor ((v - this._range [0]) * height /
+            (this._range [1] - this._range [0]));
+          
+        if (SUPPORT_3D_TRANSFORM)
+          setElementTransform (this.__handle, "translate3d(0," + y + "px,0)");
+        else
+          setElementTransform (this.__handle, "translate(0," + y + "px)");
+          
+        util.setElementSize (this.__inset, this.__inset_width, y);
+      }
+    },
+  
+    /**
+     * @ignore
+     */
+    get : function ()
+    {
+      return this._value;
+    }
+  },
+  'range':{
+    /** 
+     * Set or get the slider range, By default range = [0, 100];
+     * @name vs.ui.Slider#range 
+     * @type Array.<number>
+     */ 
+    set : function (v)
+    {
+      if (!util.isArray (v) || v.length !== 2) { return; }
+      if (!util.isNumber (v[0]) || !util.isNumber (v[1])) { return; }
+      if (v[0] === v[1] || v[0] > v[1]) { return; }
+  
+      this._range [0] = v [0];
+      this._range [1] = v [1];
+       
+      this.value = this._value;
+    },
+  
+    /** 
+     * @ignore
+     * @return {Array}
+     */ 
+    get : function ()
+    {
+      return this._range.slice ();
+    }
+  },
+  'orientation':{
+    /**
+     * Property to configure the slider orientation.
+     * <p/>A slider can be horizontal or vertical.
+     *  Use the vs.ui.Slider.HORIZONTAL
+     * or vs.ui.Slider.VERTICAL constant to configure the slider.
+     * <p/>By default a slider is horizontal.
+     * @name vs.ui.Slider#orientation 
+     * @type number
+     */
+    set : function (v)
+    {
+      if (v !== Slider.HORIZONTAL && v !== Slider.VERTICAL) { return; }
+      
+      this._orientation = v;
+      
+      if (this._orientation === 0)
+      {
+        this.removeClassName ('vertical');
+        this.addClassName ('horizontal');
+      }
+      else
+      {
+        this.addClassName ('vertical');
+        this.removeClassName ('horizontal');
+      }
+      
+      // re-apply the value
+      this.value = this._value;
+    },
+  
+    /**
+     * @ignore
+     */
+    get : function ()
+    {
+      return this._orientation;
+    }
+  },
+  'size':{
+    /** 
+     * Getter|Setter for size. Gives access to the size of the GUI Object
+     * @name vs.ui.Slider#size 
+     *
+     * @type {vs.ui.Slider.<number>}
+     */ 
+    set : function (v)
+    {
+      if (!v) { return; } 
+      if (!util.isArray (v) || v.length !== 2) { return; }
+      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+      
+      this._size [0] = v [0];
+      this._size [1] = v [1];
+      
+      if (!this.view) { return; }
+      this._updateSize ();
+      
+      // re-apply the value
+      this.value = this._value;
+    },
+  
+    /**
+     * @ignore
+     * @type {Array.<number>}
+     */
+    get : function ()
+    {
+      if (this.view && this.view.parentNode)
+      {
+        this._size [0] = this.view.offsetWidth;
+        this._size [1] = this.view.offsetHeight;
+      }
+      return this._size.slice ();
+    }
+  }
+});
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+ui.Slider = Slider;

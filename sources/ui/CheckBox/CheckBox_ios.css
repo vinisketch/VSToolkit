@@ -1,0 +1,37 @@
+.vs_ui_checkbox {
+  background-color: white;
+  font-family: Helvetica;
+  font-size: 18px;
+  color:black;
+}
+
+input[type="checkbox"]
+{
+  position: relative;
+  padding: 9px 35px 10px 10px;
+
+  color: inherit;
+  height: 40px;
+
+  border: none;
+  border-top: 1px solid #E0E0E0;
+  background: none;
+  border-radius: 0px;
+}
+
+input[type="checkbox"].pressed
+{
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, from(#9DC3F3), color-stop(0.02, #5899EB), color-stop(0.3, #3985E7), color-stop(0.65, #1A70DD), to(#1559AF)) !important;
+  color: white;
+}
+
+input[type="checkbox"]:after
+{
+  content:url(iOSCheckButton.png);
+  margin-top: -13px;
+}
+
+input[type="checkbox"]:checked:after
+{
+  content:url(iOSCheckButton_sel.png);
+}

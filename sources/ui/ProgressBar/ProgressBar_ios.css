@@ -1,0 +1,15 @@
+.vs_ui_progressbar {
+  height:9px;
+  border-radius: 5px;
+  background-image: -webkit-gradient(linear, 0% 100%, 0% 0%, color-stop(0, white), color-stop(0.5, #eee), color-stop(0.51, #ddd), color-stop(1, #999));
+  box-shadow: inset -1px 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.vs_ui_progressbar > div {
+  padding-left: 1px;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#6DB3F2), color-stop(0.5, #54A3EE), color-stop(0.51, #3690F0), to(#1E69DE));
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 125, 0.2);
+  height:9px;
+  min-width:9px;
+}

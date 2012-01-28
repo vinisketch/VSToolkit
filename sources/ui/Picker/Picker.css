@@ -1,0 +1,37 @@
+.vs_ui_picker {
+  left:0;
+  font-family:helvetica, sans-serif;
+  text-align:left;
+}
+
+.vs_ui_picker .slots {
+  position:relative; z-index:999;
+  padding:0 11px;
+  overflow:hidden;
+
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+  width:100%;
+}
+
+.vs_ui_picker .slots div {
+  -webkit-box-flex: 1;
+}
+
+.vs_ui_picker .slots div:first-child { border:0; }
+
+.vs_ui_picker ul {
+  margin:0;
+  list-style:none;
+}
+
+.vs_ui_picker .slots div.right { text-align:right; }
+.vs_ui_picker .slots div.left { text-align:left; }
+.vs_ui_picker .slots div.shrink { }
+.vs_ui_picker .slots div.readonly { }
+
+.vs_ui_picker li {
+  padding:0 8px;
+  height:44px;
+  overflow:hidden;
+}

@@ -1,0 +1,28 @@
+.vs_ui_combobox {
+  font-family: Helvetica;
+  font-weight: bold;
+  height: 40px;
+  color: black;
+  font-size : 16px;
+}
+
+.vs_ui_combobox.focus
+{
+  background: url("iOSComboBoxActive.png");
+  color: white;
+}
+
+.vs_ui_combobox > select {
+  color: black;
+  padding-top: 0px;
+}
+
+.vs_ui_combobox > select:focus {
+  background-image: url(iOSComboBoxActive.png);
+  color: white;
+}
+
+.vs_ui_combobox:after
+{
+  margin-top: 17px;
+}
