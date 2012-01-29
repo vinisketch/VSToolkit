@@ -48,7 +48,7 @@ GENDOC = $(JAVA) -jar ../tools/ext/jsdoc-toolkit/jsrun.jar ../tools/ext/jsdoc-to
 ###                         RELEASE
 ##############################################################
 
-all :: debug
+all :: release
 
 Debug :: debug
 Release :: release
