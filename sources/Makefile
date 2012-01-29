@@ -135,13 +135,13 @@ core_debug: ../lib_debug/js/vs_core.js
 ###                         GUI
 ##############################################################
 
-ui: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_io.css ../lib_debug/css/vs_ui_android.css copy_ui_img copy_widgets_font
+ui: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css copy_ui_img copy_widgets_font
 	-$(COMPILE) --js=../lib_debug/js/vs_ui.js --js_output_file=../lib/js/vs_ui.js
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui.css -o ../lib/css/vs_ui.css --type css --charset UTF8
-	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_io.css -o ../lib/css/vs_ui_ios.css --type css --charset UTF8
+	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_ios.css -o ../lib/css/vs_ui_ios.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_android.css -o ../lib/css/vs_ui_android.css --type css --charset UTF8
 	
-ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_io.css ../lib_debug/css/vs_ui_android.css copy_ui_img
+ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css copy_ui_img
 
 ../lib_debug/js/vs_ui.js: ui/View/View.js ui/Application/Application.js ui/SplitView/SplitView.js ui/TextArea/TextArea.js ui/Button/Button.js ui/List/AbstractList.js ui/List/List.js ui/NavigationBar/NavigationBar.js ui/ToolBar/ToolBar.js ui/Canvas/Canvas.js ui/ProgressBar/ProgressBar.js ui/RadioButton/RadioButton.js ui/ComboBox/ComboBox.js ui/CheckBox/CheckBox.js ui/Slider/Slider.js ui/InputField/InputField.js ui/ScrollView/ScrollView.js ui/TextLabel/TextLabel.js ui/ImageView/ImageView.js ui/PopOver/PopOver.js ui/Switch/Switch.js ui/Picker/Picker.js ui/SVGView/SVGView.js ui/SegmentedButton/SegmentedButton.js
 	$(CAT) Header.js >> $@
@@ -231,7 +231,7 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	$(CAT) ui/SVGView/SVGView.css >> $@
 	$(CAT) ui/SegmentedButton/SegmentedButton.css >> $@
 
-../lib_debug/css/vs_ui_io.css: ui/Application/Application_ios.css ui/Button/Button_ios.css ui/List/List_ios.css ui/NavigationBar/NavigationBar_ios.css ui/RadioButton/RadioButton_ios.css ui/CheckBox/CheckBox_ios.css ui/Slider/Slider_ios.css ui/ProgressBar/ProgressBar_ios.css ui/InputField/InputField_ios.css ui/TextArea/TextArea_ios.css ui/Picker/Picker_ios.css ui/Switch/Switch_ios.css ui/ComboBox/ComboBox_ios.css ui/PopOver/PopOver_ios.css ui/SegmentedButton/SegmentedButton_ios.css
+../lib_debug/css/vs_ui_ios.css: ui/Application/Application_ios.css ui/Button/Button_ios.css ui/List/List_ios.css ui/NavigationBar/NavigationBar_ios.css ui/RadioButton/RadioButton_ios.css ui/CheckBox/CheckBox_ios.css ui/Slider/Slider_ios.css ui/ProgressBar/ProgressBar_ios.css ui/InputField/InputField_ios.css ui/TextArea/TextArea_ios.css ui/Picker/Picker_ios.css ui/Switch/Switch_ios.css ui/ComboBox/ComboBox_ios.css ui/PopOver/PopOver_ios.css ui/SegmentedButton/SegmentedButton_ios.css
 	$(CAT) ui/Application/Application_ios.css >> $@
 	$(CAT) ui/Button/Button_ios.css >> $@
 	$(CAT) ui/List/List_ios.css >> $@
