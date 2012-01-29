@@ -61,15 +61,21 @@ release :: clean makedirs util core ui fx data ext av doc
 
 debug :: clean_debug makedirs util_debug core_debug ui_debug fx_debug data_debug ext_debug av_debug doc
 
-clean :: clean_libs clean_docs
+clean :: clean_debug_libs clean_libs clean_docs
 clean_debug :: clean_debug_libs clean_docs
 
 clean_debug_libs:
 	-$(RM_RF)  ../lib_debug/css/*.css
+	-$(RM_RF)  ../lib_debug/css/*.png
+	-$(RM_RF)  ../lib_debug/css/*.ttf
+	-$(RM_RF)  ../lib_debug/css/toolbar_icons
 	-$(RM_RF)  ../lib_debug/js/*.js
 
 clean_libs:
 	-$(RM_RF)  ../lib/css/*.css
+	-$(RM_RF)  ../lib/css/*.png
+	-$(RM_RF)  ../lib/css/*.ttf
+	-$(RM_RF)  ../lib/css/toolbar_icons
 	-$(RM_RF)  ../lib/js/*.js
 
 clean_docs:
@@ -93,7 +99,7 @@ doc:
 ###                    Utils
 ##############################################################
 
-util: ../lib_debug/js/vs_util.js
+util: util_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_util.js --js_output_file=../lib/js/vs_util.js
 	
 util_debug: ../lib_debug/js/vs_util.js
@@ -107,7 +113,7 @@ util_debug: ../lib_debug/js/vs_util.js
 ###                     Core
 ##############################################################
 
-core: ../lib_debug/js/vs_core.js
+core: core_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_core.js --js_output_file=../lib/js/vs_core.js
 	
 core_debug: ../lib_debug/js/vs_core.js
@@ -134,13 +140,13 @@ core_debug: ../lib_debug/js/vs_core.js
 ###                         GUI
 ##############################################################
 
-ui: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css copy_ui_img copy_widgets_font
+ui: ui_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_ui.js --js_output_file=../lib/js/vs_ui.js
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui.css -o ../lib/css/vs_ui.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_ios.css -o ../lib/css/vs_ui_ios.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_android.css -o ../lib/css/vs_ui_android.css --type css --charset UTF8
 	
-ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css copy_ui_img
+ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css copy_ui_img copy_widgets_font
 
 ../lib_debug/js/vs_ui.js: ui/View/View.js ui/Application/Application.js ui/SplitView/SplitView.js ui/TextArea/TextArea.js ui/Button/Button.js ui/List/AbstractList.js ui/List/List.js ui/NavigationBar/NavigationBar.js ui/ToolBar/ToolBar.js ui/Canvas/Canvas.js ui/ProgressBar/ProgressBar.js ui/RadioButton/RadioButton.js ui/ComboBox/ComboBox.js ui/CheckBox/CheckBox.js ui/Slider/Slider.js ui/InputField/InputField.js ui/ScrollView/ScrollView.js ui/TextLabel/TextLabel.js ui/ImageView/ImageView.js ui/PopOver/PopOver.js ui/Switch/Switch.js ui/Picker/Picker.js ui/SVGView/SVGView.js ui/SegmentedButton/SegmentedButton.js
 	$(CAT) Header.js >> $@
@@ -294,7 +300,7 @@ copy_widgets_font:
 ###                     FX
 ##############################################################
 
-fx: ../lib_debug/js/vs_fx.js
+fx: fx_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_fx.js --js_output_file=../lib/js/vs_fx.js
 	
 fx_debug: ../lib_debug/js/vs_fx.js
@@ -315,7 +321,7 @@ fx_debug: ../lib_debug/js/vs_fx.js
 ###                     Data
 ##############################################################
 
-data: ../lib_debug/js/vs_data.js
+data: data_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_data.js --js_output_file=../lib/js/vs_data.js
 	
 data_debug: ../lib_debug/js/vs_data.js
@@ -331,7 +337,7 @@ data_debug: ../lib_debug/js/vs_data.js
 ###                     AV
 ##############################################################
 
-av: copy_av_html ../lib_debug/js/vs_av.js ../lib_debug/css/vs_av.css
+av: av_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_av.js --js_output_file=../lib/js/vs_av.js
 	-$(COMPILE_YUI) ../lib_debug/css/vs_av.css -o ../lib/css/vs_av.css --type css --charset UTF8
 	
@@ -356,7 +362,7 @@ copy_av_html: av/Video/Video.html
 ###                     Extension
 ##############################################################
 
-ext: copy_ext_ui_html ../lib_debug/js/vs_ext.js ../lib_debug/css/vs_ext.css ../lib_debug/css/vs_ext_ios.css ../lib_debug/css/vs_ext_android.css copy_ext_ui_img
+ext: ext_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_ext.js --js_output_file=../lib/js/vs_ext.js
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ext.css -o ../lib/css/vs_ext.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ext_ios.css -o ../lib/css/vs_ext_ios.css --type css --charset UTF8
