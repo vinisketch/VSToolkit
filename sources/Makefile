@@ -66,11 +66,11 @@ clean_debug :: clean_debug_libs clean_docs
 
 clean_debug_libs:
 	-$(RM_RF)  ../lib_debug/css/*.css
-	-$(RM_RF)  ../lib_debug/css/*.js
+	-$(RM_RF)  ../lib_debug/js/*.js
 
 clean_libs:
 	-$(RM_RF)  ../lib/css/*.css
-	-$(RM_RF)  ../lib/css/*.js
+	-$(RM_RF)  ../lib/js/*.js
 
 clean_docs:
 	-$(RM_RF) ../docs/*.html
@@ -89,7 +89,6 @@ doc:
 	-$(GENDOC) -c=../docs/conf/vs-jsdoc.conf
 	-$(RM_F) ../docs/files.html
 	-$(CP) ../docs/conf/index.html ../docs/index.html
-
 	
 ###                    Utils
 ##############################################################
