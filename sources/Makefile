@@ -335,7 +335,6 @@ data_debug: ../lib_debug/js/vs_data.js
 av: copy_av_html ../lib_debug/js/vs_av.js ../lib_debug/css/vs_av.css
 	-$(COMPILE) --js=../lib_debug/js/vs_av.js --js_output_file=../lib/js/vs_av.js
 	-$(COMPILE_YUI) ../lib_debug/css/vs_av.css -o ../lib/css/vs_av.css --type css --charset UTF8
-	-$(RM_F) ../lib_debug/css/vs_ui.css
 	
 av_debug: copy_av_html ../lib_debug/js/vs_av.js ../lib_debug/css/vs_av.css
 
@@ -361,7 +360,6 @@ copy_av_html: av/Video/Video.html
 ext: copy_ext_ui_html ../lib_debug/js/vs_ext.js ../lib_debug/css/vs_ext.css ../lib_debug/css/vs_ext_ios.css ../lib_debug/css/vs_ext_android.css copy_ext_ui_img
 	-$(COMPILE) --js=../lib_debug/js/vs_ext.js --js_output_file=../lib/js/vs_ext.js
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ext.css -o ../lib/css/vs_ext.css --type css --charset UTF8
-	-$(RM_F) ../lib_debug/css/vs_ui.css
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ext_ios.css -o ../lib/css/vs_ext_ios.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ext_android.css -o ../lib/css/vs_ext_android.css --type css --charset UTF8
 	
