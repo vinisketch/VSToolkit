@@ -1004,12 +1004,12 @@ function getElementAbsolutePosition (element)
 {
   if (!element)
   { return null; }
-  var rec = element.getBoundingClientRect ();
-  if (rec)
+  if (element.getBoundingClientRect)
   {
-    return { x:rec.left, y:rec.top };
+    var rec = element.getBoundingClientRect ();
+    if (rec) { return { x:rec.left, y:rec.top }; } 
   }
-	var x = 0;
+  var x = 0;
   var y = 0;
   var parent = element;
   while (parent)
@@ -1390,7 +1390,7 @@ function importFile (path, doc, clb, type)
     css_style.setAttribute ("type", "text/css");
     css_style.setAttribute ("href", path);
     css_style.setAttribute ("media", "screen");
-    if (util.isFunction (func))
+    if (util.isFunction (clb))
     {
       var count = 0;
       
@@ -1418,7 +1418,7 @@ function importFile (path, doc, clb, type)
         }
         else
         {
-          func.call (document, path);
+          clb.call (document, path);
         }
       })();
     }
@@ -1456,12 +1456,13 @@ var setActiveStyleSheet = function (title)
     stylesheet, info, id, app, size;
     
   _current_platform_id = title;
+  var apps = window.Application_applications;
   
   if (SET_STYLE_OPTIMIZATION)
   {
-    for (id in Application_applications)
+    if (apps) for (id in apps)
     {
-      app = Application_applications [id];
+      app = apps [id];
       if (app.view) app.view.style.display = "none";
     }
   }
@@ -1485,9 +1486,9 @@ var setActiveStyleSheet = function (title)
   
   if (SET_STYLE_OPTIMIZATION)
   {
-    for (id in Application_applications)
+    if (apps) for (id in apps)
     {
-      app = Application_applications [id];
+      app = apps [id];
       if (app.view) app.view.style.display = "block";
     }
   }
@@ -1516,7 +1517,7 @@ var setActiveStyleSheet = function (title)
 //     {
 //       size [1] -= info.statusBarHeight;
 //     }
-//     for (id in Application_applications)
+//     if (apps) for (id in apps)
 //     {
 //       app = Application_applications [id];
 //       app.position = [0, 0];
