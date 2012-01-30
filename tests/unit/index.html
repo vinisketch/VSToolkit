@@ -1,0 +1,24 @@
+<html>
+<head>
+  <script type="text/javascript" src="../../tools/ext/jsunit/app/jsUnitCore.js"></script>
+</head>
+
+<body>
+<script language="javascript">
+
+  function data ()
+  {
+    var result = new JsUnitTestSuite();
+    result.addTestPage("../unit/util/util.html");
+//    result.addTestPage("../tests/core/core.html");
+    return result;
+  }
+  function suite ()
+  {
+    var newsuite = new JsUnitTestSuite();
+    newsuite.addTestSuite (data());
+    return newsuite;
+  }
+</script>
+</body>
+</html>
