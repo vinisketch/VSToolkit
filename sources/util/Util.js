@@ -693,7 +693,7 @@ function strip (str)
  */
 function camelize (str)
 {
-  if (!str) return;
+  if (!isString (str)) return str;
   
   var parts = str.split ('-'), len = parts.length;
   if (len === 1) { return parts [0]; }
