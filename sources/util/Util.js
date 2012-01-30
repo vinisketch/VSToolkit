@@ -663,7 +663,7 @@ function toggleClassName (element, className)
  */
 function htmlEncode (str)
 {
-  if (!str) return;
+  if (!isString (str)) return '';
   
   return str.replace (/&/g, "&amp;").
     replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -678,7 +678,7 @@ function htmlEncode (str)
  */
 function strip (str)
 {
-  if (!str) return;
+  if (!isString (str)) return '';
   
   return str.replace(/^\s+/, '').replace(/\s+$/, '');
 }
@@ -693,7 +693,7 @@ function strip (str)
  */
 function camelize (str)
 {
-  if (!isString (str)) return str;
+  if (!isString (str)) return '';
   
   var parts = str.split ('-'), len = parts.length;
   if (len === 1) { return parts [0]; }
@@ -718,7 +718,7 @@ function camelize (str)
  */
 function capitalize (str)
 {
-  if (!str) return;
+  if (!isString (str)) return '';
   
   return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
 }
@@ -734,6 +734,8 @@ function capitalize (str)
  */
 function underscore (str)
 {
+  if (!isString (str)) return '';
+
   return str.replace (/::/g, '/')
             .replace (/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
             .replace (/([a-z\d])([A-Z])/g, '$1_$2')
@@ -893,7 +895,7 @@ function getElementStyle (elem, style)
 {
   if (!isElement (elem)) return;
   
-  style = style === 'float' ? 'cssFloat' : style.camelize ();
+  style = style === 'float' ? 'cssFloat' : camelize (style);
   var value = elem.style[style], css;
   if (!value || value === 'auto')
   {
@@ -937,7 +939,6 @@ function setElementStyle (elem, styles)
       if (!styles [property])
       {
         elementStyle.removeProperty (property);
-        return;
       }
       elementStyle[(property === 'float' || property === 'cssFloat') ?
         (isUndefined(elementStyle.styleFloat) ? 'cssFloat' : 'styleFloat') :
@@ -968,8 +969,11 @@ function setElementStyle (elem, styles)
 function setElementOpacity (elem, value)
 {
   if (!isElement (elem)) return;
+  var elementStyle = elem.style;
   
-  elem.style.opacity = (value === 1 || value === '') ? '' :
+  if (isUndefined (value)) elementStyle.removeProperty ('opacity');
+  
+  elementStyle.opacity = (value === 1 || value === '') ? '' :
     (value < 0.00001) ? 0 : value;
 };
 
@@ -1043,9 +1047,10 @@ function getElementAbsolutePosition (element)
 function setElementPos (elem, x, y)
 {
   if (!elem) { return; }
+  var elementStyle = elem.style;
   
-  elem.style.left = x + 'px';
-  elem.style.top = y + 'px';
+  elementStyle.left = x + 'px';
+  elementStyle.top = y + 'px';
 }
 
 /** 
@@ -1060,9 +1065,10 @@ function setElementPos (elem, x, y)
 function setElementSize (elem, w, h)
 {
   if (!elem) { return; }
+  var elementStyle = elem.style;
   
-  elem.style.width = w + 'px';
-  elem.style.height = h + 'px';
+  elementStyle.width = w + 'px';
+  elementStyle.height = h + 'px';
 }
 
 /** 
@@ -1076,16 +1082,17 @@ function setElementSize (elem, w, h)
 function setElementVisibility (elem, v)
 {
   if (!elem) { return; }
+  var elementStyle = elem.style;
   
-  if (elem.style || util.isString (elem.innerHTML))
+  if (elementStyle || util.isString (elem.innerHTML))
   {
     if (v)
     {
-      elem.style.visibility = 'visible';
+      elementStyle.visibility = 'visible';
     }
     else
     {
-      elem.style.visibility = 'hidden';
+      elementStyle.visibility = 'hidden';
     }
   }
 //  else if (elem instanceof CharacterData)
@@ -1114,10 +1121,11 @@ function setElementVisibility (elem, v)
 function isElementVisible (elem)
 {
   if (!elem) { return false; }
+  var elementStyle = elem.style;
   
-  if (elem.style || util.isString (elem.innerHTML))
+  if (elementStyle || util.isString (elem.innerHTML))
   {
-    if (elem.style.visibility === 'hidden') { return false; }
+    if (elementStyle.visibility === 'hidden') { return false; }
     else { return true; }
   }
   else if (elem instanceof CharacterData)
@@ -1338,20 +1346,6 @@ Array.prototype.removeAll = function ()
 Array.prototype.clone = function ()
 {
   return this.slice ();
-};
-
-Array.prototype.each = function (iterator, context) 
-{
-  var index = 0;
-  try {
-    this._each (function(value)
-    {
-      iterator.call(context, value, index++);
-    });
-  } catch (e) {
-     throw e;
-  }
-  return this;
 };
 
 /********************************************************************
@@ -1592,7 +1586,7 @@ extend (util, {
   vsTestElem:              vsTestElem,
   vsTestStyle:             vsTestStyle,
   
-  // testing functions
+  // Class functions
   extend:                  extend,
   extendClass:             extendClass,
   defineProperty:          defineProperty,
@@ -1600,7 +1594,11 @@ extend (util, {
   defineClassProperties:   defineClassProperties,
   clone:                   clone,
   free:                    free,
+
+  // JSON functions  
   toJSON:                  toJSON,
+
+  // testing functions
   isElement:               isElement,
   isArray:                 isArray,
   isFunction:              isFunction,
@@ -1644,5 +1642,6 @@ extend (util, {
   importFile:           importFile,
   setActiveStyleSheet:  setActiveStyleSheet,
   preloadTemplate:      preloadTemplate,
-  __date_reg_exp:       __date_reg_exp
+  __date_reg_exp:       __date_reg_exp,
+  _findItem:            _findItem // export only for testing purpose
 });
