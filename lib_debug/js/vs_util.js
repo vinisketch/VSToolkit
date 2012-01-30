@@ -764,7 +764,7 @@ function toggleClassName (element, className)
  */
 function htmlEncode (str)
 {
-  if (!str) return;
+  if (!isString (str)) return '';
   
   return str.replace (/&/g, "&amp;").
     replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -779,7 +779,7 @@ function htmlEncode (str)
  */
 function strip (str)
 {
-  if (!str) return;
+  if (!isString (str)) return '';
   
   return str.replace(/^\s+/, '').replace(/\s+$/, '');
 }
@@ -794,7 +794,7 @@ function strip (str)
  */
 function camelize (str)
 {
-  if (!str) return;
+  if (!isString (str)) return '';
   
   var parts = str.split ('-'), len = parts.length;
   if (len === 1) { return parts [0]; }
@@ -819,7 +819,7 @@ function camelize (str)
  */
 function capitalize (str)
 {
-  if (!str) return;
+  if (!isString (str)) return '';
   
   return str.charAt(0).toUpperCase() + str.substring(1).toLowerCase();
 }
@@ -835,6 +835,8 @@ function capitalize (str)
  */
 function underscore (str)
 {
+  if (!isString (str)) return '';
+
   return str.replace (/::/g, '/')
             .replace (/([A-Z]+)([A-Z][a-z])/g, '$1_$2')
             .replace (/([a-z\d])([A-Z])/g, '$1_$2')
@@ -994,7 +996,7 @@ function getElementStyle (elem, style)
 {
   if (!isElement (elem)) return;
   
-  style = style === 'float' ? 'cssFloat' : style.camelize ();
+  style = style === 'float' ? 'cssFloat' : camelize (style);
   var value = elem.style[style], css;
   if (!value || value === 'auto')
   {
@@ -1038,7 +1040,6 @@ function setElementStyle (elem, styles)
       if (!styles [property])
       {
         elementStyle.removeProperty (property);
-        return;
       }
       elementStyle[(property === 'float' || property === 'cssFloat') ?
         (isUndefined(elementStyle.styleFloat) ? 'cssFloat' : 'styleFloat') :
@@ -1069,8 +1070,11 @@ function setElementStyle (elem, styles)
 function setElementOpacity (elem, value)
 {
   if (!isElement (elem)) return;
+  var elementStyle = elem.style;
   
-  elem.style.opacity = (value === 1 || value === '') ? '' :
+  if (isUndefined (value)) elementStyle.removeProperty ('opacity');
+  
+  elementStyle.opacity = (value === 1 || value === '') ? '' :
     (value < 0.00001) ? 0 : value;
 };
 
@@ -1101,12 +1105,12 @@ function getElementAbsolutePosition (element)
 {
   if (!element)
   { return null; }
-  var rec = element.getBoundingClientRect ();
-  if (rec)
+  if (element.getBoundingClientRect)
   {
-    return { x:rec.left, y:rec.top };
+    var rec = element.getBoundingClientRect ();
+    if (rec) { return { x:rec.left, y:rec.top }; } 
   }
-	var x = 0;
+  var x = 0;
   var y = 0;
   var parent = element;
   while (parent)
@@ -1144,9 +1148,10 @@ function getElementAbsolutePosition (element)
 function setElementPos (elem, x, y)
 {
   if (!elem) { return; }
+  var elementStyle = elem.style;
   
-  elem.style.left = x + 'px';
-  elem.style.top = y + 'px';
+  elementStyle.left = x + 'px';
+  elementStyle.top = y + 'px';
 }
 
 /** 
@@ -1161,9 +1166,10 @@ function setElementPos (elem, x, y)
 function setElementSize (elem, w, h)
 {
   if (!elem) { return; }
+  var elementStyle = elem.style;
   
-  elem.style.width = w + 'px';
-  elem.style.height = h + 'px';
+  elementStyle.width = w + 'px';
+  elementStyle.height = h + 'px';
 }
 
 /** 
@@ -1177,16 +1183,17 @@ function setElementSize (elem, w, h)
 function setElementVisibility (elem, v)
 {
   if (!elem) { return; }
+  var elementStyle = elem.style;
   
-  if (elem.style || util.isString (elem.innerHTML))
+  if (elementStyle || util.isString (elem.innerHTML))
   {
     if (v)
     {
-      elem.style.visibility = 'visible';
+      elementStyle.visibility = 'visible';
     }
     else
     {
-      elem.style.visibility = 'hidden';
+      elementStyle.visibility = 'hidden';
     }
   }
 //  else if (elem instanceof CharacterData)
@@ -1215,10 +1222,11 @@ function setElementVisibility (elem, v)
 function isElementVisible (elem)
 {
   if (!elem) { return false; }
+  var elementStyle = elem.style;
   
-  if (elem.style || util.isString (elem.innerHTML))
+  if (elementStyle || util.isString (elem.innerHTML))
   {
-    if (elem.style.visibility === 'hidden') { return false; }
+    if (elementStyle.visibility === 'hidden') { return false; }
     else { return true; }
   }
   else if (elem instanceof CharacterData)
@@ -1441,20 +1449,6 @@ Array.prototype.clone = function ()
   return this.slice ();
 };
 
-Array.prototype.each = function (iterator, context) 
-{
-  var index = 0;
-  try {
-    this._each (function(value)
-    {
-      iterator.call(context, value, index++);
-    });
-  } catch (e) {
-     throw e;
-  }
-  return this;
-};
-
 /********************************************************************
                          export
 *********************************************************************/
@@ -1497,7 +1491,7 @@ function importFile (path, doc, clb, type)
     css_style.setAttribute ("type", "text/css");
     css_style.setAttribute ("href", path);
     css_style.setAttribute ("media", "screen");
-    if (util.isFunction (func))
+    if (util.isFunction (clb))
     {
       var count = 0;
       
@@ -1525,7 +1519,7 @@ function importFile (path, doc, clb, type)
         }
         else
         {
-          func.call (document, path);
+          clb.call (document, path);
         }
       })();
     }
@@ -1563,12 +1557,13 @@ var setActiveStyleSheet = function (title)
     stylesheet, info, id, app, size;
     
   _current_platform_id = title;
+  var apps = window.Application_applications;
   
   if (SET_STYLE_OPTIMIZATION)
   {
-    for (id in Application_applications)
+    if (apps) for (id in apps)
     {
-      app = Application_applications [id];
+      app = apps [id];
       if (app.view) app.view.style.display = "none";
     }
   }
@@ -1592,9 +1587,9 @@ var setActiveStyleSheet = function (title)
   
   if (SET_STYLE_OPTIMIZATION)
   {
-    for (id in Application_applications)
+    if (apps) for (id in apps)
     {
-      app = Application_applications [id];
+      app = apps [id];
       if (app.view) app.view.style.display = "block";
     }
   }
@@ -1623,7 +1618,7 @@ var setActiveStyleSheet = function (title)
 //     {
 //       size [1] -= info.statusBarHeight;
 //     }
-//     for (id in Application_applications)
+//     if (apps) for (id in apps)
 //     {
 //       app = Application_applications [id];
 //       app.position = [0, 0];
@@ -1656,7 +1651,7 @@ function preloadTemplate (comp_name)
 {
   var path = comp_name + '.xhtml', xmlRequest;
   
-  if (View.__comp_templates [path]) { return; }
+  if (vs.ui && vs.ui.View && vs.ui.View.__comp_templates [path]) { return; }
 
   xmlRequest = new XMLHttpRequest ();
   xmlRequest.open ("GET", path, false);
@@ -1667,7 +1662,7 @@ function preloadTemplate (comp_name)
     if (xmlRequest.status === 200 || xmlRequest.status === 0)
     {
       data = xmlRequest.responseText;
-      View.__comp_templates [path] = data;
+      if (vs.ui && vs.ui.View) vs.ui.View.__comp_templates [path] = data;
     }
     else
     {
@@ -1693,7 +1688,7 @@ extend (util, {
   vsTestElem:              vsTestElem,
   vsTestStyle:             vsTestStyle,
   
-  // testing functions
+  // Class functions
   extend:                  extend,
   extendClass:             extendClass,
   defineProperty:          defineProperty,
@@ -1701,7 +1696,11 @@ extend (util, {
   defineClassProperties:   defineClassProperties,
   clone:                   clone,
   free:                    free,
+
+  // JSON functions  
   toJSON:                  toJSON,
+
+  // testing functions
   isElement:               isElement,
   isArray:                 isArray,
   isFunction:              isFunction,
@@ -1745,7 +1744,8 @@ extend (util, {
   importFile:           importFile,
   setActiveStyleSheet:  setActiveStyleSheet,
   preloadTemplate:      preloadTemplate,
-  __date_reg_exp:       __date_reg_exp
+  __date_reg_exp:       __date_reg_exp,
+  _findItem:            _findItem // export only for testing purpose
 });
 
 })(window);
