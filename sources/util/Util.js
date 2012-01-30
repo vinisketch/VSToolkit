@@ -1550,7 +1550,7 @@ function preloadTemplate (comp_name)
 {
   var path = comp_name + '.xhtml', xmlRequest;
   
-  if (View.__comp_templates [path]) { return; }
+  if (vs.ui && vs.ui.View && vs.ui.View.__comp_templates [path]) { return; }
 
   xmlRequest = new XMLHttpRequest ();
   xmlRequest.open ("GET", path, false);
@@ -1561,7 +1561,7 @@ function preloadTemplate (comp_name)
     if (xmlRequest.status === 200 || xmlRequest.status === 0)
     {
       data = xmlRequest.responseText;
-      View.__comp_templates [path] = data;
+      if (vs.ui && vs.ui.View) vs.ui.View.__comp_templates [path] = data;
     }
     else
     {
