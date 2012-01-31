@@ -146,7 +146,7 @@
 .vs_ui_button.default
 {
   border: 0px none;
-  -webkit-border-radius: 0px;
+  -webkit-border-radius: 12px;
   
   height: 43px;
   border-bottom-width: 0px;
@@ -157,55 +157,64 @@
   font-size: 20px;
   font-family: Helvetica;
 
-  padding-top: 10px;
+  padding-top: 8px;
+  border: solid 3px #83888F;
 }
+
+/*
+.vs_ui_button.default::before {
+  content:'';
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-color: red;
+}
+*/
 
 .vs_ui_button.default.white 
 { 
   color: black;
-  text-shadow: rgba(255, 255, 255, 0.699219) 0px 1px 0px;
-  -webkit-border-image: url("iOSDefautWhiteButton.png") 0 12 0 12 stretch stretch;
-  background-image: none;
+  text-shadow: rgba(255, 255, 255, 0.7) 0px 1px 0px;
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(234, 234, 234, 0.7)), color-stop(0.5, rgba(195, 195, 195, 0.7)), color-stop(0.5, rgba(166, 166, 166, 0.7)), to(rgba(167, 167, 167, 0.80)));
 }
 
 .vs_ui_button.default.white.pressed
 {
   color: white;
-  text-shadow: rgba(0,0,0, 0.699219) 0px 1px 0px;
-  background-image:none;
+  text-shadow: rgba(0,0,0, 0.7) 0px 1px 0px;
 }
 
 .vs_ui_button.default.red 
 {
   color: white;
-  text-shadow: rgba(0,0,0, 0.699219) 0px -1px 0px;
-  -webkit-border-image: url("iOSDefautRedButton.png") 0 12 0 12 stretch stretch;
-  background-image:none;
+  text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255, 59, 59, 0.80)), color-stop(0.5, rgba(233, 72, 72, 0.90)), color-stop(0.5, rgba(184, 0, 0, 0.80)), to(rgba(255, 0, 0, 0.90)));
 }
-
 
 .vs_ui_button.default.red.pressed,
 .vs_ui_button.default.green.pressed,
 .vs_ui_button.default.grey.pressed
 {
   color: black;
-  text-shadow: rgba(255, 255, 255, 0.699219) 0px -1px 0px;
-  background-image:none;
+  text-shadow: rgba(255, 255, 255, 0.7) 0px -1px 0px;
 }
-
 
 .vs_ui_button.default.green 
 {
   color: white;
-  text-shadow: rgba(0,0,0, 0.699219) 0px -1px 0px;
-  -webkit-border-image: url("iOSDefautGreenButton.png") 0 12 0 12 stretch stretch;
-  background-image:none;
+  text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(79, 156, 74, 0.7)), color-stop(0.5, rgba(54, 127, 35, 0.7)), color-stop(0.5, rgba(0, 113, 0, 0.7)), to(rgba(0, 150, 0, 0.7)));
 }
 
 .vs_ui_button.default.grey 
 {
   color: white;
-  text-shadow: rgba(0,0,0, 0.699219) 0px -1px 0px;
-  -webkit-border-image: url("iOSDefautGreyButton.png") 0 12 0 12 stretch stretch;
-  background-image:none;
+  text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(74, 74, 74, 0.95)), color-stop(0.5, rgba(20, 20, 20, 0.85)), color-stop(0.5, rgba(2, 2, 2, 0.85)), to(rgba(14, 14, 14, 0.85)));
+}
+
+.vs_ui_button.default.grey.pressed
+{
+  color: #888;
+  text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
 }
