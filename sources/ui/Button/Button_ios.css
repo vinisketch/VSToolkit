@@ -26,7 +26,8 @@
 }
 
 .vs_ui_button.nav.blue_ios_style, /** legacy comptability */
-.vs_ui_button.nav.blue_style
+.vs_ui_button.nav.blue_style,
+.vs_ui_button.nav.default_style 
 {
   height: 30px;
   -webkit-border-image:url('button_ios_blue_released.png') 0 5 0 5;
@@ -34,7 +35,8 @@
 }
 
 .vs_ui_button.nav.blue_ios_style.pressed, /** legacy comptability */
-.vs_ui_button.nav.blue_style.pressed
+.vs_ui_button.nav.blue_style.pressed,
+.vs_ui_button.nav.default_style.pressed
 {
   -webkit-border-image:url('button_ios_blue_pressed.png') 0 5 0 5;
 }
@@ -161,14 +163,16 @@
   border: solid 3px #83888F;
 }
 
-.vs_ui_button.default.white 
+.vs_ui_button.default.white, /** legacy comptability */
+.vs_ui_button.default.default_style 
 { 
   color: black;
   text-shadow: rgba(255, 255, 255, 0.7) 0px 1px 0px;
   background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(234, 234, 234, 0.7)), color-stop(0.5, rgba(195, 195, 195, 0.7)), color-stop(0.5, rgba(166, 166, 166, 0.7)), to(rgba(167, 167, 167, 0.80)));
 }
 
-.vs_ui_button.default.white.pressed
+.vs_ui_button.default.white.pressed, /** legacy comptability */
+.vs_ui_button.default.default_style.pressed
 {
   color: white;
   text-shadow: rgba(0,0,0, 0.7) 0px 1px 0px;

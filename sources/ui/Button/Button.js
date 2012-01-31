@@ -79,7 +79,7 @@ Button.DEFAULT_TYPE = 'default';
  * @name vs.ui.Button.DEFAULT_STYLE
  * @const
  */
-Button.DEFAULT_STYLE = 'white';
+Button.DEFAULT_STYLE = 'default_style';
 
 /**
  * default style button

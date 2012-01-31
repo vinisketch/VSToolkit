@@ -107,7 +107,8 @@
   color: black;
 }
 
-.vs_ui_button.default.white 
+.vs_ui_button.default.white, /** legacy comptability */
+.vs_ui_button.default.default_style 
 {
   color: #424142;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
