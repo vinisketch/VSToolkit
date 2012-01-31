@@ -26,4 +26,5 @@ var vs = window.vs,
   ui = vs.ui,
   fx = vs.fx,
   setElementTransform = util.setElementTransform,
-  getElementTransform = util.getElementTransform;
+  getElementTransform = util.getElementTransform,
+  SUPPORT_3D_TRANSFORM = vs.SUPPORT_3D_TRANSFORM;
