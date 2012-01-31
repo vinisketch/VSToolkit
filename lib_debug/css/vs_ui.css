@@ -919,6 +919,10 @@ input[type="checkbox"]:after
   position: relative;
   top: 0px;
   left: 0px;right: 0px;
+}
+
+.vs_ui_progressbar.indeterminate > div {
+  display: none;
 }.vs_ui_slider {
   padding: 0px;
   margin: 0px;
