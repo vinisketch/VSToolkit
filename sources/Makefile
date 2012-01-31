@@ -273,7 +273,6 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	
 copy_ui_img:
 	$(CP) ui/Button/button_* ../lib_debug/css 
-	$(CP) ui/Button/iOS* ../lib_debug/css
 	$(CP) ui/ComboBox/iOS* ../lib_debug/css
 	$(CP) ui/List/SimpleList* ../lib_debug/css
 	$(CP) ui/List/PanelTitle.png ../lib_debug/css
