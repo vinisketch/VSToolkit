@@ -161,16 +161,6 @@
   border: solid 3px #83888F;
 }
 
-/*
-.vs_ui_button.default::before {
-  content:'';
-  display: block;
-  width: 100%;
-  height: 100%;
-  background-color: red;
-}
-*/
-
 .vs_ui_button.default.white 
 { 
   color: black;
