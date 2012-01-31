@@ -1,6 +1,8 @@
 .vs_ui_slider {
   padding: 0px;
   margin: 0px;
+  
+  background-repeat: no-repeat;
 }
 
 .vs_ui_slider.horizontal {
@@ -11,15 +13,8 @@
   width: 23px;
 }
 
-.vs_ui_slider > div {
-  width: 100%;
-  height: 100%;
-  
+.vs_ui_slider .handle {
   position: relative;
-}
-
-.vs_ui_slider .line > div {
-  position: absolute;
   top: 0px; bottom: 0px;
   left: 0px;
 }

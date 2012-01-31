@@ -141,14 +141,7 @@ Slider.prototype = {
    * @type {number}
    */
   __handle_width : 0,
-  
-  /**
-   * @private
-   * @type {HTMLDivElement}
-   */
-  __inset : null,
-  __inset_width: 10,
-   
+     
 /********************************************************************
                   setter and getter declarations
 ********************************************************************/
@@ -167,6 +160,26 @@ Slider.prototype = {
    * @protected
    * @function
    */
+  initComponent : function ()
+  {
+    View.prototype.initComponent.call (this);
+
+    var os_device = window.deviceConfiguration.os;
+    if (os_device == DeviceConfiguration.OS_WP7)
+    {
+      this.__handle_width = 30;
+    }
+    else if (os_device == DeviceConfiguration.OS_ANDROID)
+    {
+      this.__handle_width = 34;
+    }
+    else { this.__handle_width = 23; } // ios
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
   initSkin : function ()
   {
     View.prototype.initSkin.call (this);
@@ -174,25 +187,12 @@ Slider.prototype = {
     
     //1) find first Div.
     this.__handle = this.view.querySelector ('.handle');
-    this.__handle_width = this.__handle.offsetWidth;
-    this.__inset = this.view.querySelector ('.line > div');
       
     // top/bottom click listening
     this.__handle.addEventListener (core.POINTER_START, this, true);
     
     this.orientation = this._orientation;
     this.value = this._value;
-    
-    var os_device = window.deviceConfiguration.os;
-    if (os_device == DeviceConfiguration.OS_WP7)
-    {
-      this.__inset_width = 12;
-      this.__handle_width = 30;
-    }
-    else if (os_device == DeviceConfiguration.OS_SYMBIAN)
-    {
-      this.__inset_width = 8;
-    }
   },
   
   /**
@@ -219,6 +219,7 @@ Slider.prototype = {
       this.__drag_y = pageY;
       
       this.__v = this._value;
+      this.__handle_width = this.__handle.offsetWidth;
       
       document.addEventListener (core.POINTER_MOVE, this, true);
       document.addEventListener (core.POINTER_END, this, true);
@@ -315,32 +316,34 @@ util.defineClassProperties (Slider, {
       if (v > this._range [1]) { v = this._range [1]; }
       
       this._value = v;
+      var d1 = this.__handle_width / 2;
+      var d2 = (this.__handle_width - 10) / 2;
       
       if (this._orientation === 0)
       {
-        width = this.view.offsetWidth - this.__handle_width,
+        width = this.view.offsetWidth,
           x = Math.floor ((v - this._range [0]) * width /
-            (this._range [1] - this._range [0]));
+            (this._range [1] - this._range [0])) - d1;
         
         if (SUPPORT_3D_TRANSFORM)
-          setElementTransform (this.__handle, "translate3d(" + x + "px,0,0)");
+          setElementTransform (this.__handle, "translate3d(" + x + "px,-" + d2 + "px,0)");
         else
-          setElementTransform (this.__handle, "translate(" + x + "px,0)");
+          setElementTransform (this.__handle, "translate(" + x + "px,-" + d2 + "px)");
           
-        util.setElementSize (this.__inset, x, this.__inset_width);
-      }
+        this.view.style.backgroundSize = (x + d1) + "px 10px";
+     }
       else
       {
-        height = this.view.offsetHeight - this.__handle_width,
+        height = this.view.offsetHeight,
           y = Math.floor ((v - this._range [0]) * height /
-            (this._range [1] - this._range [0]));
+            (this._range [1] - this._range [0])) - d1;
           
         if (SUPPORT_3D_TRANSFORM)
-          setElementTransform (this.__handle, "translate3d(0," + y + "px,0)");
+          setElementTransform (this.__handle, "translate3d(-" + d2 + "px," + y + "px,0)");
         else
-          setElementTransform (this.__handle, "translate(0," + y + "px)");
+          setElementTransform (this.__handle, "translate(-" + d2 + "px," + y + "px)");
           
-        util.setElementSize (this.__inset, this.__inset_width, y);
+        this.view.style.backgroundSize = "10px " + (y + d1) + "px";
       }
     },
   
