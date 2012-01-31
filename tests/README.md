@@ -6,6 +6,6 @@ Install [WebKit](http://nightly.webkit.org/) (the test use webkit as test browse
 
 ###Run
 
-test.sh
+./test.sh
 
 
