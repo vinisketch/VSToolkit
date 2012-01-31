@@ -40,6 +40,8 @@ function ProgressBar (config)
   this.parent = View;
   this.parent (config);
   this.constructor = ProgressBar;
+  
+  this._range = [0, 100];
 }
 
 /**
@@ -89,9 +91,16 @@ ProgressBar.prototype = {
   /**
    *
    * @protected
+   * @type {number}
+   */
+  _indeterminate: false,
+
+  /**
+   *
+   * @protected
    * @type {Array.<number>}
    */
-  _range: [0, 100],
+  _range: null,
    
   /**
    *
@@ -132,6 +141,7 @@ ProgressBar.prototype = {
     View.prototype.initSkin.call (this);
     
     this.__inner_view = this.view.firstElementChild;
+    this.indeterminate = this._indeterminate;
 
     var os_device = window.deviceConfiguration.os;
     if (os_device == DeviceConfiguration.OS_ANDROID)
@@ -220,6 +230,35 @@ util.defineClassProperties (ProgressBar, {
     get : function ()
     {
       return this._range.slice ();
+    }
+  },
+  'indeterminate': {
+    /** 
+     * Boolean value indicating whether the progress bar is indeterminate.
+     * @name vs.ui.ProgressBar#indeterminate 
+     * @type Boolean
+     */ 
+    set : function (v)
+    {
+      if (v)
+      {
+        this._indeterminate = true;
+        if (this.view) util.addClassName (this.view, 'indeterminate');
+      }
+      else
+      {
+        this._indeterminate = false;
+        if (this.view) util.removeClassName (this.view, 'indeterminate');
+      }
+    },
+  
+    /** 
+     * @ignore
+     * @return Boolean
+     */ 
+    get : function ()
+    {
+      return this._indeterminate ;
     }
   }
 });

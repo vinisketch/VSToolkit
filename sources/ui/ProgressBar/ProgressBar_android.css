@@ -1,6 +1,6 @@
 .vs_ui_progressbar {
   height:10px;
-  background-color: #F9F9F9;
+  background-color: rgb(90, 90, 90);
   -webkit-border-radius: 3px;
   -webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);
   -webkit-border-image: none;
@@ -20,4 +20,22 @@
     to(#ff6900)
   );
  -webkit-border-image: none;
+}
+
+@-webkit-keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+.vs_ui_progressbar.indeterminate {
+  background-image: -webkit-gradient(linear, 0 0 , 20 10, color-stop(0.23, rgba(50, 50, 50, 0)), color-stop(0.3, rgba(50, 50, 50, 0.8)), color-stop(0.3, rgba(50, 50, 50, 1)), color-stop(0.7, rgba(50, 50, 50, 1)), color-stop(0.7, rgba(50, 50, 50, 0.8)), color-stop(0.77, rgba(50, 50, 50, 0)));
+  background-color: #ff7500;
+  background-repeat: repeat-x;
+  
+  -webkit-background-size: 23px 10px;
+  -webkit-background-position-x: 0%;
+  -webkit-animation-duration: 10s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-name: vs_ui_progressbar_anim;
 }
