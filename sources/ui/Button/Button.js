@@ -432,8 +432,8 @@ util.defineClassProperties (Button, {
   },
   'type': {
     /** 
-     * Getter|Setter for the button mode :
-     * @name vs.ui.Button#mode 
+     * Getter|Setter for the button type (DEFAULT_TYPE, NAVIGATION_TYPE,…)
+     * @name vs.ui.Button#type 
      * @type {string}
      */ 
     set : function (v)
