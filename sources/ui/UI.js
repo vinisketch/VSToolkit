@@ -28,5 +28,5 @@ var vs = window.vs,
   setElementTransform = util.setElementTransform,
   getElementTransform = util.getElementTransform,
   DeviceConfiguration = core.DeviceConfiguration,
-  SUPPORT_3D_TRANSFORM = fx.SUPPORT_3D_TRANSFORM;
+  SUPPORT_3D_TRANSFORM = vs.SUPPORT_3D_TRANSFORM;
 

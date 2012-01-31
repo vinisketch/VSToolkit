@@ -2048,7 +2048,7 @@ View.prototype = {
     var transform = '';
     
     // apply translation, therefor a strange bug appear (flick)
-    if (fx.SUPPORT_3D_TRANSFORM)
+    if (SUPPORT_3D_TRANSFORM)
       transform += 
         "translate3d("+this.__view_t_x+"px,"+this.__view_t_y+"px,0)";
     else

@@ -27,15 +27,3 @@ var vs = window.vs,
   fx = vs.fx,
   setElementTransform = util.setElementTransform,
   getElementTransform = util.getElementTransform;
-
-// Test which kind of transformation you can use
-var SUPPORT_CSS_TRANSFORM = 
-  (util.vsTestStyle.webkitTransform || util.vsTestStyle.msTransform);
-  
-var SUPPORT_3D_TRANSFORM =
-  'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix ();
-
-util.extend (fx, {
-  SUPPORT_CSS_TRANSFORM:    SUPPORT_CSS_TRANSFORM,
-  SUPPORT_3D_TRANSFORM:     SUPPORT_3D_TRANSFORM
-});

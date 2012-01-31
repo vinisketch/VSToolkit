@@ -305,7 +305,7 @@ var iScroll_prototype =
         that.scrollInterval = null;
       }
 
-      if (fx.SUPPORT_3D_TRANSFORM)
+      if (SUPPORT_3D_TRANSFORM)
       {
         matrix = new WebKitCSSMatrix (getElementTransform (that.scroller));
         if (matrix.m41 !== that._ab_view_t_x || matrix.m42 !== that._ab_view_t_y) {

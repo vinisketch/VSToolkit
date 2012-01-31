@@ -38,6 +38,10 @@ var vsTestElem = document.createElement ('vstestelem');
 var vsTestStyle = vsTestElem.style;
 var __date_reg_exp = /\/Date\((-?\d+)\)\//;
 
+// Test which kind of transformation you can use
+vs.SUPPORT_CSS_TRANSFORM =
+  (vsTestStyle.webkitTransform || vsTestStyle.msTransform);
+
 /********************************************************************
 
 *********************************************************************/

@@ -856,7 +856,7 @@ Picker.prototype = {
     slot_elem.style.webkitTransitionDuration = '0';   // Remove any residual transition
     
     // Stop and hold slot position
-    if (fx.SUPPORT_3D_TRANSFORM)
+    if (SUPPORT_3D_TRANSFORM)
     {
       var theTransform = getElementTransform (slot_elem);
       theTransform = new WebKitCSSMatrix(theTransform).m42;
