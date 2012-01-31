@@ -98,8 +98,9 @@ window.vs.ext = {};
  * @name vs.ext.ui
  */
 window.vs.ext.ui = {};
-
-/**
+  
+window.vs.SUPPORT_3D_TRANSFORM =
+  'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix ()/**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
   
@@ -138,6 +139,10 @@ var vsTestElem = document.createElement ('vstestelem');
  */
 var vsTestStyle = vsTestElem.style;
 var __date_reg_exp = /\/Date\((-?\d+)\)\//;
+
+// Test which kind of transformation you can use
+vs.SUPPORT_CSS_TRANSFORM =
+  (vsTestStyle.webkitTransform || vsTestStyle.msTransform);
 
 /********************************************************************
 

@@ -431,40 +431,6 @@ input[type="checkbox"]:checked:after
   content:url(androidCheckButton_sel.png);
 }
 .vs_ui_slider.horizontal {
-  height: 34px;
-}
-
-.vs_ui_slider.vertical {
-  width: 34px;
-}
-
-.vs_ui_slider .line {
-  position: absolute;
-  background-color: #F9F9F9;
-  -webkit-border-radius: 3px;
-}
-
-.vs_ui_slider.horizontal .line {
-  top: 12px;
-  left: 17px;
-  right: 17px;
-  height: 10px;
-  -webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);
-}
-
-.vs_ui_slider.vertical .line {
-  top: 17px;
-  bottom: 17px;
-  left: 12px;
-  width: 10px;
-  -webkit-box-shadow:inset 1px 0 3px rgba(0,0,0,0.5);
-}
-
-.vs_ui_slider .line > div {
-  -webkit-border-radius: 3px;
-}
-
-.vs_ui_slider.horizontal .line > div {
   background-image: -webkit-gradient(linear, left top, left bottom, 
     from(#ad4500),
     color-stop(0, rgb(181,95,4)),
@@ -472,9 +438,13 @@ input[type="checkbox"]:checked:after
     color-stop(0.8, #ff9200),
     to(#ff6900)
   );
+
+  height: 10px;
+  -webkit-border-radius: 3px;
+  -webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);
 }
 
-.vs_ui_slider.vertical .line > div {
+.vs_ui_slider.vertical {
   background-image: -webkit-gradient(linear, left top, right top, 
     from(#ad4500),
     color-stop(0, rgb(181,95,4)),
@@ -482,6 +452,10 @@ input[type="checkbox"]:checked:after
     color-stop(0.8, #ff9200),
     to(#ff6900)
   );
+
+  width: 10px;
+  -webkit-border-radius: 3px;
+  -webkit-box-shadow:inset 1px 0 3px rgba(0,0,0,0.5);
 }
 
 .vs_ui_slider .handle {
