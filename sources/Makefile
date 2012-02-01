@@ -272,7 +272,6 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	$(CAT) ui/SegmentedButton/SegmentedButton_android.css >> $@
 	
 copy_ui_img:
-	$(CP) ui/Button/button_* ../lib_debug/css 
 	$(CP) ui/ComboBox/iOS* ../lib_debug/css
 	$(CP) ui/List/SimpleList* ../lib_debug/css
 	$(CP) ui/List/PanelTitle.png ../lib_debug/css

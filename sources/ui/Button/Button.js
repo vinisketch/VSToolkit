@@ -250,6 +250,7 @@ Button.prototype = {
   initSkin : function ()
   {
     View.prototype.initSkin.call (this);
+    this.text_view = this.view.firstElementChild;
 
     if (!this.__touch_binding)
     {
@@ -385,9 +386,9 @@ util.defineClassProperties (Button, {
       }
   
       this._text = v;
-      if (this.view)
+      if (this.text_view)
       {
-        util.setElementInnerText (this.view, this._text);
+        util.setElementInnerText (this.text_view, this._text);
       }
     },
   
