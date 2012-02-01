@@ -29,32 +29,48 @@
   font-family: droid;
 }
 
-.vs_ui_button.pressed {
-  color: #fff !important;
-  background-image: -webkit-gradient(linear, left top, left bottom, 
-    from(#fea94b), to(#ef7217)) !important;
-}
-
 /***************************************************************************
 
 ***************************************************************************/
 
 .vs_ui_button.nav,
-.vs_ui_button.nav_back,
+.vs_ui_button.nav_back 
 .vs_ui_button.nav_forward {
+  height: 27px;
+  padding-top: 0px !important;
+  margin: 0px !important;
 }
 
-.vs_ui_button.nav
-{
+.vs_ui_button.nav.pressed > div,
+.vs_ui_button.nav_back.pressed > div,
+.vs_ui_button.nav_forward.pressed > div {
+  color: #fff !important;
+  background-image: -webkit-gradient(linear, left top, left bottom, 
+    from(#fea94b), to(#ef7217)) !important;
+}
+
+.vs_ui_button.nav > div,
+.vs_ui_button.nav_back > div,
+.vs_ui_button.nav_forward > div {
+  position:relative;
+  padding: 8px 8px 0 8px;
+  margin: 0px;
   -webkit-border-radius: 5px;
+
+  font-size: 11px;
+  height: 27px;
+
+  font-weight: normal;
+  font-size: 11px;
+  text-shadow: none;
 }
 
-.vs_ui_button.nav_back,
-.vs_ui_button.nav_forward {
+.vs_ui_button.nav_back > div,
+.vs_ui_button.nav_forward > div {
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#333), to(#222));
 }
 
-.vs_ui_button.nav_back
+.vs_ui_button.nav_back > div
 {
   border-bottom-left-radius: 15px 10px;
   border-bottom-right-radius: 5px;
@@ -62,7 +78,7 @@
   border-top-right-radius: 5px;
 }
 
-.vs_ui_button.nav_forward
+.vs_ui_button.nav_forward > div
 {
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 15px 10px;
@@ -70,31 +86,22 @@
   border-top-right-radius: 15px 10px;
 }
 
-.vs_ui_button.nav
+.vs_ui_button.nav > div
 {
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F7F7F7), to(#BDBABD));
   border: 0px none;
   color: #524D52;
 }
 
-.vs_ui_button.nav,
-.vs_ui_button.nav_back,
-.vs_ui_button.nav_forward
-{
-  padding-top: 8px;
-  
-  font-size: 11px;
-  height: 27px;
-
-  -webkit-border-image: none;
-  font-weight: normal;
-  font-size: 11px;
-  text-shadow: none;
-}
-
 /***************************************************************************
 
 ***************************************************************************/
+
+.vs_ui_button.default.pressed {
+  color: #fff !important;
+  background-image: -webkit-gradient(linear, left top, left bottom, 
+    from(#fea94b), to(#ef7217)) !important;
+}
 
 .vs_ui_button.default
 {
@@ -116,7 +123,8 @@
   color: black;
 }
 
-.vs_ui_button.default.white 
+.vs_ui_button.default.white, /** legacy comptability */
+.vs_ui_button.default.default_style 
 {
   color: #424142;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
@@ -442,6 +450,7 @@ input[type="checkbox"]:checked:after
   height: 10px;
   -webkit-border-radius: 3px;
   -webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);
+  background-color: #5A5A5A;
 }
 
 .vs_ui_slider.vertical {
@@ -456,6 +465,7 @@ input[type="checkbox"]:checked:after
   width: 10px;
   -webkit-border-radius: 3px;
   -webkit-box-shadow:inset 1px 0 3px rgba(0,0,0,0.5);
+  background-color: #5A5A5A;
 }
 
 .vs_ui_slider .handle {

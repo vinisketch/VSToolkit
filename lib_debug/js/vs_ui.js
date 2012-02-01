@@ -6179,7 +6179,7 @@ Button.DEFAULT_TYPE = 'default';
  * @name vs.ui.Button.DEFAULT_STYLE
  * @const
  */
-Button.DEFAULT_STYLE = 'white';
+Button.DEFAULT_STYLE = 'default_style';
 
 /**
  * default style button
@@ -6350,6 +6350,7 @@ Button.prototype = {
   initSkin : function ()
   {
     View.prototype.initSkin.call (this);
+    this.text_view = this.view.firstElementChild;
 
     if (!this.__touch_binding)
     {
@@ -6485,9 +6486,9 @@ util.defineClassProperties (Button, {
       }
   
       this._text = v;
-      if (this.view)
+      if (this.text_view)
       {
-        util.setElementInnerText (this.view, this._text);
+        util.setElementInnerText (this.text_view, this._text);
       }
     },
   
@@ -6532,8 +6533,8 @@ util.defineClassProperties (Button, {
   },
   'type': {
     /** 
-     * Getter|Setter for the button mode :
-     * @name vs.ui.Button#mode 
+     * Getter|Setter for the button type (DEFAULT_TYPE, NAVIGATION_TYPE,…)
+     * @name vs.ui.Button#type 
      * @type {string}
      */ 
     set : function (v)
@@ -15676,7 +15677,7 @@ TextArea.prototype.html_template = "\
 ";
 
 Button.prototype.html_template = "\
-<div class='vs_ui_button'></div>\
+<div class='vs_ui_button'><div></div></div>\
 ";
 
 List.prototype.html_template = "\

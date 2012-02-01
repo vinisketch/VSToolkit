@@ -10,137 +10,244 @@
 }
 
 .vs_ui_button.nav,
-.vs_ui_button.nav_back, 
+.vs_ui_button.nav_back 
 .vs_ui_button.nav_forward {
-  padding-top: 8px;
-}
-
-.vs_ui_button.nav.black_ios_style, /** legacy comptability */
-.vs_ui_button.nav.black_style
-{
   height: 30px;
-  -webkit-border-image:url('button_ios_black_released.png') 0 5 0 5;
-  border-width: 0 5px 0 5px;
+  padding-top: 0px !important;
+  margin: 0px !important;
 }
 
-.vs_ui_button.nav.black_ios_style.pressed,
-.vs_ui_button.nav.black_style.pressed
-{
-  -webkit-border-image:url('button_ios_black_pressed.png') 0 5 0 5;
-}
-
-.vs_ui_button.nav.blue_ios_style, /** legacy comptability */
-.vs_ui_button.nav.blue_style
-{
+.vs_ui_button.nav > div,
+.vs_ui_button.nav_back > div,
+.vs_ui_button.nav_forward > div {
   height: 30px;
-  -webkit-border-image:url('button_ios_blue_released.png') 0 5 0 5;
-  border-width: 0 5px 0 5px;
+  position:relative;
+  padding: 8px 8px 0 8px;
+  margin: 0px;
+  -webkit-border-radius: 5px;
+  border: solid 1px #54617D;
 }
 
-.vs_ui_button.nav.blue_ios_style.pressed, /** legacy comptability */
-.vs_ui_button.nav.blue_style.pressed
+.vs_ui_button.nav_back > div,
+.vs_ui_button.nav_forward > div {
+  overflow: visible;
+}
+
+.vs_ui_button.nav.blue_ios_style > div, /** legacy comptability */
+.vs_ui_button.nav.blue_style > div,
+.vs_ui_button.nav.default_style > div,
+.vs_ui_button.nav_back.blue_ios_style > div, /** legacy comptability */
+.vs_ui_button.nav_back.blue_style > div,
+.vs_ui_button.nav_back.default_style > div,
+.vs_ui_button.nav_forward.blue_ios_style > div, /** legacy comptability */
+.vs_ui_button.nav_forward.blue_style > div,
+.vs_ui_button.nav_forward.default_style > div 
 {
-  -webkit-border-image:url('button_ios_blue_pressed.png') 0 5 0 5;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#92A1BF), color-stop(0.25, #798AAD), color-stop(0.5, #6276A0), color-stop(0.5, #556A97), color-stop(0.75, #566C98), to(#546993));
+  border-color: #484E59 #54617D #4C5C7A #54617D;
+}
+
+.vs_ui_button.nav.blue_ios_style.pressed > div, /** legacy comptability */
+.vs_ui_button.nav.blue_style.pressed > div,
+.vs_ui_button.nav.default_style.pressed > div,
+.vs_ui_button.nav_back.blue_ios_style.pressed > div, /** legacy comptability */
+.vs_ui_button.nav_back.blue_style.pressed > div,
+.vs_ui_button.nav_back.default_style.pressed > div,
+.vs_ui_button.nav_forward.blue_ios_style.pressed > div, /** legacy comptability */
+.vs_ui_button.nav_forward.blue_style.pressed > div,
+.vs_ui_button.nav_forward.default_style.pressed > div 
+{
+  background-image: -webkit-gradient(linear, left top, left bottom, 
+    from(#7d88a5), color-stop(0.25, #58698c),color-stop(0.5, #3a4e78), 
+    color-stop(0.5, #253c6a), color-stop(0.75, #273f6d), to(#273f6d));
 }
 
 
-.vs_ui_button.nav.silver_ios_style, /** legacy comptability */
-.vs_ui_button.nav.silver_style
+.vs_ui_button.nav.black_ios_style > div, /** legacy comptability */
+.vs_ui_button.nav.black_style > div,
+.vs_ui_button.nav_back.black_ios_style > div, /** legacy comptability */
+.vs_ui_button.nav_back.black_style > div,
+.vs_ui_button.nav_forward.black_ios_style > div, /** legacy comptability */
+.vs_ui_button.nav_forward.black_style > div
 {
-  height: 30px;
-  -webkit-border-image:url('button_ios_silver_released.png') 0 5 0 5;
-  border-width: 0 5px 0 5px;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#838383), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+  border-color: #404040 #262626 #404040 #262626;
 }
 
-.vs_ui_button.nav.silver_ios_style.pressed, /** legacy comptability */
-.vs_ui_button.nav.silver_style.pressed
+
+.vs_ui_button.nav.black_ios_style.pressed > div, /** legacy comptability */
+.vs_ui_button.nav.black_style.pressed > div,
+.vs_ui_button.nav_back.black_ios_style.pressed > div, /** legacy comptability */
+.vs_ui_button.nav_back.black_style.pressed > div,
+.vs_ui_button.nav_forward.black_ios_style.pressed > div, /** legacy comptability */
+.vs_ui_button.nav_forward.black_style.pressed > div
 {
-  -webkit-border-image:url('button_ios_silver_pressed.png') 0 5 0 5;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#444), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+}
+
+.vs_ui_button.nav.silver_ios_style > div, /** legacy comptability */
+.vs_ui_button.nav.silver_style > div,
+.vs_ui_button.nav_back.silver_ios_style > div, /** legacy comptability */
+.vs_ui_button.nav_back.silver_style > div,
+.vs_ui_button.nav_forward.silver_ios_style > div, /** legacy comptability */
+.vs_ui_button.nav_forward.silver_style > div
+{
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#b1b5bb), color-stop(57%,#7e848d), color-stop(100%,#6a727d));
+}
+
+
+.vs_ui_button.nav.silver_ios_style.pressed > div, /** legacy comptability */
+.vs_ui_button.nav.silver_style.pressed > div,
+.vs_ui_button.nav_back.silver_ios_style.pressed > div, /** legacy comptability */
+.vs_ui_button.nav_back.silver_style.pressed > div,
+.vs_ui_button.nav_forward.silver_ios_style.pressed > div, /** legacy comptability */
+.vs_ui_button.nav_forward.silver_style.pressed > div
+{
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9c9fa2), color-stop(48%,#676b70), color-stop(62%,#5b5f65), color-stop(77%,#4c5157), color-stop(100%,#42474e));
 }
 
 .vs_ui_button.nav_back.blue_ios_style, /** legacy comptability */
-.vs_ui_button.nav_back.blue_style
-{
-  height: 30px;
-  -webkit-border-image:url('button_back_ios_blue_released.png')  0 4 0 16;
-  border-width: 0 4px 0px 16px;
-}
-
-.vs_ui_button.nav_back.blue_ios_style.pressed, /** legacy comptability */
-.vs_ui_button.nav_back.blue_style.pressed
-{
-  -webkit-border-image:url('button_back_ios_blue_pressed.png') 0 4 0 16;
-}
-
-.vs_ui_button.nav_forward.blue_ios_style, /** legacy comptability */
-.vs_ui_button.nav_forward.blue_style
-{
-  height: 30px;
-  -webkit-border-image:url('button_forward_ios_blue_released.png') 0 16 0 4;
-  border-width: 0 16px 0px 4px;
-}
-
-.vs_ui_button.nav_forward.blue_ios_style.pressed, /** legacy comptability */
-.vs_ui_button.nav_forward.blue_style.pressed
-{
-  -webkit-border-image:url('button_forward_ios_blue_pressed.png') 0 16 0 4;
-}
-
+.vs_ui_button.nav_back.blue_style,
+.vs_ui_button.nav_back.default_style,
 .vs_ui_button.nav_back.black_ios_style, /** legacy comptability */
-.vs_ui_button.nav_back.black_style
-{
-  height: 30px;
-  -webkit-border-image:url('button_back_ios_black_released.png')  0 4 0 16;
-  border-width: 0 4px 0px 16px;
-}
-
-.vs_ui_button.nav_back.black_ios_style.pressed, /** legacy comptability */
-.vs_ui_button.nav_back.black_style.pressed
-{
-  -webkit-border-image:url('button_back_ios_black_pressed.png') 0 4 0 16;
-}
-
-.vs_ui_button.nav_forward.black_ios_style, /** legacy comptability */
-.vs_ui_button.nav_forward.black_style
-{
-  height: 30px;
-  -webkit-border-image:url('button_forward_ios_black_released.png') 0 16 0 4;
-  border-width: 0 16px 0px 4px;
-}
-
-.vs_ui_button.nav_forward.black_ios_style.pressed, /** legacy comptability */
-.vs_ui_button.nav_forward.black_style.pressed
-{
-  -webkit-border-image:url('button_forward_ios_black_pressed.png') 0 16 0 4;
-}
-
+.vs_ui_button.nav_back.black_style,
 .vs_ui_button.nav_back.silver_ios_style, /** legacy comptability */
 .vs_ui_button.nav_back.silver_style
 {
-  height: 30px;
-  -webkit-border-image:url('button_back_ios_silver_released.png')  0 4 0 15;
-  border-width: 0 4px 0px 15px;
+  padding: 0 0 0 10px;
 }
 
-.vs_ui_button.nav_back.silver_ios_style.pressed, /** legacy comptability */
-.vs_ui_button.nav_back.silver_style.pressed
-{
-  -webkit-border-image:url('button_back_ios_silver_pressed.png') 0 4 0 15;
-}
-
-
+.vs_ui_button.nav_forward.blue_ios_style, /** legacy comptability */
+.vs_ui_button.nav_forward.blue_style,
+.vs_ui_button.nav_forward.default_style,
+.vs_ui_button.nav_forward.black_ios_style, /** legacy comptability */
+.vs_ui_button.nav_forward.black_style,
 .vs_ui_button.nav_forward.silver_ios_style, /** legacy comptability */
 .vs_ui_button.nav_forward.silver_style
 {
-  height: 30px;
-  -webkit-border-image:url('button_forward_ios_silver_released.png') 0 15 0 4;
-  border-width: 0 15px 0px 4px;
+  padding: 0 10px 0 0;
 }
 
-.vs_ui_button.nav_forward.silver_ios_style.pressed, /** legacy comptability */
-.vs_ui_button.nav_forward.silver_style.pressed
+.vs_ui_button.nav_back.blue_ios_style > div, /** legacy comptability */
+.vs_ui_button.nav_back.blue_style > div,
+.vs_ui_button.nav_back.default_style > div
 {
-  -webkit-border-image:url('button_forward_ios_silver_pressed.png') 0 15 0 4;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#92A1BF), color-stop(0.25, #798AAD), color-stop(0.5, #6276A0), color-stop(0.5, #556A97), color-stop(0.75, #566C98), to(#546993));
+  border: solid 1px #54617D;
+  border-color: #484E59 #54617D #4C5C7A #54617D;
+}
+
+.vs_ui_button.nav_back > div::before {
+  content: '';
+  z-index: 0;
+  border-left: solid 1px #484E59;
+  border-bottom: solid 1px #484E59;
+  height: 22.5px;
+  width: 22.5px;
+  display: inline-block;
+  -webkit-transform: rotate(45deg);
+  -webkit-mask-image: -webkit-gradient(linear, left bottom, right top, from(black), color-stop(0.5,black), color-stop(0.5, transparent), to(transparent));
+  position: absolute;
+  left: -9.5px;
+  top: 3.5px;
+  -webkit-background-clip: content;
+  border-top-left-radius: 4px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 4px;
+}
+
+.vs_ui_button.nav_forward > div::after {
+  content: '';
+  z-index: 0;
+  border-left: solid 1px #484E59;
+  border-bottom: solid 1px #484E59;
+  height: 22.5px;
+  width: 22.5px;
+  display: inline-block;
+  -webkit-transform: rotate(-135deg);
+  -webkit-mask-image: -webkit-gradient(linear, left bottom, right top, from(black), color-stop(0.5,black), color-stop(0.5, transparent), to(transparent));
+  position: absolute;
+  right: -9.5px;
+  top: 3.5px;
+  -webkit-background-clip: content;
+  border-top-left-radius: 4px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 4px;
+}
+
+.vs_ui_button.nav_back.default_style > div::before,
+.vs_ui_button.nav_back.blue_style > div::before,
+.vs_ui_button.nav_back.default_style > div::before {
+  background-image: -webkit-gradient(linear, left top, right bottom, from(#92A1BF), color-stop(0.3, #798AAD), color-stop(0.51, #6276A0), color-stop(0.51, #556A97), color-stop(0.75, #566C98), to(#546993));
+}
+
+.vs_ui_button.nav_back.blue_ios_style.pressed > div::before, /** legacy comptability */
+.vs_ui_button.nav_back.blue_style.pressed > div::before,
+.vs_ui_button.nav_back.default_style.pressed > div::before
+{
+  background-image: -webkit-gradient(linear, left top, right bottom, 
+    from(#7d88a5), color-stop(0.25, #58698c), color-stop(0.5, #3a4e78), 
+    color-stop(0.5, #253c6a), color-stop(0.75, #273f6d), to(#273f6d));
+}
+
+.vs_ui_button.nav_forward.default_style > div::after,
+.vs_ui_button.nav_forward.blue_style > div::after,
+.vs_ui_button.nav_forward.default_style > div::after {
+  background-image: -webkit-gradient(linear, right bottom, left top, from(#92A1BF), color-stop(0.3, #798AAD), color-stop(0.51, #6276A0), color-stop(0.51, #556A97), color-stop(0.75, #566C98), to(#546993));
+}
+
+.vs_ui_button.nav_forward.default_style.pressed > div::after,
+.vs_ui_button.nav_forward.blue_style.pressed > div::after,
+.vs_ui_button.nav_forward.default_style.pressed > div::after {
+  background-image: -webkit-gradient(linear, right bottom, left top, 
+    from(#7d88a5), color-stop(0.25, #58698c), color-stop(0.5, #3a4e78), 
+    color-stop(0.5, #253c6a), color-stop(0.75, #273f6d), to(#273f6d));
+}
+
+.vs_ui_button.nav_back.black_style > div::before,
+.vs_ui_button.nav_back.black_ios_style > div::before {
+  background-image: -webkit-gradient(linear, left top, right bottom, from(#838383), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+}
+
+.vs_ui_button.nav_back.black_style.pressed > div::before,
+.vs_ui_button.nav_back.black_ios_style.pressed > div::before
+{
+  background-image: -webkit-gradient(linear, left top, right bottom, 
+    from(#444), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+}
+
+.vs_ui_button.nav_forward.black_style > div::after,
+.vs_ui_button.nav_forward.black_ios_style > div::after {
+  background-image: -webkit-gradient(linear, right bottom, left top, from(#838383), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+}
+
+.vs_ui_button.nav_forward.black_style.pressed > div::after,
+.vs_ui_button.nav_forward.black_ios_style.pressed > div::after {
+  background-image: -webkit-gradient(linear, right bottom, left top, 
+    from(#444), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+}
+
+.vs_ui_button.nav_back.silver_style > div::before,
+.vs_ui_button.nav_back.silver_ios_style > div::before {
+  background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#b1b5bb), color-stop(57%,#7e848d), color-stop(100%,#6a727d));
+}
+
+.vs_ui_button.nav_back.silver_style.pressed > div::before,
+.vs_ui_button.nav_back.silver_ios_style.pressed > div::before
+{
+  background-image: -webkit-gradient(linear, left top, right bottom, 
+  color-stop(0%,#9c9fa2), color-stop(48%,#676b70), color-stop(62%,#5b5f65), color-stop(77%,#4c5157), color-stop(100%,#42474e));
+}
+
+.vs_ui_button.nav_forward.silver_style > div::after,
+.vs_ui_button.nav_forward.silver_ios_style > div::after {
+  background-image: -webkit-gradient(linear, right bottom, left top, color-stop(0%,#b1b5bb), color-stop(57%,#7e848d), color-stop(100%,#6a727d));
+}
+
+.vs_ui_button.nav_forward.silver_style.pressed > div::after,
+.vs_ui_button.nav_forward.silver_ios_style.pressed > div::after {
+  background-image: -webkit-gradient(linear, right bottom, left top, 
+  color-stop(0%,#9c9fa2), color-stop(48%,#676b70), color-stop(62%,#5b5f65), color-stop(77%,#4c5157), color-stop(100%,#42474e));
 }
 
 /***************************************************************************
@@ -150,7 +257,7 @@
 .vs_ui_button.default
 {
   border: 0px none;
-  -webkit-border-radius: 0px;
+  -webkit-border-radius: 12px;
   
   height: 43px;
   border-bottom-width: 0px;
@@ -161,57 +268,58 @@
   font-size: 20px;
   font-family: Helvetica;
 
-  padding-top: 10px;
+  padding-top: 8px;
+  border: solid 3px #83888F;
 }
 
-.vs_ui_button.default.white 
+.vs_ui_button.default.white, /** legacy comptability */
+.vs_ui_button.default.default_style 
 { 
   color: black;
-  text-shadow: rgba(255, 255, 255, 0.699219) 0px 1px 0px;
-  -webkit-border-image: url("iOSDefautWhiteButton.png") 0 12 0 12 stretch stretch;
-  background-image: none;
+  text-shadow: rgba(255, 255, 255, 0.7) 0px 1px 0px;
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(234, 234, 234, 0.7)), color-stop(0.5, rgba(195, 195, 195, 0.7)), color-stop(0.5, rgba(166, 166, 166, 0.7)), to(rgba(167, 167, 167, 0.80)));
 }
 
-.vs_ui_button.default.white.pressed
+.vs_ui_button.default.white.pressed, /** legacy comptability */
+.vs_ui_button.default.default_style.pressed
 {
   color: white;
-  text-shadow: rgba(0,0,0, 0.699219) 0px 1px 0px;
-  background-image:none;
+  text-shadow: rgba(0,0,0, 0.7) 0px 1px 0px;
 }
 
 .vs_ui_button.default.red 
 {
   color: white;
-  text-shadow: rgba(0,0,0, 0.699219) 0px -1px 0px;
-  -webkit-border-image: url("iOSDefautRedButton.png") 0 12 0 12 stretch stretch;
-  background-image:none;
+  text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255, 59, 59, 0.80)), color-stop(0.5, rgba(233, 72, 72, 0.90)), color-stop(0.5, rgba(184, 0, 0, 0.80)), to(rgba(255, 0, 0, 0.90)));
 }
-
 
 .vs_ui_button.default.red.pressed,
 .vs_ui_button.default.green.pressed,
 .vs_ui_button.default.grey.pressed
 {
   color: black;
-  text-shadow: rgba(255, 255, 255, 0.699219) 0px -1px 0px;
-  background-image:none;
+  text-shadow: rgba(255, 255, 255, 0.7) 0px -1px 0px;
 }
-
 
 .vs_ui_button.default.green 
 {
   color: white;
-  text-shadow: rgba(0,0,0, 0.699219) 0px -1px 0px;
-  -webkit-border-image: url("iOSDefautGreenButton.png") 0 12 0 12 stretch stretch;
-  background-image:none;
+  text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(79, 156, 74, 0.7)), color-stop(0.5, rgba(54, 127, 35, 0.7)), color-stop(0.5, rgba(0, 113, 0, 0.7)), to(rgba(0, 150, 0, 0.7)));
 }
 
 .vs_ui_button.default.grey 
 {
   color: white;
-  text-shadow: rgba(0,0,0, 0.699219) 0px -1px 0px;
-  -webkit-border-image: url("iOSDefautGreyButton.png") 0 12 0 12 stretch stretch;
-  background-image:none;
+  text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(74, 74, 74, 0.95)), color-stop(0.5, rgba(20, 20, 20, 0.85)), color-stop(0.5, rgba(2, 2, 2, 0.85)), to(rgba(14, 14, 14, 0.85)));
+}
+
+.vs_ui_button.default.grey.pressed
+{
+  color: #888;
+  text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
 }
 .vs_ui_list {
   font-size: 17px;
