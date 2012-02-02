@@ -13,7 +13,7 @@ var myClass = vs.core.createClass ({
 
   parent: vs.ui.View,
  
-  properties : {propName: vs.core.Object.PROPERTY_IN_OUT},
+  properties : {text: vs.core.Object.PROPERTY_IN_OUT},
  
   aMethod : function (p1, p2, …)
   {
@@ -24,17 +24,19 @@ var myClass = vs.core.createClass ({
 });
 ```
 
-## Create a object from a VS class
+## Create an object from a class
 
 ```
 var config = {
   id: 'xxx',
-  …
+  text: ''
 }
 // Object construction
 var obj = new myClass (config);
 // Object initialization
 obj.init ();
+// property manipulation
+obj.text = 'Hello';
 ```
 
 ## Properties
@@ -50,9 +52,10 @@ obj.init ();
 ```
 
 Possible export values are:
-- vs.core.Object.PROPERTY_IN_OUT
-- vs.core.Object.PROPERTY_IN
-- vs.core.Object.PROPERTY_OUT
+
+* vs.core.Object.PROPERTY_IN_OUT
+* vs.core.Object.PROPERTY_IN
+* vs.core.Object.PROPERTY_OUT
 
         
 ### Descriptor declaration
@@ -108,7 +111,7 @@ This declaration is similar to declare:
 
 ##Create your first application
 
-Javascript bootstrap
+JavaScript bootstrap
 
 ```
 var myApp = vs.core.createClass ({
@@ -116,7 +119,7 @@ var myApp = vs.core.createClass ({
   /** parent class */
   parent: vs.ui.Application,
 
-  /** call when vs.ui.Application.start (); is called */
+  /** called when vs.ui.Application.start (); is called */
   applicationStarted : function (event)
   {
     …
