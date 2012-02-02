@@ -86,7 +86,7 @@ var Animations = vs.core.createClass ({
     // Complex animation
     animation = new vs.fx.Animation (['translateX','260px'],['translateY','0px'],['rotate', '0deg'],['opacity', '1'], ['scale', '1.5']);
     animation.duration = '3s';
-    animation.origin = ['50%', '100%'];
+    animation.origin = [50, 100];
     animation.timing = vs.fx.Animation.LINEAR;
     animation.addKeyFrame (0, ['0px', '0px', '0deg', 1, 1]);
     animation.addKeyFrame (50, ['130px', '50px', '90deg', 0.5, 0.7]);
