@@ -3,7 +3,7 @@
 Copyright © 2009 - 2012 [ViniSketch SARL](http://www.vinisketch.com/)
 
 
-This toolkit was created to easily develop Hybrid Applications for mobile devices (on top of [PhoneGap](http://www.phonegap.com)
+This toolkit was created to easily develop Hybrid Applications for mobile devices (on top of [PhoneGap](http://www.phonegap.com))
 
 The main features are:
 
@@ -183,6 +183,10 @@ XXX
 XXX
 
 ## Template
+
+XXX
+
+## How to handle the MVC pattern
 
 XXX
 
