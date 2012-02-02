@@ -15,9 +15,10 @@ var myClass = vs.core.createClass ({
  
   properties : {propName: vs.core.Object.PROPERTY_IN_OUT},
  
-  uneMethode : function (p1, p2, …)
+  aMethod : function (p1, p2, …)
   {
     this._super (p1, p2, …);
+    …
   }, 
   …
 });
@@ -38,6 +39,8 @@ obj.init ();
 
 ## Properties
 
+
+
 ### Basic declaration
 
 ```
@@ -46,7 +49,7 @@ obj.init ();
 …
 ```
 
-Possible export value:
+Possible export values are:
 - vs.core.Object.PROPERTY_IN_OUT
 - vs.core.Object.PROPERTY_IN
 - vs.core.Object.PROPERTY_OUT
@@ -72,12 +75,13 @@ Possible export value:
 …
 ```
         
- ### Path declaration
+### Path declaration
  
 This third syntax allow to easily export a child component's property.
  
  
 Within this example, my class exports as own property, the property named 'text' of its child 'textField'.
+
 ```
 …
   properties : {text: "textField#text"}
@@ -85,6 +89,7 @@ Within this example, my class exports as own property, the property named 'text'
 ```
 
 This declaration is similar to declare:
+
 ```
 …
   properties : {
@@ -151,6 +156,12 @@ HTML
   </body>
 </html>
 ```
+
+## Examples
+
+You can run live example at this address: [vinisketch.com/toolkit](http://www.vinisketch.com/toolkit)
+
+Code examples are available [here](https://github.com/vinisketch/VSToolkit/tree/master/examples). 
 
 ## Warning ;-)
 
