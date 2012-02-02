@@ -484,6 +484,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
           { transform += 'rotateY(' + value + ') '; }
           else if (property === 'scale')
           { transform += 'scale(' + value + ') '; }
+          else if (property === 'perspective')
+          { transform += 'perspective(' + value + ') '; }
           else
           { style += property + ':' + value + ';'; }
         }
@@ -513,6 +515,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
           { transform += 'rotateY(' + value + ') '; }
           else if (property === 'scale')
           { transform += 'scale(' + value + ') '; }
+          else if (property === 'perspective')
+          { transform += 'perspective(' + value + ') '; }
           else
           { style += property + ':' + value + ';'; }
         }

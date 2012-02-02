@@ -46,8 +46,10 @@ var vs = window.vs,
   util = vs.util,
   core = vs.core,
   ui = vs.ui,
+  fx = vs.fx,
   ext = vs.ext,
-  ext_ui = ext.ui;
+  ext_ui = ext.ui,
+  ext_fx = ext.fx;
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
