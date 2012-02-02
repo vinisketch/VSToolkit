@@ -3,27 +3,29 @@
 Copyright © 2009 - 2012 [ViniSketch SARL](http://www.vinisketch.com/)
 
 
-## Introduction
+This toolkit was created to easily develop Hybrid Applications for mobile devices (on top of [PhoneGap](http://www.phonegap.com)
 
-This toolkit was created to easily develop Hybrid applications for mobile devices (on top of [PhoneGap](http://www.phonegap.com)
 The main features are:
 
-* Object oriented toolkit
-* Framework driven by a Component Approach
-* small memory footprint and memory deallocation
-* performance
+* Objects oriented toolkit
+* Framework driven by a component approach
+* Small memory footprint and memory deallocation
+* Performance
 
-The IDE [ViniSketch designer (VSD)](http://www.vinisketch.fr/mainSite/en/product.html) uses this toolkit for creating application.
+The IDE [ViniSketch Designer (VSD)](http://www.vinisketch.fr/mainSite/en/product.html) is based on this toolkit for creating application.
 
 ## Create a class
 
 ```
 var myClass = vs.core.createClass ({
 
+  // parent class
   parent: vs.ui.View,
  
+  // properties declaration
   properties : {text: vs.core.Object.PROPERTY_IN_OUT},
  
+  // prototype declaration
   aMethod : function (p1, p2, …)
   {
     this._super (p1, p2, …);
@@ -40,10 +42,13 @@ var config = {
   id: 'xxx',
   text: ''
 }
+
 // Object construction
 var obj = new myClass (config);
+
 // Object initialization
 obj.init ();
+
 // property manipulation
 obj.text = 'Hello';
 ```
@@ -89,7 +94,7 @@ Possible export values are:
         
 ### Path declaration
  
-This third syntax allow to easily export a child component's property.
+This third syntax allows to easily export a child component's property.
  
  
 Within this example, my class exports as own property, the property named 'text' of its child 'textField'.
@@ -111,7 +116,7 @@ This declaration is similar to:
       },
      
       get : function () {
-       return this.textField.text;
+        return this.textField.text;
       }
     }
   },
@@ -149,7 +154,6 @@ HTML
 <!DOCTYPE html>
 <html id="_myApp_">
   <head>
-
     <link rel="stylesheet" type="text/css" href="lib/css/vs_ui.css">
     <link rel="stylesheet" type="text/css" href="lib/css/vs_ui_ios.css">
     <link rel="stylesheet" type="text/css" href="css/myApp.css">
@@ -169,6 +173,14 @@ HTML
 </html>
 ```
 ## Memory management
+
+XXX
+
+## DataFlow
+
+XXX
+
+## Template
 
 XXX
 
