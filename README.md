@@ -9,8 +9,10 @@ The main features are:
 
 * Objects oriented toolkit
 * Framework driven by a component approach
-* Small memory footprint and memory deallocation
-* Performance
+* Works on mobile devices
+  
+  * Small memory footprint and memory deallocation
+  * Performance (JS and Rendering)
 
 The IDE [ViniSketch Designer (VSD)](http://www.vinisketch.fr/mainSite/en/product.html) is based on this toolkit for creating application.
 
