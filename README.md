@@ -3,8 +3,17 @@
 Copyright © 2009 - 2012 [ViniSketch SARL](http://www.vinisketch.com/)
 
 
-## Usage
+## Introduction
 
+This toolkit was created to easily develop Hybrid applications for mobile devices (on top of [PhoneGap](http://www.phonegap.com)
+The main features are:
+
+* Object oriented toolkit
+* Framework driven by a Component Approach
+* small memory footprint and memory deallocation
+* performance
+
+The IDE [ViniSketch designer (VSD)](http://www.vinisketch.fr/mainSite/en/product.html) uses this toolkit for creating application.
 
 ## Create a class
 
@@ -91,7 +100,7 @@ Within this example, my class exports as own property, the property named 'text'
 …
 ```
 
-This declaration is similar to declare:
+This declaration is similar to:
 
 ```
 …
@@ -159,10 +168,13 @@ HTML
   </body>
 </html>
 ```
+## Memory management
+
+XXX
 
 ## Examples
 
-You can run live example at this address: [vinisketch.com/toolkit](http://www.vinisketch.com/toolkit)
+You can run live examples at this address: [vinisketch.com/toolkit](http://www.vinisketch.com/toolkit)
 
 Code examples are available [here](https://github.com/vinisketch/VSToolkit/tree/master/examples). 
 
