@@ -53,13 +53,13 @@ all :: release
 Debug :: debug
 Release :: release
 
-release :: clean makedirs util core ui fx data ext av doc
+release :: clean makedirs util core ui fx data ext av ext_fx doc
 	-$(CP) ../lib_debug/css/*.png ../lib/css/
 	-$(CP) ../lib_debug/css/*.ttf ../lib/css/
 	-$(MKPATH) ../lib/css/toolbar_icons
 	-$(CP) ../lib_debug/css/toolbar_icons/*.png ../lib/css/toolbar_icons/
 
-debug :: clean_debug makedirs util_debug core_debug ui_debug fx_debug data_debug ext_debug av_debug doc
+debug :: clean_debug makedirs util_debug core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug doc
 
 clean :: clean_debug_libs clean_libs clean_docs
 clean_debug :: clean_debug_libs clean_docs
@@ -399,3 +399,14 @@ copy_ext_ui_html: ext/ui/GMap/GMap.html
 
 copy_ext_ui_img:
 	$(CP) ext/ui/GMap/ios_marker.png ../lib_debug/css 
+
+ext_fx: ext_fx_debug
+	-$(COMPILE) --js=../lib_debug/js/vs_ext_fx.js --js_output_file=../lib/js/vs_ext_fx.js
+	
+ext_fx_debug: ../lib_debug/js/vs_ext_fx.js
+
+../lib_debug/js/vs_ext_fx.js: ext/Ext.js ext/fx/Animation.js
+	$(CAT) Header.js >> $@
+	$(CAT) ext/Ext.js >> $@
+	$(CAT) ext/fx/Animation.js >> $@
+	$(CAT) Footer.js >> $@
