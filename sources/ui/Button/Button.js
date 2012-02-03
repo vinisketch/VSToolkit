@@ -354,7 +354,6 @@ Button.prototype = {
         }, View.UNSELECT_DELAY);        
   
         this.propagate ('select');
-        console.log ('Button .propagate');
         
         return false;
       break;
