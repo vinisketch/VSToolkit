@@ -80,7 +80,7 @@ VSObject.prototype =
    */
   init : function ()
   {
-    if (this.__i__) { return; }
+    if (this.__i__) { return this; }
 
     if (!this._id)
     {
