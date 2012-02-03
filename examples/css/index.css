@@ -33,7 +33,7 @@ section h2 {
   margin: 0;
   padding: 0;
   border-bottom: solid #BBB 2px;
-  display: inline;
+  display: inline-block;
   height: 25px;
 }
 
@@ -133,4 +133,9 @@ section p a:before {
 }
 .button_doc:active {
   background: #B13027;
+}
+
+@media (max-width:500px)
+{
+  .button_doc { display:none; }
 }
