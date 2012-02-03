@@ -610,9 +610,13 @@ View.prototype = {
    */
   init : function ()
   {
+    if (this.__i__) { return this; }
+
     core.Object.prototype.init.call (this);
     
     this.initSkin ();
+    
+    return this;
   },
   
   /**
@@ -2763,7 +2767,7 @@ Application.prototype = {
     this.html = this.view;
     this.html._comp_ = undefined;
     
-    this.view = this.body = this._holes.children;
+    this.view = this.body = this.html.querySelector ('body');
     if (!this.view)
     {
       console.error ("Invalid Application view");
@@ -6454,7 +6458,6 @@ Button.prototype = {
         }, View.UNSELECT_DELAY);        
   
         this.propagate ('select');
-        console.log ('Button .propagate');
         
         return false;
       break;
