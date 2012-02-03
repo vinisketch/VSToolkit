@@ -93,7 +93,7 @@ Application.prototype = {
     this.html = this.view;
     this.html._comp_ = undefined;
     
-    this.view = this.body = this._holes.children;
+    this.view = this.body = this.html.querySelector ('body');
     if (!this.view)
     {
       console.error ("Invalid Application view");
