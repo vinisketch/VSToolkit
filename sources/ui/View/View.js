@@ -556,9 +556,13 @@ View.prototype = {
    */
   init : function ()
   {
+    if (this.__i__) { return this; }
+
     core.Object.prototype.init.call (this);
     
     this.initSkin ();
+    
+    return this;
   },
   
   /**
