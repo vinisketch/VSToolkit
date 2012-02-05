@@ -1,80 +1,408 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <meta charset='utf-8'>
+  <head>
+    <meta charset='utf-8'>
+    <title>VSToolkit @ GitHub</title>
+    <script type="text/javascript" src="js/highlight.pack.js"></script> 
+    <link rel="stylesheet" rev="stylesheet" href="css/index.css" media="screen" />
+    <link rel="stylesheet" href="css/zenburn.css">
+  </head>
+  <body>
+    <header>
+      <h1><a href="http://www.vinisketch.com/">ViniSketch</a></h1>
+      <div class="inner">
+        <nav>
+          <ul>
+            <li>
+              <a href="#object_model" class="link-active">Object Model</a>
+            </li>
+            <li>
+              <a href="#first_app" class="">First Application</a>
+            </li>
+            <li>
+              <a href="#examples" class="">Examples</a>
+            </li>
+            <li>
+              <a href="#dataflow" class="">DataFlow</a>
+            </li>
+            <li>
+              <a href="#template_mvc" class="">Template / MVC</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+    <article>
+      <section id="intro">
+        <h2>VS Toolkit, the mobile HTML5 toolkit used with VSD.</h2>
+        <p>
+          This toolkit was created to easily develop Hybrid Applications for mobile devices (for instance on top of 
+        <a href="http://www.phonegap.com">PhoneGap</a>) 
+        </p>
+        <p>
+          The main features are: 
+        </p>
+        <ul>
+          <li>Objects oriented toolkit</li>
+          <li>Framework driven by a component approach</li>
+          <li>Works on mobile devices
+            <ul>
+              <li>Small memory footprint and memory deallocation</li>
+              <li>Performance (JS and Rendering)</li>
+            </ul>
+          </li>
+        </ul>
+        <p>
+          The IDE 
+        <a href="http://www.vinisketch.fr/mainSite/en/product.html">
+          ViniSketch Designer (VSD)
+        </a>
+        is based on this toolkit for creating application. 
+        </p>
+        <p>
+        <h3>Authors</h3> David Thevenin
+        <h3>Contact</h3> contact_@_vinisketch_._fr
+        <h3>Download</h3>
 
-  <title>vinisketch/VSToolkit @ GitHub</title>
+      <p>
+        You can download this project in either
+        <a href="https://github.com/vinisketch/VSToolkit/zipball/master">zip</a> or
+        <a href="https://github.com/vinisketch/VSToolkit/tarball/master">tar </a> formats.
+      </p>
+      You can also clone the project with <a href="http://git-scm.com">Git</a>
+      by running:<br><br>
 
-  <style type="text/css">
-    body {
-      margin-top: 1.0em;
-      background-image: url("css/background.png");
-      font-family: Helvetica, Arial, FreeSans, san-serif;
-      color: #000000;
-    }
-    #container {
-      margin: 0 auto;
-      width: 700px;
-    }
-    h1 { font-size: 3.8em; color: #333; margin-bottom: 3px; }
-    h1 .small { font-size: 0.4em; }
-    h1 a { text-decoration: none }
-    h2 { font-size: 1.5em; color: #4762b8; }
-    h3 { text-align: center; color: #4762b8; }
-    h1 a { color: #333; }
-    a { color: #4762b8; }
-    .description { font-size: 1.2em; margin-bottom: 30px; margin-top: 30px; font-style: italic;}
-    .download { float: right; }
-    pre { background: #000; color: #fff; padding: 15px;}
-    hr { border: 0; width: 80%; border-bottom: 1px solid #aaa}
-    .footer { text-align:center; padding-top:30px; font-style: italic; }
-  </style>
-</head>
+      <pre><code>$ git clone git://github.com/vinisketch/VSToolkit</code></pre>
+      </p>
+      <p>
+        get the source code on GitHub : <a href="https://github.com/vinisketch/VSToolkit">vinisketch/VSToolkit</a>
+      </p>
+      </section>
+      <section id="object_model">
+        <h2>
+          Object Model 
+        </h2>
+        <h3>
+          Create a class 
+        </h3>
+<pre><code class="javascript">var myClass = vs.core.createClass ({
 
-<body>
-  <a href="https://github.com/vinisketch/VSToolkit"><img style="position: absolute; top: 0; right: 0; border: 0;" src="http://s3.amazonaws.com/github/ribbons/forkme_right_darkblue_121621.png" alt="Fork me on GitHub" /></a>
+	// parent class
+	parent: vs.ui.View,
 
-  <div id="container">
+	// properties declaration
+	properties : {text: vs.core.Object.PROPERTY_IN_OUT},
 
-    <div class="download">
-      <a href="https://github.com/vinisketch/VSToolkit/zipball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/zip.png"></a>
-      <a href="https://github.com/vinisketch/VSToolkit/tarball/master">
-        <img border="0" width="90" src="https://github.com/images/modules/download/tar.png"></a>
-    </div>
+	// prototype declaration
+	aMethod : function (p1, p2, …)
+	{
+		this._super (p1, p2, …);
+		…
+	}, 
+	…
+});
+</code></pre> 
+        <h3>
+          Create an object from a class 
+        </h3>
+<pre><code>var config = {
+	id: 'xxx',
+	text: ''
+}
 
-    <h1><a href="https://github.com/vinisketch/VSToolkit">VSToolkit</a>
-      <span class="small">by <a href="https://github.com/vinisketch">vinisketch</a></span></h1>
+// Object construction
+var obj = new myClass (config);
 
-    <div class="description">
-      
-    </div>
+// Object initialization
+obj.init ();
 
-      <h2>Authors</h2>
-      <p>David Thevenin</p>
-    
+// property manipulation
+obj.text = 'Hello';
+</code></pre> 
+        <h3>Properties </h3>
+        <h4>Basic declaration </h4>
+<pre>
+  <code>properties : {propName: vs.core.Object.PROPERTY_IN_OUT},</code>
+</pre> 
+        <p>
+          Possible export values are: 
+        </p>
+        <ul>
+          <li>vs.core.Object.PROPERTY_IN_OUT</li>
+          <li>vs.core.Object.PROPERTY_IN</li>
+          <li>vs.core.Object.PROPERTY_OUT</li>
+        </ul>
+        <h4>Descriptor declaration </h4>
+<pre><code class="javascript">properties : {
+	propName: {
+		set : function (v) {
+			…
+			this._prop_name = v;
+		},
 
-    
-      <h2>Contact</h2>
-      <p>ViniSketch (contact_@_vinisketch_._fr)</p>
-    
+		get : function () {
+			…
+			return this._prop_name
+		}
+	}
+},
+</code></pre> 
+        <h4>Path declaration </h4>
+        <p>
+          This third syntax allows to easily export a child component's property. 
+        </p>
+        <p>
+          Within this example, my class exports as own property, the property named 'text' of its child 'textField'. 
+        </p>
+<pre>
+<code class="javascript">properties : {text: "textField#text"}</code>
+</pre> 
+        <p>
+          This declaration is similar to: 
+        </p>
+<pre><code class="javascript">properties : {
+	text: {
+		set : function (v) {
+			this.textField.text = v;
+		},
 
-    <h2>Download</h2>
-    <p>
-      You can download this project in either
-      <a href="https://github.com/vinisketch/VSToolkit/zipball/master">zip</a> or
-      <a href="https://github.com/vinisketch/VSToolkit/tarball/master">tar formats.
-    </p>
-    <p>You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:
-      <pre>$ git clone git://github.com/vinisketch/VSToolkit</pre>
-    </p>
+		get : function () {
+			return this.textField.text;
+		}
+	}
+},
+</code></pre> 
+      </section>
+      <section id="first_app">
+        <h2>
+          Create your first application 
+        </h2>
+        <p>
+          JavaScript bootstrap 
+        </p>
+<pre><code class="javascript">var myApp = vs.core.createClass ({
 
-    <div class="footer">
-      get the source code on GitHub : <a href="https://github.com/vinisketch/VSToolkit">vinisketch/VSToolkit</a>
-    </div>
+	/** parent class */
+	parent: vs.ui.Application,
 
-  </div>
+	/** called when vs.ui.Application.start (); is called */
+	applicationStarted : function (event)
+	{
+		…
+	}
+});
 
-</body>
+function loadApplication ()
+{
+	new myApp ({id:"_myApp_"}).init ();
+
+	vs.ui.Application.start ();
+}
+</code></pre> 
+        <p>
+          HTML 
+        </p>
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html id="_myApp_"&gt;
+	&lt;head&gt;
+		&lt;link rel="stylesheet" type="text/css" href="lib/css/vs_ui.css"&gt;
+		&lt;link rel="stylesheet" type="text/css" href="lib/css/vs_ui_ios.css"&gt;
+		&lt;link rel="stylesheet" type="text/css" href="css/myApp.css"&gt;
+
+		&lt;script type="text/javascript" src="lib/js/vs_util.js"&gt;&lt;/script&gt;
+		&lt;script type="text/javascript" src="lib/js/vs_core.js"&gt;&lt;/script&gt;
+		&lt;script type="text/javascript" src="lib/js/vs_data.js"&gt;&lt;/script&gt;
+		&lt;script type="text/javascript" src="lib/js/vs_ui.js"&gt;&lt;/script&gt;
+		&lt;script type="text/javascript" src="lib/js/vs_fx.js"&gt;&lt;/script&gt;
+		&lt;script type="text/javascript" src="lib/js/vs_ext.js"&gt;&lt;/script&gt;
+		&lt;script type="text/javascript" src="lib/js/vs_ext_fx.js"&gt;&lt;/script&gt;
+		&lt;script type="text/javascript" src="js/myApp.js"&gt;&lt;/script&gt;
+
+	&lt;/head&gt;
+	&lt;body class="application" x-hag-hole="children" onload="loadApplication ()"&gt;
+	&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+        <h3>
+          Memory management 
+        </h3>
+        <p>
+          XXX 
+        </p>
+        <h3>
+          DataFlow 
+        </h3>
+        <p>
+          XXX 
+        </p>
+        </section>
+        <section id="examples">
+          <h2>
+            Examples 
+          </h2>
+          <ul class="examples">
+            <li>
+              <span>HelloWorld</span>
+              <p>
+                HelloWorld
+                <br />
+                <i>Animations.</i>
+                <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/HelloWorld/index.html">Playground</a>
+              <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/HelloWorld/helloworld.html">
+                Fullscreen version (for mobile)
+              </a>
+              </p>
+            </li>
+            <li>
+              <span>
+                Animation
+              </span>
+              <p>
+                With this example, you learn about VS Animations, the API and configuration parameters. 
+                <br />
+                <i>Animations.</i>
+                <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/Animations/index.html">
+                Playground</a>
+              <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/Animations/animations.html">
+                Fullscreen version (for mobile)
+              </a>
+              </p>
+            </li>
+            <li>
+              <span>vs.ext.fx
+                <br />Animation
+              </span>
+              <p>
+                This example show a set of useful animations you can use for animating your application components. 
+                <br />
+                <i>Animations.</i>
+                <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/ExtAnimations/index.html">Playground</a>
+              <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/ExtAnimations/animations.html">
+                Fullscreen version (for mobile)
+              </a>
+              </p>
+            </li>
+            <li>
+              <span>
+                Widgets
+              </span>
+              <p>
+                This demo presents widgets the toolkit provide. (still under dev…) 
+                <br />
+                <i>
+                  Widgets.
+                </i>
+                <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/Widgets/index.html">
+                Playground</a>
+              <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/Widgets/widgets.html">
+                Fullscreen version (for mobile)
+              </a>
+              </p>
+            </li>
+            <li>
+              <span>
+                Todos
+              </span>
+              <p>
+                This demo presents a simple Todos application. 
+                <br />
+                <i>
+                  Model, LocalStorage, Widgets.
+                </i>
+                <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/Todos/index.html">
+                Playground</a>
+              <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/Todos/todos.html">
+                Fullscreen version (for mobile)
+              </a>
+              </p>
+            </li>
+            <li>
+              <span>
+                RSSViewer
+              </span>
+              <p>
+                THE TOOKIT IS NOT YET CROSS-DOMAIN COMPATIBLE. THE DEMO CAN DOESN'T WORK. 
+                <br />
+                This is a more sofisticate application that allows to view RSS feeds and content. 
+                <br />
+                <i>
+                  Controller, Widgets, Scrolling.
+                </i>
+                <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/RSSViewer/index.html">
+                Playground</a>
+              <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/RSSViewer/rssviewer.html">
+                Fullscreen version (for mobile)
+              </a>
+              </p>
+            </li>
+            <li>
+              <span>
+                Component
+              </span>
+              <p>
+                This simple example show how to create component 
+                <br />
+                <i>
+                  Component, Class.
+                </i>
+                <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/Component/index.html">
+                Playground</a>
+              <br />
+              <a href="http://www.vinisketch.fr/toolkit/examples/Component/component.html">
+                Fullscreen version (for mobile)
+              </a>
+              </p>
+            </li>
+          </ul>
+          <p>
+            Code examples are available 
+          <a href="https://github.com/vinisketch/VSToolkit/tree/master/examples">
+            here</a>. 
+          </p>
+        </section>
+        <section id="template_mvc">
+          <h2>
+            Template 
+          </h2>
+          <p>
+            XXX 
+          </p>
+          <h2>
+            How to handle the MVC pattern 
+          </h2>
+          <p>
+            XXX 
+          </p>
+        </section>
+        <section>
+        <h2>Warning ;-)</h2>
+        <p>
+          Keep in mind the toolkit is under development. Your are welcome to give feedback :) 
+        </p>
+        <p><br/>
+          Copyright © 2009 - 2012 <a href="http://www.vinisketch.com/">ViniSketch SARL</a>
+        </p>
+    </section>
+    </article>
+    <script type="text/javascript">
+      hljs.tabReplace = '      ';
+      hljs.initHighlightingOnLoad();
+    </script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
+    <script type="text/javascript" src="js/waypoints.min.js"></script>
+    <script type="text/javascript" src="js/index.js"></script> 
+  </body>
 </html>
