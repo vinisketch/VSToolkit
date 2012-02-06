@@ -65,12 +65,7 @@ var RSSViewer = vs.core.createClass ({
     this.backButton.bind ('select', this);
     this.feedsView.bind ('view_feed', this);
     this.feedItems.bind ('itemselect', this);
-  },
 
-  initSkin: function ()
-  {
-    this._super ();
-    
     this.feedItems.layout = vs.ui.View.VERTICAL_LAYOUT; 
   },
 
