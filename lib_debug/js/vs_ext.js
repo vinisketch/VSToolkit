@@ -1500,15 +1500,7 @@ Carousel.prototype = {
         
     this.__indicators = this.view.querySelector ('.vs_ext_ui_carousel >.indicators');
     vs.util.addClassName (this.__indicators, 'horizontal');
-  },
 
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    vs.ui.View.prototype.initSkin.call (this);
     this._slideController.init ();
   },
   

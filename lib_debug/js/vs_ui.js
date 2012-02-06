@@ -614,7 +614,17 @@ View.prototype = {
 
     core.Object.prototype.init.call (this);
     
-    this.initSkin ();
+    // legacy code for application using the initSkin mechanism
+    if (this.initSkin)
+    {
+      console.warn ("Your application shouldn't use initSkin anymore.\nYou should mix the code with initComponent.");
+      
+      // create a fake initSkin (for super call)
+      View.prototype.initSkin = function () {};
+      
+      // call the initSkin
+      this.initSkin ();
+    }
     
     return this;
   },
@@ -656,14 +666,7 @@ View.prototype = {
 
     this._parse_view (this.view);
   },
-    
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {},
-  
+      
   /**
    * Notifies that the component's view was added to the DOM.<br/>
    * You can override this method to perform additional tasks 
@@ -2755,15 +2758,7 @@ Application.prototype = {
 
     View.prototype.initComponent.call (this);
     this.preventScroll = true;
-  },
-   
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
+
     this.html = this.view;
     this.html._comp_ = undefined;
     
@@ -2790,7 +2785,7 @@ Application.prototype = {
       if (pid) { self.propagate ('deviceChanged', pid, null, true); }
     });
   },
-
+  
   /**
    * Exit and terminate the application.
    * @name vs.ui.Application#exit 
@@ -3308,17 +3303,9 @@ SplitView.prototype = {
   {
     this._split_views = new Array ();
     this._pop_over = new PopOver ();
+ 
     View.prototype.initComponent.call (this);
-  },
-
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
-
+ 
     this._pop_over.init ();
     View.prototype.add.call (this, this._pop_over);
 
@@ -4975,9 +4962,10 @@ ScrollView.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     this._sub_view = this._holes.children;
     
     this.pinch = this._pinch;
@@ -5694,20 +5682,11 @@ ScrollImageView.prototype = {
   initComponent : function ()
   {
     View.prototype.initComponent.call (this);
+
+    var self = this, size;
     this._image_data = new Image ();
-    var self = this;
     this._image_data.onload = function (e) { self._image_onload (e); };
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    var size;
     
-    View.prototype.initSkin.call (this);
     this._sub_view = this.view.querySelector ('.vs_ui_scrollimageview>img');
     
     this.pinch = this._pinch;
@@ -5969,9 +5948,10 @@ TextArea.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     if (!util.isString (this._value)) {return;}
     
     this.view.value = this._value;
@@ -6351,9 +6331,10 @@ Button.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     this.text_view = this.view.firstElementChild;
 
     if (!this.__touch_binding)
@@ -6692,16 +6673,7 @@ AbstractList.prototype = {
     this._model.init ();
     this._model_allocated = true;
     this._model.bindChange (null, this, this._modelChanged);
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
-    
+
     this._list_items = this._sub_view = this._holes.item_children;
     if (SUPPORT_3D_TRANSFORM)
       setElementTransform (this._list_items, 'translate3d(0,0,0)');
@@ -6711,7 +6683,7 @@ AbstractList.prototype = {
     this._renderData (this._items_selectable);
     this.refresh ();
   },
-  
+    
   /**
    * @protected
    * @function
@@ -7420,16 +7392,7 @@ SimpleListItem.prototype = {
     AbstractListItem.prototype.initComponent.call (this);
 
     this._label_view = document.createElement ('span');
-  },
 
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
-    
     this.title_view = this.view.querySelector ('.title');
   }
 };
@@ -7830,9 +7793,9 @@ List.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    AbstractList.prototype.initSkin.call (this);
+    AbstractList.prototype.initComponent.call (this);
     
     this.addClassName (this._type);  
     this.refresh ();
@@ -8318,9 +8281,9 @@ ComboBox.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
     
     // PG Native GUI
     if (window.device && (
@@ -9164,15 +9127,7 @@ NavigationBar.prototype = {
       this._hide_animation = new fx.Animation (['translateY', '-44px']);
     }
     this._show_animation = new fx.Animation (['translateY', '0px']);
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
+
     var os_device = window.deviceConfiguration.os;
     if (os_device == DeviceConfiguration.OS_SYMBIAN)
     {
@@ -9659,15 +9614,7 @@ ToolBar.prototype = {
 
     this._hide_animation = new fx.Animation (['translateY', '44px']);
     this._show_animation = new fx.Animation (['translateY', '0px']);
-  },
 
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
     util.setElementStyle (this.view, {
       left: '0px', top: 'auto', bottom: '0px', 
       width: '100%', height: '44px'
@@ -9920,19 +9867,9 @@ ToolBar.Item.prototype = {
   {
     View.prototype.initComponent.call (this);
 
-    var glow;
-    
-    glow = document.createElement ('div');
+    var glow = document.createElement ('div');
     this.view.appendChild (glow);
-  },
-      
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
+
     this.addClassName (this._position);
     this.view.addEventListener (core.POINTER_START, this, true);
   },
@@ -10652,15 +10589,13 @@ TextLabel.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     if (!this._text) { return; }
     
-    if (this.view)
-    {
-      util.setElementInnerText (this.view, this._text);
-    }
+    util.setElementInnerText (this.view, this._text);
   }
 };
 util.extendClass (TextLabel, View);
@@ -10810,9 +10745,10 @@ Canvas.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     this.canvas_node = this.view.firstChild;
     if (this.canvas_node)
     {
@@ -11728,9 +11664,9 @@ ProgressBar.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
     
     this.__inner_view = this.view.firstElementChild;
     this.indeterminate = this._indeterminate;
@@ -12036,16 +11972,6 @@ Slider.prototype = {
       this.__handle_width = 34;
     }
     else { this.__handle_width = 23; } // ios
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
-    if (!this.view) { return; }
     
     //1) find first Div.
     this.__handle = this.view.querySelector ('.handle');
@@ -12388,9 +12314,10 @@ ImageView.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     this.view.ondragstart = function (e) { e.preventDefault(); return false; }
 
     // init default image src with the attribute node img.src
@@ -12626,9 +12553,9 @@ InputField.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
         
     this._text_field = this.view.querySelector ('input');
     this._text_field.name = this.id
@@ -13653,15 +13580,6 @@ Switch.prototype = {
       // this method could not work if the view his not displaied
       this.__width_switch = this.__switch_view.offsetWidth;
     }
-  },
-      
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
 
     if (!this.__touch_binding)
     {
@@ -14205,15 +14123,6 @@ Picker.prototype = {
     {
       this._mode = Picker.MODE_IOS;
     }
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
     
     // Pseudo table element (inner wrapper)
     this._slots_view = this.view.querySelector ('.slots');
@@ -15498,15 +15407,7 @@ SegmentedButton.prototype = {
     View.prototype.initComponent.call (this);
     this._items = new Array ();
     this._div_list = new Array ();
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
+
     this._renderButtons ();
     this.selectedIndex = this._selected_index;
     this.type = this._type;
