@@ -136,9 +136,9 @@ ProgressBar.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
     
     this.__inner_view = this.view.firstElementChild;
     this.indeterminate = this._indeterminate;

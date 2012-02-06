@@ -179,15 +179,7 @@ SegmentedButton.prototype = {
     View.prototype.initComponent.call (this);
     this._items = new Array ();
     this._div_list = new Array ();
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
+
     this._renderButtons ();
     this.selectedIndex = this._selected_index;
     this.type = this._type;

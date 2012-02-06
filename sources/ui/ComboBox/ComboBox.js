@@ -150,9 +150,9 @@ ComboBox.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
     
     // PG Native GUI
     if (window.device && (

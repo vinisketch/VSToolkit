@@ -304,9 +304,9 @@ Video.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    ui.View.prototype.initSkin.call (this);
+    ui.View.prototype.initComponent.call (this);
     
     this.__video_node = this.view.querySelector ('video');
     if (!this.__video_node)

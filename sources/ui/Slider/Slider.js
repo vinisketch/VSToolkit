@@ -174,16 +174,6 @@ Slider.prototype = {
       this.__handle_width = 34;
     }
     else { this.__handle_width = 23; } // ios
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
-    if (!this.view) { return; }
     
     //1) find first Div.
     this.__handle = this.view.querySelector ('.handle');

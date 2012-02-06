@@ -261,16 +261,7 @@ SimpleListItem.prototype = {
     AbstractListItem.prototype.initComponent.call (this);
 
     this._label_view = document.createElement ('span');
-  },
 
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
-    
     this.title_view = this.view.querySelector ('.title');
   }
 };
@@ -671,9 +662,9 @@ List.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    AbstractList.prototype.initSkin.call (this);
+    AbstractList.prototype.initComponent.call (this);
     
     this.addClassName (this._type);  
     this.refresh ();

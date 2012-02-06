@@ -14,7 +14,7 @@
   height: 100%;
 }
 
-.vs_ui_navbar >.text
+.vs_ui_navbar >.vs_ui_textlabel
 {
   font-weight: normal;
   text-align: center;

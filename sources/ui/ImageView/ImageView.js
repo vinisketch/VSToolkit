@@ -60,9 +60,10 @@ ImageView.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     this.view.ondragstart = function (e) { e.preventDefault(); return false; }
 
     // init default image src with the attribute node img.src

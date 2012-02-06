@@ -247,9 +247,10 @@ Button.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     this.text_view = this.view.firstElementChild;
 
     if (!this.__touch_binding)

@@ -55,15 +55,13 @@ TextLabel.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     if (!this._text) { return; }
     
-    if (this.view)
-    {
-      util.setElementInnerText (this.view, this._text);
-    }
+    util.setElementInnerText (this.view, this._text);
   }
 };
 util.extendClass (TextLabel, View);

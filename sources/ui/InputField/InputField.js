@@ -140,9 +140,9 @@ InputField.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
         
     this._text_field = this.view.querySelector ('input');
     this._text_field.name = this.id

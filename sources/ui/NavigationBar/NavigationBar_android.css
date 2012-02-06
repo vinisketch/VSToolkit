@@ -2,7 +2,7 @@
   height: 45px;
 }
 
-.vs_ui_navbar >.text  {
+.vs_ui_navbar >.vs_ui_textlabel  {
   font-family:  droid;
   text-shadow:  none;
   color: rgb(255, 255, 255);

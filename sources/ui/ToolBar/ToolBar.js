@@ -165,15 +165,7 @@ ToolBar.prototype = {
 
     this._hide_animation = new fx.Animation (['translateY', '44px']);
     this._show_animation = new fx.Animation (['translateY', '0px']);
-  },
 
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
     util.setElementStyle (this.view, {
       left: '0px', top: 'auto', bottom: '0px', 
       width: '100%', height: '44px'
@@ -426,19 +418,9 @@ ToolBar.Item.prototype = {
   {
     View.prototype.initComponent.call (this);
 
-    var glow;
-    
-    glow = document.createElement ('div');
+    var glow = document.createElement ('div');
     this.view.appendChild (glow);
-  },
-      
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
+
     this.addClassName (this._position);
     this.view.addEventListener (core.POINTER_START, this, true);
   },

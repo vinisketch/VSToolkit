@@ -98,9 +98,10 @@ Canvas.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     this.canvas_node = this.view.firstChild;
     if (this.canvas_node)
     {

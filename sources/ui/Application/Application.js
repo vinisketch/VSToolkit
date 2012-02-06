@@ -81,15 +81,7 @@ Application.prototype = {
 
     View.prototype.initComponent.call (this);
     this.preventScroll = true;
-  },
-   
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
+
     this.html = this.view;
     this.html._comp_ = undefined;
     
@@ -116,7 +108,7 @@ Application.prototype = {
       if (pid) { self.propagate ('deviceChanged', pid, null, true); }
     });
   },
-
+  
   /**
    * Exit and terminate the application.
    * @name vs.ui.Application#exit 

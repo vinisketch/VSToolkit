@@ -123,16 +123,7 @@ AbstractList.prototype = {
     this._model.init ();
     this._model_allocated = true;
     this._model.bindChange (null, this, this._modelChanged);
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
-    
+
     this._list_items = this._sub_view = this._holes.item_children;
     if (SUPPORT_3D_TRANSFORM)
       setElementTransform (this._list_items, 'translate3d(0,0,0)');
@@ -142,7 +133,7 @@ AbstractList.prototype = {
     this._renderData (this._items_selectable);
     this.refresh ();
   },
-  
+    
   /**
    * @protected
    * @function

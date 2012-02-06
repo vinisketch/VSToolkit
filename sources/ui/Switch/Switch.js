@@ -299,15 +299,6 @@ Switch.prototype = {
       // this method could not work if the view his not displaied
       this.__width_switch = this.__switch_view.offsetWidth;
     }
-  },
-      
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
 
     if (!this.__touch_binding)
     {

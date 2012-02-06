@@ -74,9 +74,10 @@ TextArea.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     if (!util.isString (this._value)) {return;}
     
     this.view.value = this._value;

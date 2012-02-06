@@ -201,20 +201,11 @@ ScrollImageView.prototype = {
   initComponent : function ()
   {
     View.prototype.initComponent.call (this);
+
+    var self = this, size;
     this._image_data = new Image ();
-    var self = this;
     this._image_data.onload = function (e) { self._image_onload (e); };
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    var size;
     
-    View.prototype.initSkin.call (this);
     this._sub_view = this.view.querySelector ('.vs_ui_scrollimageview>img');
     
     this.pinch = this._pinch;

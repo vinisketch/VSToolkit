@@ -129,17 +129,9 @@ SplitView.prototype = {
   {
     this._split_views = new Array ();
     this._pop_over = new PopOver ();
+ 
     View.prototype.initComponent.call (this);
-  },
-
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
-
+ 
     this._pop_over.init ();
     View.prototype.add.call (this, this._pop_over);
 

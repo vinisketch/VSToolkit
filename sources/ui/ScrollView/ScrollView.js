@@ -355,9 +355,10 @@ ScrollView.prototype = {
    * @protected
    * @function
    */
-  initSkin : function ()
+  initComponent : function ()
   {
-    View.prototype.initSkin.call (this);
+    View.prototype.initComponent.call (this);
+    
     this._sub_view = this._holes.children;
     
     this.pinch = this._pinch;

@@ -560,7 +560,17 @@ View.prototype = {
 
     core.Object.prototype.init.call (this);
     
-    this.initSkin ();
+    // legacy code for application using the initSkin mechanism
+    if (this.initSkin)
+    {
+      console.warn ("Your application shouldn't use initSkin anymore.\nYou should mix the code with initComponent.");
+      
+      // create a fake initSkin (for super call)
+      View.prototype.initSkin = function () {};
+      
+      // call the initSkin
+      this.initSkin ();
+    }
     
     return this;
   },
@@ -602,14 +612,7 @@ View.prototype = {
 
     this._parse_view (this.view);
   },
-    
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {},
-  
+      
   /**
    * Notifies that the component's view was added to the DOM.<br/>
    * You can override this method to perform additional tasks 

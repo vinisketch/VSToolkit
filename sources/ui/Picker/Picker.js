@@ -235,15 +235,6 @@ Picker.prototype = {
     {
       this._mode = Picker.MODE_IOS;
     }
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initSkin : function ()
-  {
-    View.prototype.initSkin.call (this);
     
     // Pseudo table element (inner wrapper)
     this._slots_view = this.view.querySelector ('.slots');
