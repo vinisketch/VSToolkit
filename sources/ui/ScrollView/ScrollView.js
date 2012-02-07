@@ -359,7 +359,8 @@ ScrollView.prototype = {
   {
     View.prototype.initComponent.call (this);
     
-    this._sub_view = this._holes.children;
+    this._sub_view =
+      this.view.querySelector ('.vs_ui_scrollimageview .content');
     
     this.pinch = this._pinch;
     this.scroll = this._scroll;
@@ -787,6 +788,9 @@ util.defineClassProperties (ScrollView, {
         v !== ScrollView.SCALE  && v !== ScrollView.ROTATION_AND_SCALE)
     { return; }
     
+    this._pinch = v;
+    if (!this.view) { return; }
+
     if (v === ScrollView.NO_PINCH && this._pinch !== ScrollView.NO_PINCH)
     {
       this.view.removeEventListener ('gesturestart', this);
@@ -796,7 +800,6 @@ util.defineClassProperties (ScrollView, {
       this.view.addEventListener ('gesturestart', this);
       this.view.addEventListener ('touchstart', this);
     }
-    this._pinch = v;
   }
 },
 'animationDuration': {

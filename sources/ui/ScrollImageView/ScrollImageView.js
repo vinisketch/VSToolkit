@@ -166,7 +166,7 @@ ScrollImageView.prototype = {
    */
   refresh : function ()
   {
-    if (this._scroll) { this._scroll_refresh (this._pinch); }
+    if (this.__scroll_activated) { this._scroll_refresh (this._pinch); }
   },
 
   /**
@@ -200,13 +200,11 @@ ScrollImageView.prototype = {
    */
   initComponent : function ()
   {
-    View.prototype.initComponent.call (this);
+    ScrollView.prototype.initComponent.call (this);
 
     var self = this, size;
     this._image_data = new Image ();
     this._image_data.onload = function (e) { self._image_onload (e); };
-    
-    this._sub_view = this.view.querySelector ('.vs_ui_scrollimageview>img');
     
     this.pinch = this._pinch;
     this.pan = this._pan;
