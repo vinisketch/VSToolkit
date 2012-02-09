@@ -854,15 +854,20 @@ Animation.prototype = {
   clone: function ()
   {
     var anim = new Animation (), key, data;
+    anim.keyFrames = {};
+    anim.keyFrames ['100%'] = anim;
 
     if (this.properties)
     { anim.properties = this.properties.slice (); }
+    else { anim.properties = []; }
     if (this.values)
     { anim.values = this.values.slice (); }
+    else { anim.values = []; }
     if (this.durations)
     { anim.durations = this.durations; }
     if (this.timings)
     { anim.timings = this.timings.slice (); }
+    else { anim.timings = []; }
     if (this.origin)
     { anim.origin = this.origin.slice (); }
     if (this.keyFrames)
@@ -2844,6 +2849,7 @@ util.defineClassProperties (StackController, {
       if (v)
       {
         this._is_tactile = true;
+        if (!this._owner || !this._owner.view) return;
   
         if (!this._owner_handler_event_extended)
         {
@@ -2856,6 +2862,7 @@ util.defineClassProperties (StackController, {
       else
       {
         this._is_tactile = false;
+        if (!this._owner || !this._owner.view) return;
         
         if (this._owner_handler_event_extended)
         {

@@ -1493,14 +1493,14 @@ Carousel.prototype = {
   initComponent : function ()
   {
     vs.ui.View.prototype.initComponent.call (this);
+        
+    this.__indicators =
+      this.view.querySelector ('.vs_ext_ui_carousel >.indicators');
+    vs.util.addClassName (this.__indicators, 'horizontal');
 
     this._slideController = new vs.fx.SlideController (this);
     this._slideController.delegate = this;
     this._slideController.isTactile = true;
-        
-    this.__indicators = this.view.querySelector ('.vs_ext_ui_carousel >.indicators');
-    vs.util.addClassName (this.__indicators, 'horizontal');
-
     this._slideController.init ();
   },
   

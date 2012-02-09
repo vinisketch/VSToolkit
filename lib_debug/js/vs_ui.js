@@ -593,42 +593,7 @@ View.prototype = {
       document.querySelector (".application_templates ." + ref);
     if (node) { return document.importNode (node, true); }
   },
-    
-  /**
-   *  Init the GUI object.
-   *  <p>
-   *  This method should be implemented by all object inheriting from a
-   *  vs.ui.View class. See the programer's guide for more information.
-   *
-   * @name vs.ui.View#init 
-   * @function
-   *
-   *  @example
-   *  var myObject = new vs.ui.View (config);
-   *  myObject.init ();
-   *  // now myObject is active
-   */
-  init : function ()
-  {
-    if (this.__i__) { return this; }
 
-    core.Object.prototype.init.call (this);
-    
-    // legacy code for application using the initSkin mechanism
-    if (this.initSkin)
-    {
-      console.warn ("Your application shouldn't use initSkin anymore.\nYou should mix the code with initComponent.");
-      
-      // create a fake initSkin (for super call)
-      View.prototype.initSkin = function () {};
-      
-      // call the initSkin
-      this.initSkin ();
-    }
-    
-    return this;
-  },
-  
   /**
    * @protected
    * @function
@@ -4966,7 +4931,8 @@ ScrollView.prototype = {
   {
     View.prototype.initComponent.call (this);
     
-    this._sub_view = this._holes.children;
+    this._sub_view =
+      this.view.querySelector ('.vs_ui_scrollimageview .content');
     
     this.pinch = this._pinch;
     this.scroll = this._scroll;
@@ -5394,6 +5360,9 @@ util.defineClassProperties (ScrollView, {
         v !== ScrollView.SCALE  && v !== ScrollView.ROTATION_AND_SCALE)
     { return; }
     
+    this._pinch = v;
+    if (!this.view) { return; }
+
     if (v === ScrollView.NO_PINCH && this._pinch !== ScrollView.NO_PINCH)
     {
       this.view.removeEventListener ('gesturestart', this);
@@ -5403,7 +5372,6 @@ util.defineClassProperties (ScrollView, {
       this.view.addEventListener ('gesturestart', this);
       this.view.addEventListener ('touchstart', this);
     }
-    this._pinch = v;
   }
 },
 'animationDuration': {
@@ -5647,7 +5615,7 @@ ScrollImageView.prototype = {
    */
   refresh : function ()
   {
-    if (this._scroll) { this._scroll_refresh (this._pinch); }
+    if (this.__scroll_activated) { this._scroll_refresh (this._pinch); }
   },
 
   /**
@@ -5681,13 +5649,11 @@ ScrollImageView.prototype = {
    */
   initComponent : function ()
   {
-    View.prototype.initComponent.call (this);
+    ScrollView.prototype.initComponent.call (this);
 
     var self = this, size;
     this._image_data = new Image ();
     this._image_data.onload = function (e) { self._image_onload (e); };
-    
-    this._sub_view = this.view.querySelector ('.vs_ui_scrollimageview>img');
     
     this.pinch = this._pinch;
     this.pan = this._pan;
@@ -6970,8 +6936,8 @@ AbstractList.prototype = {
     if (!el) { return; }
     var pos;
     
-    var pos_el = _toAbsolute (el);
-    var pos_list = _toAbsolute (this.view);
+    var pos_el = util.getElementAbsolutePosition (el);
+    var pos_list = util.getElementAbsolutePosition (this.view);
     this.__max_scroll = this.size [1] - this._list_items.offsetHeight;
     
     if (!delta) { delta = 0; }
@@ -13087,7 +13053,7 @@ PopOver.prototype = {
         break;
       }
       
-      pos = _toAbsolute (this.view.parentElement);
+      pos = util.getElementAbsolutePosition (this.view.parentElement);
       if (pos)
       {
         this.position = [envlop.x - pos.x, envlop.y - pos.y];
@@ -15567,13 +15533,13 @@ SplitView.prototype.html_template = "\
 ScrollView.prototype.html_template = "\
 <div class='vs_ui_scrollview'>\
   <div x-hag-hole='top_bar'></div>\
-  <div x-hag-hole='children'></div>\
+  <div class='content' x-hag-hole='children'></div>\
   <div x-hag-hole='bottom_bar'></div>\
 </div>\
 ";
 
 ScrollImageView.prototype.html_template = "\
-<div class='vs_ui_scrollimageview'><img/></div>\
+<div class='vs_ui_scrollimageview'><img class='content'/></div>\
 ";
 
 TextArea.prototype.html_template = "\
