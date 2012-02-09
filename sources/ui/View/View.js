@@ -539,42 +539,7 @@ View.prototype = {
       document.querySelector (".application_templates ." + ref);
     if (node) { return document.importNode (node, true); }
   },
-    
-  /**
-   *  Init the GUI object.
-   *  <p>
-   *  This method should be implemented by all object inheriting from a
-   *  vs.ui.View class. See the programer's guide for more information.
-   *
-   * @name vs.ui.View#init 
-   * @function
-   *
-   *  @example
-   *  var myObject = new vs.ui.View (config);
-   *  myObject.init ();
-   *  // now myObject is active
-   */
-  init : function ()
-  {
-    if (this.__i__) { return this; }
 
-    core.Object.prototype.init.call (this);
-    
-    // legacy code for application using the initSkin mechanism
-    if (this.initSkin)
-    {
-      console.warn ("Your application shouldn't use initSkin anymore.\nYou should mix the code with initComponent.");
-      
-      // create a fake initSkin (for super call)
-      View.prototype.initSkin = function () {};
-      
-      // call the initSkin
-      this.initSkin ();
-    }
-    
-    return this;
-  },
-  
   /**
    * @protected
    * @function
