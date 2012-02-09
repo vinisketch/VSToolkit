@@ -255,7 +255,7 @@ PopOver.prototype = {
         break;
       }
       
-      pos = _toAbsolute (this.view.parentElement);
+      pos = util.getElementAbsolutePosition (this.view.parentElement);
       if (pos)
       {
         this.position = [envlop.x - pos.x, envlop.y - pos.y];

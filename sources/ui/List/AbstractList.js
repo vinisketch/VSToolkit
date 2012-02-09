@@ -420,8 +420,8 @@ AbstractList.prototype = {
     if (!el) { return; }
     var pos;
     
-    var pos_el = _toAbsolute (el);
-    var pos_list = _toAbsolute (this.view);
+    var pos_el = util.getElementAbsolutePosition (el);
+    var pos_list = util.getElementAbsolutePosition (this.view);
     this.__max_scroll = this.size [1] - this._list_items.offsetHeight;
     
     if (!delta) { delta = 0; }
