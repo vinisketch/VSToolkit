@@ -502,6 +502,7 @@ util.defineClassProperties (StackController, {
       if (v)
       {
         this._is_tactile = true;
+        if (!this._owner || !this._owner.view) return;
   
         if (!this._owner_handler_event_extended)
         {
@@ -514,6 +515,7 @@ util.defineClassProperties (StackController, {
       else
       {
         this._is_tactile = false;
+        if (!this._owner || !this._owner.view) return;
         
         if (this._owner_handler_event_extended)
         {
