@@ -359,8 +359,7 @@ ScrollView.prototype = {
   {
     View.prototype.initComponent.call (this);
     
-    this._sub_view =
-      this.view.querySelector ('.vs_ui_scrollimageview .content');
+    this._sub_view = this.view.querySelector ('.content');
     
     this.pinch = this._pinch;
     this.scroll = this._scroll;
