@@ -556,16 +556,24 @@ input[type="checkbox"]:checked:after
 
 .vs_ui_picker .slots {
   top: 20px;
-  height: 44px;
+  height: 124px;
 }
 
-.vs_ui_picker .slots div {
-  height: 40px;
+.vs_ui_picker .slots > div {
+  height: 124px;
   padding-top:0px;
   border-left:10px solid transparent;
   background:transparent;
 }
 
+.vs_ui_picker .slots > div > div {
+  height: 40px;
+  overflow:hidden;
+}
+
+.vs_ui_picker .slots > div > div:nth-child(2) {
+  height: 44px;
+}
 .vs_ui_picker ul {
   padding:0;
 }
@@ -588,27 +596,14 @@ input[type="checkbox"]:checked:after
   display:none;
 }
 
-.vs_ui_picker .buttons_incr,
-.vs_ui_picker .buttons_decr {
+.vs_ui_picker .button_incr,
+.vs_ui_picker .button_decr {
   position:relative; z-index:999;
-  top: 20px;
-  height: 40px;
   padding:0 11px;
-  overflow:hidden;
 
-  display: -webkit-box;
-  -webkit-box-orient: horizontal;
   width:100%;
   background:transparent;
-}
 
-.vs_ui_picker .buttons_incr div,
-.vs_ui_picker .buttons_decr div{
-  height: 40px;
-  padding-top:0px;
-  border: none;
-  margin-left: 10px;
-  
   color: #424142;
 
   text-shadow: white 0px 1px 0px;
@@ -618,13 +613,10 @@ input[type="checkbox"]:checked:after
   text-align: center;
 }
 
-.vs_ui_picker .buttons_incr div.readonly,
-.vs_ui_picker .buttons_decr div.readonly {
+.vs_ui_picker .button_incr.readonly,
+.vs_ui_picker .button_decr.readonly {
   background-image: none;
   margin-left: 0px;
-}
-
-.vs_ui_picker .slots div.readonly {
   background: transparent;
   border-left-width: 0px;
 }
@@ -637,20 +629,20 @@ input[type="checkbox"]:checked:after
   padding-right: 0px;
 }
 
-.vs_ui_picker .buttons_incr div {
+.vs_ui_picker .button_incr {
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
   -webkit-border-top-left-radius : 8px;
   -webkit-border-top-right-radius : 8px;
 }
 
-.vs_ui_picker .buttons_decr div {
+.vs_ui_picker .button_decr {
   background-image: -webkit-gradient(linear, 100% 100%, 100% 0%, from(#F4F4F4), to(#C4C4C4));
   -webkit-border-bottom-left-radius : 8px;
   -webkit-border-bottom-right-radius : 8px;
 }
 
-.vs_ui_picker .buttons_incr div.active, 
-.vs_ui_picker .buttons_decr div.active{
+.vs_ui_picker .button_incr.active, 
+.vs_ui_picker .button_decr.active {
   color: white;
   -webkit-box-shadow: inset black 1px 1px 2px;
   background-image: -webkit-gradient(linear, left top, left bottom, 
@@ -661,9 +653,6 @@ input[type="checkbox"]:checked:after
       to(#ff6900)
     );
 }
-
-.vs_ui_picker .buttons_incr div:first-child { margin:0; }
-.vs_ui_picker .buttons_decr div:first-child { margin:0; }
 .vs_ui_combobox {
   font-family: droid;
   font-weight: normal;
@@ -813,6 +802,112 @@ textarea:focus {
 
 .vs_ui_popover.withFooter >.footer {
   height: 44px;
+}/** @licence
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+.vs_ui_toolbar {
+  width: 100%;
+  height: 44px;
+  bottom:0px;
+  z-index: 2000;
+  color: rgb(255, 255, 255);
+  
+  overflow: hidden;
+  -webkit-transform: translate3d(0,0,0);
+}
+
+.vs_ui_toolbar.black_ios_style, /** legacy comptability */
+.vs_ui_toolbar.black_style {
+  border-top: 1px solid black;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, #AEBCBF), color-stop(0.02, #6E7774), color-stop(0.69, #0A0E0A), color-stop(1, #0A0809));
+}
+
+.vs_ui_toolbar.black_translucide_ios_style, /** legacy comptability */
+.vs_ui_toolbar.black_translucide_style {
+  border-top: 1px solid black;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, #AEBCBF), color-stop(0.02, rgba(110, 119, 115, 0.6)), color-stop(0.67, rgba(10, 14, 10, 0.8)), color-stop(1, rgba(10, 8, 9, 0.8)));
+}
+
+.vs_ui_toolbar.blue_ios_style, /** legacy comptability */
+.vs_ui_toolbar.blue_style {
+  border-top: 1px solid black;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, #B5BDC8), color-stop(0.36, #828C95), color-stop(1, #28343B));
+}
+
+.vs_ui_toolbar_text {
+  margin: 7px;
+  margin-top: 10px;
+  width: auto;
+  height: 30px;
+  display: inline-block;
+}
+
+.vs_ui_toolbar_text .text_view {
+  width: auto;
+  height: 30px;
+  font-size: 18px;
+  overflow:hidden;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+
+
+.vs_ui_toolbar_button {
+  margin: 7px;
+  width: 30px;
+  height: 30px;
+  display: inline-block;
+  overflow: visible;
+}
+
+.vs_ui_toolbar_button.left {
+  float: left;
+}
+
+.vs_ui_toolbar_button.right {
+  float: right;
+}
+
+.vs_ui_toolbar_button.active > div {
+  margin-top: -35px;
+  margin-left: -35px;
+  width: 100px;
+  height: 100px;
+  background-image:url('ToolBarGlow.png');
+  overflow: visible;
+}
+
+.vs_ui_toolbar_text.active .glow_view {
+  position:relative;
+  width: 100%;
+  height: 100%;
+  margin-top: -35px;
+}
+
+.vs_ui_toolbar_text.active .glow_view > div {
+  position:absolute;
+  top: -35px;
+  left: -50px;
+  margin-left: 50%;
+  width: 100px;
+  height: 100px;
+  background-image:url('ToolBarGlow.png');
+  overflow: visible;
 }.vs_ui_segmentedbutton
 {
   font-family: droid;

@@ -1225,11 +1225,11 @@ input[type="search"] {
   width:100%;
 }
 
-.vs_ui_picker .slots div {
+.vs_ui_picker .slots > div {
   -webkit-box-flex: 1;
 }
 
-.vs_ui_picker .slots div:first-child { border:0; }
+.vs_ui_picker .slots > div:first-child { border:0; }
 
 .vs_ui_picker ul {
   margin:0;
