@@ -270,6 +270,7 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	$(CAT) ui/Switch/Switch_android.css >> $@
 	$(CAT) ui/TextArea/TextArea_android.css >> $@
 	$(CAT) ui/PopOver/PopOver_android.css >> $@
+	$(CAT) ui/ToolBar/ToolBar_android.css >> $@
 	$(CAT) ui/SegmentedButton/SegmentedButton_android.css >> $@
 	
 copy_ui_img:
