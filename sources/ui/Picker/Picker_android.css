@@ -6,16 +6,24 @@
 
 .vs_ui_picker .slots {
   top: 20px;
-  height: 44px;
+  height: 124px;
 }
 
-.vs_ui_picker .slots div {
-  height: 40px;
+.vs_ui_picker .slots > div {
+  height: 124px;
   padding-top:0px;
   border-left:10px solid transparent;
   background:transparent;
 }
 
+.vs_ui_picker .slots > div > div {
+  height: 40px;
+  overflow:hidden;
+}
+
+.vs_ui_picker .slots > div > div:nth-child(2) {
+  height: 44px;
+}
 .vs_ui_picker ul {
   padding:0;
 }
@@ -38,27 +46,14 @@
   display:none;
 }
 
-.vs_ui_picker .buttons_incr,
-.vs_ui_picker .buttons_decr {
+.vs_ui_picker .button_incr,
+.vs_ui_picker .button_decr {
   position:relative; z-index:999;
-  top: 20px;
-  height: 40px;
   padding:0 11px;
-  overflow:hidden;
 
-  display: -webkit-box;
-  -webkit-box-orient: horizontal;
   width:100%;
   background:transparent;
-}
 
-.vs_ui_picker .buttons_incr div,
-.vs_ui_picker .buttons_decr div{
-  height: 40px;
-  padding-top:0px;
-  border: none;
-  margin-left: 10px;
-  
   color: #424142;
 
   text-shadow: white 0px 1px 0px;
@@ -68,13 +63,10 @@
   text-align: center;
 }
 
-.vs_ui_picker .buttons_incr div.readonly,
-.vs_ui_picker .buttons_decr div.readonly {
+.vs_ui_picker .button_incr.readonly,
+.vs_ui_picker .button_decr.readonly {
   background-image: none;
   margin-left: 0px;
-}
-
-.vs_ui_picker .slots div.readonly {
   background: transparent;
   border-left-width: 0px;
 }
@@ -87,20 +79,20 @@
   padding-right: 0px;
 }
 
-.vs_ui_picker .buttons_incr div {
+.vs_ui_picker .button_incr {
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
   -webkit-border-top-left-radius : 8px;
   -webkit-border-top-right-radius : 8px;
 }
 
-.vs_ui_picker .buttons_decr div {
+.vs_ui_picker .button_decr {
   background-image: -webkit-gradient(linear, 100% 100%, 100% 0%, from(#F4F4F4), to(#C4C4C4));
   -webkit-border-bottom-left-radius : 8px;
   -webkit-border-bottom-right-radius : 8px;
 }
 
-.vs_ui_picker .buttons_incr div.active, 
-.vs_ui_picker .buttons_decr div.active{
+.vs_ui_picker .button_incr.active, 
+.vs_ui_picker .button_decr.active {
   color: white;
   -webkit-box-shadow: inset black 1px 1px 2px;
   background-image: -webkit-gradient(linear, left top, left bottom, 
@@ -111,6 +103,3 @@
       to(#ff6900)
     );
 }
-
-.vs_ui_picker .buttons_incr div:first-child { margin:0; }
-.vs_ui_picker .buttons_decr div:first-child { margin:0; }

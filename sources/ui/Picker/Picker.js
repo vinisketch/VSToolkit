@@ -189,14 +189,10 @@ Picker.prototype = {
     document.removeEventListener (core.POINTER_MOVE, this, false);
 
     this._slots_view.innerHTML = "";
-    this._buttons_incr.innerHTML = "";
-    this._buttons_decr.innerHTML = "";
     delete (this._data);
     delete (this._slots_elements);
     delete (this._frame_view);
     delete (this._slots_view);
-    delete (this._buttons_incr);
-    delete (this._buttons_decr);
  
     delete (this._current_values);
  
@@ -238,13 +234,7 @@ Picker.prototype = {
     
     // Pseudo table element (inner wrapper)
     this._slots_view = this.view.querySelector ('.slots');
-    
-    // Pseudo table increment buttons (Andoid)
-    this._buttons_incr = this.view.querySelector ('.buttons_incr');
-    
-    // Pseudo table decrement buttons (Andoid)
-    this._buttons_decr = this.view.querySelector ('.buttons_decr');
-    
+        
     // The scrolling controller
     this._frame_view = this.view.querySelector ('.frame');
     
@@ -287,12 +277,23 @@ Picker.prototype = {
    */
   removeAllSlots: function ()
   {
-    this._slots_view.innerHTML = "";
-    this._buttons_incr.innerHTML = "";
-    this._buttons_decr.innerHTML = "";
-
     delete (this._data);
     this._data = [];
+    
+    this._remove_all_slots ();
+  },
+
+  /**
+   * Remove all slots from the picker
+   *
+   * @public
+   * @name vs.ui.Picker#removeAllSlots 
+   * @function
+   */
+  _remove_all_slots: function ()
+  {
+    this._slots_view.innerHTML = "";
+
     delete (this._slots_elements);
     this._slots_elements = [];
     
@@ -346,12 +347,33 @@ Picker.prototype = {
       out += '<li>' + data.values[i] + '<' + '/li>';
     }
     ul.innerHTML = out;
+    
+    if (this._mode === Picker.MODE_ANDROID)
+    {
+      // Create slot container
+      div = document.createElement ('div');
+      
+      var buttons = this._generate_button (l);
 
-    // Create slot container
-    div = document.createElement ('div');
-    // Add styles to the container
-    div.className = data.style;
-    div.appendChild (ul);
+      div.appendChild (buttons [0]);
+    
+      // Create slot container
+      var slot = document.createElement ('div');
+      // Add styles to the container
+      slot.className = data.style;
+      slot.appendChild (ul);
+      div.appendChild (slot);
+
+      div.appendChild (buttons [1]);
+    }
+    else
+    {
+      // Create slot container
+      div = document.createElement ('div');
+      // Add styles to the container
+      div.className = data.style;
+      div.appendChild (ul);
+    }
 
     // Append the slot to the wrapper
     this._slots_view.appendChild (div);
@@ -383,104 +405,56 @@ Picker.prototype = {
     {
       this.scrollToValue (l, data.defaultValue);  
     }
-  },  
+  },
   
   /**
    * @protected
    * @function
    */
-  _remove_buttons: function ()
-  {
-    this._buttons_incr.innerHTML = '';
-    this._buttons_decr.innerHTML = '';
-  },  
-  
-  /**
-   * @protected
-   * @function
-   */
-  _render_buttons: function ()
-  {
-    this._remove_buttons ();
-    
-    // Create HTML slot elements
-    for (var l = 0; l < this._data.length; l++)
-    {
-      // Create the slot
-      this._render_button (l);
-    }
-  },  
-  
-  /**
-   * @protected
-   * @function
-   */
-  _update_buttons: function ()
-  {
-    var i, buttons_incr = this._buttons_incr.children,
-      buttons_decr = this._buttons_decr.children, div;
-    
-    // Create HTML slot elements
-    for (i = 0; i < this._data.length; i++)
-    {
-      var button_width = this._slots_elements[i].offsetWidth;
-      div = buttons_incr.item (i);
-      if (div) div.style.width = button_width + 'px';
-      div = buttons_decr.item (i);
-      if (div) div.style.width = button_width + 'px';
-    }
-  },  
-  
-  /**
-   * @protected
-   * @function
-   */
-  _render_button: function (i)
+  _generate_button: function (i)
   {
     var readonly = this._data[i].style.match ('readonly');
-    var button_width = this._slots_elements[i].offsetWidth;
-    // Create the slot
-    div = document.createElement ('div');
-    div.style.width = button_width + 'px';
+
+    var button_incr = document.createElement ('div');
     if (readonly)
     {
-      div.className = 'readonly';
+      button_incr.className = 'button_incr readonly';
     }
     else
     {
-      div.innerHTML = '+';
-      div.slotPosition = i;
+      button_incr.className = "button_incr";
+      button_incr.innerHTML = '+';
+      button_incr.slotPosition = i;
     }
-    // Append the increment button
-    this._buttons_incr.appendChild (div);
 
     if (!readonly)
     {
-      this.nodeBind (div, core.POINTER_START, '_buttonSelected');
-      this.nodeBind (div, core.POINTER_END, '_buttonSelected');
-      this.nodeBind (div, core.POINTER_CANCEL, '_buttonSelected');
+      button_incr.addEventListener (core.POINTER_START, this);
+      button_incr.addEventListener (core.POINTER_END, this);
+      button_incr.addEventListener (core.POINTER_CANCEL, this);
     }
+    
     // Create the slot
-    div = document.createElement ('div');
-    div.style.width = button_width + 'px';
+    var button_decr = document.createElement ('div');
     if (readonly)
     {
-      div.className = 'readonly';
+      button_decr.className = 'button_decr readonly';
     }
     else
     {
-      div.innerHTML = '-';
-      div.slotPosition = i;
+      button_decr.className = 'button_decr';
+      button_decr.innerHTML = '-';
+      button_decr.slotPosition = i;
     }
-    // Append the decrement button
-    this._buttons_decr.appendChild (div);
 
     if (!readonly)
     {
-      this.nodeBind (div, core.POINTER_START, '_buttonSelected');
-      this.nodeBind (div, core.POINTER_END, '_buttonSelected');
-      this.nodeBind (div, core.POINTER_CANCEL, '_buttonSelected');
+      button_decr.addEventListener (core.POINTER_START, this);
+      button_decr.addEventListener (core.POINTER_END, this);
+      button_decr.addEventListener (core.POINTER_CANCEL, this);
     }
+    
+    return [button_incr, button_decr];
   },
   
   /**
@@ -489,22 +463,22 @@ Picker.prototype = {
    */
   _buttonSelected : function (e)
   {
-    var slotNum = e.src.slotPosition;
+    var slotNum = e.target.slotPosition;
     switch (e.type)
     {
       case core.POINTER_START:
-        e.src.className = 'active';
+        util.addClassName (e.target, 'active');
         break
       
       case core.POINTER_END:
         var pos = this._slots_elements[slotNum].slotYPosition;
-        if (e.src.parentElement === this._buttons_decr)
-        { pos += 22; }
+        if (util.hasClassName (e.target, 'button_decr'))
+        { pos += 44; }
         else
-        { pos -= 22; }
+        { pos -= 44; }
         this._scrollTo (slotNum, pos);
       case core.POINTER_CANCEL:
-        e.src.className = '';
+        util.removeClassName (e.target, 'active');
         break
     }
   },
@@ -534,15 +508,6 @@ Picker.prototype = {
   addSlot: function (values, style, defaultValue)
   {
     if (!style) { style = ''; }
-    
-    style = style.split(' ');
-
-    for (var i = 0; i < style.length; i ++)
-    {
-      style[i] = style[i];
-    }
-    
-    style = style.join(' ');
 
     var obj = {}
     obj.values = values;
@@ -552,8 +517,6 @@ Picker.prototype = {
     this._data.push (obj);
     
     this._render_a_slot (this._data.length - 1);
-    if (this._mode === Picker.MODE_ANDROID)
-    { this._render_buttons (); }
   },
   
   /**
@@ -760,7 +723,11 @@ Picker.prototype = {
    */
   handleEvent: function (e)
   {
-    switch (e.type)
+    if (this._mode === Picker.MODE_ANDROID)
+    {
+      this._buttonSelected (e);
+    }
+    else switch (e.type)
     {
       case core.POINTER_START:
         this._scrollStart (e);
@@ -824,7 +791,7 @@ Picker.prototype = {
 
       case Picker.MODE_WP7:
         this._active_slot = e.currentTarget.index;
-        this.addClassName ("dragging");
+        util.addClassName ("dragging");
       break;
     }
     
@@ -1067,26 +1034,6 @@ Picker.prototype = {
     this._scrollTo (elem.slotPosition, elem.slotYPosition > 0 ? 0 : slotMaxScroll, 150);
     
     return false;
-  },
-  
-  
- /**********************************************************************
- 
- *********************************************************************/
- 
-  /**
-   * @protected
-   * @function
-   */
-  refresh : function ()
-  {
-    // force the refresh after a show
-    if (this._mode === Picker.MODE_ANDROID)
-    {
-      this._update_buttons ();
-    }
-
-    View.prototype.refresh.call (this);
   }
 };
 util.extendClass (Picker, View);
