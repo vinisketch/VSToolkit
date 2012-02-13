@@ -67,15 +67,41 @@ function testExtendClass ()
   assertTrue ('testExtendClass 3', vs.util.isArray (o.ar));
 }
 
-function testDefineProperty ()
+function testDefinePropertyAPI_1 ()
+{
+  var func = Object.defineProperty
+  var props = {};
+  var d = {get : function () {
+    if (!this._d) return '_hihi_';
+    else return this._d
+  }, set : function (v) {
+    this._d = v;}
+  };
+
+  vs.util._defineProperty_api1 (props, 'hihi', d);
+
+  assertNotNull ('testDefinePropertyAPI_1 1', Object.getOwnPropertyDescriptor (props, 'hihi'));
+  assertEquals ('testDefinePropertyAPI_1 2', '_hihi_', props.hihi);
+  props.hihi = '_hoho_'
+  assertEquals ('testDefinePropertyAPI_2 3', '_hoho_', props.hihi);
+}
+
+function testDefinePropertyAPI_2 ()
 {
   var props = {};
-  var d = {get : function () {return '_hihi_'}};
+  var d = {get : function () {
+    if (!this._d) return '_hihi_';
+    else return this._d
+  }, set : function (v) {
+    this._d = v;}
+  };
 
-  vs.util.defineProperty (props, 'hihi', d);
+  vs.util._defineProperty_api2 (props, 'hihi', d);
 
-  assertNotNull ('testDefineProperty 1', Object.getOwnPropertyDescriptor (props, 'hihi'));
-  assertEquals ('testDefineProperty 2', '_hihi_', props.hihi);
+  assertNotNull ('testDefinePropertyAPI_2 1', Object.getOwnPropertyDescriptor (props, 'hihi'));
+  assertEquals ('testDefinePropertyAPI_2 2', '_hihi_', props.hihi);
+  props.hihi = '_hoho_'
+  assertEquals ('testDefinePropertyAPI_2 3', '_hoho_', props.hihi);
 }
 
 function testDefineClassProperty ()
