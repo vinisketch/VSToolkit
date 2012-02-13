@@ -201,7 +201,7 @@ VSObject.prototype =
       if (config) for (key in config)
       {
         if (key === 'id' || key === 'node' ||
-            key === 'nodeRef' || key === 'view') 
+            key === 'node_ref' || key === 'view') 
         { continue; }
         this [key] = config [key];
         should_propagate = true;
