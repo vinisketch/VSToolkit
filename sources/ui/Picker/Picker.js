@@ -769,7 +769,7 @@ Picker.prototype = {
       case Picker.MODE_BLACK_BERRY:
         var delta = 0;
         // Find the clicked slot
-        var rec = this._slots_view.getBoundingClientRect ();
+        var rec = util.getBoundingClientRect (this._slots_view);
         if (this._mode == Picker.MODE_BLACK_BERRY) { delta = 8; }
         
         // Clicked position

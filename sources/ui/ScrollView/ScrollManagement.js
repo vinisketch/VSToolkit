@@ -226,8 +226,8 @@ var iScroll_prototype =
     
     bar = that[dir + 'ScrollbarWrapper'];
     
-    rectS = that.scroller.getBoundingClientRect ();
-    rectP = that.wrapper.getBoundingClientRect ();
+    rectS = util.getBoundingClientRect (that.scroller);
+    rectP = util.getBoundingClientRect (that.wrapper);
     pos = dir === 'h' ? rectP.left - rectS.left : rectP.top - rectS.top;
     pos = that[dir + 'ScrollbarProp'] * pos;
 
@@ -369,8 +369,8 @@ var iScroll_prototype =
     that.pointX = point.pageX;
     that.pointY = point.pageY;
     
-    rectS = that.scroller.getBoundingClientRect ();
-    rectP = that.wrapper.getBoundingClientRect ();
+    rectS = util.getBoundingClientRect (that.scroller);
+    rectP = util.getBoundingClientRect (that.wrapper);
     
     newX = rectS.left + deltaX;
     newY = rectS.top + deltaY;
@@ -465,8 +465,8 @@ var iScroll_prototype =
       var maxDistUpper = that._ab_view_t_x + 500;
       var maxDistLower = that._ab_view_t_x + 500;
       
-      rectS = that.scroller.getBoundingClientRect ();
-      rectP = that.wrapper.getBoundingClientRect ();
+      rectS = util.getBoundingClientRect (that.scroller);
+      rectP = util.getBoundingClientRect (that.wrapper);
       momentumX =
         that._scroll_momentum_x (newPosX - that.startX, duration, rectS, rectP);
       momentumY =
@@ -518,8 +518,8 @@ var iScroll_prototype =
       resetY = that._ab_view_t_y,
       rectS, rectP;
 
-    rectS = that.scroller.getBoundingClientRect ();
-    rectP = that.wrapper.getBoundingClientRect ();
+    rectS = util.getBoundingClientRect (that.scroller);
+    rectP = util.getBoundingClientRect (that.wrapper);
     
     if (rectS.width < rectP.width)
     {
@@ -875,8 +875,8 @@ var iScroll_prototype =
       oldHeight, offsets,
       loading, rectS, rectP;
 
-    rectS = that.scroller.getBoundingClientRect ();
-    rectP = that.wrapper.getBoundingClientRect ();
+    rectS = util.getBoundingClientRect (that.scroller);
+    rectP = util.getBoundingClientRect (that.wrapper);
 
     that.wrapperW = rectP.width;
     that.wrapperH = rectP.height;

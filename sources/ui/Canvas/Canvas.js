@@ -460,7 +460,7 @@ Canvas.setup = function ()
       };
     }(p));
 
-    Object.defineProperty (Canvas.prototype, p, d);
+    util.defineProperty (Canvas.prototype, p, d);
   }  
 };
 

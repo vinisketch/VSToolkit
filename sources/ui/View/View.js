@@ -1022,9 +1022,9 @@ View.prototype = {
         {
           event.pageX = event.changedTouches[0].pageX;
           event.pageY = event.changedTouches[0].pageY;
-          var bound = self.view.getBoundingClientRect ();
-          event.offsetX = event.changedTouches[0].pageX - bound.left;
-          event.offsetY = event.changedTouches[0].pageY - bound.top;
+          var rec = util.getElementAbsolutePosition (self.view);
+          event.offsetX = event.changedTouches[0].pageX - rec.x;
+          event.offsetY = event.changedTouches[0].pageY - rec.y;
         }
         View._propagate_pointer_event (obj, func_ptr, event);
       };

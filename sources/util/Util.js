@@ -47,14 +47,39 @@ vs.SUPPORT_CSS_TRANSFORM =
 *********************************************************************/
 
 /**
- * Copies all properties from the source to the destination object.
+ * extend with __defineSetter__/__defineGetter__ compatible API
  *
- * @memberOf vs.util
+ * @private
+ */
+function _extend_api1 (destination, source)
+{
+  for (var property in source)
+  {
+    getter = source.__lookupGetter__ (property);
+    setter = source.__lookupSetter__ (property);
+
+    if (getter)
+    {
+      destination.__defineGetter__ (property, getter)
+    }
+    if (setter)
+    {
+      destination.__defineSetter__ (property, setter)
+    }
+    if (!getter && !setter)
+    {
+      destination [property] = source [property];
+    }
+  }
+  return destination;
+}
+
+/**
+ * extend with Object.defineProperty compatible API
  *
- * @param {Object} destination The object to receive the new properties.
- * @param {Object} source The object whose properties will be duplicated.
- **/
-function extend (destination, source)
+ * @private
+ */
+function _extend_api2 (destination, source)
 {
   for (var property in source)
   {
@@ -62,30 +87,26 @@ function extend (destination, source)
     
     if (desc && (desc.get || desc.set))
     {
-      defineProperty (destination, property, desc);
+      util.defineProperty (destination, property, desc);
     }
     else
     {
       destination [property] = source [property];
     }
-//     getter = source.__lookupGetter__ (property);
-//     setter = source.__lookupSetter__ (property);
-// 
-//     if (getter)
-//     {
-//       destination.__defineGetter__ (property, getter)
-//     }
-//     if (setter)
-//     {
-//       destination.__defineSetter__ (property, setter)
-//     }
-//     if (!getter && !setter)
-//     {
-//       destination [property] = source [property];
-//     }
   }
   return destination;
 }
+
+/**
+ * Copies all properties from the source to the destination object.
+ *
+ * @memberOf vs.util
+ *
+ * @param {Object} destination The object to receive the new properties.
+ * @param {Object} source The object whose properties will be duplicated.
+ **/
+vs.util.extend = (Object.defineProperty)?_extend_api2:_extend_api1;
+
 
 /**
  * Extends a the prototype of a object
@@ -111,7 +132,7 @@ var extendClass = function (obj, extension)
       var proto = obj.prototype;
       obj.prototype = new extension ();
 
-      extend (obj.prototype, proto);
+      util.extend (obj.prototype, proto);
     }
     
     if (!obj._properties_) obj._properties_ = [];
@@ -182,17 +203,43 @@ function free (obj)
  * @param {Object} desc The descriptor for the property being defined or
  * modified
  */
-function defineProperty (obj, prop_name, desc)
+
+
+/**
+ * defineProperty with __defineSetter__/__defineGetter__ API
+ *
+ * @private
+ */
+function _defineProperty_api1 (obj, prop_name, desc)
 {
   function hasProperty (obj, prop)
   {
     return Object.prototype.hasOwnProperty.call (obj, prop);
   }
 
-  function isCallable (v)
+  if (hasProperty (desc, "set"))
   {
-    // NB: modify as necessary if other values than functions are callable.
-    return typeof v == "function";
+    var s = desc.set;
+    if (isFunction (s)) obj.__defineSetter__(prop_name, s);
+  }
+
+  if (hasProperty (desc, "get"))
+  {
+    var s = desc.get;
+    if (isFunction (s)) obj.__defineGetter__(prop_name, s);
+  }
+}
+
+/**
+ * defineProperty with Object.defineProperty API
+ *
+ * @private
+ */
+function _defineProperty_api2 (obj, prop_name, desc)
+{
+  function hasProperty (obj, prop)
+  {
+    return Object.prototype.hasOwnProperty.call (obj, prop);
   }
 
   if (typeof desc != "object" || desc === null)
@@ -216,12 +263,12 @@ function defineProperty (obj, prop_name, desc)
   if (hasProperty (desc, "get"))
   {
     var g = desc.get;
-    if (isCallable (g)) d.get = g;
+    if (isFunction (g)) d.get = g;
   }
   if (hasProperty (desc, "set"))
   {
     var s = desc.set;
-    if (isCallable (s)) d.set = s;
+    if (isFunction (s)) d.set = s;
   }
 
   if (("get" in d || "set" in d) && ("value" in d || "writable" in d))
@@ -273,9 +320,22 @@ function defineClassProperty (the_class, prop_name, desc)
 {
   if (!desc) { return; }
   if (!the_class._properties_) the_class._properties_ = [];
-  defineProperty (the_class.prototype, prop_name, desc);
+  util.defineProperty (the_class.prototype, prop_name, desc);
   if (desc.enumerable != false) the_class._properties_.push (prop_name);
 }
+
+/**
+ * @private
+ */
+var _keys = (typeof Object.keys === 'function')?Object.keys: function (o)
+{
+  var array = new Array (), key;
+  for (key in o)
+  {
+    if (Object.prototype.hasOwnProperty.call (o, key)) { array.push (key); }
+  }
+  return array;
+};
 
 /**
  * Defines new or modifies existing properties directly on an 'class'.<br/><br/>
@@ -291,7 +351,7 @@ function defineClassProperty (the_class, prop_name, desc)
 function defineClassProperties (the_class, properties)
 {
   properties = Object (properties);  
-  var keys = Object.keys (properties);  
+  var keys = _keys (properties);  
   for (var i = 0; i < keys.length; i++)
   {
     var prop_name = keys[i]
@@ -1039,6 +1099,28 @@ function getElementAbsolutePosition (element)
   return { x:x, y:y };
 }
 
+/**
+ * @private
+ */
+function _getBoundingClientRect_api1 (e) 
+{
+  var rec = getElementAbsolutePosition (e);
+  return {
+    width: e.offsetWidth,
+    height: e.offsetWidth,
+    left: rec.x,
+    top: rec.y
+  }
+};
+
+/**
+ * @private
+ */
+function _getBoundingClientRect_api2 (e)
+{
+  return (e && e.getBoundingClientRect)?e.getBoundingClientRect ():null;
+};
+
 /** 
  *  Set the absolute element position.
  *
@@ -1587,14 +1669,14 @@ function preloadTemplate (comp_name)
                          export
 *********************************************************************/
 
-extend (util, {
+util.extend (util, {
   vsTestElem:              vsTestElem,
   vsTestStyle:             vsTestStyle,
   
   // Class functions
-  extend:                  extend,
   extendClass:             extendClass,
-  defineProperty:          defineProperty,
+  defineProperty:
+        (Object.defineProperty)?_defineProperty_api2:_defineProperty_api1,
   defineClassProperty:     defineClassProperty,
   defineClassProperties:   defineClassProperties,
   clone:                   clone,
@@ -1642,11 +1724,18 @@ extend (util, {
   setElementInnerText:        setElementInnerText,
   setElementTransform:        setElementTransform,
   getElementTransform:        getElementTransform,
+  getBoundingClientRect:      
+    (vsTestElem.getBoundingClientRect)?_getBoundingClientRect_api2:
+    _getBoundingClientRect_api1,
   
   // other
   importFile:           importFile,
   setActiveStyleSheet:  setActiveStyleSheet,
   preloadTemplate:      preloadTemplate,
   __date_reg_exp:       __date_reg_exp,
-  _findItem:            _findItem // export only for testing purpose
+  _findItem:            _findItem, // export only for testing purpose
+  _defineProperty_api1: _defineProperty_api1, // export only for testing purpose
+  _defineProperty_api2: _defineProperty_api2, // export only for testing purpose
+  _extend_api1:         _extend_api1, // export only for testing purpose
+  _extend_api2:         _extend_api2 // export only for testing purpose
 });
