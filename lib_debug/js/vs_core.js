@@ -268,7 +268,7 @@ VSObject.prototype =
       if (config) for (key in config)
       {
         if (key === 'id' || key === 'node' ||
-            key === 'nodeRef' || key === 'view') 
+            key === 'node_ref' || key === 'view') 
         { continue; }
         this [key] = config [key];
         should_propagate = true;
@@ -465,34 +465,67 @@ VSObject.prototype =
     
     cloned_map [this] = obj;
     
-    for (key in this)
+    function _propertyCopy_api1 (prop_name, src, trg)
     {
-      if (key == 'id' || key == '_id') continue;
+      var value = src [prop_name],
+        getter = src.__lookupGetter__ (prop_name),
+        setter = src.__lookupSetter__ (prop_name);
       
-      value = this [key];
-      desc = Object.getOwnPropertyDescriptor (this, key);
-      desc_clone = Object.getOwnPropertyDescriptor (obj, key);
+      if (getter || setter)
+      {
+        if (getter) { obj.__defineGetter__ (prop_name, getter); }
+        if (setter) { obj.__defineSetter__ (prop_name, setter); }
+      }
+      else if (src.hasOwnProperty (prop_name))
+      {
+        if (value instanceof vs.core.Object)
+        {
+          trg [prop_name] = value.clone (null, cloned_map);
+        }
+        else if (util.isArray (value))
+        {
+          trg [prop_name] = value.slice ();
+        }
+        else { trg [prop_name] = value; }
+      }
+    }
+    
+    function _propertyCopy_api2 (prop_name, src, trg)
+    {
+      var value = src [prop_name];
+      var desc = Object.getOwnPropertyDescriptor (src, prop_name);
+      var desc_clone = Object.getOwnPropertyDescriptor (trg, prop_name);
       
       // manage getter and setter
       if (desc && (desc.get || desc.set))
       {
         // the property description doesn't exist. Create it.
-        if (!desc_clone) { util.defineProperty (obj, key, desc); }
+        if (!desc_clone) { util.defineProperty (trg, prop_name, desc); }
       }
       
       // manage other object members
-      else if (this.hasOwnProperty (key))
+      else if (src.hasOwnProperty (prop_name))
       {
         if (value instanceof vs.core.Object)
         {
-          obj [key] = value.clone (null, cloned_map);
+          trg [prop_name] = value.clone (null, cloned_map);
         }
         else if (util.isArray (value))
         {
-          obj [key] = value.slice ();
+          trg [prop_name] = value.slice ();
         }
-        else { obj [key] = value; }
+        else { trg [prop_name] = value; }
       }
+    }
+    
+    var propertyCopy =
+        (Object.defineProperty)?_propertyCopy_api2:_propertyCopy_api1;
+    
+    for (key in this)
+    {
+      if (key == 'id' || key == '_id') { continue; }
+      
+      propertyCopy (key, this, obj);
     }
     
     obj.__i__ = false;

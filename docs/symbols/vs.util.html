@@ -600,6 +600,16 @@ utility classes and methods.</div>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
+								vs.util.<b><a href="../symbols/vs.util.html#.extend">extend</a></b>
+								</div>
+								<div class="description">Copies all properties from the source to the destination object.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
 								vs.util.<b><a href="../symbols/vs.util.html#.getElementTransform">getElementTransform</a></b>
 								</div>
 								<div class="description">get the CSS transformation to a element</div>
@@ -680,25 +690,6 @@ utility classes and methods.</div>
 								</div>
 								<div class="description">Defines a new property directly on the object's prototype, or modifies an 
 existing property on an object's prototype.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.defineProperty">defineProperty</a></b>(obj, prop_name, desc)
-								</div>
-								<div class="description">Defines a new property directly on an object, or modifies an existing
-property on an object.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.extend">extend</a></b>(destination, source)
-								</div>
-								<div class="description">Copies all properties from the source to the destination object.</div>
 							</td>
 						</tr>
 					
@@ -1045,6 +1036,27 @@ utility classes and methods.
 					Field Detail
 				</div>
 				
+					<a name=".extend"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>extend</b>
+					
+					</div>
+					<div class="description">
+						Copies all properties from the source to the destination object.
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".getElementTransform"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -1332,123 +1344,6 @@ property.</dd>
 								</dt>
 								<dd>The descriptor for the property being defined or
 modified</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".defineProperty"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.util.</span><b>defineProperty</b>(obj, prop_name, desc)
-					
-					</div>
-					<div class="description">
-						Defines a new property directly on an object, or modifies an existing
-property on an object.<br/><br/>
-
-Property descriptors present in objects come in two main flavors: data
-descriptors and accessor descriptors. A data descriptor is a property that
-has a value, which may or may not be writable. An accessor descriptor is a
-property described by a getter-setter pair of functions. A descriptor must be
-one of these two flavors; it cannot be both. All descriptors regardless of
-flavor include the configurable and enumerable fields.<br/><br/>
-
-A property descriptor is an object with the following fields:
-<ul>
-<ol> <b>value</b> The value associated with the property. (data descriptors
-only). <br/><i>Defaults to undefined.</i></ol>
-<ol> <b>writable</b> True if and only if the value associated with the
-property may be changed. (data descriptors only).<br/>
-<i>Defaults to false.</ol>
-<ol> <b>get</b> A function which serves as a getter for the property, or
-undefined if there is no getter. (accessor descriptors only).<br/>
-<i>Defaults to undefined.</i></ol>
-<ol> <b>set</b> A function which serves as a setter for the property, or
-undefined if there is no setter. (accessor descriptors only).<br/>
-<i>Defaults to undefined.</i></ol>
-<ol> <b>configurable</b> True if and only if the type of this property
-descriptor may be changed and if the property may be deleted from the
-corresponding object.<br/><i>Defaults to true.</i></ol>
-<ol> <b>enumerable</b> True if and only if this property shows up during
-enumeration of the properties on the corresponding object. <br/>
-Defaults to true.</i></ol></ul>
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>obj</b>
-									
-								</dt>
-								<dd>The object on which to define the property.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>prop_name</b>
-									
-								</dt>
-								<dd>The name of the property to be defined or modified.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>desc</b>
-									
-								</dt>
-								<dd>The descriptor for the property being defined or
-modified</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".extend"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.util.</span><b>extend</b>(destination, source)
-					
-					</div>
-					<div class="description">
-						Copies all properties from the source to the destination object.
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>destination</b>
-									
-								</dt>
-								<dd>The object to receive the new properties.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>source</b>
-									
-								</dt>
-								<dd>The object whose properties will be duplicated.</dd>
 							
 							</dl>
 						
