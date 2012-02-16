@@ -23,10 +23,15 @@
 var vs = window.vs,
   util = vs.util,
   core = vs.core;
+  
+/**
+ * @private
+ */
+var _id_index_ = 0;
 
 /**
- * Returns an unique Id <p>
- * The algorithm is use a time stamp and a random number to generate the id.
+ * Returns a local unique Id <p>
+ * The algorithm is based on an index initialized when the page is loaded.
  *
  * @memberOf vs.core
  *
@@ -34,7 +39,20 @@ var vs = window.vs,
  */
 function createId ()
 {
-  return "hak_id_" + new Date().getTime() + "" + Math.floor (Math.random() * 1000000);
+  return "vs_id_" + _id_index_++;
+}
+
+/**
+ * Returns an unique Id <p>
+ * The algorithm uses a time stamp and a random number to generate the id.
+ *
+ * @memberOf vs.core
+ *
+ * @return {String}
+ */
+function createUniqueId ()
+{
+  return "vs_id_" + new Date().getTime() + "" + Math.floor (Math.random() * 1000000);
 }
 
 /********************************************************************
@@ -44,3 +62,4 @@ function createId ()
  * @private
  */
 core.createId = createId;
+core.createUniqueId = createUniqueId;
