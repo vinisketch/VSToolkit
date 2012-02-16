@@ -466,7 +466,9 @@ util.defineClassProperties (AbstractList, {
       {
         this._scroll = ScrollView.VERTICAL_SCROLL;
         var os_device = window.deviceConfiguration.os;
-        if (!this._scrollbar && os_device !== DeviceConfiguration.OS_WP7)
+        if (!this._scrollbar &&
+          os_device !== DeviceConfiguration.OS_WP7 &&
+          os_device !== DeviceConfiguration.OS_WINDOWS)
         {
           this._scrollbar = new Scrollbar ('vertical', this.view, true, true);
         }
