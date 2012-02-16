@@ -423,8 +423,20 @@ View.prototype = {
     {
       if (DOMParser)
       {
-        doc = new DOMParser ().parseFromString
-          (this.html_template, 'text/html');
+        try {
+          doc = new DOMParser ().parseFromString 
+            (this.html_template, 'text/html');
+        }
+        catch (e)
+        {
+          // @HACK
+          // IE is not compatible with 'text/html'
+          try {
+            doc = new DOMParser ().parseFromString 
+              (this.html_template, 'application/xhtml+xml');
+          }
+          catch (e) {}
+        }
         if (doc)
         {
           doc_elem = doc.documentElement;
@@ -1358,7 +1370,7 @@ View.prototype = {
     else
     {
       if (util.isNumber (value)) value = '' + value; // IE need string
-      this.view.style.setProperty (property, value);
+      this.view.style.setProperty (property, value, null);
     }
   },
 

@@ -301,7 +301,7 @@ PopOver.prototype = {
 
     this.__direction = direction;
 
-    this.view.style.setProperty ("display", 'block');
+    this.view.style.setProperty ("display", 'block', null);
     this.__view_display = undefined;
 
     if (this._show_animation)
