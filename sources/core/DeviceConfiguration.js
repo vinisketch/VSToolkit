@@ -41,8 +41,11 @@ function DeviceConfiguration ()
   this.targets = {};
   
   this.os = DeviceConfiguration.OS_UNKNOWN;
+  this.browser = DeviceConfiguration.BROWSER_UNKNOWN;
   this.screenResolution = DeviceConfiguration.SR_UNKNOWN;
   this.screenRatio = 0;
+  
+  this.browserDetect ();
 }
 
 /**
@@ -190,8 +193,74 @@ DeviceConfiguration.SR_Q_HD = 11;
  */
 DeviceConfiguration.SR_WXGA = 12;
 
+/**
+ * @name vs.core.DeviceConfiguration.BROWSER_UNKNOWN 
+ * @const
+ */
+DeviceConfiguration.BROWSER_UNKNOWN = 0;
+
+/**
+ * @name vs.core.DeviceConfiguration.BROWSER_CHROME
+ * @const
+ */
+DeviceConfiguration.BROWSER_CHROME = 1;
+
+/**
+ * @name vs.core.DeviceConfiguration.BROWSER_SAFARI 
+ * @const
+ */
+DeviceConfiguration.BROWSER_SAFARI = 2;
+
+/**
+ * @name vs.core.DeviceConfiguration.BROWSER_OPERA 
+ * @const
+ */
+DeviceConfiguration.BROWSER_OPERA = 3;
+
+/**
+ * @name vs.core.DeviceConfiguration.BROWSER_FIREFOX 
+ * @const
+ */
+DeviceConfiguration.BROWSER_FIREFOX = 4;
+
+/**
+ * @name vs.core.DeviceConfiguration.BROWSER_MSIE 
+ * @const
+ */
+DeviceConfiguration.BROWSER_MSIE = 5;
+
 
 DeviceConfiguration.prototype = {
+  
+  /**
+   * @protected
+   * @function
+   */
+  browserDetect : function ()
+  {
+    function searchString (data)
+    {
+      var i = data.length;
+      while (i--)
+      {
+        var dataString = data [i].string;
+        var dataProp = data [i].prop;
+        this.versionSearchString = data[i].versionSearch || data[i].identity;
+        if (dataString)
+        {
+          if (dataString.match (data[i].subString))
+          { return data[i].identity; }
+        }
+        else if (dataProp) { return data[i].identity; }
+      }
+    }
+
+    this.browser = searchString (DeviceConfiguration._data_browser) ||   
+      DeviceConfiguration.BROWSER_UNKNOWN;
+
+    this.os = searchString (DeviceConfiguration._data_OS) ||
+      DeviceConfiguration.OS_UNKNOWN;
+  },
   
   /**
    * Returns the current GUI orientation.
@@ -376,7 +445,7 @@ DeviceConfiguration.prototype = {
 };
 
 /**
- * private
+ * @private
  */
 DeviceConfiguration._getScreenResolutionCode = function (width, height)
 {
@@ -394,7 +463,7 @@ DeviceConfiguration._getScreenResolutionCode = function (width, height)
 }
 
 /**
- * private
+ * @private
  */
 DeviceConfiguration._estimateScreenSize = function (metric)
 {
@@ -406,6 +475,73 @@ DeviceConfiguration._estimateScreenSize = function (metric)
   if (size < 8) return 7;
   else return 10;
 };
+
+/**
+ * @private
+ * @const
+ */
+DeviceConfiguration._data_browser = [
+  {
+    string: navigator.userAgent,
+    subString: "Chrome",
+    identity: DeviceConfiguration.BROWSER_CHROME
+  },
+  {
+    string: navigator.vendor,
+    subString: "Apple",
+    identity: DeviceConfiguration.BROWSER_SAFARI,
+    versionSearch: "Version"
+  },
+  {
+    prop: window.opera,
+    identity: DeviceConfiguration.BROWSER_OPERA,
+    versionSearch: "Version"
+  },
+  {
+    string: navigator.userAgent,
+    subString: "Firefox",
+    identity: DeviceConfiguration.BROWSER_FIREFOX
+  },
+  {
+    string: navigator.userAgent,
+    subString: "MSIE",
+    identity: DeviceConfiguration.BROWSER_MSIE,
+    versionSearch: "MSIE"
+  }
+];
+
+/**
+ * @private
+ * @const
+ */
+DeviceConfiguration._data_OS = [
+  {
+    string: navigator.platform,
+    subString: "Win",
+    identity: DeviceConfiguration.OS_WINDOWS
+  },
+  {
+    string: navigator.platform,
+    subString: "Mac",
+    identity: DeviceConfiguration.OS_MACOS
+  },
+  {
+     string: navigator.userAgent,
+     subString: "iPad|iPhone|iPod",
+     identity: DeviceConfiguration.OS_IOS
+  },
+  {
+     string: navigator.userAgent,
+     subString: "Android",
+     identity: DeviceConfiguration.OS_ANDROID
+  },
+  {
+    string: navigator.platform,
+    subString: "Linux",
+    identity: DeviceConfiguration.OS_LINUX
+  }
+];
+
 
 if (typeof window.deviceConfiguration == 'undefined')
 {
