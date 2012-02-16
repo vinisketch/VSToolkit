@@ -14,7 +14,7 @@ html {
 }
 
 .buttons {
-  position : aboslute;
+  position : absolute;
   top: 200px;
   left: 10px; right: 10px;
 }
@@ -27,7 +27,7 @@ html {
 }
 
 #view_to_animate {
-  position : aboslute;
+  position : absolute;
   top: 50px;
   left: 50%;
   width: 100px;
