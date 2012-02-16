@@ -477,8 +477,20 @@ View.prototype = {
     {
       if (DOMParser)
       {
-        doc = new DOMParser ().parseFromString
-          (this.html_template, 'text/html');
+        try {
+          doc = new DOMParser ().parseFromString 
+            (this.html_template, 'text/html');
+        }
+        catch (e)
+        {
+          // @HACK
+          // IE is not compatible with 'text/html'
+          try {
+            doc = new DOMParser ().parseFromString 
+              (this.html_template, 'application/xhtml+xml');
+          }
+          catch (e) {}
+        }
         if (doc)
         {
           doc_elem = doc.documentElement;
@@ -1412,7 +1424,7 @@ View.prototype = {
     else
     {
       if (util.isNumber (value)) value = '' + value; // IE need string
-      this.view.style.setProperty (property, value);
+      this.view.style.setProperty (property, value, null);
     }
   },
 
@@ -6981,7 +6993,9 @@ util.defineClassProperties (AbstractList, {
       {
         this._scroll = ScrollView.VERTICAL_SCROLL;
         var os_device = window.deviceConfiguration.os;
-        if (!this._scrollbar && os_device !== DeviceConfiguration.OS_WP7)
+        if (!this._scrollbar &&
+          os_device !== DeviceConfiguration.OS_WP7 &&
+          os_device !== DeviceConfiguration.OS_WINDOWS)
         {
           this._scrollbar = new Scrollbar ('vertical', this.view, true, true);
         }
@@ -13098,7 +13112,7 @@ PopOver.prototype = {
 
     this.__direction = direction;
 
-    this.view.style.setProperty ("display", 'block');
+    this.view.style.setProperty ("display", 'block', null);
     this.__view_display = undefined;
 
     if (this._show_animation)

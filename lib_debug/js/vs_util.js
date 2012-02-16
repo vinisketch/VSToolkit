@@ -215,7 +215,6 @@ function _extend_api2 (destination, source)
  **/
 vs.util.extend = (Object.defineProperty)?_extend_api2:_extend_api1;
 
-
 /**
  * Extends a the prototype of a object
  *
