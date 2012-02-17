@@ -14338,11 +14338,20 @@ Picker.prototype = {
         break
       
       case core.POINTER_END:
-        var pos = this._slots_elements[slotNum].slotYPosition;
+        var slot_elem = this._slots_elements[slotNum], slotMaxScroll,
+          pos = slot_elem.slotYPosition;
         if (util.hasClassName (e.target, 'button_decr'))
-        { pos += 44; }
+        {
+          pos += 44;
+          if (pos > 0) { pos = 0;}
+        }
         else
-        { pos -= 44; }
+        {
+          pos -= 44;
+          var slotMaxScroll = this.getSlotMaxScroll (slot_elem);
+          if (pos < slotMaxScroll) { pos = slotMaxScroll; }
+        }
+
         this._scrollTo (slotNum, pos);
       case core.POINTER_CANCEL:
         util.removeClassName (e.target, 'active');
