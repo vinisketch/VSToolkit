@@ -2,50 +2,19 @@ var Animations = vs.core.createClass ({
 
   /** parent class */
   parent: vs.ui.Application,
-
-  initComponent : function ()
-  {
+  
+  initComponent : function () {
     this._super ();
+    var view, id;
     
-    this.item1 = new vs.ui.TextLabel ({id: 'item1', text: '1'});
-    this.item1.init ();
-    this.add (this.item1);
-    
-    this.item2 = new vs.ui.TextLabel ({id: 'item2', text: '2'});
-    this.item2.init ();
-    this.add (this.item2);
-    
-    this.item3 = new vs.ui.TextLabel ({id: 'item3', text: '3'});
-    this.item3.init ();
-    this.add (this.item3);
-    
-    this.item4 = new vs.ui.TextLabel ({id: 'item4', text: '4'});
-    this.item4.init ();
-    this.add (this.item4);
-    
-    this.item5 = new vs.ui.TextLabel ({id: 'item5', text: '5'});
-    this.item5.init ();
-    this.add (this.item5);
-    
-    this.item6 = new vs.ui.TextLabel ({id: 'item6', text: '6'});
-    this.item6.init ();
-    this.add (this.item6);
-    
-    this.item7 = new vs.ui.TextLabel ({id: 'item7', text: '7'});
-    this.item7.init ();
-    this.add (this.item7);
-    
-    this.item8 = new vs.ui.TextLabel ({id: 'item8', text: '8'});
-    this.item8.init ();
-    this.add (this.item8);
-    
-    this.item9 = new vs.ui.TextLabel ({id: 'item9', text: '9'});
-    this.item9.init ();
-    this.add (this.item9);   
+    for (var i = 1; i < 10; i++) {
+      view = new vs.ui.TextLabel ({id: 'item' + i, text: i}).init ();
+      this.add (view);      
+      this [view.id] = view;
+    } 
   },
 
-  applicationStarted : function (event)
-  {
+  applicationStarted : function (event) {
     var translation = new vs.fx.TranslateAnimation (260, 0, 0);
     translation.duration = '3s';
     translation.timing = vs.fx.Animation.EASE;
@@ -95,8 +64,7 @@ var Animations = vs.core.createClass ({
   }
 });
 
-function loadApplication ()
-{
+function loadApplication () {
   new Animations ({id:"animations"}).init ();
 
   vs.ui.Application.start ();
