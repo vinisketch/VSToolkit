@@ -230,9 +230,9 @@ SplitView.prototype = {
   {
     var key, a, child;
   
-    for (key in this.children)
+    for (key in this._children)
     {
-      a = this.children [key];
+      a = this._children [key];
       if (!a) { continue; }
       
       if (a instanceof Array)
@@ -249,9 +249,9 @@ SplitView.prototype = {
         this.remove (a);
         util.free (a);
       }
-      delete (this.children [key]);
+      delete (this._children [key]);
     }
-    this.children = {};
+    this._children = {};
   },
 
   /**

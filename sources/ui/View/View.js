@@ -308,9 +308,9 @@ View.prototype = {
     {
       this.__parent.remove (this);
     }
-    for (key in this.children)
+    for (key in this._children)
     {
-      a = this.children [key];
+      a = this._children [key];
       if (!a) { continue; }
       
       if (a instanceof Array)
@@ -323,9 +323,9 @@ View.prototype = {
       }
       else
       { util.free (a); }
-      delete (this.children [key]);
+      delete (this._children [key]);
     }
-    this.children = {};
+    this._children = {};
     delete (this.view);
     
     core.EventSource.prototype.destructor.call (this);
@@ -339,9 +339,9 @@ View.prototype = {
   {
     var key, a, i, child;
 
-    for (key in this.children)
+    for (key in this._children)
     {
-      a = this.children [key];
+      a = this._children [key];
       if (!a) { continue; }
       
       if (a instanceof Array)
@@ -570,7 +570,7 @@ View.prototype = {
     this._autosizing = [4,4];
 
     this._holes = {};
-    this.children = {};
+    this._children = {};
     this._pointerevent_handlers = [];
 
     if (!this.__config__) this.__config__ = {};
@@ -790,9 +790,9 @@ View.prototype = {
     
     var key, a, hole;
     
-    for (key in this.children)
+    for (key in this._children)
     {
-      a = this.children [key];
+      a = this._children [key];
       if (!a) { continue; }
       
       if (a === child || (a instanceof Array && a.indexOf (child) !== -1))
@@ -839,16 +839,16 @@ View.prototype = {
     else if (!extension) { key = View.ANY_PLACE; }
     else { key = extension; }
     
-    a = this.children [key];
+    a = this._children [key];
     if (a && util.isArray (a)) { a.push (child); }
     else if (a)
     {
       b = [];
       b.push (a);
       b.push (child);
-      this.children [key] = b;
+      this._children [key] = b;
     }
-    else { this.children [key] = child; }
+    else { this._children [key] = child; }
   
     hole = this._holes [key];
     if (view && hole)
@@ -895,15 +895,15 @@ View.prototype = {
     
     if (view)
     {
-      for (key in this.children)
+      for (key in this._children)
       {
-        a = this.children [key];
+        a = this._children [key];
         if (!a) { continue; }
         
         if (a === child || (a instanceof Array && a.indexOf (child) !== -1))
         {
           if (a instanceof Array) {a.remove (child);}
-          else { delete (this.children [key]); }
+          else { delete (this._children [key]); }
           
           hole = this._holes [key];
           if (hole) { hole.removeChild (view); }
@@ -928,9 +928,9 @@ View.prototype = {
   {
     var key, a, child;
   
-    for (key in this.children)
+    for (key in this._children)
     {
-      a = this.children [key];
+      a = this._children [key];
       if (!a) { continue; }
       
       if (a instanceof Array)
@@ -947,9 +947,9 @@ View.prototype = {
         this.remove (a);
         util.free (a);
       }
-      delete (this.children [key]);
+      delete (this._children [key]);
     }
-    this.children = {};
+    this._children = {};
   },
 
   /**
