@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - vs.ui.Picker</title>
+		<title>JsDoc Reference - vs.ui.Template</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -544,7 +544,7 @@ hr:last-child {
 <!-- ============================== class title ============================ -->
     <div class="classTitle">
       
-      Class vs.ui.Picker
+      Class vs.ui.Template
     </div>
 
 		<div id="scrollable">
@@ -553,35 +553,22 @@ hr:last-child {
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
-				<b>Extends</b>
-					<a href="../symbols/vs.ui.View.html">vs.ui.View</a>.<br /><br />
 				
 			
-				vs.ui.Picker defines a view that use a spinning-wheel or slot-machine 
- metaphor to show one or more sets of values. Users select values by 
- rotating the wheels so that the desired row of values aligns with a
- selection indicator.
- <p>
- This code ins based on Spinning Wheel object from Matteo Spinelli.
-
- <p>
- Delegate:
- <ul>
-   <li/>pickerViewSelectRow : function (vs.ui.Picker the view)
- </ul>
- <p>
- Event:
- <ul>
-   <li/>change : data : {index: slot_index, key: selected key, value, 
-                 selected value} 
- </ul>
- <p>
+				vs.ui.Template is GUI template system you can use to create the view
+ of component for instance. <br/>
+ A template is HTML text fragment containing template tags. There is tow
+ ways to use template :
+<ul>
+  <li> By expanding tags using values provides in an Object</li>
+  <li> By generating a vs.ui.View with properties linked to tags</li>
+</ul>
 	
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.ui.Picker.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.ui.Template.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -594,9 +581,9 @@ hr:last-child {
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/vs.ui.Picker.html#constructor">vs.ui.Picker</a></b>(config)
+								<b><a href="../symbols/vs.ui.Template.html#constructor">vs.ui.Template</a></b>(config)
 							</div>
-							<div class="description">The vs.ui.Picker class</div>
+							<div class="description"></div>
 						</td>
 					</tr>
 				</tbody>
@@ -605,88 +592,12 @@ hr:last-child {
 
 <!-- ============================== properties summary ===================== -->
 			
-				
-				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.ui.Picker.">
-					<caption>Field Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Field Attributes</th>
-							<th scope="col">Field Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/vs.ui.Picker.html#data">data</a></b>
-								</div>
-								<div class="description">Sets the Picker datas
-
-Data is a array of object <values, type, default_value>:
-<ul>
-<li/>Values is in the form of: < key: value >.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/vs.ui.Picker.html#delegate">delegate</a></b>
-								</div>
-								<div class="description">Set the delegate.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.ui.Picker.<b><a href="../symbols/vs.ui.Picker.html#.NUMBERS">NUMBERS</a></b>
-								</div>
-								<div class="description">Predefined numbers for the Picker</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/vs.ui.Picker.html#selectedKeys">selectedKeys</a></b>
-								</div>
-								<div class="description">Get the selected slot keys</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/vs.ui.Picker.html#selectedValues">selectedValues</a></b>
-								</div>
-								<div class="description">Get the selected slot values</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
-				
-				
-				<dl class="inheritsList">
-				<dt>Fields borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#autosizing">autosizing</a>, <a href="../symbols/vs.ui.View.html#bubbling">bubbling</a>, <a href="../symbols/vs.ui.View.html#enable">enable</a>, <a href="../symbols/vs.ui.View.html#hideAnimation">hideAnimation</a>, <a href="../symbols/vs.ui.View.html#layout">layout</a>, <a href="../symbols/vs.ui.View.html#maxScale">maxScale</a>, <a href="../symbols/vs.ui.View.html#minScale">minScale</a>, <a href="../symbols/vs.ui.View.html#position">position</a>, <a href="../symbols/vs.ui.View.html#rotation">rotation</a>, <a href="../symbols/vs.ui.View.html#scaling">scaling</a>, <a href="../symbols/vs.ui.View.html#setHideAnimation">setHideAnimation</a>, <a href="../symbols/vs.ui.View.html#setShowAnimation">setShowAnimation</a>, <a href="../symbols/vs.ui.View.html#showAnimmation">showAnimmation</a>, <a href="../symbols/vs.ui.View.html#size">size</a>, <a href="../symbols/vs.ui.View.html#transformOrigin">transformOrigin</a>, <a href="../symbols/vs.ui.View.html#translation">translation</a>, <a href="../symbols/vs.ui.View.html#visible">visible</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
-				</dl>
-				
-			
 
 <!-- ============================== methods summary ======================== -->
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.ui.Picker.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.ui.Template.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -699,36 +610,36 @@ Data is a array of object <values, type, default_value>:
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.Picker.html#addSlot">addSlot</a></b>(values, style, defaultValue)
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.Template.html#apply">apply</a></b>(values)
 								</div>
-								<div class="description">Add a new slot to the picket view.</div>
+								<div class="description">Returns an HTML String of this template with the specified values.</div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.Picker.html#getSelectedValues">getSelectedValues</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.Template.html#clone">clone</a></b>(config)
 								</div>
-								<div class="description">Returns slots selected value.</div>
+								<div class="description">Clone the Template <p></div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.Picker.html#removeAllSlots">removeAllSlots</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.Template.html#compileView">compileView</a></b>()
 								</div>
-								<div class="description">Remove all slots from the picker</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.Picker.html#scrollToValue">scrollToValue</a></b>(slot, value)
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.Template.html#toString">toString</a></b>()
 								</div>
-								<div class="description">Scroll a given slot to a set value</div>
+								<div class="description">HTML String of the template <p></div>
 							</td>
 						</tr>
 					
@@ -736,10 +647,6 @@ Data is a array of object <values, type, default_value>:
 				</table>
 				
 				
-				
-				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#add">add</a>, <a href="../symbols/vs.ui.View.html#addClassName">addClassName</a>, <a href="../symbols/vs.ui.View.html#addCssRule">addCssRule</a>, <a href="../symbols/vs.ui.View.html#addCssRules">addCssRules</a>, <a href="../symbols/vs.ui.View.html#animate">animate</a>, <a href="../symbols/vs.ui.View.html#bind">bind</a>, <a href="../symbols/vs.ui.View.html#clone">clone</a>, <a href="../symbols/vs.ui.View.html#createAndAddComponent">createAndAddComponent</a>, <a href="../symbols/vs.ui.View.html#getBorder">getBorder</a>, <a href="../symbols/vs.ui.View.html#getComputedStyle">getComputedStyle</a>, <a href="../symbols/vs.ui.View.html#getMargin">getMargin</a>, <a href="../symbols/vs.ui.View.html#getPadding">getPadding</a>, <a href="../symbols/vs.ui.View.html#getStyle">getStyle</a>, <a href="../symbols/vs.ui.View.html#hasClassName">hasClassName</a>, <a href="../symbols/vs.ui.View.html#hide">hide</a>, <a href="../symbols/vs.ui.View.html#isChild">isChild</a>, <a href="../symbols/vs.ui.View.html#notifyToParent">notifyToParent</a>, <a href="../symbols/vs.ui.View.html#redraw">redraw</a>, <a href="../symbols/vs.ui.View.html#remove">remove</a>, <a href="../symbols/vs.ui.View.html#removeAllChild">removeAllChild</a>, <a href="../symbols/vs.ui.View.html#removeClassName">removeClassName</a>, <a href="../symbols/vs.ui.View.html#rotate">rotate</a>, <a href="../symbols/vs.ui.View.html#scale">scale</a>, <a href="../symbols/vs.ui.View.html#setStyle">setStyle</a>, <a href="../symbols/vs.ui.View.html#setStyles">setStyles</a>, <a href="../symbols/vs.ui.View.html#setVisible">setVisible</a>, <a href="../symbols/vs.ui.View.html#show">show</a>, <a href="../symbols/vs.ui.View.html#translate">translate</a>, <a href="../symbols/vs.ui.View.html#unbind">unbind</a>, <a href="../symbols/vs.ui.View.html#viewDidAdd">viewDidAdd</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getProperties">getProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a></dd>
-				</dl>
 				
 			
 <!-- ============================== events summary ======================== -->
@@ -753,24 +660,48 @@ Data is a array of object <values, type, default_value>:
 				</div>
 				
 				<div class="fixedFont">
-						<b>vs.ui.Picker</b>(config)
+						<b>vs.ui.Template</b>(config)
 				</div>
 				
 				<div class="description">
-					The vs.ui.Picker class
-					<br /><i>Author: </i>David Thevenin.
+					
+					<br /><i>Author: </i>David Thevenin
+<br/>
+<br/>
+Typical template description:
+<pre class='code'>
+ var str = '&lt;span style="${style}"&gt;name:${lastname},${firstname}&lt;/span&gt;';
+</pre>
+
+Expending the template:
+<pre class='code'>
+ var myTemplate = new Template (str);
+<br/>
+ var values = {
+   lastname : "Doo",
+   firstname : "John",
+   style : "color:blue"
+ };
+<br/>
+ console.log (myTemplate.apply (values));
+ // -> &lt;span style="color:blue"&gt;name:Doo,John&lt;/span&gt;
+</pre>
+
+Generating a vs.ui.View from the template:
+<pre class='code'>
+ var myTemplate = new Template (str);
+<br/>
+ var myView = myTemplate.compileView ();
+<br/>
+ myApp.add (myView); //|| document.body.appendChild (myView.view);
+<br/>
+ // properties change automatically update the DOM
+ myView.lastname = "Doo";
+ myView.firstname = "John";
+ myView.style = "color:blue";
+<br/>
+</pre>.
 				</div>
-				
-				
-				
-				<pre class="code"> var sizePicker = new vs.ui.Picker ();
- 
- sizePicker.addSlot (vs.ui.Picker.NUMBERS, 'right');
- sizePicker.addSlot (vs.ui.Picker.NUMBERS, 'right');
- sizePicker.addSlot (vs.ui.Picker.NUMBERS, 'right');
- sizePicker.addSlot ({ separator: ',', 'readonly');
- sizePicker.addSlot (vs.ui.Picker.NUMBERS, 'right');
- sizePicker.addSlot ({ cm: 'Cm', ft: 'Feet' }, 'shrink');</pre>
 				
 				
 				
@@ -780,7 +711,7 @@ Data is a array of object <values, type, default_value>:
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{Object}</span>  <b>config</b>
+								<span class="light fixedFont">{string}</span>  <b>config</b>
 								
 							</dt>
 								<dd>the configuration structure [mandatory]</dd>
@@ -799,145 +730,6 @@ Data is a array of object <values, type, default_value>:
 
 <!-- ============================== field details ========================== -->		
 			
-				<div class="sectionTitle">
-					Field Detail
-				</div>
-				
-					<a name="data"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>data</b>
-					
-					</div>
-					<div class="description">
-						Sets the Picker datas
-
-Data is a array of object <values, type, default_value>:
-<ul>
-<li/>Values is in the form of: < key: value >. Keys are the identifiers
-that won’t be shown in the picker.<br/>
-
-<li/>Styles is a list of space separated predefined styles to be applied
-to the slot. The available values are:
-<ul>
- <li />right, align text inside the slot to the right;
- <li />readonly, the slot can’t be spun;
- <li />shrink, shrink the slot width to the minimum possible.
-</ul>
-
-<li/>Default value, a value include in values field
-</ul>
-						
-					</div>
-					
-					
-					
-					<pre class="code"> var sizePicker = new vs.ui.Picker ();
- 
- sizePicker.data = [
-    {values: vs.ui.Picker.NUMBERS, style: 'right shrink'},
-    {values: vs.ui.Picker.NUMBERS, style: 'right shrink'},
-    {values: vs.ui.Picker.NUMBERS, style: 'right shrink'}];</pre>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="delegate"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>delegate</b>
-					
-					</div>
-					<div class="description">
-						Set the delegate.
-It should implements following methods
- <ul>
-   <li/>pickerViewSelectRow : function (vs.ui.Picker the view)
- </ul>
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".NUMBERS"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.ui.Picker.</span><b>NUMBERS</b>
-					
-					</div>
-					<div class="description">
-						Predefined numbers for the Picker
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="selectedKeys"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>selectedKeys</b>
-					
-					</div>
-					<div class="description">
-						Get the selected slot keys
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="selectedValues"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>selectedValues</b>
-					
-					</div>
-					<div class="description">
-						Get the selected slot values
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					
-				
-			
 
 <!-- ============================== method details ========================= -->		
 			
@@ -945,29 +737,21 @@ It should implements following methods
 					Method Detail
 				</div>
 				
-					<a name="addSlot"> </a>
+					<a name="apply"> </a>
 					<div class="fixedFont">
 					
-					
-					<b>addSlot</b>(values, style, defaultValue)
+					<span class="light">{String}</span>
+					<b>apply</b>(values)
 					
 					</div>
 					<div class="description">
-						Add a new slot to the picket view.
-<p>
-The new slot is added at right of others slots.<br/>
-Values is in the form of: < key: value >. Keys are the identifiers
-that won’t be shown in the picker.<br/>
-
-Styles is a list of space separated predefined styles to be applied
-to the slot. The available values are:
-<ul>
- <li />right, align text inside the slot to the right;
- <li />readonly, the slot can’t be spun;
- <li />shrink, shrink the slot width to the minimum possible.
-</ul>
+						Returns an HTML String of this template with the specified values.
 						
 					</div>
+					
+					
+					
+					<pre class="code"> myTemplate.apply (['John', 25]);</pre>
 					
 					
 					
@@ -979,45 +763,9 @@ to the slot. The available values are:
 									<span class="light fixedFont">{Object}</span> <b>values</b>
 									
 								</dt>
-								<dd>The slot data</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>style</b>
-									
-								</dt>
-								<dd>The slot style</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>defaultValue</b>
-									
-								</dt>
-								<dd>The default value to set</dd>
+								<dd>The template values.</dd>
 							
 							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="getSelectedValues"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Object}</span>
-					<b>getSelectedValues</b>()
-					
-					</div>
-					<div class="description">
-						Returns slots selected value.
-						
-					</div>
-					
-					
-					
 						
 						
 						
@@ -1026,7 +774,7 @@ to the slot. The available values are:
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{Object}</span> {keys, values}</dd>
+								<dd><span class="light fixedFont">{String}</span> The HTML string</dd>
 							
 							</dl>
 						
@@ -1035,39 +783,15 @@ to the slot. The available values are:
 
 					<hr />
 				
-					<a name="removeAllSlots"> </a>
+					<a name="clone"> </a>
 					<div class="fixedFont">
 					
-					
-					<b>removeAllSlots</b>()
+					<span class="light">{<a href="../symbols/vs.ui.Template.html">vs.ui.Template</a>}</span>
+					<b>clone</b>(config)
 					
 					</div>
 					<div class="description">
-						Remove all slots from the picker
-						
-					</div>
-					
-					
-					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="scrollToValue"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{boolean}</span>
-					<b>scrollToValue</b>(slot, value)
-					
-					</div>
-					<div class="description">
-						Scroll a given slot to a set value
+						Clone the Template <p>
 						
 					</div>
 					
@@ -1078,16 +802,10 @@ to the slot. The available values are:
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{number}</span> <b>slot</b>
+									<span class="light fixedFont">{Object}</span> <b>config</b>
 									
 								</dt>
-								<dd>the slot number (number starting from 0)</dd>
-							
-								<dt>
-									<span class="light fixedFont">{string}</span> <b>value</b>
-									
-								</dt>
-								<dd>the value to set</dd>
+								<dd>the configuration structure for the new object</dd>
 							
 							</dl>
 						
@@ -1098,7 +816,69 @@ to the slot. The available values are:
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{boolean}</span> returns true if the value was set. False otherwise.</dd>
+								<dd><span class="light fixedFont">{<a href="../symbols/vs.ui.Template.html">vs.ui.Template</a>}</span> the cloned object</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="compileView"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{<a href="../symbols/vs.ui.View.html">vs.ui.View</a>}</span>
+					<b>compileView</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{<a href="../symbols/vs.ui.View.html">vs.ui.View</a>}</span> the View</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="toString"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>toString</b>()
+					
+					</div>
+					<div class="description">
+						HTML String of the template <p>
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> HTML String of the template</dd>
 							
 							</dl>
 						
