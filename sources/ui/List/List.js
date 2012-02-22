@@ -306,6 +306,12 @@ function buildSection (list, title, index, itemsSelectable)
       listItem.title = item.title;
       listItem.label = item.label;
     }
+    // model update management
+    if (item instanceof vs.core.Model)
+    {
+      item.bindChange ('change', listItem, (function (listItem, item) {
+        return function () { listItem.configure (item); };}(listItem, item)));
+    }
 
     if (itemsSelectable)
     {
@@ -439,7 +445,13 @@ function defaultListRenderData (itemsSelectable)
       listItem.title = item.title;
       listItem.label = item.label;
     }
-    
+    // model update management
+    if (item instanceof vs.core.Model)
+    {
+      item.bindChange ('change', listItem, (function (listItem, item) {
+        return function () { listItem.configure (item); };}(listItem, item)));
+    }
+
     if (itemsSelectable)
     {
       listItem.view.addEventListener (core.POINTER_START, this);
