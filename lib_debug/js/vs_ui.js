@@ -362,9 +362,9 @@ View.prototype = {
     {
       this.__parent.remove (this);
     }
-    for (key in this.children)
+    for (key in this._children)
     {
-      a = this.children [key];
+      a = this._children [key];
       if (!a) { continue; }
       
       if (a instanceof Array)
@@ -377,9 +377,9 @@ View.prototype = {
       }
       else
       { util.free (a); }
-      delete (this.children [key]);
+      delete (this._children [key]);
     }
-    this.children = {};
+    this._children = {};
     delete (this.view);
     
     core.EventSource.prototype.destructor.call (this);
@@ -393,9 +393,9 @@ View.prototype = {
   {
     var key, a, i, child;
 
-    for (key in this.children)
+    for (key in this._children)
     {
-      a = this.children [key];
+      a = this._children [key];
       if (!a) { continue; }
       
       if (a instanceof Array)
@@ -624,7 +624,7 @@ View.prototype = {
     this._autosizing = [4,4];
 
     this._holes = {};
-    this.children = {};
+    this._children = {};
     this._pointerevent_handlers = [];
 
     if (!this.__config__) this.__config__ = {};
@@ -844,9 +844,9 @@ View.prototype = {
     
     var key, a, hole;
     
-    for (key in this.children)
+    for (key in this._children)
     {
-      a = this.children [key];
+      a = this._children [key];
       if (!a) { continue; }
       
       if (a === child || (a instanceof Array && a.indexOf (child) !== -1))
@@ -893,16 +893,16 @@ View.prototype = {
     else if (!extension) { key = View.ANY_PLACE; }
     else { key = extension; }
     
-    a = this.children [key];
+    a = this._children [key];
     if (a && util.isArray (a)) { a.push (child); }
     else if (a)
     {
       b = [];
       b.push (a);
       b.push (child);
-      this.children [key] = b;
+      this._children [key] = b;
     }
-    else { this.children [key] = child; }
+    else { this._children [key] = child; }
   
     hole = this._holes [key];
     if (view && hole)
@@ -949,15 +949,15 @@ View.prototype = {
     
     if (view)
     {
-      for (key in this.children)
+      for (key in this._children)
       {
-        a = this.children [key];
+        a = this._children [key];
         if (!a) { continue; }
         
         if (a === child || (a instanceof Array && a.indexOf (child) !== -1))
         {
           if (a instanceof Array) {a.remove (child);}
-          else { delete (this.children [key]); }
+          else { delete (this._children [key]); }
           
           hole = this._holes [key];
           if (hole) { hole.removeChild (view); }
@@ -982,9 +982,9 @@ View.prototype = {
   {
     var key, a, child;
   
-    for (key in this.children)
+    for (key in this._children)
     {
-      a = this.children [key];
+      a = this._children [key];
       if (!a) { continue; }
       
       if (a instanceof Array)
@@ -1001,9 +1001,9 @@ View.prototype = {
         this.remove (a);
         util.free (a);
       }
-      delete (this.children [key]);
+      delete (this._children [key]);
     }
-    this.children = {};
+    this._children = {};
   },
 
   /**
@@ -3381,9 +3381,9 @@ SplitView.prototype = {
   {
     var key, a, child;
   
-    for (key in this.children)
+    for (key in this._children)
     {
-      a = this.children [key];
+      a = this._children [key];
       if (!a) { continue; }
       
       if (a instanceof Array)
@@ -3400,9 +3400,9 @@ SplitView.prototype = {
         this.remove (a);
         util.free (a);
       }
-      delete (this.children [key]);
+      delete (this._children [key]);
     }
-    this.children = {};
+    this._children = {};
   },
 
   /**
@@ -7416,6 +7416,12 @@ function buildSection (list, title, index, itemsSelectable)
       listItem.title = item.title;
       listItem.label = item.label;
     }
+    // model update management
+    if (item instanceof vs.core.Model)
+    {
+      item.bindChange ('change', listItem, (function (listItem, item) {
+        return function () { listItem.configure (item); };}(listItem, item)));
+    }
 
     if (itemsSelectable)
     {
@@ -7549,7 +7555,13 @@ function defaultListRenderData (itemsSelectable)
       listItem.title = item.title;
       listItem.label = item.label;
     }
-    
+    // model update management
+    if (item instanceof vs.core.Model)
+    {
+      item.bindChange ('change', listItem, (function (listItem, item) {
+        return function () { listItem.configure (item); };}(listItem, item)));
+    }
+
     if (itemsSelectable)
     {
       listItem.view.addEventListener (core.POINTER_START, this);
@@ -8537,7 +8549,7 @@ RadioButton.prototype = {
   {
     if (!this._model) { return; }
     
-    var i, input;
+    var i, input, item, l;
     
     if (!this._list_items)
     {
@@ -8549,8 +8561,9 @@ RadioButton.prototype = {
     this._selected_index = -1;
     var os_device = window.deviceConfiguration.os;
     
-    for (i = 0; i < this._model.length; i++)
+    for (i = 0, l = this._model.length; i < l; i++)
     {
+      item = this._model.item (i);
       input = document.createElement ('input');
       input.type = 'radio';
       input.name = this._id;
@@ -8567,12 +8580,12 @@ RadioButton.prototype = {
         label.value = i;
         label.addEventListener (core.POINTER_START, this);
         label.addEventListener ('click', this);
-        util.setElementInnerText (label, this._model.item (i));
+        util.setElementInnerText (label, item);
         this._list_items.appendChild (label);
       }
       else
       {
-        util.setElementInnerText (input, this._model.item (i));
+        util.setElementInnerText (input, item);
       }
     }
     this.refresh ();
@@ -8812,7 +8825,7 @@ CheckBox.prototype = {
   {
     if (!this._model) { return; }
     
-    var i, div, title, button;
+    var i, l, div, title, button, item;
     if (!this._list_items)
     {
       console.error ('vs.ui.RadioButton uncorrectly initialized.');
@@ -8823,8 +8836,9 @@ CheckBox.prototype = {
     this.clean_gui ();
     var os_device = window.deviceConfiguration.os;
     
-    for (i = 0; i < this._model.length; i++)
+    for (i = 0, l = this._model.length; i < l; i++)
     {
+      item = this._model.item (i);
       input = document.createElement ('input');
       input.type = 'checkbox';
       input.name = this._id;
@@ -8842,12 +8856,12 @@ CheckBox.prototype = {
         label.value = i;
         label.addEventListener (core.POINTER_START, this);
         label.addEventListener ('click', this);
-        util.setElementInnerText (label, this._model.item (i));
+        util.setElementInnerText (label, item);
         this._list_items.appendChild (label);
       }
       else
       {
-        util.setElementInnerText (input, this._model.item (i));
+        util.setElementInnerText (input, item);
       }
     }
     
@@ -9153,9 +9167,9 @@ NavigationBar.prototype = {
     if (this._current_state === state)
     {
       // hide all children except those have to be shown
-      for (key in this.children)
+      for (key in this._children)
       {
-        children = this.children [key];
+        children = this._children [key];
         if (util.isArray (children))
         {
           for (i = 0; i < children.length; i++)
@@ -9240,9 +9254,9 @@ NavigationBar.prototype = {
     length = objs_to_show.length;
     
     // hide all children except those have to be shown
-    for (key in this.children)
+    for (key in this._children)
     {
-      children = this.children [key];
+      children = this._children [key];
       if (util.isArray (children))
       {
         for (i = 0; i < children.length; i++)
