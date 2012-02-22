@@ -47,7 +47,7 @@
  *   parent: vs.core.Model,
  *
  *   // Properties definition
- *   properties {
+ *   properties : {
  *     content: vs.core.Object.PROPERTY_IN_OUT,
  *     done: vs.core.Object.PROPERTY_IN_OUT,
  *     date: vs.core.Object.PROPERTY_OUT
@@ -340,9 +340,8 @@ Model.prototype = {
   propertyChange : function (property)
   {
     var df = _df_node_to_def [this._id];
-    if (!df) { return; }
+    if (df) { df.propagate (this._id, property); }
     
-    df.propagate (this._id, property);
     if (this.__should_propagate_changes__) { this.change (); }
   }
 };

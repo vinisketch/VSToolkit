@@ -343,12 +343,7 @@ VSObject.prototype =
   propertyChange : function (property)
   {
     var df = _df_node_to_def [this._id];
-    if (!df)
-    {
-      return;
-    }
-    
-    df.propagate (this._id, property);
+    if (df) { df.propagate (this._id, property); }
   },
 
   /**
