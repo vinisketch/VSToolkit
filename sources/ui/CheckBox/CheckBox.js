@@ -143,7 +143,7 @@ CheckBox.prototype = {
   {
     if (!this._model) { return; }
     
-    var i, div, title, button;
+    var i, l, div, title, button, item;
     if (!this._list_items)
     {
       console.error ('vs.ui.RadioButton uncorrectly initialized.');
@@ -154,8 +154,9 @@ CheckBox.prototype = {
     this.clean_gui ();
     var os_device = window.deviceConfiguration.os;
     
-    for (i = 0; i < this._model.length; i++)
+    for (i = 0, l = this._model.length; i < l; i++)
     {
+      item = this._model.item (i);
       input = document.createElement ('input');
       input.type = 'checkbox';
       input.name = this._id;
@@ -173,12 +174,12 @@ CheckBox.prototype = {
         label.value = i;
         label.addEventListener (core.POINTER_START, this);
         label.addEventListener ('click', this);
-        util.setElementInnerText (label, this._model.item (i));
+        util.setElementInnerText (label, item);
         this._list_items.appendChild (label);
       }
       else
       {
-        util.setElementInnerText (input, this._model.item (i));
+        util.setElementInnerText (input, item);
       }
     }
     
