@@ -118,6 +118,7 @@ section p {
 section ul.examples > li {
   min-height: 85px;
   list-style: none;
+  margin-bottom: 10px;
 }
 
 section ul.examples > li > span {
