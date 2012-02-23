@@ -77,6 +77,10 @@
       <p>
         get the source code on GitHub : <a href="https://github.com/vinisketch/VSToolkit">vinisketch/VSToolkit</a>
       </p>
+
+        <h3>Documentation</h3>
+        The API reference is available <a href="http://www.vinisketch.fr/toolkit/docs/index.html">here</a>.
+
       </section>
       <section id="object_model">
         <h2>
@@ -94,8 +98,7 @@
 	properties : {text: vs.core.Object.PROPERTY_IN_OUT},
 
 	// prototype declaration
-	aMethod : function (p1, p2, …)
-	{
+	aMethod : function (p1, p2, …) {
 		this._super (p1, p2, …);
 		…
 	}, 
@@ -186,14 +189,12 @@ obj.text = 'Hello';
 	parent: vs.ui.Application,
 
 	/** called when vs.ui.Application.start (); is called */
-	applicationStarted : function (event)
-	{
+	applicationStarted : function (event) {
 		…
 	}
 });
 
-function loadApplication ()
-{
+function loadApplication () {
 	new myApp ({id:"_myApp_"}).init ();
 
 	vs.ui.Application.start ();

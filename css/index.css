@@ -3,7 +3,7 @@ html {
 }
 
 body {
-  background-color: #ededed;
+  background-color: #FAFAFA;
   font-family: "Corbel", "Helvetica Neue", "Arial";
 }
 
@@ -79,8 +79,19 @@ header nav > ul > li {
   float: left;
   margin: 5px 5px 0 0;
   display: block;
-  width: 85px; height:85px;
   background-image: url('tile_bckgrd.png');
+}
+
+header nav > ul > li > a {
+  width: 85px; height:85px;
+}
+
+header nav > ul > li > a:hover {
+  background-color: #DDD;
+}
+
+header nav > ul > li > a:active {
+  background-color: #CCC;
 }
 
 header nav a {
