@@ -20,7 +20,7 @@
  *  @class
  *  vs.ui.Template is GUI template system you can use to create the view
  *  of component for instance. <br/>
- *  A template is HTML text fragment containing template tags. There is tow
+ *  A template is a HTML text fragment containing template tags. There is two
  *  ways to use template :
  * <ul>
  *   <li> By expanding tags using values provides in an Object</li>
@@ -34,7 +34,7 @@
  *  var str = '&lt;span style="${style}"&gt;name:${lastname},${firstname}&lt;/span&gt;';
  * </pre>
  *
- * Expending the template:
+ * Expanding the template:
  * <pre class='code'>
  *  var myTemplate = new Template (str);
  * <br/>
@@ -56,14 +56,13 @@
  * <br/>
  *  myApp.add (myView); //|| document.body.appendChild (myView.view);
  * <br/>
- *  // properties change automatically update the DOM
+ *  // property changes, automatically update the DOM
  *  myView.lastname = "Doo";
  *  myView.firstname = "John";
  *  myView.style = "color:blue";
  * <br/>
  * </pre>
  *
- *  
  *  @constructor
  *  Main constructor
  *
