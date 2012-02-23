@@ -45,7 +45,7 @@
         <ul>
           <li>Objects oriented toolkit</li>
           <li>Framework driven by a component approach</li>
-          <li>Works on mobile devices
+          <li>Optimized for mobile devices
             <ul>
               <li>Small memory footprint and memory deallocation</li>
               <li>Performance (JS and Rendering)</li>
@@ -57,7 +57,7 @@
         <a href="http://www.vinisketch.fr/mainSite/en/product.html">
           ViniSketch Designer (VSD)
         </a>
-        is based on this toolkit for creating application. 
+        use this toolkit for creating application. 
         </p>
         <p>
         <h3>Authors</h3> David Thevenin
@@ -233,7 +233,7 @@ function loadApplication ()
           DataFlow 
         </h3>
         <p>
-          XXX 
+          <span style="font-weight:bold;font-style:italic">WARNING: The API will be committed asap.</span>
         </p>
         </section>
         <section id="examples">
@@ -377,14 +377,57 @@ function loadApplication ()
           <h2>
             Template 
           </h2>
+          <span style="font-weight:bold;font-style:italic">WARNING: The API is not yet fully committed.</span>
           <p>
-            XXX 
+            Template is a simple way for creating view of a component.<br/>
+            A template is a HTML text fragment containing template tags. There is two ways to use template :
+            <ul>
+              <li> By expanding tags using values provides in an Object</li>
+              <li> By generating a vs.ui.View with properties linked to tags</li>
+            </ul>
+            <br />
+Typical template description:
+            <br />
+            <br />
+<pre><code class="javascript">var str = '&lt;span style="${style}"&gt;name:${lastname},${firstname}&lt;/span&gt;';
+</code></pre>
+            <br />
+          1- Expanding the template:
+            <br />
+            <br />
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var values = {
+	lastname : "Doo",
+	firstname : "John",
+	style : "color:blue"
+};
+
+console.log (myTemplate.apply (values));
+// -> &lt;span style="color:blue"&gt;name:Doo,John&lt;/span&gt;
+</code></pre>
+            <br />
+          2- Generating a vs.ui.View from the template:
+            <br />
+            <br />
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var myView = myTemplate.compileView ();
+
+myApp.add (myView);
+
+// property changes, automatically update the DOM
+myView.lastname = "Doo";
+myView.firstname = "John";
+myView.style = "color:blue";
+</code></pre>
           </p>
+          
           <h2>
             How to handle the MVC pattern 
           </h2>
           <p>
-            XXX 
+            <span style="font-weight:bold;font-style:italic">WARNING: The API will be committed asap.</span>
           </p>
         </section>
         <section>
