@@ -315,7 +315,7 @@ util.defineClassProperties (Application, {
     get : function ()
     {
       this._prevent_scroll = document.preventScroll;
-      return _prevent_scroll;
+      return this.__prevent_scroll;
     }
   }
 });
