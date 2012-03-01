@@ -82,6 +82,7 @@ function Model (config)
   this.constructor = vs.core.Model;
 
   this.__bindings__ = {};
+  this.__links__ = [];
 }
 
 Model.prototype = {
@@ -92,9 +93,15 @@ Model.prototype = {
    
   /**
    * @protected
-   * @type {Array}
+   * @type {Object}
    */
    __bindings__: null,
+   
+  /**
+   * @protected
+   * @type {Array}
+   */
+   __links__: null,
    
   /**
    * @protected
@@ -327,6 +334,39 @@ Model.prototype = {
   },
 
   /**
+   * @protected
+   *
+   * @name vs.core.Model#linkTo
+   * @function
+   *
+   * @param {vs.core.Object} linkTo object
+   */
+  linkTo : function (obj)
+  {
+    if (obj instanceof vs.core.Object)
+    {
+      if (this.__links__.indexOf (obj) === -1)
+      { this.__links__.push (obj); }
+    }
+  },
+
+  /**
+   * @protected
+   *
+   * @name vs.core.Model#unlinkTo
+   * @function
+   *
+   * @param {vs.core.Object} linkTo object
+   */
+  unlinkTo : function (obj)
+  {
+    if (obj instanceof vs.core.Object)
+    {
+      this.__links__.remove (obj);
+    }
+  },
+
+  /**
    * Manually force dataflow properties change propagation.
    * <br/>
    * If no property name is specified, the system will assume all component's
@@ -341,6 +381,10 @@ Model.prototype = {
   {
     var df = _df_node_to_def [this._id];
     if (df) { df.propagate (this._id, property); }
+    var l = this.__links__.length, obj;
+    if (property) while (l--)
+    { this.__links__ [l] [property] = this [property]; }
+    else while (l--) { this.__links__ [l].configure (this); }
     
     if (this.__should_propagate_changes__) { this.change (); }
   }

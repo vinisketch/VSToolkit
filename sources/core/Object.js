@@ -361,6 +361,52 @@ VSObject.prototype =
   },
 
   /**
+   * The link method allow to link a model to an other object (a view for 
+   * instance).<br />
+   * This is a simple way to create a MVC architecture for witch each model
+   * modification are reported to the view.
+   * Linking is quite different than dataflow.
+   * You can use linking to connect 2 objects with the same properties name..
+   * With dataflow its possible to connect a set of object, and define precisely 
+   * with property are connected
+   * Please notice that dataflow propagation is optimized.
+   *
+   * @name vs.core.Object#link
+   * @function
+   * @param {vs.core.Model} the model to link with
+   */
+  link : function (model)
+  {
+    // model update management
+    if (model instanceof vs.core.Model)
+    {
+      if (this.__model) this.__model.unlinkTo (this);
+      this.__model = model;
+      this.__model.linkTo (this);
+      
+      // first configuration
+      this.configure (this.__model)
+    }
+    else throw "vs.core.Object.link; parameter is not a vs.core.Model";
+  },
+
+  /**
+   * Unlink this object with a model..
+   *
+   * @name vs.core.Object#link
+   * @function
+   */
+  unlink : function ()
+  {
+    // model update management
+    if (this.__model)
+    {
+     if (this.__model) this.__model.unlinkTo (this);
+      this.__model = undefined;
+    }
+  },
+
+  /**
    *  Clone the Object <p>
    * 
    * @name vs.core.Object#clone
@@ -376,7 +422,7 @@ VSObject.prototype =
     if (!cloned_map) { cloned_map = {}; }
     
     // have already cloned;
-    if (cloned_map [this]) { return cloned_map [this]; }
+    if (cloned_map [this._id]) { return cloned_map [this._id]; }
 
     if (!config) { config = {}; }
     if (!config.id) { config.id = createId (); }
@@ -391,7 +437,7 @@ VSObject.prototype =
       return null
     }
     
-    cloned_map [this] = obj;
+    cloned_map [this._id] = obj;
     
     function _propertyCopy_api1 (prop_name, src, trg)
     {
@@ -454,6 +500,14 @@ VSObject.prototype =
       if (key == 'id' || key == '_id') { continue; }
       
       propertyCopy (key, this, obj);
+    }
+    
+    // manage linking clone
+    if (this.__model)
+    {
+      if (cloned_map && cloned_map [this.__model._id])
+      { obj.link (cloned_map [this.__model._id]); }
+      else { obj.link (this.__model); }
     }
     
     obj.__i__ = false;
