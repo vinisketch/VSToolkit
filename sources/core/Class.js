@@ -168,7 +168,7 @@ function _setProperties (klass, properties)
     if (util.isNumber (value))
     {
       export_value = value; desc = {};
-      _prop_name = '_' + prop_name;
+      _prop_name = '_' + util.underscore (prop_name);
       if (export_value & vs.core.Object.PROPERTY_IN)
       {
         desc.set = (function (_prop_name)
