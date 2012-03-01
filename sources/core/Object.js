@@ -452,11 +452,12 @@ VSObject.prototype =
       }
       else if (src.hasOwnProperty (prop_name))
       {
-        if (value instanceof vs.core.Object)
-        {
-          trg [prop_name] = value.clone (null, cloned_map);
-        }
-        else if (util.isArray (value))
+//         if (value instanceof vs.core.Object)
+//         {
+//           trg [prop_name] = value.clone (null, cloned_map);
+//         }
+//         else
+        if (util.isArray (value))
         {
           trg [prop_name] = value.slice ();
         }
@@ -480,11 +481,12 @@ VSObject.prototype =
       // manage other object members
       else if (src.hasOwnProperty (prop_name))
       {
-        if (value instanceof vs.core.Object)
-        {
-          trg [prop_name] = value.clone (null, cloned_map);
-        }
-        else if (util.isArray (value))
+//         if (value instanceof vs.core.Object)
+//         {
+//           trg [prop_name] = value.clone (null, cloned_map);
+//         }
+//         else
+        if (util.isArray (value))
         {
           trg [prop_name] = value.slice ();
         }
