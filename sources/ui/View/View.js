@@ -374,7 +374,7 @@ View.prototype = {
     if (!cloned_map) { cloned_map = {}; }
     
     // have already cloned;
-    if (cloned_map [this]) { return cloned_map [this]; }
+    if (cloned_map [this._id]) { return cloned_map [this._id]; }
 
     if (!config) { config = {}; }
     if (!config.id) { config.id = core.createId (); }
@@ -386,7 +386,7 @@ View.prototype = {
     // animations clone
     if (this._show_animation)
     {
-      anim = cloned_map [this._show_animation];
+      anim = cloned_map [this._show_animation._id];
       if (anim)
         obj._show_animation = anim;
       else
@@ -396,7 +396,7 @@ View.prototype = {
     }
     if (this._hide_animation)
     {
-      anim = cloned_map [this._hide_animation];
+      anim = cloned_map [this._hide_animation._id];
       if (anim)
         obj._hide_animation = anim;
       else
