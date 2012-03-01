@@ -171,14 +171,14 @@ function _setProperties (klass, properties)
       _prop_name = '_' + util.underscore (prop_name);
       if (export_value & vs.core.Object.PROPERTY_IN)
       {
-        desc.set = (function (_prop_name)
+        desc.set = (function (prop_name, _prop_name)
         {
           return function (v)
           {
             this[_prop_name] = v;
-            this.propertyChange (_prop_name);
+            this.propertyChange (prop_name);
           };
-        }(_prop_name));
+        }(prop_name, _prop_name));
       }
       if (export_value & vs.core.Object.PROPERTY_OUT)
       {
