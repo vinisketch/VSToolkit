@@ -405,6 +405,9 @@ View.prototype = {
       obj.__hide_clb = this.__hide_clb;
     }
 
+    // remove parent link
+    obj.__parent = undefined;
+    
     /// TODO clone des children WARNING XXX
     return obj;
   },
