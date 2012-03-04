@@ -733,6 +733,16 @@ prototype chain) of a given object.</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#link">link</a></b>(model)
+								</div>
+								<div class="description">The method allows to link a model to an other object (a view for 
+instance).</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a></b>(json)
 								</div>
 								<div class="description">Set objet's properties from JSON stringification.</div>
@@ -754,6 +764,15 @@ prototype chain) of a given object.</div>
 								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#toJSON">toJSON</a></b>()
 								</div>
 								<div class="description">Returns a copy of the objet's properties for JSON stringification.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#unlink">unlink</a></b>()
+								</div>
+								<div class="description">Unlink the model which was linked with this object</div>
 							</td>
 						</tr>
 					
@@ -1140,6 +1159,66 @@ prototype chain) of a given object.
 
 					<hr />
 				
+					<a name="link"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>link</b>(model)
+					
+					</div>
+					<div class="description">
+						The method allows to link a model to an other object (a view for 
+instance).<br />
+This is a simple way to create a MVC architecture; each model
+modification will be propagated to the view.<br/><br/>
+Linking is quite different than dataflow.<br/>
+You can use linking to connect 2 objects with the same properties name.
+<br/>
+With dataflow its possible to connect a set of object, and define precisely 
+witch properties are connected together.<br/>
+<br/>
+Please notice that dataflow propagation is more optimized than linking 
+propagation.
+						
+					</div>
+					
+					
+					
+					<pre class="code"> var myModel = new MyModel ().init ();
+ var myView = new MyView ().init ();
+
+ myView.link (myModel);
+ 
+ myModel.prop = "value"; // the myView.prop will be automatically updated.
+ ...
+ myModel.stopPropagation ();
+ myModel.prop = "value";
+ myModel.propBis = "valueBis";
+ myModel.change (); // the view is updated</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/vs.core.Model.html">vs.core.Model</a>}</span> <b>model</b>
+									
+								</dt>
+								<dd>The model to link with</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="parseJSON"> </a>
 					<div class="fixedFont">
 					
@@ -1242,6 +1321,37 @@ properties have been modified.
 							</dl>
 						
 						
+						
+
+					<hr />
+				
+					<a name="unlink"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>unlink</b>()
+					
+					</div>
+					<div class="description">
+						Unlink the model which was linked with this object
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/vs.core.Object.html#link">vs.core.Object#link</a></dd>
+							
+							</dl>
 						
 
 					

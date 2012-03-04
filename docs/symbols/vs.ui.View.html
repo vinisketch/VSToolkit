@@ -961,15 +961,6 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#clone">clone</a></b>(config)
-								</div>
-								<div class="description">Clone the Object <p></div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#createAndAddComponent">createAndAddComponent</a></b>(comp_name, config, extension)
 								</div>
 								<div class="description">Instantiate, init and add the specified child component to this component.</div>
@@ -1078,7 +1069,7 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#removeAllChild">removeAllChild</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#removeAllChild">removeAllChild</a></b>(extension)
 								</div>
 								<div class="description">Remove all children components from this component and free them.</div>
 							</td>
@@ -1187,7 +1178,7 @@ hr:last-child {
 				
 				
 				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getProperties">getProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a></dd>
+				<dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getProperties">getProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
 				</dl>
 				
 			
@@ -2217,48 +2208,6 @@ Options :
 
 					<hr />
 				
-					<a name="clone"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{<a href="../symbols/vs.ui.View.html">vs.ui.View</a>}</span>
-					<b>clone</b>(config)
-					
-					</div>
-					<div class="description">
-						Clone the Object <p>
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>config</b>
-									
-								</dt>
-								<dd>the configuration structure for the new object</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{<a href="../symbols/vs.ui.View.html">vs.ui.View</a>}</span> the cloned object</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
 					<a name="createAndAddComponent"> </a>
 					<div class="fixedFont">
 					
@@ -2785,7 +2734,7 @@ Options :
 					<div class="fixedFont">
 					
 					
-					<b>removeAllChild</b>()
+					<b>removeAllChild</b>(extension)
 					
 					</div>
 					<div class="description">
@@ -2799,6 +2748,18 @@ Options :
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>extension</b>
+									
+								</dt>
+								<dd>[optional] The hole from witch all views will be
+  removed</dd>
+							
+							</dl>
 						
 						
 						
