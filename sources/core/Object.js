@@ -361,19 +361,35 @@ VSObject.prototype =
   },
 
   /**
-   * The link method allow to link a model to an other object (a view for 
+   * The method allows to link a model to an other object (a view for 
    * instance).<br />
-   * This is a simple way to create a MVC architecture for witch each model
-   * modification are reported to the view.
-   * Linking is quite different than dataflow.
-   * You can use linking to connect 2 objects with the same properties name..
+   * This is a simple way to create a MVC architecture; each model
+   * modification will be propagated to the view.<br/><br/>
+   * Linking is quite different than dataflow.<br/>
+   * You can use linking to connect 2 objects with the same properties name.
+   * <br/>
    * With dataflow its possible to connect a set of object, and define precisely 
-   * with property are connected
-   * Please notice that dataflow propagation is optimized.
+   * witch properties are connected together.<br/>
+   * <br/>
+   * Please notice that dataflow propagation is more optimized than linking 
+   * propagation.
+   *
+   * @example
+   *  var myModel = new MyModel ().init ();
+   *  var myView = new MyView ().init ();
+   *
+   *  myView.link (myModel);
+   *  
+   *  myModel.prop = "value"; // the myView.prop will be automatically updated.
+   *  ...
+   *  myModel.stopPropagation ();
+   *  myModel.prop = "value";
+   *  myModel.propBis = "valueBis";
+   *  myModel.change (); // the view is updated
    *
    * @name vs.core.Object#link
    * @function
-   * @param {vs.core.Model} the model to link with
+   * @param {vs.core.Model} model The model to link with
    */
   link : function (model)
   {
@@ -391,9 +407,10 @@ VSObject.prototype =
   },
 
   /**
-   * Unlink this object with a model..
+   * Unlink the model which was linked with this object
+   * @see vs.core.Object#link
    *
-   * @name vs.core.Object#link
+   * @name vs.core.Object#unlink
    * @function
    */
   unlink : function ()
