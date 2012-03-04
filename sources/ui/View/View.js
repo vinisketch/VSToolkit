@@ -369,7 +369,7 @@ View.prototype = {
    */
   clone : function (config, cloned_map)
   {
-    var obj, anim;
+    var obj, anim, a, key, child, l, hole;
     
     if (!cloned_map) { cloned_map = {}; }
     
@@ -409,6 +409,30 @@ View.prototype = {
     obj.__parent = undefined;
     
     /// TODO clone des children WARNING XXX
+    obj._children = {};
+    for (key in this._children)
+    {
+      a = this._children [key];
+      hole = obj._holes [key];
+      if (!a || !hole) { continue; }
+      
+      // @WARNING pas completement correct
+      hole.innerHTML = '';
+      
+      if (a instanceof Array)
+      {
+        l = a.length;
+        while (l--)
+        {
+          child = a [l];
+          obj.add (child.clone (null, cloned_map).init (), key);
+        }
+      }
+      else
+      {
+        obj.add (a.clone (null, cloned_map).init (), key);
+      }
+    }
     return obj;
   },
 
@@ -926,33 +950,49 @@ View.prototype = {
    *
    * @name vs.ui.View#removeAllChild
    * @function
+   * @param {String} extension [optional] The hole from witch all views will be
+   *   removed
    */
-  removeAllChildren : function ()
+  removeAllChildren : function (extension)
   {
-    var key, a, child;
-  
-    for (key in this._children)
+    var key, self = this;
+    
+    function remove (ext)
     {
-      a = this._children [key];
-      if (!a) { continue; }
+      var a, child;
+      
+      a = self._children [ext];
+      if (!a) { return; }
       
       if (a instanceof Array)
       {
         while (a.length)
         {
           child = a [0];
-          this.remove (child);
+          self.remove (child);
           util.free (child);
         }
       }
       else
       {
-        this.remove (a);
+        self.remove (a);
         util.free (a);
       }
-      delete (this._children [key]);
+      delete (self._children [ext]);
+    };
+  
+    if (extension)
+    {
+      remove (extension);
     }
-    this._children = {};
+    else
+    {
+      for (key in self._children)
+      {
+        remove (key);
+      }
+      this._children = {};
+    }
   },
 
   /**
