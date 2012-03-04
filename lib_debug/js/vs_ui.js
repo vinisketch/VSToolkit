@@ -74,7 +74,7 @@ var vs = window.vs,
  *  @class
  *  vs.ui.Template is GUI template system you can use to create the view
  *  of component for instance. <br/>
- *  A template is HTML text fragment containing template tags. There is tow
+ *  A template is a HTML text fragment containing template tags. There is two
  *  ways to use template :
  * <ul>
  *   <li> By expanding tags using values provides in an Object</li>
@@ -88,7 +88,7 @@ var vs = window.vs,
  *  var str = '&lt;span style="${style}"&gt;name:${lastname},${firstname}&lt;/span&gt;';
  * </pre>
  *
- * Expending the template:
+ * Expanding the template:
  * <pre class='code'>
  *  var myTemplate = new Template (str);
  * <br/>
@@ -110,14 +110,13 @@ var vs = window.vs,
  * <br/>
  *  myApp.add (myView); //|| document.body.appendChild (myView.view);
  * <br/>
- *  // properties change automatically update the DOM
+ *  // property changes, automatically update the DOM
  *  myView.lastname = "Doo";
  *  myView.firstname = "John";
  *  myView.style = "color:blue";
  * <br/>
  * </pre>
  *
- *  
  *  @constructor
  *  Main constructor
  *
@@ -144,20 +143,6 @@ Template.prototype =
   /***************************************************************
 
   ***************************************************************/
-
-  /**
-   * Clone the Template <p>
-   *
-   * @name vs.ui.Template#clone
-   * @function
-   * 
-   * @param {Object} config the configuration structure for the new object
-   * @return {vs.ui.Template} the cloned object
-   */
-  clone : function (config, cloned_map)
-  {
-//    return core.EventSource.prototype.clone.call (this);
-  },
 
   /**
    * HTML String of the template <p>
@@ -315,7 +300,7 @@ Template.prototype =
     }
     
     // clone surcharge
-    view.clone = _view_clone;
+    view._clone = _view_clone;
     view.__node__ref__ = node_ref;
     
     view.init ();
@@ -409,10 +394,10 @@ var _create_property = function (view, prop_name, node, path)
 /**
  * @private
  */
-var _view_clone = function (config, cloned_map)
+var _view_clone = function (obj, config, cloned_map)
 {
-  var obj = vs.ui.View.prototype.clone.call (this, config, cloned_map);
-  var view_cloned = obj.__config__.node;
+  vs.ui.View.prototype._clone.call (this, obj, config, cloned_map);
+  var view_cloned = obj.view;
   
   var node_ref = this.__node__ref__, node_ref_cloned = [], path, node_cloned;
   if (view_cloned && node_ref && node_ref.length)
@@ -433,8 +418,6 @@ var _view_clone = function (config, cloned_map)
   }
 
   // rewrite properties to point cloned nodes
-  
-  return obj;
 };
 
 /**
@@ -881,34 +864,36 @@ View.prototype = {
   },
 
   /**
-   *  Clone the Object <p>
-   * 
-   * @name vs.ui.View#clone
+   * @name vs.ui.View#_clone
    * @function
+   * @private
    * 
-   * @param {Object} config the configuration structure for the new object
-   * @return {vs.ui.View} the cloned object
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
    */
-  clone : function (config, cloned_map)
+  _clone : function (obj, cloned_map)
   {
-    var obj, anim;
+    var anim, a, key, child, l, hole;
     
-    if (!cloned_map) { cloned_map = {}; }
+    core.EventSource.prototype._clone.call (this, obj, cloned_map);
     
-    // have already cloned;
-    if (cloned_map [this]) { return cloned_map [this]; }
+    if (!obj.__config__.node) { obj.view = this.view.cloneNode (true); }
+    else { obj.view = obj.__config__.node; }
+    
+    if (!obj.view)
+    { throw 'vs.ui.View clone failed. No view!'; }
 
-    if (!config) { config = {}; }
-    if (!config.id) { config.id = core.createId (); }
-    if (!config.node) { config.node = this.view.cloneNode (true); }
-    
-    obj = core.EventSource.prototype.clone.call (this, config, cloned_map);
-    if (!obj) { return; }
+    // view configuration
+    obj.view.id = obj._id;
+    obj.view._comp_ = obj;
+    obj.view.setAttribute ('x-hag-comp', obj.id);
+
+    this._parse_view (this.view);
 
     // animations clone
     if (this._show_animation)
     {
-      anim = cloned_map [this._show_animation];
+      anim = cloned_map [this._show_animation._id];
       if (anim)
         obj._show_animation = anim;
       else
@@ -918,7 +903,7 @@ View.prototype = {
     }
     if (this._hide_animation)
     {
-      anim = cloned_map [this._hide_animation];
+      anim = cloned_map [this._hide_animation._id];
       if (anim)
         obj._hide_animation = anim;
       else
@@ -927,7 +912,43 @@ View.prototype = {
       obj.__hide_clb = this.__hide_clb;
     }
 
+    // remove parent link
+    obj.__parent = undefined;
+    
+    // configure member
+    obj._pos = this._pos.slice ();
+    obj._size = this._size.slice ();
+    obj._transform_origin = this._transform_origin.slice ();
+    obj._autosizing = this._autosizing.slice ();
+    
     /// TODO clone des children WARNING XXX
+    obj._holes = {};
+    obj._children = {};
+    obj._pointerevent_handlers = [];
+
+    for (key in this._children)
+    {
+      a = this._children [key];
+      hole = obj._holes [key];
+      if (!a || !hole) { continue; }
+      
+      // @WARNING pas completement correct
+      hole.innerHTML = '';
+      
+      if (a instanceof Array)
+      {
+        l = a.length;
+        while (l--)
+        {
+          child = a [l];
+          obj.add (child.clone (null, cloned_map), key);
+        }
+      }
+      else
+      {
+        obj.add (a.clone (null, cloned_map), key);
+      }
+    }
     return obj;
   },
 
@@ -1080,7 +1101,7 @@ View.prototype = {
    */
   initComponent : function ()
   {
-    core.Object.prototype.initComponent.call (this);
+    core.EventSource.prototype.initComponent.call (this);
 
     // position and size : according autosizing rules, can change
     // automaticaly if the parent container is resized
@@ -1445,33 +1466,50 @@ View.prototype = {
    *
    * @name vs.ui.View#removeAllChild
    * @function
+   * @param {String} extension [optional] The hole from witch all views will be
+   *   removed
    */
-  removeAllChildren : function ()
+  removeAllChildren : function (extension)
   {
-    var key, a, child;
-  
-    for (key in this._children)
+    var key, self = this;
+    
+    /** @private */
+    function removeChildrenInHole (ext)
     {
-      a = this._children [key];
-      if (!a) { continue; }
+      var a, child;
+      
+      a = self._children [ext];
+      if (!a) { return; }
       
       if (a instanceof Array)
       {
         while (a.length)
         {
           child = a [0];
-          this.remove (child);
+          self.remove (child);
           util.free (child);
         }
       }
       else
       {
-        this.remove (a);
+        self.remove (a);
         util.free (a);
       }
-      delete (this._children [key]);
+      delete (self._children [ext]);
+    };
+  
+    if (extension)
+    {
+      removeChildrenInHole (extension);
     }
-    this._children = {};
+    else
+    {
+      for (key in self._children)
+      {
+        removeChildrenInHole (key);
+      }
+      this._children = {};
+    }
   },
 
   /**
@@ -3437,7 +3475,7 @@ util.defineClassProperties (Application, {
     get : function ()
     {
       this._prevent_scroll = document.preventScroll;
-      return _prevent_scroll;
+      return this.__prevent_scroll;
     }
   }
 });
@@ -7870,7 +7908,7 @@ function buildSection (list, title, index, itemsSelectable)
     if (list.__template_obj)
     {
       listItem = list.__template_obj.clone ();
-      listItem.init ();
+//      listItem.init ();
       
       listItem.configure (item)
       listItem.index = index;
@@ -8009,7 +8047,7 @@ function defaultListRenderData (itemsSelectable)
     if (this.__template_obj)
     {
       listItem = this.__template_obj.clone ();
-      listItem.init ();
+//      listItem.init ();
       
       listItem.configure (item)
       listItem.index = index;
