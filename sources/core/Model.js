@@ -289,7 +289,7 @@ Model.prototype = {
    * 
    * @param {String} action the event specification [optional]
    */
-  change : function (spec)
+  change : function (spec, doNotManageLinks)
   {
     var list_bind, event, handler;
     
@@ -299,6 +299,14 @@ Model.prototype = {
     
     try
     {
+      // 1) manage links propagation
+      if (!doNotManageLinks)
+      {
+        var l = this.__links__.length, obj;
+        while (l--) { this.__links__ [l].configure (this); }
+      }
+      
+      // 2) manage change event propagation
       function _change (list_bind)
       {
         if (!list_bind) return;
@@ -381,12 +389,16 @@ Model.prototype = {
   {
     var df = _df_node_to_def [this._id];
     if (df) { df.propagate (this._id, property); }
-    var l = this.__links__.length, obj;
-    if (property) while (l--)
-    { this.__links__ [l] [property] = this [property]; }
-    else while (l--) { this.__links__ [l].configure (this); }
     
-    if (this.__should_propagate_changes__) { this.change (); }
+    if (this.__should_propagate_changes__)
+    { 
+      var l = this.__links__.length, obj;
+      if (property) while (l--)
+      { this.__links__ [l] [property] = this [property]; }
+      else while (l--) { this.__links__ [l].configure (this); }
+
+      this.change (null, true);
+    }
   }
 };
 util.extendClass (Model, core.Object);
