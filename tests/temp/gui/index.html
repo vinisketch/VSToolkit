@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>GUI Component Tests</title>
+ 
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+
+    <link rel="stylesheet" type="text/css" href="../css/vs_ui.css">
+    <link rel="stylesheet" type="text/css" href="../css/vs_ui_ios.css">
+    <script type="text/javascript" src="../js/vs_util.js"></script>
+    <script type="text/javascript" src="../js/vs_core.js"></script>
+    <script type="text/javascript" src="../js/vs_data.js"></script>
+    <script type="text/javascript" src="../js/vs_ui.js"></script>
+    <script type="text/javascript" src="../js/vs_fx.js"></script>
+    <script type="text/javascript" src="../js/vs_ext_fx.js"></script>
+
+    <script>
+      window.tests = [
+        {url: 'ext_animation.js', image:'ext_animation.jpg', text:'', result: 0},
+        {url: 'button.js', image:'button.jpg', text:'', result: 0},
+        {url: 'slider.js', image:'slider.jpg', text:'', result: 0},
+        {url: 'progressBar.js', image:'progressBar.jpg', text:'', result: 0},
+        {url: 'template_mvc.js', css: 'template_mvc.css', image:'template_mvc.jpg', text:'', result: 0}
+      ];
+      
+      window.index = -1;
+      
+      function testResult () {
+        test_view.innerHTML = '';
+        result_view.style.display = 'none';
+        
+        var text = '<span class="result">';
+        var result = 0;
+        for (var i = 0 ; i < tests.length; i++)
+        {
+          result += window.tests [i].result;
+        }
+        text += "Result: " + result + "/" + (tests.length * 5);
+        
+        text += '</span>';
+        
+        text_view.innerHTML = text;
+        document.getElementById ('button_not_ok').style.display = "none";
+        document.getElementById ('button_ok').style.display = "none";
+        document.getElementById ('message').style.display = "none";
+      };
+
+      function nextTest () {
+        if (index === tests.length -1)
+        {
+          testResult ();
+          return;
+        }
+
+        var test = window.tests [++index];
+        
+        if (test.image)
+        {
+          result_view.src = 'images/' + test.image
+          result_view.style.display = 'block';
+        }
+        else result_view.style.display = 'none';
+        
+        text_view.innerHTML = test.text;
+
+        test_view.innerHTML = '';
+        vs.util.importFile (test.url, document, function ()
+        { launchTest (test_view); }, 'js');
+        
+        if (test.css)
+        {
+          vs.util.importFile ('css/' + test.css, document, null, 'css');
+        }
+      }
+    
+      function test_not_ok ()
+      {
+        window.tests [index].result = 0;
+        nextTest ();
+      };
+      
+      function test_ok ()
+      {
+        window.tests [index].result = 5;
+        nextTest ();
+      };
+      
+      function initTest ()
+      {
+        window.test_view = document.getElementById ('test_view');
+        window.result_view = document.querySelector ('#result_view img');
+        window.text_view = document.getElementById ('text_view');
+        
+        nextTest ();
+      }
+    </script>
+
+  </head>
+  <body onload="initTest ();">
+    <div>
+      <button class="button" id="button_not_ok" onclick="test_not_ok ();">✖</button>
+      <button class="button" id="button_ok" onclick="test_ok ();">✔</button>
+
+      <div id="test_view"></div>
+      <div id="result_view"><img></div>
+      <div id="text_view"></div>
+      <img id="message" src="css/testText.png">
+    <div>
+  </body>
+</html>

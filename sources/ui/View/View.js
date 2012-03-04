@@ -359,29 +359,31 @@ View.prototype = {
   },
 
   /**
-   *  Clone the Object <p>
-   * 
-   * @name vs.ui.View#clone
+   * @name vs.ui.View#_clone
    * @function
+   * @private
    * 
-   * @param {Object} config the configuration structure for the new object
-   * @return {vs.ui.View} the cloned object
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
    */
-  clone : function (config, cloned_map)
+  _clone : function (obj, cloned_map)
   {
-    var obj, anim, a, key, child, l, hole;
+    var anim, a, key, child, l, hole;
     
-    if (!cloned_map) { cloned_map = {}; }
+    core.EventSource.prototype._clone.call (this, obj, cloned_map);
     
-    // have already cloned;
-    if (cloned_map [this._id]) { return cloned_map [this._id]; }
+    if (!obj.__config__.node) { obj.view = this.view.cloneNode (true); }
+    else { obj.view = obj.__config__.node; }
+    
+    if (!obj.view)
+    { throw 'vs.ui.View clone failed. No view!'; }
 
-    if (!config) { config = {}; }
-    if (!config.id) { config.id = core.createId (); }
-    if (!config.node) { config.node = this.view.cloneNode (true); }
-    
-    obj = core.EventSource.prototype.clone.call (this, config, cloned_map);
-    if (!obj) { return; }
+    // view configuration
+    obj.view.id = obj._id;
+    obj.view._comp_ = obj;
+    obj.view.setAttribute ('x-hag-comp', obj.id);
+
+    this._parse_view (this.view);
 
     // animations clone
     if (this._show_animation)
@@ -408,8 +410,17 @@ View.prototype = {
     // remove parent link
     obj.__parent = undefined;
     
+    // configure member
+    obj._pos = this._pos.slice ();
+    obj._size = this._size.slice ();
+    obj._transform_origin = this._transform_origin.slice ();
+    obj._autosizing = this._autosizing.slice ();
+    
     /// TODO clone des children WARNING XXX
+    obj._holes = {};
     obj._children = {};
+    obj._pointerevent_handlers = [];
+
     for (key in this._children)
     {
       a = this._children [key];
@@ -425,12 +436,12 @@ View.prototype = {
         while (l--)
         {
           child = a [l];
-          obj.add (child.clone (null, cloned_map).init (), key);
+          obj.add (child.clone (null, cloned_map), key);
         }
       }
       else
       {
-        obj.add (a.clone (null, cloned_map).init (), key);
+        obj.add (a.clone (null, cloned_map), key);
       }
     }
     return obj;
@@ -585,7 +596,7 @@ View.prototype = {
    */
   initComponent : function ()
   {
-    core.Object.prototype.initComponent.call (this);
+    core.EventSource.prototype.initComponent.call (this);
 
     // position and size : according autosizing rules, can change
     // automaticaly if the parent container is resized
@@ -957,7 +968,8 @@ View.prototype = {
   {
     var key, self = this;
     
-    function remove (ext)
+    /** @private */
+    function removeChildrenInHole (ext)
     {
       var a, child;
       
@@ -983,13 +995,13 @@ View.prototype = {
   
     if (extension)
     {
-      remove (extension);
+      removeChildrenInHole (extension);
     }
     else
     {
       for (key in self._children)
       {
-        remove (key);
+        removeChildrenInHole (key);
       }
       this._children = {};
     }

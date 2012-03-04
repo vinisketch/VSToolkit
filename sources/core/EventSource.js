@@ -132,21 +132,19 @@ EventSource.prototype =
   },
   
   /**
-   * Clone the EventSource <p>
-   *
-   * @name vs.core.EventSource#clone
+   * @name vs.core.EventSource#_clone
    * @function
+   * @private
    * 
-   * @param {Object} config the configuration structure for the new object
-   * @return {vs.core.EventSource} the cloned object
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
    */
-  clone : function (config, cloned_map)
+  _clone : function (obj, cloned_map)
   {
-    var obj = VSObject.prototype.clone.call (this, config, cloned_map);
+    VSObject.prototype._clone.call (this, obj, cloned_map);
+    
     obj.__bindings__ = {};
     obj.__node_binds__ = {};
-    
-    return obj;
   },
 
   /**

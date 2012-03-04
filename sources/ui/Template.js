@@ -91,20 +91,6 @@ Template.prototype =
   ***************************************************************/
 
   /**
-   * Clone the Template <p>
-   *
-   * @name vs.ui.Template#clone
-   * @function
-   * 
-   * @param {Object} config the configuration structure for the new object
-   * @return {vs.ui.Template} the cloned object
-   */
-  clone : function (config, cloned_map)
-  {
-//    return core.EventSource.prototype.clone.call (this);
-  },
-
-  /**
    * HTML String of the template <p>
    *
    * @name vs.ui.Template#toString
@@ -260,7 +246,7 @@ Template.prototype =
     }
     
     // clone surcharge
-    view.clone = _view_clone;
+    view._clone = _view_clone;
     view.__node__ref__ = node_ref;
     
     view.init ();
@@ -354,10 +340,10 @@ var _create_property = function (view, prop_name, node, path)
 /**
  * @private
  */
-var _view_clone = function (config, cloned_map)
+var _view_clone = function (obj, config, cloned_map)
 {
-  var obj = vs.ui.View.prototype.clone.call (this, config, cloned_map);
-  var view_cloned = obj.__config__.node;
+  vs.ui.View.prototype._clone.call (this, obj, config, cloned_map);
+  var view_cloned = obj.view;
   
   var node_ref = this.__node__ref__, node_ref_cloned = [], path, node_cloned;
   if (view_cloned && node_ref && node_ref.length)
@@ -378,8 +364,6 @@ var _view_clone = function (config, cloned_map)
   }
 
   // rewrite properties to point cloned nodes
-  
-  return obj;
 };
 
 /**

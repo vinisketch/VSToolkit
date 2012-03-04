@@ -1,0 +1,66 @@
+#test_view > div {
+  position: relative !important;
+}
+
+.contact {
+  margin: 45px;
+  width: 300px;
+  font-size: 14px;
+  border: 1px solid rgba(0,0,0,0.1);
+  font-family: Helvetica, Arial;
+  font-size: 14px;
+}
+
+.contact > * {
+  position: relative;
+}
+
+.contact > img {
+  width: 50px;
+  height: 50px;
+  float: left;
+  margin-top: 10px;
+  margin-right: 10px;
+  left: 50px;
+}
+
+.contact .name {
+  font-weight: bold;
+  position: absolute;
+  right: 0px;
+  left: 110px;
+  top: 10px;
+  font-size: 1.2em;
+}
+
+.contact .comp {
+  position: absolute;
+  right: 0px;
+  left: 110px;
+  top: 30px;
+  font-size: 1.1em;
+  color: grey;
+}
+
+.contact .tel {
+  margin-top: 70px;
+  margin-left: 110px;
+  margin-bottom: 10px;
+}
+
+.contact > div::before {
+  position: absolute;
+  left: -100px;
+  text-align: right;
+  width: 90px;
+  color: grey;
+}
+
+.contact .tel::before { content: 'tel ';}
+
+.contact .address {
+  margin-left: 110px;
+  margin-bottom: 10px;
+}
+
+.contact .address::before { content: 'address ';}

@@ -142,22 +142,23 @@ Fsm.prototype =
   ****************************************************************/
 
   /**
-   * @ignore
+   * @private
    * @function
+   * 
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
    */
-  clone : function (object, cloned_map)
+  _clone : function (obj, cloned_map)
   {
-    var obj = core.EventSource.prototype.clone.call (this, null, cloned_map);
-    
-    obj.owner = object;
+    EventSource.prototype._clone.call (this, obj, cloned_map);
+
+    obj.owner = obj.__config__.owner;
     obj._current_state = "";
     
     obj._inputs = {};
     obj._output_action = {};
     
     // XXX TODO WARNING il faut refaire in inputs en outputs.
-    
-    return obj;
   },
   
   /**

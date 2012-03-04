@@ -292,7 +292,7 @@ function buildSection (list, title, index, itemsSelectable)
     if (list.__template_obj)
     {
       listItem = list.__template_obj.clone ();
-      listItem.init ();
+//      listItem.init ();
       
       listItem.configure (item)
       listItem.index = index;
@@ -431,7 +431,7 @@ function defaultListRenderData (itemsSelectable)
     if (this.__template_obj)
     {
       listItem = this.__template_obj.clone ();
-      listItem.init ();
+//      listItem.init ();
       
       listItem.configure (item)
       listItem.index = index;

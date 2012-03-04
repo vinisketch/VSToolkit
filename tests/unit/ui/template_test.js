@@ -76,12 +76,12 @@ function testTemplateClone ()
   view1.style = "display:none";
   
   var view2 = view1.clone ();
-  view2.init ();
+
   view2.lastname = "Salut2"
   view2.firstname = "Gars2";
   
   var view3 = view2.clone ();
-  view3.init ();
+
   view3.lastname = "Salut3"
   view3.style = "display:block";
   
