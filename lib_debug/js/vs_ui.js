@@ -394,9 +394,10 @@ var _create_property = function (view, prop_name, node, path)
 /**
  * @private
  */
-var _view_clone = function (obj, config, cloned_map)
+var _view_clone = function (obj, cloned_map)
 {
-  vs.ui.View.prototype._clone.call (this, obj, config, cloned_map);
+  vs.ui.View.prototype._clone.call (this, obj, cloned_map);
+//  var view_cloned = obj.__config__.node;
   var view_cloned = obj.view;
   
   var node_ref = this.__node__ref__, node_ref_cloned = [], path, node_cloned;
@@ -871,25 +872,28 @@ View.prototype = {
    * @param {vs.core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
+  clone : function (config, cloned_map)
+  {
+    if (!config) { config = {}; }
+    if (!config.node) { config.node = this.view.cloneNode (true); }
+    
+    return core.EventSource.prototype.clone.call (this, config, cloned_map);
+  },
+  
+  /**
+   * @name vs.ui.View#_clone
+   * @function
+   * @private
+   * 
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
   _clone : function (obj, cloned_map)
   {
     var anim, a, key, child, l, hole;
     
     core.EventSource.prototype._clone.call (this, obj, cloned_map);
     
-    if (!obj.__config__.node) { obj.view = this.view.cloneNode (true); }
-    else { obj.view = obj.__config__.node; }
-    
-    if (!obj.view)
-    { throw 'vs.ui.View clone failed. No view!'; }
-
-    // view configuration
-    obj.view.id = obj._id;
-    obj.view._comp_ = obj;
-    obj.view.setAttribute ('x-hag-comp', obj.id);
-
-    this._parse_view (this.view);
-
     // animations clone
     if (this._show_animation)
     {
@@ -915,41 +919,29 @@ View.prototype = {
     // remove parent link
     obj.__parent = undefined;
     
-    // configure member
-    obj._pos = this._pos.slice ();
-    obj._size = this._size.slice ();
-    obj._transform_origin = this._transform_origin.slice ();
-    obj._autosizing = this._autosizing.slice ();
-    
-    /// TODO clone des children WARNING XXX
-    obj._holes = {};
-    obj._children = {};
-    obj._pointerevent_handlers = [];
-
-    for (key in this._children)
-    {
-      a = this._children [key];
-      hole = obj._holes [key];
-      if (!a || !hole) { continue; }
+//     for (key in this._children)
+//     {
+//       a = this._children [key];
+//       hole = obj._holes [key];
+//       if (!a || !hole) { continue; }
+//       
+//       // @WARNING pas completement correct
+//       hole.innerHTML = '';
       
-      // @WARNING pas completement correct
-      hole.innerHTML = '';
-      
-      if (a instanceof Array)
-      {
-        l = a.length;
-        while (l--)
-        {
-          child = a [l];
-          obj.add (child.clone (null, cloned_map), key);
-        }
-      }
-      else
-      {
-        obj.add (a.clone (null, cloned_map), key);
-      }
-    }
-    return obj;
+//       if (a instanceof Array)
+//       {
+//         l = a.length;
+//         while (l--)
+//         {
+//           child = a [l];
+//           obj.add (child.clone (null, cloned_map), key);
+//         }
+//       }
+//       else
+//       {
+//         obj.add (a.clone (null, cloned_map), key);
+//       }
+//    }
   },
 
   /**
@@ -12099,6 +12091,13 @@ ProgressBar.BORDER_WIDTH_WP7 = 0;
  */
 ProgressBar.BORDER_WIDTH_SYMBIAN = 0;
 
+/**
+ * @const
+ * @private
+ * @type {number}
+ */
+ProgressBar.BORDER_WIDTH_BB = 1;
+
 ProgressBar.prototype = {
   
   /**
@@ -12187,6 +12186,10 @@ ProgressBar.prototype = {
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_SYMBIAN * 2;
     }
+    else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
+    {
+      this.__border_width = ProgressBar.BORDER_WIDTH_BB * 2;
+    }
 
     this.index = this._index;
   }
@@ -12221,7 +12224,13 @@ util.defineClassProperties (ProgressBar, {
       if (w > width) { w = width; }
       if (w < 0) { w = 0; }
           
-      this.__inner_view.style.width = (w + this.__border_width) + 'px';
+      var os_device = window.deviceConfiguration.os;
+      if (os_device === DeviceConfiguration.OS_ANDROID ||
+          os_device === DeviceConfiguration.OS_IOS)
+      {
+        this.__inner_view.style.width = (w + this.__border_width) + 'px';
+      }
+      else { this.__inner_view.style.width = w + 'px'; }
     },
   
     /** 
@@ -12439,6 +12448,12 @@ Slider.prototype = {
    */
   __handle_width : 0,
      
+  /**
+   * @private
+   * @type {number}
+   */
+  __handle_delta : 10,
+     
 /********************************************************************
                   setter and getter declarations
 ********************************************************************/
@@ -12469,6 +12484,11 @@ Slider.prototype = {
     else if (os_device == DeviceConfiguration.OS_ANDROID)
     {
       this.__handle_width = 34;
+    }
+    else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
+    {
+      this.__handle_width = 30;
+      this.__handle_delta = 7;
     }
     else { this.__handle_width = 23; } // ios
     
@@ -12604,7 +12624,7 @@ util.defineClassProperties (Slider, {
       
       this._value = v;
       var d1 = this.__handle_width / 2;
-      var d2 = (this.__handle_width - 10) / 2;
+      var d2 = (this.__handle_width - this.__handle_delta) / 2;
       
       if (this._orientation === 0)
       {
@@ -12618,7 +12638,7 @@ util.defineClassProperties (Slider, {
           setElementTransform (this.__handle, "translate(" + x + "px,-" + d2 + "px)");
           
         this.view.style.backgroundSize = (x + d1) + "px 10px";
-     }
+      }
       else
       {
         height = this.view.offsetHeight,
