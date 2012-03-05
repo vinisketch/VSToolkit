@@ -366,25 +366,28 @@ View.prototype = {
    * @param {vs.core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
+  clone : function (config, cloned_map)
+  {
+    if (!config) { config = {}; }
+    if (!config.node) { config.node = this.view.cloneNode (true); }
+    
+    return core.EventSource.prototype.clone.call (this, config, cloned_map);
+  },
+  
+  /**
+   * @name vs.ui.View#_clone
+   * @function
+   * @private
+   * 
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
   _clone : function (obj, cloned_map)
   {
     var anim, a, key, child, l, hole;
     
     core.EventSource.prototype._clone.call (this, obj, cloned_map);
     
-    if (!obj.__config__.node) { obj.view = this.view.cloneNode (true); }
-    else { obj.view = obj.__config__.node; }
-    
-    if (!obj.view)
-    { throw 'vs.ui.View clone failed. No view!'; }
-
-    // view configuration
-    obj.view.id = obj._id;
-    obj.view._comp_ = obj;
-    obj.view.setAttribute ('x-hag-comp', obj.id);
-
-    this._parse_view (this.view);
-
     // animations clone
     if (this._show_animation)
     {
@@ -410,41 +413,29 @@ View.prototype = {
     // remove parent link
     obj.__parent = undefined;
     
-    // configure member
-    obj._pos = this._pos.slice ();
-    obj._size = this._size.slice ();
-    obj._transform_origin = this._transform_origin.slice ();
-    obj._autosizing = this._autosizing.slice ();
-    
-    /// TODO clone des children WARNING XXX
-    obj._holes = {};
-    obj._children = {};
-    obj._pointerevent_handlers = [];
-
-    for (key in this._children)
-    {
-      a = this._children [key];
-      hole = obj._holes [key];
-      if (!a || !hole) { continue; }
+//     for (key in this._children)
+//     {
+//       a = this._children [key];
+//       hole = obj._holes [key];
+//       if (!a || !hole) { continue; }
+//       
+//       // @WARNING pas completement correct
+//       hole.innerHTML = '';
       
-      // @WARNING pas completement correct
-      hole.innerHTML = '';
-      
-      if (a instanceof Array)
-      {
-        l = a.length;
-        while (l--)
-        {
-          child = a [l];
-          obj.add (child.clone (null, cloned_map), key);
-        }
-      }
-      else
-      {
-        obj.add (a.clone (null, cloned_map), key);
-      }
-    }
-    return obj;
+//       if (a instanceof Array)
+//       {
+//         l = a.length;
+//         while (l--)
+//         {
+//           child = a [l];
+//           obj.add (child.clone (null, cloned_map), key);
+//         }
+//       }
+//       else
+//       {
+//         obj.add (a.clone (null, cloned_map), key);
+//       }
+//    }
   },
 
   /**
