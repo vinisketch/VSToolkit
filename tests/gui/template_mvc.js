@@ -44,8 +44,9 @@ function launchTest (test_view)
   
   vs.util.defineProperty (view, 'tels', {
     set : function (a) {
-      this._tels = a;
       this.removeTels ();
+      this._tels = a;
+      if (!a) return;
       var l = a.length;
       while (l--) {
         var view = this.tel_tmp.compileView ();
@@ -57,8 +58,9 @@ function launchTest (test_view)
   
   vs.util.defineProperty (view, 'addresses', {
     set : function (a) {
-      this._addresses = a;
       this.removeAddresses ();
+      this._addresses = a;
+      if (!a) return;
       var l = a.length;
       while (l--) {
         var view = this.address_tmp.compileView ();
@@ -85,7 +87,9 @@ function launchTest (test_view)
 
   c.lastname = 'DooDoo';
 
-  cloned_view.unlink ();
+  var cc = c.clone ();
+  cloned_view.link (cc);
+
   c.firstname = 'Jo';
   c.tels.push ('34 8984 4380');
   c.addresses.push ('145 bd Saint George, 67000 Toulouse');
