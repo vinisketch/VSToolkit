@@ -418,7 +418,14 @@ VSObject.prototype =
     // model update management
     if (this.__model)
     {
-     if (this.__model) this.__model.unlinkTo (this);
+      if (this.__model)
+      {
+        this.__model.unlinkTo (this);
+        var props = this.__model.getProperties (); l = props.length,
+          config = {};
+        while (l--) { config [props[l]] = null; }
+        this.configure (config);
+      }
       this.__model = undefined;
     }
   },
@@ -456,37 +463,36 @@ VSObject.prototype =
     
     cloned_map [this._id] = obj;
     
-    function _propertyCopy_api1 (prop_name, src, trg)
+    function _propertyDecl_api1 (prop_name, src, trg)
     {
-      var value = src [prop_name],
-        getter = src.__lookupGetter__ (prop_name),
-        setter = src.__lookupSetter__ (prop_name);
-      
-      if (getter || setter)
+      var getter = src.__lookupGetter__ (prop_name),
+        setter = src.__lookupSetter__ (prop_name),
+        getter_clone = trg.__lookupGetter__ (prop_name),
+        setter_clone = trg.__lookupSetter__ (prop_name);
+        
+      // manage getter
+      if (getter && !getter_clone)
       {
-        if (getter) { obj.__defineGetter__ (prop_name, getter); }
-        if (setter) { obj.__defineSetter__ (prop_name, setter); }
+        trg.__defineGetter__ (prop_name, getter);
       }
-      else if (src.hasOwnProperty (prop_name))
+      // manage setter
+      if (setter && !setter_clone)
       {
-//         if (value instanceof vs.core.Object)
-//         {
-//           trg [prop_name] = value.clone (null, cloned_map);
-//         }
-//         else
-        if (util.isArray (value))
-        {
-          trg [prop_name] = value.slice ();
-        }
-        else { trg [prop_name] = value; }
+        trg.__defineSetter__ (prop_name, setter);
+      }
+      // generic member copy
+      if (!setter && !getter)
+      {
+        var value = src [prop_name];
+        if (util.isArray (value)) { trg [prop_name] = value.slice (); }
+        else { trg [prop_name] = src [prop_name]; }
       }
     }
     
-    function _propertyCopy_api2 (prop_name, src, trg)
+    function _propertyDecl_api2 (prop_name, src, trg)
     {
-      var value = src [prop_name];
-      var desc = Object.getOwnPropertyDescriptor (src, prop_name);
-      var desc_clone = Object.getOwnPropertyDescriptor (trg, prop_name);
+      var desc = Object.getOwnPropertyDescriptor (src, prop_name),
+        desc_clone = Object.getOwnPropertyDescriptor (trg, prop_name);
       
       // manage getter and setter
       if (desc && (desc.get || desc.set))
@@ -494,33 +500,73 @@ VSObject.prototype =
         // the property description doesn't exist. Create it.
         if (!desc_clone) { util.defineProperty (trg, prop_name, desc); }
       }
-      
-      // manage other object members
-      else if (src.hasOwnProperty (prop_name))
+      // generic member copy
+      else
       {
-//         if (value instanceof vs.core.Object)
-//         {
-//           trg [prop_name] = value.clone (null, cloned_map);
-//         }
-//         else
-        if (util.isArray (value))
-        {
-          trg [prop_name] = value.slice ();
-        }
-        else { trg [prop_name] = value; }
+        var value = src [prop_name];
+        if (util.isArray (value)) { trg [prop_name] = value.slice (); }
+        else { trg [prop_name] = src [prop_name]; }
+      }
+    }
+    
+    var propertyDecl =
+      (Object.defineProperty)?_propertyDecl_api2:_propertyDecl_api1;
+    
+    function _propertyCopy_api1 (prop_name, src, trg)
+    {
+      var getter = src.__lookupGetter__ (prop_name),
+        setter = src.__lookupSetter__ (prop_name),
+        setter_clone = trg.__lookupSetter__ (prop_name);
+        
+      // Property value copy
+      if (setter || getter)
+      {
+        if (setter_clone) { trg [prop_name] = src ['_' + prop_name]; }
+        else { trg ['_' + prop_name] = src ['_' + prop_name]; }
+      }
+    }
+    
+    function _propertyCopy_api2 (prop_name, src, trg)
+    {
+      var desc = Object.getOwnPropertyDescriptor (src, prop_name),
+        desc_clone = Object.getOwnPropertyDescriptor (trg, prop_name);
+      
+      // Property value copy
+      if (desc && desc_clone && (desc.get || desc.set))
+      {
+        if (desc_clone.set) { trg [prop_name] = src ['_' + prop_name]; }
+        else { trg ['_' + prop_name] = src ['_' + prop_name]; }
       }
     }
     
     var propertyCopy =
-        (Object.defineProperty)?_propertyCopy_api2:_propertyCopy_api1;
+      (Object.defineProperty)?_propertyCopy_api2:_propertyCopy_api1;
     
+    // property and function declaration copy
     for (key in this)
     {
-      if (key == 'id' || key == '_id') { continue; }
+      if (!this.hasOwnProperty (key)) continue;
       
-      propertyCopy (key, this, obj);
+      if (util.isFunction (this [key]) && !util.isFunction (obj [key]))
+      { obj [key] = this [key]; }
+      else propertyDecl (key, this, obj);
     }
+            
+    obj.__i__ = false;
+    obj.init ();
     
+    // call object specific clone implementation
+    this._clone (obj, config, cloned_map);
+
+    // property values copy
+    for (key in this)
+    {
+      if (key == 'id' || key == '_id') continue;
+      if (!this.hasOwnProperty (key)) continue;
+      
+      propertyCopy (key, this, obj); 
+    }
+
     // manage linking clone
     if (this.__model)
     {
@@ -528,13 +574,7 @@ VSObject.prototype =
       { obj.link (cloned_map [this.__model._id]); }
       else { obj.link (this.__model); }
     }
-    
-    // call object specific clone implementation
-    this._clone (obj, config, cloned_map);
-    
-    obj.__i__ = false;
-    obj.init (true);
-    
+
     return obj;
   },
 
