@@ -291,12 +291,16 @@ Accordion.prototype = {
       {
         util.removeClassName (panel.dt, 'expanded');
         util.addClassName (panel.dt, 'collapsed');
+        util.removeClassName (panel.dd, 'expanded');
+        util.addClassName (panel.dd, 'collapsed');
         panel.dd.style.height = '0px';
       }
   
       panel = this.__ab_a_items [index];
       util.removeClassName (panel.dt, 'collapsed');
       util.addClassName (panel.dt, 'expanded');
+      util.removeClassName (panel.dd, 'collapsed');
+      util.addClassName (panel.dd, 'expanded');
   
       this.__ab_a_current_index = index;
       this._updateSizePanel ();
@@ -366,6 +370,26 @@ Accordion.prototype = {
   ********************************************************************/
 
   /**
+   * @ignore
+   */
+  show: function ()
+  {
+    vs.ui.View.prototype.show.call (this);
+    
+    this._updateSizePanel ();
+  },
+  
+  /**
+   * @ignore
+   */
+  refresh: function ()
+  {
+    vs.ui.View.prototype.refresh.call (this);
+    
+    this._updateSizePanel ();
+  },
+  
+  /**
    * @private
    */
   _updateSize: function ()
@@ -416,7 +440,7 @@ Accordion.prototype = {
       if (EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
       
       e.stopPropagation ();
-      e.preventDefault();
+      e.preventDefault ();
       
       if (util.hasClassName (elem, 'expanded'))
       { return false; }
@@ -438,12 +462,12 @@ Accordion.prototype = {
       {
         util.addClassName (self.__elem, 'selected');
         self.__list_time_out = 0;
-      }, ui.View.SELECT_DELAY);
+      }, 0); //ui.View.SELECT_DELAY);
     }
     else if (e.type === core.POINTER_MOVE)
     {
       e.stopPropagation ();
-      e.preventDefault();
+      e.preventDefault ();
 
       pageX = EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
       pageY = EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
@@ -470,7 +494,7 @@ Accordion.prototype = {
     else if (e.type === core.POINTER_END)
     {
       e.stopPropagation ();
-      e.preventDefault();
+      e.preventDefault ();
 
       // Stop tracking when the last finger is removed from this element
       document.removeEventListener (core.POINTER_MOVE, this);
@@ -504,13 +528,6 @@ Accordion.prototype = {
     }
           
     return false;
-  },
-  
-  /**
-   * @protected
-   */
-  notify : function (event)
-  {
   }
 }
 util.extendClass (Accordion, vs.ui.View);
