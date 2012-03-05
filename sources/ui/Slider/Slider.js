@@ -142,6 +142,12 @@ Slider.prototype = {
    */
   __handle_width : 0,
      
+  /**
+   * @private
+   * @type {number}
+   */
+  __handle_delta : 10,
+     
 /********************************************************************
                   setter and getter declarations
 ********************************************************************/
@@ -172,6 +178,11 @@ Slider.prototype = {
     else if (os_device == DeviceConfiguration.OS_ANDROID)
     {
       this.__handle_width = 34;
+    }
+    else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
+    {
+      this.__handle_width = 30;
+      this.__handle_delta = 7;
     }
     else { this.__handle_width = 23; } // ios
     
@@ -307,7 +318,7 @@ util.defineClassProperties (Slider, {
       
       this._value = v;
       var d1 = this.__handle_width / 2;
-      var d2 = (this.__handle_width - 10) / 2;
+      var d2 = (this.__handle_width - this.__handle_delta) / 2;
       
       if (this._orientation === 0)
       {
@@ -321,7 +332,7 @@ util.defineClassProperties (Slider, {
           setElementTransform (this.__handle, "translate(" + x + "px,-" + d2 + "px)");
           
         this.view.style.backgroundSize = (x + d1) + "px 10px";
-     }
+      }
       else
       {
         height = this.view.offsetHeight,

@@ -72,6 +72,13 @@ ProgressBar.BORDER_WIDTH_WP7 = 0;
  */
 ProgressBar.BORDER_WIDTH_SYMBIAN = 0;
 
+/**
+ * @const
+ * @private
+ * @type {number}
+ */
+ProgressBar.BORDER_WIDTH_BB = 1;
+
 ProgressBar.prototype = {
   
   /**
@@ -160,6 +167,10 @@ ProgressBar.prototype = {
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_SYMBIAN * 2;
     }
+    else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
+    {
+      this.__border_width = ProgressBar.BORDER_WIDTH_BB * 2;
+    }
 
     this.index = this._index;
   }
@@ -194,7 +205,13 @@ util.defineClassProperties (ProgressBar, {
       if (w > width) { w = width; }
       if (w < 0) { w = 0; }
           
-      this.__inner_view.style.width = (w + this.__border_width) + 'px';
+      var os_device = window.deviceConfiguration.os;
+      if (os_device === DeviceConfiguration.OS_ANDROID ||
+          os_device === DeviceConfiguration.OS_IOS)
+      {
+        this.__inner_view.style.width = (w + this.__border_width) + 'px';
+      }
+      else { this.__inner_view.style.width = w + 'px'; }
     },
   
     /** 
