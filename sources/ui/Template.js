@@ -340,9 +340,10 @@ var _create_property = function (view, prop_name, node, path)
 /**
  * @private
  */
-var _view_clone = function (obj, config, cloned_map)
+var _view_clone = function (obj, cloned_map)
 {
-  vs.ui.View.prototype._clone.call (this, obj, config, cloned_map);
+  vs.ui.View.prototype._clone.call (this, obj, cloned_map);
+//  var view_cloned = obj.__config__.node;
   var view_cloned = obj.view;
   
   var node_ref = this.__node__ref__, node_ref_cloned = [], path, node_cloned;
