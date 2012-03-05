@@ -133,10 +133,10 @@ Model.prototype = {
     {
       if (!list_bind) return;
       
-      var bind, i = 0;
-      while (i < list_bind.length)
+      var bind, l = list_bind.length;
+      while (l--)
       {
-        bind = list_bind [i];
+        bind = list_bind [l];
         util.free (bind);
       }
     };
