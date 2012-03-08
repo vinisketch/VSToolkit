@@ -269,18 +269,21 @@ var procesAnimation = function (comp, animation, clb, ctx)
       comp.setStyle (property, Animation.EASE);
     }
 
-    if (animation.iterationCount === 'infinite')
+    if (isComplex)
     {
-      comp.setStyle (ITERATION_COUNT, 'infinite');
-    }
-    else if (!animation.iterationCount ||
-             !util.isNumber (animation.iterationCount))
-    {
-      comp.setStyle (ITERATION_COUNT, '1');
-    }
-    else 
-    {
-      comp.setStyle (ITERATION_COUNT, animation.iterationCount);
+      if (animation.iterationCount === 'infinite')
+      {
+        comp.setStyle (ITERATION_COUNT, 'infinite');
+      }
+      else if (!animation.iterationCount ||
+               !util.isNumber (animation.iterationCount))
+      {
+        comp.setStyle (ITERATION_COUNT, '1');
+      }
+      else 
+      {
+        comp.setStyle (ITERATION_COUNT, animation.iterationCount);
+      }
     }
   };
   
@@ -323,7 +326,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
   applySimpleAnimation = function ()
   {
     initWithParameters ();
-    var callback, i, self = this;
+    var callback, i, self = this, dur;
     
     callback = function (event) 
     {
@@ -341,6 +344,11 @@ var procesAnimation = function (comp, animation, clb, ctx)
       
       if (clb) { clb.call (ctx?ctx:self); }
     }
+    
+    // if durations is egal to 0, no event is generated a the end.
+    // Then use a small time
+    dur = parseFloat (comp.view.style [TRANSITION_DURATION]);
+    if (dur === 0) comp.view.style [TRANSITION_DURATION] = "0.0001s";
     
     comp.view.addEventListener (TRANSITION_END, callback, false);  
     
@@ -391,7 +399,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
   {
     initWithParameters ();
     
-    var i, callback, value, anim_name, 
+    var i, callback, value, anim_name, dur, 
     
     callback = function (event) 
     {
@@ -436,6 +444,11 @@ var procesAnimation = function (comp, animation, clb, ctx)
       if (clb) { clb.call (ctx?ctx:self); }
     }
     
+    // if durations is egal to 0, no event is generated a the end.
+    // Then use a small time
+    dur = parseFloat (comp.view.style [ANIMATION_DURATION]);
+    if (dur === 0) comp.view.style [ANIMATION_DURATION] = "0.0001s";
+
     comp.view.addEventListener (ANIMATION_END, callback, false);
     anim_name = comp.getStyle (ANIMATION_NAME);
     
@@ -1909,7 +1922,7 @@ Controller.prototype = {
   _animateComponents :
     function (fromComp, toComp, animationOut, animationIn, animation_clb, instant)
   {
-    var self = this, runAnimation, callback = function ()
+    var self = this, callback = function ()
     {
       try
       {
@@ -1927,7 +1940,7 @@ Controller.prototype = {
           self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
         }
       } catch (e) { console.error (e); }
-    };
+    },
     runAnimation = function ()
     {
       try
@@ -1971,7 +1984,7 @@ Controller.prototype = {
         }
       }
       catch (e) { console.error (e); }
-    }
+    };
     window.setTimeout (function () {runAnimation ();}, 0);
   },
 
