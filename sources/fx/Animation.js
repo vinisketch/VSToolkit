@@ -271,7 +271,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
   applySimpleAnimation = function ()
   {
     initWithParameters ();
-    var callback, i, self = this;
+    var callback, i, self = this, dur;
     
     callback = function (event) 
     {
@@ -289,6 +289,11 @@ var procesAnimation = function (comp, animation, clb, ctx)
       
       if (clb) { clb.call (ctx?ctx:self); }
     }
+    
+    // if durations is egal to 0, no event is generated a the end.
+    // Then use a small time
+    dur = parseFloat (comp.view.style [TRANSITION_DURATION]);
+    if (dur === 0) comp.view.style [TRANSITION_DURATION] = "0.0001s";
     
     comp.view.addEventListener (TRANSITION_END, callback, false);  
     
@@ -339,7 +344,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
   {
     initWithParameters ();
     
-    var i, callback, value, anim_name, 
+    var i, callback, value, anim_name, dur, 
     
     callback = function (event) 
     {
@@ -384,6 +389,11 @@ var procesAnimation = function (comp, animation, clb, ctx)
       if (clb) { clb.call (ctx?ctx:self); }
     }
     
+    // if durations is egal to 0, no event is generated a the end.
+    // Then use a small time
+    dur = parseFloat (comp.view.style [ANIMATION_DURATION]);
+    if (dur === 0) comp.view.style [ANIMATION_DURATION] = "0.0001s";
+
     comp.view.addEventListener (ANIMATION_END, callback, false);
     anim_name = comp.getStyle (ANIMATION_NAME);
     
