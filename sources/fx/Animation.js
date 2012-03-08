@@ -217,18 +217,21 @@ var procesAnimation = function (comp, animation, clb, ctx)
       comp.setStyle (property, Animation.EASE);
     }
 
-    if (animation.iterationCount === 'infinite')
+    if (isComplex)
     {
-      comp.setStyle (ITERATION_COUNT, 'infinite');
-    }
-    else if (!animation.iterationCount ||
-             !util.isNumber (animation.iterationCount))
-    {
-      comp.setStyle (ITERATION_COUNT, '1');
-    }
-    else 
-    {
-      comp.setStyle (ITERATION_COUNT, animation.iterationCount);
+      if (animation.iterationCount === 'infinite')
+      {
+        comp.setStyle (ITERATION_COUNT, 'infinite');
+      }
+      else if (!animation.iterationCount ||
+               !util.isNumber (animation.iterationCount))
+      {
+        comp.setStyle (ITERATION_COUNT, '1');
+      }
+      else 
+      {
+        comp.setStyle (ITERATION_COUNT, animation.iterationCount);
+      }
     }
   };
   
