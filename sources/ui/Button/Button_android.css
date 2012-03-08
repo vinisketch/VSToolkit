@@ -30,6 +30,8 @@
   height: 27px;
   padding-top: 0px !important;
   margin: 0px !important;
+
+  font-size: 11px;
 }
 
 .vs_ui_button.nav.pressed > div,
@@ -48,10 +50,7 @@
   margin: 0px;
   -webkit-border-radius: 5px;
 
-  font-size: 11px;
-
   font-weight: normal;
-  font-size: 11px;
   text-shadow: none;
 }
 
