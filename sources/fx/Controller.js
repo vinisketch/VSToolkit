@@ -433,7 +433,7 @@ Controller.prototype = {
   _animateComponents :
     function (fromComp, toComp, animationOut, animationIn, animation_clb, instant)
   {
-    var self = this, runAnimation, callback = function ()
+    var self = this, callback = function ()
     {
       try
       {
@@ -451,7 +451,7 @@ Controller.prototype = {
           self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
         }
       } catch (e) { console.error (e); }
-    };
+    },
     runAnimation = function ()
     {
       try
@@ -495,7 +495,7 @@ Controller.prototype = {
         }
       }
       catch (e) { console.error (e); }
-    }
+    };
     window.setTimeout (function () {runAnimation ();}, 0);
   },
 
