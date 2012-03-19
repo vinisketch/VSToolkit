@@ -491,8 +491,8 @@ VSObject.prototype =
     
     function _propertyDecl_api2 (prop_name, src, trg)
     {
-      var desc = Object.getOwnPropertyDescriptor (src, prop_name),
-        desc_clone = Object.getOwnPropertyDescriptor (trg, prop_name);
+      var desc = src.getOwnPropertyDescriptor (prop_name),
+        desc_clone = trg.getOwnPropertyDescriptor (prop_name);
       
       // manage getter and setter
       if (desc && (desc.get || desc.set))
@@ -528,8 +528,8 @@ VSObject.prototype =
     
     function _propertyCopy_api2 (prop_name, src, trg)
     {
-      var desc = Object.getOwnPropertyDescriptor (src, prop_name),
-        desc_clone = Object.getOwnPropertyDescriptor (trg, prop_name);
+      var desc = src.getOwnPropertyDescriptor (prop_name),
+        desc_clone = trg.getOwnPropertyDescriptor (prop_name);
       
       // Property value copy
       if (desc && desc_clone && (desc.get || desc.set))
