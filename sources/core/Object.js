@@ -605,9 +605,7 @@ VSObject.prototype =
    */ 
   getOwnPropertyDescriptor : function (prop)
   {
-    var proto = Object.getPrototypeOf (this);
-    if (!proto) return null;
-    return Object.getOwnPropertyDescriptor (proto, prop);
+    return Object.getOwnPropertyDescriptor (this, prop);
   },
 
   /** 
@@ -621,6 +619,9 @@ VSObject.prototype =
    */ 
   getPropertyDescriptor : function (prop)
   {
+    var desc = Object.getOwnPropertyDescriptor (this, prop);
+    if (desc) return desc;
+    
     /** @private */
     function _getOwnPropertyDescriptor (obj, prop)
     {
