@@ -181,8 +181,9 @@ Slider.prototype = {
     }
     else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
     {
-      this.__handle_width = 30;
-      this.__handle_delta = 7;
+      this.__handle_width = 35;
+      this.__handle_height = 12;
+      this.__handle_delta = 3;
     }
     else { this.__handle_width = 23; } // ios
     
@@ -317,8 +318,17 @@ util.defineClassProperties (Slider, {
       if (v > this._range [1]) { v = this._range [1]; }
       
       this._value = v;
-      var d1 = this.__handle_width / 2;
-      var d2 = (this.__handle_width - this.__handle_delta) / 2;
+      var d1 = this.__handle_width / 2, d2 = 0;
+       
+      var os_device = window.deviceConfiguration.os;
+      if (os_device === DeviceConfiguration.OS_BLACK_BERRY)
+      {
+        d2 = (this.__handle_height - this.__handle_delta) / 2;
+      }
+      else
+      {
+        d2 = (this.__handle_width - this.__handle_delta) / 2;
+      }
       
       if (this._orientation === 0)
       {
