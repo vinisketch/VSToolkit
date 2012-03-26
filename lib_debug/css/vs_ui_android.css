@@ -112,7 +112,7 @@
   font-family: droid;
   font-weight: normal;
 
-  padding: 10px;
+  padding: 10px 10px 0px 10px;
 }
 
 .vs_ui_button.default.disabled 

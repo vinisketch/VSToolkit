@@ -2236,7 +2236,7 @@ Accordion.prototype = {
     {
       height = this._size [1];
       this.__ab_a_head_height = panel.dt.offsetHeight;
-      height -= this.__ab_a_items.length * this.__ab_a_head_height + 2 + 6;
+      height -= this.__ab_a_items.length * this.__ab_a_head_height + 2;
       panel.dd.style.height = height + 'px';
       if (this._stretch === Accordion.STRETCH_FILL)
       {

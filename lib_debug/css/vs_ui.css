@@ -1227,8 +1227,6 @@ input[type="search"] {
   -webkit-box-flex: 1;
 }
 
-.vs_ui_picker .slots > div:first-child { border:0; }
-
 .vs_ui_picker ul {
   margin:0;
   list-style:none;
