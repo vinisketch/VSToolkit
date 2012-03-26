@@ -1,0 +1,85 @@
+.vs_ui_picker
+{
+  height: 139px;
+}
+
+.vs_ui_picker.dragging
+{
+  z-index: 1000;
+}
+
+.vs_ui_picker .frame {
+  position:relative;
+  z-index:1000;
+  border-width:12px;
+  height: 139px;
+//  -webkit-border-image:url("BBPicker.png") 16;
+  top: -139px;
+}
+
+.vs_ui_picker .slots {
+  height: 139px;
+  padding-top: 48px;
+  background: transparent;
+  overflow: hidden;
+}
+
+.vs_ui_picker .slots div {
+  background-repeat: repeat-y;
+  overflow: hidden;
+  height: 45px;
+  background-color: #bbbcbe;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
+  border-top: 1px solid #999;
+  border-bottom: 1px solid #999;
+}
+
+.vs_ui_picker .slots div.visible {
+  overflow: visible;
+  background-color: #0f7ae5;
+}
+
+.vs_ui_picker .slots div .shrink {
+  height: 139px;
+}
+.vs_ui_picker ul {
+  padding:0 0 0 0;
+}
+
+.vs_ui_picker li {
+  font:bold 24px/46px Helvetica,sans-serif;
+  height: 46px;
+  text-align: center;
+  margin-bottom: 3px;
+  padding-top: -10px;
+}
+
+.vs_ui_picker .slots div.visible ul, .vs_ui_picker .slots div.visible li {
+  background-color: #0f7ae5;
+  color: white;
+}
+
+.vs_ui_picker .buttons_incr,
+.vs_ui_picker .buttons_decr {
+  display: none;
+}
+
+.vs_ui_picker .slots div:first-child {
+	border-top-left-radius: 3px;
+	border-bottom-left-radius: 3px;
+  border-left: 1px solid #999;
+}
+
+.vs_ui_picker .slots div:last-child {
+	border-top-right-radius: 3px;
+	border-bottom-right-radius: 3px;
+  border-right: 1px solid #999;
+}
+
+.vs_ui_picker .slots div:first-child ul {
+	margin-left: 8px;
+}
+
+.vs_ui_picker .slots div:last-child ul {
+	margin-right: 8px;
+}

@@ -1,0 +1,75 @@
+/*
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+.vs_ui_switch {
+  border-radius: 5px;
+  border: 1px solid #999;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#3985E7), color-stop(0.65, #1A70DD), to(#1559AF));
+
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+  border: 1px solid #999;
+  height: 30px;
+}
+
+.vs_ui_switch > div:first-child {
+  display: none;
+}
+
+.vs_ui_switch .toggle_on {
+  top: 0px;
+  left: 0px;
+  padding-top : 5px;
+  width : 51%;
+  
+  border-radius: 4px 4px 4px 4px;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
+  color: transparent;
+  text-shadow : none;
+}
+
+.vs_ui_switch .toggle_off {
+  top: 0px;
+  right: 0px;
+  padding-top : 5px;
+  width : 50%;
+  
+  border-radius: 4px 0px 0px 4px;
+  background-color : transparent;
+  background-image: none;
+  color : white;
+  text-shadow : rgba(0, 0, 0, 0.597656) 0px -1px 0px;
+}
+
+.vs_ui_switch.on .toggle_on {
+  border-radius: 4px 0px 0px 4px;
+  background-image: none;
+  color : white;
+  text-shadow : rgba(0, 0, 0, 0.597656) 0px -1px 0px;
+}
+
+.vs_ui_switch.on .toggle_off {
+  border-radius: 4px 4px 4px 4px;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
+  color: transparent;
+  text-shadow : none;
+}
+
+.vs_ui_switch.selected {
+  background-color: #5899EB !important;
+  background-image: none;
+}

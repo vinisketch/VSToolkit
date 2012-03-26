@@ -1,0 +1,17 @@
+.vs_ui_textarea {
+  width: 256px;
+  min-height: 60px;
+  min-width: 150px;
+
+  background-clip: padding-box;
+  
+  color:black;
+  
+  border-radius: 0;
+  border: #CCC solid 1px;
+  -webkit-box-shadow: none;
+}
+
+.vs_ui_textarea.focus {
+  border: #1559AF solid 1px;
+}

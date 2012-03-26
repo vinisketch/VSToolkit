@@ -1,0 +1,83 @@
+.vs_ui_segmentedbutton
+{
+  font-family: Helvetica;
+  border: 1px solid #999;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+}
+
+/***************************************************************************
+                          default button spec
+***************************************************************************/
+
+.vs_ui_segmentedbutton.default
+{
+  -webkit-border-radius: 3px;
+  
+  height: 43px;
+
+  font-size: 20px;
+}
+
+
+.vs_ui_segmentedbutton.default > div {
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
+  color: black;
+  
+  padding: 10px 10px 0 10px;
+  
+  border: none;
+  border-left: 1px solid #999;  
+  border-right: 1px solid transparent;  
+}
+
+
+.vs_ui_segmentedbutton > div.selected {
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#3985E7), color-stop(0.65, #1A70DD), to(#1559AF)) !important;
+  color: white !important;
+}
+
+
+.vs_ui_segmentedbutton.default > div:first-child {
+  -webkit-border-top-left-radius: 2px;
+  -webkit-border-bottom-left-radius: 2px;
+  
+  border: none;
+}
+
+.vs_ui_segmentedbutton.default > div:last-child {
+  -webkit-border-top-right-radius: 2px;
+  -webkit-border-bottom-right-radius: 2px;
+}
+
+/***************************************************************************
+                          bar button spec
+***************************************************************************/
+
+.vs_ui_segmentedbutton.bar
+{  
+  -webkit-border-radius: 3px;
+  height: 30px;
+  font-size: 15px;
+}
+
+
+.vs_ui_segmentedbutton.bar > div {
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
+  color: black;
+  
+  padding: 6px 5px 0 5px;
+  
+  border: none;
+  border-right: 1px solid #999; 
+}
+
+.vs_ui_segmentedbutton.bar > div:first-child {
+  -webkit-border-top-left-radius: 2px;
+  -webkit-border-bottom-left-radius: 2px;
+}
+
+.vs_ui_segmentedbutton.bar > div:last-child {
+  -webkit-border-top-right-radius: 2px;
+  -webkit-border-bottom-right-radius: 2px;
+  border-right: none;  
+}

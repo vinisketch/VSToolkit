@@ -1,0 +1,41 @@
+.vs_ui_slider {
+  background-color: #F9F9F9;
+  border: 1px solid #999;
+}
+
+.vs_ui_slider.horizontal {
+  height: 4px;
+  background-image: -webkit-gradient(
+    linear, left top,left bottom,
+    color-stop(0, #5899EB), color-stop(1, #5899EB));
+}
+
+.vs_ui_slider.vertical {
+  width: 4px;
+  background-image: -webkit-gradient(
+    linear, left top, right top,
+    color-stop(0, #5899EB), color-stop(1, #5899EB));
+}
+
+.vs_ui_slider .handle {
+  position:absolute;
+  top: 0px;
+  border-radius: 3px;
+  border: 1px solid #999;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#E2E2E2), color-stop(2%,#E2E2E2), color-stop(2%,#9E9E9E), color-stop(100%,#D6D6D6)) !important;
+}
+
+.vs_ui_slider.horizontal .handle {
+  width: 35px;
+  height: 11px;
+}
+
+.vs_ui_slider.vertical .handle {
+  width: 11px;
+  height: 35px;
+}
+
+.vs_ui_slider .handle:active {
+  border: 1px solid white;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, from(#9DC3F3), color-stop(0.02, #5899EB), color-stop(0.3, #3985E7), color-stop(0.65, #1A70DD), to(#1559AF)) !important;
+}

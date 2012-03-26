@@ -1,0 +1,42 @@
+.vs_ui_combobox {
+  height: 40px;
+  font-size : 18px;
+  color: black;
+  
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+  border: 1px solid #999;
+  -webkit-border-radius: 5px;
+}
+
+.vs_ui_combobox > select {
+  color: inherit;
+  padding-top: 0px;
+}
+
+.vs_ui_combobox > select:focus, .vs_ui_combobox > select:active {
+  color: #fff !important;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, from(#9DC3F3), color-stop(0.02, #5899EB), color-stop(0.3, #3985E7), color-stop(0.65, #1A70DD), to(#1559AF)) !important;
+}
+
+.vs_ui_combobox:after
+{
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#999), to(#666));
+  content: '▼';
+  color: #eee;
+  height: 39px;
+  width: 38px;
+  top: 0px;
+  left: auto;
+  margin: 0px;
+  margin-right: 0px;
+  margin-top: 0px;
+  position: absolute;
+  z-index: 2;
+  display: block;
+  right: 0px;
+  border-top-right-radius: 4px;
+  border-bottom-right-radius: 4px;
+  border: none;
+  padding: 11px 10px;
+}

@@ -1,0 +1,155 @@
+/*
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+.vs_ui_button {
+  font-family: Myriad Pro;
+  box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
+  color: black;
+}
+
+/***************************************************************************
+
+***************************************************************************/
+
+.vs_ui_button.nav,
+.vs_ui_button.nav_back,
+.vs_ui_button.nav_forward {
+  -webkit-border-radius: 3px;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
+  border: 1px solid #999;
+}
+
+.vs_ui_button.nav_back
+{
+  overflow: visible;
+  padding-left: 8px;
+}
+
+.vs_ui_button.nav_forward
+{
+  overflow: visible;
+  padding-right: 8px;
+}
+
+.vs_ui_button.nav_back:before
+{
+  content: url('bbNavButtonDark.png');
+  margin-top: -13px;
+  margin-right: 6px;
+  border: 0;
+  position: absolute;
+  left: 5px;
+  top: 50%;
+  -webkit-transform: rotate(180deg);
+}
+
+.vs_ui_button.nav_back.pressed:before
+{
+  content: url('bbNavButtonLight.png');
+}
+
+.vs_ui_button.nav_forward:after
+{
+  content: url('bbNavButtonDark.png');
+  margin-top: -6px;
+  margin-right: 6px;
+  border: 0;
+  position: absolute;
+  right: -0px;
+  top: 50%;
+}
+
+.vs_ui_button.nav_forward.pressed:after
+{
+  content: url('bbNavButtonLight.png');
+}
+
+.vs_ui_button.nav,
+.vs_ui_button.nav_back,
+.vs_ui_button.nav_forward
+{
+  padding-top: 7px;
+  
+  height: 30px;
+
+  font-weight: normal;
+  font-size: 14px;
+}
+
+.vs_ui_button.nav.pressed,
+.vs_ui_button.nav_back.pressed,
+.vs_ui_button.nav_forward.pressed
+{
+  background-image: none !important;
+  color: #fff !important;
+  background-color: #5899EB !important; 
+}
+
+/***************************************************************************
+
+***************************************************************************/
+
+.vs_ui_button.default
+{
+  font-size: 18px;
+  
+  height: 38px;
+  padding: 0px;
+  -webkit-border-radius: 5px;
+
+  font-weight: normal;
+
+  padding-top: 8px;
+  border: 2px solid #999;
+}
+
+.vs_ui_button.default.pressed
+{
+  color: #fff !important;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, from(#9DC3F3), color-stop(0.02, #5899EB), color-stop(0.3, #3985E7), color-stop(0.65, #1A70DD), to(#1559AF)) !important;
+  border: 2px solid white !important;
+}
+
+.vs_ui_button.default.disabled 
+{ 
+  color: black;
+}
+
+.vs_ui_button.default.white 
+{
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
+}
+
+.vs_ui_button.default.red
+{
+  color: white;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(red), to(#BE0000));
+}
+
+.vs_ui_button.default.green
+{
+  color: white;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#01BF00), to(#079600));
+}
+
+.vs_ui_button.default.grey
+{
+  border: 2px solid #DDD;
+  color: white;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#797979), to(#444));
+}
