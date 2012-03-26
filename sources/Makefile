@@ -146,8 +146,9 @@ ui: ui_debug
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui.css -o ../lib/css/vs_ui.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_ios.css -o ../lib/css/vs_ui_ios.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_android.css -o ../lib/css/vs_ui_android.css --type css --charset UTF8
+	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_bb.css -o ../lib/css/vs_ui_bb.css --type css --charset UTF8
 	
-ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css copy_ui_img copy_widgets_font
+ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css ../lib_debug/css/vs_ui_bb.css copy_ui_img copy_widgets_font
 
 ../lib_debug/js/vs_ui.js: ui/View/View.js ui/Application/Application.js ui/SplitView/SplitView.js ui/TextArea/TextArea.js ui/Button/Button.js ui/List/AbstractList.js ui/List/List.js ui/NavigationBar/NavigationBar.js ui/ToolBar/ToolBar.js ui/Canvas/Canvas.js ui/ProgressBar/ProgressBar.js ui/RadioButton/RadioButton.js ui/ComboBox/ComboBox.js ui/CheckBox/CheckBox.js ui/Slider/Slider.js ui/InputField/InputField.js ui/ScrollView/ScrollView.js ui/TextLabel/TextLabel.js ui/ImageView/ImageView.js ui/PopOver/PopOver.js ui/Switch/Switch.js ui/Picker/Picker.js ui/SVGView/SVGView.js ui/SegmentedButton/SegmentedButton.js
 	$(CAT) Header.js >> $@
@@ -272,9 +273,26 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	$(CAT) ui/PopOver/PopOver_android.css >> $@
 	$(CAT) ui/ToolBar/ToolBar_android.css >> $@
 	$(CAT) ui/SegmentedButton/SegmentedButton_android.css >> $@
+
+../lib_debug/css/vs_ui_bb.css: ui/Application/Application_bb.css ui/Button/Button_bb.css ui/List/List_bb.css  ui/RadioButton/RadioButton_bb.css ui/CheckBox/CheckBox_bb.css ui/Slider/Slider_bb.css ui/Switch/Switch_bb.css ui/ProgressBar/ProgressBar_bb.css ui/InputField/InputField_bb.css ui/ComboBox/ComboBox_bb.css ui/SegmentedButton/SegmentedButton_bb.css ui/TextArea/TextArea_bb.css ui/Picker/Picker_bb.css ext/ui/Accordion/Accordion_bb.css
+	$(CAT) ui/Application/Application_bb.css >> $@
+	$(CAT) ui/Button/Button_bb.css >> $@
+	$(CAT) ui/List/List_bb.css >> $@
+	$(CAT) ui/RadioButton/RadioButton_bb.css >> $@
+	$(CAT) ui/CheckBox/CheckBox_bb.css >> $@
+	$(CAT) ui/Slider/Slider_bb.css >> $@
+	$(CAT) ui/Switch/Switch_bb.css >> $@
+	$(CAT) ui/TextArea/TextArea_bb.css >> $@
+	$(CAT) ui/ProgressBar/ProgressBar_bb.css >> $@
+	$(CAT) ui/InputField/InputField_bb.css >> $@
+	$(CAT) ui/ComboBox/ComboBox_bb.css >> $@
+	$(CAT) ui/SegmentedButton/SegmentedButton_bb.css >> $@
+	$(CAT) ui/Picker/Picker_bb.css >> $@
+	$(CAT) ext/ui/Accordion/Accordion_bb.css >> $@
 	
 copy_ui_img:
 	$(CP) ui/ComboBox/iOS* ../lib_debug/css
+	$(CP) ui/Button/bb* ../lib_debug/css
 	$(CP) ui/List/SimpleList* ../lib_debug/css
 	$(CP) ui/List/PanelTitle.png ../lib_debug/css
 	$(CP) ui/ToolBar/ToolBarG* ../lib_debug/css
