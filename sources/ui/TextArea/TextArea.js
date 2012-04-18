@@ -62,12 +62,12 @@ TextArea.prototype = {
    */
   destructor : function ()
   {
-    View.prototype.destructor.call (this);
-    
     this.view.removeEventListener ('change', this);
     this.view.removeEventListener ('focus', this);
     this.view.removeEventListener ('blur', this);
     this.view.removeEventListener ('textInput', this);
+
+    View.prototype.destructor.call (this);
   },
 
   /**

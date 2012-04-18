@@ -129,6 +129,8 @@ EventSource.prototype =
       }
     }
     delete (this.__node_binds__);
+    
+    VSObject.prototype.destructor.call (this);
   },
   
   /**

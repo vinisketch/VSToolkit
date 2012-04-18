@@ -327,7 +327,9 @@ VSObject.prototype =
    * @function
    */
   destructor : function ()
-  {},
+  {
+    this.__i__ = false;
+  },
   
   /**
    * Manually force properties change propagation.

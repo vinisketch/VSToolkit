@@ -135,6 +135,8 @@ Fsm.prototype =
     delete (this._list_output);
     delete (this._inputs);
     delete (this._output_action);
+    
+    core.EventSource.prototype.destructor.call (this);
   },
 
   /*****************************************************************
