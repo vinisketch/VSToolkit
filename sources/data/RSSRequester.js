@@ -858,10 +858,10 @@ RSSRequester.prototype = {
    */
   destructor : function ()
   {
-    RSSFeed.prototype.destructor.call (this);
-    
     this._xhr.unbind ('xmlload', this, this.processRSS);
     free (this._xhr);
+
+    RSSFeed.prototype.destructor.call (this);
   },
  
   /**
