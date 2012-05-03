@@ -478,7 +478,7 @@ EventSource.prototype =
     if (typeof (binds) === "undefined")
     {
       console.warn
-        ("vs.core.Object.nodeUnbind, no bind <" + event + ',' + func_s + " exists.");
+        ("vs.core.Object.nodeUnbind, no bind <" + event + ',' + func_s + "> exists.");
       return;
     }
     for (i = 0; i < binds.length;)
