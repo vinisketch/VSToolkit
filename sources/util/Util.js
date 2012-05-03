@@ -642,7 +642,8 @@ function hasClassName (element, className)
 {
   if (!element) { return; }
   var elementClassName = element.className;
-  return (elementClassName.length > 0 && (elementClassName === className ||
+  return (elementClassName && elementClassName.length > 0 && 
+    (elementClassName === className ||
     new RegExp("(^|\\s)" + className + "(\\s|$)").test(elementClassName)));
 }
 
@@ -665,7 +666,7 @@ function addClassName ()
     className = arguments [i];
     if (!hasClassName(element, className))
     {
-      element.className += (element.className ? ' ' : '') + className;
+      element.className = (element.className ? element.className + ' ' : '') + className;
     }
   }
   return element;
@@ -685,7 +686,7 @@ function addClassName ()
 function removeClassName ()
 {
   var element = arguments [0], className, i = 1;
-  if (!element) { return; }
+  if (!element || !element.className) { return; }
   for (; i < arguments.length; i++)
   {
     className = arguments [i];
