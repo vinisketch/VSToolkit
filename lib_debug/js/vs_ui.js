@@ -162,15 +162,48 @@ Template.prototype =
    * @name vs.ui.Template#compileView
    * @function
    * 
+   * @param {String} viewName The view class Name. By default vs.ui.View. 
+   *                 [optional] 
    * @return {vs.ui.View} the View
    */
-  compileView : function ()
+  compileView : function (viewName)
   {
-    var properties = [];
-    var properties_path = [];
-    var prop_nodes = [];
-    var self = this;
+    var view_node = this._compile ();
     
+    function resolveClass (name)
+    {
+      if (!name) return null;
+      
+      var namespaces = name.split ('.');
+      var base = window;
+      while (base && namespaces.length) {
+        base = base [namespaces.shift ()];
+      }
+      
+      return base;
+    }
+    
+    var viewClass = resolveClass (viewName);
+    if (!vs.util.isFunction (viewClass)) viewClass = vs.ui.View;
+
+    var view = new viewClass ({node: view_node});
+    
+    this._addPropertiesToObject (view);
+    
+    view.init ();
+    return view;
+  },
+  
+  /**
+   * @private
+   */
+  _compile : function ()
+  {
+    this.__properties = [];
+    this.__properties_path = [];
+    this.__prop_nodes = [];
+    var self = this;
+        
     /**
      * Replacement function
      * Replace a Template tag into a temporary index code
@@ -178,12 +211,12 @@ Template.prototype =
      */
     function replace_fnc (str, key, p1, p2, offset, html)
     {
-      var i = properties.length;
+      var i = self.__properties.length;
       // a new property is found
-      properties.push (key);
+      self.__properties.push (key);
 
-      if (p2) properties_path.push (p2.split ('.').shift ());
-      else properties_path.push (null);
+      if (p2) self.__properties_path.push (p2.split ('.').shift ());
+      else self.__properties_path.push (null);
 
       return "\${*" + i + "*}";
     }
@@ -248,7 +281,7 @@ Template.prototype =
                 node.insertBefore (text_node, node_temp);
               }
               
-              prop_nodes [parseInt (result[1], 10)] = node_temp;
+              self.__prop_nodes [parseInt (result[1], 10)] = node_temp;
               index = result.index + result[0].length;
               
               result = self._regexp_index.exec (value);
@@ -269,7 +302,7 @@ Template.prototype =
             var result = self._regexp_index.exec (node_temp.value);
             if (result)
             {
-              prop_nodes [parseInt (result[1], 10)] = node_temp;
+              self.__prop_nodes [parseInt (result[1], 10)] = node_temp;
               node_temp.value = '';
             }
           }
@@ -283,28 +316,33 @@ Template.prototype =
       parseNodes (node.attributes);     
     }
     parseNode (view_node);
-    var view = new vs.ui.View ({node: view_node});
-    var node_ref = [];
     
+    return view_node;
+  },
+    
+  /**
+   * @private
+   */
+  _addPropertiesToObject : function (obj)
+  {
+    var node_ref = [];
+
     // configure properties
-    var l = properties.length;
+    var l = this.__properties.length;
     while (l--)
     {
-      var prop_name = properties [l];
-      var path = properties_path [l];
-      var node = prop_nodes [l];
+      var prop_name = this.__properties [l];
+      var path = this.__properties_path [l];
+      var node = this.__prop_nodes [l];
       if (!node) { continue; }
       
       node_ref.push ([prop_name, node]);
-      _create_property (view, prop_name, node, path);
+      _create_property (obj, prop_name, node, path);
     }
     
     // clone surcharge
-    view._clone = _view_clone;
-    view.__node__ref__ = node_ref;
-    
-    view.init ();
-    return view;
+    obj._clone = _view_clone;
+    obj.__node__ref__ = node_ref;
   },
     
  /**
@@ -952,6 +990,13 @@ View.prototype = {
   {
     var node = this.__getGUInode (config), compName, doc, doc_elem;
     if (node) { return node; }
+    
+     if (config.template) {
+      var template = new Template (config.template);
+      var node = template._compile ();
+      template._addPropertiesToObject (this);
+      return node;
+    }
     
     // 4) no node exists, generate a warning a create a div node.
     if (this.html_template)
@@ -6411,12 +6456,12 @@ TextArea.prototype = {
    */
   destructor : function ()
   {
-    View.prototype.destructor.call (this);
-    
     this.view.removeEventListener ('change', this);
     this.view.removeEventListener ('focus', this);
     this.view.removeEventListener ('blur', this);
     this.view.removeEventListener ('textInput', this);
+
+    View.prototype.destructor.call (this);
   },
 
   /**

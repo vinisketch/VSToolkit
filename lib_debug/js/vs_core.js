@@ -413,7 +413,9 @@ VSObject.prototype =
    * @function
    */
   destructor : function ()
-  {},
+  {
+    this.__i__ = false;
+  },
   
   /**
    * Manually force properties change propagation.
@@ -1701,6 +1703,8 @@ EventSource.prototype =
       }
     }
     delete (this.__node_binds__);
+    
+    VSObject.prototype.destructor.call (this);
   },
   
   /**
@@ -2500,6 +2504,8 @@ Fsm.prototype =
     delete (this._list_output);
     delete (this._inputs);
     delete (this._output_action);
+    
+    core.EventSource.prototype.destructor.call (this);
   },
 
   /*****************************************************************
@@ -5145,8 +5151,8 @@ HTTPRequest.prototype = {
             
             self.propagateChange ();
 
-            self.propagate ('textload', this._response_text);
-            self.propagate ('xmlload', this._response_xml);
+            self.propagate ('textload', self._response_text);
+            self.propagate ('xmlload', self._response_xml);
           }
           else
           {
