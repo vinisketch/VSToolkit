@@ -446,9 +446,11 @@ View.prototype = {
   {
     var node = this.__getGUInode (config), compName, doc, doc_elem;
     if (node) { return node; }
-    
-     if (config.template) {
-      var template = new Template (config.template);
+  
+    var _template = (config.template)?config.template:this.template;
+    if (_template)
+    {
+      var template = new Template (_template);
       var node = template._compile ();
       template._addPropertiesToObject (this);
       return node;
