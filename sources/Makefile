@@ -135,7 +135,7 @@ core_debug: ../lib_debug/js/vs_core.js
 	$(CAT) core/Array.js >> $@
 	$(CAT) core/DataStorage.js >> $@
 	$(CAT) core/LocalStorage.js >> $@
-#	$(CAT) core/RestStorage.js >> $@
+	$(CAT) core/RestStorage.js >> $@
 	$(CAT) Footer.js >> $@
 
 ###                         GUI
