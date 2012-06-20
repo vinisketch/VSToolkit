@@ -26,6 +26,7 @@ var _constructor_ = window.Object.prototype.constructor;
  * @example
  *  var Class1 = vs.core.createClass ({
  *    properties: {name: vs.core.Object.PROPERTY_IN_OUT},{});
+ *
  *  var t = new Class1 ({name: 'Hello'});
  *  t.init ();
  *  console.log (t.name); // > 'Hello'
