@@ -140,7 +140,7 @@ var extendClass = function (obj, extension)
       obj._properties_ = obj._properties_.concat (extension._properties_);
     }
 
-    return;
+    return obj;
   }
   catch (e)
   {
