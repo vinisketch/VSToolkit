@@ -482,12 +482,12 @@ DeviceConfiguration._estimateScreenSize = function (metric)
  */
 DeviceConfiguration._data_browser = [
   {
-    string: navigator.userAgent,
+    string: window.navigator.userAgent,
     subString: "Chrome",
     identity: DeviceConfiguration.BROWSER_CHROME
   },
   {
-    string: navigator.vendor,
+    string: window.navigator.vendor,
     subString: "Apple",
     identity: DeviceConfiguration.BROWSER_SAFARI,
     versionSearch: "Version"
@@ -498,12 +498,12 @@ DeviceConfiguration._data_browser = [
     versionSearch: "Version"
   },
   {
-    string: navigator.userAgent,
+    string: window.navigator.userAgent,
     subString: "Firefox",
     identity: DeviceConfiguration.BROWSER_FIREFOX
   },
   {
-    string: navigator.userAgent,
+    string: window.navigator.userAgent,
     subString: "MSIE",
     identity: DeviceConfiguration.BROWSER_MSIE,
     versionSearch: "MSIE"
@@ -516,27 +516,27 @@ DeviceConfiguration._data_browser = [
  */
 DeviceConfiguration._data_OS = [
   {
-    string: navigator.platform,
+    string: window.navigator.platform,
     subString: "Win",
     identity: DeviceConfiguration.OS_WINDOWS
   },
   {
-    string: navigator.platform,
+    string: window.navigator.platform,
     subString: "Mac",
     identity: DeviceConfiguration.OS_MACOS
   },
   {
-     string: navigator.userAgent,
+     string: window.navigator.userAgent,
      subString: "iPad|iPhone|iPod",
      identity: DeviceConfiguration.OS_IOS
   },
   {
-     string: navigator.userAgent,
+     string: window.navigator.userAgent,
      subString: "Android",
      identity: DeviceConfiguration.OS_ANDROID
   },
   {
-    string: navigator.platform,
+    string: window.navigator.platform,
     subString: "Linux",
     identity: DeviceConfiguration.OS_LINUX
   }
