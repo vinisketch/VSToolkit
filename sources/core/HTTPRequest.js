@@ -128,7 +128,8 @@ HTTPRequest.prototype = {
             self.propagateChange ();
 
             self.propagate ('textload', self._response_text);
-            self.propagate ('xmlload', self._response_xml);
+            if (self._response_xml)
+              self.propagate ('xmlload', self._response_xml);
           }
           else
           {
