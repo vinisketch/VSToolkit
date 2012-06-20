@@ -990,9 +990,11 @@ View.prototype = {
   {
     var node = this.__getGUInode (config), compName, doc, doc_elem;
     if (node) { return node; }
-    
-     if (config.template) {
-      var template = new Template (config.template);
+  
+    var _template = (config.template)?config.template:this.template;
+    if (_template)
+    {
+      var template = new Template (_template);
       var node = template._compile ();
       template._addPropertiesToObject (this);
       return node;
@@ -8273,13 +8275,16 @@ List.prototype = {
    *
    * @name vs.ui.List#setItemTemplate 
    * @function
-   * @param {vs.ui.View} obj the template object;
+   * @param {vs.ui.View | Class} obj the template object;
    */
   setItemTemplate : function (obj)
   {
-    if (!obj && !obj.constructor) { return; }
+    if (!obj) return;
     
-    this.__template_obj = obj;
+    if (util.isFunction (obj))
+      this.__template_obj = new obj () .init ();
+    else if (obj.constructor) 
+      this.__template_obj = obj;
   },
 
   /**
