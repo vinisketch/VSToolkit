@@ -234,26 +234,37 @@ VSArray.prototype = {
   parseJSON : function (json)
   {
     try {
-      var obj = (json && util.parseJSON (json)) || {}, i, key, _model, item;
+      var obj = (json && util.parseJSON (json)) || {}, i, key, _model, item,
+        self = this;
+      
+      function fillArray (data)
+      {
+        self._data = [];
+        for (i = 0; i < data.length; i++)
+        {
+          item = data [i];
+          if (self._model_class)
+          {
+            _model = new self._model_class ();
+            _model.init ();
+          
+            for (key in item) { _model ['_' + key] = item [key]; }
+            self.add (_model);
+          }
+          else self.add (item);
+        }
+      };
   
-      for (key in obj)
+      if (util.isArray (obj))
+      {
+        fillArray (obj);
+      }
+      else for (key in obj)
       {
         this._data = [];
         if (key == 'data')
         {
-          for (i = 0; i < obj.data.length; i++)
-          {
-            item = obj.data [i];
-            if (this._model_class)
-            {
-              _model = new this._model_class ();
-              _model.init ();
-            
-              for (key in item) { _model ['_' + key] = item [key]; }
-              this.add (_model);
-            }
-            else this.add (item);
-          }
+          fillArray (obj.data);
         }
         else this ['_' + key] = obj [key];
       }
