@@ -388,7 +388,7 @@ EventSource.prototype =
       handler = function (event)
       {
         // event.preventDefault ();
-        event.stopPropagation ();
+        // event.stopPropagation ();
         
         try
         {
