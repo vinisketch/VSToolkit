@@ -94,6 +94,36 @@ li {
   right: 25px;
 }
 
+.vs_ui_list.TabList > .direct_access {
+  z-index: 10;
+  width: 15px;
+  height : auto;
+  right : 10px;
+  top : 15px;
+  background-color: transparent;
+  position: absolute;
+  border-radius: 7px;
+  overflow: hidden;
+  color: rgba(125,125,125,1);
+  text-shadow: none;
+  background-color: rgba(125,125,125,0.2);
+  padding: 5px 0;
+}
+
+
+.vs_ui_list.TabList > .direct_access > div {
+  font-weight: bold;
+  font-size: .7em;
+  text-align: center;
+  text-transform:capitalize;
+}
+
+.vs_ui_list.TabList > .direct_access:active {
+  background-color: rgba(125,125,125,0.5);
+  color: white;
+  text-shadow: rgba(0,0,0,0.398438) 0 1px 0;
+}
+
 /********************************************************************
                 Block List Item CSS
 *********************************************************************/
