@@ -18,3 +18,9 @@ body {
   padding: 1px;
   line-height: 23px;
 }
+
+.tab_list > div {
+  width: 100%;
+  top: 50px;
+  bottom: 0px;
+}

@@ -7,7 +7,8 @@ var Widgets = vs.core.createClass ({
     this.add (this.list);
     this.list.model = [
       {title: 'Button'},
-      {title: 'Progress&Slider'}
+      {title: 'Progress&Slider'},
+      {title: 'Tab list'}
     ];
     
     this.list.bind ('itemselect', this);
@@ -24,6 +25,12 @@ var Widgets = vs.core.createClass ({
     panel.hide ();
     panel.bind ('close', this);
     this.panels['Progress&Slider'] = panel;
+    
+    var panel = this.initTabList ();
+    this.add (panel);
+    panel.hide ();
+    panel.bind ('close', this);
+    this.panels ['Tab list'] = panel; 
   },
   
   notify : function (e) {
@@ -177,7 +184,132 @@ var Widgets = vs.core.createClass ({
     slider.bind ('continuous_change', this, function (e) {progress3.index = e.data;});
 
     return view;
+  },
+  
+  initTabList : function () {
+    var view = this.buildGenericPanel ();
+    view.addClassName ('tab_list');
+
+    var listItems = new vs.ui.List ({
+      id: 'list_items',
+      scroll: true,
+      type: vs.ui.List.TAB_LIST
+    });
+    listItems.init ();
+    view.add (listItems);
+        
+    // Set the data list items
+    listItems.data = [
+      'a',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'b',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'c',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      'd',
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'e',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'f',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'g',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      'h',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      'i',
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'j',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'k',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'l',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'm',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      'n',
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'o',
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'p',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'q',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      'r',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      's',
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      't',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'u',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'v',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'w',
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      {title: 'Strange image', url: "resources/image1.jpeg"},
+      'x',
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'y',
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+      'z',
+      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
+      {title: 'The dream house', url: "resources/image3.jpeg"},
+    ];
+    
+    return view;
   }
+
 });
 
 function loadApplication () {
