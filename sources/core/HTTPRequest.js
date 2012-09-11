@@ -30,8 +30,16 @@
  *  @constructor
  *   Creates a new HTTPRequest.
  *
+ *  <p>
+ *  Events:
+ *  <ul>textload
+ *    <li/> xmlload: data [xml doc]; propagate when data are loaded
+ *    <li/> textload: data [text]: propagate when data are loaded
+ *    <li/> loaderror: data [error information]: propagate when an error occured
+ *  </ul>
+ *  <p>
  * @example
- *  var xhr = new core.HTTPRequest ({url: "http..."});
+ *  var xhr = new vs.core.HTTPRequest ({url: "http..."});
  *  xhr.init ();
  *  xhr.bind ('xmlload', this, this.processRSS);
  *  xhr.send ();
