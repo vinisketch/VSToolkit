@@ -271,7 +271,7 @@
 { 
   color: black;
   text-shadow: rgba(255, 255, 255, 0.7) 0px 1px 0px;
-  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(234, 234, 234, 0.7)), color-stop(0.5, rgba(195, 195, 195, 0.7)), color-stop(0.5, rgba(166, 166, 166, 0.7)), to(rgba(167, 167, 167, 0.80)));
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(234, 234, 234)), color-stop(0.5, rgb(224, 224, 224)), color-stop(0.5, rgb(198,198,198)), to(rgb(198,198,198)));
 }
 
 .vs_ui_button.default.white.pressed, /** legacy comptability */
@@ -285,7 +285,7 @@
 {
   color: white;
   text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
-  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(255, 59, 59, 0.80)), color-stop(0.5, rgba(233, 72, 72, 0.90)), color-stop(0.5, rgba(184, 0, 0, 0.80)), to(rgba(255, 0, 0, 0.90)));
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(249,99,98)), color-stop(0.5, rgb(231,91,90)), color-stop(0.5, rgb(196,50,50)), to(rgb(248,31,28)));
 }
 
 .vs_ui_button.default.red.pressed,
@@ -300,14 +300,14 @@
 {
   color: white;
   text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
-  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(79, 156, 74, 0.7)), color-stop(0.5, rgba(54, 127, 35, 0.7)), color-stop(0.5, rgba(0, 113, 0, 0.7)), to(rgba(0, 150, 0, 0.7)));
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(132,185,122)), color-stop(0.5, rgb(116,166,96)), color-stop(0.5, rgb(81,158,69)), to(rgb(83,182,65)));
 }
 
 .vs_ui_button.default.grey 
 {
   color: white;
   text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
-  background-image:-webkit-gradient(linear, left top, left bottom, from(rgba(74, 74, 74, 0.95)), color-stop(0.5, rgba(20, 20, 20, 0.85)), color-stop(0.5, rgba(2, 2, 2, 0.85)), to(rgba(14, 14, 14, 0.85)));
+  background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(82,82,82)), color-stop(0.5, rgb(56,56,56)), color-stop(0.5, rgb(40,40,40)), to(rgb(50,50,50)));
 }
 
 .vs_ui_button.default.grey.pressed
