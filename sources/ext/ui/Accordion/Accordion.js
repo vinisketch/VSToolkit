@@ -437,7 +437,7 @@ Accordion.prototype = {
     if (e.type === core.POINTER_START)
     {
       // prevent multi touch events
-      if (EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
       
       e.stopPropagation ();
       e.preventDefault ();
@@ -448,8 +448,10 @@ Accordion.prototype = {
       document.addEventListener (core.POINTER_MOVE, this, false);
       document.addEventListener (core.POINTER_END, this, false);
       
-      this.__touch_start_x = EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
-      this.__touch_start_y = EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+      this.__touch_start_x =
+        core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+      this.__touch_start_y =
+        core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
 
       this.__elem = elem;
 
@@ -469,8 +471,8 @@ Accordion.prototype = {
       e.stopPropagation ();
       e.preventDefault ();
 
-      pageX = EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
-      pageY = EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+      pageX = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
+      pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
       delta = 
         Math.abs (pageY - this.__touch_start_y) + 
         Math.abs (pageX - this.__touch_start_x);  
