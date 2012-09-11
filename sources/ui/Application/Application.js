@@ -54,7 +54,7 @@ var Application = function (config)
  */
 var Application_applications = {};
 
-window.Application_applications = Application_applications;
+vs.Application_applications = Application_applications;
 
 Application.prototype = {
   
