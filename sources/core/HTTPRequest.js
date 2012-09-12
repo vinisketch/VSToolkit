@@ -147,7 +147,13 @@ HTTPRequest.prototype = {
         }
         else
         {
-          self.propagate ('loaderror', xhr.status);
+          var data;
+          try {
+            data = JSON.parse (xhr.responseText);
+          } catch (e) {
+            data = xhr.responseText;
+          }
+          self.propagate ('loaderror', {'status': xhr.status, 'response':data});
           return false;
         }
       }
@@ -187,7 +193,7 @@ util.defineClassProperties (HTTPRequest, {
      */ 
     set : function (v)
     {
-      if (v != 'GET' || v != 'POST') { return; }
+      if (v != 'GET' && v != 'POST') { return; }
       
       this._method = v;
     }
