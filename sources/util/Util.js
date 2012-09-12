@@ -20,6 +20,8 @@
                    
 *********************************************************************/
 
+var document = (typeof window != "undefined")?window.document:null;
+
 /**
  *  @private
  */
