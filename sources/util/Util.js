@@ -30,17 +30,17 @@ var vs = window.vs,
  * Create our "vsTest" element and style that we do most feature tests on.
  * @private
  */
-var vsTestElem = document.createElement ('vstestelem');
+var vsTestElem = (document)?document.createElement ('vstestelem'):null;
 
 /**
  * @private
  */
-var vsTestStyle = vsTestElem.style;
+var vsTestStyle = (vsTestElem)?vsTestElem.style:null;
 var __date_reg_exp = /\/Date\((-?\d+)\)\//;
 
 // Test which kind of transformation you can use
 vs.SUPPORT_CSS_TRANSFORM =
-  (vsTestStyle.webkitTransform || vsTestStyle.msTransform);
+  (vsTestStyle && (vsTestStyle.webkitTransform || vsTestStyle.msTransform));
 
 /********************************************************************
 
@@ -1327,12 +1327,12 @@ var setElementTransform;
  **/
 var getElementTransform;
 
-if (vsTestStyle.webkitTransform !== undefined)
+if (vsTestStyle && vsTestStyle.webkitTransform !== undefined)
 {
   setElementTransform = setElementWebkitTransform;
   getElementTransform = getElementWebkitTransform;
 }  
-else if (vsTestStyle.msTransform !== undefined)
+else if (vsTestStyle && vsTestStyle.msTransform !== undefined)
 {
   setElementTransform = setElementMSTransform;
   getElementTransform = getElementMSTransform;
@@ -1526,7 +1526,7 @@ var SET_STYLE_OPTIMIZATION = true;
  * @private
  */
 var _current_platform_id = 0;
-window._current_platform_id = _current_platform_id;
+vs._current_platform_id = _current_platform_id;
 
 /** 
  *  Sets the active stylesheet for the HTML document according to the specified
@@ -1541,8 +1541,8 @@ var setActiveStyleSheet = function (title)
   var i = 0, stylesheets = document.getElementsByTagName ("link"),
     stylesheet, info, id, app, size;
     
-  _current_platform_id = title;
-  var apps = window.Application_applications;
+  vs._current_platform_id = title;
+  var apps = vs.Application_applications;
   
   if (SET_STYLE_OPTIMIZATION)
   {
@@ -1725,8 +1725,8 @@ util.extend (util, {
   setElementTransform:        setElementTransform,
   getElementTransform:        getElementTransform,
   getBoundingClientRect:      
-    (vsTestElem.getBoundingClientRect)?_getBoundingClientRect_api2:
-    _getBoundingClientRect_api1,
+    (vsTestElem && vsTestElem.getBoundingClientRect)?
+    _getBoundingClientRect_api2:_getBoundingClientRect_api1,
   
   // other
   importFile:           importFile,
