@@ -15,7 +15,7 @@
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
  
- Use code from Canto.js Copyright 2010 Steven Levithan <stevenlevithan.com>
+  Use code from Canto.js Copyright 2010 Steven Levithan <stevenlevithan.com>
 */
 
 /**
@@ -183,13 +183,13 @@ URL.prototype = {
     
     var	o   = this.__options,
       m   = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
-      i   = 14;
+      i   = 14, self = this;
   
     while (i--) { this [o.key[i]] = m[i] || ""; }
   
     this [o.q.name] = {};
     this [o.key[12]].replace(o.q.parser, function ($0, $1, $2) {
-      if ($1) this [o.q.name][$1] = $2;
+      if ($1) self [o.q.name][$1] = $2;
     });
     
     this.propertyChange ('src');
