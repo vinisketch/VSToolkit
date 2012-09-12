@@ -25,8 +25,12 @@ FORCE_EVENT_PROPAGATION_DELAY = false;
 /**
  * @name vs.core.EVENT_SUPPORT_TOUCH
  */
-EVENT_SUPPORT_TOUCH = ('createTouch' in document);
-if (!EVENT_SUPPORT_TOUCH)
+var EVENT_SUPPORT_TOUCH = false;
+if (typeof document != "undefined" && 'createTouch' in document)
+  EVENT_SUPPORT_TOUCH = true;
+  
+if (!EVENT_SUPPORT_TOUCH && typeof document != "undefined" &&
+    window.navigator && window.navigator.userAgent)
 {
   if (window.navigator.userAgent.indexOf ('Android') !== -1 ||
       window.navigator.userAgent.indexOf ('BlackBerry') !== -1)
