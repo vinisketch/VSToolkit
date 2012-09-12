@@ -21,6 +21,13 @@
  * @constructor
  * @name vs.ui.TextArea
  * @extends vs.ui.View
+ *  <p>
+ *  Events:
+ *  <ul>
+ *    <li/> continuous_change: data [text]; the current text
+ *    <li/> change: data [text]: Data is the current text
+ *  </ul>
+ *  <p>
  */
 function TextArea (config)
 {
@@ -82,6 +89,7 @@ TextArea.prototype = {
     
     this.view.value = this._value;
 
+    this.view.addEventListener ('textInput', this);
     this.view.addEventListener ('change', this);
     this.view.addEventListener ('focus', this);
     this.view.addEventListener ('blur', this);
