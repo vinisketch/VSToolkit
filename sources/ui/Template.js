@@ -241,8 +241,10 @@ Template.prototype =
                 node_temp = text_node;
               }
             }
+            var text_node = document.createTextNode (value.substring (index));
+            node.insertBefore (text_node, node_temp);
           }
-          if (node_temp.nodeType === 2) // ATTRIBUTE_NODE
+          else if (node_temp.nodeType === 2) // ATTRIBUTE_NODE
           {
             self._regexp_index.lastIndex = 0;// reset the regex
             var result = self._regexp_index.exec (node_temp.value);
