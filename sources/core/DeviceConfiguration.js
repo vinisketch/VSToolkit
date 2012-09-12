@@ -431,7 +431,7 @@ DeviceConfiguration.prototype = {
   setActiveStyleSheet : function (pid)
   {
     util.setActiveStyleSheet (pid);
-    window._current_platform_id = pid;
+    vs._current_platform_id = pid;
   },
     
   /**
@@ -476,18 +476,20 @@ DeviceConfiguration._estimateScreenSize = function (metric)
   else return 10;
 };
 
+if (typeof navigator != "undefined")
+{
 /**
  * @private
  * @const
  */
 DeviceConfiguration._data_browser = [
   {
-    string: window.navigator.userAgent,
+    string: navigator.userAgent,
     subString: "Chrome",
     identity: DeviceConfiguration.BROWSER_CHROME
   },
   {
-    string: window.navigator.vendor,
+    string: navigator.vendor,
     subString: "Apple",
     identity: DeviceConfiguration.BROWSER_SAFARI,
     versionSearch: "Version"
@@ -498,52 +500,57 @@ DeviceConfiguration._data_browser = [
     versionSearch: "Version"
   },
   {
-    string: window.navigator.userAgent,
+    string: navigator.userAgent,
     subString: "Firefox",
     identity: DeviceConfiguration.BROWSER_FIREFOX
   },
   {
-    string: window.navigator.userAgent,
+    string: navigator.userAgent,
     subString: "MSIE",
     identity: DeviceConfiguration.BROWSER_MSIE,
     versionSearch: "MSIE"
   }
 ];
+}
+else DeviceConfiguration._data_browser = [];
 
+if (typeof navigator != "undefined")
+{
 /**
  * @private
  * @const
  */
 DeviceConfiguration._data_OS = [
   {
-    string: window.navigator.platform,
+    string: navigator.platform,
     subString: "Win",
     identity: DeviceConfiguration.OS_WINDOWS
   },
   {
-    string: window.navigator.platform,
+    string: navigator.platform,
     subString: "Mac",
     identity: DeviceConfiguration.OS_MACOS
   },
   {
-     string: window.navigator.userAgent,
+    string: navigator.platform,
+    subString: "Linux",
+    identity: DeviceConfiguration.OS_LINUX
+  },
+  {
+     string: navigator.userAgent,
      subString: "iPad|iPhone|iPod",
      identity: DeviceConfiguration.OS_IOS
   },
   {
-     string: window.navigator.userAgent,
+     string: navigator.userAgent,
      subString: "Android",
      identity: DeviceConfiguration.OS_ANDROID
-  },
-  {
-    string: window.navigator.platform,
-    subString: "Linux",
-    identity: DeviceConfiguration.OS_LINUX
   }
 ];
+}
+else DeviceConfiguration._data_OS = [];
 
-
-if (typeof window.deviceConfiguration == 'undefined')
+if (typeof window != 'undefined' && !window.deviceConfiguration)
 {
   window.deviceConfiguration = new DeviceConfiguration ();
 }

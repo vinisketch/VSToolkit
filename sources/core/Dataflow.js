@@ -208,7 +208,7 @@ function _df_node_register (df_id, ref, id)
   df._node_link [ref] = id;
   _df_node_to_def [id] = df;
 }
-window._df_node_register = _df_node_register;
+vs._df_node_register = _df_node_register;
 
 function _df_create (id, ref)
 {
@@ -219,7 +219,7 @@ function _df_create (id, ref)
   
   return df;
 }
-window._df_create = _df_create;
+vs._df_create = _df_create;
 
 function _df_register_ref_node (id, data)
 {
@@ -230,7 +230,7 @@ function _df_register_ref_node (id, data)
   
   df.register_ref_node (data);
 }
-window._df_register_ref_node = _df_register_ref_node;
+vs._df_register_ref_node = _df_register_ref_node;
 
 function _df_register_ref_edges (id, data)
 {
@@ -241,7 +241,7 @@ function _df_register_ref_edges (id, data)
   
   df.register_ref_edges (data);
 }
-window._df_register_ref_edges = _df_register_ref_edges;
+vs._df_register_ref_edges = _df_register_ref_edges;
 
 function _df_build (id)
 {
@@ -252,7 +252,7 @@ function _df_build (id)
   
   df.build ();
 }
-window._df_build = _df_build;
+vs._df_build = _df_build;
 
 /********************************************************************
                       Export
