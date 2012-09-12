@@ -292,26 +292,21 @@ function buildSection (list, title, index, itemsSelectable)
     if (list.__template_obj)
     {
       listItem = list.__template_obj.clone ();
-//      listItem.init ();
-      
-      listItem.configure (item)
-      listItem.index = index;
     }
     else
     {
-      listItem = new DefaultListItem ();
-      listItem.init ();
-      
-      listItem.index = index;
-      listItem.title = item.title;
-      listItem.label = item.label;
+      listItem = new DefaultListItem ().init ();
     }
     // model update management
     if (item instanceof core.Model)
     {
-      item.bindChange ('change', listItem, (function (listItem, item) {
-        return function () { listItem.configure (item); };}(listItem, item)));
+      listItem.link (item);
     }
+    else
+    {
+      listItem.configure (item)
+    }
+    listItem.index = index;
 
     if (itemsSelectable)
     {
@@ -482,26 +477,21 @@ function defaultListRenderData (itemsSelectable)
     if (this.__template_obj)
     {
       listItem = this.__template_obj.clone ();
-//      listItem.init ();
-      
-      listItem.configure (item)
-      listItem.index = index;
     }
     else
     {
-      listItem = new DefaultListItem ();
-      listItem.init ();
-      
-      listItem.index = index;
-      listItem.title = item.title;
-      listItem.label = item.label;
+      listItem = new DefaultListItem ().init ();
     }
     // model update management
     if (item instanceof core.Model)
     {
-      item.bindChange ('change', listItem, (function (listItem, item) {
-        return function () { listItem.configure (item); };}(listItem, item)));
+      listItem.link (item);
     }
+    else
+    {
+      listItem.configure (item);
+    }
+    listItem.index = index;
 
     if (itemsSelectable)
     {
@@ -918,6 +908,18 @@ List.prototype = {
     this._acces_index = 0;
     
     var self = this;
+    var bar_dim, bar_pos;
+    
+    var getIndex = function (y) {
+      if (!bar_dim || !bar_pos) return 0;
+      var dy = y - bar_pos.y;
+      if (dy < 0) dy = 0;
+      else if (dy > bar_dim.height) dy = bar_dim.height - 1;
+      
+      var nb_elem = self._direct_access.childElementCount;
+      return Math.floor (dy * nb_elem / bar_dim.height);
+    };
+    
     var accessBarStart = function (e)
     {
       e.stopPropagation ();
@@ -949,14 +951,21 @@ List.prototype = {
 
       // animate the scroll
       if (self._scrollbar) self._scrollbar.setPosition (newPos);
-    }
+      
+      bar_dim = util.getElementDimensions (self._direct_access);
+      bar_dim.height -= 10;
+      bar_pos = util.getElementAbsolutePosition (self._direct_access);
+      bar_pos.y += 5;
+
+      if (self._startScrolling) self._startScrolling ();
+    };
     
     var accessBarMove = function (e)
     {
       e.stopPropagation ();
       e.preventDefault ();
       
-      var _acces_index = e.srcElement._index_;
+      var _acces_index = getIndex (e.pageY);
       if (!util.isNumber (_acces_index)) return;
       
       if (self._acces_index === _acces_index) return;
@@ -976,13 +985,17 @@ List.prototype = {
 
       // animate the scroll
       if (self._scrollbar) self._scrollbar.setPosition (newPos);
-    }
+
+      if (self._isScrolling) self._isScrolling ();
+    };
     
     var accessBarEnd = function (e)
     {
       document.removeEventListener (core.POINTER_MOVE, accessBarMove);
       document.removeEventListener (core.POINTER_END, accessBarEnd);
-    }
+
+      if (self._endScrolling) self._endScrolling ();
+    };
 
     this._direct_access.addEventListener (core.POINTER_START, accessBarStart, false);
   },
