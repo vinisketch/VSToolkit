@@ -124,25 +124,20 @@ RadioButton.prototype = {
       input.type = 'radio';
       input.name = this._id;
       input.value = i;
+      input.id = this._id + "_l" + i;
       
       this._list_items.appendChild (input);
       this._items [i] = input;
       input.addEventListener (core.POINTER_START, this);
       input.addEventListener ('click', this);
       
-      if (os_device == DeviceConfiguration.OS_WP7)
-      {
-        label = document.createElement ('label');
-        label.value = i;
-        label.addEventListener (core.POINTER_START, this);
-        label.addEventListener ('click', this);
-        util.setElementInnerText (label, item);
-        this._list_items.appendChild (label);
-      }
-      else
-      {
-        util.setElementInnerText (input, item);
-      }
+      label = document.createElement ('label');
+      label.value = i;
+      label.for = this._id + "_l" + i;
+      label.addEventListener (core.POINTER_START, this);
+      label.addEventListener ('click', this);
+      util.setElementInnerText (label, item);
+      this._list_items.appendChild (label);
     }
     this.refresh ();
   },

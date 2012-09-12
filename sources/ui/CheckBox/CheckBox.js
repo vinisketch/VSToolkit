@@ -160,6 +160,7 @@ CheckBox.prototype = {
       input = document.createElement ('input');
       input.type = 'checkbox';
       input.name = this._id;
+      input.id = this._id + "_l" + i;
       input.value = i;
 
       this._list_items.appendChild (input);
@@ -168,19 +169,13 @@ CheckBox.prototype = {
       input.addEventListener (core.POINTER_START, this);
       input.addEventListener ('click', this);
 
-      if (os_device == DeviceConfiguration.OS_WP7)
-      {
-        label = document.createElement ('label');
-        label.value = i;
-        label.addEventListener (core.POINTER_START, this);
-        label.addEventListener ('click', this);
-        util.setElementInnerText (label, item);
-        this._list_items.appendChild (label);
-      }
-      else
-      {
-        util.setElementInnerText (input, item);
-      }
+      label = document.createElement ('label');
+      label.value = i;
+      label.for = this._id + "_l" + i;
+      label.addEventListener (core.POINTER_START, this);
+      label.addEventListener ('click', this);
+      util.setElementInnerText (label, item);
+      this._list_items.appendChild (label);
     }
     
     // select items

@@ -9,17 +9,16 @@
 input[type="radio"]
 {
   position: relative;
-  padding: 17px 40px 10px 10px;
+
   color: inherit;
   height: 60px;
 
-  border: none;
-  border-top: 1px solid #999;
   background: none;
   border-radius: 0px;
 }
 
-input[type="radio"].pressed
+input[type="radio"].pressed + label,
+.vs_ui_radiobutton label.pressed 
 {
   background-image: -webkit-gradient(linear, left top, left bottom, 
     from(#fea94b), to(#ef7217)) !important;
@@ -36,4 +35,11 @@ input[type="radio"]:after
 input[type="radio"]:checked:after
 {
   content:url(androidRadioButton_sel.png);
+}
+
+.vs_ui_radiobutton label {
+  padding: 17px 40px 10px 10px;
+  vertical-align: center;
+  height: 60px;
+  border-top: 1px solid #E0E0E0;
 }
