@@ -123,8 +123,14 @@ AbstractList.prototype = {
     this._model.init ();
     this._model_allocated = true;
     this._model.bindChange (null, this, this._modelChanged);
-
+    
+    // manage list template without x-hag-hole="item_children"
+    if (!this._holes.item_children) {
+      this._holes.item_children = this.view.querySelector ('ul');
+    }
+    
     this._list_items = this._sub_view = this._holes.item_children;
+    
     if (SUPPORT_3D_TRANSFORM)
       setElementTransform (this._list_items, 'translate3d(0,0,0)');
     else
@@ -290,7 +296,7 @@ AbstractList.prototype = {
       document.removeEventListener (core.POINTER_MOVE, this);
       document.removeEventListener (core.POINTER_END, this);
       
-     if (this.__delta) { this.__scroll_start += this.__delta; }
+      if (this.__delta) { this.__scroll_start += this.__delta; }
       
       if (this._scroll)
       {
@@ -524,8 +530,6 @@ util.defineClassProperties (AbstractList, {
         this._model.bindChange (null, this, this._modelChanged);
       }
       else return;
-
-      this._modelChanged ();
     },
   
     /**
