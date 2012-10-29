@@ -8,13 +8,10 @@
 input[type="checkbox"]
 {
   position: relative;
-  padding: 9px 35px 10px 10px;
 
   color: inherit;
   height: 40px;
 
-  border: none;
-  border-top: 1px solid #E0E0E0;
   background: none;
   border-radius: 0px;
 }
