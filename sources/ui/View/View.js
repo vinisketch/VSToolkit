@@ -461,11 +461,7 @@ View.prototype = {
     {
       if (DOMParser)
       {
-        try {
-          doc = new DOMParser ().parseFromString 
-            (this.html_template, 'text/html');
-        }
-        catch (e)
+        if (deviceConfiguration.browser === DeviceConfiguration.BROWSER_MSIE)
         {
           // @HACK
           // IE is not compatible with 'text/html'
@@ -475,6 +471,11 @@ View.prototype = {
           }
           catch (e) {}
         }
+        else try {
+          doc = new DOMParser ().parseFromString 
+            (this.html_template, 'text/html');
+        }
+        catch (e) {}
         if (doc)
         {
           doc_elem = doc.documentElement;
