@@ -348,7 +348,7 @@ Button.prototype = {
         document.removeEventListener (core.POINTER_END, this);
         document.removeEventListener (core.POINTER_MOVE, this);
 
-        this.__button_time_out = window.setTimeout (function ()
+        this.__button_time_out = setTimeout (function ()
         {
           self._setPressed (false);
           self.__button_time_out = 0;

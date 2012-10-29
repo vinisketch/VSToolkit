@@ -293,7 +293,7 @@ EventSource.prototype =
         /** @private */
         handler = list_bind [i];    
         
-        if (delay || handler.delay) { window.setTimeout (func, 0); }
+        if (delay || handler.delay) { setTimeout (func, 0); }
         else { func.call (this); }
       }
     }

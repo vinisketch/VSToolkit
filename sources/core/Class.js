@@ -20,7 +20,7 @@
 
 *********************************************************************/
 
-var _constructor_ = window.Object.prototype.constructor;
+var _constructor_ = Object.prototype.constructor;
 
 /**
  * @example

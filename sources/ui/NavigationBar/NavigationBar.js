@@ -336,14 +336,14 @@ NavigationBar.prototype = {
         event.currentTarget.removeEventListener (core.POINTER_END, this);
         event.currentTarget.removeEventListener (core.POINTER_MOVE, this);        
         
-        window.setTimeout (function () 
+        setTimeout (function () 
           { util.removeClassName (self, 'active'); }, 200);
         this.propagate ('buttonselect', event.currentTarget.spec);
       break;
 
       case core.POINTER_MOVE:
         event.preventDefault ();
-        window.setTimeout (function () 
+        setTimeout (function () 
           { util.removeClassName (self, 'active'); }, 200);
         event.currentTarget.removeEventListener (core.POINTER_END, this);
         event.currentTarget.removeEventListener (core.POINTER_MOVE, this);
