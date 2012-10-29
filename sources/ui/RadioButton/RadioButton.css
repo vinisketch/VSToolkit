@@ -22,12 +22,13 @@ input[type="radio"]
   width: 100%;
   -webkit-appearance: none;
   font-size: inherit;
-  
+
   margin: 0px;
   min-height: 30px;
   width:30px;
   margin-top: 0px;
   float: right;
+  border: none;
 }
 
 input[type="radio"]:after

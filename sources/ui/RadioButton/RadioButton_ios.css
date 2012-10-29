@@ -1,7 +1,6 @@
 .vs_ui_radiobutton {
   background-color: white;
   font-family: Helvetica;
-
   font-size: 18px;
   color:black;
 }
@@ -12,13 +11,13 @@ input[type="radio"]
 
   color: inherit;
   height: 40px;
-  
+
   background: none;
   border-radius: 0px;
 }
 
 input[type="radio"].pressed + label,
-.vs_ui_radiobutton label.pressed 
+.vs_ui_radiobutton label.pressed
 {
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, from(#9DC3F3), color-stop(0.02, #5899EB), color-stop(0.3, #3985E7), color-stop(0.65, #1A70DD), to(#1559AF)) !important;
   color: white;
