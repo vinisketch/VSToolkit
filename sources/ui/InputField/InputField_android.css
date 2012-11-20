@@ -14,7 +14,6 @@
 }
 
 .vs_ui_inputfield.focus {
-  margin: 0px;
   border: orange solid 3px;
   background-position: 5px 8px;
   -webkit-border-radius: 6px;
