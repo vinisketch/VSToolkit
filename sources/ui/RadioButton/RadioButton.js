@@ -133,7 +133,7 @@ RadioButton.prototype = {
       
       label = document.createElement ('label');
       label.value = i;
-      label.for = this._id + "_l" + i;
+      label.setAttribute ("for", this._id + "_l" + i);
       label.addEventListener (core.POINTER_START, this);
       label.addEventListener ('click', this);
       util.setElementInnerText (label, item);
