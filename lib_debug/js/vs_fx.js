@@ -1985,7 +1985,7 @@ Controller.prototype = {
       }
       catch (e) { console.error (e); }
     };
-    window.setTimeout (function () {runAnimation ();}, 0);
+    setTimeout (function () {runAnimation ();}, 0);
   },
 
 

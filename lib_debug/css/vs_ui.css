@@ -512,6 +512,36 @@ li {
   right: 25px;
 }
 
+.vs_ui_list.TabList > .direct_access {
+  z-index: 10;
+  width: 15px;
+  height : auto;
+  right : 10px;
+  top : 15px;
+  background-color: transparent;
+  position: absolute;
+  border-radius: 7px;
+  overflow: hidden;
+  color: rgba(125,125,125,1);
+  text-shadow: none;
+  background-color: rgba(125,125,125,0.2);
+  padding: 5px 0;
+}
+
+
+.vs_ui_list.TabList > .direct_access > div {
+  font-weight: bold;
+  font-size: .7em;
+  text-align: center;
+  text-transform:capitalize;
+}
+
+.vs_ui_list.TabList > .direct_access:active {
+  background-color: rgba(125,125,125,0.5);
+  color: white;
+  text-shadow: rgba(0,0,0,0.398438) 0 1px 0;
+}
+
 /********************************************************************
                 Block List Item CSS
 *********************************************************************/
@@ -609,8 +639,13 @@ input[type="radio"]
   width: 100%;
   -webkit-appearance: none;
   font-size: inherit;
-  
+
   margin: 0px;
+  min-height: 30px;
+  width:30px;
+  margin-top: 0px;
+  float: right;
+  border: none;
 }
 
 input[type="radio"]:after
@@ -618,6 +653,16 @@ input[type="radio"]:after
   position: absolute;
   right: 10px;
   top: 50%;
+}
+
+.vs_ui_radiobutton label {
+  width: 100%;
+  display: block;
+}
+
+.vs_ui_radiobutton label:nth-child(2)
+{
+  border: none;
 }
 .vs_ui_checkbox {
   overflow: hidden;
@@ -643,8 +688,13 @@ input[type="checkbox"]
   width: 100%;
   -webkit-appearance: none;
   font-size: inherit;
-  
+
   margin: 0px;
+  min-height: 30px;
+  width:30px;
+  margin-top: 0px;
+  float: right;
+  border: none;
 }
 
 input[type="checkbox"]:after
@@ -652,6 +702,16 @@ input[type="checkbox"]:after
   position: absolute;
   right: 10px;
   top: 50%;
+}
+
+.vs_ui_checkbox label {
+  width: 100%;
+  display: block;
+}
+
+.vs_ui_checkbox label:nth-child(2)
+{
+  border: none;
 }
 .vs_ui_navbar {
   width: 100%;

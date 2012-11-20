@@ -781,7 +781,7 @@ core.Object = VSObject;
 
 *********************************************************************/
 
-var _constructor_ = window.Object.prototype.constructor;
+var _constructor_ = Object.prototype.constructor;
 
 /**
  * @example
@@ -1433,8 +1433,12 @@ FORCE_EVENT_PROPAGATION_DELAY = false;
 /**
  * @name vs.core.EVENT_SUPPORT_TOUCH
  */
-EVENT_SUPPORT_TOUCH = ('createTouch' in document);
-if (!EVENT_SUPPORT_TOUCH)
+var EVENT_SUPPORT_TOUCH = false;
+if (typeof document != "undefined" && 'createTouch' in document)
+  EVENT_SUPPORT_TOUCH = true;
+  
+if (!EVENT_SUPPORT_TOUCH && typeof document != "undefined" &&
+    window.navigator && window.navigator.userAgent)
 {
   if (window.navigator.userAgent.indexOf ('Android') !== -1 ||
       window.navigator.userAgent.indexOf ('BlackBerry') !== -1)
@@ -1868,7 +1872,7 @@ EventSource.prototype =
         /** @private */
         handler = list_bind [i];    
         
-        if (delay || handler.delay) { window.setTimeout (func, 0); }
+        if (delay || handler.delay) { setTimeout (func, 0); }
         else { func.call (this); }
       }
     }
@@ -3557,7 +3561,7 @@ function _df_node_register (df_id, ref, id)
   df._node_link [ref] = id;
   _df_node_to_def [id] = df;
 }
-window._df_node_register = _df_node_register;
+vs._df_node_register = _df_node_register;
 
 function _df_create (id, ref)
 {
@@ -3568,7 +3572,7 @@ function _df_create (id, ref)
   
   return df;
 }
-window._df_create = _df_create;
+vs._df_create = _df_create;
 
 function _df_register_ref_node (id, data)
 {
@@ -3579,7 +3583,7 @@ function _df_register_ref_node (id, data)
   
   df.register_ref_node (data);
 }
-window._df_register_ref_node = _df_register_ref_node;
+vs._df_register_ref_node = _df_register_ref_node;
 
 function _df_register_ref_edges (id, data)
 {
@@ -3590,7 +3594,7 @@ function _df_register_ref_edges (id, data)
   
   df.register_ref_edges (data);
 }
-window._df_register_ref_edges = _df_register_ref_edges;
+vs._df_register_ref_edges = _df_register_ref_edges;
 
 function _df_build (id)
 {
@@ -3601,7 +3605,7 @@ function _df_build (id)
   
   df.build ();
 }
-window._df_build = _df_build;
+vs._df_build = _df_build;
 
 /********************************************************************
                       Export
@@ -4901,7 +4905,7 @@ DeviceConfiguration.prototype = {
   setActiveStyleSheet : function (pid)
   {
     util.setActiveStyleSheet (pid);
-    window._current_platform_id = pid;
+    vs._current_platform_id = pid;
   },
     
   /**
@@ -4946,18 +4950,20 @@ DeviceConfiguration._estimateScreenSize = function (metric)
   else return 10;
 };
 
+if (typeof navigator != "undefined")
+{
 /**
  * @private
  * @const
  */
 DeviceConfiguration._data_browser = [
   {
-    string: window.navigator.userAgent,
+    string: navigator.userAgent,
     subString: "Chrome",
     identity: DeviceConfiguration.BROWSER_CHROME
   },
   {
-    string: window.navigator.vendor,
+    string: navigator.vendor,
     subString: "Apple",
     identity: DeviceConfiguration.BROWSER_SAFARI,
     versionSearch: "Version"
@@ -4968,52 +4974,57 @@ DeviceConfiguration._data_browser = [
     versionSearch: "Version"
   },
   {
-    string: window.navigator.userAgent,
+    string: navigator.userAgent,
     subString: "Firefox",
     identity: DeviceConfiguration.BROWSER_FIREFOX
   },
   {
-    string: window.navigator.userAgent,
+    string: navigator.userAgent,
     subString: "MSIE",
     identity: DeviceConfiguration.BROWSER_MSIE,
     versionSearch: "MSIE"
   }
 ];
+}
+else DeviceConfiguration._data_browser = [];
 
+if (typeof navigator != "undefined")
+{
 /**
  * @private
  * @const
  */
 DeviceConfiguration._data_OS = [
   {
-    string: window.navigator.platform,
+    string: navigator.platform,
     subString: "Win",
     identity: DeviceConfiguration.OS_WINDOWS
   },
   {
-    string: window.navigator.platform,
+    string: navigator.platform,
     subString: "Mac",
     identity: DeviceConfiguration.OS_MACOS
   },
   {
-     string: window.navigator.userAgent,
+    string: navigator.platform,
+    subString: "Linux",
+    identity: DeviceConfiguration.OS_LINUX
+  },
+  {
+     string: navigator.userAgent,
      subString: "iPad|iPhone|iPod",
      identity: DeviceConfiguration.OS_IOS
   },
   {
-     string: window.navigator.userAgent,
+     string: navigator.userAgent,
      subString: "Android",
      identity: DeviceConfiguration.OS_ANDROID
-  },
-  {
-    string: window.navigator.platform,
-    subString: "Linux",
-    identity: DeviceConfiguration.OS_LINUX
   }
 ];
+}
+else DeviceConfiguration._data_OS = [];
 
-
-if (typeof window.deviceConfiguration == 'undefined')
+if (typeof window != 'undefined' && !window.deviceConfiguration)
 {
   window.deviceConfiguration = new DeviceConfiguration ();
 }
@@ -5055,8 +5066,16 @@ core.DeviceConfiguration = DeviceConfiguration;
  *  @constructor
  *   Creates a new HTTPRequest.
  *
+ *  <p>
+ *  Events:
+ *  <ul>textload
+ *    <li/> xmlload: data [xml doc]; propagate when data are loaded
+ *    <li/> textload: data [text]: propagate when data are loaded
+ *    <li/> loaderror: data [error information]: propagate when an error occured
+ *  </ul>
+ *  <p>
  * @example
- *  var xhr = new core.HTTPRequest ({url: "http..."});
+ *  var xhr = new vs.core.HTTPRequest ({url: "http..."});
  *  xhr.init ();
  *  xhr.bind ('xmlload', this, this.processRSS);
  *  xhr.send ();
@@ -5164,7 +5183,13 @@ HTTPRequest.prototype = {
         }
         else
         {
-          self.propagate ('loaderror', xhr.status);
+          var data;
+          try {
+            data = JSON.parse (xhr.responseText);
+          } catch (e) {
+            data = xhr.responseText;
+          }
+          self.propagate ('loaderror', {'status': xhr.status, 'response':data});
           return false;
         }
       }
@@ -5204,7 +5229,7 @@ util.defineClassProperties (HTTPRequest, {
      */ 
     set : function (v)
     {
-      if (v != 'GET' || v != 'POST') { return; }
+      if (v != 'GET' && v != 'POST') { return; }
       
       this._method = v;
     }

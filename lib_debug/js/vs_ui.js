@@ -295,8 +295,10 @@ Template.prototype =
                 node_temp = text_node;
               }
             }
+            var text_node = document.createTextNode (value.substring (index));
+            node.insertBefore (text_node, node_temp);
           }
-          if (node_temp.nodeType === 2) // ATTRIBUTE_NODE
+          else if (node_temp.nodeType === 2) // ATTRIBUTE_NODE
           {
             self._regexp_index.lastIndex = 0;// reset the regex
             var result = self._regexp_index.exec (node_temp.value);
@@ -1005,11 +1007,7 @@ View.prototype = {
     {
       if (DOMParser)
       {
-        try {
-          doc = new DOMParser ().parseFromString 
-            (this.html_template, 'text/html');
-        }
-        catch (e)
+        if (deviceConfiguration.browser === DeviceConfiguration.BROWSER_MSIE)
         {
           // @HACK
           // IE is not compatible with 'text/html'
@@ -1019,6 +1017,11 @@ View.prototype = {
           }
           catch (e) {}
         }
+        else try {
+          doc = new DOMParser ().parseFromString 
+            (this.html_template, 'text/html');
+        }
+        catch (e) {}
         if (doc)
         {
           doc_elem = doc.documentElement;
@@ -3253,7 +3256,7 @@ var Application = function (config)
  */
 var Application_applications = {};
 
-window.Application_applications = Application_applications;
+vs.Application_applications = Application_applications;
 
 Application.prototype = {
   
@@ -6417,6 +6420,13 @@ ui.ScrollImageView = ScrollImageView;
  * @constructor
  * @name vs.ui.TextArea
  * @extends vs.ui.View
+ *  <p>
+ *  Events:
+ *  <ul>
+ *    <li/> continuous_change: data [text]; the current text
+ *    <li/> change: data [text]: Data is the current text
+ *  </ul>
+ *  <p>
  */
 function TextArea (config)
 {
@@ -6478,6 +6488,7 @@ TextArea.prototype = {
     
     this.view.value = this._value;
 
+    this.view.addEventListener ('textInput', this);
     this.view.addEventListener ('change', this);
     this.view.addEventListener ('focus', this);
     this.view.addEventListener ('blur', this);
@@ -6954,7 +6965,7 @@ Button.prototype = {
         document.removeEventListener (core.POINTER_END, this);
         document.removeEventListener (core.POINTER_MOVE, this);
 
-        this.__button_time_out = window.setTimeout (function ()
+        this.__button_time_out = setTimeout (function ()
         {
           self._setPressed (false);
           self.__button_time_out = 0;
@@ -7195,8 +7206,14 @@ AbstractList.prototype = {
     this._model.init ();
     this._model_allocated = true;
     this._model.bindChange (null, this, this._modelChanged);
-
+    
+    // manage list template without x-hag-hole="item_children"
+    if (!this._holes.item_children) {
+      this._holes.item_children = this.view.querySelector ('ul');
+    }
+    
     this._list_items = this._sub_view = this._holes.item_children;
+    
     if (SUPPORT_3D_TRANSFORM)
       setElementTransform (this._list_items, 'translate3d(0,0,0)');
     else
@@ -7362,7 +7379,7 @@ AbstractList.prototype = {
       document.removeEventListener (core.POINTER_MOVE, this);
       document.removeEventListener (core.POINTER_END, this);
       
-     if (this.__delta) { this.__scroll_start += this.__delta; }
+      if (this.__delta) { this.__scroll_start += this.__delta; }
       
       if (this._scroll)
       {
@@ -7596,8 +7613,6 @@ util.defineClassProperties (AbstractList, {
         this._model.bindChange (null, this, this._modelChanged);
       }
       else return;
-
-      this._modelChanged ();
     },
   
     /**
@@ -7947,26 +7962,21 @@ function buildSection (list, title, index, itemsSelectable)
     if (list.__template_obj)
     {
       listItem = list.__template_obj.clone ();
-//      listItem.init ();
-      
-      listItem.configure (item)
-      listItem.index = index;
     }
     else
     {
-      listItem = new DefaultListItem ();
-      listItem.init ();
-      
-      listItem.index = index;
-      listItem.title = item.title;
-      listItem.label = item.label;
+      listItem = new DefaultListItem ().init ();
     }
     // model update management
-    if (item instanceof vs.core.Model)
+    if (item instanceof core.Model)
     {
-      item.bindChange ('change', listItem, (function (listItem, item) {
-        return function () { listItem.configure (item); };}(listItem, item)));
+      listItem.link (item);
     }
+    else
+    {
+      listItem.configure (item)
+    }
+    listItem.index = index;
 
     if (itemsSelectable)
     {
@@ -8005,7 +8015,7 @@ function buildSection (list, title, index, itemsSelectable)
 /**
  * @private
  */
-function blockAndTablListRenderData (itemsSelectable)
+function blockListRenderData (itemsSelectable)
 {
   if (!this._model) { return; }
      
@@ -8048,6 +8058,57 @@ function blockAndTablListRenderData (itemsSelectable)
   util.setElementVisibility (_list_items, true);
 };
 
+/**
+ * @private
+ */
+function tabListRenderData (itemsSelectable)
+{
+  if (!this._model) { return; }
+     
+  var _list_items = this._list_items, _direct_access = this._direct_access,
+    index, item, title,
+    s, width, titles, i, items;
+  if (!_list_items) { return; }
+   
+// remove all children
+  this._freeListItems ();
+  
+  _list_items.innerHTML = "";
+  _direct_access.innerHTML = "";
+
+  if (SUPPORT_3D_TRANSFORM)
+    util.setElementTransform (_list_items, 'translate3d(0,0,0)');
+  else
+    util.setElementTransform (_list_items, 'translate(0,0)');
+
+  this.view.removeChild (_list_items);
+  this.view.removeChild (_direct_access);
+  
+  index = 0;
+  util.setElementVisibility (_list_items, false);
+  var title_index = 0;
+  while (index < this._model.length)
+  {
+    item = this._model.item (index);
+    title = null;
+    if (util.isString (item))
+    {
+      title = item; index ++;
+      var elem = document.createElement ('div');
+      elem.innerHTML = title [0];
+      elem._index_ = title_index++;
+      _direct_access.appendChild (elem);
+    }
+
+    s = buildSection (this, title, index, itemsSelectable);
+    _list_items.appendChild (s[0]);
+    index = s[1];
+  }
+  this.view.appendChild (_list_items);
+  this.view.appendChild (_direct_access);
+  _list_items.style.width = 'auto';
+  util.setElementVisibility (_list_items, true);
+};
 
 /**********************************************************************
         
@@ -8086,26 +8147,21 @@ function defaultListRenderData (itemsSelectable)
     if (this.__template_obj)
     {
       listItem = this.__template_obj.clone ();
-//      listItem.init ();
-      
-      listItem.configure (item)
-      listItem.index = index;
     }
     else
     {
-      listItem = new DefaultListItem ();
-      listItem.init ();
-      
-      listItem.index = index;
-      listItem.title = item.title;
-      listItem.label = item.label;
+      listItem = new DefaultListItem ().init ();
     }
     // model update management
-    if (item instanceof vs.core.Model)
+    if (item instanceof core.Model)
     {
-      item.bindChange ('change', listItem, (function (listItem, item) {
-        return function () { listItem.configure (item); };}(listItem, item)));
+      listItem.link (item);
     }
+    else
+    {
+      listItem.configure (item);
+    }
+    listItem.index = index;
 
     if (itemsSelectable)
     {
@@ -8507,6 +8563,119 @@ List.prototype = {
       index: this._selected_item,
       item: this._model.item (this._selected_item)
     });
+  },
+  
+ /**********************************************************************
+      General function for the direct access bar within Tab list
+  *********************************************************************/
+
+  init_directAccessBar : function ()
+  {
+    this._direct_access = document.createElement ('div');
+    this._direct_access.className = 'direct_access';
+    this.view.appendChild (this._direct_access);
+    
+    this._acces_index = 0;
+    
+    var self = this;
+    var bar_dim, bar_pos;
+    
+    var getIndex = function (y) {
+      if (!bar_dim || !bar_pos) return 0;
+      var dy = y - bar_pos.y;
+      if (dy < 0) dy = 0;
+      else if (dy > bar_dim.height) dy = bar_dim.height - 1;
+      
+      var nb_elem = self._direct_access.childElementCount;
+      return Math.floor (dy * nb_elem / bar_dim.height);
+    };
+    
+    var accessBarStart = function (e)
+    {
+      e.stopPropagation ();
+      e.preventDefault ();
+      
+      self._list_items.style.webkitTransition = '';
+      self.__max_scroll = self.size [1] - self._list_items.offsetHeight;
+      
+      document.addEventListener (core.POINTER_MOVE, accessBarMove, false);
+      document.addEventListener (core.POINTER_END, accessBarEnd, false);
+      
+      var _acces_index = e.srcElement._index_;
+      if (!util.isNumber (_acces_index)) return;
+      
+      if (self._acces_index === _acces_index) return;
+      self._acces_index = _acces_index;
+      var newPos = -self.getTitlePosition (_acces_index);
+      
+      if (newPos < self.__max_scroll) newPos = self.__max_scroll;
+
+      self.__scroll_start = newPos;
+
+      if (SUPPORT_3D_TRANSFORM)
+        util.setElementTransform
+          (self._list_items, 'translate3d(0,' + newPos + 'px,0)');
+      else
+        util.setElementTransform
+          (self._list_items, 'translate(0,' + newPos + 'px)');
+
+      // animate the scroll
+      if (self._scrollbar) self._scrollbar.setPosition (newPos);
+      
+      bar_dim = util.getElementDimensions (self._direct_access);
+      bar_dim.height -= 10;
+      bar_pos = util.getElementAbsolutePosition (self._direct_access);
+      bar_pos.y += 5;
+
+      if (self._startScrolling) self._startScrolling ();
+    };
+    
+    var accessBarMove = function (e)
+    {
+      e.stopPropagation ();
+      e.preventDefault ();
+      
+      var _acces_index = getIndex (e.pageY);
+      if (!util.isNumber (_acces_index)) return;
+      
+      if (self._acces_index === _acces_index) return;
+      self._acces_index = _acces_index;
+      var newPos = -self.getTitlePosition (_acces_index);
+
+      if (newPos < self.__max_scroll) newPos = self.__max_scroll;
+
+      self.__scroll_start = newPos;
+
+      if (SUPPORT_3D_TRANSFORM)
+        util.setElementTransform
+          (self._list_items, 'translate3d(0,' + newPos + 'px,0)');
+      else
+        util.setElementTransform
+          (self._list_items, 'translate(0,' + newPos + 'px)');
+
+      // animate the scroll
+      if (self._scrollbar) self._scrollbar.setPosition (newPos);
+
+      if (self._isScrolling) self._isScrolling ();
+    };
+    
+    var accessBarEnd = function (e)
+    {
+      document.removeEventListener (core.POINTER_MOVE, accessBarMove);
+      document.removeEventListener (core.POINTER_END, accessBarEnd);
+
+      if (self._endScrolling) self._endScrolling ();
+    };
+
+    this._direct_access.addEventListener (core.POINTER_START, accessBarStart, false);
+  },
+  
+  getTitlePosition : function (index)
+  {
+    var titleItems = this.view.querySelectorAll ('ul > li > div');
+    var item = titleItems.item (index);
+    if (!item) return;
+    return item.parentElement.offsetTop;
   }
 };
 util.extendClass (List, AbstractList);
@@ -8589,13 +8758,28 @@ util.defineClassProperties (List, {
       this._type = v;
       this.addClassName (this._type);
       
-      if (this._type === List.BLOCK_LIST || this._type === List.TAB_LIST)
+      if (this._type === List.BLOCK_LIST)
       {
-        this._renderData = blockAndTablListRenderData
+        this._renderData = blockListRenderData;
+        if (this._direct_access)
+        {
+          this.view.removeChild (this._direct_access);
+          delete (this._direct_access);
+        }
+      }
+      if (this._type === List.TAB_LIST)
+      {
+        this._renderData = tabListRenderData
+        if (!this._direct_access) this.init_directAccessBar ();
       }
       if (this._type === List.DEFAULT_LIST)
       {
         this._renderData = defaultListRenderData
+        if (this._direct_access)
+        {
+          this.view.removeChild (this._direct_access);
+          delete (this._direct_access);
+        }
       }
       
       this._renderData (this._items_selectable);
@@ -9116,25 +9300,20 @@ RadioButton.prototype = {
       input.type = 'radio';
       input.name = this._id;
       input.value = i;
+      input.id = this._id + "_l" + i;
       
       this._list_items.appendChild (input);
       this._items [i] = input;
       input.addEventListener (core.POINTER_START, this);
       input.addEventListener ('click', this);
       
-      if (os_device == DeviceConfiguration.OS_WP7)
-      {
-        label = document.createElement ('label');
-        label.value = i;
-        label.addEventListener (core.POINTER_START, this);
-        label.addEventListener ('click', this);
-        util.setElementInnerText (label, item);
-        this._list_items.appendChild (label);
-      }
-      else
-      {
-        util.setElementInnerText (input, item);
-      }
+      label = document.createElement ('label');
+      label.value = i;
+      label.setAttribute ("for", this._id + "_l" + i);
+      label.addEventListener (core.POINTER_START, this);
+      label.addEventListener ('click', this);
+      util.setElementInnerText (label, item);
+      this._list_items.appendChild (label);
     }
     this.refresh ();
   },
@@ -9390,6 +9569,7 @@ CheckBox.prototype = {
       input = document.createElement ('input');
       input.type = 'checkbox';
       input.name = this._id;
+      input.id = this._id + "_l" + i;
       input.value = i;
 
       this._list_items.appendChild (input);
@@ -9398,19 +9578,13 @@ CheckBox.prototype = {
       input.addEventListener (core.POINTER_START, this);
       input.addEventListener ('click', this);
 
-      if (os_device == DeviceConfiguration.OS_WP7)
-      {
-        label = document.createElement ('label');
-        label.value = i;
-        label.addEventListener (core.POINTER_START, this);
-        label.addEventListener ('click', this);
-        util.setElementInnerText (label, item);
-        this._list_items.appendChild (label);
-      }
-      else
-      {
-        util.setElementInnerText (input, item);
-      }
+      label = document.createElement ('label');
+      label.value = i;
+      label.setAttribute ("for", this._id + "_l" + i);
+      label.addEventListener (core.POINTER_START, this);
+      label.addEventListener ('click', this);
+      util.setElementInnerText (label, item);
+      this._list_items.appendChild (label);
     }
     
     // select items
@@ -9862,14 +10036,14 @@ NavigationBar.prototype = {
         event.currentTarget.removeEventListener (core.POINTER_END, this);
         event.currentTarget.removeEventListener (core.POINTER_MOVE, this);        
         
-        window.setTimeout (function () 
+        setTimeout (function () 
           { util.removeClassName (self, 'active'); }, 200);
         this.propagate ('buttonselect', event.currentTarget.spec);
       break;
 
       case core.POINTER_MOVE:
         event.preventDefault ();
-        window.setTimeout (function () 
+        setTimeout (function () 
           { util.removeClassName (self, 'active'); }, 200);
         event.currentTarget.removeEventListener (core.POINTER_END, this);
         event.currentTarget.removeEventListener (core.POINTER_MOVE, this);
@@ -13980,7 +14154,7 @@ Switch.prototype = {
    * @private
    * @type {Number}
    */
-  _mode: Picker.MODE_IOS,
+  _mode: Switch.MODE_IOS,
 
   /**
    *
@@ -16215,19 +16389,19 @@ util.defineProperty (document, 'preventScroll', {
     if (preventScroll)
     {
       // for android
-      document.addEventListener("touchstart", preventBehavior, false);
+      document.addEventListener ("touchstart", preventBehavior, false);
       // for android and other
-      document.addEventListener("touchmove", preventBehavior, false);
-      document.addEventListener("scroll", preventBehavior, false);
-      window.scrollTo(0, 0);
+      document.addEventListener ("touchmove", preventBehavior, false);
+      document.addEventListener ("scroll", preventBehavior, false);
+      window.scrollTo (0, 0);
     }
     else
     {
       // for android
-      document.removeEventListener("touchstart", preventBehavior, false);
+      document.removeEventListener ("touchstart", preventBehavior, false);
       // for android and other
-     document.removeEventListener("touchmove", preventBehavior, false);
-      document.removeEventListener("scroll", preventBehavior, false);
+      document.removeEventListener ("touchmove", preventBehavior, false);
+      document.removeEventListener ("scroll", preventBehavior, false);
     }
   }
 });
