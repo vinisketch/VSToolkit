@@ -120,7 +120,7 @@ Switch.prototype = {
    * @private
    * @type {Number}
    */
-  _mode: Picker.MODE_IOS,
+  _mode: Switch.MODE_IOS,
 
   /**
    *
