@@ -173,6 +173,15 @@ ProgressBar.prototype = {
     }
 
     this.index = this._index;
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  refresh : function ()
+  {
+    this.index = this._index;
   }
 };
 util.extendClass (ProgressBar, View);
