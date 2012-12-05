@@ -20,7 +20,7 @@ var HelloWorld = vs.core.createClass ({
 
 function loadApplication ()
 {
-  new HelloWorld ({id:"helloworld"}).init ();
+  new HelloWorld ({id:"helloworld", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
 
   vs.ui.Application.start ();
 }
