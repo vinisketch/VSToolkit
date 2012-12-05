@@ -63,11 +63,6 @@ html {
                     Absolute Layout
 *********************************************************************/
 
-.vs_ui_popover >.center,
-.application,
-.vs_ui_splitview,
-.vs_ui_view,
-.vs_ui_navbar,
 .vs_ui_popover >.center.absolute_layout,
 .application.absolute_layout,
 .vs_ui_splitview.absolute_layout,
@@ -77,11 +72,6 @@ html {
   display: block;
 }
 
-.vs_ui_popover >.center > *,
-.application > *,
-.vs_ui_splitview > *,
-.vs_ui_view > *,
-.vs_ui_navbar > *,
 .vs_ui_popover >.center.absolute_layout > *,
 .application.absolute_layout > *,
 .vs_ui_splitview.absolute_layout > *,
