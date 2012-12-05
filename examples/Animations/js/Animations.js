@@ -65,7 +65,7 @@ var Animations = vs.core.createClass ({
 });
 
 function loadApplication () {
-  new Animations ({id:"animations"}).init ();
+  new Animations ({id:"animations", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
 
   vs.ui.Application.start ();
 }
