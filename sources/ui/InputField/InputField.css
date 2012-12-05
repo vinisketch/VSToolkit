@@ -6,10 +6,12 @@
   background: white;
 }
 
-input {
+input[type="search"],
+input[type="text"] {
   -webkit-user-select: text;
   -webkit-appearance: none;
   background: transparent;
+  cursor: text;
 }
 
 .vs_ui_inputfield > input {
