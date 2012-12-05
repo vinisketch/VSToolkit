@@ -103,7 +103,7 @@ var RSSViewer = vs.core.createClass ({
 
 function loadApplication ()
 {
-  new RSSViewer ({id:"rss_viewer"}).init ();
+  new RSSViewer ({id:"rss_viewer", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
 
   vs.ui.Application.start ();
 }
