@@ -429,6 +429,9 @@ function defineClassProperty (the_class, prop_name, desc)
 {
   if (!desc) { return; }
   if (!the_class._properties_) the_class._properties_ = [];
+  if (!the_class.prototype) {
+    throw ("defineClassProperty on a Class without prototype");
+  }
   util.defineProperty (the_class.prototype, prop_name, desc);
   if (desc.enumerable != false) the_class._properties_.push (prop_name);
 }
@@ -459,6 +462,10 @@ var _keys = (typeof Object.keys === 'function')?Object.keys: function (o)
  */
 function defineClassProperties (the_class, properties)
 {
+  if (!the_class.prototype) {
+    throw ("defineClassProperties on a Class without prototype");
+  }
+
   properties = Object (properties);  
   var keys = _keys (properties);  
   for (var i = 0; i < keys.length; i++)

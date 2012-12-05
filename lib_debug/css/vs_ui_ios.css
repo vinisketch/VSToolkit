@@ -637,6 +637,11 @@ input[type="checkbox"]:checked:after
   -webkit-border-radius: 5px;
 }
 
+.vs_ui_inputfield.focus {
+  margin: 0px;
+  border: none;
+}
+
 .vs_ui_inputfield .clear_button {
   background-position: 6px 6px;
 }

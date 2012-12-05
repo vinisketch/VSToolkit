@@ -536,6 +536,7 @@ input[type="checkbox"]:checked:after
 }
 
 .vs_ui_inputfield.focus {
+  margin: 0px;
   border: #1559AF solid 1px;
   background-position: 5px 8px;
   -webkit-border-radius: 0px;
