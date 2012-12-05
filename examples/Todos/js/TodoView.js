@@ -7,6 +7,7 @@ var TodoView = vs.core.createClass ({
   initComponent : function ()
   {
     this._super ();
+    this.layout = vs.ui.View.ABSOLUTE_LAYOUT;
     
     var config = {};
     config.node_ref = this.id + "#contentView";

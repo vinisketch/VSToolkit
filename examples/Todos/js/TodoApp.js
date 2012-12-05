@@ -79,7 +79,7 @@ var TodoApp = vs.core.createClass ({
 
 function loadApplication ()
 {
- new TodoApp ({id:"todo_app"}).init ();
+ new TodoApp ({id:"todo_app", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
 
   vs.ui.Application.start ();
 }
