@@ -30,7 +30,7 @@ var Component = vs.core.createClass ({
 
 function loadApplication ()
 {
-  new Component ({id:"component"}).init ();
+  new Component ({id:"component", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
 
   vs.ui.Application.start ();
 }
