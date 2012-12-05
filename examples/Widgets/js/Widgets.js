@@ -49,7 +49,7 @@ var Widgets = vs.core.createClass ({
   },
   
   buildGenericPanel : function () {
-    var view = new vs.ui.View ().init ();
+    var view = new vs.ui.View ({layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
     view.addClassName ('panel');
     view.notify = function () { 
       this.propagate ('close');
