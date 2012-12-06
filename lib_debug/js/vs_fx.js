@@ -106,6 +106,25 @@ else if (util.vsTestStyle.msTransform !== undefined)
   var TRANSFORM = "-ms-transform";
   var KEY_FRAMES = "-ms-keyframes";
 }  
+else if (util.vsTestStyle.MozTransform !== undefined)
+{
+  var ANIMATION_DURATION = "-moz-animation-duration";
+  var ANIMATION_DELAY = "-moz-animation-delay";
+  var ANIMATION_NAME = "-moz-animation-name";
+  var ANIMATION_END = "animationend";
+  var ANIMATION_TIMING_FUNC = "-moz-animation-timing-function";
+  
+  var TRANSITION_DURATION = "-moz-transition-duration";
+  var TRANSITION_DELAY = "-moz-transition-delay";
+  var TRANSITION_END = "transitionend";
+  var TRANSITION_TIMING_FUNC = "-moz-transition-timing-function";
+  var TRANSITION_PROPERTY = "-moz-transition-property";
+  
+  var TRANSFORM_ORIGIN = "-moz-transform-origin";
+  var ITERATION_COUNT = "-moz-animation-iteration-count";
+  var TRANSFORM = "-moz-transform";
+  var KEY_FRAMES = "-moz-keyframes";
+}  
 else
 {
   var ANIMATION_DURATION = "animation-duration";
@@ -392,6 +411,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     {
       setElementTransform (comp.view, transform);
     }
+  
     comp.setStyle (TRANSITION_PROPERTY, properties.join (',')); 
   }
   

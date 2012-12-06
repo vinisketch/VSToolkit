@@ -104,9 +104,9 @@ window.vs.ext.ui = {};
  * @name vs.ext.fx
  */
 window.vs.ext.fx = {};
-  
-window.vs.SUPPORT_3D_TRANSFORM =
-  'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix ()/**
+
+window.vs.SUPPORT_3D_TRANSFORM = false
+/**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
   
@@ -151,6 +151,16 @@ var __date_reg_exp = /\/Date\((-?\d+)\)\//;
 // Test which kind of transformation you can use
 vs.SUPPORT_CSS_TRANSFORM =
   (vsTestStyle && (vsTestStyle.webkitTransform || vsTestStyle.msTransform));
+  
+if (vsTestStyle)
+{
+  if (vsTestStyle.webkitTransform !== undefined)
+    vs.SUPPORT_3D_TRANSFORM =
+      'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix ();
+      
+  else if (vsTestStyle.MozTransform !== undefined) 
+    vs.SUPPORT_3D_TRANSFORM = 'MozPerspective' in vsTestStyle;
+}
 
 /********************************************************************
 
@@ -1398,6 +1408,7 @@ function setElementInnerText (elem, text)
 function setElementWebkitTransform (elem, transform)
 {
   if (elem && elem.style) elem.style.webkitTransform = transform;
+  else console.warn ("setElementTransform, elem null or without style");
 }
 
 /**
@@ -1414,6 +1425,7 @@ function getElementWebkitTransform (elem, transform)
 function setElementMSTransform (elem, transform)
 {
   if (elem && elem.style) elem.style.msTransform = transform;
+  else console.warn ("setElementTransform, elem null or without style");
 }
 
 /**
@@ -1422,6 +1434,23 @@ function setElementMSTransform (elem, transform)
 function getElementMSTransform (elem, transform)
 {
   if (elem) return window.getComputedStyle (elem).msTransform;
+}
+
+/**
+ *@private
+ */
+function setElementMozTransform (elem, transform)
+{
+  if (elem && elem.style) elem.style.MozTransform = transform;
+  else console.warn ("setElementTransform, elem null or without style");
+}
+
+/**
+ *@private
+ */
+function getElementMozTransform (elem, transform)
+{
+  if (elem) return window.getComputedStyle (elem).MozTransform;
 }
 
 /** 
@@ -1453,6 +1482,11 @@ else if (vsTestStyle && vsTestStyle.msTransform !== undefined)
 {
   setElementTransform = setElementMSTransform;
   getElementTransform = getElementMSTransform;
+}
+else if (vsTestStyle && vsTestStyle.MozTransform !== undefined)
+{
+  setElementTransform = setElementMozTransform;
+  getElementTransform = getElementMozTransform;
 }
 /********************************************************************
                     Array extension
