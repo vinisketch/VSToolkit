@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html id="flipBook">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, target-densityDpi=160, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Flip Book</title>
+    
+    <script type="text/javascript" src="../../lib/js/vs_util.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_core.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_data.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_ui.js"></script>
+
+    <style>
+    html {
+      width: 100%;
+      height: 100%;
+    }
+    
+    * {
+      -webkit-tap-highlight-color: transparent;
+      -webkit-box-sizing:border-box;
+    }
+    
+    #flipBook {
+      background-color: #EEE;
+      width: 100%;
+      height: 100%;
+      -webkit-user-select: none;
+      margin: 0px;
+    }
+    </style>
+  </head>
+  <body class="theme application">
+    <div x-hag-hole="children"></div>
+    <div class="buttons" x-hag-hole="buttons"></div>
+    <div class="application_templates" style="display: none; "></div>
+  </body>
+</html>

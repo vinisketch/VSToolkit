@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html id="component" x-hag-ref="component">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, target-densityDpi=160, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Component</title>
+    <style>
+      ::selection {background: transparent;}
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="../../lib/css/vs_ui.css">
+    <link rel="stylesheet" type="text/css" href="../../lib/css/vs_ui_ios.css">
+    <link rel="stylesheet" type="text/css" href="css/Component.css">
+    <link rel="stylesheet" type="text/css" href="css/Selector.css">
+    <link rel="stylesheet" type="text/css" href="css/ListItem.css">
+
+    <script type="text/javascript" src="../../lib/js/vs_util.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_core.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_data.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_ui.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_fx.js"></script>
+    <script type="text/javascript" src="js/Component.js"></script>
+    <script type="text/javascript" src="js/Selector.js"></script>
+    <script type="text/javascript" src="js/ListItem.js"></script>
+
+  </head>
+  <body class="theme application" x-hag-hole="children"onload="loadApplication ()">
+    <div class="application_templates" style="display: none; ">
+    
+      <div class="vs_ui_view Selector"x-hag-hole="children">
+        <div class="vs_ui_segmentedbutton barSegmentedButton2" x-hag-ref="barSegmentedButton2"></div>
+        <div class="text textlabel1" x-hag-ref="textlabel1"></div>
+      </div>
+      
+    </div>
+  </body>
+</html>

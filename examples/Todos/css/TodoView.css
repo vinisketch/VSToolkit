@@ -1,0 +1,24 @@
+.TodoView {
+  position: relative;
+  width: 100%;
+  height: 38px;
+}
+
+.TodoView.pressed {
+  background-color: #DDD;
+  color: white;
+}
+
+.TodoView .contentView {
+  top: 9px;
+  left: 6px;
+  right: 30px;
+  height: 20px;
+}
+
+.TodoView .checkmarkView {
+  top: 9px;
+  right: 5px;
+  width: 21px;
+  height: 22px;
+}

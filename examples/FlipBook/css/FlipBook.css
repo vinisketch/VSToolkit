@@ -1,0 +1,93 @@
+.flipView {
+  position: relative;
+  height: 650px;
+  width: 1000px;
+  -webkit-user-select: none;
+  margin: 50px auto;
+  -webkit-perspective: 1500;
+  box-shadow: 0 0 5px 1px rgba(0,0,0,0.5);
+  background-image: -webkit-linear-gradient(0deg, #666 0%, #666 45%, #555 49.5%, black 50%, #555 50.5%, #666 55%, #666 100%); 
+}
+
+.sheet {
+  position: absolute;
+  height: 650px;
+  width: 500px;
+  left: 500px;
+  top: 0px;
+  
+  -webkit-transform-style: preserve-3d;
+  -webkit-transition-property: -webkit-transform;
+  -webkit-transform-origin: 0% 50%;
+  font-family: helvetica;
+}
+
+.page {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overflow-y: scroll;
+
+  -webkit-backface-visibility: hidden;
+  
+  background-color: white;
+  padding: 10px;
+  text-align: justify;
+}
+
+.page img {
+  width: 480px;
+  margin-top: 7px;
+  margin-bottom: 7px;
+}
+
+.page .place {
+  font-size: 1.4em;
+  font-weight: bold;
+  color: #444;
+}
+
+.page.even  {
+  -webkit-transform: rotateY(180deg);
+}
+
+.page.even {
+  border: 1px solid rgba(0,0,0,0.1);
+  border-right: 1px solid rgb(230,230,230);
+  background-image: -webkit-linear-gradient(180deg, rgb(240,240,240), white 10%, white 100%); 
+}
+
+.page.odd {
+  border: 1px solid rgba(0,0,0,0.1);
+  border-left: none;
+  background-image: -webkit-linear-gradient(0deg, rgb(240,240,240), white 10%, white 100%); 
+}
+
+@media (max-width:1000px) {
+  .flipView {
+    height: 350px;
+    width: 600px;
+    margin: 20px auto;
+  }
+  
+  .sheet {
+    font-size: 12px;
+    height: 350px;
+    width: 300px;
+    left: 300px;
+  }
+  
+  .page {
+    padding: 7px;
+  }
+  
+  .page img {
+    width: 190px;
+    margin-left: 45px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+  }
+}

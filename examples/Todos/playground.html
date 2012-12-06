@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html id="todo_app" x-hag-ref="todo_app">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, target-densityDpi=160, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Todos App</title>
+
+    <link rel="stylesheet" type="text/css" href="../../lib/css/vs_ui.css">
+    <link rel="stylesheet" type="text/css" href="../../lib/css/vs_ui_ios.css">
+    
+    <script type="text/javascript" src="../../lib/js/vs_util.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_core.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_data.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_ui.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_fx.js"></script>
+
+  </head>
+  <body class="theme application" x-hag-hole="children" onload="loadApplication ()">
+    <div class="vs_ui_list" id="todos_list" x-hag-ref="todos_list">
+      <ul x-hag-hole="item_children"></ul>
+    </div>
+    <div class="vs_ui_textlabel" id="main_label" x-hag-ref="main_label"></div>
+    <div class="vs_ui_inputfield" id="todo_text_field" x-hag-ref="todo_text_field">
+      <input type="text" value="" placeholder="type ..." incremental="incremental">
+      <div class="clear_button"></div>
+    </div>
+    <div class="vs_ui_button deleteButton" id="delete_button" x-hag-ref="delete_button"><div></div></div>
+    <div class="application_templates" style="display: none; ">
+      <div class="vs_ui_view TodoView" x-hag-hole="children">
+        <div class="text contentView" x-hag-ref="contentView"></div>
+        <img class="vs.ui.ImageView checkmarkView" src="resources/images/check_mark.png" width="30" height="30" x-hag-ref="checkmarkView">
+      </div>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,25 @@
+html {
+  width: 100%;
+  height: 100%;
+}
+
+#rss_viewer {
+  background-color: white;
+}
+
+#feeds_view {
+  padding: 5px;
+}
+
+#back_button {
+  width: 60px;
+  margin-top:6px;
+  margin-bottom:5px;
+  margin-left:5px;
+}
+
+.page {
+  top: 42px;
+  bottom: 0px;
+  width: 100%;
+}

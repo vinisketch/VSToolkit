@@ -1,0 +1,198 @@
+html {
+  
+}
+
+body {
+  background-color: #FAFAFA;
+  font-family: "Corbel", "Helvetica Neue", "Arial";
+}
+
+article {
+  max-width: 980px;
+  min-width: 340px;
+  margin: 0 auto;
+  padding: 80px 20px 0 20px;
+}
+
+header {
+  position: fixed;
+  z-index: 3;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 0 0 5px 0;
+  background-color: #ededed;
+  -webkit-box-shadow: 0 3px 5px #888;
+  -moz-box-shadow: 0 3px 5px #888;
+  box-shadow: 0 3px 5px #888;
+}
+
+header ~ i {
+  top: 100px;
+  position: relative;
+  font-style: italic;
+}
+
+header > h1 {
+  float: left;
+  font-size: 38px;
+  margin: 10px 0px 0px 40px;
+}
+
+header > h1 a {
+  color: #333;
+}
+
+header > h1::before {
+  content: url('logo_small.png');
+  width: 44px;
+  height: 41px;
+  display: block;
+  margin-bottom: -10px;
+  margin-left: 25px;
+}
+
+header nav > ul {
+  float: right;
+  padding: 0px;
+  margin: 0px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+
+a {
+  color: #82B3D9;
+  text-decoration: none;
+}
+
+header nav > ul {
+  list-style: none;
+}
+
+ul, ol {
+  padding-left: 10px;
+  margin-left: 15px;
+}
+
+header nav > ul > li {
+  float: left;
+  margin: 5px 5px 0 0;
+  display: block;
+  background-image: url('tile_bckgrd.png');
+}
+
+header nav > ul > li > a {
+  width: 75px; height:75px;
+}
+
+header nav > ul > li > a:hover {
+  background-color: #DDD;
+}
+
+header nav > ul > li > a:active {
+  background-color: #CCC;
+}
+
+header nav a {
+  display: block;
+  font-size: 15px;
+  padding: 5px 5px;
+  color: #555;
+}
+
+section {
+}
+
+section > h2 {
+  padding-top: 40px;
+  font-size: 1.7em;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
+}
+
+section > h3 {
+  font-size: 1.3em;
+  margin: 10px 0px;
+}
+
+section > h4 {
+  font-size: 1.1em;
+  font-style:italic;
+  margin: 10px 0px;
+}
+
+section p {
+  margin: 10px 0px 5px 0;
+}
+
+section ul.examples > li {
+  min-height: 85px;
+  list-style: none;
+  margin-bottom: 10px;
+}
+
+section ul.examples > li > span {
+  margin: 0 5px 5px 0;
+  padding: 5px;;
+  display: block;
+  width: 80px; height:80px;
+  background-image: url('tile_bckgrd.png');
+  float: left;
+}
+
+section ul.examples > li > p {
+  margin-left: 90px;
+}
+
+section p i {
+  font-size: 0.8em;
+  font-style: italic;
+}
+
+section p i::before {
+  content: 'Main technos:';
+  margin-right: 5px;
+  font-weight: bold;
+}
+
+@media (max-width:500px)
+{
+  header {
+    position: absolute;
+    height: 55px;
+  }
+  ul, ol {
+    margin: 0px;
+    padding: 0px;
+  }
+  header > h1 {
+    float: left;
+    font-size: 30px;
+    margin: 15px 0px 0px 60px;
+    width: 100%;
+  }
+  article {
+    padding: 50px 10px 0 10px;
+  }
+  section > h2 {
+    padding-top: 10px;
+  }
+  header .inner { display:none; }
+
+  header > h1::before {
+    margin-top: -5px;
+    margin-left: -50px;
+    float: left;
+  }
+
+  header ~ i {
+    top: 60px;
+  }
+}
