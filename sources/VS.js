@@ -82,6 +82,5 @@ window.vs.ext.ui = {};
  * @name vs.ext.fx
  */
 window.vs.ext.fx = {};
-  
-window.vs.SUPPORT_3D_TRANSFORM =
-  'WebKitCSSMatrix' in window && 'm11' in new WebKitCSSMatrix ()
+
+window.vs.SUPPORT_3D_TRANSFORM = false
