@@ -459,34 +459,6 @@ View.prototype = {
     // 4) no node exists, generate a warning a create a div node.
     if (this.html_template)
     {
-      if (DOMParser)
-      {
-        if (deviceConfiguration.browser === DeviceConfiguration.BROWSER_MSIE)
-        {
-          // @HACK
-          // IE is not compatible with 'text/html'
-          try {
-            doc = new DOMParser ().parseFromString 
-              (this.html_template, 'application/xhtml+xml');
-          }
-          catch (e) {}
-        }
-        else try {
-          doc = new DOMParser ().parseFromString 
-            (this.html_template, 'text/html');
-        }
-        catch (e) {}
-        if (doc)
-        {
-          doc_elem = doc.documentElement;
-          if (doc_elem instanceof HTMLElement)
-          {
-            node = document.importNode (doc_elem, true);
-            if (node) { return node; }
-          }
-        }
-      }
- 
       node = document.createElement ('div');
       node.innerHTML = this.html_template;
       node = node.firstElementChild;
