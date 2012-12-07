@@ -130,7 +130,7 @@ section p {
 }
 
 section .examples > div.text {
-  min-height: 85px;
+  min-height: 65px;
   list-style: none;
   margin-bottom: 10px;
   border-radius: 0px;
