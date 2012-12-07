@@ -1,0 +1,74 @@
+.visible-phone {
+  display: none !important;
+}
+
+.visible-tablet {
+  display: none !important;
+}
+
+.hidden-desktop {
+  display: none !important;
+}
+
+.visible-desktop {
+  display: inherit !important;
+}
+
+@media (min-width: 768px) and (max-width: 979px) {
+  .hidden-desktop {
+    display: inherit !important;
+  }
+  .visible-desktop {
+    display: none !important ;
+  }
+  .visible-tablet {
+    display: inherit !important;
+  }
+  .hidden-tablet {
+    display: none !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .hidden-desktop {
+    display: inherit !important;
+  }
+  .visible-desktop {
+    display: none !important;
+  }
+  .visible-phone {
+    display: inherit !important;
+  }
+  .hidden-phone {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  header > h1 {
+    float: left;
+    font-size: 28px;
+    margin: 5px 0px 0px 35px;
+  }
+  
+  header > h1::before {
+    width: 18px;
+    height: 21px;
+    margin-bottom: -10px;
+    margin-left: -35px;
+  }
+
+  header nav > ul > li > a {
+    width: 85px; height:35px;
+  }
+
+  section > h2 {
+    padding-top: 0px;
+//    font-size: 1.3em;
+    margin-bottom: 10px;
+  }
+  
+  body {
+    font-size: 0.9em;
+  }
+}

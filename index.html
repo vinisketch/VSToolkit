@@ -5,6 +5,7 @@
     <title>VSToolkit @ GitHub</title>
     <script type="text/javascript" src="js/highlight.pack.js"></script> 
     <link rel="stylesheet" rev="stylesheet" href="css/index.css" media="screen" />
+    <link rel="stylesheet" rev="stylesheet" href="css/index-responsive.css" media="screen" />
     <link rel="stylesheet" href="css/zenburn.css">
     <link rel="stylesheet" href="css/bender.css">
     <meta name="viewport" content="initial-scale=1.0,user-scalable=no">
@@ -15,19 +16,19 @@
       <div class="inner">
         <nav>
           <ul>
-            <li>
+            <li class="hidden-phone">
               <a href="#object_model" class="link-active">Object Model</a>
             </li>
-            <li>
+            <li class="hidden-phone">
               <a href="#first_app" class="">First Application</a>
             </li>
             <li>
               <a href="#examples" class="">Examples</a>
             </li>
-            <li>
+            <li class="hidden-phone">
               <a href="#dataflow" class="">DataFlow</a>
             </li>
-            <li>
+            <li class="hidden-phone">
               <a href="#template_mvc" class="">Template / MVC</a>
             </li>
           </ul>
@@ -71,11 +72,12 @@
         <a href="https://github.com/vinisketch/VSToolkit/zipball/master">zip</a> or
         <a href="https://github.com/vinisketch/VSToolkit/tarball/master">tar </a> formats.
       </p>
+      <p class="hidden-phone">
       You can also clone the project with <a href="http://git-scm.com">Git</a>
-      by running:<br><br>
-
-      <pre><code>$ git clone git://github.com/vinisketch/VSToolkit</code></pre>
+      by running:
       </p>
+      <pre class="hidden-phone"><code>$ git clone git://github.com/vinisketch/VSToolkit</code></pre>
+  
       <p>
         get the source code on GitHub : <a href="https://github.com/vinisketch/VSToolkit">vinisketch/VSToolkit</a>
       </p>
@@ -84,7 +86,7 @@
         The API reference is available <a href="http://www.vinisketch.fr/toolkit/docs/index.html">here</a>.
 
       </section>
-      <section id="object_model">
+      <section class="hidden-phone" id="object_model">
         <h2>
           Object Model 
         </h2>
@@ -178,7 +180,7 @@ obj.text = 'Hello';
 },
 </code></pre> 
       </section>
-      <section id="first_app">
+      <section class="hidden-phone" id="first_app">
         <h2>
           Create your first application 
         </h2>
@@ -239,188 +241,188 @@ function loadApplication () {
           <span style="font-weight:bold;font-style:italic">WARNING: The API will be committed asap.</span>
         </p>
         </section>
-        <section id="examples">
-          <h2>
-            Examples 
-          </h2>
-          <div class="tiles examples">
-            <div class="text">
-              <span>HelloWorld</span>
-              <p>
-                HelloWorld
-                <br />
-                <i>Animations.</i>
-                <br />
-              <a href="examples/HelloWorld/index.html">Playground</a>
+      <section id="examples">
+        <h2>
+          Examples 
+        </h2>
+        <div class="tiles examples">
+          <div class="text">
+            <span>HelloWorld</span>
+            <p>
+              HelloWorld
               <br />
-              <a href="examples/HelloWorld/helloworld.html">
-                Fullscreen version (for mobile)
-              </a>
-              </p>
-            </div>
-            <div class="text">
-              <span>
-                Animation
-              </span>
-              <p>
-                With this example, you learn about VS Animations, the API and configuration parameters. 
-                <br />
-                <i>Animations.</i>
-                <br />
-              <a href="examples/Animations/index.html">
-                Playground</a>
+              <i>Animations.</i>
               <br />
-              <a href="examples/Animations/animations.html">
-                Fullscreen version (for mobile)
-              </a>
-              </p>
-            </div>
-            <div class="text">
-              <span>vs.ext.fx.Animation
-              </span>
-              <p>
-                This example show a set of useful animations you can use for animating your application components. 
-                <br />
-                <i>Animations.</i>
-                <br />
-              <a href="examples/ExtAnimations/index.html">Playground</a>
-              <br />
-              <a href="examples/ExtAnimations/animations.html">
-                Fullscreen version (for mobile)
-              </a>
-              </p>
-            </div>
-            <div class="text">
-              <span>
-                Widgets
-              </span>
-              <p>
-                This demo presents widgets the toolkit provide. (still under dev…) 
-                <br />
-                <i>
-                  Widgets.
-                </i>
-                <br />
-              <a href="examples/Widgets/index.html">
-                Playground</a>
-              <br />
-              <a href="examples/Widgets/widgets.html">
-                Fullscreen version (for mobile)
-              </a>
-              </p>
-            </div>
-            <div class="text">
-              <span>
-                Todos
-              </span>
-              <p>
-                This demo presents a simple Todos application. 
-                <br />
-                <i>
-                  Model, LocalStorage, Widgets.
-                </i>
-                <br />
-              <a href="examples/Todos/index.html">
-                Playground</a>
-              <br />
-              <a href="examples/Todos/todos.html">
-                Fullscreen version (for mobile)
-              </a>
-              </p>
-            </div>
-            <div class="text">
-              <span>
-                RSSViewer
-              </span>
-              <p>
-                This is a more sofisticate application that allows to view RSS feeds and content. 
-                <br />
-                <i>
-                  Controller, Widgets, Scrolling.
-                </i>
-                <br />
-              <a href="examples/RSSViewer/index.html">
-                Playground</a>
-              <br />
-              <a href="examples/RSSViewer/rssviewer.html">
-                Fullscreen version (for mobile)
-              </a>
-              </p>
-            </div>
-            <div class="text">
-              <span>
-                Component
-              </span>
-              <p>
-                This simple example show how to create component 
-                <br />
-                <i>
-                  Component, Class.
-                </i>
-                <br />
-              <a href="examples/Component/index.html">
-                Playground</a>
-              <br />
-              <a href="examples/Component/component.html">
-                Fullscreen version (for mobile)
-              </a>
-              </p>
-            </div>
-            <div class="text">
-              <span><a name="comp"></a>FlipBook</span>
-              <p>
-              This demonstration implements a flip book effect.
-              <br />
-              <i>Template, Event.</i>
-              <br />
-              <a href="examples/FlipBook/index.html">Playground</a><br />
-              <a href="examples/FlipBook/flip.html">Fullscreen version (for mobile)</a>
-              </p>
-            </div>
+            <a href="examples/HelloWorld/index.html">Playground</a>
+            <br />
+            <a href="examples/HelloWorld/helloworld.html">
+              Fullscreen version (for mobile)
+            </a>
+            </p>
           </div>
-          <p>
-            Code examples are available 
-          <a href="https://github.com/vinisketch/VSToolkit/tree/master/examples">
-            here</a>. 
-          </p>
-        </section>
-        <section id="template_mvc">
-          <h2>
-            Template 
-          </h2>
-          <span style="font-weight:bold;font-style:italic">WARNING: The API is not yet fully committed.</span>
-          <p>
-            Template is a simple way for creating view of a component.<br/>
-            A template is a HTML text fragment containing template tags. There is two ways to use template :
-            <ul>
-              <li> By expanding tags using values provides in an Object</li>
-              <li> By generating a vs.ui.View with properties linked to tags</li>
-            </ul>
+          <div class="text">
+            <span>
+              Animation
+            </span>
+            <p>
+              With this example, you learn about VS Animations, the API and configuration parameters. 
+              <br />
+              <i>Animations.</i>
+              <br />
+            <a href="examples/Animations/index.html">
+              Playground</a>
             <br />
+            <a href="examples/Animations/animations.html">
+              Fullscreen version (for mobile)
+            </a>
+            </p>
+          </div>
+          <div class="text">
+            <span>vs.ext.fx.Animation
+            </span>
+            <p>
+              This example show a set of useful animations you can use for animating your application components. 
+              <br />
+              <i>Animations.</i>
+              <br />
+            <a href="examples/ExtAnimations/index.html">Playground</a>
+            <br />
+            <a href="examples/ExtAnimations/animations.html">
+              Fullscreen version (for mobile)
+            </a>
+            </p>
+          </div>
+          <div class="text">
+            <span>
+              Widgets
+            </span>
+            <p>
+              This demo presents widgets the toolkit provide. (still under dev…) 
+              <br />
+              <i>
+                Widgets.
+              </i>
+              <br />
+            <a href="examples/Widgets/index.html">
+              Playground</a>
+            <br />
+            <a href="examples/Widgets/widgets.html">
+              Fullscreen version (for mobile)
+            </a>
+            </p>
+          </div>
+          <div class="text">
+            <span>
+              Todos
+            </span>
+            <p>
+              This demo presents a simple Todos application. 
+              <br />
+              <i>
+                Model, LocalStorage, Widgets.
+              </i>
+              <br />
+            <a href="examples/Todos/index.html">
+              Playground</a>
+            <br />
+            <a href="examples/Todos/todos.html">
+              Fullscreen version (for mobile)
+            </a>
+            </p>
+          </div>
+          <div class="text">
+            <span>
+              RSSViewer
+            </span>
+            <p>
+              This is a more sofisticate application that allows to view RSS feeds and content. 
+              <br />
+              <i>
+                Controller, Widgets, Scrolling.
+              </i>
+              <br />
+            <a href="examples/RSSViewer/index.html">
+              Playground</a>
+            <br />
+            <a href="examples/RSSViewer/rssviewer.html">
+              Fullscreen version (for mobile)
+            </a>
+            </p>
+          </div>
+          <div class="text">
+            <span>
+              Component
+            </span>
+            <p>
+              This simple example show how to create component 
+              <br />
+              <i>
+                Component, Class.
+              </i>
+              <br />
+            <a href="examples/Component/index.html">
+              Playground</a>
+            <br />
+            <a href="examples/Component/component.html">
+              Fullscreen version (for mobile)
+            </a>
+            </p>
+          </div>
+          <div class="text">
+            <span><a name="comp"></a>FlipBook</span>
+            <p>
+            This demonstration implements a flip book effect.
+            <br />
+            <i>Template, Event.</i>
+            <br />
+            <a href="examples/FlipBook/index.html">Playground</a><br />
+            <a href="examples/FlipBook/flip.html">Fullscreen version (for mobile)</a>
+            </p>
+          </div>
+        </div>
+        <p>
+          Code examples are available 
+        <a href="https://github.com/vinisketch/VSToolkit/tree/master/examples">
+          here</a>. 
+        </p>
+      </section>
+      <section class="hidden-phone" id="template_mvc">
+        <h2>
+          Template 
+        </h2>
+        <span style="font-weight:bold;font-style:italic">WARNING: The API is not yet fully committed.</span>
+        <p>
+          Template is a simple way for creating view of a component.<br/>
+          A template is a HTML text fragment containing template tags. There is two ways to use template :
+          <ul>
+            <li> By expanding tags using values provides in an Object</li>
+            <li> By generating a vs.ui.View with properties linked to tags</li>
+          </ul>
+          <br />
 Typical template description:
-            <br />
-            <br />
+          <br />
+          <br />
 <pre><code class="javascript">var str = '&lt;span style="${style}"&gt;name:${lastname},${firstname}&lt;/span&gt;';
 </code></pre>
-            <br />
-          1- Expanding the template:
-            <br />
-            <br />
+          <br />
+        1- Expanding the template:
+          <br />
+          <br />
 <pre><code class="javascript">var myTemplate = new Template (str);
 
 var values = {
-	lastname : "Doo",
-	firstname : "John",
-	style : "color:blue"
+lastname : "Doo",
+firstname : "John",
+style : "color:blue"
 };
 
 console.log (myTemplate.apply (values));
 // -> &lt;span style="color:blue"&gt;name:Doo,John&lt;/span&gt;
 </code></pre>
-            <br />
-          2- Generating a vs.ui.View from the template:
-            <br />
-            <br />
+          <br />
+        2- Generating a vs.ui.View from the template:
+          <br />
+          <br />
 <pre><code class="javascript">var myTemplate = new Template (str);
 
 var myView = myTemplate.compileView ();
@@ -432,16 +434,16 @@ myView.lastname = "Doo";
 myView.firstname = "John";
 myView.style = "color:blue";
 </code></pre>
-          </p>
-          
-          <h2>
-            How to handle the MVC pattern 
-          </h2>
-          <p>
-            <span style="font-weight:bold;font-style:italic">WARNING: The API will be committed asap.</span>
-          </p>
-        </section>
-        <section>
+        </p>
+        
+        <h2>
+          How to handle the MVC pattern 
+        </h2>
+        <p>
+          <span style="font-weight:bold;font-style:italic">WARNING: The API will be committed asap.</span>
+        </p>
+      </section>
+      <section class="hidden-phone">
         <h2>Warning ;-)</h2>
         <p>
           Keep in mind the toolkit is under development. Your are welcome to give feedback :) 
