@@ -95,26 +95,26 @@
         </h3>
 <pre><code class="javascript">var myClass = vs.core.createClass ({
 
-	// parent class
-	parent: vs.ui.View,
+  // parent class
+  parent: vs.ui.View,
 
-	// properties declaration
-	properties : {text: vs.core.Object.PROPERTY_IN_OUT},
+  // properties declaration
+  properties : {text: vs.core.Object.PROPERTY_IN_OUT},
 
-	// prototype declaration
-	aMethod : function (p1, p2, …) {
-		this._super (p1, p2, …);
-		…
-	}, 
-	…
+  // prototype declaration
+  aMethod : function (p1, p2, …) {
+    this._super (p1, p2, …);
+    …
+  }, 
+  …
 });
 </code></pre> 
         <h3>
           Create an object from a class 
         </h3>
 <pre><code>var config = {
-	id: 'xxx',
-	text: ''
+  id: 'xxx',
+  text: ''
 }
 
 // Object construction
@@ -141,17 +141,17 @@ obj.text = 'Hello';
         </ul>
         <h4>Descriptor declaration </h4>
 <pre><code class="javascript">properties : {
-	propName: {
-		set : function (v) {
-			…
-			this._prop_name = v;
-		},
+  propName: {
+    set : function (v) {
+      …
+      this._prop_name = v;
+    },
 
-		get : function () {
-			…
-			return this._prop_name
-		}
-	}
+    get : function () {
+      …
+      return this._prop_name
+    }
+  }
 },
 </code></pre> 
         <h4>Path declaration </h4>
@@ -168,15 +168,15 @@ obj.text = 'Hello';
           This declaration is similar to: 
         </p>
 <pre><code class="javascript">properties : {
-	text: {
-		set : function (v) {
-			this.textField.text = v;
-		},
+  text: {
+    set : function (v) {
+      this.textField.text = v;
+    },
 
-		get : function () {
-			return this.textField.text;
-		}
-	}
+    get : function () {
+      return this.textField.text;
+    }
+  }
 },
 </code></pre> 
       </section>
@@ -189,19 +189,19 @@ obj.text = 'Hello';
         </p>
 <pre><code class="javascript">var myApp = vs.core.createClass ({
 
-	/** parent class */
-	parent: vs.ui.Application,
+  /** parent class */
+  parent: vs.ui.Application,
 
-	/** called when vs.ui.Application.start (); is called */
-	applicationStarted : function (event) {
-		…
-	}
+  /** called when vs.ui.Application.start (); is called */
+  applicationStarted : function (event) {
+    …
+  }
 });
 
 function loadApplication () {
-	new myApp ({id:"_myApp_"}).init ();
+  new myApp ({id:"_myApp_"}).init ();
 
-	vs.ui.Application.start ();
+  vs.ui.Application.start ();
 }
 </code></pre> 
         <p>
@@ -209,23 +209,23 @@ function loadApplication () {
         </p>
 <pre><code class="html">&lt;!DOCTYPE html&gt;
 &lt;html id="_myApp_"&gt;
-	&lt;head&gt;
-		&lt;link rel="stylesheet" type="text/css" href="lib/css/vs_ui.css"&gt;
-		&lt;link rel="stylesheet" type="text/css" href="lib/css/vs_ui_ios.css"&gt;
-		&lt;link rel="stylesheet" type="text/css" href="css/myApp.css"&gt;
+  &lt;head&gt;
+    &lt;link rel="stylesheet" type="text/css" href="lib/css/vs_ui.css"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="lib/css/vs_ui_ios.css"&gt;
+    &lt;link rel="stylesheet" type="text/css" href="css/myApp.css"&gt;
 
-		&lt;script type="text/javascript" src="lib/js/vs_util.js"&gt;&lt;/script&gt;
-		&lt;script type="text/javascript" src="lib/js/vs_core.js"&gt;&lt;/script&gt;
-		&lt;script type="text/javascript" src="lib/js/vs_data.js"&gt;&lt;/script&gt;
-		&lt;script type="text/javascript" src="lib/js/vs_ui.js"&gt;&lt;/script&gt;
-		&lt;script type="text/javascript" src="lib/js/vs_fx.js"&gt;&lt;/script&gt;
-		&lt;script type="text/javascript" src="lib/js/vs_ext.js"&gt;&lt;/script&gt;
-		&lt;script type="text/javascript" src="lib/js/vs_ext_fx.js"&gt;&lt;/script&gt;
-		&lt;script type="text/javascript" src="js/myApp.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="lib/js/vs_util.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="lib/js/vs_core.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="lib/js/vs_data.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="lib/js/vs_ui.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="lib/js/vs_fx.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="lib/js/vs_ext.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="lib/js/vs_ext_fx.js"&gt;&lt;/script&gt;
+    &lt;script type="text/javascript" src="js/myApp.js"&gt;&lt;/script&gt;
 
-	&lt;/head&gt;
-	&lt;body class="application" x-hag-hole="children" onload="loadApplication ()"&gt;
-	&lt;/body&gt;
+  &lt;/head&gt;
+  &lt;body class="application" x-hag-hole="children" onload="loadApplication ()"&gt;
+  &lt;/body&gt;
 &lt;/html&gt;
 </code></pre> 
         <h3>
@@ -411,9 +411,9 @@ Typical template description:
 <pre><code class="javascript">var myTemplate = new Template (str);
 
 var values = {
-lastname : "Doo",
-firstname : "John",
-style : "color:blue"
+  lastname : "Doo",
+  firstname : "John",
+  style : "color:blue"
 };
 
 console.log (myTemplate.apply (values));
