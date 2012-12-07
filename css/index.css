@@ -126,23 +126,24 @@ section p {
   margin: 10px 0px 5px 0;
 }
 
-section ul.examples > li {
+section .examples > div.text {
   min-height: 85px;
   list-style: none;
   margin-bottom: 10px;
+  border-radius: 0px;
+  position: relative;
+  padding: 5px;
 }
 
-section ul.examples > li > span {
-  margin: 0 5px 5px 0;
-  padding: 5px;;
-  display: block;
-  width: 80px; height:80px;
-  background-image: url('tile_bckgrd.png');
-  float: left;
+section .examples > div > span {
+  padding: 10px 5px;
+  font-weight: bold;
 }
 
-section ul.examples > li > p {
+section .examples > div > p {
   margin-left: 90px;
+  position: absolute;
+  bottom: 5px;
 }
 
 section p i {
