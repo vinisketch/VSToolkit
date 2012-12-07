@@ -34,7 +34,7 @@ div.tiles {
 
 @media (max-width: 480px) {
   div.tiles  {
-    width: 240px;
+    width: 320px;
   }
 }
 

@@ -9,7 +9,6 @@ body {
 
 article {
   max-width: 980px;
-  min-width: 340px;
   margin: 0 auto;
   padding: 80px 20px 0 20px;
 }
@@ -50,6 +49,10 @@ header nav > ul {
   float: right;
   padding: 0px;
   margin: 0px;
+}
+
+pre code {
+  font-size: 0.9em;
 }
 
 * {

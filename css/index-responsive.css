@@ -64,11 +64,36 @@
 
   section > h2 {
     padding-top: 0px;
-//    font-size: 1.3em;
     margin-bottom: 10px;
   }
   
   body {
     font-size: 0.9em;
+  }
+  
+  div.tiles {
+    width: 100%;
+  }
+  div.tiles > div {
+    font-size: 16px;
+    border-radius: 5px;
+    width: 100%;
+    height: auto;
+    margin: 0px;
+    display: block;
+    vertical-align: bottom;
+    box-shadow: 0 0 5px #999;
+    text-align: left;
+  }
+  
+  div.tiles > div > span {
+    background-image: url('tile_bckgrd.png');
+    float: left;
+    padding: 5px 10px;
+    margin-right: 5px;
+  }
+  div.tiles > div > p {
+    position: static;
+    text-align: left;
   }
 }
