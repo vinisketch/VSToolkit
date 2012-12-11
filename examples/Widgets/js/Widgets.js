@@ -153,7 +153,7 @@ var Widgets = vs.core.createClass ({
     
     button = new vs.ui.SegmentedButton ({
       position:[20, 320], size:[150, 42],
-      isToggleButton: false,
+      isToggleButtons: false,
       items: ['1', '2', '3']
     }).init ();
     view.add (button);
@@ -167,7 +167,7 @@ var Widgets = vs.core.createClass ({
     
     button = new vs.ui.SegmentedButton ({
       position:[20, 370], size:[150, 28],
-      isToggleButton: false,
+      isToggleButtons: false,
       type: vs.ui.SegmentedButton.BAR_TYPE,
       items: ['1', '2', '3']
     }).init ();
