@@ -151,6 +151,36 @@ var Widgets = vs.core.createClass ({
     }).init ();
     view.add (button);
     
+    button = new vs.ui.SegmentedButton ({
+      position:[20, 320], size:[150, 42],
+      isToggleButton: false,
+      items: ['1', '2', '3']
+    }).init ();
+    view.add (button);
+    
+    button = new vs.ui.SegmentedButton ({
+      position:[200, 320], size:[150, 42],
+      items: ['1', '2', '3'],
+      selectedIndex : 0
+    }).init ();
+    view.add (button);
+    
+    button = new vs.ui.SegmentedButton ({
+      position:[20, 370], size:[150, 28],
+      isToggleButton: false,
+      type: vs.ui.SegmentedButton.BAR_TYPE,
+      items: ['1', '2', '3']
+    }).init ();
+    view.add (button);
+    
+    button = new vs.ui.SegmentedButton ({
+      position:[200, 370], size:[150, 28],
+      type: vs.ui.SegmentedButton.BAR_TYPE,
+      items: ['1', '2', '3'],
+      selectedIndex : 0
+    }).init ();
+    view.add (button);
+    
     return view;
   },
   
