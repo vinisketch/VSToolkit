@@ -282,14 +282,46 @@ util.extendClass (VSArray, core.Model);
 ********************************************************************/
 
 util.defineClassProperties (VSArray, {
+  "data" : {
+    /**
+     * Set data elements for the array
+     *
+     * @name vs.core.Array#data 
+     * @type {Array | vs.core.Array}
+     */
+    set : function (v)
+    {
+      if (!this.__i__) throw ("Component not initialized");
+      
+      if (util.isArray (v)) this._data = v.slice ();
+      else if (v instanceof VSArray)
+      {
+        this._data = v._data.slice ();
+      }
+      else return;
+      
+      if (this.hasToPropagateChange ()) this.change ('add');
+    },
+    
+    /**
+     * Returns an array of elements
+     *
+     * @name vs.core.Array#data 
+     * @type {Array}
+     */
+    get : function ()
+    {
+      if (!this.__i__) throw ("Component not initialized");
+      return this._data.slice ();
+    }
+  },
+  
   "length" : {
     /**
-     * The url anchor
-     * @example
-     * top in http://test.com/index.html#top
+     * Reflects the number of elements in an array.
      *
      * @name vs.core.Array#length 
-     * @type {string}
+     * @type {number}
      */
     get : function ()
     {
