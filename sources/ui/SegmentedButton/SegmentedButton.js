@@ -89,6 +89,13 @@ SegmentedButton.prototype = {
   /**
    *
    * @protected
+   * @type {number}
+   */
+  _is_toggle_button: true,
+
+  /**
+   *
+   * @protected
    * @type {array.<string>}
    */
   _items: null,
@@ -98,7 +105,7 @@ SegmentedButton.prototype = {
    * @protected
    * @type {number}
    */
-  _selected_index: 0,
+  _selected_index: -1,
 
   /**
    *
@@ -209,7 +216,7 @@ SegmentedButton.prototype = {
       e.stopPropagation ();
       e.preventDefault ();
 
-      this.selectedIndex = target._index;     
+      this.selectedIndex = target._index;
       this.propagate ('select', {
         index: this._selected_index,
         item: this._items [this._selected_index]
@@ -249,7 +256,7 @@ util.defineClassProperties (SegmentedButton, {
       }
       
       this._renderButtons ();
-      this.selectedIndex = this._selected_index;
+      if (this._is_toggle_button) this.selectedIndex = this._selected_index;
     },
   
     /** 
@@ -283,6 +290,16 @@ util.defineClassProperties (SegmentedButton, {
       if (div)
       {
         util.addClassName (div, 'selected'); 
+      }
+      if (!this._is_toggle_button)
+      {
+        var self = this;
+        this.__button_time_out = setTimeout (function ()
+        {
+          util.removeClassName (div, 'selected');
+          self.__button_time_out = 0;
+          self._selected_index = -1;
+        }, View.UNSELECT_DELAY);
       }
     },
   
@@ -319,6 +336,28 @@ util.defineClassProperties (SegmentedButton, {
     get : function ()
     {
       return this._type;
+    }
+  },
+  'isToggleButton': {
+    /** 
+     * Getter|Setter to configure the buttons as toggle buttons or not
+     * By default SegmentedButton are toggle buttons
+     * @name vs.ui.SegmentedButton#isToggleButton 
+     * @type {boolean}
+     */ 
+    set : function (v)
+    {
+      if (v) this._is_toggle_button = true;
+      else this._is_toggle_button = false;
+    },
+  
+    /** 
+     * @ignore
+     * @return {string}
+     */ 
+    get : function ()
+    {
+      return this._is_toggle_button;
     }
   }
 });
