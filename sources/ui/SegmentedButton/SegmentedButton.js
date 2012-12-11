@@ -91,7 +91,7 @@ SegmentedButton.prototype = {
    * @protected
    * @type {number}
    */
-  _is_toggle_button: true,
+  _is_toggle_buttons: true,
 
   /**
    *
@@ -256,7 +256,7 @@ util.defineClassProperties (SegmentedButton, {
       }
       
       this._renderButtons ();
-      if (this._is_toggle_button) this.selectedIndex = this._selected_index;
+      if (this._is_toggle_buttons) this.selectedIndex = this._selected_index;
     },
   
     /** 
@@ -291,7 +291,7 @@ util.defineClassProperties (SegmentedButton, {
       {
         util.addClassName (div, 'selected'); 
       }
-      if (!this._is_toggle_button)
+      if (!this._is_toggle_buttons)
       {
         var self = this;
         this.__button_time_out = setTimeout (function ()
@@ -338,7 +338,7 @@ util.defineClassProperties (SegmentedButton, {
       return this._type;
     }
   },
-  'isToggleButton': {
+  'isToggleButtons': {
     /** 
      * Getter|Setter to configure the buttons as toggle buttons or not
      * By default SegmentedButton are toggle buttons
@@ -347,8 +347,8 @@ util.defineClassProperties (SegmentedButton, {
      */ 
     set : function (v)
     {
-      if (v) this._is_toggle_button = true;
-      else this._is_toggle_button = false;
+      if (v) this._is_toggle_buttons = true;
+      else this._is_toggle_buttons = false;
     },
   
     /** 
@@ -357,7 +357,7 @@ util.defineClassProperties (SegmentedButton, {
      */ 
     get : function ()
     {
-      return this._is_toggle_button;
+      return this._is_toggle_buttons;
     }
   }
 });
