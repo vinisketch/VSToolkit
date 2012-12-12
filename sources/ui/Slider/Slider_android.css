@@ -35,9 +35,12 @@
   top: 0px;
   width: 34px;
   height: 34px;
-  background-image: url('android_handler.png');
+  border-radius: 17px;
+  border: 1px solid #222;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
 }
 
 .vs_ui_slider .handle:active {
-  background-image: url('android_handler_pressed.png');
+  background-image: -webkit-gradient(linear, left top, left bottom, 
+    from(#fea94b), to(#ef7217));
 }
