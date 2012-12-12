@@ -231,6 +231,7 @@ Switch.prototype = {
         this.removeClassName ('on');
       }
     }
+    this.propertyChange ();
   },
 
   /**
