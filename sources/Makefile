@@ -300,8 +300,6 @@ copy_ui_img:
 	$(CP) ui/RadioButton/iOS* ../lib_debug/css
 	$(CP) ui/CheckBox/android* ../lib_debug/css
 	$(CP) ui/CheckBox/iOS* ../lib_debug/css
-	$(CP) ui/Slider/android* ../lib_debug/css
-	$(CP) ui/Slider/iOS* ../lib_debug/css
 	$(CP) ui/List/DefaultTabListTitle.png ../lib_debug/css
 	$(CP) ui/List/SimpleListNext.png ../lib_debug/css
 	$(CP) ui/List/SimpleListNextSel.png ../lib_debug/css
