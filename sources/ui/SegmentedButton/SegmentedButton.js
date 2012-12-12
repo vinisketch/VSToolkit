@@ -162,6 +162,9 @@ SegmentedButton.prototype = {
     if (this._items.length && os_device == DeviceConfiguration.OS_WP7)
       width = Math.floor (100 / this._items.length);
       
+    var subView = document.createElement ('div');
+    this.view.appendChild (subView)
+    
     for (var i = 0, l = this._items.length; i < l; i++)
     {
       var div = document.createElement ('div');
@@ -174,7 +177,7 @@ SegmentedButton.prototype = {
       div.addEventListener (core.POINTER_START, this);
       
       this._div_list.push (div);
-      this.view.appendChild (div);
+      subView.appendChild (div);
     }
   },
   

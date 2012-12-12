@@ -19,7 +19,7 @@
 }
 
 
-.vs_ui_segmentedbutton.default > div {
+.vs_ui_segmentedbutton.default > div > div {
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFF), color-stop(70%,#DDD), color-stop(100%,#EEE));
   color: #888;
   
@@ -31,7 +31,7 @@
   border-right: 1px solid transparent;  
 }
 
-.vs_ui_segmentedbutton.default > div:before {
+.vs_ui_segmentedbutton.default > div > div:before {
   display: block;
   position: relative;
   content: '';
@@ -49,12 +49,12 @@
 }
 
 
-.vs_ui_segmentedbutton.default > div.selected:before {
+.vs_ui_segmentedbutton.default > div > div.selected:before {
   background-image: -webkit-gradient(linear, left bottom, left top, 
     from(#fea94b), to(#ef7217)) !important;
 }
 
-.vs_ui_segmentedbutton.default > div:first-child {
+.vs_ui_segmentedbutton.default > div > div:first-child {
   border: none;
 }
 
@@ -73,7 +73,7 @@
   border: none;
 }
 
-.vs_ui_segmentedbutton.bar > div {
+.vs_ui_segmentedbutton.bar > div > div {
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#666), color-stop(8%,#CCC),  color-stop(40%,#888), color-stop(100%,#888));
   color: #555;
   
@@ -86,17 +86,17 @@
 }
 
 
-.vs_ui_segmentedbutton.bar > div.selected {
+.vs_ui_segmentedbutton.bar > div > div.selected {
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#666), color-stop(8%,#FFF),  color-stop(40%,#DDD), color-stop(70%,#CCC), color-stop(100%,#DDD)) !important;
 }
 
 
-.vs_ui_segmentedbutton.bar > div:first-child {
+.vs_ui_segmentedbutton.bar > div > div:first-child {
   -webkit-border-top-left-radius: 5px;
   -webkit-border-bottom-left-radius: 5px;
 }
 
-.vs_ui_segmentedbutton.bar > div:last-child {
+.vs_ui_segmentedbutton.bar > div > div:last-child {
   -webkit-border-top-right-radius: 5px;
   -webkit-border-bottom-right-radius: 5px;
   
