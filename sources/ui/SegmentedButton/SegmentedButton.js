@@ -25,9 +25,10 @@
  *  The vs.ui.SegmentedButton class is a subclass of vs.ui.View that intercepts
  *  pointer-down events and sends an 'select' event to a target object when
  *  it’s clicked or pressed.
+ *  <br />
  *  The widget displays horizontally a set of button. Only one button can be
  *  selected.
- *
+ *  <br />
  *  Events:
  *  <ul>
  *    <li /> select: Fired after a button is pressed. {index, item}
@@ -36,11 +37,11 @@
  *  @example
  *  // Simple example: (the button will have the platform skin)
  *
- *  var segButton = vs.ui.SegmentedButton ();
- *  segButton.init ();
- *  segButton.items = ['test1', 'test2', 'test3'];
- *  segButton.size = [280, 30];
- *  segButton.style = vs.ui.SegmentedButton.BAR_STYLE;
+ *  var segButton = vs.ui.SegmentedButton ({
+ *    items : ['test1', 'test2', 'test3'],
+ *    size : [280, 30],
+ *    style : vs.ui.SegmentedButton.BAR_STYLE
+ *  }).init ();
  * <p>
  *
  *  @author David Thevenin
@@ -340,7 +341,7 @@ util.defineClassProperties (SegmentedButton, {
   },
   'isToggleButtons': {
     /** 
-     * Getter|Setter to configure the buttons as toggle buttons or not
+     * Getter|Setter to configure the buttons as toggle buttons or not.
      * By default SegmentedButton are toggle buttons
      * @name vs.ui.SegmentedButton#isToggleButton 
      * @type {boolean}
