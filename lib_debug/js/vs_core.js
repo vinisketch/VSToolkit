@@ -4498,8 +4498,18 @@ util.extend (core, {
  */
  
 /**
- *  @class
- *  An vs.core.DeviceConfiguration object, ...
+ *  @class An vs.core.DeviceConfiguration object describes the device's hardware
+ *  and software.
+ *  <br /><br />
+ *  A global object is visible in the window global scope: 
+ *  window.deviceConfiguration.
+ *
+ *  
+ *  @example
+ *  var conf = window.deviceConfiguration;
+ *  console.log ("OS: " + conf.os);
+ *  console.log ("Screen size: " + conf.screenResolution);
+ *  console.log ("Screen ratio: " + conf.screenRatio);
  *
  *  @author David Thevenin
  *
@@ -4513,11 +4523,6 @@ function DeviceConfiguration ()
   this.orientation = null;
   this.deviceId = null;
   this.targets = {};
-  
-  this.os = DeviceConfiguration.OS_UNKNOWN;
-  this.browser = DeviceConfiguration.BROWSER_UNKNOWN;
-  this.screenResolution = DeviceConfiguration.SR_UNKNOWN;
-  this.screenRatio = 0;
   
   this.browserDetect ();
 }
@@ -4583,7 +4588,6 @@ DeviceConfiguration.OS_ANDROID = 9;
 DeviceConfiguration.OS_MEEGO = 10;
 
 
-
 /**
  * @name vs.core.DeviceConfiguration.SR_UNKNOWN 
  * @const
@@ -4592,78 +4596,78 @@ DeviceConfiguration.SR_UNKNOWN = 0;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_QVGA 
- * QVGA (320×240) 
  * @const
+ * QVGA (320×240) 
  */
 DeviceConfiguration.SR_QVGA = 1;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_WQVGA 
- * QVGA (400×240) 
  * @const
+ * QVGA (400×240) 
  */
 DeviceConfiguration.SR_WQVGA = 2;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_HVGA 
- * HVGA (480×320) 
  * @const
+ * HVGA (480×320) 
  */
 DeviceConfiguration.SR_HVGA = 4;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_VGA 
- * VGA (640×480) 
  * @const
+ * VGA (640×480) 
  */
 DeviceConfiguration.SR_VGA = 5;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_WVGA 
- * WVGA (800×480) 
  * @const
+ * WVGA (800×480) 
  */
 DeviceConfiguration.SR_WVGA = 6;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_FWVGA 
- * FWVGA (854×480) 
  * @const
+ * FWVGA (854×480) 
  */
 DeviceConfiguration.SR_FWVGA = 7;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_SVGA 
- * SVGA (800×600)
  * @const
+ * SVGA (800×600)
  */
 DeviceConfiguration.SR_SVGA = 8;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_XGA 
- * XGA (1024×768)
  * @const
+ * XGA (1024×768)
  */
 DeviceConfiguration.SR_XGA = 9;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_N_HD 
- * nHD (640×360)
  * @const
+ * nHD (640×360)
  */
 DeviceConfiguration.SR_N_HD = 10;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_Q_HD 
- * qHD (960×540)
  * @const
+ * qHD (960×540)
  */
 DeviceConfiguration.SR_Q_HD = 11;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_WXGA 
- * WXGA (1280×720/768/800)
  * @const
+ * WXGA (1280×720/768/800)
  */
 DeviceConfiguration.SR_WXGA = 12;
 
@@ -4706,6 +4710,34 @@ DeviceConfiguration.BROWSER_MSIE = 5;
 
 DeviceConfiguration.prototype = {
   
+  /** 
+   * Get the device's operating system name.
+   * @name vs.core.DeviceConfiguration#os 
+   * @type {number}
+   */
+  os : DeviceConfiguration.OS_UNKNOWN,
+
+  /** 
+   * Get the browser name.
+   * @name vs.core.DeviceConfiguration#browser 
+   * @type {number}
+   */
+  browser : DeviceConfiguration.BROWSER_UNKNOWN,
+
+  /** 
+   * Get the device's screen resolution type.
+   * @name vs.core.DeviceConfiguration#screenResolution 
+   * @type {number}
+   */
+  screenResolution : DeviceConfiguration.SR_UNKNOWN,
+
+  /** 
+   * Get the device's screen ratio.
+   * @name vs.core.DeviceConfiguration#screenRatio 
+   * @type {number}
+   */
+  screenRatio : 0,
+
   /**
    * @protected
    * @function
