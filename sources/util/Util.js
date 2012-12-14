@@ -1561,6 +1561,84 @@ function importFile (path, doc, clb, type)
 *********************************************************************/
 
 /**
+ *  Modifies CSS styleSheets.
+ *  <p>
+ *  Modifies CSS style styleSheets. It can be preempted
+ *  by css style inline modification (see vs.ui.View.setStyle).
+ *  @see vs.ui.View#setStyles if you want to modify inline CSS.
+ *
+ *  @example
+ *  vs.util.addCssRules ('.classname1', ['color: red', 'margin: 0px']);
+ *
+ * @memberOf vs.util
+ * @function
+ *
+ * @param {String} selector CSS Selector
+ * @param {Array} rules the array of rules
+ */
+function addCssRules (selector, rules)
+{
+  if (!isArray (rules)) { return; }
+  
+  var i = rules.length;
+  while (i--)
+  {
+    addCssRule (selector, rules [i]);
+  }
+};
+
+/**
+ *  Modifies CSS styleSheets.
+ *  <p>
+ *  Modifies CSS style styleSheets. It can be preempted
+ *  by css style inline modification (see vs.ui.View.setStyle).
+ *  @see vs.ui.View#setStyle if you want to modify inline CSS.
+ *
+ *  @example
+ *  vs.util.addCssRule ('.classname1', 'color: red');
+ *
+ * @memberOf vs.util
+ * @function
+ *
+ * @param {String} selector CSS Selector
+ * @param {String} rule the rule using the following format:
+ *   "prop_name: value"
+ */
+function addCssRule (selector, rule)
+{
+  if (document.styleSheets)
+  {
+    var head, i, ss, l;
+    if (!document.styleSheets.length)
+    {
+      head = document.getElementsByTagName ('head')[0];
+      head.appendChild (bc.createEl ('style'));
+    }
+    
+    i = document.styleSheets.length - 1;
+    ss = document.styleSheets [i];
+    
+    l = 0;
+    if (ss.cssRules)
+    {
+      l = ss.cssRules.length;
+    } else if (ss.rules)
+    {
+      l = ss.rules.length;
+    }
+    
+    if (ss.insertRule)
+    {
+      ss.insertRule (selector + ' {' + rule + '}', l);
+    } else if (ss.addRule) 
+    {
+      ss.addRule (selector, rule, l);
+    }
+  }
+};
+
+
+/**
  * @private
  */
 var SET_STYLE_OPTIMIZATION = true;
@@ -1751,6 +1829,8 @@ util.extend (util, {
   parseJSON:       parseJSON,
 
   // element style
+  addCssRule:                 addCssRule,
+  addCssRules:                addCssRules,
   getElementHeight:           getElementHeight,
   getElementWidth:            getElementWidth,
   getElementDimensions:       getElementDimensions,
