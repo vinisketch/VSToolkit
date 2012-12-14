@@ -1432,9 +1432,9 @@ View.prototype = {
   },
   
   /**
-   *  Modifies vs.ui.View View CSS styleSheets.
+   *  Modifies CSS styleSheets.
    *  <p>
-   *  Modifies vs.ui.View View’s CSS style styleSheets. It can be preempted
+   *  Modifies CSS style styleSheets. It can be preempted
    *  by css style inline modification (see vs.ui.View.setStyle).
    *  @see vs.ui.View#setStyles if you want to modify inline CSS.
    *
@@ -1449,19 +1449,13 @@ View.prototype = {
    */
   addCssRules : function (selector, rules)
   {
-    if (!rules) { return; }
-    
-    var i = rules.length;
-    while (i--)
-    {
-      this.addCssRule (selector, rules [i]);
-    }
+    util.addCssRules (selector, rules);
   },
   
   /**
-   *  Modifies vs.ui.View View CSS styleSheets.
+   *  Modifies styleSheets.
    *  <p>
-   *  Modifies vs.ui.View View’s CSS style styleSheets. It can be preempted
+   *  Modifies CSS style styleSheets. It can be preempted
    *  by css style inline modification (see vs.ui.View.setStyle).
    *  @see vs.ui.View#setStyle if you want to modify inline CSS.
    *
@@ -1477,35 +1471,7 @@ View.prototype = {
    */
   addCssRule : function (selector, rule)
   {
-    if (document.styleSheets)
-    {
-      var head, i, ss, l;
-      if (!document.styleSheets.length)
-      {
-        head = document.getElementsByTagName ('head')[0];
-        head.appendChild (bc.createEl ('style'));
-      }
-      
-      i = document.styleSheets.length - 1;
-      ss = document.styleSheets [i];
-      
-      l = 0;
-      if (ss.cssRules)
-      {
-        l = ss.cssRules.length;
-      } else if (ss.rules)
-      {
-        l = ss.rules.length;
-      }
-      
-      if (ss.insertRule)
-      {
-        ss.insertRule (selector + ' {' + rule + '}', l);
-      } else if (ss.addRule) 
-      {
-        ss.addRule (selector, rule, l);
-      }
-    }
+    util.addCssRule (selector, rule);
   },
 
 /********************************************************************
