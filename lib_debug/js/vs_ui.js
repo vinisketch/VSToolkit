@@ -1978,9 +1978,9 @@ View.prototype = {
   },
   
   /**
-   *  Modifies vs.ui.View View CSS styleSheets.
+   *  Modifies CSS styleSheets.
    *  <p>
-   *  Modifies vs.ui.View View’s CSS style styleSheets. It can be preempted
+   *  Modifies CSS style styleSheets. It can be preempted
    *  by css style inline modification (see vs.ui.View.setStyle).
    *  @see vs.ui.View#setStyles if you want to modify inline CSS.
    *
@@ -1995,19 +1995,13 @@ View.prototype = {
    */
   addCssRules : function (selector, rules)
   {
-    if (!rules) { return; }
-    
-    var i = rules.length;
-    while (i--)
-    {
-      this.addCssRule (selector, rules [i]);
-    }
+    util.addCssRules (selector, rules);
   },
   
   /**
-   *  Modifies vs.ui.View View CSS styleSheets.
+   *  Modifies styleSheets.
    *  <p>
-   *  Modifies vs.ui.View View’s CSS style styleSheets. It can be preempted
+   *  Modifies CSS style styleSheets. It can be preempted
    *  by css style inline modification (see vs.ui.View.setStyle).
    *  @see vs.ui.View#setStyle if you want to modify inline CSS.
    *
@@ -2023,35 +2017,7 @@ View.prototype = {
    */
   addCssRule : function (selector, rule)
   {
-    if (document.styleSheets)
-    {
-      var head, i, ss, l;
-      if (!document.styleSheets.length)
-      {
-        head = document.getElementsByTagName ('head')[0];
-        head.appendChild (bc.createEl ('style'));
-      }
-      
-      i = document.styleSheets.length - 1;
-      ss = document.styleSheets [i];
-      
-      l = 0;
-      if (ss.cssRules)
-      {
-        l = ss.cssRules.length;
-      } else if (ss.rules)
-      {
-        l = ss.rules.length;
-      }
-      
-      if (ss.insertRule)
-      {
-        ss.insertRule (selector + ' {' + rule + '}', l);
-      } else if (ss.addRule) 
-      {
-        ss.addRule (selector, rule, l);
-      }
-    }
+    util.addCssRule (selector, rule);
   },
 
 /********************************************************************
@@ -15993,6 +15959,28 @@ SegmentedButton.DEFAULT_TYPE = 'default';;
  */
 SegmentedButton.BAR_TYPE = 'bar';;
 
+/** 
+ * Horizontal constant to configure a SegmentedButton.
+ * <p/>A SegmentedButton can be horizontal or vertical.
+ * Set the orientation property with this constant for a horizontal SegmentedButton.
+ * By default a SegmentedButton is horizontal.
+ * @see vs.ui.SegmentedButton#orientation
+ * @name vs.ui.SegmentedButton.HORIZONTAL
+ * @const
+ */
+SegmentedButton.HORIZONTAL = 0;
+
+/** 
+ * Vertical constant to configure a SegmentedButton.
+ * <p/>A SegmentedButton can be horizontal or vertical.
+ * Set the orientation property with this constant for a vertical SegmentedButton.
+ * By default a SegmentedButton is horizontal.
+ * @see vs.ui.SegmentedButton#orientation
+ * @name vs.ui.SegmentedButton.VERTICAL
+ * @const
+ */
+SegmentedButton.VERTICAL = 1;
+
 SegmentedButton.prototype = {
   
   /*****************************************************************
@@ -16033,6 +16021,13 @@ SegmentedButton.prototype = {
    * @type {array.<HtmlDivElement>}
    */
   _div_list: null,
+
+  /**
+   * SegmentedButton orientation (0: horizontal, 1: vertical)
+   * @protected
+   * @type {number}
+   */
+  _orientation : SegmentedButton.HORIZONTAL,
 
   /*****************************************************************
    *               General methods
@@ -16081,6 +16076,9 @@ SegmentedButton.prototype = {
     if (this._items.length && os_device == DeviceConfiguration.OS_WP7)
       width = Math.floor (100 / this._items.length);
       
+    var subView = document.createElement ('div');
+    this.view.appendChild (subView)
+    
     for (var i = 0, l = this._items.length; i < l; i++)
     {
       var div = document.createElement ('div');
@@ -16093,8 +16091,9 @@ SegmentedButton.prototype = {
       div.addEventListener (core.POINTER_START, this);
       
       this._div_list.push (div);
-      this.view.appendChild (div);
+      subView.appendChild (div);
     }
+    this.orientation = this._orientation;
   },
   
   /**
@@ -16278,6 +16277,44 @@ util.defineClassProperties (SegmentedButton, {
     get : function ()
     {
       return this._is_toggle_buttons;
+    }
+  },
+  'orientation':{
+    /**
+     * Property to configure the SegmentedButton orientation.
+     * <p/>A SegmentedButton can be horizontal or vertical.
+     *  Use the vs.ui.SegmentedButton.HORIZONTAL
+     * or vs.ui.SegmentedButton.VERTICAL constant to configure the
+     * SegmentedButton.
+     * <p/>By default a SegmentedButton is horizontal.
+     * @name vs.ui.SegmentedButton#orientation 
+     * @type number
+     */
+    set : function (v)
+    {
+      if (v !== SegmentedButton.HORIZONTAL && v !== SegmentedButton.VERTICAL)
+      { return; }
+      
+      this._orientation = v;
+      
+      if (this._orientation === 0)
+      {
+        this.removeClassName ('vertical');
+        this.addClassName ('horizontal');
+      }
+      else
+      {
+        this.addClassName ('vertical');
+        this.removeClassName ('horizontal');
+      }
+    },
+  
+    /**
+     * @ignore
+     */
+    get : function ()
+    {
+      return this._orientation;
     }
   }
 });

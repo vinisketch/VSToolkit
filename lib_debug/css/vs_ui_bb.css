@@ -613,33 +613,42 @@ input[type="checkbox"]:checked:after
 }
 
 
-.vs_ui_segmentedbutton.default > div {
+.vs_ui_segmentedbutton.default > div > div {
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
   color: black;
   
   padding: 10px 10px 0 10px;
-  
-  border: none;
+}
+
+.vs_ui_segmentedbutton.default.horizontal > div > div {
   border-left: 1px solid #999;  
   border-right: 1px solid transparent;  
 }
 
-
-.vs_ui_segmentedbutton > div.selected {
+.vs_ui_segmentedbutton > div > div.selected {
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#3985E7), color-stop(0.65, #1A70DD), to(#1559AF)) !important;
   color: white !important;
 }
 
-
-.vs_ui_segmentedbutton.default > div:first-child {
+.vs_ui_segmentedbutton.default.horizontal > div > div:first-child {
   -webkit-border-top-left-radius: 2px;
   -webkit-border-bottom-left-radius: 2px;
   
   border: none;
 }
 
-.vs_ui_segmentedbutton.default > div:last-child {
+.vs_ui_segmentedbutton.default.horizontal > div > div:last-child {
   -webkit-border-top-right-radius: 2px;
+  -webkit-border-bottom-right-radius: 2px;
+}
+
+.vs_ui_segmentedbutton.default.vertical > div > div:first-child {
+  -webkit-border-top-left-radius: 2px;
+  -webkit-border-top-right-radius: 2px;
+}
+
+.vs_ui_segmentedbutton.default.vertical > div > div:last-child {
+  -webkit-border-bottom-left-radius: 2px;
   -webkit-border-bottom-right-radius: 2px;
 }
 
@@ -654,26 +663,38 @@ input[type="checkbox"]:checked:after
   font-size: 15px;
 }
 
-
-.vs_ui_segmentedbutton.bar > div {
+.vs_ui_segmentedbutton.bar > div > div {
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
   color: black;
   
   padding: 6px 5px 0 5px;
   
   border: none;
+}
+
+.vs_ui_segmentedbutton.bar.horizontal > div > div {
   border-right: 1px solid #999; 
 }
 
-.vs_ui_segmentedbutton.bar > div:first-child {
+.vs_ui_segmentedbutton.bar.horizontal > div > div:first-child {
   -webkit-border-top-left-radius: 2px;
   -webkit-border-bottom-left-radius: 2px;
 }
 
-.vs_ui_segmentedbutton.bar > div:last-child {
+.vs_ui_segmentedbutton.bar.horizontal > div > div:last-child {
   -webkit-border-top-right-radius: 2px;
   -webkit-border-bottom-right-radius: 2px;
   border-right: none;  
+}
+
+.vs_ui_segmentedbutton.bar.vertical > div > div:first-child {
+  -webkit-border-top-left-radius: 2px;
+  -webkit-border-top-right-radius: 2px;
+}
+
+.vs_ui_segmentedbutton.bar.vertical > div > div:last-child {
+  -webkit-border-bottom-left-radius: 2px;
+  -webkit-border-bottom-right-radius: 2px;
 }.vs_ui_picker
 {
   height: 139px;
