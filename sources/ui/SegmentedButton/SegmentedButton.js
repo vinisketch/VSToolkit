@@ -74,6 +74,28 @@ SegmentedButton.DEFAULT_TYPE = 'default';;
  */
 SegmentedButton.BAR_TYPE = 'bar';;
 
+/** 
+ * Horizontal constant to configure a SegmentedButton.
+ * <p/>A SegmentedButton can be horizontal or vertical.
+ * Set the orientation property with this constant for a horizontal SegmentedButton.
+ * By default a SegmentedButton is horizontal.
+ * @see vs.ui.SegmentedButton#orientation
+ * @name vs.ui.SegmentedButton.HORIZONTAL
+ * @const
+ */
+SegmentedButton.HORIZONTAL = 0;
+
+/** 
+ * Vertical constant to configure a SegmentedButton.
+ * <p/>A SegmentedButton can be horizontal or vertical.
+ * Set the orientation property with this constant for a vertical SegmentedButton.
+ * By default a SegmentedButton is horizontal.
+ * @see vs.ui.SegmentedButton#orientation
+ * @name vs.ui.SegmentedButton.VERTICAL
+ * @const
+ */
+SegmentedButton.VERTICAL = 1;
+
 SegmentedButton.prototype = {
   
   /*****************************************************************
@@ -114,6 +136,13 @@ SegmentedButton.prototype = {
    * @type {array.<HtmlDivElement>}
    */
   _div_list: null,
+
+  /**
+   * SegmentedButton orientation (0: horizontal, 1: vertical)
+   * @protected
+   * @type {number}
+   */
+  _orientation : SegmentedButton.HORIZONTAL,
 
   /*****************************************************************
    *               General methods
@@ -179,6 +208,7 @@ SegmentedButton.prototype = {
       this._div_list.push (div);
       subView.appendChild (div);
     }
+    this.orientation = this._orientation;
   },
   
   /**
@@ -362,6 +392,44 @@ util.defineClassProperties (SegmentedButton, {
     get : function ()
     {
       return this._is_toggle_buttons;
+    }
+  },
+  'orientation':{
+    /**
+     * Property to configure the SegmentedButton orientation.
+     * <p/>A SegmentedButton can be horizontal or vertical.
+     *  Use the vs.ui.SegmentedButton.HORIZONTAL
+     * or vs.ui.SegmentedButton.VERTICAL constant to configure the
+     * SegmentedButton.
+     * <p/>By default a SegmentedButton is horizontal.
+     * @name vs.ui.SegmentedButton#orientation 
+     * @type number
+     */
+    set : function (v)
+    {
+      if (v !== SegmentedButton.HORIZONTAL && v !== SegmentedButton.VERTICAL)
+      { return; }
+      
+      this._orientation = v;
+      
+      if (this._orientation === 0)
+      {
+        this.removeClassName ('vertical');
+        this.addClassName ('horizontal');
+      }
+      else
+      {
+        this.addClassName ('vertical');
+        this.removeClassName ('horizontal');
+      }
+    },
+  
+    /**
+     * @ignore
+     */
+    get : function ()
+    {
+      return this._orientation;
     }
   }
 });
