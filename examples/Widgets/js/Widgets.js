@@ -181,7 +181,41 @@ var Widgets = vs.core.createClass ({
     }).init ();
     view.add (button);
     
-    return view;
+    button = new vs.ui.SegmentedButton ({
+      position:[20, 420], size:[50, 130],
+      items: ['1', '2', '3'],
+      isToggleButtons: false,
+      orientation: vs.ui.SegmentedButton.VERTICAL
+    }).init ();
+    view.add (button);
+
+    button = new vs.ui.SegmentedButton ({
+      position:[80, 420], size:[30, 80],
+      items: ['1', '2', '3'],
+      isToggleButtons: false,
+      type: vs.ui.SegmentedButton.BAR_TYPE,
+      orientation: vs.ui.SegmentedButton.VERTICAL
+    }).init ();
+    view.add (button);
+
+    button = new vs.ui.SegmentedButton ({
+      position:[150, 420], size:[50, 130],
+      items: ['1', '2', '3'],
+      selectedIndex : 0,
+      orientation: vs.ui.SegmentedButton.VERTICAL
+    }).init ();
+    view.add (button);
+
+    button = new vs.ui.SegmentedButton ({
+      position:[210, 420], size:[30, 80],
+      items: ['1', '2', '3'],
+      selectedIndex : 0,
+      type: vs.ui.SegmentedButton.BAR_TYPE,
+      orientation: vs.ui.SegmentedButton.VERTICAL
+    }).init ();
+    view.add (button);
+
+   return view;
   },
   
   initButtonsProgressSlider: function () {
