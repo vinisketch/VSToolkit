@@ -661,6 +661,24 @@ utility classes and methods.</div>
 						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.addCssRule">addCssRule</a></b>(selector, rule)
+								</div>
+								<div class="description">Modifies CSS styleSheets.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.addCssRules">addCssRules</a></b>(selector, rules)
+								</div>
+								<div class="description">Modifies CSS styleSheets.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont">vs.util.<b><a href="../symbols/vs.util.html#.camelize">camelize</a></b>(str)
 								</div>
 								<div class="description">Converts a string separated by dashes into a camelCase equivalent</div>
@@ -1144,6 +1162,117 @@ utility classes and methods.
 						
 						
 						
+						
+
+					<hr />
+				
+					<a name=".addCssRule"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>addCssRule</b>(selector, rule)
+					
+					</div>
+					<div class="description">
+						Modifies CSS styleSheets.
+ <p>
+ Modifies CSS style styleSheets. It can be preempted
+ by css style inline modification (see vs.ui.View.setStyle).
+						
+					</div>
+					
+					
+					
+					<pre class="code"> vs.util.addCssRule ('.classname1', 'color: red');</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>selector</b>
+									
+								</dt>
+								<dd>CSS Selector</dd>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>rule</b>
+									
+								</dt>
+								<dd>the rule using the following format:
+  "prop_name: value"</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/vs.ui.View.html#setStyle">vs.ui.View#setStyle</a> if you want to modify inline CSS.</dd>
+							
+							</dl>
+						
+
+					<hr />
+				
+					<a name=".addCssRules"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.util.</span><b>addCssRules</b>(selector, rules)
+					
+					</div>
+					<div class="description">
+						Modifies CSS styleSheets.
+ <p>
+ Modifies CSS style styleSheets. It can be preempted
+ by css style inline modification (see vs.ui.View.setStyle).
+						
+					</div>
+					
+					
+					
+					<pre class="code"> vs.util.addCssRules ('.classname1', ['color: red', 'margin: 0px']);</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>selector</b>
+									
+								</dt>
+								<dd>CSS Selector</dd>
+							
+								<dt>
+									<span class="light fixedFont">{<a href="../symbols/Array.html">Array</a>}</span> <b>rules</b>
+									
+								</dt>
+								<dd>the array of rules</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+								<dd><a href="../symbols/vs.ui.View.html#setStyles">vs.ui.View#setStyles</a> if you want to modify inline CSS.</dd>
+							
+							</dl>
 						
 
 					<hr />

@@ -560,9 +560,10 @@ hr:last-child {
 				The vs.ui.SegmentedButton class is a subclass of vs.ui.View that intercepts
  pointer-down events and sends an 'select' event to a target object when
  it’s clicked or pressed.
+ <br />
  The widget displays horizontally a set of button. Only one button can be
  selected.
-
+ <br />
  Events:
  <ul>
    <li /> select: Fired after a button is pressed. {index, item}
@@ -630,6 +631,36 @@ hr:last-child {
 						</tr>
 					
 						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.SegmentedButton.<b><a href="../symbols/vs.ui.SegmentedButton.html#.HORIZONTAL">HORIZONTAL</a></b>
+								</div>
+								<div class="description">Horizontal constant to configure a SegmentedButton.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.ui.SegmentedButton.html#isToggleButton">isToggleButton</a></b>
+								</div>
+								<div class="description">Getter|Setter to configure the buttons as toggle buttons or not.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.ui.SegmentedButton.html#orientation">orientation</a></b>
+								</div>
+								<div class="description">Property to configure the SegmentedButton orientation.</div>
+							</td>
+						</tr>
+					
+						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
@@ -656,6 +687,16 @@ hr:last-child {
 								<b><a href="../symbols/vs.ui.SegmentedButton.html#type">type</a></b>
 								</div>
 								<div class="description">Getter|Setter for the widget type (for instance default, bar, .</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.SegmentedButton.<b><a href="../symbols/vs.ui.SegmentedButton.html#.VERTICAL">VERTICAL</a></b>
+								</div>
+								<div class="description">Vertical constant to configure a SegmentedButton.</div>
 							</td>
 						</tr>
 					
@@ -704,11 +745,11 @@ hr:last-child {
 				
 				<pre class="code"> // Simple example: (the button will have the platform skin)
 
- var segButton = vs.ui.SegmentedButton ();
- segButton.init ();
- segButton.items = ['test1', 'test2', 'test3'];
- segButton.size = [280, 30];
- segButton.style = vs.ui.SegmentedButton.BAR_STYLE;
+ var segButton = vs.ui.SegmentedButton ({
+   items : ['test1', 'test2', 'test3'],
+   size : [280, 30],
+   style : vs.ui.SegmentedButton.BAR_STYLE
+ }).init ();
 <p></pre>
 				
 				
@@ -784,6 +825,85 @@ hr:last-child {
 
 					<hr />
 				
+					<a name=".HORIZONTAL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.SegmentedButton.</span><b>HORIZONTAL</b>
+					
+					</div>
+					<div class="description">
+						Horizontal constant to configure a SegmentedButton.
+<p/>A SegmentedButton can be horizontal or vertical.
+Set the orientation property with this constant for a horizontal SegmentedButton.
+By default a SegmentedButton is horizontal.
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="../symbols/vs.ui.SegmentedButton.html#orientation">vs.ui.SegmentedButton#orientation</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
+					<a name="isToggleButton"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>isToggleButton</b>
+					
+					</div>
+					<div class="description">
+						Getter|Setter to configure the buttons as toggle buttons or not.
+By default SegmentedButton are toggle buttons
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="orientation"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{number}</span>
+					<b>orientation</b>
+					
+					</div>
+					<div class="description">
+						Property to configure the SegmentedButton orientation.
+<p/>A SegmentedButton can be horizontal or vertical.
+ Use the vs.ui.SegmentedButton.HORIZONTAL
+or vs.ui.SegmentedButton.VERTICAL constant to configure the
+SegmentedButton.
+<p/>By default a SegmentedButton is horizontal.
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="selectedIndex"> </a>
 					<div class="fixedFont">
 					
@@ -843,6 +963,37 @@ by the button
 
 						
 						
+						
+						
+
+					<hr />
+				
+					<a name=".VERTICAL"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.SegmentedButton.</span><b>VERTICAL</b>
+					
+					</div>
+					<div class="description">
+						Vertical constant to configure a SegmentedButton.
+<p/>A SegmentedButton can be horizontal or vertical.
+Set the orientation property with this constant for a vertical SegmentedButton.
+By default a SegmentedButton is horizontal.
+						
+					</div>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="../symbols/vs.ui.SegmentedButton.html#orientation">vs.ui.SegmentedButton#orientation</a></dd>
+							
+							</dl>
 						
 						
 
