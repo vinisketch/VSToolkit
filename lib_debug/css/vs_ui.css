@@ -3,6 +3,11 @@ html {
   height: 100%;
 }
 
+body {
+  width: 100%;
+  height: 100%;
+}
+
 .application {
   display: block;
   width: 100%;
