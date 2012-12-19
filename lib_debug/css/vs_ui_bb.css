@@ -53,7 +53,7 @@ body {
 .vs_ui_button.nav_back:before
 {
   content: url('bbNavButtonDark.png');
-  margin-top: -13px;
+  margin-top: -10px;
   margin-right: 6px;
   border: 0;
   position: absolute;
@@ -115,6 +115,7 @@ body {
   height: 38px;
   padding: 0px;
   -webkit-border-radius: 5px;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
 
   font-weight: normal;
 
@@ -594,8 +595,9 @@ input[type="checkbox"]:checked:after
   padding: 11px 10px;
 }.vs_ui_segmentedbutton
 {
+  color: black;
+  
   font-family: Helvetica;
-  border: 1px solid #999;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
 }
 
@@ -605,24 +607,30 @@ input[type="checkbox"]:checked:after
 
 .vs_ui_segmentedbutton.default
 {
-  -webkit-border-radius: 3px;
-  
   height: 43px;
 
   font-size: 20px;
 }
 
 
-.vs_ui_segmentedbutton.default > div > div {
+.vs_ui_segmentedbutton.default > div {
+  -webkit-border-radius: 3px;
+  border: 1px solid #999;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
-  color: black;
-  
+}
+
+.vs_ui_segmentedbutton.default > div > div {
   padding: 10px 10px 0 10px;
 }
 
 .vs_ui_segmentedbutton.default.horizontal > div > div {
   border-left: 1px solid #999;  
   border-right: 1px solid transparent;  
+}
+
+.vs_ui_segmentedbutton.default.vertical > div > div {
+  border-top: 1px solid #999;  
+  border-bottom: 1px solid transparent;  
 }
 
 .vs_ui_segmentedbutton > div > div.selected {
@@ -634,22 +642,28 @@ input[type="checkbox"]:checked:after
   -webkit-border-top-left-radius: 2px;
   -webkit-border-bottom-left-radius: 2px;
   
-  border: none;
+  border-left: none;
 }
 
 .vs_ui_segmentedbutton.default.horizontal > div > div:last-child {
   -webkit-border-top-right-radius: 2px;
   -webkit-border-bottom-right-radius: 2px;
+  
+  border-right: none;
 }
 
 .vs_ui_segmentedbutton.default.vertical > div > div:first-child {
   -webkit-border-top-left-radius: 2px;
   -webkit-border-top-right-radius: 2px;
+  
+  border-top: none;
 }
 
 .vs_ui_segmentedbutton.default.vertical > div > div:last-child {
   -webkit-border-bottom-left-radius: 2px;
   -webkit-border-bottom-right-radius: 2px;
+  
+  border-bottom: none;
 }
 
 /***************************************************************************
@@ -658,27 +672,34 @@ input[type="checkbox"]:checked:after
 
 .vs_ui_segmentedbutton.bar
 {  
-  -webkit-border-radius: 3px;
+  color: black;
+  
   height: 30px;
   font-size: 15px;
 }
 
-.vs_ui_segmentedbutton.bar > div > div {
+.vs_ui_segmentedbutton.bar > div
+{  
+  -webkit-border-radius: 3px;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
-  color: black;
-  
+}
+
+.vs_ui_segmentedbutton.bar > div > div {
   padding: 6px 5px 0 5px;
-  
-  border: none;
 }
 
 .vs_ui_segmentedbutton.bar.horizontal > div > div {
   border-right: 1px solid #999; 
 }
 
+.vs_ui_segmentedbutton.bar.vertical > div > div {
+  border-bottom: 1px solid #999; 
+}
+
 .vs_ui_segmentedbutton.bar.horizontal > div > div:first-child {
   -webkit-border-top-left-radius: 2px;
   -webkit-border-bottom-left-radius: 2px;
+  border-left: none;  
 }
 
 .vs_ui_segmentedbutton.bar.horizontal > div > div:last-child {
@@ -690,11 +711,13 @@ input[type="checkbox"]:checked:after
 .vs_ui_segmentedbutton.bar.vertical > div > div:first-child {
   -webkit-border-top-left-radius: 2px;
   -webkit-border-top-right-radius: 2px;
+  border-top: none;  
 }
 
 .vs_ui_segmentedbutton.bar.vertical > div > div:last-child {
   -webkit-border-bottom-left-radius: 2px;
   -webkit-border-bottom-right-radius: 2px;
+  border-bottom: none;  
 }.vs_ui_picker
 {
   height: 139px;

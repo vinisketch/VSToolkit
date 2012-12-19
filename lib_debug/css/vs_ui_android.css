@@ -958,6 +958,11 @@ textarea:focus {
   border-right: 1px solid transparent;  
 }
 
+.vs_ui_segmentedbutton.default.vertical > div > div {
+  border-top: 1px solid #CCC;  
+  border-bottom: 1px solid transparent;  
+}
+
 .vs_ui_segmentedbutton.default > div > div:before {
   display: block;
   position: relative;
@@ -977,7 +982,6 @@ textarea:focus {
 }
 
 .vs_ui_segmentedbutton.default.vertical > div > div:before {
-//  top: 50%;
   margin-top: 5px;
   left: -8px;
 }
