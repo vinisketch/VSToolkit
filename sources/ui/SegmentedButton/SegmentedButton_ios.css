@@ -9,19 +9,20 @@
 
 .vs_ui_segmentedbutton.default
 {
-  border: 0px none;
-  -webkit-border-radius: 10px;
-  
+  border: 0px none;  
   height: 43px;
 
   font-size: 20px;
-  
-  border: 1px solid #DDD;
 }
 
+.vs_ui_segmentedbutton.default > div
+{
+  -webkit-border-radius: 11px;
+  border: 1px solid #DDD;
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFF), color-stop(70%,#DDD), color-stop(100%,#EEE));
+}
 
 .vs_ui_segmentedbutton.default > div > div {
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFF), color-stop(70%,#DDD), color-stop(100%,#EEE));
   color: #888;
   
   padding: 10px 10px 0 10px;
