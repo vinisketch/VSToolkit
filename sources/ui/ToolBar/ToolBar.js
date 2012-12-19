@@ -163,8 +163,8 @@ ToolBar.prototype = {
   {
     View.prototype.initComponent.call (this);
 
-    this._hide_animation = new fx.Animation (['translateY', '44px']);
-    this._show_animation = new fx.Animation (['translateY', '0px']);
+    this._hide_animation = new vs.fx.Animation (['translateY', '44px']);
+    this._show_animation = new vs.fx.Animation (['translateY', '0px']);
 
     util.setElementStyle (this.view, {
       left: '0px', top: 'auto', bottom: '0px', 

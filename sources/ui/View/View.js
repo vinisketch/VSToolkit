@@ -1605,13 +1605,13 @@ View.prototype = {
     }
     else
     {
-      if (animations.constructor === fx.Animation)
+      if (animations.constructor === vs.fx.Animation)
       {
         this._show_animation = animations.clone ();
       }
       else if (util.isArray (animations))
       {
-        this._show_animation = new fx.Animation ();
+        this._show_animation = new vs.fx.Animation ();
         this._show_animation.setAnimations (animations);
       }
       else
@@ -1727,13 +1727,13 @@ View.prototype = {
      }
     else
     {
-      if (animations.constructor === fx.Animation)
+      if (animations.constructor === vs.fx.Animation)
       {
         this._hide_animation = animations.clone ();
       }
       else if (util.isArray (animations))
       {
-        this._hide_animation = new fx.Animation ();
+        this._hide_animation = new vs.fx.Animation ();
         this._hide_animation.setAnimations (animations);
       }
       else
@@ -1930,13 +1930,13 @@ View.prototype = {
   animate: function (animations, options, clb)
   {
     var anim;
-    if (animations instanceof fx.Animation)
+    if (animations instanceof vs.fx.Animation)
     {
       anim = animations
     }
     else if (util.isArray (animations))
     {
-      var anim = new fx.Animation ();
+      var anim = new vs.fx.Animation ();
       anim.setAnimations (animations);
     }
     else

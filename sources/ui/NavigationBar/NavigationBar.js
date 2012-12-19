@@ -135,13 +135,13 @@ NavigationBar.prototype = {
     var os_device = window.deviceConfiguration.os;
     if (os_device == DeviceConfiguration.OS_SYMBIAN)
     {
-      this._hide_animation = new fx.Animation (['translateY', '-50px']);
+      this._hide_animation = new vs.fx.Animation (['translateY', '-50px']);
     }
     else
     {
-      this._hide_animation = new fx.Animation (['translateY', '-44px']);
+      this._hide_animation = new vs.fx.Animation (['translateY', '-44px']);
     }
-    this._show_animation = new fx.Animation (['translateY', '0px']);
+    this._show_animation = new vs.fx.Animation (['translateY', '0px']);
 
     var os_device = window.deviceConfiguration.os;
     if (os_device == DeviceConfiguration.OS_SYMBIAN)
