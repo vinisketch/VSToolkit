@@ -111,6 +111,7 @@
   height: 38px;
   padding: 0px;
   -webkit-border-radius: 5px;
+  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
 
   font-weight: normal;
 
