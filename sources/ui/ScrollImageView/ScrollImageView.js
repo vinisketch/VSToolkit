@@ -304,17 +304,26 @@ util.defineClassProperties (ScrollImageView, {
     else if (this._stretch === ScrollImageView.STRETCH_UNIFORM)
     {
       var r1 = this._size[0] / this._size[1],
-        r2 = this._image_width / this._image_height;
+        r2 = this._image_width / this._image_height,
+        delta = 0, scale = 1;
       
       if (r1 < r2)
       {
+        scale = this._image_width / this._size[0];
+        delta = (this._size[1] - this._image_height / scale) / 2;
         this._sub_view.setAttribute ('width', "100%");
         this._sub_view.removeAttribute ('height');
+        this._sub_view.style.left = "0px";
+        this._sub_view.style.top = delta + "px";
       }
       else
       {
+        scale = this._image_height / this._size[1];
+        delta = (this._size[0] - this._image_width / scale) / 2;
         this._sub_view.removeAttribute ('width');
         this._sub_view.setAttribute ('height', "100%");
+        this._sub_view.style.top = "0px";
+        this._sub_view.style.left = delta + "px";
       }
     }
     else if (this._stretch === ScrollImageView.STRETCH_UNIFORM_FILL)
