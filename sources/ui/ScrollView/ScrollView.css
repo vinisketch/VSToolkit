@@ -38,12 +38,12 @@
                     Vertical Layout
 *********************************************************************/
 
-.vs_ui_scrollview > div.vertical_layout:nth-child(2) {
+.vs_ui_scrollview.vertical_layout > div:nth-child(2) {
   display: -webkit-box;
   -webkit-box-orient: vertical;
 }
 
-.vs_ui_scrollview > div.vertical_layout:nth-child(2) > * {
+.vs_ui_scrollview.vertical_layout > div:nth-child(2) > * {
   -webkit-box-flex: 0;
 //  display: block;
   position: relative;
@@ -58,7 +58,7 @@
   -webkit-box-orient: horizontal;
 }
 
-.vs_ui_scrollview > div.horizontal_layout:nth-child(2) > * {
+.vs_ui_scrollview.horizontal_layout > div:nth-child(2) > * {
   -webkit-box-flex: 0;
 //  display: block;
   position: relative;
@@ -87,7 +87,7 @@
 }
 
 .vs_ui_scrollview > div:nth-child(2),
-.vs_ui_scrollview > div.absolute_layout:nth-child(2) > * {
+.vs_ui_scrollview.absolute_layout > div:nth-child(2) > * {
   display: block;
   position: absolute;
 }
