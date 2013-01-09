@@ -389,7 +389,7 @@ StackController.prototype = {
         this._fsm.fsmNotify (StackController.NEXT, null, true);
         current_pos ++;
       }
-      return this._fsm.fsmNotify (StackController.NEXT, instant);
+      return this._fsm.fsmNotify (StackController.NEXT, null, instant);
     }
     else
     {
@@ -398,7 +398,7 @@ StackController.prototype = {
         this._fsm.fsmNotify (StackController.PRED, null, true);
         current_pos --;
       }
-      return this._fsm.fsmNotify (StackController.PRED, instant);
+      return this._fsm.fsmNotify (StackController.PRED, null, instant);
     }
   },
 
@@ -438,7 +438,7 @@ StackController.prototype = {
    */
   goToFirstView : function (instant)
   {
-    return this._fsm.fsmNotify (StackController.FIRST, instant);
+    return this._fsm.fsmNotify (StackController.FIRST, null, instant);
   },
 
   /**
