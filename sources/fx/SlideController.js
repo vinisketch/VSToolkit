@@ -263,10 +263,8 @@ SlideController.prototype = {
       return state_id;
     }
     
-    this.addTransition (this._last_comp_id, state_id, StackController.NEXT,
-      this._transition_out_1, this._transition_clear);
-    this.addTransition (state_id, this._last_comp_id, StackController.PRED,
-      this._transition_out_2, this._transition_clear);
+    this.addTransition (this._last_comp_id, state_id, StackController.NEXT);
+    this.addTransition (state_id, this._last_comp_id, StackController.PRED);
 //    this.addTransition 
 //      (state_id, this._initial_component, StackController.FIRST);
     
