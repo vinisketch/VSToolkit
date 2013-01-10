@@ -255,10 +255,8 @@ CardController.prototype = {
       return state_id;
     }
     
-    this.addTransition (this._last_comp_id, state_id, StackController.NEXT,
-      null, this._transition_in);
-    this.addTransition (state_id, this._last_comp_id, StackController.PRED,
-      this._transition_out, null);
+    this.addTransition (this._last_comp_id, state_id, StackController.NEXT);
+    this.addTransition (state_id, this._last_comp_id, StackController.PRED);
 //    this.addTransition 
 //      (state_id, this._initial_component, StackController.FIRST);
     
@@ -266,7 +264,7 @@ CardController.prototype = {
     state = this._fsm._list_of_state [state_id];
     if (!state)
     {
-      console.error ("Unknown error in vs.fx.StackController.push");
+      console.error ("Unknown error in vs.fx.CardController.push");
       return;
     }
     if (this._last_comp_id === this._initial_component)
@@ -571,7 +569,71 @@ CardController.prototype = {
       document.removeEventListener (core.POINTER_END, this, true);
       document.removeEventListener (core.POINTER_MOVE, this, true);
     }
-  }
+  },
+  
+  /**
+   *  @protected
+   */
+  _stackAnimateComponents : function (order, fromComp, toComp, instant)
+  {
+    var animation, setInitialPosAnimation, durations_tmp,
+      compToAnimate;
+
+    if (order > 0)
+    {
+      animation = this._transition_in;
+      compToAnimate = toComp;
+    }
+    else
+    {
+      animation = this._transition_out;
+      setInitialPosAnimation = this._transition_in;
+      compToAnimate = fromComp;
+    }
+
+    if (setInitialPosAnimation)
+    {
+      durations_tmp = setInitialPosAnimation.durations;
+      setInitialPosAnimation.durations = '0s';
+    }
+    var self = this, callback = function ()
+    {
+      fromComp.hide ();
+      try
+      {
+        if (self._delegate && self._delegate.controllerAnimationDidEnd)
+        {
+          self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
+        }
+      } catch (e) { console.error (e); }
+    },
+    
+    runAnimation = function ()
+    {
+      if (setInitialPosAnimation)
+        setInitialPosAnimation.durations = durations_tmp;
+      try
+      {
+        toComp.show ();
+        if (instant)
+        {
+          var inDurations = animation.durations;
+          animation.durations = '0s';
+        }
+        animation.process (compToAnimate, callback, self);
+
+        if (instant)
+        {
+          animation.durations = inDurations;
+        }
+      }
+      catch (e) { console.error (e); }
+    };
+    if (setInitialPosAnimation) setInitialPosAnimation.process (toComp, function () {
+      setTimeout (function () {runAnimation ();}, 0);
+    });
+    else runAnimation ();
+  } 
 };
 util.extendClass (CardController, StackController);
 
