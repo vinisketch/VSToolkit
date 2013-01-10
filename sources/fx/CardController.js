@@ -103,7 +103,7 @@ function CardController (owner)
   if (owner)
   {
     this._transition_out = new TranslateAnimation (0,0,0);
-    this._transition_clear = new TranslateAnimation (0,0,0);
+    this._transition_in = new TranslateAnimation (0,0,0);
   
     this.animationDuration = CardController.ANIMATION_DURATION;
   }
@@ -168,7 +168,7 @@ CardController.prototype = {
    * @protected
    * @type {vs.fx.TranslateAnimation}
    */
-  _transition_clear : null,  
+  _transition_in : null,  
 
 /*********************************************************
  *                behavior update
@@ -256,7 +256,7 @@ CardController.prototype = {
     }
     
     this.addTransition (this._last_comp_id, state_id, StackController.NEXT,
-      null, this._transition_clear);
+      null, this._transition_in);
     this.addTransition (state_id, this._last_comp_id, StackController.PRED,
       this._transition_out, null);
 //    this.addTransition 
@@ -624,8 +624,8 @@ util.defineClassProperties (CardController, {
       this._animation_duration = v;
       if (this._transition_out)
         this._transition_out.duration = this._animation_duration + 'ms';
-      if (this._transition_clear)
-        this._transition_clear.duration = this._animation_duration + 'ms';
+      if (this._transition_in)
+        this._transition_in.duration = this._animation_duration + 'ms';
     }
   }
 });
