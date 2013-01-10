@@ -177,10 +177,16 @@ var SlideController = vs.core.createClass ({
 
     if (!arguments.length) return;
   
-    this._transition_out_left = new TranslateAnimation (0,0,0);
-    this._transition_out_right = new TranslateAnimation (0,0,0);
-    this._transition_in = new TranslateAnimation (0,0,0);
+    this._transition_out_left = new Animation (['translate', '${x}%,${y}%,0']);
+    this._transition_out_left.x = 0;
+    this._transition_out_left.y = 0;
+    
+    this._transition_out_right = new Animation (['translate', '${x}%,${y}%,0']);
+    this._transition_out_right.x = 0;
+    this._transition_out_right.y = 0;
 
+    this._transition_in = new Animation (['translate', '0,0,0']);
+ 
     this.animationDuration = SlideController.ANIMATION_DURATION;
   },
 
@@ -193,30 +199,30 @@ var SlideController = vs.core.createClass ({
    */
   _updateViewSize : function ()
   {
-    var size = this.viewSize, i, state_id, state, transform;
+    var i, state_id, state, transform;
     if (this._orientation === SlideController.HORIZONTAL)
     {
-      this._transition_out_left.x = -size [0];
+      this._transition_out_left.x = -100;
       this._transition_out_left.y = 0;
-      this._transition_out_right.x = size [0];
+      this._transition_out_right.x = 100;
       this._transition_out_right.y = 0;
     }
     else if (this._orientation === SlideController.VERTICAL)
     {
       this._transition_out_left.x = 0;
-      this._transition_out_left.y = -size [1];
+      this._transition_out_left.y = -100;
       this._transition_out_right.x = 0;
-      this._transition_out_right.y = size [1];
+      this._transition_out_right.y = 100;
     }
     
     // define transformation for view before current one
     if (this._orientation === SlideController.HORIZONTAL)
     {
-      transform = "translate3D(-" + size [0] + "px,0,0)";
+      transform = "translate3D(-100%,0,0)";
     }
     else if (this._orientation === SlideController.VERTICAL)
     {
-      transform = "translate3D(0,-" + size [1] + "px,0)";
+      transform = "translate3D(0,-100%,0)";
     }
     
     for (i = 0; i < this._states_array.length; i++)
@@ -231,11 +237,11 @@ var SlideController = vs.core.createClass ({
         // define transformation for view after current one
         if (this._orientation === SlideController.HORIZONTAL)
         {
-          transform = "translate3D(" + size [0] + "px,0,0)";
+          transform = "translate3D(100%,0,0)";
         }
         else if (this._orientation === SlideController.VERTICAL)
         {
-          transform = "translate3D(0," + size [1] + "px,0)";
+          transform = "translate3D(0,100%,0)";
         }
         
         // set no transformation for the current one
@@ -344,15 +350,15 @@ var SlideController = vs.core.createClass ({
    */
   configureNewComponent : function (comp)
   {
-    var transform, size;
-    size = this.viewSize;      
+    var transform;
+          
     if (this._orientation === SlideController.HORIZONTAL)
     {
-      transform = "translate3D(" + size [0] + "px,0,0)";
+      transform = "translate3D(100%,0,0)";
     }
     else if (this._orientation === SlideController.VERTICAL)
     {
-      transform = "translate3D(0," + size [1] + "px,0)";
+      transform = "translate3D(0,100%,0)";
     }
 
     comp.view.style.webkitTransitionDuration = '0';
