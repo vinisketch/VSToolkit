@@ -416,6 +416,14 @@ StackController.prototype = {
   {},
   
   /**
+   *  @protected
+   *  do nothing, will be managed by _stackAnimateComponents
+   */
+  _animateComponents :
+    function (fromComp, toComp, animationOut, animationIn, animation_clb, instant)
+  {},
+  
+  /**
    * Go to the next view if it exist.
    *
    * @name vs.fx.StackController#goToNextView
