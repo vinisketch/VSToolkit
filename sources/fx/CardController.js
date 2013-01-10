@@ -257,9 +257,7 @@ CardController.prototype = {
     
     this.addTransition (this._last_comp_id, state_id, StackController.NEXT);
     this.addTransition (state_id, this._last_comp_id, StackController.PRED);
-//    this.addTransition 
-//      (state_id, this._initial_component, StackController.FIRST);
-    
+   
     // create the second view 
     state = this._fsm._list_of_state [state_id];
     if (!state)
