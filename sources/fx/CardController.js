@@ -137,8 +137,7 @@ var CardController = vs.core.createClass ({
        */ 
       set : function (v)
       {
-        var state, state_id, i = 0, pos = 0, index, transform = '',
-          size = this._owner.size;
+        var state, state_id, i = 0, pos = 0, index, transform = '';
       
         if (v !== CardController.LEFT_OUT &&
             v !== CardController.RIGHT_OUT &&
@@ -183,8 +182,6 @@ var CardController = vs.core.createClass ({
   {
     this._super (owner);
 
-    this._direction = CardController.RIGHT_OUT;
-
     if (owner)
     {
       this._transition_out = new Animation (['translate', '${x}%,${y}%,0']);
@@ -197,6 +194,8 @@ var CardController = vs.core.createClass ({
   
       this.animationDuration = CardController.ANIMATION_DURATION;
     }
+
+    this._direction = CardController.RIGHT_OUT;
   },
 
   /*********************************************************
@@ -209,7 +208,6 @@ var CardController = vs.core.createClass ({
    */
   _updateViewSize : function ()
   {
-    var size = this.viewSize;
     if (!this._transition_out) return;
     
     if (this._direction === CardController.LEFT_OUT)
@@ -333,8 +331,8 @@ var CardController = vs.core.createClass ({
    */
   configureNewComponent : function (comp)
   {
-    var transform, size;
-    size = this.viewSize;
+    var transform;
+    
     if (SUPPORT_3D_TRANSFORM) transform = "translate3d";
     else transform = "translate";
     if (this._direction === CardController.LEFT_OUT)
