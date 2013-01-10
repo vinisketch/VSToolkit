@@ -82,9 +82,9 @@ function SlideController (owner)
   
   if (!arguments.length) return;
   
-  this._transition_out_1 = new TranslateAnimation (0,0,0);
-  this._transition_out_2 = new TranslateAnimation (0,0,0);
-  this._transition_clear = new TranslateAnimation (0,0,0);
+  this._transition_out_left = new TranslateAnimation (0,0,0);
+  this._transition_out_right = new TranslateAnimation (0,0,0);
+  this._transition_in = new TranslateAnimation (0,0,0);
 
   this.animationDuration = SlideController.ANIMATION_DURATION;
 }
@@ -136,21 +136,21 @@ SlideController.prototype = {
    * @protected
    * @type {vs.fx.TranslateAnimation}
    */
-  _transition_out_1 : null,
+  _transition_out_left : null,
   
   /**
    *
    * @protected
    * @type {vs.fx.TranslateAnimation}
    */
-  _transition_out_2 : null,
+  _transition_out_right : null,
     
   /**
    *
    * @protected
    * @type {vs.fx.TranslateAnimation}
    */
-  _transition_clear : null,  
+  _transition_in : null,  
 
 /*********************************************************
  *                 behavior update
@@ -164,17 +164,17 @@ SlideController.prototype = {
     var size = this.viewSize, i, state_id, state, transform;
     if (this._orientation === SlideController.HORIZONTAL)
     {
-      this._transition_out_1.x = -size [0];
-      this._transition_out_1.y = 0;
-      this._transition_out_2.x = size [0];
-      this._transition_out_2.y = 0;
+      this._transition_out_left.x = -size [0];
+      this._transition_out_left.y = 0;
+      this._transition_out_right.x = size [0];
+      this._transition_out_right.y = 0;
     }
     else if (this._orientation === SlideController.VERTICAL)
     {
-      this._transition_out_1.x = 0;
-      this._transition_out_1.y = -size [1];
-      this._transition_out_2.x = 0;
-      this._transition_out_2.y = size [1];
+      this._transition_out_left.x = 0;
+      this._transition_out_left.y = -size [1];
+      this._transition_out_right.x = 0;
+      this._transition_out_right.y = size [1];
     }
     
     // define transformation for view before current one
@@ -419,7 +419,68 @@ SlideController.prototype = {
   {
     StackController.prototype.refresh.call (this);
     this._updateViewSize ();
-  }
+  },
+  
+  /**
+   *  @protected
+   */
+  _stackAnimateComponents : function (order, fromComp, toComp, instant)
+  {
+    var animationIn = this._transition_in, animationOut,
+      setPosition, durations_tmp;
+    if (order > 0)
+    {
+      setPosition = this._transition_out_right;
+      animationOut = this._transition_out_left;
+    }
+    else
+    {
+      setPosition = this._transition_out_left;
+      animationOut = this._transition_out_right;
+    }
+    
+    durations_tmp = setPosition.durations;
+    setPosition.durations = '0s';
+    
+    var self = this, callback = function ()
+    {
+      try
+      {
+        if (self._delegate && self._delegate.controllerAnimationDidEnd)
+        {
+          self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
+        }
+      } catch (e) { console.error (e); }
+    },
+    
+    runAnimation = function ()
+    {
+      setPosition.durations = durations_tmp;
+      try
+      {
+        toComp.show ();
+        if (instant)
+        {
+          var inDurations = animationIn.durations;
+          animationIn.durations = '0s';
+          var outDurations = animationOut.durations;
+          animationOut.durations = '0s';
+        }
+        animationIn.process (toComp, callback, self);
+        animationOut.process (fromComp); 
+
+        if (instant)
+        {
+          animationIn.durations = inDurations;
+          animationOut.durations = outDurations;
+        }
+      }
+      catch (e) { console.error (e); }
+    };
+    setPosition.process (toComp, function () {
+      setTimeout (function () {runAnimation ();}, 0);
+    });
+  } 
 };
 util.extendClass (SlideController, StackController);
 
@@ -468,9 +529,9 @@ util.defineClassProperties (SlideController, {
       if (!util.isNumber (v)) { return };
       
       this._animation_duration = v;
-      this._transition_out_1.duration = this._animation_duration + 'ms';
-      this._transition_out_2.duration = this._animation_duration + 'ms';
-      this._transition_clear.duration = this._animation_duration + 'ms';
+      this._transition_out_left.duration = this._animation_duration + 'ms';
+      this._transition_out_right.duration = this._animation_duration + 'ms';
+      this._transition_in.duration = this._animation_duration + 'ms';
     }
   }
 });
