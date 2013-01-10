@@ -459,7 +459,7 @@ var SlideController = vs.core.createClass ({
   /**
    *  @protected
    */
-  _stackAnimateComponents : function (order, fromComp, toComp, instant)
+  _stackAnimateComponents : function (order, fromComp, toComp, clb, instant)
   {
     var animationIn = this._transition_in, animationOut,
       setPosition, durations_tmp;
@@ -485,6 +485,7 @@ var SlideController = vs.core.createClass ({
         {
           self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
         }
+        if (clb) clb.call (this.owner);
       } catch (e) { console.error (e); }
     },
     

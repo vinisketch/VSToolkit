@@ -599,7 +599,7 @@ var CardController = vs.core.createClass ({
   /**
    *  @protected
    */
-  _stackAnimateComponents : function (order, fromComp, toComp, instant)
+  _stackAnimateComponents : function (order, fromComp, toComp, clb, instant)
   {
     var animation, setInitialPosAnimation, durations_tmp,
       compToAnimate;
@@ -630,6 +630,7 @@ var CardController = vs.core.createClass ({
         {
           self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
         }
+        if (clb) clb.call (this.owner);
       } catch (e) { console.error (e); }
     },
     

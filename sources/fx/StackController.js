@@ -356,14 +356,17 @@ StackController.prototype = {
    * @name vs.fx.StackController#goToViewId
    * @function
    * 
-   * @return true if the transition is possible, false if not (no view exists)
+   * @param {String} id The state id (component id)
+   * @param {Function} clb a function reference, will be called at the end
+   *                   of transition
+   * @param {boolean} instant Force a transition without animation
    */
-  goToViewId : function (id, instant)
+  goToViewId : function (id, clb, instant)
   {
     var pos = this._states_array.findItem (id);
     if (pos === -1) { return false; }
     
-    this.goToViewAt (pos, instant);
+    this.goToViewAt (pos, clb, instant);
   },
 
   /**
@@ -373,8 +376,11 @@ StackController.prototype = {
    * @function
    *
    * @param {number} index The component index
+   * @param {Function} clb a function reference, will be called at the end
+   *                   of transition
+   * @param {boolean} instant Force a transition without animation
    */
-  goToViewAt : function (pos, instant)
+  goToViewAt : function (pos, clb, instant)
   {
     if (pos < 0) { return false; }
     if (pos > this._states_array.length) { return false; }
@@ -393,7 +399,7 @@ StackController.prototype = {
       this._fsm.fsmNotify (StackController.NEXT, null, true);
       
       var state_to = this._fsm._list_of_state [this._fsm._current_state];
-      this._stackAnimateComponents (1, state_from.comp, state_to.comp, instant);
+      this._stackAnimateComponents (1, state_from.comp, state_to.comp, clb, instant);
     }
     else
     {
@@ -405,14 +411,14 @@ StackController.prototype = {
       this._fsm.fsmNotify (StackController.PRED, null, true);
 
       var state_to = this._fsm._list_of_state [this._fsm._current_state];
-      this._stackAnimateComponents (-1, state_from.comp, state_to.comp, instant);
+      this._stackAnimateComponents (-1, state_from.comp, state_to.comp, clb, instant);
     }
   },
 
   /**
    *  @protected
    */
-  _stackAnimateComponents : function (order, fromComp, toComp, instant)
+  _stackAnimateComponents : function (order, fromComp, toComp, clb, instant)
   {},
   
   /**
@@ -429,11 +435,14 @@ StackController.prototype = {
    * @name vs.fx.StackController#goToNextView
    * @function
    * 
+   * @param {Function} clb a function reference, will be called at the end
+   *                   of transition
+   * @param {boolean} instant Force a transition without animation
    * @return true if the transition is possible, false if not (no view exists)
    */
-  goToNextView : function (instant)
+  goToNextView : function (clb, instant)
   {
-    return this._fsm.fsmNotify (StackController.NEXT, null, instant);
+    return this._fsm.fsmNotify (StackController.NEXT, clb, instant);
   },
 
   /**
@@ -442,11 +451,14 @@ StackController.prototype = {
    * @name vs.fx.StackController#goToPreviousView
    * @function
    * 
+   * @param {Function} clb a function reference, will be called at the end
+   *                   of transition
+   * @param {boolean} instant Force a transition without animation
    * @return true if the transition is possible, false if not (no view exists)
    */
-  goToPreviousView : function (instant)
+  goToPreviousView : function (clb, instant)
   {
-    return this._fsm.fsmNotify (StackController.PRED, null, instant);
+    return this._fsm.fsmNotify (StackController.PRED, clb, instant);
   },
 
   /**
