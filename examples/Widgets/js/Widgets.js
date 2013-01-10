@@ -3,10 +3,29 @@ var Widgets = vs.core.createClass ({
   parent: vs.ui.Application,
 
   applicationStarted : function (event) {
+    this.splitView = new vs.ui.SplitView ({
+      mode: vs.ui.SplitView.TABLET_MODE
+    }).init ();
+    this.leftView = new vs.ui.View ().init ();
+    this.rightView = new vs.ui.View ().init ();
+    this.add (this.splitView);
+    this.splitView.add (this.leftView, 'left_panel');
+    this.splitView.add (this.rightView, 'main_panel');
+    
     this.layout = vs.ui.View.ABSOLUTE_LAYOUT;
     
+    this.panelsIndexes = [];
+    
+    this.setupMainNavigation ();
+    this.setupWidgetsPanels ();
+    
+    window.splitView = this.splitView;
+  },
+  
+  setupMainNavigation : function (event) {
     this.navBar = new vs.ui.NavigationBar ().init ();
-    this.add (this.navBar);
+    this.leftView.add (this.navBar);
+    this.leftView.layout = vs.ui.View.ABSOLUTE_LAYOUT;
 
     this.backButton = new vs.ui.Button ({
       type: vs.ui.Button.NAVIGATION_BACK_TYPE,
@@ -17,16 +36,33 @@ var Widgets = vs.core.createClass ({
     this.navBar.add (this.backButton);
     var backId = this.backButton.id;
   
-    this.controller = new vs.fx.NavigationController (this, this.navBar);
-    this.controller.init ();
+    this.leftController = new vs.fx.NavigationController (this.leftView, this.navBar);
+    this.leftController.init ();
+
+    this.mainList = new vs.ui.List ({
+      position:[0, 44],
+      hasArrow: true
+    }).init ();
+    this.mainList.setStyle ('bottom', '0px');
+    var mainState = this.leftController.push (this.mainList);
+    this.leftController.configureNavigationBarState (this.mainList.id, []);
+    this.leftController.initialComponent = this.mainList.id;
  
-    this.list = new vs.ui.List ({id: 'widgets_list'}).init ();
-    var mainState = this.controller.push (this.list);
+    this.mainList.model = [
+      {title: 'UI Components'},
+      {title: 'Animation'},
+      {title: 'Map'}
+    ];
     
-   //    this.controller.configureNavigationBarState (this.list.id, []);
-    this.controller.initialComponent = this.list.id;
+    this.mainList.bind ('itemselect', this);
+    
+    this.widgetList = new vs.ui.List ({position:[0, 44]}).init ();
+    this.widgetList.setStyle ('bottom', '0px');
+    var id = this.leftController.push (this.widgetList);
+    this.leftController.configureNavigationBarState (id, [{comp: backId}]);
+    this.leftController.configureTransition (mainState, id, 'UI Components');
  
-     this.list.model = [
+    this.widgetList.model = [
       {title: 'Button'},
       {title: 'Fields and Combobox'},
       {title: 'Pickers'},
@@ -34,64 +70,63 @@ var Widgets = vs.core.createClass ({
       {title: 'Progress&Slider'},
       {title: 'List'},
       {title: 'Tab List'},
-      {title: 'Block List'},
-      {title: 'Map'}
+      {title: 'Block List'}
     ];
     
-    this.list.bind ('itemselect', this);
+    this.widgetList.bind ('itemselect', this);
+  },
   
-    var panel = initButtonsPanel ();
-    var stateId = this.controller.push (panel);
-    this.controller.configureNavigationBarState (stateId, [{comp: backId}]);
-    this.controller.configureTransition (mainState, stateId, 'Button',vs.fx.NavigationController.CARD_ANIMATION);
+  setupWidgetsPanels : function (event) {
+    var navBar = new vs.ui.NavigationBar ().init ();
+    this.rightView.add (navBar);
 
-    var panel = initFieldsPanel ();
-    this.controller.push (panel);
-    this.controller.configureNavigationBarState (stateId, [{comp: backId}]);
-    this.controller.configureTransition (mainState, stateId, 'Fields and Combobox',vs.fx.NavigationController.CARD_ANIMATION);
+    var controller = new vs.fx.SlideController (this.rightView);
+    this.mainController = controller;
+    controller.init ();
+     
+    var stateId = controller.push (initButtonsPanel ());
+    this.panelsIndexes.push ('Button');
 
-    var panel = initPickersPanel ();
-    stateId = this.controller.push (panel);
-    this.controller.configureNavigationBarState (stateId, [{comp: backId}]);
-    this.controller.configureTransition (mainState, stateId, 'Pickers');
+    controller.push (initFieldsPanel ());
+    this.panelsIndexes.push ('Fields and Combobox');
+
+    stateId = controller.push (initPickersPanel ());
+    this.panelsIndexes.push ('Pickers');
     
-    var panel = initSelectorsPanel ();
-    stateId = this.controller.push (panel);
-    this.controller.configureNavigationBarState (stateId, [{comp: backId}]);
-    this.controller.configureTransition (mainState, stateId, 'Selectors');
+    stateId = controller.push (initSelectorsPanel ());
+    this.panelsIndexes.push ('Selectors');
     
-    var panel = initButtonsProgressSlider ();
-    stateId = this.controller.push (panel);
-    this.controller.configureNavigationBarState (stateId, [{comp: backId}]);
-    this.controller.configureTransition (mainState, stateId, 'Progress&Slider');
+    stateId = controller.push (initButtonsProgressSlider ());
+    this.panelsIndexes.push ('Progress&Slider');
     
-    var panel = initStandardList ();
-    stateId = this.controller.push (panel);
-    this.controller.configureNavigationBarState (stateId, [{comp: backId}]);
-    this.controller.configureTransition (mainState, stateId, 'List'); 
+    stateId = controller.push (initStandardList ());
+    this.panelsIndexes.push ('List'); 
 
-    var panel = initTabList ();
-    stateId = this.controller.push (panel);
-    this.controller.configureNavigationBarState (stateId, [{comp: backId}]);
-    this.controller.configureTransition (mainState, stateId, 'Tab List'); 
+    stateId = controller.push (initTabList ());
+    this.panelsIndexes.push ('Tab List'); 
 
-    var panel = initBlockList ();
-    stateId = this.controller.push (panel);
-    this.controller.configureNavigationBarState (stateId, [{comp: backId}]);
-    this.controller.configureTransition (mainState, stateId, 'Block List'); 
+    stateId = controller.push (initBlockList ());
+    this.panelsIndexes.push ('Block List'); 
 
-    var panel = initMapPanel ();
-    stateId = this.controller.push (panel);
-    this.controller.configureNavigationBarState (stateId, [{comp: backId}]);
-    this.controller.configureTransition (mainState, stateId, 'Map'); 
+    stateId = controller.push (initBlockList ());
+    this.panelsIndexes.push ('Map');
   },
   
   notify : function (e) {
-    if (e.type == 'select') {
-      this.controller.notify ({type: 'back'});
+    var self = this;
+    
+    if (e.type == 'select' && e.src == this.backButton) {
+      this.leftController.notify ({type: 'back'});
     }
-    else if (e.type == 'itemselect') {
-      this.controller.notify ({type: e.data.item.title});
+    else if (e.type == 'itemselect' && e.src == this.mainList) {
+      this.leftController.notify ({type: e.data.item.title});
+    }
+    else if (e.type == 'itemselect' && e.src == this.widgetList) {
+      this.mainController.goToViewAt (
+        this.panelsIndexes.indexOf (e.data.item.title), function () {
+          self.splitView.showMainView ();
+        }, false
+      );     
     }
   }
 });
