@@ -223,9 +223,10 @@ NavigationController.prototype = {
    
     var size = this._owner.size;
     
+
     this.__translate_in_right = new TranslateAnimation (0);
-    this.__translate_out_right = new TranslateAnimation (size [0]);
-    this.__translate_out_left = new TranslateAnimation (-size [0]);
+    this.__translate_out_right = new Animation (['translate', '100%,0,0']);
+    this.__translate_out_left = new Animation (['translate', '-100%,0,0']);
     this.__translate_in_left = new TranslateAnimation (0);
   },
 
@@ -248,23 +249,8 @@ NavigationController.prototype = {
    * @protected
    * @function
    */
-  refresh: function ()
-  {
-    Controller.prototype.refresh.call (this);
-    this._updateViewSize ();
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
   _updateViewSize : function ()
-  {
-    var size = this.viewSize, i, state_id, state, transform;
-
-    this.__translate_out_left.x = -size [0];
-    this.__translate_out_right.x = size [0];
-  },
+  {},
   
   /**
    *  Add the a child component to the Navigation Controller
