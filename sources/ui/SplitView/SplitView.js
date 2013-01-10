@@ -65,14 +65,71 @@
  *
  * @param {Object} config the configuration structure [mandatory]
 */
-function SplitView (config)
-{
-  this.parent = View;
-  this.parent (config);
-  this.constructor = SplitView;
-}
+var SplitView = vs.core.createClass ({
 
-SplitView.prototype = {
+  parent: vs.ui.View,
+
+  properties: {
+    "delegate": {
+      /** 
+       * Set the delegate.
+       * It should implements following methods
+       *  <ul>
+       *    <li/>viewWillStartZooming : function (vs.ui.ScrollView the view)
+       *    <li/>viewDidEndZooming : function (vs.ui.ScrollView the view, number scale)
+       *  </ul>
+       * @name vs.ui.SplitView#delegate 
+       * @type {Object}
+       */ 
+      set : function (v)
+      {
+        this._delegate = v;
+      }
+    },
+  
+    "mode": {
+      /** 
+       * Set the split view mode (MOBILE, TABLET)
+       * @name vs.ui.SplitView#mode 
+       * @type {String}
+       */ 
+      set : function (v)
+      {
+        if (v !== SplitView.TABLET_MODE && v !== SplitView.MOBILE_MODE)
+          return;
+      
+        this.removeClassName (this._mode);
+        this._mode = v;
+        this.addClassName (this._mode);
+      }
+    },
+  
+    "orientation": {
+      /** 
+       * Set/get the split view mode (MOBILE, TABLET)
+       * @name vs.ui.SplitView#mode 
+       * @type {String}
+       */ 
+      set : function (v)
+      {
+        if (v !== SplitView.VERTICAL && v !== SplitView.HORIZONTAL)
+          return;
+      
+        this.removeClassName (this._orientation);
+        this._orientation = v;
+        this.addClassName (this._orientation);
+        if (v === SplitView.VERTICAL) this._set_orientation (0);
+        else this._set_orientation (90);
+      },
+      
+      /**
+      */
+      get : function (v)
+      {
+        this._orientation;
+      }
+    },
+  },
 
   /*****************************************************************
    *                Private members
@@ -83,6 +140,18 @@ SplitView.prototype = {
    * @type {Object}
    */
   _delegate: null,
+
+   /**
+   * @protected
+   * @type {String}
+   */
+  _mode: '',
+
+   /**
+   * @protected
+   * @type {String}
+   */
+  _orientation: '',
 
    /**
    * @private
@@ -116,26 +185,31 @@ SplitView.prototype = {
    * @protected
    * @function
    */
-  destructor : function ()
+  constructor: function (config)
   {
-    View.prototype.destructor.call (this);
+    this._super (config);
+
+    this._left_views = new Array ();
+    this._pop_over = new PopOver ();
   },
-    
+
   /**
    * @protected
    * @function
    */
   initComponent: function ()
   {
-    this._split_views = new Array ();
-    this._pop_over = new PopOver ();
- 
-    View.prototype.initComponent.call (this);
- 
+    this._super ();
     this._pop_over.init ();
-    View.prototype.add.call (this, this._pop_over);
 
     this._pop_over.hide ();
+    document.body.appendChild (this._pop_over.view);
+
+    if (this._mode) this.mode = this._mode;
+    else this.mode = SplitView.TABLET_MODE;
+    
+    if (this._orientation) this.orientation = this._orientation;
+    else this.orientation = SplitView.HORIZONTAL;
   },
 
   /**
@@ -147,77 +221,26 @@ SplitView.prototype = {
    * @function
    * @param {vs.ui.EventSource} child The component to be added.
    */
-  add : function (child)
+  add : function (child, hole)
   {
-    var size, orientation;
-    if (this._split_views.length === 2)
+    if (hole === 'left_panel') this._left_views.push (child);
+    else
     {
-      console.error ('vs.ui.SplitView is limited to two views');
+      this._super (child, 'main_panel');
       return;
     }
     
-    orientation = Application.getOrientation ();
-    size = this.size;
-    if (this._split_views.length === 0)
-    {
-      child.position = [0,0];
-      child.size = [this._fisrt_view_width, size[1]];
-      if (orientation === 90 || orientation === -90)
-      {
-        View.prototype.add.call (this, child);
-        this._pop_over.hide ();
-       
-        if (this._delegate && this._delegate.willShowView)
-        {
-          this._delegate.willShowView (child, this._pop_over);
-        }
-      }
-      else
-      {
-        this._pop_over.add (child);
-        this._pop_over.size =
-          [this._fisrt_view_width + 2 * this._pop_over_border_width, 500];
-        
-        if (this._delegate && this._delegate.willHideView)
-        {
-          this._delegate.willHideView (child, this._pop_over);
-        }
-      }
-    }
-    else if (this._split_views.length === 1)
-    {
-      if (orientation === 90 || orientation === -90)
-      {
-        child.position = [this._fisrt_view_width,0];
-        child.size = [size[0] - this._fisrt_view_width, size[1]];
-      }
-      else
-      {
-        child.position = [0,0];
-        child.size = size;
-      }
-      
-      View.prototype.add.call (this, child);
-    }
     
-    this._split_views.push (child);
+    if (this._orientation === SplitView.HORIZONTAL)
+    {
+      this._super (child, 'left_panel');
+    }
+    else
+    {
+      this._pop_over.add (child);
+    }
   },
-  
-  /**
-   * Remove the specified child component from this component.
-   * 
-   * @example
-   * myObject.remove (myButton);
-   *
-   * @name vs.ui.SplitView#remove 
-   * @function
-   * @param {vs.ui.EventSource} child The component to be removed.
-   */
-  remove : function (child)
-  {
-    View.prototype.remove.call (this, child);
-  },
-  
+    
   /**
    * Remove all children components from this component and free them.
    * 
@@ -260,36 +283,8 @@ SplitView.prototype = {
    */
   refresh : function ()
   {
-    var size = this.size, child, orientation;
-    
-    orientation = Application.getOrientation ();
-    child = this._split_views [0];
-    if (child)
-    {
-      if (orientation === 90 || orientation === -90)
-      {
-        child.position = [0,0];
-        child.size = [this._fisrt_view_width, size[1]];
-      }
-    }
-    
-    child = this._split_views [1];
-    if (child)
-    {
-      if (orientation === 90 || orientation === -90)
-      {
-        child.position = [this._fisrt_view_width,0];
-        child.size = [size[0] - this._fisrt_view_width, size[1]];
-      }
-      else
-      {
-        child.position = [0,0];
-        child.size = size;
-      }
-    }
-
-    // propagate to child
-    View.prototype.refresh.call (this);
+    this._super ();
+    if (this._pop_over.visible) this._pop_over.refresh ();
   },
   
   /**
@@ -298,9 +293,21 @@ SplitView.prototype = {
    */
   orientationWillChange : function (orientation)
   {
+    if (orientation === 90 || orientation === -90)
+      this.orientation = SplitView.HORIZONTAL;
+    else
+      this.orientation = SplitView.VERICAL; 
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  _set_orientation : function (orientation)
+  {
     var size = this.size, child, orientation;
     
-    child = this._split_views [0];
+    child = this._left_views [0];
     if (child)
     {
       if (orientation === 90 || orientation === -90)
@@ -313,10 +320,8 @@ SplitView.prototype = {
         
         if (!this.isChild (child))
         {
-          View.prototype.add.call (this, child);
+          View.prototype.add.call (this, child, 'left_panel');
         }
-        child.position = [0,0];
-        child.size = [this._fisrt_view_width, size[1]];
         child.show (child.refresh);
         
         if (this._delegate && this._delegate.willShowView)
@@ -344,21 +349,6 @@ SplitView.prototype = {
         }
       }
     }
-    
-    child = this._split_views [1];
-    if (child)
-    {
-      if (orientation === 90 || orientation === -90)
-      {
-        child.position = [this._fisrt_view_width,0];
-        child.size = [size[0] - this._fisrt_view_width, size[1]];
-      }
-      else
-      {
-        child.position = [0,0];
-        child.size = size;
-      }
-    }
   },
   
   /**
@@ -368,30 +358,57 @@ SplitView.prototype = {
   orientationDidChange : function (orientation)
   {
     this.refresh ();
+  },
+  
+  /**
+   * @function
+   */
+  showPopOver : function (pos, direction)
+  {
+    if (this._mode !== SplitView.TABLET_MODE ||
+        this._orientation !== SplitView.VERTICAL) return;
+
+    this._pop_over.show (pos, direction);
+    this._pop_over.refresh ();
+  },
+  
+  /**
+   * @function
+   */
+  hidePopOver : function ()
+  {
+    this._pop_over.hide ();
+  },
+  
+  /**
+   * @function
+   */
+  showMainView : function ()
+  {
+    if (this._mode !== SplitView.MOBILE_MODE) return;
+
+    this.addClassName ('main_view_visible');
+  },
+  
+  /**
+   * @function
+   */
+  hideMainView : function ()
+  {
+    if (this._mode !== SplitView.MOBILE_MODE) return;
+
+    this.removeClassName ('main_view_visible');
   }
-};
-util.extendClass (SplitView, View);
+});
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperty (SplitView, "delegate", {
-  /** 
-   * Set the delegate.
-   * It should implements following methods
-   *  <ul>
-   *    <li/>viewWillStartZooming : function (vs.ui.ScrollView the view)
-   *    <li/>viewDidEndZooming : function (vs.ui.ScrollView the view, number scale)
-   *  </ul>
-   * @name vs.ui.SplitView#delegate 
-   * @type {Object}
-   */ 
-  set : function (v)
-  {
-    this._delegate = v;
-  }
-});
+SplitView.TABLET_MODE = 'tablet';
+SplitView.MOBILE_MODE = 'mobile';
+SplitView.VERTICAL = 'vertical';
+SplitView.HORIZONTAL = 'horizontal';
 
 /********************************************************************
                       Export

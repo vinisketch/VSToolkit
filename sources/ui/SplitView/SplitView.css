@@ -1,2 +1,62 @@
-.vs_ui_splitview
-{}
+.vs_ui_splitview {
+  width: 100%;
+  height: 100%;
+}
+
+.vs_ui_splitview > div:nth-child(1) {
+  position: relative;
+}
+
+.vs_ui_splitview > div:nth-child(2) {
+  position: relative;
+}
+
+.vs_ui_splitview.mobile > div {
+  -webkit-transform: translate(0,0);
+  -webkit-transition: -webkit-transform ease 300ms;
+}
+
+.vs_ui_splitview.mobile.main_view_visible > div {
+  -webkit-transform: translate(-100%,0);
+}
+
+.vs_ui_splitview.mobile > div:nth-child(1) {
+  width: 100%;
+  height: 100%;
+}
+
+.vs_ui_splitview.mobile > div:nth-child(2) {
+  width: 100%;
+  height: 100%;
+}
+
+.vs_ui_splitview {
+  display: -webkit-box;
+  -webkit-box-orient: horizontal;
+}
+
+.vs_ui_splitview.tablet.horizontal > div:nth-child(1) {
+  -webkit-box-flex: 0;
+  box-flex: 0;
+  width: 30%;
+  height: 100%;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+.vs_ui_splitview.tablet.horizontal > div:nth-child(2) {
+  -webkit-box-flex: 0;
+  box-flex: 0;
+  position: relative;
+  width: 70%;
+  height: 100%;
+  z-index: 0;
+}
+
+.vs_ui_splitview.tablet.vertical > div:nth-child(1) {
+  display:none;
+}
+
+.vs_ui_splitview.tablet.vertical > div:nth-child(2) {
+  width: 100%;
+}
