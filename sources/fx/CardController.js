@@ -113,17 +113,17 @@ function CardController (owner)
  * The duration of the animation between two views
  * @name vs.fx.CardController.ANIMATION_DURATION
  */
-CardController.ANIMATION_DURATION = 500;
+CardController.ANIMATION_DURATION = 300;
 
 /**
- * Left out card slide (defaut)
+ * Left out card slide
  * @name vs.fx.CardController.LEFT_OUT
  * @const
  */
 CardController.LEFT_OUT = 0;
 
 /**
- * Right out card slide
+ * Right out card slide (defaut)
  * @name vs.fx.CardController.RIGHT_OUT
  * @const
  */
@@ -154,7 +154,7 @@ CardController.prototype = {
    * @protected
    * @type {number}
    */
-  _direction : CardController.LEFT_OUT,
+  _direction : CardController.RIGHT_OUT,
 
   /**
    *
