@@ -182,7 +182,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
   var initWithParameters, parseValue, applySimpleAnimation, applyStyleTo,
     runComplexAnimation, applyComplexAnimation,
     cssAnimation, anim_id = core.createId (),
-    isComplex = isComplexAnimation ();
+    isComplex = isComplexAnimation (),
+    forceCallback = false;
 
   initWithParameters = function ()
   {
@@ -300,7 +301,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
       // do nothing if that event just bubbled from our target's sub-tree
       if (event.currentTarget !== comp.view) { return; }
       
-      comp.view.removeEventListener (TRANSITION_END, callback, false);
+      if (!forceCallback)
+        comp.view.removeEventListener (TRANSITION_END, callback, false);
       
       // clear transition parameters
       comp.view.style.removeProperty (TRANSITION_DURATION);
@@ -315,9 +317,13 @@ var procesAnimation = function (comp, animation, clb, ctx)
     // if durations is egal to 0, no event is generated a the end.
     // Then use a small time
     dur = parseFloat (comp.view.style [TRANSITION_DURATION]);
-    if (dur === 0) comp.view.style [TRANSITION_DURATION] = "0.0001s";
+    if (dur === 0) forceCallback = true;
     
-    comp.view.addEventListener (TRANSITION_END, callback, false);  
+    if (!forceCallback)
+      comp.view.addEventListener (TRANSITION_END, callback, false);
+     else setTimeout (function () {
+      callback ({currentTarget: comp.view});
+    }, 0);
     
     applyStyleTo ();
   };
@@ -374,7 +380,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
       // do nothing if that event just bubbled from our target's sub-tree
       if (event.currentTarget !== comp.view) { return; }
       
-      comp.view.removeEventListener (ANIMATION_END, callback, false);
+      if (!forceCallback)
+        comp.view.removeEventListener (ANIMATION_END, callback, false);
       
       // apply the last state
       if (isComplex) { applyStyleTo (); }
@@ -415,9 +422,14 @@ var procesAnimation = function (comp, animation, clb, ctx)
     // if durations is egal to 0, no event is generated a the end.
     // Then use a small time
     dur = parseFloat (comp.view.style [ANIMATION_DURATION]);
-    if (dur === 0) comp.view.style [ANIMATION_DURATION] = "0.0001s";
+    if (dur === 0) forceCallback = true;
 
-    comp.view.addEventListener (ANIMATION_END, callback, false);
+    if (!forceCallback)
+      comp.view.addEventListener (ANIMATION_END, callback, false);
+    else setTimeout (function () {
+      callback ({currentTarget: comp.view});
+    }, 0);
+
     anim_name = comp.getStyle (ANIMATION_NAME);
     
     if (!anim_name) { anim_name = anim_id; }
