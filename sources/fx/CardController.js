@@ -187,8 +187,13 @@ var CardController = vs.core.createClass ({
 
     if (owner)
     {
-      this._transition_out = new TranslateAnimation (0,0,0);
-      this._transition_in = new TranslateAnimation (0,0,0);
+      this._transition_out = new Animation (['translate', '${x}%,${y}%,0']);
+      this._transition_out.x = 0;
+      this._transition_out.y = 0;
+      
+      this._transition_in = new Animation (['translate', '${x}%,${y}%,0']);
+      this._transition_in.x = 0;
+      this._transition_in.y = 0;
   
       this.animationDuration = CardController.ANIMATION_DURATION;
     }
@@ -209,23 +214,23 @@ var CardController = vs.core.createClass ({
     
     if (this._direction === CardController.LEFT_OUT)
     {
-      this._transition_out.x = -size [0];
+      this._transition_out.x = -100;
       this._transition_out.y = 0;
     }
     else if (this._direction === CardController.RIGHT_OUT)
     {
-      this._transition_out.x = size [0];
+      this._transition_out.x = 100;
       this._transition_out.y = 0;
     }
     else if (this._direction === CardController.BOTTOM_OUT)
     {
       this._transition_out.x = 0;
-      this._transition_out.y =  size [1];
+      this._transition_out.y = 100;
     }
     else
     {
       this._transition_out.x = 0;
-      this._transition_out.y = -size [1];
+      this._transition_out.y = -100;
     }
   },
 
@@ -334,19 +339,19 @@ var CardController = vs.core.createClass ({
     else transform = "translate";
     if (this._direction === CardController.LEFT_OUT)
     {
-      transform += "(-" + size [0] + "px,0";
+      transform += "(-100%,0";
     }
     else if (this._direction === CardController.RIGHT_OUT)
     {
-      transform += "(" + size [0] + "px,0";
+      transform += "(100%,0";
     }
     else if (this._direction === CardController.BOTTOM_OUT)
     {
-      transform += "(0," + size [1] + "px";
+      transform += "(0,100%";
     }
     else
     {
-      transform += "(0,-" + size [1] + "px";
+      transform += "(0,-100%";
     }
     if (SUPPORT_3D_TRANSFORM) transform += ",0)";
     else transform += ")";
@@ -565,19 +570,19 @@ var CardController = vs.core.createClass ({
 
             if (this.__controller__._direction === CardController.LEFT_OUT)
             {
-              transform = "(-" + this._size [0] + "px,0px"; 
+              transform = "(-100%,0px"; 
             }
             else if (this.__controller__._direction === CardController.RIGHT_OUT)
             {
-              transform = "(" + this._size [0] + "px,0px"; 
+              transform = "(100%,0px"; 
             }
             else if (this.__controller__._direction === CardController.BOTTOM_OUT)
             {
-              transform = "(0px," + this._size [1] + "px"; 
+              transform = "(0px,100%"; 
             }
             else
             {
-              transform = "(0px,-" + this._size [1] + "px"; 
+              transform = "(0px,-100%"; 
             }    
             if (SUPPORT_3D_TRANSFORM) transform += ",0)";
             else transform += ")";
