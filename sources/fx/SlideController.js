@@ -297,8 +297,6 @@ var SlideController = vs.core.createClass ({
     
     this.addTransition (this._last_comp_id, state_id, StackController.NEXT);
     this.addTransition (state_id, this._last_comp_id, StackController.PRED);
-//    this.addTransition 
-//      (state_id, this._initial_component, StackController.FIRST);
     
     // create the second view 
     state = this._fsm._list_of_state [state_id];
@@ -436,7 +434,6 @@ var SlideController = vs.core.createClass ({
           duration = Math.floor (duration * this.__delta / size [1]);
           this.animationDuration = duration;
         }
-//        this.__curent_comp.translate (0, 0);
       }
       document.removeEventListener (core.POINTER_END, this, true);
       document.removeEventListener (core.POINTER_MOVE, this, true);
