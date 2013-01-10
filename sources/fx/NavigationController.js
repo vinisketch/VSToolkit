@@ -462,7 +462,13 @@ NavigationController.prototype = {
       this.owner._nav_bar.changeState
         (state_id, this.owner.__nav_bar_states [state_id]);
     }
-  }
+  },
+  
+  /**
+   *  @protected
+   *  do nothing, will be managed by _stackAnimateComponents
+   */
+  _animateComponents : fx.Controller.prototype._animateComponents
 };
 util.extendClass (NavigationController, StackController);
 
