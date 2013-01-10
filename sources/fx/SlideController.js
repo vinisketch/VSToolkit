@@ -523,7 +523,7 @@ var SlideController = vs.core.createClass ({
  *
  * @name vs.fx.SlideController.ANIMATION_DURATION
  */
-SlideController.ANIMATION_DURATION = 500;
+SlideController.ANIMATION_DURATION = 300;
 
 /**
  * Horizontal slide (defaut)
