@@ -74,49 +74,13 @@
  *
  * @param {vs.ui.View} owner the View using this Layer [mandatory]
  */
-function SlideController (owner)
-{
-  this.parent = StackController;
-  this.parent (owner);
-  this.constructor = SlideController;
+var SlideController = vs.core.createClass ({
+
+  parent: vs.fx.StackController,
   
-  if (!arguments.length) return;
-  
-  this._transition_out_left = new TranslateAnimation (0,0,0);
-  this._transition_out_right = new TranslateAnimation (0,0,0);
-  this._transition_in = new TranslateAnimation (0,0,0);
-
-  this.animationDuration = SlideController.ANIMATION_DURATION;
-}
-
-/**
- * The duration of the animation between two views
- *
- * @name vs.fx.SlideController.ANIMATION_DURATION
- */
-SlideController.ANIMATION_DURATION = 500;
-
-/**
- * Horizontal slide (defaut)
- *
- * @name vs.fx.SlideController.HORIZONTAL
- * @const
- */
-SlideController.HORIZONTAL = 0;
-
-/**
- * Vertical slide
- *
- * @name vs.fx.SlideController.VERTICAL
- * @const
- */
-SlideController.VERTICAL = 1;
-
-SlideController.prototype = {
-
-/********************************************************************
-                  protected members declarations
-********************************************************************/
+  /********************************************************************
+                    protected members declarations
+  ********************************************************************/
   /**
    *
    * @protected
@@ -129,7 +93,7 @@ SlideController.prototype = {
    * @protected
    * @type {number}
    */
-  _orientation : SlideController.HORIZONTAL,
+  _orientation : 0,
     
   /**
    *
@@ -150,11 +114,79 @@ SlideController.prototype = {
    * @protected
    * @type {vs.fx.TranslateAnimation}
    */
-  _transition_in : null,  
+  _transition_in : null,
 
-/*********************************************************
- *                 behavior update
- *********************************************************/
+  /********************************************************************
+                    Define class properties
+  ********************************************************************/
+
+  properties: {
+    'orientation': {
+      /** 
+       * Getter|Setter for page slide orientation. It can take the value
+       * vs.fx.SlideController.HORIZONTAL or vs.fx.SlideController.VERTICAL.
+       * By default the slider is horizontal.
+       * @name vs.fx.SlideController#orientation 
+       * @type String
+       */ 
+      set : function (v)
+      {
+        var state, state_id, i = 0, pos = 0;
+      
+        if (v !== SlideController.HORIZONTAL &&
+            v !== SlideController.VERTICAL) { return; }
+      
+        this._orientation = v;
+        this._updateViewSize ();
+      },
+  
+      /** 
+       * @ignore
+       * @return {String}
+       */ 
+      get : function ()
+      {
+        return this._orientation;
+      }
+    },
+    
+    'animationDuration': {
+      /** 
+       * Set the animation/transition temporisation (in millisecond)
+       * @name vs.fx.SlideController#animationDuration 
+       * @type {number}
+       */ 
+      set : function (v)
+      {
+        if (!v) { v = 0; }
+        if (!util.isNumber (v)) { return };
+      
+        this._animation_duration = v;
+        this._transition_out_left.duration = this._animation_duration + 'ms';
+        this._transition_out_right.duration = this._animation_duration + 'ms';
+        this._transition_in.duration = this._animation_duration + 'ms';
+      }
+    }
+  },
+
+  constructor : function (owner)
+  {
+    this._super (owner);
+    
+    this._orientation = SlideController.HORIZONTAL;
+
+    if (!arguments.length) return;
+  
+    this._transition_out_left = new TranslateAnimation (0,0,0);
+    this._transition_out_right = new TranslateAnimation (0,0,0);
+    this._transition_in = new TranslateAnimation (0,0,0);
+
+    this.animationDuration = SlideController.ANIMATION_DURATION;
+  },
+
+  /*********************************************************
+   *                 behavior update
+   *********************************************************/
   /**
    * @protected
    * @function
@@ -329,9 +361,9 @@ SlideController.prototype = {
     setElementTransform (comp.view, transform);
   },
 
-/*********************************************************
- *                  Event management
- *********************************************************/
+  /*********************************************************
+   *                  Event management
+   *********************************************************/
   /**
    * @protected
    * @function
@@ -481,60 +513,31 @@ SlideController.prototype = {
       setTimeout (function () {runAnimation ();}, 0);
     });
   } 
-};
-util.extendClass (SlideController, StackController);
-
-/********************************************************************
-                  Define class properties
-********************************************************************/
-
-util.defineClassProperties (SlideController, {
-  'orientation': {
-    /** 
-     * Getter|Setter for page slide orientation. It can take the value
-     * vs.fx.SlideController.HORIZONTAL or vs.fx.SlideController.VERTICAL.
-     * By default the slider is horizontal.
-     * @name vs.fx.SlideController#orientation 
-     * @type String
-     */ 
-    set : function (v)
-    {
-      var state, state_id, i = 0, pos = 0;
-      
-      if (v !== SlideController.HORIZONTAL &&
-          v !== SlideController.VERTICAL) { return; }
-      
-      this._orientation = v;
-      this._updateViewSize ();
-    },
-  
-    /** 
-     * @ignore
-     * @return {String}
-     */ 
-    get : function ()
-    {
-      return this._orientation;
-    }
-  },
-  'animationDuration': {
-    /** 
-     * Set the animation/transition temporisation (in millisecond)
-     * @name vs.fx.SlideController#animationDuration 
-     * @type {number}
-     */ 
-    set : function (v)
-    {
-      if (!v) { v = 0; }
-      if (!util.isNumber (v)) { return };
-      
-      this._animation_duration = v;
-      this._transition_out_left.duration = this._animation_duration + 'ms';
-      this._transition_out_right.duration = this._animation_duration + 'ms';
-      this._transition_in.duration = this._animation_duration + 'ms';
-    }
-  }
 });
+
+/**
+ * The duration of the animation between two views
+ *
+ * @name vs.fx.SlideController.ANIMATION_DURATION
+ */
+SlideController.ANIMATION_DURATION = 500;
+
+/**
+ * Horizontal slide (defaut)
+ *
+ * @name vs.fx.SlideController.HORIZONTAL
+ * @const
+ */
+SlideController.HORIZONTAL = 0;
+
+/**
+ * Vertical slide
+ *
+ * @name vs.fx.SlideController.VERTICAL
+ * @const
+ */
+SlideController.VERTICAL = 1;
+
 /********************************************************************
                       Export
 *********************************************************************/
