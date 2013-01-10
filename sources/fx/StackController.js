@@ -382,6 +382,7 @@ StackController.prototype = {
     var current_pos = this._states_array.findItem (this._fsm._current_state);
     if (current_pos === pos) { return true; }
     
+    var state_from = this._fsm._list_of_state [this._fsm._current_state];
     if (pos > current_pos)
     {
       while (current_pos < pos - 1)
@@ -389,7 +390,10 @@ StackController.prototype = {
         this._fsm.fsmNotify (StackController.NEXT, null, true);
         current_pos ++;
       }
-      return this._fsm.fsmNotify (StackController.NEXT, null, instant);
+      this._fsm.fsmNotify (StackController.NEXT, null, true);
+      
+      var state_to = this._fsm._list_of_state [this._fsm._current_state];
+      this._stackAnimateComponents (1, state_from.comp, state_to.comp, instant);
     }
     else
     {
@@ -398,10 +402,19 @@ StackController.prototype = {
         this._fsm.fsmNotify (StackController.PRED, null, true);
         current_pos --;
       }
-      return this._fsm.fsmNotify (StackController.PRED, null, instant);
+      this._fsm.fsmNotify (StackController.PRED, null, true);
+
+      var state_to = this._fsm._list_of_state [this._fsm._current_state];
+      this._stackAnimateComponents (-1, state_from.comp, state_to.comp, instant);
     }
   },
 
+  /**
+   *  @protected
+   */
+  _stackAnimateComponents : function (order, fromComp, toComp, instant)
+  {},
+  
   /**
    * Go to the next view if it exist.
    *
