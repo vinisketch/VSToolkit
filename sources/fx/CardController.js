@@ -94,67 +94,20 @@
  * @param {String} extension The hole into the vs.ui.View will be inserted. 
  *     ['children' by default]
  */
-function CardController (owner)
-{
-  this.parent = StackController;
-  this.parent (owner);
-  this.constructor = CardController;
-  
-  if (owner)
-  {
-    this._transition_out = new TranslateAnimation (0,0,0);
-    this._transition_in = new TranslateAnimation (0,0,0);
-  
-    this.animationDuration = CardController.ANIMATION_DURATION;
-  }
-}
+var CardController = vs.core.createClass ({
 
-/**
- * The duration of the animation between two views
- * @name vs.fx.CardController.ANIMATION_DURATION
- */
-CardController.ANIMATION_DURATION = 300;
+  parent: vs.fx.StackController,
 
-/**
- * Left out card slide
- * @name vs.fx.CardController.LEFT_OUT
- * @const
- */
-CardController.LEFT_OUT = 0;
-
-/**
- * Right out card slide (defaut)
- * @name vs.fx.CardController.RIGHT_OUT
- * @const
- */
-CardController.RIGHT_OUT = 1;
-
-/**
- * Top out card slide
- * @name vs.fx.CardController.TOP_OUT
- * @const
- */
-CardController.TOP_OUT = 2;
-
-/**
- * Bottom out card slide
- * @name vs.fx.CardController.BOTTOM_OUT
- * @const
- */
-CardController.BOTTOM_OUT = 3;
-
-CardController.prototype = {
-
-/********************************************************************
-                  protected members declarations
-********************************************************************/
+  /********************************************************************
+                    protected members declarations
+  ********************************************************************/
   
   /**
    *
    * @protected
    * @type {number}
    */
-  _direction : CardController.RIGHT_OUT,
+  _direction : 0,
 
   /**
    *
@@ -170,9 +123,80 @@ CardController.prototype = {
    */
   _transition_in : null,  
 
-/*********************************************************
- *                behavior update
- *********************************************************/
+  /********************************************************************
+                    Define class properties
+  ********************************************************************/
+
+  properties : {
+
+    'direction': {
+      /** 
+       * Getter|Setter Card slide direction 
+       * @name vs.fx.CardController#direction 
+       * @type String
+       */ 
+      set : function (v)
+      {
+        var state, state_id, i = 0, pos = 0, index, transform = '',
+          size = this._owner.size;
+      
+        if (v !== CardController.LEFT_OUT &&
+            v !== CardController.RIGHT_OUT &&
+            v !== CardController.BOTTOM_OUT &&
+            v !== CardController.TOP_OUT) { return; }
+      
+        this._direction = v;
+        this._updateViewSize ();
+      },
+  
+      /** 
+       * @ignore
+       * @return {String}
+       */ 
+      get : function ()
+      {
+        return this._direction;
+      }
+    },
+
+    'animationDuration': {
+      /** 
+       * Set the animation/transition temporisation (in millisecond)
+       * @name vs.fx.CardController#animationDuration 
+       * @type {number}
+       */ 
+      set : function (v)
+      {
+        if (!v) { v = 0; }
+        if (!util.isNumber (v)) { return };
+      
+        this._animation_duration = v;
+        if (this._transition_out)
+          this._transition_out.duration = this._animation_duration + 'ms';
+        if (this._transition_in)
+          this._transition_in.duration = this._animation_duration + 'ms';
+      }
+    }
+  },
+  
+  constructor : function (owner)
+  {
+    this._super (owner);
+
+    this._direction = CardController.RIGHT_OUT;
+
+    if (owner)
+    {
+      this._transition_out = new TranslateAnimation (0,0,0);
+      this._transition_in = new TranslateAnimation (0,0,0);
+  
+      this.animationDuration = CardController.ANIMATION_DURATION;
+    }
+  },
+
+  /*********************************************************
+   *                behavior update
+   *********************************************************/
   
   /**
    * @protected
@@ -205,9 +229,9 @@ CardController.prototype = {
     }
   },
 
-/*********************************************************
- *                  Event management
- *********************************************************/
+  /*********************************************************
+   *                  Event management
+   *********************************************************/
 
   /**
    *  Add a child component to the Slider Manager
@@ -632,64 +656,41 @@ CardController.prototype = {
     });
     else runAnimation ();
   } 
-};
-util.extendClass (CardController, StackController);
-
-/********************************************************************
-                  Define class properties
-********************************************************************/
-
-util.defineClassProperties (CardController, {
-
-  'direction': {
-    /** 
-     * Getter|Setter Card slide direction 
-     * @name vs.fx.CardController#direction 
-     * @type String
-     */ 
-    set : function (v)
-    {
-      var state, state_id, i = 0, pos = 0, index, transform = '',
-        size = this._owner.size;
-      
-      if (v !== CardController.LEFT_OUT &&
-          v !== CardController.RIGHT_OUT &&
-          v !== CardController.BOTTOM_OUT &&
-          v !== CardController.TOP_OUT) { return; }
-      
-      this._direction = v;
-      this._updateViewSize ();
-    },
-  
-    /** 
-     * @ignore
-     * @return {String}
-     */ 
-    get : function ()
-    {
-      return this._direction;
-    }
-  },
-  'animationDuration': {
-    /** 
-     * Set the animation/transition temporisation (in millisecond)
-     * @name vs.fx.CardController#animationDuration 
-     * @type {number}
-     */ 
-    set : function (v)
-    {
-      if (!v) { v = 0; }
-      if (!util.isNumber (v)) { return };
-      
-      this._animation_duration = v;
-      if (this._transition_out)
-        this._transition_out.duration = this._animation_duration + 'ms';
-      if (this._transition_in)
-        this._transition_in.duration = this._animation_duration + 'ms';
-    }
-  }
 });
 
+/**
+ * The duration of the animation between two views
+ * @name vs.fx.CardController.ANIMATION_DURATION
+ */
+CardController.ANIMATION_DURATION = 300;
+
+/**
+ * Left out card slide
+ * @name vs.fx.CardController.LEFT_OUT
+ * @const
+ */
+CardController.LEFT_OUT = 0;
+
+/**
+ * Right out card slide (defaut)
+ * @name vs.fx.CardController.RIGHT_OUT
+ * @const
+ */
+CardController.RIGHT_OUT = 1;
+
+/**
+ * Top out card slide
+ * @name vs.fx.CardController.TOP_OUT
+ * @const
+ */
+CardController.TOP_OUT = 2;
+
+/**
+ * Bottom out card slide
+ * @name vs.fx.CardController.BOTTOM_OUT
+ * @const
+ */
+CardController.BOTTOM_OUT = 3;
 
 /********************************************************************
                       Export
