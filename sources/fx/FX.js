@@ -28,80 +28,174 @@ var vs = window.vs,
   setElementTransform = util.setElementTransform,
   getElementTransform = util.getElementTransform,
   SUPPORT_3D_TRANSFORM = vs.SUPPORT_3D_TRANSFORM;
+  
+vs.CSS_VENDOR
 
-if (util.vsTestStyle.webkitTransform !== undefined)
+function createProperty (name)
 {
-  var ANIMATION_DURATION = "-webkit-animation-duration";
-  var ANIMATION_DELAY = "-webkit-animation-delay";
-  var ANIMATION_NAME = "-webkit-animation-name";
-  var ANIMATION_END = "webkitAnimationEnd";
-  var ANIMATION_TIMING_FUNC = "-webkit-animation-timing-function";
-  
-  var TRANSITION_DURATION = "-webkit-transition-duration";
-  var TRANSITION_DELAY = "-webkit-transition-delay";
-  var TRANSITION_END = "webkitTransitionEnd";
-  var TRANSITION_TIMING_FUNC = "-webkit-transition-timing-function";
-  var TRANSITION_PROPERTY = "-webkit-transition-property";
-  
-  var TRANSFORM_ORIGIN = "-webkit-transform-origin";
-  var ITERATION_COUNT = "-webkit-animation-iteration-count";
-  var TRANSFORM = "-webkit-transform";
-  var KEY_FRAMES = "-webkit-keyframes";
-}  
-else if (util.vsTestStyle.msTransform !== undefined)
+  if (!vs.CSS_VENDOR) return name;
+  return '-' + vs.CSS_VENDOR.toLowerCase () + '-' + name;
+}
+
+/** 
+ * CSS property specifies the length of time that an animation should take to
+ * complete one cycle
+ * @name vs.ANIMATION_DURATION
+ * @type {String}
+ * @const
+ */ 
+var ANIMATION_DURATION = createProperty ("animation-duration");
+
+/** 
+ * CSS property specifies when the animation should start. This lets the
+ * animation sequence begin some time after it's applied to an element
+ * @name vs.ANIMATION_DELAY
+ * @type {String}
+ * @const
+ */ 
+var ANIMATION_DELAY = createProperty ("animation-delay");
+
+/** 
+ * CSS property specifies a list of animations that should be applied to the
+ * selected element.
+ * @name vs.ANIMATION_NAME
+ * @type {String}
+ * @const
+ */ 
+var ANIMATION_NAME = createProperty ("animation-name");
+
+/** 
+ * CSS property specifies how a CSS animation should progress over the duration
+ * of each cycle
+ * @name vs.ANIMATION_TIMING_FUNC
+ * @type {String}
+ * @const
+ */ 
+var ANIMATION_TIMING_FUNC = createProperty ("animation-timing-function");
+
+
+/** 
+ * CSS property specifies the number of seconds or milliseconds a transition
+ * animation should take to complete
+ * @name vs.TRANSITION_DURATION
+ * @type {String}
+ * @const
+ */ 
+var TRANSITION_DURATION = createProperty ("transition-duration");
+
+/** 
+ * CSS property specifies the length of time that an animation should take to
+ * complete one cycle
+ * @name vs.TRANSITION_DELAY
+ * @type {String}
+ * @const
+ */ 
+var TRANSITION_DELAY = createProperty ("transition-delay");
+
+/** 
+ * CSS property specifies the amount of time to wait between a change bein
+ * requested to a property that is to be transitioned and the start of the
+ * transition effect
+ * @name vs.TRANSITION_TIMING_FUNC
+ * @type {String}
+ * @const
+ */ 
+var TRANSITION_TIMING_FUNC = createProperty ("transition-timing-function");
+
+/** 
+ * CSS property is used to specify the names of CSS properties to which a
+ * transition effect should be applied
+ * @name vs.TRANSITION_PROPERTY
+ * @type {String}
+ * @const
+ */ 
+var TRANSITION_PROPERTY = createProperty ("transition-property");
+
+
+/** 
+ * CSS property lets you modify the origin for transformations of an element.
+ * @name vs.TRANSFORM_ORIGIN
+ * @type {String}
+ * @const
+ */ 
+var TRANSFORM_ORIGIN = createProperty ("transform-origin");
+
+/** 
+ * CSS property defines the number of times an animation cycle should be played
+ * before stopping
+ * @name vs.ITERATION_COUNT
+ * @type {String}
+ * @const
+ */ 
+var ITERATION_COUNT = createProperty ("animation-iteration-count");
+
+/** 
+ * CSS property lets you modify the coordinate space of the CSS visual
+ * formatting model
+ * @name vs.TRANSFORM
+ * @type {String}
+ * @const
+ */ 
+var TRANSFORM = createProperty ("transform");
+
+/** 
+ * CSS at-rule lets authors control the intermediate steps in a CSS animation
+ * sequence
+ * @name vs.KEY_FRAMES
+ * @type {String}
+ * @const
+ */ 
+var KEY_FRAMES = createProperty ("keyframes");
+
+
+/** 
+ * The vs.ANIMATION_END event is fired when a CSS animation has completed.
+ * @name vs.ANIMATION_END
+ * @type {String}
+ * @const
+ */ 
+var ANIMATION_END = "animationEnd";
+
+/** 
+ * The vs.TRANSITION_END event is fired when a CSS transition has completed
+ * @name vs.TRANSITION_END
+ * @type {String}
+ * @const
+ */ 
+var TRANSITION_END = "transitionEnd";
+
+if (vs.CSS_VENDOR === 'webkit')
 {
-  var ANIMATION_DURATION = "-ms-animation-duration";
-  var ANIMATION_DELAY = "-ms-animation-delay";
-  var ANIMATION_NAME = "-ms-animation-name";
-  var ANIMATION_END = "msAnimationEnd";
-  var ANIMATION_TIMING_FUNC = "-ms-animation-timing-function";
-  
-  var TRANSITION_DURATION = "-ms-transition-duration";
-  var TRANSITION_DELAY = "-ms-transition-delay";
-  var TRANSITION_END = "msTransitionEnd";
-  var TRANSITION_TIMING_FUNC = "-ms-transition-timing-function";
-  var TRANSITION_PROPERTY = "-ms-transition-property";
-  
-  var TRANSFORM_ORIGIN = "-ms-transform-origin";
-  var ITERATION_COUNT = "-ms-animation-iteration-count";
-  var TRANSFORM = "-ms-transform";
-  var KEY_FRAMES = "-ms-keyframes";
+  ANIMATION_END = "webkitAnimationEnd";
+  TRANSITION_END = "webkitTransitionEnd";
 }  
-else if (util.vsTestStyle.MozTransform !== undefined)
+else if (vs.CSS_VENDOR === 'ms')
 {
-  var ANIMATION_DURATION = "-moz-animation-duration";
-  var ANIMATION_DELAY = "-moz-animation-delay";
-  var ANIMATION_NAME = "-moz-animation-name";
-  var ANIMATION_END = "animationend";
-  var ANIMATION_TIMING_FUNC = "-moz-animation-timing-function";
-  
-  var TRANSITION_DURATION = "-moz-transition-duration";
-  var TRANSITION_DELAY = "-moz-transition-delay";
-  var TRANSITION_END = "transitionend";
-  var TRANSITION_TIMING_FUNC = "-moz-transition-timing-function";
-  var TRANSITION_PROPERTY = "-moz-transition-property";
-  
-  var TRANSFORM_ORIGIN = "-moz-transform-origin";
-  var ITERATION_COUNT = "-moz-animation-iteration-count";
-  var TRANSFORM = "-moz-transform";
-  var KEY_FRAMES = "-moz-keyframes";
+  ANIMATION_END = "msAnimationEnd";
+  TRANSITION_END = "msTransitionEnd";
 }  
-else
+else if (vs.CSS_VENDOR === 'moz')
 {
-  var ANIMATION_DURATION = "animation-duration";
-  var ANIMATION_DELAY = "animation-delay";
-  var ANIMATION_NAME = "animation-name";
-  var ANIMATION_END = "animationEnd";
-  var ANIMATION_TIMING_FUNC = "animation-timing-function";
-  
-  var TRANSITION_DURATION = "transition-duration";
-  var TRANSITION_DELAY = "transition-delay";
-  var TRANSITION_END = "transitionEnd";
-  var TRANSITION_TIMING_FUNC = "transition-timing-function";
-  var TRANSITION_PROPERTY = "transition-property";
-  
-  var TRANSFORM_ORIGIN = "transform-origin";
-  var ITERATION_COUNT = "animation-iteration-count";
-  var TRANSFORM = "transform";
-  var KEY_FRAMES = "keyframes";
-}  
+  ANIMATION_END = "animationend";
+  TRANSITION_END = "transitionend";
+}
+
+util.extend (vs, {
+  ANIMATION_DURATION:        ANIMATION_DURATION,
+  ANIMATION_DELAY:           ANIMATION_DELAY,
+  ANIMATION_NAME:            ANIMATION_NAME,
+  ANIMATION_TIMING_FUNC:     ANIMATION_TIMING_FUNC,
+
+  TRANSITION_DURATION:       TRANSITION_DURATION,
+  TRANSITION_PROPERTY:       TRANSITION_PROPERTY,
+  TRANSITION_DELAY:          TRANSITION_DELAY,
+  TRANSITION_TIMING_FUNC:    TRANSITION_TIMING_FUNC,
+
+  TRANSFORM_ORIGIN:          TRANSFORM_ORIGIN,
+  ITERATION_COUNT:           ITERATION_COUNT,
+  TRANSFORM:                 TRANSFORM,
+  KEY_FRAMES:                KEY_FRAMES,
+
+  ANIMATION_END:             ANIMATION_END,
+  TRANSITION_END:            TRANSITION_END
+});
