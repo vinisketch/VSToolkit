@@ -787,7 +787,6 @@ util.defineClassProperties (ScrollView, {
         v !== ScrollView.SCALE  && v !== ScrollView.ROTATION_AND_SCALE)
     { return; }
     
-    this._pinch = v;
     if (!this.view) { return; }
 
     if (v === ScrollView.NO_PINCH && this._pinch !== ScrollView.NO_PINCH)
@@ -799,6 +798,7 @@ util.defineClassProperties (ScrollView, {
       this.view.addEventListener ('gesturestart', this);
       this.view.addEventListener ('touchstart', this);
     }
+    this._pinch = v;
   }
 },
 'animationDuration': {
