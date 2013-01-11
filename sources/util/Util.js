@@ -73,10 +73,12 @@ if (vsTestStyle)
  * frame. The method takes as an argument a callback to be invoked before
  * the repaint.
  *
+ * @public
+ * @function
+ * @memberOf vs
+ *
  * @param {Function} callback A parameter specifying a function to call
  *        when it's time to update your animation for the next repaint.
- * @public
- * @memberOf vs
  */
 vs.requestAnimationFrame = window.requestAnimationFrame ||
   window.webkitRequestAnimationFrame ||
