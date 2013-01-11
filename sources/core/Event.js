@@ -26,10 +26,14 @@ FORCE_EVENT_PROPAGATION_DELAY = false;
  * @name vs.core.EVENT_SUPPORT_TOUCH
  */
 var EVENT_SUPPORT_TOUCH = false;
+var hasMSPointer = window.navigator.msPointerEnabled;
+
 if (typeof document != "undefined" && 'createTouch' in document)
   EVENT_SUPPORT_TOUCH = true;
   
-if (!EVENT_SUPPORT_TOUCH && typeof document != "undefined" &&
+else if (hasMSPointer) { EVENT_SUPPORT_TOUCH = true; }
+  
+else if (typeof document != "undefined" &&
     window.navigator && window.navigator.userAgent)
 {
   if (window.navigator.userAgent.indexOf ('Android') !== -1 ||
@@ -72,10 +76,10 @@ core.POINTER_CANCEL;
 
 if (EVENT_SUPPORT_TOUCH)
 {
-  core.POINTER_START = 'touchstart';
-  core.POINTER_MOVE = 'touchmove';
-  core.POINTER_END = 'touchend';
-  core.POINTER_CANCEL = 'touchcancel';
+  core.POINTER_START = hasMSPointer ? 'MSPointerDown' : 'touchstart';
+  core.POINTER_MOVE = hasMSPointer ? 'MSPointerMove' : 'touchmove';
+  core.POINTER_END = hasMSPointer ? 'MSPointerUp' : 'touchend';
+  core.POINTER_CANCEL = hasMSPointer ? 'MSPointerCancel' : 'touchcancel';
 }
 else
 {
