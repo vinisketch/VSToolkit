@@ -858,12 +858,12 @@ util.defineClassProperties (ScrollView, {
 
     if (this._layout)
     {
-      util.removeClassName (this._sub_view, this._layout);
+      util.removeClassName (this.view, this._layout);
     }
     this._layout = v;
     if (this._layout)
     {
-      util.addClassName (this._sub_view, this._layout);
+      util.addClassName (this.view, this._layout);
     }
   }
 }
