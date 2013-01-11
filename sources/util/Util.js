@@ -52,6 +52,19 @@ if (vsTestStyle)
       
   else if (vsTestStyle.MozTransform !== undefined) 
     vs.SUPPORT_3D_TRANSFORM = 'MozPerspective' in vsTestStyle;
+
+  vs.CSS_VENDOR = (function () {
+    var vendors = ['MozT', 'msT', 'OT', 'webkitT', 't'],
+      transform,
+      l = vendors.length;
+
+    while (--l) {
+      transform = vendors[l] + 'ransform';
+      if ( transform in vsTestStyle ) return vendors[l].substr(0, vendors[l].length-1);
+    }
+
+    return null;
+  })();
 }
 
 /********************************************************************
