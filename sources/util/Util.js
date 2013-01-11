@@ -40,9 +40,6 @@ var vsTestElem = (document)?document.createElement ('vstestelem'):null;
 var vsTestStyle = (vsTestElem)?vsTestElem.style:null;
 var __date_reg_exp = /\/Date\((-?\d+)\)\//;
 
-// Test which kind of transformation you can use
-vs.SUPPORT_CSS_TRANSFORM =
-  (vsTestStyle && (vsTestStyle.webkitTransform || vsTestStyle.msTransform));
   
 if (vsTestStyle)
 {
@@ -66,6 +63,8 @@ if (vsTestStyle)
     return null;
   })();
 }
+
+vs.SUPPORT_CSS_TRANSFORM = (vs.CSS_VENDOR !== null) ? true : false;
 
 /**
  * Tells the browser that you wish to perform an animation and requests
