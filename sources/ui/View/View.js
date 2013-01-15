@@ -2033,17 +2033,19 @@ View.prototype = {
     if (!origin) { return; }
     if (!util.isNumber (origin.x) || !util.isNumber (origin.y)) { return; }
 
-    var transform = {
-      origin: this._transform_origin,
-      tx: this.__view_t_x,
-      ty: this.__view_t_y,
-      s: this._scaling,
-      r: this._rotation
-    };
+    // Save current transform into a matrix
+    var matrix = new vs.CSSMatrix ();
+    matrix = matrix.translate
+      (this._transform_origin [0], this._transform_origin [1], 0);
+    matrix = matrix.translate (this.__view_t_x, this.__view_t_y, 0);
+    matrix = matrix.rotate (0, 0, this._rotation);
+    matrix = matrix.scale (this._scaling, this._scaling, 1);
+    matrix = matrix.translate
+      (-this._transform_origin [0], -this._transform_origin [1], 0);
+
+    this._transforms_stack.push (matrix);
     
-    this._transforms_stack.push (transform);
-    
-    // init new transform space
+    // Init a new transform space
     this.__view_t_x = 0;
     this.__view_t_y = 0;
     this._scaling = 1;
@@ -2059,6 +2061,12 @@ View.prototype = {
    */
   clearTransformStack : function ()
   {
+    var index = this._transforms_stack.length, matrix;
+    while (index)
+    {
+      matrix = this._transforms_stack [--index];
+      delete (matrix);
+    }
     this._transforms_stack = [];
   },
   
@@ -2068,7 +2076,7 @@ View.prototype = {
    */
   _calculateTransformMatrix: function ()
   {
-    var matrix = new WebKitCSSMatrix (), transform, matrix_tmp;
+    var matrix = new vs.CSSMatrix (), transform, matrix_tmp;
     
     // apply current transformation
     matrix = matrix.translate (this._transform_origin [0], this._transform_origin [1], 0);
@@ -2081,16 +2089,9 @@ View.prototype = {
     var index = this._transforms_stack.length;
     while (index)
     {
-      matrix_tmp = new WebKitCSSMatrix ();
-      transform = this._transforms_stack [--index];
-      matrix_tmp = matrix_tmp.translate (transform.origin [0], transform.origin [1], 0);
-      matrix_tmp = matrix_tmp.translate (transform.tx, transform.ty, 0);
-      matrix_tmp = matrix_tmp.rotate (0, 0, transform.r);
-      matrix_tmp = matrix_tmp.scale (transform.s, transform.s, 1);
-      matrix_tmp = matrix_tmp.translate (-transform.origin [0], -transform.origin [1], 0);
+      matrix_tmp = this._transforms_stack [--index];
       
       matrix = matrix.multiply (matrix_tmp);
-      delete (matrix_tmp);
     }
 
     return matrix;
@@ -2116,7 +2117,7 @@ View.prototype = {
 //   getProjection: function (pos)
 //   {
 //     var matrix = this._calculateTransformMatrix ();   
-//     var matrix_tmp = new WebKitCSSMatrix ();
+//     var matrix_tmp = new vs.CSSMatrix ();
 //         
 //     matrix_tmp = matrix_tmp.translate (pos.x, pos.y, pos.z || 0);
 //     matrix = matrix.multiply (matrix_tmp);
