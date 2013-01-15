@@ -856,7 +856,6 @@ List.prototype = {
     // ne gerer que la difference
     this._renderData (this._items_selectable);
     this.refresh ();
-    this._clearScroll ();
   },
 
   /**
@@ -925,7 +924,7 @@ List.prototype = {
       e.stopPropagation ();
       e.preventDefault ();
       
-      self._list_items.style.webkitTransition = '';
+      util.setElementTransform (self._list_items, '');
       self.__max_scroll = self.size [1] - self._list_items.offsetHeight;
       
       document.addEventListener (core.POINTER_MOVE, accessBarMove, false);
@@ -997,7 +996,8 @@ List.prototype = {
       if (self._endScrolling) self._endScrolling ();
     };
 
-    this._direct_access.addEventListener (core.POINTER_START, accessBarStart, false);
+    this._direct_access.addEventListener
+      (core.POINTER_START, accessBarStart, false);
   },
   
   getTitlePosition : function (index)
@@ -1142,8 +1142,13 @@ util.defineClassProperties (List, {
     /** 
      * Getter|Setter for filters. Allow to filter item data.
      * @ex:
-     *   list.filters = 
-     *      [{property:'title', value:'o', matching:vs.ui.List.FILTER_CONTAINS, strict:true];
+     *   list.filters = [
+     *     {
+     *       property:'title',
+     *       value:'o',
+     *       matching:vs.ui.List.FILTER_CONTAINS,
+     *       strict:true
+     *     }];
      *
      * @name vs.ui.List#filters 
      *
