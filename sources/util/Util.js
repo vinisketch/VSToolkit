@@ -86,6 +86,13 @@ vs.requestAnimationFrame = window.requestAnimationFrame ||
   window.msRequestAnimationFrame ||
   function (callback) { window.setTimeout (callback, 1000 / 60); };
 
+vs.cancelRequestAnimationFrame = window.cancelRequestAnimationFrame ||
+  window.webkitCancelAnimationFrame ||
+  window.mozCancelAnimationFrame ||
+  window.oCancelAnimationFrame ||
+  window.msCancelAnimationFrame ||
+  clearTimeout;
+
 /********************************************************************
 
 *********************************************************************/
@@ -1412,6 +1419,25 @@ else if (vsTestStyle && vsTestStyle.MozTransform !== undefined)
   setElementTransform = setElementMozTransform;
   getElementTransform = getElementMozTransform;
 }
+
+/** 
+ *  Set the CSS transformation to a element
+ *
+ *  @memberOf vs.util
+ *
+ * @param {Element} elem The element
+ * @param {String} origin. The value is a CSS string. Ex: '50% 0%',
+ *                 or '10px 10px'
+ **/
+function setElementTransformOrigin (elem, value)
+{
+  if (elem && elem.style) 
+  {
+    elem.style ['-' + vs.CSS_VENDOR.toLowerCase () + '-transform-origin'] = value;
+  }
+  else console.warn ("setElementTransformOrigin, elem null or without style");
+}
+
 /********************************************************************
                     Array extension
 *********************************************************************/
@@ -1879,6 +1905,7 @@ util.extend (util, {
   setElementInnerText:        setElementInnerText,
   setElementTransform:        setElementTransform,
   getElementTransform:        getElementTransform,
+  setElementTransformOrigin:  setElementTransformOrigin,
   getBoundingClientRect:      
     (vsTestElem && vsTestElem.getBoundingClientRect)?
     _getBoundingClientRect_api2:_getBoundingClientRect_api1,
