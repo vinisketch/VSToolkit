@@ -328,6 +328,8 @@ View.prototype = {
     this._children = {};
     delete (this.view);
     
+    this.clearTransformStack ();
+    
     core.EventSource.prototype.destructor.call (this);
   },
 
@@ -575,7 +577,8 @@ View.prototype = {
     // automaticaly if the parent container is resized
     this._pos = [-1, -1];
     this._size = [-1, -1];
-    this._transform_origin = [50, 50];
+    this._transform_origin = [0, 0];
+    this._transforms_stack = [];
 
     // rules for positionning a object
     this._autosizing = [4,4];
@@ -599,6 +602,8 @@ View.prototype = {
     this.view.setAttribute ('x-hag-comp', this.id);
 
     this._parse_view (this.view);
+    
+    this.view.style ['-webkit-transform-origin'] = '0px 0px';
   },
       
   /**
@@ -1976,7 +1981,7 @@ View.prototype = {
     this.__view_t_x = x;
     this.__view_t_y = y;
     
-    this.applyTransformation2D ();
+    this._applyTransformation ();
   },
   
   /**
@@ -1994,7 +1999,7 @@ View.prototype = {
     
     this._rotation = r;
     
-    this.applyTransformation2D ();
+    this._applyTransformation ();
   },
   
   /**
@@ -2014,36 +2019,121 @@ View.prototype = {
  
     this._scaling = s;
     
-    this.applyTransformation2D ();
+    this._applyTransformation ();
+  },
+  
+  /**
+   *  Define a new transformation matrix, using the transformation origin 
+   *  set as parameter.
+   * @public
+   * @function
+   *
+   * @param {Object} origin is a object reference a x and y position
+   */
+  setNewTransformOrigin : function (origin)
+  {
+    if (!origin) { return; }
+    if (!util.isNumber (origin.x) || !util.isNumber (origin.y)) { return; }
+
+    var transform = {
+      origin: this._transform_origin,
+      tx: this.__view_t_x,
+      ty: this.__view_t_y,
+      s: this._scaling,
+      r: this._rotation
+    };
+    
+    this._transforms_stack.push (transform);
+    
+    // init new transform space
+    this.__view_t_x = 0;
+    this.__view_t_y = 0;
+    this._scaling = 1;
+    this._rotation = 0;
+    
+    this._transform_origin = [origin.x, origin.y];
+  },
+  
+  /**
+   *  Remove all previous transformations set for this view
+   * @public
+   * @function
+   */
+  clearTransformStack : function ()
+  {
+    this._transforms_stack = [];
   },
   
   /**
    * @protected
    * @function
    */
-  applyTransformation2D: function ()
+  _calculateTransformMatrix: function ()
   {
-    var transform = '';
+    var matrix = new WebKitCSSMatrix (), transform, matrix_tmp;
     
-    // apply translation, therefor a strange bug appear (flick)
-    if (SUPPORT_3D_TRANSFORM)
-      transform += 
-        "translate3d("+this.__view_t_x+"px,"+this.__view_t_y+"px,0)";
-    else
-      transform += 
-        "translate("+this.__view_t_x+"px,"+this.__view_t_y+"px)";
+    // apply current transformation
+    matrix = matrix.translate (this._transform_origin [0], this._transform_origin [1], 0);
+    matrix = matrix.translate (this.__view_t_x, this.__view_t_y, 0);
+    matrix = matrix.rotate (0, 0, this._rotation);
+    matrix = matrix.scale (this._scaling, this._scaling, 1);
+    matrix = matrix.translate (-this._transform_origin [0], -this._transform_origin [1], 0);    
 
-    if (this._rotation)
+    // apply previous transformations
+    var index = this._transforms_stack.length;
+    while (--index)
     {
-      transform += " rotate(" + this._rotation + "deg)";
+      matrix_tmp = new WebKitCSSMatrix ();
+      transform = this._transforms_stack [index];
+      matrix_tmp = matrix_tmp.translate (transform.origin [0], transform.origin [1], 0);
+      matrix_tmp = matrix_tmp.translate (transform.tx, transform.ty, 0);
+      matrix_tmp = matrix_tmp.rotate (0, 0, transform.r);
+      matrix_tmp = matrix_tmp.scale (transform.s, transform.s, 1);
+      matrix_tmp = matrix_tmp.translate (-transform.origin [0], -transform.origin [1], 0);
+      
+      matrix = matrix.multiply (matrix_tmp);
+      delete (matrix_tmp);
     }
-    if (this._scaling !== 1)
-    {
-      transform += " scale(" + this._scaling + ")";
-    }
+
+    return matrix;
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  _applyTransformation: function ()
+  {
+    var matrix = this._calculateTransformMatrix ();
     
-    setElementTransform (this.view, transform);
+    setElementTransform (this.view, matrix.toString ());
+    delete (matrix_matrixtmp);
   }
+  
+//   
+//   /**
+//    * @public
+//    * @function
+//    */
+//   getProjection: function (pos)
+//   {
+//     var matrix = this._calculateTransformMatrix ();   
+//     var matrix_tmp = new WebKitCSSMatrix ();
+//         
+//     matrix_tmp = matrix_tmp.translate (pos.x, pos.y, pos.z || 0);
+//     matrix = matrix.multiply (matrix_tmp);
+//     
+//     var result = {
+//       x: matrix.m41,
+//       y: matrix.m42,
+//       z: matrix.m43,
+//     }
+//         
+//     delete (matrix);
+//     delete (matrix_tmp);
+//     
+//     return result;
+//   }
 };
 util.extendClass (View, core.EventSource);
 
@@ -2346,9 +2436,9 @@ util.defineClassProperties (View, {
       this._transform_origin [0] = v [0];
       this._transform_origin [1] = v [1];
   
-      var origin_str = this._transform_origin [0] + '% ';
-      origin_str += this._transform_origin [1] + '%';
-      this.view.style ['-webkit-transform-origin'] = origin_str;
+//      var origin_str = this._transform_origin [0] + '% ';
+//      origin_str += this._transform_origin [1] + '%';
+//      this.view.style ['-webkit-transform-origin'] = origin_str;
     },
   
     /** 
