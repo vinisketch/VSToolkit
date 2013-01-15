@@ -50,6 +50,177 @@ var vs = window.vs,
   setElementTransform = util.setElementTransform,
   getElementTransform = util.getElementTransform,
   SUPPORT_3D_TRANSFORM = vs.SUPPORT_3D_TRANSFORM;
+  
+vs.CSS_VENDOR
+
+function createProperty (name)
+{
+  if (!vs.CSS_VENDOR) return name;
+  return '-' + vs.CSS_VENDOR.toLowerCase () + '-' + name;
+}
+
+/** 
+ * CSS property specifies the length of time that an animation should take to
+ * complete one cycle
+ * @name vs.ANIMATION_DURATION
+ * @type {String}
+ * @const
+ */ 
+var ANIMATION_DURATION = createProperty ("animation-duration");
+
+/** 
+ * CSS property specifies when the animation should start. This lets the
+ * animation sequence begin some time after it's applied to an element
+ * @name vs.ANIMATION_DELAY
+ * @type {String}
+ * @const
+ */ 
+var ANIMATION_DELAY = createProperty ("animation-delay");
+
+/** 
+ * CSS property specifies a list of animations that should be applied to the
+ * selected element.
+ * @name vs.ANIMATION_NAME
+ * @type {String}
+ * @const
+ */ 
+var ANIMATION_NAME = createProperty ("animation-name");
+
+/** 
+ * CSS property specifies how a CSS animation should progress over the duration
+ * of each cycle
+ * @name vs.ANIMATION_TIMING_FUNC
+ * @type {String}
+ * @const
+ */ 
+var ANIMATION_TIMING_FUNC = createProperty ("animation-timing-function");
+
+
+/** 
+ * CSS property specifies the number of seconds or milliseconds a transition
+ * animation should take to complete
+ * @name vs.TRANSITION_DURATION
+ * @type {String}
+ * @const
+ */ 
+var TRANSITION_DURATION = createProperty ("transition-duration");
+
+/** 
+ * CSS property specifies the length of time that an animation should take to
+ * complete one cycle
+ * @name vs.TRANSITION_DELAY
+ * @type {String}
+ * @const
+ */ 
+var TRANSITION_DELAY = createProperty ("transition-delay");
+
+/** 
+ * CSS property specifies the amount of time to wait between a change bein
+ * requested to a property that is to be transitioned and the start of the
+ * transition effect
+ * @name vs.TRANSITION_TIMING_FUNC
+ * @type {String}
+ * @const
+ */ 
+var TRANSITION_TIMING_FUNC = createProperty ("transition-timing-function");
+
+/** 
+ * CSS property is used to specify the names of CSS properties to which a
+ * transition effect should be applied
+ * @name vs.TRANSITION_PROPERTY
+ * @type {String}
+ * @const
+ */ 
+var TRANSITION_PROPERTY = createProperty ("transition-property");
+
+
+/** 
+ * CSS property lets you modify the origin for transformations of an element.
+ * @name vs.TRANSFORM_ORIGIN
+ * @type {String}
+ * @const
+ */ 
+var TRANSFORM_ORIGIN = createProperty ("transform-origin");
+
+/** 
+ * CSS property defines the number of times an animation cycle should be played
+ * before stopping
+ * @name vs.ITERATION_COUNT
+ * @type {String}
+ * @const
+ */ 
+var ITERATION_COUNT = createProperty ("animation-iteration-count");
+
+/** 
+ * CSS property lets you modify the coordinate space of the CSS visual
+ * formatting model
+ * @name vs.TRANSFORM
+ * @type {String}
+ * @const
+ */ 
+var TRANSFORM = createProperty ("transform");
+
+/** 
+ * CSS at-rule lets authors control the intermediate steps in a CSS animation
+ * sequence
+ * @name vs.KEY_FRAMES
+ * @type {String}
+ * @const
+ */ 
+var KEY_FRAMES = createProperty ("keyframes");
+
+
+/** 
+ * The vs.ANIMATION_END event is fired when a CSS animation has completed.
+ * @name vs.ANIMATION_END
+ * @type {String}
+ * @const
+ */ 
+var ANIMATION_END = "animationend";
+
+/** 
+ * The vs.TRANSITION_END event is fired when a CSS transition has completed
+ * @name vs.TRANSITION_END
+ * @type {String}
+ * @const
+ */ 
+var TRANSITION_END = "transitionend";
+
+if (vs.CSS_VENDOR === 'webkit')
+{
+  ANIMATION_END = "webkitAnimationEnd";
+  TRANSITION_END = "webkitTransitionEnd";
+}  
+else if (vs.CSS_VENDOR === 'ms')
+{
+  ANIMATION_END = "msAnimationEnd";
+  TRANSITION_END = "msTransitionEnd";
+}  
+else if (vs.CSS_VENDOR === 'moz')
+{
+  ANIMATION_END = "Mozanimationend";
+  TRANSITION_END = "Moztransitionend";
+}
+
+util.extend (vs, {
+  ANIMATION_DURATION:        ANIMATION_DURATION,
+  ANIMATION_DELAY:           ANIMATION_DELAY,
+  ANIMATION_NAME:            ANIMATION_NAME,
+  ANIMATION_TIMING_FUNC:     ANIMATION_TIMING_FUNC,
+
+  TRANSITION_DURATION:       TRANSITION_DURATION,
+  TRANSITION_PROPERTY:       TRANSITION_PROPERTY,
+  TRANSITION_DELAY:          TRANSITION_DELAY,
+  TRANSITION_TIMING_FUNC:    TRANSITION_TIMING_FUNC,
+
+  TRANSFORM_ORIGIN:          TRANSFORM_ORIGIN,
+  ITERATION_COUNT:           ITERATION_COUNT,
+  TRANSFORM:                 TRANSFORM,
+  KEY_FRAMES:                KEY_FRAMES,
+
+  ANIMATION_END:             ANIMATION_END,
+  TRANSITION_END:            TRANSITION_END
+});
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
@@ -67,83 +238,6 @@ var vs = window.vs,
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-
-if (util.vsTestStyle.webkitTransform !== undefined)
-{
-  var ANIMATION_DURATION = "-webkit-animation-duration";
-  var ANIMATION_DELAY = "-webkit-animation-delay";
-  var ANIMATION_NAME = "-webkit-animation-name";
-  var ANIMATION_END = "webkitAnimationEnd";
-  var ANIMATION_TIMING_FUNC = "-webkit-animation-timing-function";
-  
-  var TRANSITION_DURATION = "-webkit-transition-duration";
-  var TRANSITION_DELAY = "-webkit-transition-delay";
-  var TRANSITION_END = "webkitTransitionEnd";
-  var TRANSITION_TIMING_FUNC = "-webkit-transition-timing-function";
-  var TRANSITION_PROPERTY = "-webkit-transition-property";
-  
-  var TRANSFORM_ORIGIN = "-webkit-transform-origin";
-  var ITERATION_COUNT = "-webkit-animation-iteration-count";
-  var TRANSFORM = "-webkit-transform";
-  var KEY_FRAMES = "-webkit-keyframes";
-}  
-else if (util.vsTestStyle.msTransform !== undefined)
-{
-  var ANIMATION_DURATION = "-ms-animation-duration";
-  var ANIMATION_DELAY = "-ms-animation-delay";
-  var ANIMATION_NAME = "-ms-animation-name";
-  var ANIMATION_END = "msAnimationEnd";
-  var ANIMATION_TIMING_FUNC = "-ms-animation-timing-function";
-  
-  var TRANSITION_DURATION = "-ms-transition-duration";
-  var TRANSITION_DELAY = "-ms-transition-delay";
-  var TRANSITION_END = "msTransitionEnd";
-  var TRANSITION_TIMING_FUNC = "-ms-transition-timing-function";
-  var TRANSITION_PROPERTY = "-ms-transition-property";
-  
-  var TRANSFORM_ORIGIN = "-ms-transform-origin";
-  var ITERATION_COUNT = "-ms-animation-iteration-count";
-  var TRANSFORM = "-ms-transform";
-  var KEY_FRAMES = "-ms-keyframes";
-}  
-else if (util.vsTestStyle.MozTransform !== undefined)
-{
-  var ANIMATION_DURATION = "-moz-animation-duration";
-  var ANIMATION_DELAY = "-moz-animation-delay";
-  var ANIMATION_NAME = "-moz-animation-name";
-  var ANIMATION_END = "animationend";
-  var ANIMATION_TIMING_FUNC = "-moz-animation-timing-function";
-  
-  var TRANSITION_DURATION = "-moz-transition-duration";
-  var TRANSITION_DELAY = "-moz-transition-delay";
-  var TRANSITION_END = "transitionend";
-  var TRANSITION_TIMING_FUNC = "-moz-transition-timing-function";
-  var TRANSITION_PROPERTY = "-moz-transition-property";
-  
-  var TRANSFORM_ORIGIN = "-moz-transform-origin";
-  var ITERATION_COUNT = "-moz-animation-iteration-count";
-  var TRANSFORM = "-moz-transform";
-  var KEY_FRAMES = "-moz-keyframes";
-}  
-else
-{
-  var ANIMATION_DURATION = "animation-duration";
-  var ANIMATION_DELAY = "animation-delay";
-  var ANIMATION_NAME = "animation-name";
-  var ANIMATION_END = "animationEnd";
-  var ANIMATION_TIMING_FUNC = "animation-timing-function";
-  
-  var TRANSITION_DURATION = "transition-duration";
-  var TRANSITION_DELAY = "transition-delay";
-  var TRANSITION_END = "transitionEnd";
-  var TRANSITION_TIMING_FUNC = "transition-timing-function";
-  var TRANSITION_PROPERTY = "transition-property";
-  
-  var TRANSFORM_ORIGIN = "transform-origin";
-  var ITERATION_COUNT = "animation-iteration-count";
-  var TRANSFORM = "transform";
-  var KEY_FRAMES = "keyframes";
-}  
 
 /**
  * @private
@@ -234,7 +328,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
   var initWithParameters, parseValue, applySimpleAnimation, applyStyleTo,
     runComplexAnimation, applyComplexAnimation,
     cssAnimation, anim_id = core.createId (),
-    isComplex = isComplexAnimation ();
+    isComplex = isComplexAnimation (),
+    forceCallback = false;
 
   initWithParameters = function ()
   {
@@ -352,7 +447,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
       // do nothing if that event just bubbled from our target's sub-tree
       if (event.currentTarget !== comp.view) { return; }
       
-      comp.view.removeEventListener (TRANSITION_END, callback, false);
+      if (!forceCallback)
+        comp.view.removeEventListener (TRANSITION_END, callback, false);
       
       // clear transition parameters
       comp.view.style.removeProperty (TRANSITION_DURATION);
@@ -367,9 +463,13 @@ var procesAnimation = function (comp, animation, clb, ctx)
     // if durations is egal to 0, no event is generated a the end.
     // Then use a small time
     dur = parseFloat (comp.view.style [TRANSITION_DURATION]);
-    if (dur === 0) comp.view.style [TRANSITION_DURATION] = "0.0001s";
+    if (dur === 0) forceCallback = true;
     
-    comp.view.addEventListener (TRANSITION_END, callback, false);  
+    if (!forceCallback)
+      comp.view.addEventListener (TRANSITION_END, callback, false);
+     else setTimeout (function () {
+      callback ({currentTarget: comp.view});
+    }, 0);
     
     applyStyleTo ();
   };
@@ -426,7 +526,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
       // do nothing if that event just bubbled from our target's sub-tree
       if (event.currentTarget !== comp.view) { return; }
       
-      comp.view.removeEventListener (ANIMATION_END, callback, false);
+      if (!forceCallback)
+        comp.view.removeEventListener (ANIMATION_END, callback, false);
       
       // apply the last state
       if (isComplex) { applyStyleTo (); }
@@ -467,9 +568,14 @@ var procesAnimation = function (comp, animation, clb, ctx)
     // if durations is egal to 0, no event is generated a the end.
     // Then use a small time
     dur = parseFloat (comp.view.style [ANIMATION_DURATION]);
-    if (dur === 0) comp.view.style [ANIMATION_DURATION] = "0.0001s";
+    if (dur === 0) forceCallback = true;
 
-    comp.view.addEventListener (ANIMATION_END, callback, false);
+    if (!forceCallback)
+      comp.view.addEventListener (ANIMATION_END, callback, false);
+    else setTimeout (function () {
+      callback ({currentTarget: comp.view});
+    }, 0);
+
     anim_name = comp.getStyle (ANIMATION_NAME);
     
     if (!anim_name) { anim_name = anim_id; }
@@ -2736,14 +2842,17 @@ StackController.prototype = {
    * @name vs.fx.StackController#goToViewId
    * @function
    * 
-   * @return true if the transition is possible, false if not (no view exists)
+   * @param {String} id The state id (component id)
+   * @param {Function} clb a function reference, will be called at the end
+   *                   of transition
+   * @param {boolean} instant Force a transition without animation
    */
-  goToViewId : function (id, instant)
+  goToViewId : function (id, clb, instant)
   {
     var pos = this._states_array.findItem (id);
     if (pos === -1) { return false; }
     
-    this.goToViewAt (pos, instant);
+    this.goToViewAt (pos, clb, instant);
   },
 
   /**
@@ -2753,8 +2862,11 @@ StackController.prototype = {
    * @function
    *
    * @param {number} index The component index
+   * @param {Function} clb a function reference, will be called at the end
+   *                   of transition
+   * @param {boolean} instant Force a transition without animation
    */
-  goToViewAt : function (pos, instant)
+  goToViewAt : function (pos, clb, instant)
   {
     if (pos < 0) { return false; }
     if (pos > this._states_array.length) { return false; }
@@ -2762,6 +2874,7 @@ StackController.prototype = {
     var current_pos = this._states_array.findItem (this._fsm._current_state);
     if (current_pos === pos) { return true; }
     
+    var state_from = this._fsm._list_of_state [this._fsm._current_state];
     if (pos > current_pos)
     {
       while (current_pos < pos - 1)
@@ -2769,7 +2882,10 @@ StackController.prototype = {
         this._fsm.fsmNotify (StackController.NEXT, null, true);
         current_pos ++;
       }
-      return this._fsm.fsmNotify (StackController.NEXT, instant);
+      this._fsm.fsmNotify (StackController.NEXT, null, true);
+      
+      var state_to = this._fsm._list_of_state [this._fsm._current_state];
+      this._stackAnimateComponents (1, state_from.comp, state_to.comp, clb, instant);
     }
     else
     {
@@ -2778,21 +2894,46 @@ StackController.prototype = {
         this._fsm.fsmNotify (StackController.PRED, null, true);
         current_pos --;
       }
-      return this._fsm.fsmNotify (StackController.PRED, instant);
+      this._fsm.fsmNotify (StackController.PRED, null, true);
+
+      var state_to = this._fsm._list_of_state [this._fsm._current_state];
+      this._stackAnimateComponents (-1, state_from.comp, state_to.comp, clb, instant);
     }
   },
 
+  /**
+   *  @protected
+   */
+  _stackAnimateComponents : function (order, fromComp, toComp, clb, instant)
+  {},
+  
+  /**
+   *  @protected
+   *  do nothing, will be managed by _stackAnimateComponents
+   */
+  _animateComponents :
+    function (fromComp, toComp, animationOut, animationIn, animation_clb, instant)
+  {},
+  
   /**
    * Go to the next view if it exist.
    *
    * @name vs.fx.StackController#goToNextView
    * @function
    * 
+   * @param {Function} clb a function reference, will be called at the end
+   *                   of transition
+   * @param {boolean} instant Force a transition without animation
    * @return true if the transition is possible, false if not (no view exists)
    */
-  goToNextView : function (instant)
+  goToNextView : function (clb, instant)
   {
-    return this._fsm.fsmNotify (StackController.NEXT, null, instant);
+    var state_from = this._fsm._list_of_state [this._fsm._current_state],
+      r = this._fsm.fsmNotify (StackController.NEXT, null, true),
+      state_to = this._fsm._list_of_state [this._fsm._current_state];
+
+    if (r) this._stackAnimateComponents (1, state_from.comp, state_to.comp, clb, instant);
+    return r;
   },
 
   /**
@@ -2801,11 +2942,19 @@ StackController.prototype = {
    * @name vs.fx.StackController#goToPreviousView
    * @function
    * 
+   * @param {Function} clb a function reference, will be called at the end
+   *                   of transition
+   * @param {boolean} instant Force a transition without animation
    * @return true if the transition is possible, false if not (no view exists)
    */
-  goToPreviousView : function (instant)
+  goToPreviousView : function (clb, instant)
   {
-    return this._fsm.fsmNotify (StackController.PRED, null, instant);
+    var state_from = this._fsm._list_of_state [this._fsm._current_state],
+      r = this._fsm.fsmNotify (StackController.PRED, null, true),
+      state_to = this._fsm._list_of_state [this._fsm._current_state];
+
+    if (r) this._stackAnimateComponents (-1, state_from.comp, state_to.comp, clb, instant);
+    return r;
   },
 
   /**
@@ -2814,11 +2963,19 @@ StackController.prototype = {
    * @name vs.fx.StackController#goToFirstView
    * @function
    * 
+   * @param {Function} clb a function reference, will be called at the end
+   *                   of transition
+   * @param {boolean} instant Force a transition without animation
    * @return true if the transition is possible
    */
-  goToFirstView : function (instant)
+  goToFirstView : function (clb, instant)
   {
-    return this._fsm.fsmNotify (StackController.FIRST, instant);
+    var state_from = this._fsm._list_of_state [this._fsm._current_state],
+      r = this._fsm.fsmNotify (StackController.FIRST, null, true),
+      state_to = this._fsm._list_of_state [this._fsm._current_state];
+
+    if (r) this._stackAnimateComponents (-1, state_from.comp, state_to.comp, clb, instant);
+    return r;
   },
 
   /**
@@ -3012,49 +3169,13 @@ fx.StackController = StackController;
  *
  * @param {vs.ui.View} owner the View using this Layer [mandatory]
  */
-function SlideController (owner)
-{
-  this.parent = StackController;
-  this.parent (owner);
-  this.constructor = SlideController;
+var SlideController = vs.core.createClass ({
+
+  parent: vs.fx.StackController,
   
-  if (!arguments.length) return;
-  
-  this._transition_out_1 = new TranslateAnimation (0,0,0);
-  this._transition_out_2 = new TranslateAnimation (0,0,0);
-  this._transition_clear = new TranslateAnimation (0,0,0);
-
-  this.animationDuration = SlideController.ANIMATION_DURATION;
-}
-
-/**
- * The duration of the animation between two views
- *
- * @name vs.fx.SlideController.ANIMATION_DURATION
- */
-SlideController.ANIMATION_DURATION = 500;
-
-/**
- * Horizontal slide (defaut)
- *
- * @name vs.fx.SlideController.HORIZONTAL
- * @const
- */
-SlideController.HORIZONTAL = 0;
-
-/**
- * Vertical slide
- *
- * @name vs.fx.SlideController.VERTICAL
- * @const
- */
-SlideController.VERTICAL = 1;
-
-SlideController.prototype = {
-
-/********************************************************************
-                  protected members declarations
-********************************************************************/
+  /********************************************************************
+                    protected members declarations
+  ********************************************************************/
   /**
    *
    * @protected
@@ -3067,62 +3188,136 @@ SlideController.prototype = {
    * @protected
    * @type {number}
    */
-  _orientation : SlideController.HORIZONTAL,
+  _orientation : 0,
     
   /**
    *
    * @protected
    * @type {vs.fx.TranslateAnimation}
    */
-  _transition_out_1 : null,
+  _transition_out_left : null,
   
   /**
    *
    * @protected
    * @type {vs.fx.TranslateAnimation}
    */
-  _transition_out_2 : null,
+  _transition_out_right : null,
     
   /**
    *
    * @protected
    * @type {vs.fx.TranslateAnimation}
    */
-  _transition_clear : null,  
+  _transition_in : null,
 
-/*********************************************************
- *                 behavior update
- *********************************************************/
+  /********************************************************************
+                    Define class properties
+  ********************************************************************/
+
+  properties: {
+    'orientation': {
+      /** 
+       * Getter|Setter for page slide orientation. It can take the value
+       * vs.fx.SlideController.HORIZONTAL or vs.fx.SlideController.VERTICAL.
+       * By default the slider is horizontal.
+       * @name vs.fx.SlideController#orientation 
+       * @type String
+       */ 
+      set : function (v)
+      {
+        var state, state_id, i = 0, pos = 0;
+      
+        if (v !== SlideController.HORIZONTAL &&
+            v !== SlideController.VERTICAL) { return; }
+      
+        this._orientation = v;
+        this._updateViewSize ();
+      },
+  
+      /** 
+       * @ignore
+       * @return {String}
+       */ 
+      get : function ()
+      {
+        return this._orientation;
+      }
+    },
+    
+    'animationDuration': {
+      /** 
+       * Set the animation/transition temporisation (in millisecond)
+       * @name vs.fx.SlideController#animationDuration 
+       * @type {number}
+       */ 
+      set : function (v)
+      {
+        if (!v) { v = 0; }
+        if (!util.isNumber (v)) { return };
+      
+        this._animation_duration = v;
+        this._transition_out_left.duration = this._animation_duration + 'ms';
+        this._transition_out_right.duration = this._animation_duration + 'ms';
+        this._transition_in.duration = this._animation_duration + 'ms';
+      }
+    }
+  },
+
+  constructor : function (owner)
+  {
+    this._super (owner);
+    
+    this._orientation = SlideController.HORIZONTAL;
+
+    if (!arguments.length) return;
+  
+    this._transition_out_left = new Animation (['translate', '${x}%,${y}%,0']);
+    this._transition_out_left.x = 0;
+    this._transition_out_left.y = 0;
+    
+    this._transition_out_right = new Animation (['translate', '${x}%,${y}%,0']);
+    this._transition_out_right.x = 0;
+    this._transition_out_right.y = 0;
+
+    this._transition_in = new Animation (['translate', '0,0,0']);
+ 
+    this.animationDuration = SlideController.ANIMATION_DURATION;
+  },
+
+  /*********************************************************
+   *                 behavior update
+   *********************************************************/
   /**
    * @protected
    * @function
    */
   _updateViewSize : function ()
   {
-    var size = this.viewSize, i, state_id, state, transform;
+    var i, state_id, state, transform;
     if (this._orientation === SlideController.HORIZONTAL)
     {
-      this._transition_out_1.x = -size [0];
-      this._transition_out_1.y = 0;
-      this._transition_out_2.x = size [0];
-      this._transition_out_2.y = 0;
+      this._transition_out_left.x = -100;
+      this._transition_out_left.y = 0;
+      this._transition_out_right.x = 100;
+      this._transition_out_right.y = 0;
     }
     else if (this._orientation === SlideController.VERTICAL)
     {
-      this._transition_out_1.x = 0;
-      this._transition_out_1.y = -size [1];
-      this._transition_out_2.x = 0;
-      this._transition_out_2.y = size [1];
+      this._transition_out_left.x = 0;
+      this._transition_out_left.y = -100;
+      this._transition_out_right.x = 0;
+      this._transition_out_right.y = 100;
     }
     
     // define transformation for view before current one
     if (this._orientation === SlideController.HORIZONTAL)
     {
-      transform = "translate3D(-" + size [0] + "px,0,0)";
+      transform = "translate3D(-100%,0,0)";
     }
     else if (this._orientation === SlideController.VERTICAL)
     {
-      transform = "translate3D(0,-" + size [1] + "px,0)";
+      transform = "translate3D(0,-100%,0)";
     }
     
     for (i = 0; i < this._states_array.length; i++)
@@ -3137,11 +3332,11 @@ SlideController.prototype = {
         // define transformation for view after current one
         if (this._orientation === SlideController.HORIZONTAL)
         {
-          transform = "translate3D(" + size [0] + "px,0,0)";
+          transform = "translate3D(100%,0,0)";
         }
         else if (this._orientation === SlideController.VERTICAL)
         {
-          transform = "translate3D(0," + size [1] + "px,0)";
+          transform = "translate3D(0,100%,0)";
         }
         
         // set no transformation for the current one
@@ -3201,12 +3396,8 @@ SlideController.prototype = {
       return state_id;
     }
     
-    this.addTransition (this._last_comp_id, state_id, StackController.NEXT,
-      this._transition_out_1, this._transition_clear);
-    this.addTransition (state_id, this._last_comp_id, StackController.PRED,
-      this._transition_out_2, this._transition_clear);
-//    this.addTransition 
-//      (state_id, this._initial_component, StackController.FIRST);
+    this.addTransition (this._last_comp_id, state_id, StackController.NEXT);
+    this.addTransition (state_id, this._last_comp_id, StackController.PRED);
     
     // create the second view 
     state = this._fsm._list_of_state [state_id];
@@ -3254,24 +3445,24 @@ SlideController.prototype = {
    */
   configureNewComponent : function (comp)
   {
-    var transform, size;
-    size = this.viewSize;      
+    var transform;
+          
     if (this._orientation === SlideController.HORIZONTAL)
     {
-      transform = "translate3D(" + size [0] + "px,0,0)";
+      transform = "translate3D(100%,0,0)";
     }
     else if (this._orientation === SlideController.VERTICAL)
     {
-      transform = "translate3D(0," + size [1] + "px,0)";
+      transform = "translate3D(0,100%,0)";
     }
 
     comp.view.style.webkitTransitionDuration = '0';
     setElementTransform (comp.view, transform);
   },
 
-/*********************************************************
- *                  Event management
- *********************************************************/
+  /*********************************************************
+   *                  Event management
+   *********************************************************/
   /**
    * @protected
    * @function
@@ -3344,7 +3535,6 @@ SlideController.prototype = {
           duration = Math.floor (duration * this.__delta / size [1]);
           this.animationDuration = duration;
         }
-//        this.__curent_comp.translate (0, 0);
       }
       document.removeEventListener (core.POINTER_END, this, true);
       document.removeEventListener (core.POINTER_MOVE, this, true);
@@ -3360,168 +3550,93 @@ SlideController.prototype = {
     StackController.prototype.refresh.call (this);
     this._updateViewSize ();
   },
-
-//   /**
-//    * @protected
-//    *
-//    * @param {number} orientation = {0, 180, -90, 90}
-//    */
-//   orientationDidChange: function (orientation)
-//   { 
-//     this.refresh ();
-//   },
-
-//   /**
-//    *  Private method use by the fsm to cross a transition.
-//    *  @note for the moment only one ouput lexem can be generation when
-//    *  crossing a transition
-//    *  @private
-//    *
-//    * @param {String} id_sate the id of target state.
-//    * @param {String} output
-//    * @param {Object} event the event
-//    */
-//   goTo : function (state_id, output, event)
-//   {
-//     var state_to, index = this._states_array.indexOf (state_id),
-//       size = this.owner.size, callback, self = this,
-//       duration = self._animation_duration, __delta = this.owner.__delta;
-//     // manage output
-//     // TODO WARNING
-//     StackController.prototype.goTo.call (self, state_id, output, event);
-//     if (!state_id) { return; }
-// 
-//     state_to = self._list_of_state [self._current_state];
-//     if (self._orientation === SlideController.HORIZONTAL)
-//     {
-//       self._delta = index * size [0];
-//       self.owner._sub_view.style.width = (index + 1) * size [0] + 'px';
-//       self.owner._sub_view.style.height = size [1] + 'px';
-//     }
-//     else
-//     {
-//       self._delta = index * size [1];
-//       self.owner._sub_view.style.width = size [0] + 'px';
-//       self.owner._sub_view.style.height = (index + 1) * size [1] + 'px';
-//     }
-//         
-//     function initState (index)
-//     {
-//       var state_id = self._states_array [index],
-//           state = self._list_of_state [state_id];
-//       
-//       if (!state) { return; }
-// 
-//       if (!state.comp)
-//       {
-//         state.comp = self.owner.createAndAddComponent
-//           (state.comp_name, state.init_data, state.extension);
-//           
-//         state.comp.configure (state.init_data);
-//         if (state.comp && state.comp.propertiesDidChange) 
-//         { 
-//           state.comp.propertiesDidChange ();
-//         }
-//         state.comp.propertyChange ();
-//       }
-//       state.comp.show ();  
-//     }
-//     
-//     /// left/top component 
-//     if (index > 0) { initState.call (self, index - 1); }
-// 
-//     /// right/bottom component 
-//     if (index < self._states_array.length - 1)
-//     { initState.call (self, index + 1); }
-//      
-//     callback = function () 
-//     {
-//       if (self._delegate && self._delegate.animationDidEnd)
-//       { self._delegate.animationDidEnd (self); }
-//     }
-// 
-//     if (!util.isNumber (__delta)) { __delta = 0; }
-//     else { __delta = Math.abs (__delta); }
-//     if (self._orientation === SlideController.HORIZONTAL)
-//     {
-//       duration = Math.floor (duration * (size[0] - __delta) / size [0]);
-//       self.owner.animationDuration = duration;
-//       self.owner.insideTranslate (-self._delta, 0, callback);
-//     }
-//     else
-//     {
-//       duration = Math.floor (duration * (size[1] - __delta) / size [1]);
-//       self.owner.animationDuration = duration;
-//       self.owner.insideTranslate (0, -self._delta, callback);
-//     }
-// 
-//     if (output && self._output_action [output])
-//     {
-//       var clb = self._output_action [output];
-//       if (clb instanceof Function)
-//       {
-//         clb.call (self.owner, event);
-//       }
-//       else if (util.isString (clb))
-//       {
-//         self.owner [self._output_action [output]] (event);
-//       }
-//     }
-//   }
-};
-util.extendClass (SlideController, StackController);
-
-/********************************************************************
-                  Define class properties
-********************************************************************/
-
-util.defineClassProperties (SlideController, {
-  'orientation': {
-    /** 
-     * Getter|Setter for page slide orientation. It can take the value
-     * vs.fx.SlideController.HORIZONTAL or vs.fx.SlideController.VERTICAL.
-     * By default the slider is horizontal.
-     * @name vs.fx.SlideController#orientation 
-     * @type String
-     */ 
-    set : function (v)
-    {
-      var state, state_id, i = 0, pos = 0;
-      
-      if (v !== SlideController.HORIZONTAL &&
-          v !== SlideController.VERTICAL) { return; }
-      
-      this._orientation = v;
-      this._updateViewSize ();
-    },
   
-    /** 
-     * @ignore
-     * @return {String}
-     */ 
-    get : function ()
+  /**
+   *  @protected
+   */
+  _stackAnimateComponents : function (order, fromComp, toComp, clb, instant)
+  {
+    var animationIn = this._transition_in, animationOut,
+      setPosition, durations_tmp;
+    if (order > 0)
     {
-      return this._orientation;
+      setPosition = this._transition_out_right;
+      animationOut = this._transition_out_left;
     }
-  },
-  'animationDuration': {
-    /** 
-     * Set the animation/transition temporisation (in millisecond)
-     * @name vs.fx.SlideController#animationDuration 
-     * @type {number}
-     */ 
-    set : function (v)
+    else
     {
-      if (!v) { v = 0; }
-      if (!util.isNumber (v)) { return };
-      
-      this._animation_duration = v;
-      this._transition_out_1.duration = this._animation_duration + 'ms';
-      this._transition_out_2.duration = this._animation_duration + 'ms';
-      this._transition_clear.duration = this._animation_duration + 'ms';
+      setPosition = this._transition_out_left;
+      animationOut = this._transition_out_right;
     }
-  }
+    
+    durations_tmp = setPosition.durations;
+    setPosition.durations = '0s';
+    
+    var self = this, callback = function ()
+    {
+      try
+      {
+        if (self._delegate && self._delegate.controllerAnimationDidEnd)
+        {
+          self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
+        }
+        if (clb) clb.call (this.owner);
+      } catch (e) { console.error (e); }
+    },
+    
+    runAnimation = function ()
+    {
+      setPosition.durations = durations_tmp;
+      try
+      {
+        toComp.show ();
+        if (instant)
+        {
+          var inDurations = animationIn.durations;
+          animationIn.durations = '0s';
+          var outDurations = animationOut.durations;
+          animationOut.durations = '0s';
+        }
+        animationIn.process (toComp, callback, self);
+        animationOut.process (fromComp); 
+
+        if (instant)
+        {
+          animationIn.durations = inDurations;
+          animationOut.durations = outDurations;
+        }
+      }
+      catch (e) { console.error (e); }
+    };
+    setPosition.process (toComp, function () {
+      setTimeout (function () {runAnimation ();}, 0);
+    });
+  } 
 });
+
+/**
+ * The duration of the animation between two views
+ *
+ * @name vs.fx.SlideController.ANIMATION_DURATION
+ */
+SlideController.ANIMATION_DURATION = 300;
+
+/**
+ * Horizontal slide (defaut)
+ *
+ * @name vs.fx.SlideController.HORIZONTAL
+ * @const
+ */
+SlideController.HORIZONTAL = 0;
+
+/**
+ * Vertical slide
+ *
+ * @name vs.fx.SlideController.VERTICAL
+ * @const
+ */
+SlideController.VERTICAL = 1;
+
 /********************************************************************
                       Export
 *********************************************************************/
@@ -3752,9 +3867,10 @@ NavigationController.prototype = {
    
     var size = this._owner.size;
     
+
     this.__translate_in_right = new TranslateAnimation (0);
-    this.__translate_out_right = new TranslateAnimation (size [0]);
-    this.__translate_out_left = new TranslateAnimation (-size [0]);
+    this.__translate_out_right = new Animation (['translate', '100%,0,0']);
+    this.__translate_out_left = new Animation (['translate', '-100%,0,0']);
     this.__translate_in_left = new TranslateAnimation (0);
   },
 
@@ -3777,23 +3893,8 @@ NavigationController.prototype = {
    * @protected
    * @function
    */
-  refresh: function ()
-  {
-    Controller.prototype.refresh.call (this);
-    this._updateViewSize ();
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
   _updateViewSize : function ()
-  {
-    var size = this.viewSize, i, state_id, state, transform;
-
-    this.__translate_out_left.x = -size [0];
-    this.__translate_out_right.x = size [0];
-  },
+  {},
   
   /**
    *  Add the a child component to the Navigation Controller
@@ -3950,12 +4051,12 @@ NavigationController.prototype = {
       this.__translate_in_right.duration = "0" 
       this.__translate_out_right.duration = "0" 
     }
- },
+   },
   
 
-/*********************************************************
- *                 FSM management
- *********************************************************/
+  /*********************************************************
+   *                 FSM management
+   *********************************************************/
 
   /**
    * @protected
@@ -3991,7 +4092,13 @@ NavigationController.prototype = {
       this.owner._nav_bar.changeState
         (state_id, this.owner.__nav_bar_states [state_id]);
     }
-  }
+  },
+  
+  /**
+   *  @protected
+   *  do nothing, will be managed by _stackAnimateComponents
+   */
+  _animateComponents : fx.Controller.prototype._animateComponents
 };
 util.extendClass (NavigationController, StackController);
 
@@ -4175,67 +4282,20 @@ fx.NavigationController = NavigationController;
  * @param {String} extension The hole into the vs.ui.View will be inserted. 
  *     ['children' by default]
  */
-function CardController (owner)
-{
-  this.parent = StackController;
-  this.parent (owner);
-  this.constructor = CardController;
-  
-  if (owner)
-  {
-    this._transition_out = new TranslateAnimation (0,0,0);
-    this._transition_clear = new TranslateAnimation (0,0,0);
-  
-    this.animationDuration = CardController.ANIMATION_DURATION;
-  }
-}
+var CardController = vs.core.createClass ({
 
-/**
- * The duration of the animation between two views
- * @name vs.fx.CardController.ANIMATION_DURATION
- */
-CardController.ANIMATION_DURATION = 500;
+  parent: vs.fx.StackController,
 
-/**
- * Left out card slide (defaut)
- * @name vs.fx.CardController.LEFT_OUT
- * @const
- */
-CardController.LEFT_OUT = 0;
-
-/**
- * Right out card slide
- * @name vs.fx.CardController.RIGHT_OUT
- * @const
- */
-CardController.RIGHT_OUT = 1;
-
-/**
- * Top out card slide
- * @name vs.fx.CardController.TOP_OUT
- * @const
- */
-CardController.TOP_OUT = 2;
-
-/**
- * Bottom out card slide
- * @name vs.fx.CardController.BOTTOM_OUT
- * @const
- */
-CardController.BOTTOM_OUT = 3;
-
-CardController.prototype = {
-
-/********************************************************************
-                  protected members declarations
-********************************************************************/
+  /********************************************************************
+                    protected members declarations
+  ********************************************************************/
   
   /**
    *
    * @protected
    * @type {number}
    */
-  _direction : CardController.LEFT_OUT,
+  _direction : 0,
 
   /**
    *
@@ -4249,11 +4309,86 @@ CardController.prototype = {
    * @protected
    * @type {vs.fx.TranslateAnimation}
    */
-  _transition_clear : null,  
+  _transition_in : null,  
 
-/*********************************************************
- *                behavior update
- *********************************************************/
+  /********************************************************************
+                    Define class properties
+  ********************************************************************/
+
+  properties : {
+
+    'direction': {
+      /** 
+       * Getter|Setter Card slide direction 
+       * @name vs.fx.CardController#direction 
+       * @type String
+       */ 
+      set : function (v)
+      {
+        var state, state_id, i = 0, pos = 0, index, transform = '';
+      
+        if (v !== CardController.LEFT_OUT &&
+            v !== CardController.RIGHT_OUT &&
+            v !== CardController.BOTTOM_OUT &&
+            v !== CardController.TOP_OUT) { return; }
+      
+        this._direction = v;
+        this._updateViewSize ();
+      },
+  
+      /** 
+       * @ignore
+       * @return {String}
+       */ 
+      get : function ()
+      {
+        return this._direction;
+      }
+    },
+
+    'animationDuration': {
+      /** 
+       * Set the animation/transition temporisation (in millisecond)
+       * @name vs.fx.CardController#animationDuration 
+       * @type {number}
+       */ 
+      set : function (v)
+      {
+        if (!v) { v = 0; }
+        if (!util.isNumber (v)) { return };
+      
+        this._animation_duration = v;
+        if (this._transition_out)
+          this._transition_out.duration = this._animation_duration + 'ms';
+        if (this._transition_in)
+          this._transition_in.duration = this._animation_duration + 'ms';
+      }
+    }
+  },
+  
+  constructor : function (owner)
+  {
+    this._super (owner);
+
+    if (owner)
+    {
+      this._transition_out = new Animation (['translate', '${x}%,${y}%,0']);
+      this._transition_out.x = 0;
+      this._transition_out.y = 0;
+      
+      this._transition_in = new Animation (['translate', '${x}%,${y}%,0']);
+      this._transition_in.x = 0;
+      this._transition_in.y = 0;
+  
+      this.animationDuration = CardController.ANIMATION_DURATION;
+    }
+
+    this._direction = CardController.RIGHT_OUT;
+  },
+
+  /*********************************************************
+   *                behavior update
+   *********************************************************/
   
   /**
    * @protected
@@ -4261,34 +4396,33 @@ CardController.prototype = {
    */
   _updateViewSize : function ()
   {
-    var size = this.viewSize;
     if (!this._transition_out) return;
     
     if (this._direction === CardController.LEFT_OUT)
     {
-      this._transition_out.x = -size [0];
+      this._transition_out.x = -100;
       this._transition_out.y = 0;
     }
     else if (this._direction === CardController.RIGHT_OUT)
     {
-      this._transition_out.x = size [0];
+      this._transition_out.x = 100;
       this._transition_out.y = 0;
     }
     else if (this._direction === CardController.BOTTOM_OUT)
     {
       this._transition_out.x = 0;
-      this._transition_out.y =  size [1];
+      this._transition_out.y = 100;
     }
     else
     {
       this._transition_out.x = 0;
-      this._transition_out.y = -size [1];
+      this._transition_out.y = -100;
     }
   },
 
-/*********************************************************
- *                  Event management
- *********************************************************/
+  /*********************************************************
+   *                  Event management
+   *********************************************************/
 
   /**
    *  Add a child component to the Slider Manager
@@ -4336,18 +4470,14 @@ CardController.prototype = {
       return state_id;
     }
     
-    this.addTransition (this._last_comp_id, state_id, StackController.NEXT,
-      null, this._transition_clear);
-    this.addTransition (state_id, this._last_comp_id, StackController.PRED,
-      this._transition_out, null);
-//    this.addTransition 
-//      (state_id, this._initial_component, StackController.FIRST);
-    
+    this.addTransition (this._last_comp_id, state_id, StackController.NEXT);
+    this.addTransition (state_id, this._last_comp_id, StackController.PRED);
+   
     // create the second view 
     state = this._fsm._list_of_state [state_id];
     if (!state)
     {
-      console.error ("Unknown error in vs.fx.StackController.push");
+      console.error ("Unknown error in vs.fx.CardController.push");
       return;
     }
     if (this._last_comp_id === this._initial_component)
@@ -4389,25 +4519,25 @@ CardController.prototype = {
    */
   configureNewComponent : function (comp)
   {
-    var transform, size;
-    size = this.viewSize;
+    var transform;
+    
     if (SUPPORT_3D_TRANSFORM) transform = "translate3d";
     else transform = "translate";
     if (this._direction === CardController.LEFT_OUT)
     {
-      transform += "(-" + size [0] + "px,0";
+      transform += "(-100%,0";
     }
     else if (this._direction === CardController.RIGHT_OUT)
     {
-      transform += "(" + size [0] + "px,0";
+      transform += "(100%,0";
     }
     else if (this._direction === CardController.BOTTOM_OUT)
     {
-      transform += "(0," + size [1] + "px";
+      transform += "(0,100%";
     }
     else
     {
-      transform += "(0,-" + size [1] + "px";
+      transform += "(0,-100%";
     }
     if (SUPPORT_3D_TRANSFORM) transform += ",0)";
     else transform += ")";
@@ -4626,19 +4756,19 @@ CardController.prototype = {
 
             if (this.__controller__._direction === CardController.LEFT_OUT)
             {
-              transform = "(-" + this._size [0] + "px,0px"; 
+              transform = "(-100%,0px"; 
             }
             else if (this.__controller__._direction === CardController.RIGHT_OUT)
             {
-              transform = "(" + this._size [0] + "px,0px"; 
+              transform = "(100%,0px"; 
             }
             else if (this.__controller__._direction === CardController.BOTTOM_OUT)
             {
-              transform = "(0px," + this._size [1] + "px"; 
+              transform = "(0px,100%"; 
             }
             else
             {
-              transform = "(0px,-" + this._size [1] + "px"; 
+              transform = "(0px,-100%"; 
             }    
             if (SUPPORT_3D_TRANSFORM) transform += ",0)";
             else transform += ")";
@@ -4652,65 +4782,107 @@ CardController.prototype = {
       document.removeEventListener (core.POINTER_END, this, true);
       document.removeEventListener (core.POINTER_MOVE, this, true);
     }
-  }
-};
-util.extendClass (CardController, StackController);
-
-/********************************************************************
-                  Define class properties
-********************************************************************/
-
-util.defineClassProperties (CardController, {
-
-  'direction': {
-    /** 
-     * Getter|Setter Card slide direction 
-     * @name vs.fx.CardController#direction 
-     * @type String
-     */ 
-    set : function (v)
-    {
-      var state, state_id, i = 0, pos = 0, index, transform = '',
-        size = this._owner.size;
-      
-      if (v !== CardController.LEFT_OUT &&
-          v !== CardController.RIGHT_OUT &&
-          v !== CardController.BOTTOM_OUT &&
-          v !== CardController.TOP_OUT) { return; }
-      
-      this._direction = v;
-      this._updateViewSize ();
-    },
-  
-    /** 
-     * @ignore
-     * @return {String}
-     */ 
-    get : function ()
-    {
-      return this._direction;
-    }
   },
-  'animationDuration': {
-    /** 
-     * Set the animation/transition temporisation (in millisecond)
-     * @name vs.fx.CardController#animationDuration 
-     * @type {number}
-     */ 
-    set : function (v)
+  
+  /**
+   *  @protected
+   */
+  _stackAnimateComponents : function (order, fromComp, toComp, clb, instant)
+  {
+    var animation, setInitialPosAnimation, durations_tmp,
+      compToAnimate;
+
+    if (order > 0)
     {
-      if (!v) { v = 0; }
-      if (!util.isNumber (v)) { return };
-      
-      this._animation_duration = v;
-      if (this._transition_out)
-        this._transition_out.duration = this._animation_duration + 'ms';
-      if (this._transition_clear)
-        this._transition_clear.duration = this._animation_duration + 'ms';
+      animation = this._transition_in;
+      compToAnimate = toComp;
     }
-  }
+    else
+    {
+      animation = this._transition_out;
+      setInitialPosAnimation = this._transition_in;
+      compToAnimate = fromComp;
+    }
+
+    if (setInitialPosAnimation)
+    {
+      durations_tmp = setInitialPosAnimation.durations;
+      setInitialPosAnimation.durations = '0s';
+    }
+    var self = this, callback = function ()
+    {
+      fromComp.hide ();
+      try
+      {
+        if (self._delegate && self._delegate.controllerAnimationDidEnd)
+        {
+          self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
+        }
+        if (clb) clb.call (this.owner);
+      } catch (e) { console.error (e); }
+    },
+    
+    runAnimation = function ()
+    {
+      if (setInitialPosAnimation)
+        setInitialPosAnimation.durations = durations_tmp;
+      try
+      {
+        toComp.show ();
+        if (instant)
+        {
+          var inDurations = animation.durations;
+          animation.durations = '0s';
+        }
+        animation.process (compToAnimate, callback, self);
+
+        if (instant)
+        {
+          animation.durations = inDurations;
+        }
+      }
+      catch (e) { console.error (e); }
+    };
+    if (setInitialPosAnimation) setInitialPosAnimation.process (toComp, function () {
+      setTimeout (function () {runAnimation ();}, 0);
+    });
+    else runAnimation ();
+  } 
 });
 
+/**
+ * The duration of the animation between two views
+ * @name vs.fx.CardController.ANIMATION_DURATION
+ */
+CardController.ANIMATION_DURATION = 300;
+
+/**
+ * Left out card slide
+ * @name vs.fx.CardController.LEFT_OUT
+ * @const
+ */
+CardController.LEFT_OUT = 0;
+
+/**
+ * Right out card slide (defaut)
+ * @name vs.fx.CardController.RIGHT_OUT
+ * @const
+ */
+CardController.RIGHT_OUT = 1;
+
+/**
+ * Top out card slide
+ * @name vs.fx.CardController.TOP_OUT
+ * @const
+ */
+CardController.TOP_OUT = 2;
+
+/**
+ * Bottom out card slide
+ * @name vs.fx.CardController.BOTTOM_OUT
+ * @const
+ */
+CardController.BOTTOM_OUT = 3;
 
 /********************************************************************
                       Export

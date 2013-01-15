@@ -148,9 +148,6 @@ var vsTestElem = (document)?document.createElement ('vstestelem'):null;
 var vsTestStyle = (vsTestElem)?vsTestElem.style:null;
 var __date_reg_exp = /\/Date\((-?\d+)\)\//;
 
-// Test which kind of transformation you can use
-vs.SUPPORT_CSS_TRANSFORM =
-  (vsTestStyle && (vsTestStyle.webkitTransform || vsTestStyle.msTransform));
   
 if (vsTestStyle)
 {
@@ -160,7 +157,49 @@ if (vsTestStyle)
       
   else if (vsTestStyle.MozTransform !== undefined) 
     vs.SUPPORT_3D_TRANSFORM = 'MozPerspective' in vsTestStyle;
+
+  vs.CSS_VENDOR = (function () {
+    var vendors = ['MozT', 'msT', 'OT', 'webkitT', 't'],
+      transform,
+      l = vendors.length;
+
+    while (--l) {
+      transform = vendors[l] + 'ransform';
+      if ( transform in vsTestStyle ) return vendors[l].substr(0, vendors[l].length-1);
+    }
+
+    return null;
+  })();
 }
+
+vs.SUPPORT_CSS_TRANSFORM = (vs.CSS_VENDOR !== null) ? true : false;
+
+/**
+ * Tells the browser that you wish to perform an animation and requests
+ * that the browser schedule a repaint of the window for the next animation
+ * frame. The method takes as an argument a callback to be invoked before
+ * the repaint.
+ *
+ * @public
+ * @function
+ * @memberOf vs
+ *
+ * @param {Function} callback A parameter specifying a function to call
+ *        when it's time to update your animation for the next repaint.
+ */
+vs.requestAnimationFrame = window.requestAnimationFrame ||
+  window.webkitRequestAnimationFrame ||
+  window.mozRequestAnimationFrame ||
+  window.oRequestAnimationFrame ||
+  window.msRequestAnimationFrame ||
+  function (callback) { window.setTimeout (callback, 1000 / 60); };
+
+vs.cancelRequestAnimationFrame = window.cancelRequestAnimationFrame ||
+  window.webkitCancelAnimationFrame ||
+  window.mozCancelAnimationFrame ||
+  window.oCancelAnimationFrame ||
+  window.msCancelAnimationFrame ||
+  clearTimeout;
 
 /********************************************************************
 
@@ -1488,6 +1527,25 @@ else if (vsTestStyle && vsTestStyle.MozTransform !== undefined)
   setElementTransform = setElementMozTransform;
   getElementTransform = getElementMozTransform;
 }
+
+/** 
+ *  Set the CSS transformation to a element
+ *
+ *  @memberOf vs.util
+ *
+ * @param {Element} elem The element
+ * @param {String} origin. The value is a CSS string. Ex: '50% 0%',
+ *                 or '10px 10px'
+ **/
+function setElementTransformOrigin (elem, value)
+{
+  if (elem && elem.style) 
+  {
+    elem.style ['-' + vs.CSS_VENDOR.toLowerCase () + '-transform-origin'] = value;
+  }
+  else console.warn ("setElementTransformOrigin, elem null or without style");
+}
+
 /********************************************************************
                     Array extension
 *********************************************************************/
@@ -1955,6 +2013,7 @@ util.extend (util, {
   setElementInnerText:        setElementInnerText,
   setElementTransform:        setElementTransform,
   getElementTransform:        getElementTransform,
+  setElementTransformOrigin:  setElementTransformOrigin,
   getBoundingClientRect:      
     (vsTestElem && vsTestElem.getBoundingClientRect)?
     _getBoundingClientRect_api2:_getBoundingClientRect_api1,
