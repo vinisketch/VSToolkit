@@ -278,6 +278,12 @@ View.prototype = {
    * @type {Array.<number>}
    */
   _transform_origin: null,
+  
+  /**
+   * @protected
+   * @type {vs.CSSMatrix}
+   */
+  _transforms_stack: null,
 
   /**
    * @protected
@@ -578,7 +584,6 @@ View.prototype = {
     this._pos = [-1, -1];
     this._size = [-1, -1];
     this._transform_origin = [0, 0];
-    this._transforms_stack = [];
 
     // rules for positionning a object
     this._autosizing = [4,4];
@@ -2043,7 +2048,11 @@ View.prototype = {
     matrix = matrix.translate
       (-this._transform_origin [0], -this._transform_origin [1], 0);
 
-    this._transforms_stack.push (matrix);
+    if (!this._transforms_stack) this._transforms_stack = matrix;
+    {
+      this._transforms_stack = matrix.multiply (this._transforms_stack);
+      delete (matrix);
+    }
     
     // Init a new transform space
     this.__view_t_x = 0;
@@ -2061,13 +2070,8 @@ View.prototype = {
    */
   clearTransformStack : function ()
   {
-    var index = this._transforms_stack.length, matrix;
-    while (index)
-    {
-      matrix = this._transforms_stack [--index];
-      delete (matrix);
-    }
-    this._transforms_stack = [];
+    if (this._transforms_stack) delete (this._transforms_stack);
+    this._transforms_stack = undefined;
   },
   
   /**
@@ -2085,16 +2089,10 @@ View.prototype = {
     matrix = matrix.scale (this._scaling, this._scaling, 1);
     matrix = matrix.translate (-this._transform_origin [0], -this._transform_origin [1], 0);    
 
-    // apply previous transformations
-    var index = this._transforms_stack.length;
-    while (index)
-    {
-      matrix_tmp = this._transforms_stack [--index];
-      
-      matrix = matrix.multiply (matrix_tmp);
-    }
-
-    return matrix;
+    
+    // apply previous transformations and return the matrix
+    if (this._transforms_stack) return matrix.multiply (this._transforms_stack);
+    else return matrix;
   },
   
   /**
@@ -2106,7 +2104,7 @@ View.prototype = {
     var matrix = this._calculateTransformMatrix ();
     
     setElementTransform (this.view, matrix.toString ());
-    delete (matrix_matrixtmp);
+    delete (matrix);
   }
   
 //   
