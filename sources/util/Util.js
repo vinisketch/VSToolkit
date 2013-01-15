@@ -67,6 +67,16 @@ if (vsTestStyle)
 vs.SUPPORT_CSS_TRANSFORM = (vs.CSS_VENDOR !== null) ? true : false;
 
 /**
+ * Represents a 4×4 homogeneous matrix that enables Document Object Model (DOM)
+ * scripting access to Cascading Style Sheets (CSS) 2-D and 3-D Transforms
+ * functionality.
+ * @public
+ * @memberOf vs
+ */
+vs.CSSMatrix = ('WebKitCSSMatrix' in window)?window.WebKitCSSMatrix:
+  ('MSCSSMatrix' in window)?window.MSCSSMatrix:FirminCSSMatrix;
+
+/**
  * Tells the browser that you wish to perform an animation and requests
  * that the browser schedule a repaint of the window for the next animation
  * frame. The method takes as an argument a callback to be invoked before
