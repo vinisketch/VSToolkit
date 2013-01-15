@@ -602,8 +602,6 @@ View.prototype = {
     this.view.setAttribute ('x-hag-comp', this.id);
 
     this._parse_view (this.view);
-    
-    this.view.style ['-webkit-transform-origin'] = '0px 0px';
   },
       
   /**
