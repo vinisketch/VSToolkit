@@ -154,7 +154,7 @@ var KEY_FRAMES = createProperty ("keyframes");
  * @type {String}
  * @const
  */ 
-var ANIMATION_END = "animationEnd";
+var ANIMATION_END = "animationend";
 
 /** 
  * The vs.TRANSITION_END event is fired when a CSS transition has completed
@@ -162,7 +162,7 @@ var ANIMATION_END = "animationEnd";
  * @type {String}
  * @const
  */ 
-var TRANSITION_END = "transitionEnd";
+var TRANSITION_END = "transitionend";
 
 if (vs.CSS_VENDOR === 'webkit')
 {
@@ -176,8 +176,8 @@ else if (vs.CSS_VENDOR === 'ms')
 }  
 else if (vs.CSS_VENDOR === 'moz')
 {
-  ANIMATION_END = "animationend";
-  TRANSITION_END = "transitionend";
+  ANIMATION_END = "Mozanimationend";
+  TRANSITION_END = "Moztransitionend";
 }
 
 util.extend (vs, {
