@@ -34,7 +34,7 @@
  */
 function AbstractList (config)
 {
-  this.parent = View;
+  this.parent = ScrollView;
   this.parent (config);
   this.constructor = AbstractList;
 }
@@ -130,16 +130,20 @@ AbstractList.prototype = {
     }
     
     this._list_items = this._sub_view = this._holes.item_children;
-    
-    if (SUPPORT_3D_TRANSFORM)
-      setElementTransform (this._list_items, 'translate3d(0,0,0)');
-    else
-      setElementTransform (this._list_items, 'translate(0,0)');
 
     this._renderData (this._items_selectable);
     this.refresh ();
   },
     
+  /**
+   * @protected
+   * @function
+   */
+  refresh : function ()
+  {
+    if (this.__iscroll__) this.__iscroll__.refresh ();
+  },
+
   /**
    * @protected
    * @function
@@ -151,7 +155,6 @@ AbstractList.prototype = {
     // ne gerer que la difference
     this._renderData (this._items_selectable);
     this.refresh ();
-    this._clearScroll ();
   },
     
   /**
@@ -169,13 +172,13 @@ AbstractList.prototype = {
   /**
    * @protected
    * @function
-   */
+  
   _untouchItemFeedback : function (item) {},
 
   /**
    * @protected
    * @function
-   */
+  
   _updateSelectItem : function (item) {},
 
   /**
@@ -185,7 +188,7 @@ AbstractList.prototype = {
   handleEvent : function (e)
   {
     var elem = e.currentTarget, self = this, pageY, pageX,
-      newPos, time, pos, index;
+      time, pos, index;
     
     if (e.type === 'click')
     {
@@ -198,22 +201,8 @@ AbstractList.prototype = {
     {
       // prevent multi touch events
       if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
-      e.stopPropagation ();
-      e.preventDefault();
 
       this.__touch_start = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
-      if (this._scroll)
-      {
-        this.__max_scroll = this.size [1] - this._list_items.offsetHeight;
-
-        if (this.__max_scroll < 0 && this._scrollbar)
-        {
-          this._scrollbar.init (this.size [1], this._list_items.offsetHeight);
-        }
-        this._list_items.style.webkitTransition = '';
-      }
-
-      this.__scroll_start_time = e.timeStamp;
   
       document.addEventListener (core.POINTER_MOVE, this, false);
       document.addEventListener (core.POINTER_END, this, false);
@@ -246,33 +235,8 @@ AbstractList.prototype = {
     }
     else if (e.type === core.POINTER_MOVE)
     {
-      e.stopPropagation ();
-      e.preventDefault ();
-
       pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
       this.__delta = pageY - this.__touch_start;  
-
-      newPos = this.__scroll_start + this.__delta;
-    
-      if (this._scroll)
-      {
-        if (this.__max_scroll < 0 && this._scrollbar)
-        {
-          this._scrollbar.show ();
-        }
-
-        if (SUPPORT_3D_TRANSFORM)
-          setElementTransform
-            (this._list_items, 'translate3d(0,' + newPos + 'px,0)');
-        else
-          setElementTransform
-            (this._list_items, 'translate(0,' + newPos + 'px)');
-
-        if (this.__max_scroll < 0 && this._scrollbar)
-        {
-          this._scrollbar.setPosition (newPos);
-        }
-      }
             
       // this is a move, not a selection => deactivate the selected element
       // if needs
@@ -289,86 +253,11 @@ AbstractList.prototype = {
     }
     else if (e.type === core.POINTER_END)
     {
-      e.stopPropagation ();
-      e.preventDefault();
-
       // Stop tracking when the last finger is removed from this element
       document.removeEventListener (core.POINTER_MOVE, this);
       document.removeEventListener (core.POINTER_END, this);
       
       if (this.__delta) { this.__scroll_start += this.__delta; }
-      
-      if (this._scroll)
-      {
-        if (this._scrollbar) this._scrollbar.hide ();
-        if (this.__max_scroll >= 0)
-        {
-          this._list_items.style.webkitTransition = '0.2s ease-out';
-          if (SUPPORT_3D_TRANSFORM)
-            setElementTransform (this._list_items, 'translate3d(0,0,0)');
-          else
-            setElementTransform (this._list_items, 'translate(0,0)');
-          this.__scroll_start = 0;
-        }
-        else if (this.__scroll_start > 0)
-        {
-          this._list_items.style.webkitTransition = '0.2s ease-out';
-          if (SUPPORT_3D_TRANSFORM)
-            setElementTransform (this._list_items, 'translate3d(0,0,0)');
-          else
-            setElementTransform (this._list_items, 'translate(0,0)');
-          this.__scroll_start = 0;
-        }
-        else if (this.__scroll_start < this.__max_scroll)
-        {
-          this._list_items.style.webkitTransition = '0.2s ease-out';
-          
-          if (SUPPORT_3D_TRANSFORM)
-            setElementTransform (this._list_items, 
-              'translate3d(0,' + this.__max_scroll + 'px,0)');
-          else
-            setElementTransform (this._list_items, 
-              'translate(0,' + this.__max_scroll + 'px)');
-          
-          this.__scroll_start = this.__max_scroll;
-        }
-        else
-        {
-          time = e.timeStamp - this.__scroll_start_time;
-          if (time < 250)
-          {
-            ///  this._momentum * 2;
-            if (this.__delta)
-            { pos = this.__scroll_start + this.__delta * 4; }
-            else
-            { pos = this.__scroll_start; }
-            
-            if ( pos > 0) // min position
-            {
-              pos = 0;
-            }
-            else if ( pos < this.__max_scroll) // maximum position
-            {
-              pos = this.__max_scroll;
-            }
-            
-            this.__scroll_start = pos;
-            
-            // animate the list
-            this._list_items.style.webkitTransition = '0.3s ease-out';
-            
-            if (SUPPORT_3D_TRANSFORM)
-              setElementTransform
-                (this._list_items, 'translate3d(0,' + pos + 'px,0)');
-            else
-              setElementTransform
-                (this._list_items, 'translate(0,' + pos + 'px)');
-            
-            // animate the scroll
-            if (this._scrollbar) this._scrollbar.setPosition (pos);
-          }
-        }
-      }
       
       // a item is selected. propagate the change
       if (this.__elem)
@@ -396,62 +285,42 @@ AbstractList.prototype = {
     }
     return false;
   },
-  
-  /**
-   * @private
-   * @function
-   */
-  _clearScroll : function ()
-  {
-    this.__scroll_start = 0;
-    
-    if (this._list_items)
-    {
-      if (SUPPORT_3D_TRANSFORM)
-        setElementTransform (this._list_items, 'translate3d(0,0,0)');
-      else
-        setElementTransform (this._list_items, 'translate(0,0)');
-    }
-    // animate the scroll
-    if (this._scrollbar)
-    { this._scrollbar.setPosition (0); }
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  _scrollToElement: function (el, delta)
-  {
-    if (!el) { return; }
-    var pos;
-    
-    var pos_el = util.getElementAbsolutePosition (el);
-    var pos_list = util.getElementAbsolutePosition (this.view);
-    this.__max_scroll = this.size [1] - this._list_items.offsetHeight;
-    
-    if (!delta) { delta = 0; }
-    
-    var scroll = this.__scroll_start + (pos_list.y - pos_el.y) + delta
-    scroll = scroll > 0 ? 0 : scroll < this.__max_scroll ? this.__max_scroll : scroll;
 
-    // animate the list
-    this._list_items.style.webkitTransition = '0.3s ease-out';
-    
-    this.__scroll_start = scroll;
-    
-    if (SUPPORT_3D_TRANSFORM)
-      setElementTransform
-        (this._list_items, 'translate3d(0,' + scroll + 'px,0)');
-    else
-      setElementTransform
-        (this._list_items, 'translate(0,' + scroll + 'px)');    
-    
-    // animate the scroll
-    if (this._scrollbar) this._scrollbar.setPosition (scroll);
-  }  
+//   /**
+//    * @protected
+//    * @function
+//    */
+//   _scrollToElement: function (el, delta)
+//   {
+//     if (!el) { return; }
+//     var pos;
+//     
+//     var pos_el = util.getElementAbsolutePosition (el);
+//     var pos_list = util.getElementAbsolutePosition (this.view);
+//     this.__max_scroll = this.size [1] - this._list_items.offsetHeight;
+//     
+//     if (!delta) { delta = 0; }
+//     
+//     var scroll = this.__scroll_start + (pos_list.y - pos_el.y) + delta
+//     scroll = scroll > 0 ? 0 : scroll < this.__max_scroll ? this.__max_scroll : scroll;
+// 
+//     // animate the list
+//     this._list_items.style.webkitTransition = '0.3s ease-out';
+//     
+//     this.__scroll_start = scroll;
+//     
+//     if (SUPPORT_3D_TRANSFORM)
+//       setElementTransform
+//         (this._list_items, 'translate3d(0,' + scroll + 'px,0)');
+//     else
+//       setElementTransform
+//         (this._list_items, 'translate(0,' + scroll + 'px)');    
+//     
+//     // animate the scroll
+//     if (this._scrollbar) this._scrollbar.setPosition (scroll);
+//   }  
 };
-util.extendClass (AbstractList, View);
+util.extendClass (AbstractList, ScrollView);
 
 /********************************************************************
                   Define class properties
@@ -471,24 +340,16 @@ util.defineClassProperties (AbstractList, {
       if (v)
       {
         this._scroll = ScrollView.VERTICAL_SCROLL;
-        var os_device = window.deviceConfiguration.os;
-        if (!this._scrollbar &&
-          os_device !== DeviceConfiguration.OS_WP7 &&
-          os_device !== DeviceConfiguration.OS_WINDOWS)
-        {
-          this._scrollbar = new Scrollbar ('vertical', this.view, true, true);
-        }
-        this.view.addEventListener (core.POINTER_START, this, false);
+        this._setup_iscroll ();
       }
       else
       {
-        this._scroll = 0;
-        if (this._scrollbar)
+        if (this.__iscroll__)
         {
-          this._scrollbar.remove ();
-          delete (this._scrollbar);
+          this.__iscroll__.destroy ();
+          this.__iscroll__ = undefined;
         }
-        this.view.removeEventListener (core.POINTER_START, this);
+        this._scroll = false;
       }
     },
   
