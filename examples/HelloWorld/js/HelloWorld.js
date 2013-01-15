@@ -10,6 +10,7 @@ var HelloWorld = vs.core.createClass ({
     this.add (hello);
 
     var animation = new vs.fx.Animation (['rotate', '720deg'], ['scale', '1']);
+    animation.origin = [50, 50];
     animation.duration = '2s';
     animation.timing = vs.fx.Animation.EASE;
     animation.addKeyFrame (0, ['0deg', 0]);
