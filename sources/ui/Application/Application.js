@@ -441,7 +441,7 @@ ImagePreloader.prototype.preload = function (image)
 
 function preventBehavior (e)
 {
-  window.scrollTo (0, 0);
+//  window.scrollTo (0, 0);
 
   if (e.type == "touchstart" &&
       (e.target.tagName == "INPUT" ||
