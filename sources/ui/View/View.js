@@ -2081,10 +2081,10 @@ View.prototype = {
 
     // apply previous transformations
     var index = this._transforms_stack.length;
-    while (--index)
+    while (index)
     {
       matrix_tmp = new WebKitCSSMatrix ();
-      transform = this._transforms_stack [index];
+      transform = this._transforms_stack [--index];
       matrix_tmp = matrix_tmp.translate (transform.origin [0], transform.origin [1], 0);
       matrix_tmp = matrix_tmp.translate (transform.tx, transform.ty, 0);
       matrix_tmp = matrix_tmp.rotate (0, 0, transform.r);
