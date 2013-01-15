@@ -57,8 +57,6 @@ function ScrollView (config)
   this.constructor = ScrollView;
   
   this.__ab_view_t_o = [50, 50];
-  
-  util.extend (this, iScroll_prototype);
 }
 
 /********************************************************************
@@ -273,20 +271,17 @@ ScrollView.prototype = {
     
     if (this._scroll === ScrollView.SCROLL)
     {
-//      this._sub_view.style.width = 'auto';
       this._sub_view.style.width = width + 'px';
       this._sub_view.style.height = height + 'px';
     }
     if (this._scroll === ScrollView.HORIZONTAL_SCROLL)
     {
-//      this._sub_view.style.width = 'auto';
       this._sub_view.style.width = width + 'px';
       this._sub_view.style.height = this.size [1] - dx + 'px';
     }
     if (this._scroll === ScrollView.VERTICAL_SCROLL)
     {
       this._sub_view.style.width = this.size [0] - dy + 'px';
-//      this._sub_view.style.height = 'auto';
       this._sub_view.style.height = height + 'px';
     }
     
@@ -296,7 +291,8 @@ ScrollView.prototype = {
       this._sub_view.style.width = size [0] + 'px';
       this._sub_view.style.height = size [1] + 'px'
     }
-    if (this.__scroll_activated) { this._scroll_refresh (this._pinch); }
+
+    if (this.__iscroll__) this.__iscroll__.refresh ();
   },
     
   /**
@@ -305,9 +301,10 @@ ScrollView.prototype = {
    */
   destructor : function ()
   {
-    if (this._scroll)
+    if (this.__iscroll__)
     {
-      this._deactivate_scroll ();
+      this.__iscroll__.destroy ();
+      this.__iscroll__ = undefined;
     }
     this._scroll = false;
     
@@ -367,7 +364,7 @@ ScrollView.prototype = {
     this.animationDuration = this._animation_duration;
    
     this.refresh ();
-    this._applyInsideTransformation2D ();
+//    this._applyInsideTransformation2D ();
   },
   
   /*****************************************************************
@@ -378,193 +375,193 @@ ScrollView.prototype = {
    * @private
    * @function
    */
-  handleEvent : function (e)
-  {
-    switch (e.type)
-    {
-      case core.POINTER_START:
-        this.pointerStart (e);
-        break;
-      case core.POINTER_MOVE:
-        this._scroll_pointer_move (e);
-        break;
-      case core.POINTER_CANCEL:
-      case core.POINTER_END:
-        this._scroll_pointer_end (e);
-        break;
-      case 'gesturestart':
-        this.gestureStart (e);
-        break;
-      case 'gesturechange':
-        this.gestureChange (e);
-        break;
-      case 'gestureend':
-      case 'gesturecancel':
-        this.gestureEnd (e);
-        break;
-      case 'webkitTransitionEnd':
-        this._scroll_transition_end ();
-        break;
-      case 'orientationchange':
-      case 'resize':
-        this.refresh ();
-        break;
-      case 'DOMSubtreeModified':
-        this.onDOMModified (e);
-        break;
-     }
-    return false;
-  },
+//   handleEvent : function (e)
+//   {
+//     switch (e.type)
+//     {
+//       case core.POINTER_START:
+//         this.pointerStart (e);
+//         break;
+//       case core.POINTER_MOVE:
+//         this._scroll_pointer_move (e);
+//         break;
+//       case core.POINTER_CANCEL:
+//       case core.POINTER_END:
+//         this._scroll_pointer_end (e);
+//         break;
+//       case 'gesturestart':
+//         this.gestureStart (e);
+//         break;
+//       case 'gesturechange':
+//         this.gestureChange (e);
+//         break;
+//       case 'gestureend':
+//       case 'gesturecancel':
+//         this.gestureEnd (e);
+//         break;
+//       case 'webkitTransitionEnd':
+//         this._scroll_transition_end ();
+//         break;
+//       case 'orientationchange':
+//       case 'resize':
+//         this.refresh ();
+//         break;
+//       case 'DOMSubtreeModified':
+//         this.onDOMModified (e);
+//         break;
+//      }
+//     return false;
+//   },
 
   /**
    * @private
    * @function
    */
-  gestureStart : function (e)
-  {
-    e.preventDefault ();
-    e.stopPropagation ();
-    
-    this.animationDuration = 0;
-
-    if (this._pinch & ScrollView.SCALE && this._delegate &&
-        this._delegate.viewWillStartZooming)
-    {
-      this._delegate.viewWillStartZooming (this);
-    }
-
-    document.addEventListener ('gesturechange', this);
-    document.addEventListener ('gestureend', this);
-    document.addEventListener ('gesturecancel', this);
-    this.view.addEventListener ('gestureend', this);
-    this.view.addEventListener ('gesturecancel', this);
-    
-    this.__ab_view_s = this._ab_view_s;
-    this.__ab_view_r = this._ab_view_r;
-
-    origin_str = '50% 50%';
-    this._sub_view.style ['-webkit-transform-origin'] = origin_str;
-  },
-
-  /**
-   * @private
-   * @function
-   */
-  gestureChange : function (e)
-  {
-    var scale = this.__ab_view_s * e.scale;
-    e.preventDefault ();
-    e.stopPropagation ();
-
-    if (scale > this._max_scale) { scale = this._max_scale; }
-    if (scale < this._min_scale) { scale = this._min_scale; }
-
-    if (this._pinch === ScrollView.ROTATION)
-    {
-      this._ab_view_r = this.__ab_view_r + e.rotation;
-    }
-    else if (this._pinch === ScrollView.SCALE)
-    {
-      this._ab_view_s = scale;
-    }
-    else if (this._pinch === ScrollView.ROTATION_AND_SCALE)
-    {
-      this._ab_view_r = this.__ab_view_r + e.rotation;
-      this._ab_view_s = scale;
-    }
-    this._applyInsideTransformation2D ();
-    
-    // refresh scroll views according scale and rotiation
-//    if (this._scroll) { this._scroll_refresh (this._pinch); }
-  },
+//   gestureStart : function (e)
+//   {
+//     e.preventDefault ();
+//     e.stopPropagation ();
+//     
+//     this.animationDuration = 0;
+// 
+//     if (this._pinch & ScrollView.SCALE && this._delegate &&
+//         this._delegate.viewWillStartZooming)
+//     {
+//       this._delegate.viewWillStartZooming (this);
+//     }
+// 
+//     document.addEventListener ('gesturechange', this);
+//     document.addEventListener ('gestureend', this);
+//     document.addEventListener ('gesturecancel', this);
+//     this.view.addEventListener ('gestureend', this);
+//     this.view.addEventListener ('gesturecancel', this);
+//     
+//     this.__ab_view_s = this._ab_view_s;
+//     this.__ab_view_r = this._ab_view_r;
+// 
+//     origin_str = '50% 50%';
+//     this._sub_view.style ['-webkit-transform-origin'] = origin_str;
+//   },
 
   /**
    * @private
    * @function
    */
-  gestureEnd : function (e)
-  {
-    var self = this;
+//   gestureChange : function (e)
+//   {
+//     var scale = this.__ab_view_s * e.scale;
+//     e.preventDefault ();
+//     e.stopPropagation ();
+// 
+//     if (scale > this._max_scale) { scale = this._max_scale; }
+//     if (scale < this._min_scale) { scale = this._min_scale; }
+// 
+//     if (this._pinch === ScrollView.ROTATION)
+//     {
+//       this._ab_view_r = this.__ab_view_r + e.rotation;
+//     }
+//     else if (this._pinch === ScrollView.SCALE)
+//     {
+//       this._ab_view_s = scale;
+//     }
+//     else if (this._pinch === ScrollView.ROTATION_AND_SCALE)
+//     {
+//       this._ab_view_r = this.__ab_view_r + e.rotation;
+//       this._ab_view_s = scale;
+//     }
+//     this._applyInsideTransformation2D ();
+//     
+//     // refresh scroll views according scale and rotiation
+// //    if (this._scroll) { this._scroll_refresh (this._pinch); }
+//   },
 
-    e.preventDefault ();
-    e.stopPropagation ();
-
-    document.removeEventListener ('gesturechange', this);
-    document.removeEventListener ('gestureend', this);
-    document.removeEventListener ('gesturecancel', this);
-    this.view.removeEventListener ('gestureend', this);
-    this.view.removeEventListener ('gesturecancel', this);
-    
-		setTimeout(function () {
-			self.refresh();
-		}, 0);
-
-    if (this._pinch & ScrollView.SCALE && this._delegate &&
-        this._delegate.viewDidEndZooming)
-    {
-      this._delegate.viewDidEndZooming (this, this._ab_view_s);
-    }
-  },
+  /**
+   * @private
+   * @function
+   */
+//   gestureEnd : function (e)
+//   {
+//     var self = this;
+// 
+//     e.preventDefault ();
+//     e.stopPropagation ();
+// 
+//     document.removeEventListener ('gesturechange', this);
+//     document.removeEventListener ('gestureend', this);
+//     document.removeEventListener ('gesturecancel', this);
+//     this.view.removeEventListener ('gestureend', this);
+//     this.view.removeEventListener ('gesturecancel', this);
+//     
+// 		setTimeout(function () {
+// 			self.refresh();
+// 		}, 0);
+// 
+//     if (this._pinch & ScrollView.SCALE && this._delegate &&
+//         this._delegate.viewDidEndZooming)
+//     {
+//       this._delegate.viewDidEndZooming (this, this._ab_view_s);
+//     }
+//   },
 
   /**
    * @protected
    * @function
    */
-  pointerStart: function (e)
-  {
-    var matrix, len, origin_str, bx = 0, by = 0;
-    
-    // manage multi touche events (pinch, ...)
-    if (e.changedTouches && e.changedTouches.length > 1)
-    {
-      len = e.changedTouches.length;
-      for (i = 0; i < len; i ++)
-      {
-        bx += e.changedTouches [i].pageX;
-        by += e.changedTouches [i].pageY;
-      }
-      bx = (bx / len) - this._pos [0];
-      by = (by / len) - this._pos [1];
-      origin_str = bx + 'px ' + by + 'px';
-      this._sub_view.style ['-webkit-transform-origin'] = origin_str;
-      return;
-    }
-
-// manage one touch event (touch, slide, ...)
-//     if (!this.enabled || (!this.options.vScrollbar && !this.options.hScrollbar)) {
-//       this._propagateToParent (e);
+//   pointerStart: function (e)
+//   {
+//     var matrix, len, origin_str, bx = 0, by = 0;
+//     
+//     // manage multi touche events (pinch, ...)
+//     if (e.changedTouches && e.changedTouches.length > 1)
+//     {
+//       len = e.changedTouches.length;
+//       for (i = 0; i < len; i ++)
+//       {
+//         bx += e.changedTouches [i].pageX;
+//         by += e.changedTouches [i].pageY;
+//       }
+//       bx = (bx / len) - this._pos [0];
+//       by = (by / len) - this._pos [1];
+//       origin_str = bx + 'px ' + by + 'px';
+//       this._sub_view.style ['-webkit-transform-origin'] = origin_str;
 //       return;
 //     }
-//     if (!e._fake && e.currentTarget !== this._sub_view) { return; }
-
-    this._scroll_pointer_start (e);
-  },
+// 
+// // manage one touch event (touch, slide, ...)
+// //     if (!this.enabled || (!this.options.vScrollbar && !this.options.hScrollbar)) {
+// //       this._propagateToParent (e);
+// //       return;
+// //     }
+// //     if (!e._fake && e.currentTarget !== this._sub_view) { return; }
+// 
+//     this._scroll_pointer_start (e);
+//   },
   
   /**
    * @protected
    * @function
    */
-  onDOMModified: function (e)
-  {
-    var self = this;
-
-    // (Hopefully) execute onDOMModified only once
-    if (e.target.parentNode !== this._sub_view) { return; }
-
-//    setTimeout (function () { self.refresh(); }, 0);
-    this.refresh();
-
-    if (this.options.topOnDOMChanges && 
-       (this._ab_view_t_x !== 0 || this._ab_view_t_y !== 0))
-    { this.scrollTo (0,0,0); }
-  },
+//   onDOMModified: function (e)
+//   {
+//     var self = this;
+// 
+//     // (Hopefully) execute onDOMModified only once
+//     if (e.target.parentNode !== this._sub_view) { return; }
+// 
+// //    setTimeout (function () { self.refresh(); }, 0);
+//     this.refresh();
+// 
+//     if (this.options.topOnDOMChanges && 
+//        (this._ab_view_t_x !== 0 || this._ab_view_t_y !== 0))
+//     { this.scrollTo (0,0,0); }
+//   },
 
   /**
    * @protected
    * @function
    */
-  onScrollEnd: function ()
-  {},
+//   onScrollEnd: function ()
+//   {},
   
   /*****************************************************************
    *                Transformation methods
@@ -580,15 +577,15 @@ ScrollView.prototype = {
    * @param {int} y translation over the y axis
    * @param {function} clb Function call at the end of the transformation
    */
-  insideTranslate: function (x, y, clb)
-  {
-    if (this._ab_view_t_x === x && this._ab_view_t_y === y) { return; }
-    
-    this._ab_view_t_x = x;
-    this._ab_view_t_y = y;
-    
-    this._applyInsideTransformation2D (clb);
-  },
+//   insideTranslate: function (x, y, clb)
+//   {
+//     if (this._ab_view_t_x === x && this._ab_view_t_y === y) { return; }
+//     
+//     this._ab_view_t_x = x;
+//     this._ab_view_t_y = y;
+//     
+//     this._applyInsideTransformation2D (clb);
+//   },
 
   /**
    * Rotate the content
@@ -600,17 +597,17 @@ ScrollView.prototype = {
    * @param y {int} translation over the y axis
    * @param {function} clb Function call at the end of the transformation
    */
-  insideRotate: function (r, clb)
-  {
-    if (this._ab_view_r === r) { return; }
-    
-    this._ab_view_r = r;
-    
-    this._applyInsideTransformation2D (clb);
-    
-    // refresh scroll views according scale and rotiation
-    if (this._scroll) { this._scroll_refresh (this._pinch); }
-  },
+//   insideRotate: function (r, clb)
+//   {
+//     if (this._ab_view_r === r) { return; }
+//     
+//     this._ab_view_r = r;
+//     
+//     this._applyInsideTransformation2D (clb);
+//     
+//     // refresh scroll views according scale and rotiation
+//     if (this._scroll) { this._scroll_refresh (this._pinch); }
+//   },
   
   /**
    * Scale the content
@@ -622,62 +619,62 @@ ScrollView.prototype = {
    * @param s {float} scale value
    * @param {function} clb Function call at the end of the transformation
    */
-  insideScale: function (s, clb)
-  {    
-    if (s > this._max_scale) { s = this._max_scale; }
-    if (s < this._min_scale) { s = this._min_scale; }
-    if (this._ab_view_s === s) { return; }
- 
-    this._ab_view_s = s;
-    
-    this._applyInsideTransformation2D (clb);
-    
-    // refresh scroll views according scale and rotiation
-//    if (this._scroll) { this._scroll_refresh (this._pinch); }
-  },
+//   insideScale: function (s, clb)
+//   {    
+//     if (s > this._max_scale) { s = this._max_scale; }
+//     if (s < this._min_scale) { s = this._min_scale; }
+//     if (this._ab_view_s === s) { return; }
+//  
+//     this._ab_view_s = s;
+//     
+//     this._applyInsideTransformation2D (clb);
+//     
+//     // refresh scroll views according scale and rotiation
+// //    if (this._scroll) { this._scroll_refresh (this._pinch); }
+//   },
   
   /**
    * @protected
    * @function
    */
-  _applyInsideTransformation2D: function (clb)
-  {
-    var transform = '', callback, self = this;
-    
-    callback = function (event) 
-    {
-      // do nothing if that event just bubbled from our target's sub-tree
-      if (event.currentTarget !== self._sub_view) { return; }
-
-      self._sub_view.removeEventListener
-        ('webkitTransitionEnd', callback, false);
-      
-      if (clb) { clb.call (self); }
-    }
-
-    // apply translation, therefor a strange bug appear (flick)
-    if (SUPPORT_3D_TRANSFORM)
-      transform += 
-        "translate3d("+this._ab_view_t_x+"px,"+this._ab_view_t_y+"px,0)";
-    else
-      transform += 
-        "translate("+this._ab_view_t_x+"px,"+this._ab_view_t_y+"px)";
-
-    if (this._ab_view_r)
-    {
-      transform += " rotate(" + this._ab_view_r + "deg)";
-    }
-    if (this._ab_view_s !== 1)
-    {
-      transform += " scale(" + this._ab_view_s + ")";
-    }
-    
-    if (clb)
-    {
-      this._sub_view.addEventListener ('webkitTransitionEnd', callback, false);
-    }
-    setElementTransform (this._sub_view, transform);
-  },
+//   _applyInsideTransformation2D: function (clb)
+//   {
+//     var transform = '', callback, self = this;
+//     
+//     callback = function (event) 
+//     {
+//       // do nothing if that event just bubbled from our target's sub-tree
+//       if (event.currentTarget !== self._sub_view) { return; }
+// 
+//       self._sub_view.removeEventListener
+//         ('webkitTransitionEnd', callback, false);
+//       
+//       if (clb) { clb.call (self); }
+//     }
+// 
+//     // apply translation, therefor a strange bug appear (flick)
+//     if (SUPPORT_3D_TRANSFORM)
+//       transform += 
+//         "translate3d("+this._ab_view_t_x+"px,"+this._ab_view_t_y+"px,0)";
+//     else
+//       transform += 
+//         "translate("+this._ab_view_t_x+"px,"+this._ab_view_t_y+"px)";
+// 
+//     if (this._ab_view_r)
+//     {
+//       transform += " rotate(" + this._ab_view_r + "deg)";
+//     }
+//     if (this._ab_view_s !== 1)
+//     {
+//       transform += " scale(" + this._ab_view_s + ")";
+//     }
+//     
+//     if (clb)
+//     {
+//       this._sub_view.addEventListener ('webkitTransitionEnd', callback, false);
+//     }
+//     setElementTransform (this._sub_view, transform);
+//   },
   
   /**
    * @protected
@@ -687,6 +684,45 @@ ScrollView.prototype = {
   {
     View.prototype._updateSize.call (this);
     this.refresh ();
+  },
+  
+  _setup_iscroll : function () {
+    if (this.__iscroll__)
+    {
+      this.__iscroll__.destroy ();
+      this.__iscroll__ = undefined;
+    }
+  
+    if (this.view && this._sub_view)
+    {
+      var options = {};
+      options.bubbling = false;
+//      options.bounce = false;
+//      options.momentum = false;
+      options.hScroll = false;
+      options.vScroll = false;
+      if (this._scroll === 1)
+      {
+        options.vScroll = true;
+      }
+      else if (this._scroll === 2)
+      {
+        options.hScroll = true;
+      }
+      else if (this._scroll === 3)
+      {
+        options.hScroll = true;
+        options.vScroll = true;
+      }
+      
+      // For any case, do not show the scroll bar
+//       options.hScrollbar = false;
+//       options.vScrollbar = false;
+ 
+      this.__iscroll__ = new iScroll (this.view, this._sub_view, options);
+
+      this.refresh ();
+    }
   }
 };
 util.extendClass (ScrollView, View);
@@ -721,43 +757,20 @@ util.defineClassProperties (ScrollView, {
    */ 
   set : function (v)
   {
+    if (v === this._scroll) return;
     if (!v)
     {
-      if (this.__scroll_activated)
+      if (this.__iscroll__)
       {
-        this._deactivate_scroll ();
-        this.__scroll_activated = false;
+        this.__iscroll__.destroy ();
+        this.__iscroll__ = undefined;
       }
       this._scroll = false;
     }
     else if (v === true || v === 1 || v === 2 || v === 3)
     {
-      if (!this.__scroll_activated && this.view && this._sub_view)
-      {
-        var options = {};
-        options.bubbling = false;
-  //      options.bounce = false;
-  //      options.momentum = false;
-        if (v === 1)
-        {
-          options.hScrollbar = false;
-          options.vScrollbar = true;
-        }
-        else if (v === 2)
-        {
-          options.hScrollbar = true;
-          options.vScrollbar = false;
-        }
-        else
-        {
-          options.hScrollbar = true;
-          options.vScrollbar = true;
-        }
-        this._activate_scroll (this.view, this._sub_view, options);
-        this.__scroll_activated = true;
-        this.refresh ();
-      }
       this._scroll = v;
+      this._setup_iscroll ();
     }
   },
   
@@ -789,15 +802,15 @@ util.defineClassProperties (ScrollView, {
     
     if (!this.view) { return; }
 
-    if (v === ScrollView.NO_PINCH && this._pinch !== ScrollView.NO_PINCH)
-    {
-      this.view.removeEventListener ('gesturestart', this);
-    }
-    else if (v !== ScrollView.NO_PINCH && this._pinch === ScrollView.NO_PINCH)
-    {
-      this.view.addEventListener ('gesturestart', this);
-      this.view.addEventListener ('touchstart', this);
-    }
+//     if (v === ScrollView.NO_PINCH && this._pinch !== ScrollView.NO_PINCH)
+//     {
+//       this.view.removeEventListener ('gesturestart', this);
+//     }
+//     else if (v !== ScrollView.NO_PINCH && this._pinch === ScrollView.NO_PINCH)
+//     {
+//       this.view.addEventListener ('gesturestart', this);
+// //      this.view.addEventListener ('touchstart', this);
+//     }
     this._pinch = v;
   }
 },
