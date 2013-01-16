@@ -239,7 +239,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     
     // if durations is egal to 0, no event is generated a the end.
     // Then use a small time
-    dur = parseFloat (comp.view.style [TRANSITION_DURATION]);
+    dur = parseFloat (comp.view.style.getPropertyValue (TRANSITION_DURATION));
     if (dur === 0) forceCallback = true;
     
     if (!forceCallback)
@@ -344,7 +344,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     
     // if durations is egal to 0, no event is generated a the end.
     // Then use a small time
-    dur = parseFloat (comp.view.style [ANIMATION_DURATION]);
+    dur = parseFloat (comp.view.style.getPropertyValue (ANIMATION_DURATION));
     if (dur === 0) forceCallback = true;
 
     if (!forceCallback)
