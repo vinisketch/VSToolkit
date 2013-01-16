@@ -21,6 +21,7 @@
   background: transparent;
   border: none;
   font-size: inherit;
+  position:relative;
 }
 
 .vs_ui_combobox > div {
@@ -38,7 +39,7 @@
   outline: none;
 }
 
-.vs_ui_combobox:after
+.vs_ui_combobox::after
 {
   border-color: #DDD transparent transparent;
   border-style: solid;
