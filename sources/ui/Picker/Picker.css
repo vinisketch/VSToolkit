@@ -5,13 +5,19 @@
 }
 
 .vs_ui_picker .slots {
-  position:relative; z-index:999;
+  position:relative;
+  z-index:999;
   padding:0 11px;
   overflow:hidden;
 
   display: -webkit-box;
   -webkit-box-orient: horizontal;
   width:100%;
+}
+
+.vs_ui_picker .frame {
+  position:relative;
+  z-index:1000;
 }
 
 .vs_ui_picker .slots > div {
