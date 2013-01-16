@@ -1512,10 +1512,11 @@ View.prototype = {
       else
       { n.style.removeProperty ('display'); }
       
-      if (clb && clb instanceof Function)
+      setTimeout (function()
       {
-        setTimeout (function() {clb.call (self);}, 0);
-      }
+        self.refresh ();
+        if (clb && clb instanceof Function) clb.call (self);
+      }, 0);
     }, 0);
   },
 

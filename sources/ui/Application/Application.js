@@ -368,11 +368,9 @@ Application.start = function ()
   for (key in Application_applications)
   {
     obj = Application_applications [key];
-    obj.redraw (function ()
-    {
-      obj.propertyChange ();
-      obj.applicationStarted ();
-    });
+    obj.propertyChange ();
+    obj.applicationStarted ();
+    obj.redraw ();
   }
 };
 
