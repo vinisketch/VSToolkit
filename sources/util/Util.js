@@ -40,7 +40,6 @@ var vsTestElem = (document)?document.createElement ('vstestelem'):null;
 var vsTestStyle = (vsTestElem)?vsTestElem.style:null;
 var __date_reg_exp = /\/Date\((-?\d+)\)\//;
 
-  
 if (vsTestStyle)
 {
   if (vsTestStyle.webkitTransform !== undefined)
