@@ -57,36 +57,42 @@ function Switch (config)
  * @private
  * @const
  */
-Switch.MODE_IOS = 0;
-/**
- * @private
- * @const
- */
-Switch.MODE_ANDROID = 1;
+Switch.MODE_DEFAULT = 0;
 
 /**
  * @private
  * @const
  */
-Switch.MODE_MEEGO = 2;
+Switch.MODE_IOS = 1;
+/**
+ * @private
+ * @const
+ */
+Switch.MODE_ANDROID = 2;
 
 /**
  * @private
  * @const
  */
-Switch.MODE_WP7 = 3;
+Switch.MODE_MEEGO = 3;
 
 /**
  * @private
  * @const
  */
-Switch.MODE_SYMBIAN = 4;
+Switch.MODE_WP7 = 4;
 
 /**
  * @private
  * @const
  */
-Switch.MODE_BLACKBERRY = 5;
+Switch.MODE_SYMBIAN = 5;
+
+/**
+ * @private
+ * @const
+ */
+Switch.MODE_BLACKBERRY = 6;
 
 Switch.prototype = {
   
@@ -120,7 +126,7 @@ Switch.prototype = {
    * @private
    * @type {Number}
    */
-  _mode: Switch.MODE_IOS,
+  _mode: Switch.MODE_DEFAULT,
 
   /**
    *
@@ -205,7 +211,8 @@ Switch.prototype = {
         setElementTransform (this.__background_view, "scale(0, 1)");
         setElementTransform (this.__toggles_view, "translate(0,0)");
       }
-      else if (this._mode === Switch.MODE_ANDROID ||
+      else if (this._mode === Switch.MODE_DEFAULT ||
+               this._mode === Switch.MODE_ANDROID ||
                this._mode === Switch.MODE_MEEGO ||
                this._mode === Switch.MODE_SYMBIAN ||
                this._mode === Switch.MODE_BLACKBERRY)
@@ -223,7 +230,8 @@ Switch.prototype = {
         setElementTransform (this.__toggles_view, 
           "translate(-" + (this.size[0] - this.__width_switch) + "px,0)");
       }
-      else if (this._mode === Switch.MODE_ANDROID ||
+      else if (this._mode === Switch.MODE_DEFAULT ||
+               this._mode === Switch.MODE_ANDROID ||
                this._mode === Switch.MODE_MEEGO ||
                this._mode === Switch.MODE_SYMBIAN ||
                this._mode === Switch.MODE_BLACKBERRY)
@@ -266,12 +274,17 @@ Switch.prototype = {
       this.view.querySelector ('.vs_ui_switch .toggle_off');
     this.__switch_view =
       this.view.querySelector ('.vs_ui_switch .switch');
-          
+
+    if (!this.__touch_binding)
+    {
+      this.view.addEventListener (core.POINTER_START, this);
+      this.__touch_binding = true;
+    }
+
     var os_device = window.deviceConfiguration.os;
     if (os_device == DeviceConfiguration.OS_IOS)
     {
       this._mode = Switch.MODE_IOS;
-      this.__width_switch = 40;
     }
     else if (os_device == DeviceConfiguration.OS_ANDROID)
     {
@@ -288,23 +301,10 @@ Switch.prototype = {
     else if (os_device == DeviceConfiguration.OS_WP7)
     {
       this._mode = Switch.MODE_WP7;
-      this.__width_switch = 23;
     }
     else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
     {
       this._mode = Switch.MODE_BLACKBERRY;
-      this.__width_switch = 20;
-    }
-    else
-    {
-      // this method could not work if the view his not displaied
-      this.__width_switch = this.__switch_view.offsetWidth;
-    }
-
-    if (!this.__touch_binding)
-    {
-      this.view.addEventListener (core.POINTER_START, this);
-      this.__touch_binding = true;
     }
 
     if (this._text_on)
@@ -325,6 +325,30 @@ Switch.prototype = {
     }
 
     this.toggled = this._toggled;
+  },
+  
+  refresh : function ()
+  {
+    View.prototype.refresh.call (this);
+
+    switch (this._mode)
+    {
+      case Switch.MODE_IOS:
+        this.__width_switch = 40;
+      break;
+    
+      case Switch.MODE_WP7:
+        this.__width_switch = 23;
+      break;
+
+      case Switch.MODE_BLACKBERRY:
+        this.__width_switch = 20;
+      break;
+
+      default:
+      // this method could not work if the view his not displaied
+      this.__width_switch = this.__switch_view.offsetWidth;
+    }
   },
   
   /**
