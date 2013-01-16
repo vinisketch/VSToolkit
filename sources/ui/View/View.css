@@ -121,8 +121,8 @@
 .vs_ui_navbar.horizontal_layout > *,
 .vs_ui_view.horizontal_layout > *
 {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
+  -webkit-box-flex: 0;
+  box-flex: 0;
 
   position: relative;
 }
