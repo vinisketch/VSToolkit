@@ -553,8 +553,8 @@ Picker.prototype = {
       if (!elem)
       { continue; }
       // Remove any residual animation
-      elem.removeEventListener('webkitTransitionEnd', this, false);
-      elem.style.webkitTransitionDuration = '0';
+      elem.removeEventListener (vs.TRANSITION_END, this, false);
+      elem.style.setProperty (vs.TRANSITION_DURATION, '0');
 
       slotMaxScroll = this.getSlotMaxScroll (elem);
       
@@ -649,8 +649,8 @@ Picker.prototype = {
     if (!elem) { return false; }
     if (!slot_data) { return false; }
     
-    elem.removeEventListener ('webkitTransitionEnd', this, false);
-    elem.style.webkitTransitionDuration = '0';
+    elem.removeEventListener (vs.TRANSITION_END, this, false);
+    elem.style.setProperty (vs.TRANSITION_DURATION, '0');
     
     count = 0;
     for (i in slot_data.values)
@@ -698,7 +698,7 @@ Picker.prototype = {
   _scrollTo: function (slotNum, dest, runtime)
   {
     var slot_elem = this._slots_elements[slotNum], slotMaxScroll;
-    slot_elem.style.webkitTransitionDuration = runtime ? runtime + 'ms': '100ms';
+    slot_elem.style.setProperty (vs.TRANSITION_DURATION, runtime ? runtime + 'ms': '100ms');
     this._setPosition (slotNum, dest ? dest : 0);
 
     slotMaxScroll = this.getSlotMaxScroll (slot_elem);
@@ -707,7 +707,7 @@ Picker.prototype = {
     if (slot_elem.slotYPosition > 0 ||
         slot_elem.slotYPosition < slotMaxScroll)
     {
-      slot_elem.addEventListener ('webkitTransitionEnd', this, false);
+      slot_elem.addEventListener (vs.TRANSITION_END, this, false);
     }
     else
     {
@@ -740,17 +740,18 @@ Picker.prototype = {
     {
       case core.POINTER_START:
         this._scrollStart (e);
-      break;
-    
+       break;
+
       case core.POINTER_MOVE:
         this._scrollMove (e);
+       console.log (e);
       break;
 
       case core.POINTER_END:
         this._scrollEnd (e);
       break;
 
-      case 'webkitTransitionEnd':
+      case vs.TRANSITION_END:
         this._backWithinBoundaries (e);
       break;
     }
@@ -769,7 +770,7 @@ Picker.prototype = {
     this._active_slot = undefined;
 
     var css = this._getComputedStyle (this._frame_view);
-    this._frame_border_width = css ? parseInt (css ['border-left-width']) : 0;
+    this._frame_border_width = css ? parseInt (css.getPropertyValue ('border-left-width')) : 0;
 
     switch (this._mode)
     {
@@ -819,14 +820,14 @@ Picker.prototype = {
     
     slot_elem.slotMaxScroll = this.getSlotMaxScroll (slot_elem);
 
-    slot_elem.removeEventListener('webkitTransitionEnd', this, false);  // Remove transition event (if any)
-    slot_elem.style.webkitTransitionDuration = '0';   // Remove any residual transition
+    slot_elem.removeEventListener (vs.TRANSITION_END, this, false);  // Remove transition event (if any)
+    slot_elem.style.setProperty (vs.TRANSITION_DURATION, '0');   // Remove any residual transition
     
     // Stop and hold slot position
     if (SUPPORT_3D_TRANSFORM)
     {
       var theTransform = getElementTransform (slot_elem);
-      theTransform = new WebKitCSSMatrix(theTransform).m42;
+      theTransform = new vs.CSSMatrix(theTransform).m42;
       if (theTransform != slot_elem.slotYPosition)
       {
         this._setPosition (this._active_slot, theTransform);
@@ -1036,7 +1037,7 @@ Picker.prototype = {
   _backWithinBoundaries: function (e)
   {
     var elem = e.target;
-    elem.removeEventListener ('webkitTransitionEnd', this, false);
+    elem.removeEventListener (vs.TRANSITION_END, this, false);
     
     slotMaxScroll = this.getSlotMaxScroll (elem);
 
