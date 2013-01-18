@@ -1654,6 +1654,7 @@ function addCssRules (selector, rules)
   }
 };
 
+var __app_style_sheet__ = null;
 /**
  *  Modifies CSS styleSheets.
  *  <p>
@@ -1673,34 +1674,33 @@ function addCssRules (selector, rules)
  */
 function addCssRule (selector, rule)
 {
-  if (document.styleSheets)
+  if (!__app_style_sheet__) 
   {
-    var head, i, ss, l;
-    if (!document.styleSheets.length)
-    {
-      head = document.getElementsByTagName ('head')[0];
-      head.appendChild (bc.createEl ('style'));
-    }
+    var style = document.createElement ('style');
+    /* For Safari */
+    style.appendChild (document.createTextNode (''));
+    head = document.getElementsByTagName ('head')[0];
+    head.appendChild (style);
     
-    i = document.styleSheets.length - 1;
-    ss = document.styleSheets [i];
-    
-    l = 0;
-    if (ss.cssRules)
-    {
-      l = ss.cssRules.length;
-    } else if (ss.rules)
-    {
-      l = ss.rules.length;
-    }
-    
-    if (ss.insertRule)
-    {
-      ss.insertRule (selector + ' {' + rule + '}', l);
-    } else if (ss.addRule) 
-    {
-      ss.addRule (selector, rule, l);
-    }
+    __app_style_sheet__ =
+      document.styleSheets[document.styleSheets.length - 1];
+  }
+  
+  var l = 0;
+  if (__app_style_sheet__.cssRules)
+  {
+    l = __app_style_sheet__.cssRules.length;
+  } else if (__app_style_sheet__.rules)
+  {
+    l = __app_style_sheet__.rules.length;
+  }
+  
+  if (__app_style_sheet__.insertRule)
+  {
+    __app_style_sheet__.insertRule (selector + ' {' + rule + '}', l);
+  } else if (__app_style_sheet__.addRule) 
+  {
+    __app_style_sheet__.addRule (selector, rule, l);
   }
 };
 
