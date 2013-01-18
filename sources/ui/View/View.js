@@ -1440,14 +1440,12 @@ View.prototype = {
   },
   
   /**
-   *  Modifies CSS styleSheets.
-   *  <p>
-   *  Modifies CSS style styleSheets. It can be preempted
-   *  by css style inline modification (see vs.ui.View.setStyle).
-   *  @see vs.ui.View#setStyles if you want to modify inline CSS.
+   *  Add new CSS rules related to this component.
    *
    *  @example
    *  myObject.addCssRules ('.classname1', ['color: red', 'margin: 0px']);
+   *  <=> to
+   *  vs.util.addCssRules ('#' + myObject.id + ' .classname1', ['color: red', 'margin: 0px']);
    *
    * @name vs.ui.View#addCssRules 
    * @function
@@ -1457,19 +1455,17 @@ View.prototype = {
    */
   addCssRules : function (selector, rules)
   {
-    util.addCssRules (selector, rules);
+    util.addCssRules ('#' + this._id + ' ' + selector, rules);
   },
   
   /**
-   *  Modifies styleSheets.
-   *  <p>
-   *  Modifies CSS style styleSheets. It can be preempted
-   *  by css style inline modification (see vs.ui.View.setStyle).
-   *  @see vs.ui.View#setStyle if you want to modify inline CSS.
+   *  Add new CSS rule related to this component.
    *
    *  @example
    *  myObject.addCssRule ('.classname1', 'color: red');
-   *
+   *  <=> to
+   *  vs.util.addCssRule ('#' + myObject.id + ' .classname1', 'color: red');
+   *  
    * @name vs.ui.View#addCssRule 
    * @function
    *
@@ -1479,7 +1475,7 @@ View.prototype = {
    */
   addCssRule : function (selector, rule)
   {
-    util.addCssRule (selector, rule);
+    util.addCssRule ('#' + this._id + ' ' + selector, rule);
   },
 
 /********************************************************************
