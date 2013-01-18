@@ -407,7 +407,7 @@ NavigationController.prototype = {
       this.__translate_in_right.duration = "0" 
       this.__translate_out_right.duration = "0" 
     }
-   },
+  },
   
 
   /*********************************************************
