@@ -669,7 +669,7 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.fx.StackController.html#goToFirstView">goToFirstView</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/vs.fx.StackController.html#goToFirstView">goToFirstView</a></b>(clb, instant)
 								</div>
 								<div class="description">Go to the first view</div>
 							</td>
@@ -678,7 +678,7 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.fx.StackController.html#goToNextView">goToNextView</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/vs.fx.StackController.html#goToNextView">goToNextView</a></b>(clb, instant)
 								</div>
 								<div class="description">Go to the next view if it exist.</div>
 							</td>
@@ -687,7 +687,7 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.fx.StackController.html#goToPreviousView">goToPreviousView</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/vs.fx.StackController.html#goToPreviousView">goToPreviousView</a></b>(clb, instant)
 								</div>
 								<div class="description">Go to the previous view if it exist.</div>
 							</td>
@@ -696,7 +696,7 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.fx.StackController.html#goToViewAt">goToViewAt</a></b>(index)
+								<div class="fixedFont"><b><a href="../symbols/vs.fx.StackController.html#goToViewAt">goToViewAt</a></b>(index, clb, instant)
 								</div>
 								<div class="description">Go to the view specified by its position (index start at 0)</div>
 							</td>
@@ -705,7 +705,7 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.fx.StackController.html#goToViewId">goToViewId</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/vs.fx.StackController.html#goToViewId">goToViewId</a></b>(id, clb, instant)
 								</div>
 								<div class="description">Go to the view specified by its id if it exist.</div>
 							</td>
@@ -905,7 +905,7 @@ hr:last-child {
 					<div class="fixedFont">
 					
 					
-					<b>goToFirstView</b>()
+					<b>goToFirstView</b>(clb, instant)
 					
 					</div>
 					<div class="description">
@@ -915,6 +915,24 @@ hr:last-child {
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>clb</b>
+									
+								</dt>
+								<dd>a function reference, will be called at the end
+                  of transition</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>instant</b>
+									
+								</dt>
+								<dd>Force a transition without animation</dd>
+							
+							</dl>
 						
 						
 						
@@ -936,7 +954,7 @@ hr:last-child {
 					<div class="fixedFont">
 					
 					
-					<b>goToNextView</b>()
+					<b>goToNextView</b>(clb, instant)
 					
 					</div>
 					<div class="description">
@@ -946,6 +964,24 @@ hr:last-child {
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>clb</b>
+									
+								</dt>
+								<dd>a function reference, will be called at the end
+                  of transition</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>instant</b>
+									
+								</dt>
+								<dd>Force a transition without animation</dd>
+							
+							</dl>
 						
 						
 						
@@ -967,7 +1003,7 @@ hr:last-child {
 					<div class="fixedFont">
 					
 					
-					<b>goToPreviousView</b>()
+					<b>goToPreviousView</b>(clb, instant)
 					
 					</div>
 					<div class="description">
@@ -977,6 +1013,24 @@ hr:last-child {
 					
 					
 					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>clb</b>
+									
+								</dt>
+								<dd>a function reference, will be called at the end
+                  of transition</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>instant</b>
+									
+								</dt>
+								<dd>Force a transition without animation</dd>
+							
+							</dl>
 						
 						
 						
@@ -998,7 +1052,7 @@ hr:last-child {
 					<div class="fixedFont">
 					
 					
-					<b>goToViewAt</b>(index)
+					<b>goToViewAt</b>(index, clb, instant)
 					
 					</div>
 					<div class="description">
@@ -1018,6 +1072,19 @@ hr:last-child {
 								</dt>
 								<dd>The component index</dd>
 							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>clb</b>
+									
+								</dt>
+								<dd>a function reference, will be called at the end
+                  of transition</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>instant</b>
+									
+								</dt>
+								<dd>Force a transition without animation</dd>
+							
 							</dl>
 						
 						
@@ -1033,7 +1100,7 @@ hr:last-child {
 					<div class="fixedFont">
 					
 					
-					<b>goToViewId</b>()
+					<b>goToViewId</b>(id, clb, instant)
 					
 					</div>
 					<div class="description">
@@ -1044,16 +1111,33 @@ hr:last-child {
 					
 					
 						
-						
-						
-						
-						
 							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
+							<dt class="heading">Parameters:</dt>
 							
-								<dd>true if the transition is possible, false if not (no view exists)</dd>
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>id</b>
+									
+								</dt>
+								<dd>The state id (component id)</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>clb</b>
+									
+								</dt>
+								<dd>a function reference, will be called at the end
+                  of transition</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>instant</b>
+									
+								</dt>
+								<dd>Force a transition without animation</dd>
 							
 							</dl>
+						
+						
+						
+						
 						
 						
 						
