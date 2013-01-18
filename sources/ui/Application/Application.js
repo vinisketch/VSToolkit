@@ -370,7 +370,7 @@ Application.start = function ()
     obj = Application_applications [key];
     obj.propertyChange ();
     obj.applicationStarted ();
-    obj.redraw ();
+    setTimeout (function () {obj.refresh ();}, 0);
   }
 };
 
