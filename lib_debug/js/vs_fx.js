@@ -462,7 +462,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     
     // if durations is egal to 0, no event is generated a the end.
     // Then use a small time
-    dur = parseFloat (comp.view.style [TRANSITION_DURATION]);
+    dur = parseFloat (comp.view.style.getPropertyValue (TRANSITION_DURATION));
     if (dur === 0) forceCallback = true;
     
     if (!forceCallback)
@@ -567,7 +567,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     
     // if durations is egal to 0, no event is generated a the end.
     // Then use a small time
-    dur = parseFloat (comp.view.style [ANIMATION_DURATION]);
+    dur = parseFloat (comp.view.style.getPropertyValue (ANIMATION_DURATION));
     if (dur === 0) forceCallback = true;
 
     if (!forceCallback)
@@ -4051,7 +4051,7 @@ NavigationController.prototype = {
       this.__translate_in_right.duration = "0" 
       this.__translate_out_right.duration = "0" 
     }
-   },
+  },
   
 
   /*********************************************************
@@ -4064,9 +4064,15 @@ NavigationController.prototype = {
    */
   configureNewComponent : function (comp)
   {
-    var size = this.viewSize;
+    var animation = this.__translate_out_right,
+      duration = animation.duration;
     
-    comp.translation = [size[0], 0];
+    // apply the transformation without animation (duration = 0s)
+    animation.duration = '0s';
+    
+    animation.process (comp, function () {
+      animation.duration = duration;
+    });
   },
 
   /**
@@ -4165,10 +4171,18 @@ util.defineClassProperties (NavigationController, {
       this._fsm.initialState = comp_id;
       
       this._fsm.goTo (comp_id);
-      var state = this._fsm._list_of_state [comp_id];
+      var state = this._fsm._list_of_state [comp_id],
+        animation = this.__translate_in_right,
+        duration = animation.duration;
+          
       if (state && state.comp)
       {
-        state.comp.translation = [0, 0];
+        // apply the transformation without animation (duration = 0s)
+        animation.duration = '0s';
+    
+        animation.process (state.comp, function () {
+          animation.duration = duration;
+        });
       }
     },
     

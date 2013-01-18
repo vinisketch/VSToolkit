@@ -824,6 +824,12 @@ View.prototype = {
    * @type {Array.<number>}
    */
   _transform_origin: null,
+  
+  /**
+   * @protected
+   * @type {vs.CSSMatrix}
+   */
+  _transforms_stack: null,
 
   /**
    * @protected
@@ -1124,7 +1130,6 @@ View.prototype = {
     this._pos = [-1, -1];
     this._size = [-1, -1];
     this._transform_origin = [0, 0];
-    this._transforms_stack = [];
 
     // rules for positionning a object
     this._autosizing = [4,4];
@@ -1981,14 +1986,12 @@ View.prototype = {
   },
   
   /**
-   *  Modifies CSS styleSheets.
-   *  <p>
-   *  Modifies CSS style styleSheets. It can be preempted
-   *  by css style inline modification (see vs.ui.View.setStyle).
-   *  @see vs.ui.View#setStyles if you want to modify inline CSS.
+   *  Add new CSS rules related to this component.
    *
    *  @example
    *  myObject.addCssRules ('.classname1', ['color: red', 'margin: 0px']);
+   *  <=> to
+   *  vs.util.addCssRules ('#' + myObject.id + ' .classname1', ['color: red', 'margin: 0px']);
    *
    * @name vs.ui.View#addCssRules 
    * @function
@@ -1998,19 +2001,17 @@ View.prototype = {
    */
   addCssRules : function (selector, rules)
   {
-    util.addCssRules (selector, rules);
+    util.addCssRules ('#' + this._id + ' ' + selector, rules);
   },
   
   /**
-   *  Modifies styleSheets.
-   *  <p>
-   *  Modifies CSS style styleSheets. It can be preempted
-   *  by css style inline modification (see vs.ui.View.setStyle).
-   *  @see vs.ui.View#setStyle if you want to modify inline CSS.
+   *  Add new CSS rule related to this component.
    *
    *  @example
    *  myObject.addCssRule ('.classname1', 'color: red');
-   *
+   *  <=> to
+   *  vs.util.addCssRule ('#' + myObject.id + ' .classname1', 'color: red');
+   *  
    * @name vs.ui.View#addCssRule 
    * @function
    *
@@ -2020,7 +2021,7 @@ View.prototype = {
    */
   addCssRule : function (selector, rule)
   {
-    util.addCssRule (selector, rule);
+    util.addCssRule ('#' + this._id + ' ' + selector, rule);
   },
 
 /********************************************************************
@@ -2053,10 +2054,11 @@ View.prototype = {
       else
       { n.style.removeProperty ('display'); }
       
-      if (clb && clb instanceof Function)
+      setTimeout (function()
       {
-        setTimeout (function() {clb.call (self);}, 0);
-      }
+        self.refresh ();
+        if (clb && clb instanceof Function) clb.call (self);
+      }, 0);
     }, 0);
   },
 
@@ -2579,17 +2581,23 @@ View.prototype = {
     if (!origin) { return; }
     if (!util.isNumber (origin.x) || !util.isNumber (origin.y)) { return; }
 
-    var transform = {
-      origin: this._transform_origin,
-      tx: this.__view_t_x,
-      ty: this.__view_t_y,
-      s: this._scaling,
-      r: this._rotation
-    };
+    // Save current transform into a matrix
+    var matrix = new vs.CSSMatrix ();
+    matrix = matrix.translate
+      (this._transform_origin [0], this._transform_origin [1], 0);
+    matrix = matrix.translate (this.__view_t_x, this.__view_t_y, 0);
+    matrix = matrix.rotate (0, 0, this._rotation);
+    matrix = matrix.scale (this._scaling, this._scaling, 1);
+    matrix = matrix.translate
+      (-this._transform_origin [0], -this._transform_origin [1], 0);
+
+    if (!this._transforms_stack) this._transforms_stack = matrix;
+    {
+      this._transforms_stack = matrix.multiply (this._transforms_stack);
+      delete (matrix);
+    }
     
-    this._transforms_stack.push (transform);
-    
-    // init new transform space
+    // Init a new transform space
     this.__view_t_x = 0;
     this.__view_t_y = 0;
     this._scaling = 1;
@@ -2605,7 +2613,8 @@ View.prototype = {
    */
   clearTransformStack : function ()
   {
-    this._transforms_stack = [];
+    if (this._transforms_stack) delete (this._transforms_stack);
+    this._transforms_stack = undefined;
   },
   
   /**
@@ -2614,7 +2623,7 @@ View.prototype = {
    */
   _calculateTransformMatrix: function ()
   {
-    var matrix = new WebKitCSSMatrix (), transform, matrix_tmp;
+    var matrix = new vs.CSSMatrix (), transform, matrix_tmp;
     
     // apply current transformation
     matrix = matrix.translate (this._transform_origin [0], this._transform_origin [1], 0);
@@ -2623,23 +2632,10 @@ View.prototype = {
     matrix = matrix.scale (this._scaling, this._scaling, 1);
     matrix = matrix.translate (-this._transform_origin [0], -this._transform_origin [1], 0);    
 
-    // apply previous transformations
-    var index = this._transforms_stack.length;
-    while (index)
-    {
-      matrix_tmp = new WebKitCSSMatrix ();
-      transform = this._transforms_stack [--index];
-      matrix_tmp = matrix_tmp.translate (transform.origin [0], transform.origin [1], 0);
-      matrix_tmp = matrix_tmp.translate (transform.tx, transform.ty, 0);
-      matrix_tmp = matrix_tmp.rotate (0, 0, transform.r);
-      matrix_tmp = matrix_tmp.scale (transform.s, transform.s, 1);
-      matrix_tmp = matrix_tmp.translate (-transform.origin [0], -transform.origin [1], 0);
-      
-      matrix = matrix.multiply (matrix_tmp);
-      delete (matrix_tmp);
-    }
-
-    return matrix;
+    
+    // apply previous transformations and return the matrix
+    if (this._transforms_stack) return matrix.multiply (this._transforms_stack);
+    else return matrix;
   },
   
   /**
@@ -2651,7 +2647,7 @@ View.prototype = {
     var matrix = this._calculateTransformMatrix ();
     
     setElementTransform (this.view, matrix.toString ());
-    delete (matrix_matrixtmp);
+    delete (matrix);
   }
   
 //   
@@ -2662,7 +2658,7 @@ View.prototype = {
 //   getProjection: function (pos)
 //   {
 //     var matrix = this._calculateTransformMatrix ();   
-//     var matrix_tmp = new WebKitCSSMatrix ();
+//     var matrix_tmp = new vs.CSSMatrix ();
 //         
 //     matrix_tmp = matrix_tmp.translate (pos.x, pos.y, pos.z || 0);
 //     matrix = matrix.multiply (matrix_tmp);
@@ -3596,11 +3592,9 @@ Application.start = function ()
   for (key in Application_applications)
   {
     obj = Application_applications [key];
-    obj.redraw (function ()
-    {
-      obj.propertyChange ();
-      obj.applicationStarted ();
-    });
+    obj.propertyChange ();
+    obj.applicationStarted ();
+    setTimeout (function () {obj.refresh ();}, 0);
   }
 };
 
@@ -3669,7 +3663,7 @@ ImagePreloader.prototype.preload = function (image)
 
 function preventBehavior (e)
 {
-  window.scrollTo (0, 0);
+//  window.scrollTo (0, 0);
 
   if (e.type == "touchstart" &&
       (e.target.tagName == "INPUT" ||
@@ -3954,7 +3948,6 @@ var SplitView = vs.core.createClass ({
       this._super (child, 'main_panel');
       return;
     }
-    
     
     if (this._orientation === SplitView.HORIZONTAL)
     {
@@ -6598,7 +6591,7 @@ ScrollView.prototype = {
     this.animationDuration = this._animation_duration;
    
     this.refresh ();
-    this._applyInsideTransformation2D ();
+//    this._applyInsideTransformation2D ();
   },
   
   /*****************************************************************
@@ -6651,91 +6644,91 @@ ScrollView.prototype = {
    * @private
    * @function
    */
-  gestureStart : function (e)
-  {
-    e.preventDefault ();
-    e.stopPropagation ();
-    
-    this.animationDuration = 0;
-
-    if (this._pinch & ScrollView.SCALE && this._delegate &&
-        this._delegate.viewWillStartZooming)
-    {
-      this._delegate.viewWillStartZooming (this);
-    }
-
-    document.addEventListener ('gesturechange', this);
-    document.addEventListener ('gestureend', this);
-    document.addEventListener ('gesturecancel', this);
-    this.view.addEventListener ('gestureend', this);
-    this.view.addEventListener ('gesturecancel', this);
-    
-    this.__ab_view_s = this._ab_view_s;
-    this.__ab_view_r = this._ab_view_r;
-
-    origin_str = '50% 50%';
-    this._sub_view.style ['-webkit-transform-origin'] = origin_str;
-  },
-
-  /**
-   * @private
-   * @function
-   */
-  gestureChange : function (e)
-  {
-    var scale = this.__ab_view_s * e.scale;
-    e.preventDefault ();
-    e.stopPropagation ();
-
-    if (scale > this._max_scale) { scale = this._max_scale; }
-    if (scale < this._min_scale) { scale = this._min_scale; }
-
-    if (this._pinch === ScrollView.ROTATION)
-    {
-      this._ab_view_r = this.__ab_view_r + e.rotation;
-    }
-    else if (this._pinch === ScrollView.SCALE)
-    {
-      this._ab_view_s = scale;
-    }
-    else if (this._pinch === ScrollView.ROTATION_AND_SCALE)
-    {
-      this._ab_view_r = this.__ab_view_r + e.rotation;
-      this._ab_view_s = scale;
-    }
-    this._applyInsideTransformation2D ();
-    
-    // refresh scroll views according scale and rotiation
-//    if (this._scroll) { this._scroll_refresh (this._pinch); }
-  },
+//   gestureStart : function (e)
+//   {
+//     e.preventDefault ();
+//     e.stopPropagation ();
+//     
+//     this.animationDuration = 0;
+// 
+//     if (this._pinch & ScrollView.SCALE && this._delegate &&
+//         this._delegate.viewWillStartZooming)
+//     {
+//       this._delegate.viewWillStartZooming (this);
+//     }
+// 
+//     document.addEventListener ('gesturechange', this);
+//     document.addEventListener ('gestureend', this);
+//     document.addEventListener ('gesturecancel', this);
+//     this.view.addEventListener ('gestureend', this);
+//     this.view.addEventListener ('gesturecancel', this);
+//     
+//     this.__ab_view_s = this._ab_view_s;
+//     this.__ab_view_r = this._ab_view_r;
+// 
+//     origin_str = '50% 50%';
+//     this._sub_view.style ['-webkit-transform-origin'] = origin_str;
+//   },
 
   /**
    * @private
    * @function
    */
-  gestureEnd : function (e)
-  {
-    var self = this;
+//   gestureChange : function (e)
+//   {
+//     var scale = this.__ab_view_s * e.scale;
+//     e.preventDefault ();
+//     e.stopPropagation ();
+// 
+//     if (scale > this._max_scale) { scale = this._max_scale; }
+//     if (scale < this._min_scale) { scale = this._min_scale; }
+// 
+//     if (this._pinch === ScrollView.ROTATION)
+//     {
+//       this._ab_view_r = this.__ab_view_r + e.rotation;
+//     }
+//     else if (this._pinch === ScrollView.SCALE)
+//     {
+//       this._ab_view_s = scale;
+//     }
+//     else if (this._pinch === ScrollView.ROTATION_AND_SCALE)
+//     {
+//       this._ab_view_r = this.__ab_view_r + e.rotation;
+//       this._ab_view_s = scale;
+//     }
+//     this._applyInsideTransformation2D ();
+//     
+//     // refresh scroll views according scale and rotiation
+// //    if (this._scroll) { this._scroll_refresh (this._pinch); }
+//   },
 
-    e.preventDefault ();
-    e.stopPropagation ();
-
-    document.removeEventListener ('gesturechange', this);
-    document.removeEventListener ('gestureend', this);
-    document.removeEventListener ('gesturecancel', this);
-    this.view.removeEventListener ('gestureend', this);
-    this.view.removeEventListener ('gesturecancel', this);
-    
-		setTimeout(function () {
-			self.refresh();
-		}, 0);
-
-    if (this._pinch & ScrollView.SCALE && this._delegate &&
-        this._delegate.viewDidEndZooming)
-    {
-      this._delegate.viewDidEndZooming (this, this._ab_view_s);
-    }
-  },
+  /**
+   * @private
+   * @function
+   */
+//   gestureEnd : function (e)
+//   {
+//     var self = this;
+// 
+//     e.preventDefault ();
+//     e.stopPropagation ();
+// 
+//     document.removeEventListener ('gesturechange', this);
+//     document.removeEventListener ('gestureend', this);
+//     document.removeEventListener ('gesturecancel', this);
+//     this.view.removeEventListener ('gestureend', this);
+//     this.view.removeEventListener ('gesturecancel', this);
+//     
+// 		setTimeout(function () {
+// 			self.refresh();
+// 		}, 0);
+// 
+//     if (this._pinch & ScrollView.SCALE && this._delegate &&
+//         this._delegate.viewDidEndZooming)
+//     {
+//       this._delegate.viewDidEndZooming (this, this._ab_view_s);
+//     }
+//   },
 
   /**
    * @protected
@@ -6811,15 +6804,15 @@ ScrollView.prototype = {
    * @param {int} y translation over the y axis
    * @param {function} clb Function call at the end of the transformation
    */
-  insideTranslate: function (x, y, clb)
-  {
-    if (this._ab_view_t_x === x && this._ab_view_t_y === y) { return; }
-    
-    this._ab_view_t_x = x;
-    this._ab_view_t_y = y;
-    
-    this._applyInsideTransformation2D (clb);
-  },
+//   insideTranslate: function (x, y, clb)
+//   {
+//     if (this._ab_view_t_x === x && this._ab_view_t_y === y) { return; }
+//     
+//     this._ab_view_t_x = x;
+//     this._ab_view_t_y = y;
+//     
+//     this._applyInsideTransformation2D (clb);
+//   },
 
   /**
    * Rotate the content
@@ -6831,17 +6824,17 @@ ScrollView.prototype = {
    * @param y {int} translation over the y axis
    * @param {function} clb Function call at the end of the transformation
    */
-  insideRotate: function (r, clb)
-  {
-    if (this._ab_view_r === r) { return; }
-    
-    this._ab_view_r = r;
-    
-    this._applyInsideTransformation2D (clb);
-    
-    // refresh scroll views according scale and rotiation
-    if (this._scroll) { this._scroll_refresh (this._pinch); }
-  },
+//   insideRotate: function (r, clb)
+//   {
+//     if (this._ab_view_r === r) { return; }
+//     
+//     this._ab_view_r = r;
+//     
+//     this._applyInsideTransformation2D (clb);
+//     
+//     // refresh scroll views according scale and rotiation
+//     if (this._scroll) { this._scroll_refresh (this._pinch); }
+//   },
   
   /**
    * Scale the content
@@ -6853,62 +6846,62 @@ ScrollView.prototype = {
    * @param s {float} scale value
    * @param {function} clb Function call at the end of the transformation
    */
-  insideScale: function (s, clb)
-  {    
-    if (s > this._max_scale) { s = this._max_scale; }
-    if (s < this._min_scale) { s = this._min_scale; }
-    if (this._ab_view_s === s) { return; }
- 
-    this._ab_view_s = s;
-    
-    this._applyInsideTransformation2D (clb);
-    
-    // refresh scroll views according scale and rotiation
-//    if (this._scroll) { this._scroll_refresh (this._pinch); }
-  },
+//   insideScale: function (s, clb)
+//   {    
+//     if (s > this._max_scale) { s = this._max_scale; }
+//     if (s < this._min_scale) { s = this._min_scale; }
+//     if (this._ab_view_s === s) { return; }
+//  
+//     this._ab_view_s = s;
+//     
+//     this._applyInsideTransformation2D (clb);
+//     
+//     // refresh scroll views according scale and rotiation
+// //    if (this._scroll) { this._scroll_refresh (this._pinch); }
+//   },
   
   /**
    * @protected
    * @function
    */
-  _applyInsideTransformation2D: function (clb)
-  {
-    var transform = '', callback, self = this;
-    
-    callback = function (event) 
-    {
-      // do nothing if that event just bubbled from our target's sub-tree
-      if (event.currentTarget !== self._sub_view) { return; }
-
-      self._sub_view.removeEventListener
-        ('webkitTransitionEnd', callback, false);
-      
-      if (clb) { clb.call (self); }
-    }
-
-    // apply translation, therefor a strange bug appear (flick)
-    if (SUPPORT_3D_TRANSFORM)
-      transform += 
-        "translate3d("+this._ab_view_t_x+"px,"+this._ab_view_t_y+"px,0)";
-    else
-      transform += 
-        "translate("+this._ab_view_t_x+"px,"+this._ab_view_t_y+"px)";
-
-    if (this._ab_view_r)
-    {
-      transform += " rotate(" + this._ab_view_r + "deg)";
-    }
-    if (this._ab_view_s !== 1)
-    {
-      transform += " scale(" + this._ab_view_s + ")";
-    }
-    
-    if (clb)
-    {
-      this._sub_view.addEventListener ('webkitTransitionEnd', callback, false);
-    }
-    setElementTransform (this._sub_view, transform);
-  },
+//   _applyInsideTransformation2D: function (clb)
+//   {
+//     var transform = '', callback, self = this;
+//     
+//     callback = function (event) 
+//     {
+//       // do nothing if that event just bubbled from our target's sub-tree
+//       if (event.currentTarget !== self._sub_view) { return; }
+// 
+//       self._sub_view.removeEventListener
+//         ('webkitTransitionEnd', callback, false);
+//       
+//       if (clb) { clb.call (self); }
+//     }
+// 
+//     // apply translation, therefor a strange bug appear (flick)
+//     if (SUPPORT_3D_TRANSFORM)
+//       transform += 
+//         "translate3d("+this._ab_view_t_x+"px,"+this._ab_view_t_y+"px,0)";
+//     else
+//       transform += 
+//         "translate("+this._ab_view_t_x+"px,"+this._ab_view_t_y+"px)";
+// 
+//     if (this._ab_view_r)
+//     {
+//       transform += " rotate(" + this._ab_view_r + "deg)";
+//     }
+//     if (this._ab_view_s !== 1)
+//     {
+//       transform += " scale(" + this._ab_view_s + ")";
+//     }
+//     
+//     if (clb)
+//     {
+//       this._sub_view.addEventListener ('webkitTransitionEnd', callback, false);
+//     }
+//     setElementTransform (this._sub_view, transform);
+//   },
   
   /**
    * @protected
@@ -6952,7 +6945,7 @@ ScrollView.prototype = {
       // For any case, do not show the scroll bar
 //       options.hScrollbar = false;
 //       options.vScrollbar = false;
-
+ 
       this.__iscroll__ = new iScroll (this.view, this._sub_view, options);
 
       this.refresh ();
@@ -7036,15 +7029,15 @@ util.defineClassProperties (ScrollView, {
     
     if (!this.view) { return; }
 
-    if (v === ScrollView.NO_PINCH && this._pinch !== ScrollView.NO_PINCH)
-    {
-      this.view.removeEventListener ('gesturestart', this);
-    }
-    else if (v !== ScrollView.NO_PINCH && this._pinch === ScrollView.NO_PINCH)
-    {
-      this.view.addEventListener ('gesturestart', this);
-//      this.view.addEventListener ('touchstart', this);
-    }
+//     if (v === ScrollView.NO_PINCH && this._pinch !== ScrollView.NO_PINCH)
+//     {
+//       this.view.removeEventListener ('gesturestart', this);
+//     }
+//     else if (v !== ScrollView.NO_PINCH && this._pinch === ScrollView.NO_PINCH)
+//     {
+//       this.view.addEventListener ('gesturestart', this);
+// //      this.view.addEventListener ('touchstart', this);
+//     }
     this._pinch = v;
   }
 },
@@ -8346,6 +8339,15 @@ AbstractList.prototype = {
    * @protected
    * @function
    */
+  refresh : function ()
+  {
+    if (this.__iscroll__) this.__iscroll__.refresh ();
+  },
+
+  /**
+   * @protected
+   * @function
+   */
   _modelChanged : function ()
   {
     // TODO   on peut mieux faire : au lieu de faire
@@ -9570,7 +9572,7 @@ List.prototype = {
       e.stopPropagation ();
       e.preventDefault ();
       
-      self._list_items.style.webkitTransition = '';
+      util.setElementTransform (self._list_items, '');
       self.__max_scroll = self.size [1] - self._list_items.offsetHeight;
       
       document.addEventListener (core.POINTER_MOVE, accessBarMove, false);
@@ -9642,7 +9644,8 @@ List.prototype = {
       if (self._endScrolling) self._endScrolling ();
     };
 
-    this._direct_access.addEventListener (core.POINTER_START, accessBarStart, false);
+    this._direct_access.addEventListener
+      (core.POINTER_START, accessBarStart, false);
   },
   
   getTitlePosition : function (index)
@@ -9787,8 +9790,13 @@ util.defineClassProperties (List, {
     /** 
      * Getter|Setter for filters. Allow to filter item data.
      * @ex:
-     *   list.filters = 
-     *      [{property:'title', value:'o', matching:vs.ui.List.FILTER_CONTAINS, strict:true];
+     *   list.filters = [
+     *     {
+     *       property:'title',
+     *       value:'o',
+     *       matching:vs.ui.List.FILTER_CONTAINS,
+     *       strict:true
+     *     }];
      *
      * @name vs.ui.List#filters 
      *
@@ -15075,36 +15083,42 @@ function Switch (config)
  * @private
  * @const
  */
-Switch.MODE_IOS = 0;
-/**
- * @private
- * @const
- */
-Switch.MODE_ANDROID = 1;
+Switch.MODE_DEFAULT = 0;
 
 /**
  * @private
  * @const
  */
-Switch.MODE_MEEGO = 2;
+Switch.MODE_IOS = 1;
+/**
+ * @private
+ * @const
+ */
+Switch.MODE_ANDROID = 2;
 
 /**
  * @private
  * @const
  */
-Switch.MODE_WP7 = 3;
+Switch.MODE_MEEGO = 3;
 
 /**
  * @private
  * @const
  */
-Switch.MODE_SYMBIAN = 4;
+Switch.MODE_WP7 = 4;
 
 /**
  * @private
  * @const
  */
-Switch.MODE_BLACKBERRY = 5;
+Switch.MODE_SYMBIAN = 5;
+
+/**
+ * @private
+ * @const
+ */
+Switch.MODE_BLACKBERRY = 6;
 
 Switch.prototype = {
   
@@ -15138,7 +15152,7 @@ Switch.prototype = {
    * @private
    * @type {Number}
    */
-  _mode: Switch.MODE_IOS,
+  _mode: Switch.MODE_DEFAULT,
 
   /**
    *
@@ -15223,7 +15237,8 @@ Switch.prototype = {
         setElementTransform (this.__background_view, "scale(0, 1)");
         setElementTransform (this.__toggles_view, "translate(0,0)");
       }
-      else if (this._mode === Switch.MODE_ANDROID ||
+      else if (this._mode === Switch.MODE_DEFAULT ||
+               this._mode === Switch.MODE_ANDROID ||
                this._mode === Switch.MODE_MEEGO ||
                this._mode === Switch.MODE_SYMBIAN ||
                this._mode === Switch.MODE_BLACKBERRY)
@@ -15241,7 +15256,8 @@ Switch.prototype = {
         setElementTransform (this.__toggles_view, 
           "translate(-" + (this.size[0] - this.__width_switch) + "px,0)");
       }
-      else if (this._mode === Switch.MODE_ANDROID ||
+      else if (this._mode === Switch.MODE_DEFAULT ||
+               this._mode === Switch.MODE_ANDROID ||
                this._mode === Switch.MODE_MEEGO ||
                this._mode === Switch.MODE_SYMBIAN ||
                this._mode === Switch.MODE_BLACKBERRY)
@@ -15284,12 +15300,17 @@ Switch.prototype = {
       this.view.querySelector ('.vs_ui_switch .toggle_off');
     this.__switch_view =
       this.view.querySelector ('.vs_ui_switch .switch');
-          
+
+    if (!this.__touch_binding)
+    {
+      this.view.addEventListener (core.POINTER_START, this);
+      this.__touch_binding = true;
+    }
+
     var os_device = window.deviceConfiguration.os;
     if (os_device == DeviceConfiguration.OS_IOS)
     {
       this._mode = Switch.MODE_IOS;
-      this.__width_switch = 40;
     }
     else if (os_device == DeviceConfiguration.OS_ANDROID)
     {
@@ -15306,23 +15327,10 @@ Switch.prototype = {
     else if (os_device == DeviceConfiguration.OS_WP7)
     {
       this._mode = Switch.MODE_WP7;
-      this.__width_switch = 23;
     }
     else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
     {
       this._mode = Switch.MODE_BLACKBERRY;
-      this.__width_switch = 20;
-    }
-    else
-    {
-      // this method could not work if the view his not displaied
-      this.__width_switch = this.__switch_view.offsetWidth;
-    }
-
-    if (!this.__touch_binding)
-    {
-      this.view.addEventListener (core.POINTER_START, this);
-      this.__touch_binding = true;
     }
 
     if (this._text_on)
@@ -15343,6 +15351,30 @@ Switch.prototype = {
     }
 
     this.toggled = this._toggled;
+  },
+  
+  refresh : function ()
+  {
+    View.prototype.refresh.call (this);
+
+    switch (this._mode)
+    {
+      case Switch.MODE_IOS:
+        this.__width_switch = 40;
+      break;
+    
+      case Switch.MODE_WP7:
+        this.__width_switch = 23;
+      break;
+
+      case Switch.MODE_BLACKBERRY:
+        this.__width_switch = 20;
+      break;
+
+      default:
+      // this method could not work if the view his not displaied
+      this.__width_switch = this.__switch_view.offsetWidth;
+    }
   },
   
   /**
@@ -16179,8 +16211,8 @@ Picker.prototype = {
       if (!elem)
       { continue; }
       // Remove any residual animation
-      elem.removeEventListener('webkitTransitionEnd', this, false);
-      elem.style.webkitTransitionDuration = '0';
+      elem.removeEventListener (vs.TRANSITION_END, this, false);
+      elem.style.setProperty (vs.TRANSITION_DURATION, '0');
 
       slotMaxScroll = this.getSlotMaxScroll (elem);
       
@@ -16275,8 +16307,8 @@ Picker.prototype = {
     if (!elem) { return false; }
     if (!slot_data) { return false; }
     
-    elem.removeEventListener ('webkitTransitionEnd', this, false);
-    elem.style.webkitTransitionDuration = '0';
+    elem.removeEventListener (vs.TRANSITION_END, this, false);
+    elem.style.setProperty (vs.TRANSITION_DURATION, '0');
     
     count = 0;
     for (i in slot_data.values)
@@ -16324,7 +16356,7 @@ Picker.prototype = {
   _scrollTo: function (slotNum, dest, runtime)
   {
     var slot_elem = this._slots_elements[slotNum], slotMaxScroll;
-    slot_elem.style.webkitTransitionDuration = runtime ? runtime + 'ms': '100ms';
+    slot_elem.style.setProperty (vs.TRANSITION_DURATION, runtime ? runtime + 'ms': '100ms');
     this._setPosition (slotNum, dest ? dest : 0);
 
     slotMaxScroll = this.getSlotMaxScroll (slot_elem);
@@ -16333,7 +16365,7 @@ Picker.prototype = {
     if (slot_elem.slotYPosition > 0 ||
         slot_elem.slotYPosition < slotMaxScroll)
     {
-      slot_elem.addEventListener ('webkitTransitionEnd', this, false);
+      slot_elem.addEventListener (vs.TRANSITION_END, this, false);
     }
     else
     {
@@ -16367,7 +16399,7 @@ Picker.prototype = {
       case core.POINTER_START:
         this._scrollStart (e);
       break;
-    
+
       case core.POINTER_MOVE:
         this._scrollMove (e);
       break;
@@ -16376,7 +16408,7 @@ Picker.prototype = {
         this._scrollEnd (e);
       break;
 
-      case 'webkitTransitionEnd':
+      case vs.TRANSITION_END:
         this._backWithinBoundaries (e);
       break;
     }
@@ -16395,7 +16427,7 @@ Picker.prototype = {
     this._active_slot = undefined;
 
     var css = this._getComputedStyle (this._frame_view);
-    this._frame_border_width = css ? parseInt (css ['border-left-width']) : 0;
+    this._frame_border_width = css ? parseInt (css.getPropertyValue ('border-left-width')) : 0;
 
     switch (this._mode)
     {
@@ -16445,14 +16477,14 @@ Picker.prototype = {
     
     slot_elem.slotMaxScroll = this.getSlotMaxScroll (slot_elem);
 
-    slot_elem.removeEventListener('webkitTransitionEnd', this, false);  // Remove transition event (if any)
-    slot_elem.style.webkitTransitionDuration = '0';   // Remove any residual transition
+    slot_elem.removeEventListener (vs.TRANSITION_END, this, false);  // Remove transition event (if any)
+    slot_elem.style.setProperty (vs.TRANSITION_DURATION, '0');   // Remove any residual transition
     
     // Stop and hold slot position
     if (SUPPORT_3D_TRANSFORM)
     {
       var theTransform = getElementTransform (slot_elem);
-      theTransform = new WebKitCSSMatrix(theTransform).m42;
+      theTransform = new vs.CSSMatrix(theTransform).m42;
       if (theTransform != slot_elem.slotYPosition)
       {
         this._setPosition (this._active_slot, theTransform);
@@ -16662,7 +16694,7 @@ Picker.prototype = {
   _backWithinBoundaries: function (e)
   {
     var elem = e.target;
-    elem.removeEventListener ('webkitTransitionEnd', this, false);
+    elem.removeEventListener (vs.TRANSITION_END, this, false);
     
     slotMaxScroll = this.getSlotMaxScroll (elem);
 

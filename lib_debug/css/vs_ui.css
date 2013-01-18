@@ -138,8 +138,8 @@ body {
 .vs_ui_navbar.horizontal_layout > *,
 .vs_ui_view.horizontal_layout > *
 {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
+  -webkit-box-flex: 0;
+  box-flex: 0;
 
   position: relative;
 }
@@ -639,6 +639,7 @@ li {
   background: transparent;
   border: none;
   font-size: inherit;
+  position:relative;
 }
 
 .vs_ui_combobox > div {
@@ -656,7 +657,7 @@ li {
   outline: none;
 }
 
-.vs_ui_combobox:after
+.vs_ui_combobox::after
 {
   border-color: #DDD transparent transparent;
   border-style: solid;
@@ -680,6 +681,7 @@ li {
   overflow: hidden;
   padding: 0px;
   margin: 0px;
+  width: 100%;
 }
 
 .vs_ui_radiobutton > fieldset {
@@ -729,6 +731,7 @@ input[type="radio"]:after
   overflow: hidden;
   padding: 0px;
   margin: 0px;
+  width: 100%;
 }
 
 .vs_ui_checkbox > fieldset {
@@ -1079,14 +1082,17 @@ input[type="checkbox"]:after
 }.vs_ui_imageview {
 }
 .vs_ui_inputfield {
-  min-width: 100px;
+  min-width: 200px;
   border: 0px;
   margin: 0px;
   padding: 0px;
   background: white;
+
+  position: relative !important;
 }
 
 input[type="search"],
+input[type="password"],
 input[type="text"] {
   -webkit-user-select: text;
   -webkit-appearance: none;
@@ -1100,39 +1106,30 @@ input[type="text"] {
   margin: 0px;
   font-size: inherit;
   outline: none;
-  position: relative;
   display: block;
   left: 5px;
-  width: 100%;
   height: 100%;
-  padding-right: 10px;
-}
+  right: 10px;
+  left: 10px;
 
-.vs_ui_inputfield.focus > input
-{
-  padding-right: 35px;
-}
-
-input[type="search"] {
-  padding-left: 10px;
-  padding-right: 10px;
-  border-right: 20px solid transparent;
+  position: absolute;
 }
 
 .vs_ui_inputfield .clear_button {
-  position: relative;
+  position: absolute;
 
-  top: -100%;
-  height: 30px;
+  height: 100%;
   width: 30px;
   right: 0px;
 
   background: transparent;
   background-image: url('FieldCancel.png');
   background-repeat: no-repeat;
-  
-  float:right;
-  z-index: 10;
+}
+
+.vs_ui_inputfield.focus > input
+{
+  right: 35px;
 }.vs_ui_popover {
   font-family: Helvetica;
   font-size: 12px;
@@ -1337,13 +1334,19 @@ input[type="search"] {
 }
 
 .vs_ui_picker .slots {
-  position:relative; z-index:999;
+  position:relative;
+  z-index:999;
   padding:0 11px;
   overflow:hidden;
 
   display: -webkit-box;
   -webkit-box-orient: horizontal;
   width:100%;
+}
+
+.vs_ui_picker .frame {
+  position:relative;
+  z-index:1000;
 }
 
 .vs_ui_picker .slots > div {
