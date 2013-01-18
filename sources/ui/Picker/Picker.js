@@ -740,11 +740,10 @@ Picker.prototype = {
     {
       case core.POINTER_START:
         this._scrollStart (e);
-       break;
+      break;
 
       case core.POINTER_MOVE:
         this._scrollMove (e);
-       console.log (e);
       break;
 
       case core.POINTER_END:
