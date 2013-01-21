@@ -252,6 +252,17 @@ InputField.prototype = {
   },
   
   /**
+   * Did enable delegate
+   * @name vs.ui.View#_didEnable
+   * @protected
+   */
+  _didEnable : function ()
+  {
+    if (this._enable) this._text_field.removeAttribute ('disabled');
+    else this._text_field.setAttribute ('disabled');
+  },
+  
+  /**
    * @private
    * @function
    */
