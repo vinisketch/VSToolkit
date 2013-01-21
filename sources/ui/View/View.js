@@ -1151,7 +1151,8 @@ View.prototype = {
     {
       if (pWidth)
       {
-        width = Math.round (size[0] / pWidth * 100) + '%';
+//        width = Math.round (size[0] / pWidth * 100) + '%';
+        width = (size[0] / pWidth * 100) + '%';
       }
       else { width = size[0] + 'px'; } 
     }
@@ -1170,7 +1171,8 @@ View.prototype = {
     { 
       if (pHeight)
       {
-        height = Math.round (size[1] / pHeight * 100) + '%';
+//        height = Math.round (size[1] / pHeight * 100) + '%';
+        height = (size[1] / pHeight * 100) + '%';
       }
       else { height = size[1] + 'px'; } 
     }
@@ -1212,7 +1214,8 @@ View.prototype = {
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
     { sPosL = pos[0] + 'px'; }
     else if ((aH === 2 || aH === 0) && pWidth)
-    { sPosL = Math.round (pos[0] / pWidth * 100) + '%'; }
+//    { sPosL = Math.round (pos[0] / pWidth * 100) + '%'; }
+    { sPosL = (pos[0] / pWidth * 100) + '%'; }
     
     if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
     {
@@ -1222,7 +1225,8 @@ View.prototype = {
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
     { sPosT = pos[1] + 'px'; }
     else if ((aV === 2 || aV === 0) && pHeight)
-    { sPosT = Math.round (pos[1]  / pHeight * 100) + '%'; }
+//    { sPosT = Math.round (pos[1]  / pHeight * 100) + '%'; }
+    { sPosT = (pos[1]  / pHeight * 100) + '%'; }
 
     if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
     {
@@ -1440,7 +1444,11 @@ View.prototype = {
   },
   
   /**
-   *  Add new CSS rules related to this component.
+   *  Modifies CSS styleSheets.
+   *  <p>
+   *  Modifies CSS style styleSheets. It can be preempted
+   *  by css style inline modification (see vs.ui.View.setStyle).
+   *  @see vs.ui.View#setStyles if you want to modify inline CSS.
    *
    *  @example
    *  myObject.addCssRules ('.classname1', ['color: red', 'margin: 0px']);
@@ -1897,6 +1905,13 @@ View.prototype = {
     }
   },
   
+  /**
+   * Did enable delegate
+   * @name vs.ui.View#_didEnable
+   * @protected
+   */
+   _didEnable : function () {},
+  
   /*****************************************************************
    *                Animation methods
    ****************************************************************/
@@ -2277,15 +2292,17 @@ util.defineClassProperties (View, {
      */ 
     set : function (v)
     {
-      if (v)
+      if (v && !this._enable)
       { 
         this._enable = true;
         this.removeClassName ('disabled');
+        this._didEnable ();
       }
-      else
+      else if (!v && this._enable)
       { 
         this._enable = false;
         this.addClassName ('disabled');
+        this._didEnable ();
       }
     },
   
