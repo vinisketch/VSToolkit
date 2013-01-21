@@ -172,13 +172,13 @@ AbstractList.prototype = {
   /**
    * @protected
    * @function
-  
+   */
   _untouchItemFeedback : function (item) {},
 
   /**
    * @protected
    * @function
-  
+   */
   _updateSelectItem : function (item) {},
 
   /**
