@@ -11,13 +11,15 @@
 }
 
 .vs_ui_picker .slots div {
-  height:100%;
-  padding-top:70px;
+  height:163px;
+  margin-top: 10px;
+  padding-top:60px;
   border-left:2px solid #0d0e0f;
   background-color:#fcfcfc;
   background-position: 0 0, 100% 0;
   background-repeat: repeat-y;
   background-image: url('iOSPicker_border.png');
+  overflow: hidden;
 }
 
 .vs_ui_picker ul {
