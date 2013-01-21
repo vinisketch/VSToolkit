@@ -32,6 +32,14 @@ input[type="text"] {
   position: absolute;
 }
 
+.vs_ui_inputfield > input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.vs_ui_inputfield > input::-webkit-search-decoration {
+  display: none;
+}
+
 .vs_ui_inputfield .clear_button {
   position: absolute;
 
