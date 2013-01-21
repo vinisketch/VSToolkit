@@ -92,31 +92,37 @@ Picker.NUMBERS =
  * @private
  * @const
  */
-Picker.MODE_IOS = 0;
+Picker.MODE_DEFAULT = 0;
 
 /**
  * @private
  * @const
  */
-Picker.MODE_ANDROID = 1;
+Picker.MODE_IOS = 1;
 
 /**
  * @private
  * @const
  */
-Picker.MODE_WP7 = 2;
+Picker.MODE_ANDROID = 2;
 
 /**
  * @private
  * @const
  */
-Picker.MODE_SYMBIAN = 3;
+Picker.MODE_WP7 = 3;
 
 /**
  * @private
  * @const
  */
-Picker.MODE_BLACK_BERRY = 4;
+Picker.MODE_SYMBIAN = 4;
+
+/**
+ * @private
+ * @const
+ */
+Picker.MODE_BLACK_BERRY = 5;
 
 Picker.prototype = {
 
@@ -124,7 +130,7 @@ Picker.prototype = {
    * @private
    * @type {Number}
    */
-  _mode: Picker.MODE_IOS,
+  _mode: Picker.MODE_DEFAULT,
 
   /**
    * @private
@@ -211,7 +217,11 @@ Picker.prototype = {
     this._slots_elements = [];
     
     var os_device = window.deviceConfiguration.os;
-    if (os_device == DeviceConfiguration.OS_ANDROID)
+    if (os_device == DeviceConfiguration.OS_IOS)
+    {
+      this._mode = Picker.MODE_IOS;
+    }
+    else if (os_device == DeviceConfiguration.OS_ANDROID)
     {
       this._mode = Picker.MODE_ANDROID;
     }
@@ -229,7 +239,7 @@ Picker.prototype = {
     }
     else
     {
-      this._mode = Picker.MODE_IOS;
+      this._mode = Picker.MODE_DEFAULT;
     }
     
     // Pseudo table element (inner wrapper)
@@ -240,12 +250,11 @@ Picker.prototype = {
     
     switch (this._mode)
     {
+      case Picker.MODE_BLACK_BERRY:
+         this._cell_height = 50;
+
+      case Picker.MODE_DEFAULT:
       case Picker.MODE_IOS:
-        // Add scrolling to the slots
-        this._frame_view.addEventListener (core.POINTER_START, this);
-        this._frame_border_width = 0;
-      break;
-      
       case Picker.MODE_SYMBIAN:
         // Add scrolling to the slots
         this._frame_view.addEventListener (core.POINTER_START, this);
@@ -253,17 +262,10 @@ Picker.prototype = {
       break;
       
       case Picker.MODE_WP7:
-        this._frame_view.parentElement.removeChild (this._frame_view);
         this._cell_height = 83;
-      break;
       
       case Picker.MODE_ANDROID:
         this._frame_view.parentElement.removeChild (this._frame_view);
-      break;
-
-      case Picker.MODE_BLACK_BERRY:
-        this._frame_view.addEventListener (core.POINTER_START, this);
-        this._cell_height = 50;
       break;
     }    
   },
@@ -773,6 +775,7 @@ Picker.prototype = {
 
     switch (this._mode)
     {
+      case Picker.MODE_DEFAULT:
       case Picker.MODE_IOS:
       case Picker.MODE_SYMBIAN:
       case Picker.MODE_BLACK_BERRY:
@@ -1005,6 +1008,10 @@ Picker.prototype = {
   {
     switch (this._mode)
     {
+      case Picker.MODE_DEFAULT:
+        return this.view.clientHeight - ul.clientHeight - 66;
+      break;
+      
       case Picker.MODE_IOS:
         return this.view.clientHeight - ul.clientHeight - 86;
       break;
