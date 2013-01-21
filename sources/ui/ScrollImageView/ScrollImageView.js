@@ -190,7 +190,7 @@ ScrollImageView.prototype = {
     setTimeout (function ()
     {
       self.refresh ();
-      self._applyInsideTransformation2D ();
+//      self._applyInsideTransformation ();
     }, 0);
   },
   
@@ -229,7 +229,7 @@ ScrollImageView.prototype = {
     }
     
     this.refresh ();
-    this._applyInsideTransformation2D ();
+//    this._applyInsideTransformation ();
   }
 };
 util.extendClass (ScrollImageView, ScrollView);
