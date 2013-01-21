@@ -790,7 +790,8 @@ View.prototype = {
 
     // Add object to its parent
     this.add (obj, extension);
-
+    obj.refresh ();
+    
     return obj;
   },
 
@@ -1444,11 +1445,7 @@ View.prototype = {
   },
   
   /**
-   *  Modifies CSS styleSheets.
-   *  <p>
-   *  Modifies CSS style styleSheets. It can be preempted
-   *  by css style inline modification (see vs.ui.View.setStyle).
-   *  @see vs.ui.View#setStyles if you want to modify inline CSS.
+   *  Add new CSS rules related to this component.
    *
    *  @example
    *  myObject.addCssRules ('.classname1', ['color: red', 'margin: 0px']);
