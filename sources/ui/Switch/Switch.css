@@ -24,6 +24,7 @@
   width: 100px;
 
   overflow: hidden;
+  position:relative;
 }
 
 .vs_ui_switch >div:first-child {
