@@ -318,11 +318,11 @@ GMap.prototype = {
     {
       this._center_mark = new google.maps.Marker({
         position: new google.maps.LatLng (this._center [0], this._center [1]),
-        icon: "mapCenter.png",
+        icon: "css/kit/mapCenter.png",
       });
     }
     
-    this._center_mark.setGMap (this._gmap);
+    this._center_mark.setMap (this._gmap);
   },
 
   /**
@@ -336,7 +336,7 @@ GMap.prototype = {
     if (!this._center_mark)
     { return; }
     
-    this._center_mark.setGMap (null);
+    this._center_mark.setMap (null);
   },
 
 /********************************************************************
