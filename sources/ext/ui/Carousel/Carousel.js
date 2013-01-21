@@ -179,6 +179,7 @@ Carousel.prototype = {
     this._slideController = new vs.fx.SlideController (this);
     this._slideController.delegate = this;
     this._slideController.isTactile = true;
+    this._slideController.animationMode = vs.fx.SlideController.PIXEL;
     this._slideController.init ();
   },
   
