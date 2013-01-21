@@ -1,11 +1,11 @@
 .vs_ui_inputfield {
-  min-width: 200px;
+  min-width: 150px;
   border: 0px;
   margin: 0px;
   padding: 0px;
   background: white;
 
-  position: relative !important;
+  position: relative;
 }
 
 input[type="search"],
