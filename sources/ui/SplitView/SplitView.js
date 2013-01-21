@@ -230,7 +230,6 @@ var SplitView = vs.core.createClass ({
       return;
     }
     
-    
     if (this._orientation === SplitView.HORIZONTAL)
     {
       this._super (child, 'left_panel');
