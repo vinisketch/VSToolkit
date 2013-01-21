@@ -7,15 +7,6 @@
   background: rgba(255, 255, 255, 0.5);
   border-radius: 10px;
 }
-/*
-
-.vs_ext_ui_carousel > div:nth-child(n+2)
-{
-  position: absolute;
-  top: 0px;
-  left: 0px;
-}
-*/
 
 .vs_ext_ui_carousel > *
 {
