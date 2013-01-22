@@ -237,7 +237,7 @@ Button.prototype = {
   {
     if (this.__touch_binding)
     {
-      this.view.removeEventListener (core.POINTER_START, this);
+      vs.removePointerListener (this.view, core.POINTER_START, this);
       this.__touch_binding = false;
     }
     View.prototype.destructor.call (this);
@@ -255,7 +255,7 @@ Button.prototype = {
 
     if (!this.__touch_binding)
     {
-      this.view.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (this.view, core.POINTER_START, this);
       this.__touch_binding = true;
     }
 
@@ -293,7 +293,7 @@ Button.prototype = {
       case core.POINTER_START:
         if (this.__is_touched) { return; }
         // prevent multi touch events
-        if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+        if (e.nbPointers > 1) { return; }
         
         // we keep the event
         e.stopPropagation ();
@@ -305,10 +305,10 @@ Button.prototype = {
         }
         
         this._setPressed (true);
-        document.addEventListener (core.POINTER_END, this);
-        document.addEventListener (core.POINTER_MOVE, this);
-        this.__start_x = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
-        this.__start_y = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+        vs.addPointerListener (document, core.POINTER_END, this);
+        vs.addPointerListener (document, core.POINTER_MOVE, this);
+        this.__start_x = e.pointerList[0].pageX;
+        this.__start_y = e.pointerList[0].pageY;
         this.__is_touched = true;
         
         return false;
@@ -317,10 +317,8 @@ Button.prototype = {
       case core.POINTER_MOVE:
         if (!this.__is_touched) { return; }
 
-        var dx = 
-          (core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX) - this.__start_x;
-        var dy =
-          (core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY) - this.__start_y;
+        var dx = e.pointerList[0].pageX - this.__start_x;
+        var dy = e.pointerList[0].pageY - this.__start_y;
           
         if (Math.abs (dx) + Math.abs (dy) < View.MOVE_THRESHOLD)
         {
@@ -329,8 +327,8 @@ Button.prototype = {
           return false;
         }
  
-        document.removeEventListener (core.POINTER_END, this);
-        document.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (document, core.POINTER_END, this);
+        vs.removePointerListener (document, core.POINTER_MOVE, this);
         this.__is_touched = false;
 
         this._setPressed (false);
@@ -345,8 +343,8 @@ Button.prototype = {
         // we keep the event
         e.stopPropagation ();
 
-        document.removeEventListener (core.POINTER_END, this);
-        document.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (document, core.POINTER_END, this);
+        vs.removePointerListener (document, core.POINTER_MOVE, this);
 
         this.__button_time_out = setTimeout (function ()
         {

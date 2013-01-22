@@ -1075,7 +1075,7 @@ function createInfoWindowClass ()
     
     this.view = document.createElement ('div');
  
-    this.view.addEventListener (core.POINTER_START, this);
+    vs.addPointerListener (this.view, core.POINTER_START, this);
   };
   
   /**
@@ -1089,12 +1089,12 @@ function createInfoWindowClass ()
     {
       case core.POINTER_START:
         // prevent multi touch events
-        if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+        if (e.nbPointers > 1) { return; }
         
-        document.addEventListener (core.POINTER_END, this);
-        document.addEventListener (core.POINTER_MOVE, this);
-        this.__start_x = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
-        this.__start_y = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+        vs.addPointerListener (document, core.POINTER_END, this);
+        vs.addPointerListener (document, core.POINTER_MOVE, this);
+        this.__start_x = e.pointerList[0].pageX;
+        this.__start_y = e.pointerList[0].pageY;
         
         if (this.marker) this.removeMapEvent ();
         util.addClassName (this.view, "selected");
@@ -1103,10 +1103,8 @@ function createInfoWindowClass ()
 
       case core.POINTER_MOVE:
 
-        var dx = 
-          (core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX) - this.__start_x;
-        var dy =
-          (core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY) - this.__start_y;
+        var dx = e.pointerList[0].pageX - this.__start_x;
+        var dy = e.pointerList[0].pageY - this.__start_y;
           
         if (Math.abs (dx) + Math.abs (dy) < 10)
         {
@@ -1115,8 +1113,8 @@ function createInfoWindowClass ()
           return false;
         }
  
-        document.removeEventListener (core.POINTER_END, this);
-        document.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (document, core.POINTER_END, this);
+        vs.removePointerListener (document, core.POINTER_MOVE, this);
         if (this.marker) setTimeout (function () {self.initMapEvent ();}, 0);
         util.removeClassName (this.view, "selected");
  
@@ -1129,8 +1127,8 @@ function createInfoWindowClass ()
         e.stopPropagation ();
         e.preventDefault ();
 
-        document.removeEventListener (core.POINTER_END, this);
-        document.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (document, core.POINTER_END, this);
+        vs.removePointerListener (document, core.POINTER_MOVE, this);
         if (this.marker) setTimeout (function () {self.initMapEvent ();}, 0);
         util.removeClassName (this.view, "selected");
         

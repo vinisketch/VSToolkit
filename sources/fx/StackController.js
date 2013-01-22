@@ -557,7 +557,7 @@ util.defineClassProperties (StackController, {
   
         if (!this._owner_handler_event_extended)
         {
-          this._owner.view.addEventListener (core.POINTER_START, this._owner, false);
+          vs.addPointerListener (this._owner.view, core.POINTER_START, this._owner, false);
           this._owner_handler_event = this._owner.handleEvent;
           this._owner.handleEvent = this.handleEvent;
         }
@@ -570,7 +570,7 @@ util.defineClassProperties (StackController, {
         
         if (this._owner_handler_event_extended)
         {
-          this._owner.view.removeEventListener (core.POINTER_START, this._owner, false);
+          vs.removePointerListener (this._owner.view, core.POINTER_START, this._owner, false);
           this._owner.handleEvent = this._owner_handler_event;
           
           this._owner_handler_event_extended = false;

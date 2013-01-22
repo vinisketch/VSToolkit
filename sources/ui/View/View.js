@@ -1084,7 +1084,7 @@ View.prototype = {
       
       this._pointerevent_handlers [obj.id + spec] = handler;
       
-      this.view.addEventListener (spec, handler);
+      vs.addPointerListener (this.view, spec, handler);
     }
     core.EventSource.prototype.bind.call (this, spec, obj, func, delay);
   },
@@ -1109,7 +1109,7 @@ View.prototype = {
       var handler = this._pointerevent_handlers [obj.id + spec];
       if (!handler || !this.view) { return; }
       
-      this.view.removeEventListener (core.POINTER_END, handler);
+      vs.removePointerListener (this.view, core.POINTER_END, handler);
     }
     core.EventSource.prototype.unbind.call (this, spec, obj);
   },

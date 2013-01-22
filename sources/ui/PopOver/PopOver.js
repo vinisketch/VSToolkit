@@ -313,7 +313,7 @@ PopOver.prototype = {
       this._show_object ();
     }
     
-    document.addEventListener (core.POINTER_START, this, true); 
+    vs.addPointerListener (document, core.POINTER_START, this, true); 
   },
   
   /**
@@ -359,7 +359,7 @@ PopOver.prototype = {
     if (!this.view) { return; }
     View.prototype.hide.call (this);
     
-    document.removeEventListener (core.POINTER_START, this, true); 
+    vs.removePointerListener (document, core.POINTER_START, this, true); 
     this.view.style.display = 'none';
   }
 };

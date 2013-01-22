@@ -173,7 +173,7 @@ Accordion.prototype = {
     panel = this.__ab_a_items [index];
     panel.dd.removeChild (child.view);
     this.view.removeChild (panel.dt);
-    panel.dt.removeEventListener (core.POINTER_START, this);
+    vs.removePointerListener (panel.dt, core.POINTER_START, this);
     delete (panel.dt);
     delete (panel.dd);
     delete (panel);
@@ -254,7 +254,7 @@ Accordion.prototype = {
     }
     panel.dt.__dd = panel.dd;
     panel.dt.__index = index;
-    panel.dt.addEventListener (core.POINTER_START, this);
+    vs.addPointerListener (panel.dt, core.POINTER_START, this);
     return panel;
   },
   
@@ -437,7 +437,7 @@ Accordion.prototype = {
     if (e.type === core.POINTER_START)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
       
       e.stopPropagation ();
       e.preventDefault ();
@@ -445,13 +445,11 @@ Accordion.prototype = {
       if (util.hasClassName (elem, 'expanded'))
       { return false; }
 
-      document.addEventListener (core.POINTER_MOVE, this, false);
-      document.addEventListener (core.POINTER_END, this, false);
+      vs.addPointerListener (document, core.POINTER_MOVE, this, false);
+      vs.addPointerListener (document, core.POINTER_END, this, false);
       
-      this.__touch_start_x =
-        core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
-      this.__touch_start_y =
-        core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+      this.__touch_start_x = e.pointerList[0].pageX;
+      this.__touch_start_y = e.pointerList[0].pageY;
 
       this.__elem = elem;
 
@@ -471,8 +469,8 @@ Accordion.prototype = {
       e.stopPropagation ();
       e.preventDefault ();
 
-      pageX = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
-      pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+      pageX = e.pointerList[0].pageX;
+      pageY = e.pointerList[0].pageY;
       delta = 
         Math.abs (pageY - this.__touch_start_y) + 
         Math.abs (pageX - this.__touch_start_x);  
@@ -499,8 +497,8 @@ Accordion.prototype = {
       e.preventDefault ();
 
       // Stop tracking when the last finger is removed from this element
-      document.removeEventListener (core.POINTER_MOVE, this);
-      document.removeEventListener (core.POINTER_END, this);
+      vs.removePointerListener (document, core.POINTER_MOVE, this);
+      vs.removePointerListener (document, core.POINTER_END, this);
                   
       // a item is selected. propagate the change
       if (this.__elem)

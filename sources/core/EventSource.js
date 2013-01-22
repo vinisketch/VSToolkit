@@ -432,7 +432,7 @@ EventSource.prototype =
     binds.push ({n: node, h: handler});
     
     // set the listener
-    node.addEventListener (event, handler, false);
+    vs.addPointerListener (node, event, handler, false);
   },
   
   /**

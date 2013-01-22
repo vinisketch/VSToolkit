@@ -441,13 +441,13 @@ ToolBar.Item.prototype = {
     {
       case core.POINTER_START:
         util.addClassName (self, 'active');
-        event.currentTarget.addEventListener (core.POINTER_END, this, true);
-        event.currentTarget.addEventListener (core.POINTER_MOVE, this, true);
+        vs.addPointerListener (event.currentTarget, core.POINTER_END, this, true);
+        vs.addPointerListener (event.currentTarget, core.POINTER_MOVE, this, true);
       break;
 
       case core.POINTER_END:
-        event.currentTarget.removeEventListener (core.POINTER_END, this);
-        event.currentTarget.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);
                 
         window.setTimeout (function () { util.removeClassName (self, 'active'); }, 200);
         this.propagate ('select', this.id);
@@ -456,8 +456,8 @@ ToolBar.Item.prototype = {
       case core.POINTER_MOVE:
         event.preventDefault ();
         window.setTimeout (function () { util.removeClassName (self, 'active'); }, 200);
-        event.currentTarget.removeEventListener (core.POINTER_END, this);
-        event.currentTarget.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);
       break;
     }
   }

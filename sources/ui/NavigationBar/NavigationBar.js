@@ -328,13 +328,13 @@ NavigationBar.prototype = {
     {
       case core.POINTER_START:
         util.addClassName (self, 'active');
-        event.currentTarget.addEventListener (core.POINTER_END, this, true);
-        event.currentTarget.addEventListener (core.POINTER_MOVE, this, true);
+        vs.addPointerListener (event.currentTarget, core.POINTER_END, this, true);
+        vs.addPointerListener (event.currentTarget, core.POINTER_MOVE, this, true);
       break;
 
       case core.POINTER_END:
-        event.currentTarget.removeEventListener (core.POINTER_END, this);
-        event.currentTarget.removeEventListener (core.POINTER_MOVE, this);        
+        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);        
         
         setTimeout (function () 
           { util.removeClassName (self, 'active'); }, 200);
@@ -345,8 +345,8 @@ NavigationBar.prototype = {
         event.preventDefault ();
         setTimeout (function () 
           { util.removeClassName (self, 'active'); }, 200);
-        event.currentTarget.removeEventListener (core.POINTER_END, this);
-        event.currentTarget.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);
       break;
     }
   },

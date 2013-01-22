@@ -484,8 +484,8 @@ var SlideController = vs.core.createClass ({
         {  this.__pos = event.clientY; }
       }
 
-      document.addEventListener (core.POINTER_END, this, true);
-      document.addEventListener (core.POINTER_MOVE, this, true);
+      vs.addPointerListener (document, core.POINTER_END, this, true);
+      vs.addPointerListener (document, core.POINTER_MOVE, this, true);
       
       this.animationDuration = 0;
       this.__delta = 0;
@@ -531,8 +531,8 @@ var SlideController = vs.core.createClass ({
           this.animationDuration = duration;
         }
       }
-      document.removeEventListener (core.POINTER_END, this, true);
-      document.removeEventListener (core.POINTER_MOVE, this, true);
+      vs.removePointerListener (document, core.POINTER_END, this, true);
+      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
     }
   },
   

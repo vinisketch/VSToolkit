@@ -91,7 +91,7 @@ RadioButton.prototype = {
     {
       input = this._items [0];
       
-      input.removeEventListener (core.POINTER_START, this);
+      vs.removePointerListener (input, core.POINTER_START, this);
       input.removeEventListener ('click', this);
       this._items.remove (0);
     }
@@ -128,13 +128,13 @@ RadioButton.prototype = {
       
       this._list_items.appendChild (input);
       this._items [i] = input;
-      input.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (input, core.POINTER_START, this);
       input.addEventListener ('click', this);
       
       label = document.createElement ('label');
       label.value = i;
       label.setAttribute ("for", this._id + "_l" + i);
-      label.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (label, core.POINTER_START, this);
       label.addEventListener ('click', this);
       util.setElementInnerText (label, item);
       this._list_items.appendChild (label);

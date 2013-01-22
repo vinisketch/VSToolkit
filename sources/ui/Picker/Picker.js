@@ -189,10 +189,10 @@ Picker.prototype = {
    */
   destructor : function ()
   {
-    this._frame_view.removeEventListener (core.POINTER_START, this, false);
+    vs.removePointerListener (this._frame_view, core.POINTER_START, this, false);
 
-    document.removeEventListener (core.POINTER_START, this, false);
-    document.removeEventListener (core.POINTER_MOVE, this, false);
+    vs.removePointerListener (document, core.POINTER_START, this, false);
+    vs.removePointerListener (document, core.POINTER_MOVE, this, false);
 
     this._slots_view.innerHTML = "";
     delete (this._data);
@@ -257,7 +257,7 @@ Picker.prototype = {
       case Picker.MODE_IOS:
       case Picker.MODE_SYMBIAN:
         // Add scrolling to the slots
-        this._frame_view.addEventListener (core.POINTER_START, this);
+        vs.addPointerListener (this._frame_view, core.POINTER_START, this);
         this._frame_border_width = 0;
       break;
       
@@ -387,7 +387,7 @@ Picker.prototype = {
     {
       case Picker.MODE_WP7:
         ul.slotMaxScroll = this.view.clientHeight - ul.clientHeight;
-        ul.addEventListener (core.POINTER_START, this, true);
+        vs.addPointerListener (ul, core.POINTER_START, this, true);
       break;
     }    
     
@@ -431,9 +431,9 @@ Picker.prototype = {
 
     if (!readonly)
     {
-      button_incr.addEventListener (core.POINTER_START, this);
-      button_incr.addEventListener (core.POINTER_END, this);
-      button_incr.addEventListener (core.POINTER_CANCEL, this);
+      vs.addPointerListener (button_incr, core.POINTER_START, this);
+      vs.addPointerListener (button_incr, core.POINTER_END, this);
+      vs.addPointerListener (button_incr, core.POINTER_CANCEL, this);
     }
     
     // Create the slot
@@ -451,9 +451,9 @@ Picker.prototype = {
 
     if (!readonly)
     {
-      button_decr.addEventListener (core.POINTER_START, this);
-      button_decr.addEventListener (core.POINTER_END, this);
-      button_decr.addEventListener (core.POINTER_CANCEL, this);
+      vs.addPointerListener (button_decr, core.POINTER_START, this);
+      vs.addPointerListener (button_decr, core.POINTER_END, this);
+      vs.addPointerListener (button_decr, core.POINTER_CANCEL, this);
     }
     
     return [button_incr, button_decr];
@@ -813,8 +813,8 @@ Picker.prototype = {
     // If slot is readonly do nothing
     if (this._data[this._active_slot].style.match('readonly'))
     {
-      document.removeEventListener (core.POINTER_MOVE, this, true);
-      document.removeEventListener (core.POINTER_END, this, true);
+      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
+      vs.removePointerListener (document, core.POINTER_END, this, true);
       return false;
     }
     
@@ -840,8 +840,8 @@ Picker.prototype = {
     this.scrollStartY = slot_elem.slotYPosition;
     this.scrollStartTime = e.timeStamp;
 
-    document.addEventListener (core.POINTER_MOVE, this, true);
-    document.addEventListener (core.POINTER_END, this, true);
+    vs.addPointerListener (document, core.POINTER_MOVE, this, true);
+    vs.addPointerListener (document, core.POINTER_END, this, true);
     
     switch (this._mode)
     {
@@ -901,8 +901,8 @@ Picker.prototype = {
    */
   _scrollEnd: function (e)
   {
-    document.removeEventListener(core.POINTER_MOVE, this, true);
-    document.removeEventListener(core.POINTER_END, this, true);
+    vs.removePointerListener (document, core.POINTER_MOVE, this, true);
+    vs.removePointerListener (document, core.POINTER_END, this, true);
     
     var elem = this._slots_elements[this._active_slot], scrollDist,
       scrollDur, newDur, newPos, self = this;

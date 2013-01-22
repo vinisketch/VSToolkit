@@ -148,14 +148,14 @@ TextArea.prototype = {
       if (event.src === self.view)
       { return; }
       
-      document.removeEventListener (core.POINTER_START, manageBlur, true);
+      vs.removePointerListener (document, core.POINTER_START, manageBlur, true);
       self.setBlur ();
     }
     
     switch (event.type)
     {
       case 'focus':
-        document.addEventListener (core.POINTER_START, manageBlur, true);
+        vs.addPointerListener (document, core.POINTER_START, manageBlur, true);
       break;
 
       case 'blur':

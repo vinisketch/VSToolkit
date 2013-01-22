@@ -282,7 +282,7 @@ InputField.prototype = {
         return;
       }
       
-      document.removeEventListener (core.POINTER_START, manageBlur, true);
+      vs.removePointerListener (document, core.POINTER_START, manageBlur, true);
       self.setBlur ();
     }
 
@@ -305,7 +305,7 @@ InputField.prototype = {
       if (this._value) { this._activateDelete (true); }
       else { this._activateDelete (false); }
       
-      document.addEventListener (core.POINTER_START, manageBlur, true);
+      vs.addPointerListener (document, core.POINTER_START, manageBlur, true);
     }
     else if (event.type === 'blur')
     {

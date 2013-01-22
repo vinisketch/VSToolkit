@@ -93,8 +93,8 @@ ComboBox.prototype = {
   {
     if (this._mode === ComboBox.NATIVE_MODE)
     {
-      this.view.removeEventListener (core.POINTER_START, this);
-      this.view.removeEventListener (core.POINTER_END, this);
+      vs.removePointerListener (this.view, core.POINTER_START, this);
+      vs.removePointerListener (this.view, core.POINTER_END, this);
     }
     else
     {
@@ -166,8 +166,8 @@ ComboBox.prototype = {
       this._select = document.createElement ('div');
       this.view.appendChild (this._select);
 
-      this.view.addEventListener (core.POINTER_START, this);
-      this.view.addEventListener (core.POINTER_END, this);
+      vs.addPointerListener (this.view, core.POINTER_START, this);
+      vs.addPointerListener (this.view, core.POINTER_END, this);
     }
     // Normal GUI
     else

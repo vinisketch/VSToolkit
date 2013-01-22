@@ -310,7 +310,7 @@ function buildSection (list, title, index, itemsSelectable)
 
     if (itemsSelectable)
     {
-      listItem.view.addEventListener (core.POINTER_START, list);
+      vs.addPointerListener (listItem.view, core.POINTER_START, list);
     }
     content.appendChild (listItem.view);
     list.__item_obs.push (listItem);
@@ -495,7 +495,7 @@ function defaultListRenderData (itemsSelectable)
 
     if (itemsSelectable)
     {
-      listItem.view.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (listItem.view, core.POINTER_START, this);
     }
     _list_items.appendChild (listItem.view);
     this.__item_obs.push (listItem);
@@ -927,8 +927,8 @@ List.prototype = {
       util.setElementTransform (self._list_items, '');
       self.__max_scroll = self.size [1] - self._list_items.offsetHeight;
       
-      document.addEventListener (core.POINTER_MOVE, accessBarMove, false);
-      document.addEventListener (core.POINTER_END, accessBarEnd, false);
+      vs.addPointerListener (document, core.POINTER_MOVE, accessBarMove, false);
+      vs.addPointerListener (document, core.POINTER_END, accessBarEnd, false);
       
       var _acces_index = e.srcElement._index_;
       if (!util.isNumber (_acces_index)) return;
@@ -990,14 +990,14 @@ List.prototype = {
     
     var accessBarEnd = function (e)
     {
-      document.removeEventListener (core.POINTER_MOVE, accessBarMove);
-      document.removeEventListener (core.POINTER_END, accessBarEnd);
+      vs.removePointerListener (document, core.POINTER_MOVE, accessBarMove);
+      vs.removePointerListener (document, core.POINTER_END, accessBarEnd);
 
       if (self._endScrolling) self._endScrolling ();
     };
 
-    this._direct_access.addEventListener
-      (core.POINTER_START, accessBarStart, false);
+    vs.addPointerListener
+      (this._direct_access, core.POINTER_START, accessBarStart, false);
   },
   
   getTitlePosition : function (index)
@@ -1038,7 +1038,7 @@ util.defineClassProperties (List, {
         for (i = 0; i < this.__item_obs.length; i++)
         {
           obj = this.__item_obs [i];
-          obj.view.addEventListener (core.POINTER_START, this, true);
+          vs.addPointerListener (obj.view, core.POINTER_START, this, true);
         }
       }
       else
@@ -1047,7 +1047,7 @@ util.defineClassProperties (List, {
         for (i = 0; i < this.__item_obs.length; i++)
         {
           obj = this.__item_obs [i];
-          obj.view.removeEventListener (core.POINTER_START, this, true);
+          vs.removePointerListener (obj.view, core.POINTER_START, this, true);
         }
       }
     }

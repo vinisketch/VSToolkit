@@ -158,7 +158,7 @@ Slider.prototype = {
    */
   destructor: function ()
   {
-    this.__handle.removeEventListener (core.POINTER_START, this, true);
+    vs.removePointerListener (this.__handle, core.POINTER_START, this, true);
     View.prototype.destructor.call (this);
   },
 
@@ -191,7 +191,7 @@ Slider.prototype = {
     this.__handle = this.view.querySelector ('.handle');
       
     // top/bottom click listening
-    this.__handle.addEventListener (core.POINTER_START, this, true);
+    vs.addPointerListener (this.__handle, core.POINTER_START, this, true);
     
     this.orientation = this._orientation;
     this.value = this._value;
@@ -208,14 +208,14 @@ Slider.prototype = {
     if (e.type === core.POINTER_START)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
 
       // prevent objet keep event => prevent propagation
       e.stopPropagation ();
       e.preventDefault();
 
-      pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY,
-      pageX = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
+      pageY = e.pointerList[0].pageY,
+      pageX = e.pointerList[0].pageX;
 
       this.__drag_x = pageX;
       this.__drag_y = pageY;
@@ -223,23 +223,23 @@ Slider.prototype = {
       this.__v = this._value;
       this.__handle_width = this.__handle.offsetWidth;
       
-      document.addEventListener (core.POINTER_MOVE, this, true);
-      document.addEventListener (core.POINTER_END, this, true);
-      this.__handle.addEventListener (core.POINTER_END, this, true);
+      vs.addPointerListener (document, core.POINTER_MOVE, this, true);
+      vs.addPointerListener (document, core.POINTER_END, this, true);
+      vs.addPointerListener (this.__handle, core.POINTER_END, this, true);
       
       return false;
     }
     else if (e.type === core.POINTER_MOVE)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
 
       // prevent objet keep event => prevent propagation
       e.stopPropagation ();
       e.preventDefault();
 
-      pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY,
-      pageX = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
+      pageY = e.pointerList[0].pageY,
+      pageX = e.pointerList[0].pageX;
 
       if (this._orientation === 0)
       {
@@ -262,15 +262,15 @@ Slider.prototype = {
     else if (e.type === core.POINTER_END)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
 
       // prevent objet keep event => prevent propagation
       e.stopPropagation ();
       e.preventDefault();
 
-      document.removeEventListener (core.POINTER_MOVE, this, true);
-      document.removeEventListener (core.POINTER_END, this, true);
-      this.__handle.removeEventListener (core.POINTER_END, this, true);
+      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
+      vs.removePointerListener (document, core.POINTER_END, this, true);
+      vs.removePointerListener (this.__handle, core.POINTER_END, this, true);
  
       this.propagate ('change', this._value);
       

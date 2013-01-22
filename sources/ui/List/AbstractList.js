@@ -200,12 +200,12 @@ AbstractList.prototype = {
     if (e.type === core.POINTER_START)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
 
-      this.__touch_start = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+      this.__touch_start = e.pointerList[0].pageY;
   
-      document.addEventListener (core.POINTER_MOVE, this, false);
-      document.addEventListener (core.POINTER_END, this, false);
+      vs.addPointerListener (document, core.POINTER_MOVE, this, false);
+      vs.addPointerListener (document, core.POINTER_END, this, false);
       
       if (!this._items_selectable)
       { return false; }
@@ -235,7 +235,7 @@ AbstractList.prototype = {
     }
     else if (e.type === core.POINTER_MOVE)
     {
-      pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+      pageY = e.pointerList[0].pageY;
       this.__delta = pageY - this.__touch_start;  
             
       // this is a move, not a selection => deactivate the selected element
@@ -254,8 +254,8 @@ AbstractList.prototype = {
     else if (e.type === core.POINTER_END)
     {
       // Stop tracking when the last finger is removed from this element
-      document.removeEventListener (core.POINTER_MOVE, this);
-      document.removeEventListener (core.POINTER_END, this);
+      vs.removePointerListener (document, core.POINTER_MOVE, this);
+      vs.removePointerListener (document, core.POINTER_END, this);
       
       if (this.__delta) { this.__scroll_start += this.__delta; }
       

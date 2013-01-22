@@ -171,7 +171,7 @@ SegmentedButton.prototype = {
     while (this._div_list.length)
     {
       var div = this._div_list [0];
-      div.removeEventListener (core.POINTER_START, this);
+      vs.removePointerListener (div, core.POINTER_START, this);
       
       this._div_list.remove (0);
     }
@@ -203,7 +203,7 @@ SegmentedButton.prototype = {
       // WP7 does not manage box model (then use inline-block instead of)
       if (width) util.setElementStyle (div, {"width": width + '%'});
 
-      div.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (div, core.POINTER_START, this);
       
       this._div_list.push (div);
       subView.appendChild (div);
@@ -236,7 +236,7 @@ SegmentedButton.prototype = {
     if (e.type === core.POINTER_START)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
       
       // hack to retrieve the correct source (the bug occurs on iOS)
       target = e.target;

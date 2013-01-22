@@ -319,7 +319,7 @@ iScroll.prototype = {
 		that.dirY = 0;
 
 		// Gesture start
-		if (that.options.zoom && hasTouch && e.touches.length > 1) {
+		if (that.options.zoom && hasTouch && e.nbPointers > 1) {
 			c1 = m.abs(e.touches[0].pageX-e.touches[1].pageX);
 			c2 = m.abs(e.touches[0].pageY-e.touches[1].pageY);
 			that.touchesDistStart = m.sqrt(c1 * c1 + c2 * c2);
@@ -380,7 +380,7 @@ iScroll.prototype = {
 		if (that.options.onBeforeScrollMove) that.options.onBeforeScrollMove.call(that, e);
 
 		// Zoom
-		if (that.options.zoom && hasTouch && e.touches.length > 1) {
+		if (that.options.zoom && hasTouch && e.nbPointers > 1) {
 			c1 = m.abs(e.touches[0].pageX - e.touches[1].pageX);
 			c2 = m.abs(e.touches[0].pageY - e.touches[1].pageY);
 			that.touchesDist = m.sqrt(c1*c1+c2*c2);
@@ -449,7 +449,7 @@ iScroll.prototype = {
 	},
 	
 	_end: function (e) {
-		if (hasTouch && e.touches.length !== 0) return;
+		if (hasTouch && e.nbPointers !== 0) return;
 
 		var that = this,
 			point = hasTouch ? e.changedTouches[0] : e,
