@@ -958,6 +958,8 @@ function createInfoWindowClass ()
     this.vs_map = map;
     this.id = id;
     this.type = type;
+    
+    if (!map) return;
     this.setCoordinate (lat, lon);
 
     // Initialization
