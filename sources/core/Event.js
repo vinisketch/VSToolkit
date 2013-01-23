@@ -220,27 +220,62 @@ function buildTouchList (evt)
     pointers.push (pointer);
   }
   evt.pointerList = pointers;
+  pointers = [];
+  for (var i = 0; i < evt.changedTouches.length; i++)
+  {
+    var touch = evt.changedTouches[i];
+    var pointer = new Pointer (touch, PointerTypes.TOUCH, touch.identifier);
+    pointers.push (pointer);
+  }
+  evt.changedPointerList = pointers;
 }
 
-function buildMouseList (evt)
+function buildMouseList (evt, remove)
 {
   var pointers = [];
   pointers.push (new Pointer (evt, PointerTypes.MOUSE, MOUSE_ID));
-  evt.nbPointers = 1;
-  evt.pointerList = pointers;
+  if (!remove)
+  {
+    evt.nbPointers = 1;
+    evt.pointerList = pointers;
+    evt.changedPointerList = [];
+  }
+  else
+  {
+    evt.nbPointers = 0;
+    evt.pointerList = [];
+    evt.changedPointerList = pointers;
+  }
 }
 
 var all_pointers = {};
+var removed_pointers = {};
 
 function buildMSPointerList (evt, remove)
 {
   // Note: "this" is the element.
   var pointers = [];
+  var removePointers = [];
   var id = evt.pointerId, pointer = all_pointers [id];
   
   if (remove)
   {
-    if (pointer) delete (all_pointers [pointer.identifier]);
+    if (pointer)
+    {
+      removed_pointers [id] = pointer;
+      delete (all_pointers [id]);
+    }
+    else
+    {
+      pointer = removed_pointers [id];
+      if (!pointer)
+      {
+        pointer = new Pointer (evt, evt.pointerType, id);
+        removed_pointers [id] = pointer;
+      }
+    }
+    for (id in removed_pointers) { removePointers.push (removed_pointers [id]); }
+    removed_pointers = {};
   }
   else
   {
@@ -256,6 +291,7 @@ function buildMSPointerList (evt, remove)
   for (id in all_pointers) { pointers.push (all_pointers [id]); }
   evt.nbPointers = pointers.length;
   evt.pointerList = pointers;
+  evt.changedPointerList = removePointers;
 }
 
 /*************** Mouse event handlers *****************/
@@ -274,7 +310,7 @@ function mouseMoveHandler(event, listener)
 
 function mouseUpHandler (event, listener)
 {
-  buildMouseList (event);
+  buildMouseList (event, true);
   listener (event);
 }
 
@@ -313,9 +349,10 @@ var msRemovePointer = function (evt) {
 
   if (pointer)
   {
+    removed_pointers [pointer.identifier] = pointer;
     delete (all_pointers [pointer.identifier]);
-    nbPointerListener --;
   }
+  nbPointerListener --;
 
   if (nbPointerListener === 0)
   {
