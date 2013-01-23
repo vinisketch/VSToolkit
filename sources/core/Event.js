@@ -306,42 +306,53 @@ function touchCancelHandler (event, listener)
 
 /*************** MSIE Pointer event handlers *****************/
 
+// remove the pointer from the list of availables pointer
+var nbPointerListener = 0;
+var msRemovePointer = function (evt) {
+  var id = evt.pointerId, pointer = all_pointers [id];
+
+  if (pointer)
+  {
+    delete (all_pointers [pointer.identifier]);
+    nbPointerListener --;
+  }
+
+  if (nbPointerListener === 0)
+  {
+    document.removeEventListener ('MSPointerUp', msRemovePointer);
+    document.removeEventListener ('MSPointerCancel', msRemovePointer);
+  }
+}
+
+
 function msPointerDownHandler (event, listener)
 {
   buildMSPointerList (event);
-  console.log ('pointerdown: ' + event.nbPointers);
   listener (event);
   
-  var removeEvent = function (evt) {
-    var id = evt.pointerId, pointer = all_pointers [id];
-  
-    if (pointer) delete (all_pointers [pointer.identifier]);
-    evt.currentTarget.removeEventListener ('MSPointerUp', removeEvent);
-    evt.currentTarget.removeEventListener ('MSPointerCancel', removeEvent);
+  if (nbPointerListener === 0)
+  {
+    document.addEventListener ('MSPointerUp', msRemovePointer);
+    document.addEventListener ('MSPointerCancel', msRemovePointer);
   }
-  
-  event.currentTarget.addEventListener ('MSPointerUp', removeEvent);
-  event.currentTarget.addEventListener ('MSPointerCancel', removeEvent);
+  nbPointerListener ++;
 }
 
 function msPointerMoveHandler (event, listener)
 {
   buildMSPointerList (event);
-  console.log ('pointermove' + event.nbPointers);
   listener (event);
 }
 
 function msPointerUpHandler (event, listener)
 {
   buildMSPointerList (event, true);
-  console.log ('pointerup' + event.nbPointers);
   listener (event);
 }
 
 function msPointerCancelHandler (event, listener)
 {
   buildMSPointerList (event, true);
-  console.log ('pointerup' + event.nbPointers);
   listener (event);
 }
 
