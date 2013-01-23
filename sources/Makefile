@@ -44,6 +44,7 @@ COMPILE = $(JAVA) -jar ../tools/ext/closurecompiler/compiler.jar --language_in=E
 COMPILE_ADV = $(JAVA) -jar ../tools/ext/closurecompiler/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS
 COMPILE_YUI = $(JAVA) -cp ../../../lib/yuicompressor/jargs-1.0.jar:../tools/ext/yuicompressor/rhino-1.6R7.jar -jar ../tools/ext/yuicompressor/yuicompressor-2.4.2.jar
 GENDOC = $(JAVA) -jar ../tools/ext/jsdoc-toolkit/jsrun.jar ../tools/ext/jsdoc-toolkit/app/run.js 
+COMPILE_LESS = lessc
 
 ###                         RELEASE
 ##############################################################
@@ -59,7 +60,7 @@ release :: clean makedirs util core ui fx data ext av ext_fx doc
 	-$(MKPATH) ../lib/css/toolbar_icons
 	-$(CP) ../lib_debug/css/toolbar_icons/*.png ../lib/css/toolbar_icons/
 
-debug :: clean_debug makedirs util_debug core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug doc
+debug :: clean_debug makedirs util_debug core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug
 
 clean :: clean_debug_libs clean_libs clean_docs
 clean_debug :: clean_debug_libs clean_docs
@@ -104,9 +105,10 @@ util: util_debug
 	
 util_debug: ../lib_debug/js/vs_util.js
 
-../lib_debug/js/vs_util.js: util/Util.js
+../lib_debug/js/vs_util.js: util/FirminCSSMatrix.js util/Util.js
 	$(CAT) Header.js >> $@
 	$(CAT) VS.js >> $@
+	$(CAT) util/FirminCSSMatrix.js >> $@
 	$(CAT) util/Util.js >> $@
 	$(CAT) Footer.js >> $@
 
@@ -143,12 +145,17 @@ core_debug: ../lib_debug/js/vs_core.js
 
 ui: ui_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_ui.js --js_output_file=../lib/js/vs_ui.js
+	-$(COMPILE_YUI) ui/view/ie10.css -o ../lib_debug/css/ie10.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui.css -o ../lib/css/vs_ui.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_ios.css -o ../lib/css/vs_ui_ios.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_android.css -o ../lib/css/vs_ui_android.css --type css --charset UTF8
+	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_pure.css -o ../lib/css/vs_ui_pure.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_bb.css -o ../lib/css/vs_ui_bb.css --type css --charset UTF8
 	
-ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css ../lib_debug/css/vs_ui_bb.css copy_ui_img copy_widgets_font
+ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css ../lib_debug/css/vs_ui_pure.less ../lib_debug/css/vs_ui_bb.css copy_ui_img copy_widgets_font
+	-$(CP) ui/view/ie10.css ../lib_debug/css/ie10.css
+	-$(COMPILE_LESS) ../lib_debug/css/vs_ui_pure.less ../lib_debug/css/vs_ui_pure.css
+	-$(RM_F) ../lib_debug/css/vs_ui_pure.less
 
 ../lib_debug/js/vs_ui.js: ui/View/View.js ui/Application/Application.js ui/SplitView/SplitView.js ui/TextArea/TextArea.js ui/Button/Button.js ui/List/AbstractList.js ui/List/List.js ui/NavigationBar/NavigationBar.js ui/ToolBar/ToolBar.js ui/Canvas/Canvas.js ui/ProgressBar/ProgressBar.js ui/RadioButton/RadioButton.js ui/ComboBox/ComboBox.js ui/CheckBox/CheckBox.js ui/Slider/Slider.js ui/InputField/InputField.js ui/ScrollView/ScrollView.js ui/TextLabel/TextLabel.js ui/ImageView/ImageView.js ui/PopOver/PopOver.js ui/Switch/Switch.js ui/Picker/Picker.js ui/SVGView/SVGView.js ui/SegmentedButton/SegmentedButton.js
 	$(CAT) Header.js >> $@
@@ -159,6 +166,7 @@ ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../li
 	$(CAT) ui/Application/Application.js >> $@
 	$(CAT) ui/SplitView/SplitView.js >> $@
 	$(CAT) ui/ScrollView/ScrollManagement.js >> $@
+	$(CAT) ui/ScrollView/iscroll4.js >> $@
 	$(CAT) ui/ScrollView/ScrollView.js >> $@
 	$(CAT) ui/ScrollImageView/ScrollImageView.js >> $@
 	$(CAT) ui/TextArea/TextArea.js >> $@
@@ -273,6 +281,28 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	$(CAT) ui/PopOver/PopOver_android.css >> $@
 	$(CAT) ui/ToolBar/ToolBar_android.css >> $@
 	$(CAT) ui/SegmentedButton/SegmentedButton_android.css >> $@
+
+../lib_debug/css/vs_ui_pure.less: ui/View/lesshat.less ui/View/View.less ui/Application/Application_pure.less ui/Button/Button_pure.less ui/List/List_pure.less ui/InputField/InputField_pure.less ui/Switch/Switch_pure.less ui/TextArea/TextArea_pure.less ui/SegmentedButton/SegmentedButton_pure.less ui/Slider/Slider_pure.less ui/ProgressBar/ProgressBar_pure.less ui/NavigationBar/NavigationBar_pure.less ui/Picker/Picker_pure.less
+	$(CAT) ui/View/lesshat.less >> $@
+	$(CAT) ui/View/lesshat-ext.less >> $@
+	$(CAT) ui/View/View.less >> $@
+	$(CAT) ui/SplitView/SplitView.less >> $@
+	$(CAT) ui/Application/Application_pure.less >> $@
+	$(CAT) ui/Button/Button_pure.less >> $@
+	$(CAT) ui/List/List_pure.less >> $@
+	$(CAT) ui/InputField/InputField_pure.less >> $@
+	$(CAT) ui/Switch/Switch_pure.less >> $@
+	$(CAT) ui/TextArea/TextArea_pure.less >> $@
+	$(CAT) ui/SegmentedButton/SegmentedButton_pure.less >> $@
+	$(CAT) ui/Slider/Slider_pure.less >> $@
+	$(CAT) ui/ProgressBar/ProgressBar_pure.less >> $@
+	$(CAT) ui/RadioButton/RadioButton_pure.less>> $@
+	$(CAT) ui/NavigationBar/NavigationBar_pure.less >> $@
+	$(CAT) ui/CheckBox/CheckBox_pure.less >> $@
+	$(CAT) ui/Picker/Picker_pure.less >> $@
+	$(CAT) ui/ComboBox/ComboBox_pure.less >> $@
+#	$(CAT) ui/PopOver/PopOver_android.css >> $@
+#	$(CAT) ui/ToolBar/ToolBar_android.css >> $@
 
 ../lib_debug/css/vs_ui_bb.css: ui/Application/Application_bb.css ui/Button/Button_bb.css ui/List/List_bb.css  ui/RadioButton/RadioButton_bb.css ui/CheckBox/CheckBox_bb.css ui/Slider/Slider_bb.css ui/Switch/Switch_bb.css ui/ProgressBar/ProgressBar_bb.css ui/InputField/InputField_bb.css ui/ComboBox/ComboBox_bb.css ui/SegmentedButton/SegmentedButton_bb.css ui/TextArea/TextArea_bb.css ui/Picker/Picker_bb.css ext/ui/Accordion/Accordion_bb.css
 	$(CAT) ui/Application/Application_bb.css >> $@
