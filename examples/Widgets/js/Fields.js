@@ -1,6 +1,11 @@
 function initFieldsPanel () {
   var view = buildPanel();
-  view.layout = vs.ui.View.FLOW_LAYOUT;
+  view.layout = vs.ui.View.VERTICAL_LAYOUT;
+  
+  view.setStyles ({margin: "10px"});
+  
+  // All children have a margin
+  view.addCssRule ('>*', "margin: 5px");
   
   var label = new vs.ui.TextLabel ({
     text: 'Select a value:'

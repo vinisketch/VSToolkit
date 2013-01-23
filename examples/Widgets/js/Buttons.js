@@ -85,46 +85,46 @@ function initButtonsPanel () {
   view.add (button);
   
   button = new vs.ui.SegmentedButton ({
-    position:[20, 260], size:[150, 42],
+    position:[20, 260], size:[300, 42],
     isToggleButtons: false,
-    items: ['1', '2', '3']
+    items: ['item 1', 'item 2', 'item 3']
   }).init ();
   view.add (button);
   
   button = new vs.ui.SegmentedButton ({
-    position:[200, 260], size:[150, 42],
-    items: ['1', '2', '3'],
+    position:[350, 260], size:[300, 42],
+    items: ['item 1', 'item 2', 'item 3'],
     selectedIndex : 0
   }).init ();
   view.add (button);
   
   button = new vs.ui.SegmentedButton ({
-    position:[20, 310], size:[150, 28],
+    position:[20, 310], size:[200, 28],
     isToggleButtons: false,
     type: vs.ui.SegmentedButton.BAR_TYPE,
-    items: ['1', '2', '3']
+    items: ['item 1', 'item 2', 'item 3']
   }).init ();
   view.add (button);
   
   button = new vs.ui.SegmentedButton ({
-    position:[200, 310], size:[150, 28],
+    position:[250, 310], size:[200, 28],
     type: vs.ui.SegmentedButton.BAR_TYPE,
-    items: ['1', '2', '3'],
+    items: ['item 1', 'item 2', 'item 3'],
     selectedIndex : 0
   }).init ();
   view.add (button);
   
   button = new vs.ui.SegmentedButton ({
-    position:[20, 340], size:[50, 130],
-    items: ['1', '2', '3'],
+    position:[20, 360], size:[100, 130],
+    items: ['item 1', 'item 2', 'item 3'],
     isToggleButtons: false,
     orientation: vs.ui.SegmentedButton.VERTICAL
   }).init ();
   view.add (button);
 
   button = new vs.ui.SegmentedButton ({
-    position:[80, 340], size:[30, 80],
-    items: ['1', '2', '3'],
+    position:[130, 360], size:[70, 80],
+    items: ['item 1', 'item 2', 'item 3'],
     isToggleButtons: false,
     type: vs.ui.SegmentedButton.BAR_TYPE,
     orientation: vs.ui.SegmentedButton.VERTICAL
@@ -132,16 +132,16 @@ function initButtonsPanel () {
   view.add (button);
 
   button = new vs.ui.SegmentedButton ({
-    position:[150, 340], size:[50, 130],
-    items: ['1', '2', '3'],
+    position:[250, 360], size:[100, 130],
+    items: ['item 1', 'item 2', 'item 3'],
     selectedIndex : 0,
     orientation: vs.ui.SegmentedButton.VERTICAL
   }).init ();
   view.add (button);
 
   button = new vs.ui.SegmentedButton ({
-    position:[210, 340], size:[30, 80],
-    items: ['1', '2', '3'],
+    position:[360, 360], size:[70, 80],
+    items: ['item 1', 'item 2', 'item 3'],
     selectedIndex : 0,
     type: vs.ui.SegmentedButton.BAR_TYPE,
     orientation: vs.ui.SegmentedButton.VERTICAL

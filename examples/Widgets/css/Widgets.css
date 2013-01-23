@@ -6,12 +6,12 @@ html {
 body {
   width: 100%;
   height: 100%;
+  background-color: #E9E9E9;
 }
 
 #widgets_list, .panel {
   width: 100%;
   height: 100%;
-  background-color: #9EACAF;
 }
 
 .vs_ui_button.close {
@@ -23,4 +23,21 @@ body {
   width: 100%;
   top: 50px;
   bottom: 0px;
+}
+
+.vs_ui_picker {
+  margin: 10px;
+}
+
+.gmap_info {
+  position: absolute;
+  border-radius: 10px;
+  padding: 5px;
+  background: #eee;
+  box-shadow: 1px 1px 15px black;
+  width: 200px;
+}
+
+.gmap_info .subtitle {
+  font-size: 0.8em;
 }

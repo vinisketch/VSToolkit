@@ -41,7 +41,8 @@ var Widgets = vs.core.createClass ({
 
     this.mainList = new vs.ui.List ({
       position:[0, 44],
-      hasArrow: true
+      hasArrow: true,
+      scroll: true
     }).init ();
     this.mainList.setStyle ('bottom', '0px');
     var mainState = this.leftController.push (this.mainList);
@@ -70,7 +71,9 @@ var Widgets = vs.core.createClass ({
       {title: 'Progress&Slider'},
       {title: 'List'},
       {title: 'Tab List'},
-      {title: 'Block List'}
+      {title: 'Block List'},
+      {title: 'Images'},
+      {title: 'Map'}
     ];
     
     this.widgetList.bind ('itemselect', this);
@@ -109,6 +112,9 @@ var Widgets = vs.core.createClass ({
     this.panelsIndexes.push ('Block List'); 
 
     stateId = controller.push (initBlockList ());
+    this.panelsIndexes.push ('Images');
+
+    stateId = controller.push (initMapPanel ());
     this.panelsIndexes.push ('Map');
   },
   

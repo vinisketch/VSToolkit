@@ -1,6 +1,6 @@
 function initSelectorsPanel () {
   var view = buildPanel();
-  view.layout = vs.ui.View.VERTICAL_LAYOUT;
+  view.layout = vs.ui.View.FLOW_LAYOUT;
   
   var label = new vs.ui.TextLabel ({
     text: 'Radio button:'

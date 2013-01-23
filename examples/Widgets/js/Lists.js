@@ -1,6 +1,5 @@
 function initStandardList () {
   var view = buildPanel　();
-  view.layout = vs.ui.View.FLOW_LAYOUT;
 
   var listItems = new vs.ui.List ({
     scroll: true,
@@ -44,8 +43,7 @@ function initStandardList () {
 
 function initTabList () {
   var view = buildPanel　();
-  view.layout = vs.ui.View.VERTICAL_LAYOUT;
-
+ 
   var listItems = new vs.ui.List ({
     scroll: true,
     type: vs.ui.List.TAB_LIST
@@ -167,7 +165,6 @@ function initTabList () {
 
 function initBlockList () {
   var view = buildPanel　();
-  view.layout = vs.ui.View.VERTICAL_LAYOUT;
 
   var listItems = new vs.ui.List ({
     scroll: true,
