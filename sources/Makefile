@@ -145,12 +145,13 @@ core_debug: ../lib_debug/js/vs_core.js
 
 ui: ui_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_ui.js --js_output_file=../lib/js/vs_ui.js
-	-$(COMPILE_YUI) ui/view/ie10.css -o ../lib_debug/css/ie10.css --type css --charset UTF8
+	-$(COMPILE_YUI) ui/view/ie10.css -o ../lib/css/ie10.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui.css -o ../lib/css/vs_ui.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_ios.css -o ../lib/css/vs_ui_ios.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_android.css -o ../lib/css/vs_ui_android.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_pure.css -o ../lib/css/vs_ui_pure.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_bb.css -o ../lib/css/vs_ui_bb.css --type css --charset UTF8
+	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_pure.css -o ../lib/css/vs_ui_pure.css --type css --charset UTF8
 	
 ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css ../lib_debug/css/vs_ui_pure.less ../lib_debug/css/vs_ui_bb.css copy_ui_img copy_widgets_font
 	-$(CP) ui/view/ie10.css ../lib_debug/css/ie10.css
