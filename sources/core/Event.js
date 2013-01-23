@@ -172,10 +172,10 @@ Event.prototype =
 // positive integers.
 var MOUSE_ID = 31337;
 
-function Pointer (pageX, pageY, type, identifier)
+function Pointer (evt, type, identifier)
 {
-  this.pageX = pageX;
-  this.pageY = pageY;
+  this.pageX = evt.pageX;
+  this.pageY = evt.pageY;
   this.type = type;
   this.identifier = identifier;
 }
@@ -206,8 +206,7 @@ function buildTouchList (evt)
   for (var i = 0; i < evt.nbPointers; i++)
   {
     var touch = evt.touches[i];
-    var pointer = new Pointer (touch.pageX, touch.pageY,
-                               PointerTypes.TOUCH, touch.identifier);
+    var pointer = new Pointer (touch, PointerTypes.TOUCH, touch.identifier);
     pointers.push (pointer);
   }
   evt.pointerList = pointers;
@@ -216,8 +215,7 @@ function buildTouchList (evt)
 function buildMouseList (evt)
 {
   var pointers = [];
-  pointers.push (new Pointer (evt.pageX, evt.pageY,
-                              PointerTypes.MOUSE, MOUSE_ID));
+  pointers.push (new Pointer (evt, PointerTypes.MOUSE, MOUSE_ID));
   evt.nbPointers = 1;
   evt.pointerList = pointers;
 }
@@ -242,7 +240,7 @@ function buildMSPointerList (evt, remove)
     }
     else
     {
-      pointer = new Pointer (evt.pageX, evt.pageY, evt.pointerType, id);
+      pointer = new Pointer (evt, evt.pointerType, id);
       all_pointers [id] = pointer;
     }
   }
