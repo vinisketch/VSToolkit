@@ -785,6 +785,10 @@ if (vsTestStyle)
   else if (vsTestStyle.MozTransform !== undefined) 
     vs.SUPPORT_3D_TRANSFORM = 'MozPerspective' in vsTestStyle;
 
+  else if (vsTestStyle.msTransform !== undefined) 
+    vs.SUPPORT_3D_TRANSFORM =
+     'MSCSSMatrix' in window && 'm11' in new MSCSSMatrix ();
+
   vs.CSS_VENDOR = (function () {
     var vendors = ['MozT', 'msT', 'OT', 'webkitT', 't'],
       transform,

@@ -1574,6 +1574,314 @@ Event.prototype =
   }
 };
 
+// TODO(smus): Come up with a better solution for this. This is bad because
+// it might conflict with a touch ID. However, giving negative IDs is also
+// bad because of code that makes assumptions about touch identifiers being
+// positive integers.
+var MOUSE_ID = 31337;
+
+function Pointer (event, type, identifier)
+{
+  this.configureWithEvent (event)
+  this.type = type;
+  this.identifier = identifier;
+}
+
+Pointer.prototype.configureWithEvent = function (evt)
+{
+  this.pageX = evt.pageX;
+  this.pageY = evt.pageY;
+  this.clientX = evt.clientX;
+  this.clientY = evt.clientY;
+  this.target = evt.target;
+  this.currentTarget = evt.currentTarget;
+}
+
+
+var PointerTypes = {
+  TOUCH: 2,
+  PEN: 3,
+  MOUSE: 4
+};
+
+function setMouse (mouseEvent)
+{
+  mouseEvent.target.mouseEvent = mouseEvent;
+}
+
+function unsetMouse (mouseEvent)
+{
+  mouseEvent.target.mouseEvent = null;
+}
+
+/**
+ * Returns an array of all pointers currently on the screen.
+ */
+function buildTouchList (evt)
+{
+  var pointers = [];
+  evt.nbPointers = evt.touches.length;
+  for (var i = 0; i < evt.nbPointers; i++)
+  {
+    var touch = evt.touches[i];
+    var pointer = new Pointer (touch, PointerTypes.TOUCH, touch.identifier);
+    pointers.push (pointer);
+  }
+  evt.pointerList = pointers;
+}
+
+function buildMouseList (evt)
+{
+  var pointers = [];
+  pointers.push (new Pointer (evt, PointerTypes.MOUSE, MOUSE_ID));
+  evt.nbPointers = 1;
+  evt.pointerList = pointers;
+}
+
+var all_pointers = {};
+
+function buildMSPointerList (evt, remove)
+{
+  // Note: "this" is the element.
+  var pointers = [];
+  var id = evt.pointerId, pointer = all_pointers [id];
+  
+  if (remove)
+  {
+    if (pointer) delete (all_pointers [pointer.identifier]);
+  }
+  else
+  {
+    if (pointer) {
+      pointer.configureWithEvent (evt);
+    }
+    else
+    {
+      pointer = new Pointer (evt, evt.pointerType, id);
+      all_pointers [id] = pointer;
+    }
+  }
+  for (id in all_pointers) { pointers.push (all_pointers [id]); }
+  evt.nbPointers = pointers.length;
+  evt.pointerList = pointers;
+}
+
+/*************** Mouse event handlers *****************/
+
+function mouseDownHandler (event, listener)
+{
+  buildMouseList (event);
+  listener (event);
+}
+
+function mouseMoveHandler(event, listener)
+{
+  buildMouseList (event);
+  listener (event);
+}
+
+function mouseUpHandler (event, listener)
+{
+  buildMouseList (event);
+  listener (event);
+}
+
+/*************** Touch event handlers *****************/
+
+function touchStartHandler (event, listener)
+{
+  buildTouchList (event);
+  listener (event);
+}
+
+function touchMoveHandler (event, listener)
+{
+  buildTouchList (event);
+  listener (event);
+}
+
+function touchEndHandler (event, listener)
+{
+  buildTouchList (event);
+  listener (event);
+}
+
+function touchCancelHandler (event, listener)
+{
+  buildTouchList (event);
+  listener (event, listener);
+}
+
+/*************** MSIE Pointer event handlers *****************/
+
+// remove the pointer from the list of availables pointer
+var nbPointerListener = 0;
+var msRemovePointer = function (evt) {
+  var id = evt.pointerId, pointer = all_pointers [id];
+
+  if (pointer)
+  {
+    delete (all_pointers [pointer.identifier]);
+    nbPointerListener --;
+  }
+
+  if (nbPointerListener === 0)
+  {
+    document.removeEventListener ('MSPointerUp', msRemovePointer);
+    document.removeEventListener ('MSPointerCancel', msRemovePointer);
+  }
+}
+
+
+function msPointerDownHandler (event, listener)
+{
+  buildMSPointerList (event);
+  listener (event);
+  
+  if (nbPointerListener === 0)
+  {
+    document.addEventListener ('MSPointerUp', msRemovePointer);
+    document.addEventListener ('MSPointerCancel', msRemovePointer);
+  }
+  nbPointerListener ++;
+}
+
+function msPointerMoveHandler (event, listener)
+{
+  buildMSPointerList (event);
+  listener (event);
+}
+
+function msPointerUpHandler (event, listener)
+{
+  buildMSPointerList (event, true);
+  listener (event);
+}
+
+function msPointerCancelHandler (event, listener)
+{
+  buildMSPointerList (event, true);
+  listener (event);
+}
+
+/*************************************************************/
+
+var pointerStartHandler, pointerMoveHandler, pointerEndHandle, pointerCancelHandler;
+
+if (EVENT_SUPPORT_TOUCH)
+{
+  if (hasMSPointer)
+  {
+    pointerStartHandler = msPointerDownHandler;
+    pointerMoveHandler = msPointerMoveHandler;
+    pointerEndHandler = msPointerUpHandler;
+    pointerCancelHandler = msPointerCancelHandler;
+  }
+  else
+  {
+    pointerStartHandler = touchStartHandler;
+    pointerMoveHandler = touchMoveHandler;
+    pointerEndHandler = touchEndHandler;
+    pointerCancelHandler = touchCancelHandler;
+  }
+}
+else
+{
+  pointerStartHandler = mouseDownHandler;
+  pointerMoveHandler = mouseMoveHandler;
+  pointerEndHandler = mouseUpHandler;
+  pointerCancelHandler = mouseUpHandler;
+}
+
+function getBindingIndex (target, type, listener)
+{
+  if (!type || !listener || !listener.__event_listeners) return -1;
+  for (var i = 0; i < listener.__event_listeners.length; i++)
+  {
+    var binding = listener.__event_listeners [i];
+    if (binding.target === target && binding.type === type && binding.listener === listener)
+      return i;
+  }
+  return -1;
+}
+
+/**
+ * Option 2: Replace addEventListener with a custom version.
+ */
+function addPointerListener (node, type, listener, useCapture)
+{
+  if (!listener) {
+    console.error ("addPointerListener no listener");
+    return;
+  }
+  var func = listener;
+  if (!util.isFunction (listener))
+  {
+    func = listener.handleEvent;
+    if (util.isFunction (func)) func = func.bind (listener);
+  }
+  
+  if (getBindingIndex (node, type, listener) !== -1)
+  {
+    console.error ("addPointerListener binding already existing");
+    return;
+  }
+  
+  if (!listener.__event_listeners) listener.__event_listeners = [];
+
+  var binding = {
+    target: node,
+    type: type,
+    listener: listener
+  };
+  listener.__event_listeners.push (binding);
+
+  switch (type)
+  {
+    case core.POINTER_START:
+      binding.handler = function (e) {pointerStartHandler (e, func);};
+    break;
+  
+    case core.POINTER_MOVE:
+      binding.handler = function (e) {pointerMoveHandler (e, func);};
+    break;
+  
+    case core.POINTER_END:
+      binding.handler = function (e) {pointerEndHandler (e, func);};
+    break;
+  
+    case core.POINTER_CANCEL:
+      binding.handler = function (e) {pointerCancelHandler (e, func);};
+    break;
+  
+    default:
+      binding.handler = listener;
+    break;
+  }
+
+  node.addEventListener (type, binding.handler, useCapture);
+}
+
+function removePointerListener (node, type, listener, useCapture)
+{
+  if (!listener) {
+    console.error ("removePointerListener no listener");
+    return;
+  }
+  
+  var index = getBindingIndex (node, type, listener);
+  if (index === -1)
+  {
+    console.error ("removePointerListener no binding");
+    return;
+  }
+  var binding = listener.__event_listeners [index];
+  listener.__event_listeners.remove (index);
+
+  node.removeEventListener (type, binding.handler, useCapture);
+  delete (binding);
+}
+
 /********************************************************************
                       Export
 *********************************************************************/
@@ -1581,6 +1889,10 @@ Event.prototype =
 core.Event = Event;
 core.FORCE_EVENT_PROPAGATION_DELAY = FORCE_EVENT_PROPAGATION_DELAY;
 core.EVENT_SUPPORT_TOUCH = EVENT_SUPPORT_TOUCH;
+
+vs.removePointerListener = removePointerListener;
+vs.addPointerListener = addPointerListener;
+vs.PointerTypes = PointerTypes;
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
@@ -2015,7 +2327,7 @@ EventSource.prototype =
     binds.push ({n: node, h: handler});
     
     // set the listener
-    node.addEventListener (event, handler, false);
+    vs.addPointerListener (node, event, handler, false);
   },
   
   /**

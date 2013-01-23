@@ -68,6 +68,10 @@ body {
   height: 100%;
 }
 
+.disabled {
+  opacity: 0.5;
+}
+
 /********************************************************************
                     Absolute Layout
 *********************************************************************/
@@ -470,11 +474,7 @@ textarea:focus {
   padding: 0px;
   font-weight: bold;
 }
-
-.vs_ui_button.default.disabled
-{ 
-  opacity: 0.7;
-}.vs_ui_list {
+.vs_ui_list {
   padding: 0px;
   margin: 0px;
   overflow: hidden;
@@ -1082,13 +1082,13 @@ input[type="checkbox"]:after
 }.vs_ui_imageview {
 }
 .vs_ui_inputfield {
-  min-width: 200px;
+  min-width: 150px;
   border: 0px;
   margin: 0px;
   padding: 0px;
   background: white;
 
-  position: relative !important;
+  position: relative;
 }
 
 input[type="search"],
@@ -1113,6 +1113,14 @@ input[type="text"] {
   left: 10px;
 
   position: absolute;
+}
+
+.vs_ui_inputfield > input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.vs_ui_inputfield > input::-webkit-search-decoration {
+  display: none;
 }
 
 .vs_ui_inputfield .clear_button {
@@ -1295,6 +1303,7 @@ input[type="text"] {
   width: 100px;
 
   overflow: hidden;
+  position: relative;
 }
 
 .vs_ui_switch >div:first-child {

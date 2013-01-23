@@ -370,11 +370,11 @@ GMap.prototype = {
     {
       this._center_mark = new google.maps.Marker({
         position: new google.maps.LatLng (this._center [0], this._center [1]),
-        icon: "mapCenter.png",
+        icon: "css/kit/mapCenter.png",
       });
     }
     
-    this._center_mark.setGMap (this._gmap);
+    this._center_mark.setMap (this._gmap);
   },
 
   /**
@@ -388,7 +388,7 @@ GMap.prototype = {
     if (!this._center_mark)
     { return; }
     
-    this._center_mark.setGMap (null);
+    this._center_mark.setMap (null);
   },
 
 /********************************************************************
@@ -1010,6 +1010,8 @@ function createInfoWindowClass ()
     this.vs_map = map;
     this.id = id;
     this.type = type;
+    
+    if (!map) return;
     this.setCoordinate (lat, lon);
 
     // Initialization
@@ -1125,7 +1127,7 @@ function createInfoWindowClass ()
     
     this.view = document.createElement ('div');
  
-    this.view.addEventListener (core.POINTER_START, this);
+    vs.addPointerListener (this.view, core.POINTER_START, this);
   };
   
   /**
@@ -1139,12 +1141,12 @@ function createInfoWindowClass ()
     {
       case core.POINTER_START:
         // prevent multi touch events
-        if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+        if (e.nbPointers > 1) { return; }
         
-        document.addEventListener (core.POINTER_END, this);
-        document.addEventListener (core.POINTER_MOVE, this);
-        this.__start_x = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
-        this.__start_y = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+        vs.addPointerListener (document, core.POINTER_END, this);
+        vs.addPointerListener (document, core.POINTER_MOVE, this);
+        this.__start_x = e.pointerList[0].pageX;
+        this.__start_y = e.pointerList[0].pageY;
         
         if (this.marker) this.removeMapEvent ();
         util.addClassName (this.view, "selected");
@@ -1153,10 +1155,8 @@ function createInfoWindowClass ()
 
       case core.POINTER_MOVE:
 
-        var dx = 
-          (core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX) - this.__start_x;
-        var dy =
-          (core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY) - this.__start_y;
+        var dx = e.pointerList[0].pageX - this.__start_x;
+        var dy = e.pointerList[0].pageY - this.__start_y;
           
         if (Math.abs (dx) + Math.abs (dy) < 10)
         {
@@ -1165,8 +1165,8 @@ function createInfoWindowClass ()
           return false;
         }
  
-        document.removeEventListener (core.POINTER_END, this);
-        document.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (document, core.POINTER_END, this);
+        vs.removePointerListener (document, core.POINTER_MOVE, this);
         if (this.marker) setTimeout (function () {self.initMapEvent ();}, 0);
         util.removeClassName (this.view, "selected");
  
@@ -1179,8 +1179,8 @@ function createInfoWindowClass ()
         e.stopPropagation ();
         e.preventDefault ();
 
-        document.removeEventListener (core.POINTER_END, this);
-        document.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (document, core.POINTER_END, this);
+        vs.removePointerListener (document, core.POINTER_MOVE, this);
         if (this.marker) setTimeout (function () {self.initMapEvent ();}, 0);
         util.removeClassName (this.view, "selected");
         
@@ -1501,6 +1501,7 @@ Carousel.prototype = {
     this._slideController = new vs.fx.SlideController (this);
     this._slideController.delegate = this;
     this._slideController.isTactile = true;
+    this._slideController.animationMode = vs.fx.SlideController.PIXEL;
     this._slideController.init ();
   },
   
@@ -1999,7 +2000,7 @@ Accordion.prototype = {
     panel = this.__ab_a_items [index];
     panel.dd.removeChild (child.view);
     this.view.removeChild (panel.dt);
-    panel.dt.removeEventListener (core.POINTER_START, this);
+    vs.removePointerListener (panel.dt, core.POINTER_START, this);
     delete (panel.dt);
     delete (panel.dd);
     delete (panel);
@@ -2080,7 +2081,7 @@ Accordion.prototype = {
     }
     panel.dt.__dd = panel.dd;
     panel.dt.__index = index;
-    panel.dt.addEventListener (core.POINTER_START, this);
+    vs.addPointerListener (panel.dt, core.POINTER_START, this);
     return panel;
   },
   
@@ -2263,7 +2264,7 @@ Accordion.prototype = {
     if (e.type === core.POINTER_START)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
       
       e.stopPropagation ();
       e.preventDefault ();
@@ -2271,13 +2272,11 @@ Accordion.prototype = {
       if (util.hasClassName (elem, 'expanded'))
       { return false; }
 
-      document.addEventListener (core.POINTER_MOVE, this, false);
-      document.addEventListener (core.POINTER_END, this, false);
+      vs.addPointerListener (document, core.POINTER_MOVE, this, false);
+      vs.addPointerListener (document, core.POINTER_END, this, false);
       
-      this.__touch_start_x =
-        core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
-      this.__touch_start_y =
-        core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+      this.__touch_start_x = e.pointerList[0].pageX;
+      this.__touch_start_y = e.pointerList[0].pageY;
 
       this.__elem = elem;
 
@@ -2297,8 +2296,8 @@ Accordion.prototype = {
       e.stopPropagation ();
       e.preventDefault ();
 
-      pageX = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
-      pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+      pageX = e.pointerList[0].pageX;
+      pageY = e.pointerList[0].pageY;
       delta = 
         Math.abs (pageY - this.__touch_start_y) + 
         Math.abs (pageX - this.__touch_start_x);  
@@ -2325,8 +2324,8 @@ Accordion.prototype = {
       e.preventDefault ();
 
       // Stop tracking when the last finger is removed from this element
-      document.removeEventListener (core.POINTER_MOVE, this);
-      document.removeEventListener (core.POINTER_END, this);
+      vs.removePointerListener (document, core.POINTER_MOVE, this);
+      vs.removePointerListener (document, core.POINTER_END, this);
                   
       // a item is selected. propagate the change
       if (this.__elem)
@@ -2419,7 +2418,9 @@ GMap.prototype.html_template = "\
 ";
 
 Carousel.prototype.html_template = "\
-<div class='vs_ext_ui_carousel' x-hag-hole='children'><div class='indicators'></div></div>\
+<div class='vs_ext_ui_carousel' x-hag-hole='children'>\
+  <div class='indicators'></div>\
+</div>\
 ";
 
 Accordion.prototype.html_template = "\

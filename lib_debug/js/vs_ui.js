@@ -1336,7 +1336,8 @@ View.prototype = {
 
     // Add object to its parent
     this.add (obj, extension);
-
+    obj.refresh ();
+    
     return obj;
   },
 
@@ -1629,7 +1630,7 @@ View.prototype = {
       
       this._pointerevent_handlers [obj.id + spec] = handler;
       
-      this.view.addEventListener (spec, handler);
+      vs.addPointerListener (this.view, spec, handler);
     }
     core.EventSource.prototype.bind.call (this, spec, obj, func, delay);
   },
@@ -1654,7 +1655,7 @@ View.prototype = {
       var handler = this._pointerevent_handlers [obj.id + spec];
       if (!handler || !this.view) { return; }
       
-      this.view.removeEventListener (core.POINTER_END, handler);
+      vs.removePointerListener (this.view, core.POINTER_END, handler);
     }
     core.EventSource.prototype.unbind.call (this, spec, obj);
   },
@@ -1697,7 +1698,8 @@ View.prototype = {
     {
       if (pWidth)
       {
-        width = Math.round (size[0] / pWidth * 100) + '%';
+//        width = Math.round (size[0] / pWidth * 100) + '%';
+        width = (size[0] / pWidth * 100) + '%';
       }
       else { width = size[0] + 'px'; } 
     }
@@ -1716,7 +1718,8 @@ View.prototype = {
     { 
       if (pHeight)
       {
-        height = Math.round (size[1] / pHeight * 100) + '%';
+//        height = Math.round (size[1] / pHeight * 100) + '%';
+        height = (size[1] / pHeight * 100) + '%';
       }
       else { height = size[1] + 'px'; } 
     }
@@ -1758,7 +1761,8 @@ View.prototype = {
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
     { sPosL = pos[0] + 'px'; }
     else if ((aH === 2 || aH === 0) && pWidth)
-    { sPosL = Math.round (pos[0] / pWidth * 100) + '%'; }
+//    { sPosL = Math.round (pos[0] / pWidth * 100) + '%'; }
+    { sPosL = (pos[0] / pWidth * 100) + '%'; }
     
     if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
     {
@@ -1768,7 +1772,8 @@ View.prototype = {
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
     { sPosT = pos[1] + 'px'; }
     else if ((aV === 2 || aV === 0) && pHeight)
-    { sPosT = Math.round (pos[1]  / pHeight * 100) + '%'; }
+//    { sPosT = Math.round (pos[1]  / pHeight * 100) + '%'; }
+    { sPosT = (pos[1]  / pHeight * 100) + '%'; }
 
     if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
     {
@@ -2443,6 +2448,13 @@ View.prototype = {
     }
   },
   
+  /**
+   * Did enable delegate
+   * @name vs.ui.View#_didEnable
+   * @protected
+   */
+   _didEnable : function () {},
+  
   /*****************************************************************
    *                Animation methods
    ****************************************************************/
@@ -2823,15 +2835,17 @@ util.defineClassProperties (View, {
      */ 
     set : function (v)
     {
-      if (v)
+      if (v && !this._enable)
       { 
         this._enable = true;
         this.removeClassName ('disabled');
+        this._didEnable ();
       }
-      else
+      else if (!v && this._enable)
       { 
         this._enable = false;
         this.addClassName ('disabled');
+        this._didEnable ();
       }
     },
   
@@ -3845,7 +3859,7 @@ var SplitView = vs.core.createClass ({
       */
       get : function (v)
       {
-        this._orientation;
+        return this._orientation;
       }
     },
   },
@@ -5466,7 +5480,7 @@ iScroll.prototype = {
 	
 	_start: function (e) {
 		var that = this,
-			point = hasTouch ? e.touches[0] : e,
+			point = e.pointerList[0],
 			matrix, x, y,
 			c1, c2;
 
@@ -5487,13 +5501,13 @@ iScroll.prototype = {
 		that.dirY = 0;
 
 		// Gesture start
-		if (that.options.zoom && hasTouch && e.touches.length > 1) {
-			c1 = m.abs(e.touches[0].pageX-e.touches[1].pageX);
-			c2 = m.abs(e.touches[0].pageY-e.touches[1].pageY);
+		if (that.options.zoom && e.nbPointers > 1) {
+			c1 = m.abs(e.pointerList[0].pageX-e.pointerList[1].pageX);
+			c2 = m.abs(e.pointerList[0].pageY-e.pointerList[1].pageY);
 			that.touchesDistStart = m.sqrt(c1 * c1 + c2 * c2);
 
-			that.originX = m.abs(e.touches[0].pageX + e.touches[1].pageX - that.wrapperOffsetLeft * 2) / 2 - that.x;
-			that.originY = m.abs(e.touches[0].pageY + e.touches[1].pageY - that.wrapperOffsetTop * 2) / 2 - that.y;
+			that.originX = m.abs(e.pointerList[0].pageX + e.pointerList[1].pageX - that.wrapperOffsetLeft * 2) / 2 - that.x;
+			that.originY = m.abs(e.pointerList[0].pageY + e.pointerList[1].pageY - that.wrapperOffsetTop * 2) / 2 - that.y;
 
 			if (that.options.onZoomStart) that.options.onZoomStart.call(that, e);
 		}
@@ -5537,7 +5551,7 @@ iScroll.prototype = {
 	
 	_move: function (e) {
 		var that = this,
-			point = hasTouch ? e.touches[0] : e,
+			point = e.pointerList[0],
 			deltaX = point.pageX - that.pointX,
 			deltaY = point.pageY - that.pointY,
 			newX = that.x + deltaX,
@@ -5548,9 +5562,9 @@ iScroll.prototype = {
 		if (that.options.onBeforeScrollMove) that.options.onBeforeScrollMove.call(that, e);
 
 		// Zoom
-		if (that.options.zoom && hasTouch && e.touches.length > 1) {
-			c1 = m.abs(e.touches[0].pageX - e.touches[1].pageX);
-			c2 = m.abs(e.touches[0].pageY - e.touches[1].pageY);
+		if (that.options.zoom && e.nbPointers > 1) {
+			c1 = m.abs(e.pointerList[0].pageX - e.pointerList[1].pageX);
+			c2 = m.abs(e.pointerList[0].pageY - e.pointerList[1].pageY);
 			that.touchesDist = m.sqrt(c1*c1+c2*c2);
 
 			that.zoomed = true;
@@ -5617,10 +5631,10 @@ iScroll.prototype = {
 	},
 	
 	_end: function (e) {
-		if (hasTouch && e.touches.length !== 0) return;
+		if (e.nbPointers !== 0) return;
 
 		var that = this,
-			point = hasTouch ? e.changedTouches[0] : e,
+			point = e, // TODO hasTouch ? e.changedTouches[0] : e,
 			target, ev,
 			momentumX = { dist:0, time:0 },
 			momentumY = { dist:0, time:0 },
@@ -5985,11 +5999,13 @@ iScroll.prototype = {
 	},
 
 	_bind: function (type, el, bubble) {
-		(el || this.scroller).addEventListener(type, this, !!bubble);
+//		(el || this.scroller).addEventListener(type, this, !!bubble);
+		vs.addPointerListener ((el || this.scroller), type, this, !!bubble);
 	},
 
 	_unbind: function (type, el, bubble) {
-		(el || this.scroller).removeEventListener(type, this, !!bubble);
+//		(el || this.scroller).removeEventListener(type, this, !!bubble);
+		vs.removePointerListener ((el || this.scroller), type, this, !!bubble);
 	},
 
 
@@ -7306,7 +7322,7 @@ ScrollImageView.prototype = {
     setTimeout (function ()
     {
       self.refresh ();
-      self._applyInsideTransformation2D ();
+//      self._applyInsideTransformation ();
     }, 0);
   },
   
@@ -7345,7 +7361,7 @@ ScrollImageView.prototype = {
     }
     
     this.refresh ();
-    this._applyInsideTransformation2D ();
+//    this._applyInsideTransformation ();
   }
 };
 util.extendClass (ScrollImageView, ScrollView);
@@ -7664,14 +7680,14 @@ TextArea.prototype = {
       if (event.src === self.view)
       { return; }
       
-      document.removeEventListener (core.POINTER_START, manageBlur, true);
+      vs.removePointerListener (document, core.POINTER_START, manageBlur, true);
       self.setBlur ();
     }
     
     switch (event.type)
     {
       case 'focus':
-        document.addEventListener (core.POINTER_START, manageBlur, true);
+        vs.addPointerListener (document, core.POINTER_START, manageBlur, true);
       break;
 
       case 'blur':
@@ -7971,7 +7987,7 @@ Button.prototype = {
   {
     if (this.__touch_binding)
     {
-      this.view.removeEventListener (core.POINTER_START, this);
+      vs.removePointerListener (this.view, core.POINTER_START, this);
       this.__touch_binding = false;
     }
     View.prototype.destructor.call (this);
@@ -7989,7 +8005,7 @@ Button.prototype = {
 
     if (!this.__touch_binding)
     {
-      this.view.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (this.view, core.POINTER_START, this);
       this.__touch_binding = true;
     }
 
@@ -8027,7 +8043,7 @@ Button.prototype = {
       case core.POINTER_START:
         if (this.__is_touched) { return; }
         // prevent multi touch events
-        if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+        if (e.nbPointers > 1) { return; }
         
         // we keep the event
         e.stopPropagation ();
@@ -8039,10 +8055,10 @@ Button.prototype = {
         }
         
         this._setPressed (true);
-        document.addEventListener (core.POINTER_END, this);
-        document.addEventListener (core.POINTER_MOVE, this);
-        this.__start_x = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
-        this.__start_y = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+        vs.addPointerListener (document, core.POINTER_END, this);
+        vs.addPointerListener (document, core.POINTER_MOVE, this);
+        this.__start_x = e.pointerList[0].pageX;
+        this.__start_y = e.pointerList[0].pageY;
         this.__is_touched = true;
         
         return false;
@@ -8051,10 +8067,8 @@ Button.prototype = {
       case core.POINTER_MOVE:
         if (!this.__is_touched) { return; }
 
-        var dx = 
-          (core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX) - this.__start_x;
-        var dy =
-          (core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY) - this.__start_y;
+        var dx = e.pointerList[0].pageX - this.__start_x;
+        var dy = e.pointerList[0].pageY - this.__start_y;
           
         if (Math.abs (dx) + Math.abs (dy) < View.MOVE_THRESHOLD)
         {
@@ -8063,8 +8077,8 @@ Button.prototype = {
           return false;
         }
  
-        document.removeEventListener (core.POINTER_END, this);
-        document.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (document, core.POINTER_END, this);
+        vs.removePointerListener (document, core.POINTER_MOVE, this);
         this.__is_touched = false;
 
         this._setPressed (false);
@@ -8079,8 +8093,8 @@ Button.prototype = {
         // we keep the event
         e.stopPropagation ();
 
-        document.removeEventListener (core.POINTER_END, this);
-        document.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (document, core.POINTER_END, this);
+        vs.removePointerListener (document, core.POINTER_MOVE, this);
 
         this.__button_time_out = setTimeout (function ()
         {
@@ -8372,13 +8386,13 @@ AbstractList.prototype = {
   /**
    * @protected
    * @function
-  
+   */
   _untouchItemFeedback : function (item) {},
 
   /**
    * @protected
    * @function
-  
+   */
   _updateSelectItem : function (item) {},
 
   /**
@@ -8400,12 +8414,12 @@ AbstractList.prototype = {
     if (e.type === core.POINTER_START)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
 
-      this.__touch_start = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+      this.__touch_start = e.pointerList[0].pageY;
   
-      document.addEventListener (core.POINTER_MOVE, this, false);
-      document.addEventListener (core.POINTER_END, this, false);
+      vs.addPointerListener (document, core.POINTER_MOVE, this, false);
+      vs.addPointerListener (document, core.POINTER_END, this, false);
       
       if (!this._items_selectable)
       { return false; }
@@ -8435,7 +8449,7 @@ AbstractList.prototype = {
     }
     else if (e.type === core.POINTER_MOVE)
     {
-      pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+      pageY = e.pointerList[0].pageY;
       this.__delta = pageY - this.__touch_start;  
             
       // this is a move, not a selection => deactivate the selected element
@@ -8454,8 +8468,8 @@ AbstractList.prototype = {
     else if (e.type === core.POINTER_END)
     {
       // Stop tracking when the last finger is removed from this element
-      document.removeEventListener (core.POINTER_MOVE, this);
-      document.removeEventListener (core.POINTER_END, this);
+      vs.removePointerListener (document, core.POINTER_MOVE, this);
+      vs.removePointerListener (document, core.POINTER_END, this);
       
       if (this.__delta) { this.__scroll_start += this.__delta; }
       
@@ -8958,7 +8972,7 @@ function buildSection (list, title, index, itemsSelectable)
 
     if (itemsSelectable)
     {
-      listItem.view.addEventListener (core.POINTER_START, list);
+      vs.addPointerListener (listItem.view, core.POINTER_START, list);
     }
     content.appendChild (listItem.view);
     list.__item_obs.push (listItem);
@@ -9143,7 +9157,7 @@ function defaultListRenderData (itemsSelectable)
 
     if (itemsSelectable)
     {
-      listItem.view.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (listItem.view, core.POINTER_START, this);
     }
     _list_items.appendChild (listItem.view);
     this.__item_obs.push (listItem);
@@ -9575,8 +9589,8 @@ List.prototype = {
       util.setElementTransform (self._list_items, '');
       self.__max_scroll = self.size [1] - self._list_items.offsetHeight;
       
-      document.addEventListener (core.POINTER_MOVE, accessBarMove, false);
-      document.addEventListener (core.POINTER_END, accessBarEnd, false);
+      vs.addPointerListener (document, core.POINTER_MOVE, accessBarMove, false);
+      vs.addPointerListener (document, core.POINTER_END, accessBarEnd, false);
       
       var _acces_index = e.srcElement._index_;
       if (!util.isNumber (_acces_index)) return;
@@ -9638,14 +9652,14 @@ List.prototype = {
     
     var accessBarEnd = function (e)
     {
-      document.removeEventListener (core.POINTER_MOVE, accessBarMove);
-      document.removeEventListener (core.POINTER_END, accessBarEnd);
+      vs.removePointerListener (document, core.POINTER_MOVE, accessBarMove);
+      vs.removePointerListener (document, core.POINTER_END, accessBarEnd);
 
       if (self._endScrolling) self._endScrolling ();
     };
 
-    this._direct_access.addEventListener
-      (core.POINTER_START, accessBarStart, false);
+    vs.addPointerListener
+      (this._direct_access, core.POINTER_START, accessBarStart, false);
   },
   
   getTitlePosition : function (index)
@@ -9686,7 +9700,7 @@ util.defineClassProperties (List, {
         for (i = 0; i < this.__item_obs.length; i++)
         {
           obj = this.__item_obs [i];
-          obj.view.addEventListener (core.POINTER_START, this, true);
+          vs.addPointerListener (obj.view, core.POINTER_START, this, true);
         }
       }
       else
@@ -9695,7 +9709,7 @@ util.defineClassProperties (List, {
         for (i = 0; i < this.__item_obs.length; i++)
         {
           obj = this.__item_obs [i];
-          obj.view.removeEventListener (core.POINTER_START, this, true);
+          vs.removePointerListener (obj.view, core.POINTER_START, this, true);
         }
       }
     }
@@ -9930,8 +9944,8 @@ ComboBox.prototype = {
   {
     if (this._mode === ComboBox.NATIVE_MODE)
     {
-      this.view.removeEventListener (core.POINTER_START, this);
-      this.view.removeEventListener (core.POINTER_END, this);
+      vs.removePointerListener (this.view, core.POINTER_START, this);
+      vs.removePointerListener (this.view, core.POINTER_END, this);
     }
     else
     {
@@ -10003,8 +10017,8 @@ ComboBox.prototype = {
       this._select = document.createElement ('div');
       this.view.appendChild (this._select);
 
-      this.view.addEventListener (core.POINTER_START, this);
-      this.view.addEventListener (core.POINTER_END, this);
+      vs.addPointerListener (this.view, core.POINTER_START, this);
+      vs.addPointerListener (this.view, core.POINTER_END, this);
     }
     // Normal GUI
     else
@@ -10250,7 +10264,7 @@ RadioButton.prototype = {
     {
       input = this._items [0];
       
-      input.removeEventListener (core.POINTER_START, this);
+      vs.removePointerListener (input, core.POINTER_START, this);
       input.removeEventListener ('click', this);
       this._items.remove (0);
     }
@@ -10287,13 +10301,13 @@ RadioButton.prototype = {
       
       this._list_items.appendChild (input);
       this._items [i] = input;
-      input.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (input, core.POINTER_START, this);
       input.addEventListener ('click', this);
       
       label = document.createElement ('label');
       label.value = i;
       label.setAttribute ("for", this._id + "_l" + i);
-      label.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (label, core.POINTER_START, this);
       label.addEventListener ('click', this);
       util.setElementInnerText (label, item);
       this._list_items.appendChild (label);
@@ -10521,7 +10535,7 @@ CheckBox.prototype = {
     {
       input = this._items [0];
       
-      input.removeEventListener (core.POINTER_START, this);
+      vs.removePointerListener (input, core.POINTER_START, this);
       input.removeEventListener ('click', this);
       this._items.remove (0);
     }
@@ -10558,13 +10572,13 @@ CheckBox.prototype = {
       this._list_items.appendChild (input);
       this._items [i] = input;
       
-      input.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (input, core.POINTER_START, this);
       input.addEventListener ('click', this);
 
       label = document.createElement ('label');
       label.value = i;
       label.setAttribute ("for", this._id + "_l" + i);
-      label.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (label, core.POINTER_START, this);
       label.addEventListener ('click', this);
       util.setElementInnerText (label, item);
       this._list_items.appendChild (label);
@@ -11011,13 +11025,13 @@ NavigationBar.prototype = {
     {
       case core.POINTER_START:
         util.addClassName (self, 'active');
-        event.currentTarget.addEventListener (core.POINTER_END, this, true);
-        event.currentTarget.addEventListener (core.POINTER_MOVE, this, true);
+        vs.addPointerListener (event.currentTarget, core.POINTER_END, this, true);
+        vs.addPointerListener (event.currentTarget, core.POINTER_MOVE, this, true);
       break;
 
       case core.POINTER_END:
-        event.currentTarget.removeEventListener (core.POINTER_END, this);
-        event.currentTarget.removeEventListener (core.POINTER_MOVE, this);        
+        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);        
         
         setTimeout (function () 
           { util.removeClassName (self, 'active'); }, 200);
@@ -11028,8 +11042,8 @@ NavigationBar.prototype = {
         event.preventDefault ();
         setTimeout (function () 
           { util.removeClassName (self, 'active'); }, 200);
-        event.currentTarget.removeEventListener (core.POINTER_END, this);
-        event.currentTarget.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);
       break;
     }
   },
@@ -11588,13 +11602,13 @@ ToolBar.Item.prototype = {
     {
       case core.POINTER_START:
         util.addClassName (self, 'active');
-        event.currentTarget.addEventListener (core.POINTER_END, this, true);
-        event.currentTarget.addEventListener (core.POINTER_MOVE, this, true);
+        vs.addPointerListener (event.currentTarget, core.POINTER_END, this, true);
+        vs.addPointerListener (event.currentTarget, core.POINTER_MOVE, this, true);
       break;
 
       case core.POINTER_END:
-        event.currentTarget.removeEventListener (core.POINTER_END, this);
-        event.currentTarget.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);
                 
         window.setTimeout (function () { util.removeClassName (self, 'active'); }, 200);
         this.propagate ('select', this.id);
@@ -11603,8 +11617,8 @@ ToolBar.Item.prototype = {
       case core.POINTER_MOVE:
         event.preventDefault ();
         window.setTimeout (function () { util.removeClassName (self, 'active'); }, 200);
-        event.currentTarget.removeEventListener (core.POINTER_END, this);
-        event.currentTarget.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
+        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);
       break;
     }
   }
@@ -13680,7 +13694,7 @@ Slider.prototype = {
    */
   destructor: function ()
   {
-    this.__handle.removeEventListener (core.POINTER_START, this, true);
+    vs.removePointerListener (this.__handle, core.POINTER_START, this, true);
     View.prototype.destructor.call (this);
   },
 
@@ -13713,7 +13727,7 @@ Slider.prototype = {
     this.__handle = this.view.querySelector ('.handle');
       
     // top/bottom click listening
-    this.__handle.addEventListener (core.POINTER_START, this, true);
+    vs.addPointerListener (this.__handle, core.POINTER_START, this, true);
     
     this.orientation = this._orientation;
     this.value = this._value;
@@ -13730,14 +13744,14 @@ Slider.prototype = {
     if (e.type === core.POINTER_START)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
 
       // prevent objet keep event => prevent propagation
       e.stopPropagation ();
       e.preventDefault();
 
-      pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY,
-      pageX = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
+      pageY = e.pointerList[0].pageY,
+      pageX = e.pointerList[0].pageX;
 
       this.__drag_x = pageX;
       this.__drag_y = pageY;
@@ -13745,23 +13759,23 @@ Slider.prototype = {
       this.__v = this._value;
       this.__handle_width = this.__handle.offsetWidth;
       
-      document.addEventListener (core.POINTER_MOVE, this, true);
-      document.addEventListener (core.POINTER_END, this, true);
-      this.__handle.addEventListener (core.POINTER_END, this, true);
+      vs.addPointerListener (document, core.POINTER_MOVE, this, true);
+      vs.addPointerListener (document, core.POINTER_END, this, true);
+      vs.addPointerListener (this.__handle, core.POINTER_END, this, true);
       
       return false;
     }
     else if (e.type === core.POINTER_MOVE)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
 
       // prevent objet keep event => prevent propagation
       e.stopPropagation ();
       e.preventDefault();
 
-      pageY = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY,
-      pageX = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
+      pageY = e.pointerList[0].pageY,
+      pageX = e.pointerList[0].pageX;
 
       if (this._orientation === 0)
       {
@@ -13784,15 +13798,15 @@ Slider.prototype = {
     else if (e.type === core.POINTER_END)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
 
       // prevent objet keep event => prevent propagation
       e.stopPropagation ();
       e.preventDefault();
 
-      document.removeEventListener (core.POINTER_MOVE, this, true);
-      document.removeEventListener (core.POINTER_END, this, true);
-      this.__handle.removeEventListener (core.POINTER_END, this, true);
+      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
+      vs.removePointerListener (document, core.POINTER_END, this, true);
+      vs.removePointerListener (this.__handle, core.POINTER_END, this, true);
  
       this.propagate ('change', this._value);
       
@@ -14410,6 +14424,17 @@ InputField.prototype = {
   },
   
   /**
+   * Did enable delegate
+   * @name vs.ui.View#_didEnable
+   * @protected
+   */
+  _didEnable : function ()
+  {
+    if (this._enable) this._text_field.removeAttribute ('disabled');
+    else this._text_field.setAttribute ('disabled');
+  },
+  
+  /**
    * @private
    * @function
    */
@@ -14429,7 +14454,7 @@ InputField.prototype = {
         return;
       }
       
-      document.removeEventListener (core.POINTER_START, manageBlur, true);
+      vs.removePointerListener (document, core.POINTER_START, manageBlur, true);
       self.setBlur ();
     }
 
@@ -14452,7 +14477,7 @@ InputField.prototype = {
       if (this._value) { this._activateDelete (true); }
       else { this._activateDelete (false); }
       
-      document.addEventListener (core.POINTER_START, manageBlur, true);
+      vs.addPointerListener (document, core.POINTER_START, manageBlur, true);
     }
     else if (event.type === 'blur')
     {
@@ -14890,7 +14915,7 @@ PopOver.prototype = {
       this._show_object ();
     }
     
-    document.addEventListener (core.POINTER_START, this, true); 
+    vs.addPointerListener (document, core.POINTER_START, this, true); 
   },
   
   /**
@@ -14936,7 +14961,7 @@ PopOver.prototype = {
     if (!this.view) { return; }
     View.prototype.hide.call (this);
     
-    document.removeEventListener (core.POINTER_START, this, true); 
+    vs.removePointerListener (document, core.POINTER_START, this, true); 
     this.view.style.display = 'none';
   }
 };
@@ -15276,7 +15301,7 @@ Switch.prototype = {
   {
     if (this.__touch_binding)
     {
-      this.view.removeEventListener (core.POINTER_START, this);
+      vs.removePointerListener (this.view, core.POINTER_START, this);
       this.__touch_binding = false;
     }
     View.prototype.destructor.call (this);
@@ -15303,7 +15328,7 @@ Switch.prototype = {
 
     if (!this.__touch_binding)
     {
-      this.view.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (this.view, core.POINTER_START, this);
       this.__touch_binding = true;
     }
 
@@ -15473,16 +15498,16 @@ Switch.prototype = {
       case core.POINTER_START:
         if (this.__is_touched) { return; }
         // prevent multi touch events
-        if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+        if (e.nbPointers > 1) { return; }
 
         // we keep the event
         e.stopPropagation ();
                 
         this._setSelected (true);
-        document.addEventListener (core.POINTER_END, this);
-        document.addEventListener (core.POINTER_MOVE, this);
-        this.__start_x = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX;
-        this.__start_y = core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY;
+        vs.addPointerListener (document, core.POINTER_END, this);
+        vs.addPointerListener (document, core.POINTER_MOVE, this);
+        this.__start_x = e.pointerList[0].pageX;
+        this.__start_y = e.pointerList[0].pageY;
         this.__is_touched = true;
         
         return false;
@@ -15491,10 +15516,8 @@ Switch.prototype = {
       case core.POINTER_MOVE:
         if (!this.__is_touched) { return; }
 
-        var dx = 
-          (core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX) - this.__start_x;
-        var dy =
-          (core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageY : e.pageY) - this.__start_y;
+        var dx = e.pointerList[0].pageX - this.__start_x;
+        var dy = e.pointerList[0].pageY - this.__start_y;
         
         // manage swipe and selection
         if (this._mode === Switch.MODE_IOS)
@@ -15518,8 +15541,8 @@ Switch.prototype = {
           }
         }
 
-        document.removeEventListener (core.POINTER_END, this);
-        document.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (document, core.POINTER_END, this);
+        vs.removePointerListener (document, core.POINTER_MOVE, this);
         this.__is_touched = false;
 
         this._setSelected (false);
@@ -15534,8 +15557,8 @@ Switch.prototype = {
         // we keep the event
         e.stopPropagation ();
 
-        document.removeEventListener (core.POINTER_END, this);
-        document.removeEventListener (core.POINTER_MOVE, this);
+        vs.removePointerListener (document, core.POINTER_END, this);
+        vs.removePointerListener (document, core.POINTER_MOVE, this);
 
         this._setSelected (false);
 
@@ -15750,31 +15773,37 @@ Picker.NUMBERS =
  * @private
  * @const
  */
-Picker.MODE_IOS = 0;
+Picker.MODE_DEFAULT = 0;
 
 /**
  * @private
  * @const
  */
-Picker.MODE_ANDROID = 1;
+Picker.MODE_IOS = 1;
 
 /**
  * @private
  * @const
  */
-Picker.MODE_WP7 = 2;
+Picker.MODE_ANDROID = 2;
 
 /**
  * @private
  * @const
  */
-Picker.MODE_SYMBIAN = 3;
+Picker.MODE_WP7 = 3;
 
 /**
  * @private
  * @const
  */
-Picker.MODE_BLACK_BERRY = 4;
+Picker.MODE_SYMBIAN = 4;
+
+/**
+ * @private
+ * @const
+ */
+Picker.MODE_BLACK_BERRY = 5;
 
 Picker.prototype = {
 
@@ -15782,7 +15811,7 @@ Picker.prototype = {
    * @private
    * @type {Number}
    */
-  _mode: Picker.MODE_IOS,
+  _mode: Picker.MODE_DEFAULT,
 
   /**
    * @private
@@ -15841,10 +15870,10 @@ Picker.prototype = {
    */
   destructor : function ()
   {
-    this._frame_view.removeEventListener (core.POINTER_START, this, false);
+    vs.removePointerListener (this._frame_view, core.POINTER_START, this, false);
 
-    document.removeEventListener (core.POINTER_START, this, false);
-    document.removeEventListener (core.POINTER_MOVE, this, false);
+    vs.removePointerListener (document, core.POINTER_START, this, false);
+    vs.removePointerListener (document, core.POINTER_MOVE, this, false);
 
     this._slots_view.innerHTML = "";
     delete (this._data);
@@ -15869,7 +15898,11 @@ Picker.prototype = {
     this._slots_elements = [];
     
     var os_device = window.deviceConfiguration.os;
-    if (os_device == DeviceConfiguration.OS_ANDROID)
+    if (os_device == DeviceConfiguration.OS_IOS)
+    {
+      this._mode = Picker.MODE_IOS;
+    }
+    else if (os_device == DeviceConfiguration.OS_ANDROID)
     {
       this._mode = Picker.MODE_ANDROID;
     }
@@ -15887,7 +15920,7 @@ Picker.prototype = {
     }
     else
     {
-      this._mode = Picker.MODE_IOS;
+      this._mode = Picker.MODE_DEFAULT;
     }
     
     // Pseudo table element (inner wrapper)
@@ -15898,30 +15931,22 @@ Picker.prototype = {
     
     switch (this._mode)
     {
+      case Picker.MODE_BLACK_BERRY:
+         this._cell_height = 50;
+
+      case Picker.MODE_DEFAULT:
       case Picker.MODE_IOS:
-        // Add scrolling to the slots
-        this._frame_view.addEventListener (core.POINTER_START, this);
-        this._frame_border_width = 0;
-      break;
-      
       case Picker.MODE_SYMBIAN:
         // Add scrolling to the slots
-        this._frame_view.addEventListener (core.POINTER_START, this);
+        vs.addPointerListener (this._frame_view, core.POINTER_START, this);
         this._frame_border_width = 0;
       break;
       
       case Picker.MODE_WP7:
-        this._frame_view.parentElement.removeChild (this._frame_view);
         this._cell_height = 83;
-      break;
       
       case Picker.MODE_ANDROID:
         this._frame_view.parentElement.removeChild (this._frame_view);
-      break;
-
-      case Picker.MODE_BLACK_BERRY:
-        this._frame_view.addEventListener (core.POINTER_START, this);
-        this._cell_height = 50;
       break;
     }    
   },
@@ -16043,7 +16068,7 @@ Picker.prototype = {
     {
       case Picker.MODE_WP7:
         ul.slotMaxScroll = this.view.clientHeight - ul.clientHeight;
-        ul.addEventListener (core.POINTER_START, this, true);
+        vs.addPointerListener (ul, core.POINTER_START, this, true);
       break;
     }    
     
@@ -16087,9 +16112,9 @@ Picker.prototype = {
 
     if (!readonly)
     {
-      button_incr.addEventListener (core.POINTER_START, this);
-      button_incr.addEventListener (core.POINTER_END, this);
-      button_incr.addEventListener (core.POINTER_CANCEL, this);
+      vs.addPointerListener (button_incr, core.POINTER_START, this);
+      vs.addPointerListener (button_incr, core.POINTER_END, this);
+      vs.addPointerListener (button_incr, core.POINTER_CANCEL, this);
     }
     
     // Create the slot
@@ -16107,9 +16132,9 @@ Picker.prototype = {
 
     if (!readonly)
     {
-      button_decr.addEventListener (core.POINTER_START, this);
-      button_decr.addEventListener (core.POINTER_END, this);
-      button_decr.addEventListener (core.POINTER_CANCEL, this);
+      vs.addPointerListener (button_decr, core.POINTER_START, this);
+      vs.addPointerListener (button_decr, core.POINTER_END, this);
+      vs.addPointerListener (button_decr, core.POINTER_CANCEL, this);
     }
     
     return [button_incr, button_decr];
@@ -16420,10 +16445,12 @@ Picker.prototype = {
    */
   _scrollStart: function (e)
   {
+    if (e.nbPointers > 1) return false;
+    
     e.preventDefault ();
     e.stopPropagation ();
     
-    var point = core.EVENT_SUPPORT_TOUCH ? e.targetTouches[0]: e;
+    var point = e.pointerList [0];
     this._active_slot = undefined;
 
     var css = this._getComputedStyle (this._frame_view);
@@ -16431,6 +16458,7 @@ Picker.prototype = {
 
     switch (this._mode)
     {
+      case Picker.MODE_DEFAULT:
       case Picker.MODE_IOS:
       case Picker.MODE_SYMBIAN:
       case Picker.MODE_BLACK_BERRY:
@@ -16468,8 +16496,8 @@ Picker.prototype = {
     // If slot is readonly do nothing
     if (this._data[this._active_slot].style.match('readonly'))
     {
-      document.removeEventListener (core.POINTER_MOVE, this, true);
-      document.removeEventListener (core.POINTER_END, this, true);
+      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
+      vs.removePointerListener (document, core.POINTER_END, this, true);
       return false;
     }
     
@@ -16495,8 +16523,8 @@ Picker.prototype = {
     this.scrollStartY = slot_elem.slotYPosition;
     this.scrollStartTime = e.timeStamp;
 
-    document.addEventListener (core.POINTER_MOVE, this, true);
-    document.addEventListener (core.POINTER_END, this, true);
+    vs.addPointerListener (document, core.POINTER_MOVE, this, true);
+    vs.addPointerListener (document, core.POINTER_END, this, true);
     
     switch (this._mode)
     {
@@ -16529,7 +16557,7 @@ Picker.prototype = {
     e.preventDefault ();
     e.stopPropagation ();
 
-    var point = core.EVENT_SUPPORT_TOUCH ? e.targetTouches[0]: e;
+    var point = e.pointerList [0];
     var topDelta = point.clientY - this.startY;
     var slot_elem = this._slots_elements[this._active_slot];
 
@@ -16556,8 +16584,8 @@ Picker.prototype = {
    */
   _scrollEnd: function (e)
   {
-    document.removeEventListener(core.POINTER_MOVE, this, true);
-    document.removeEventListener(core.POINTER_END, this, true);
+    vs.removePointerListener (document, core.POINTER_MOVE, this, true);
+    vs.removePointerListener (document, core.POINTER_END, this, true);
     
     var elem = this._slots_elements[this._active_slot], scrollDist,
       scrollDur, newDur, newPos, self = this;
@@ -16663,6 +16691,10 @@ Picker.prototype = {
   {
     switch (this._mode)
     {
+      case Picker.MODE_DEFAULT:
+        return this.view.clientHeight - ul.clientHeight - 66;
+      break;
+      
       case Picker.MODE_IOS:
         return this.view.clientHeight - ul.clientHeight - 86;
       break;
@@ -17125,7 +17157,7 @@ SegmentedButton.prototype = {
     while (this._div_list.length)
     {
       var div = this._div_list [0];
-      div.removeEventListener (core.POINTER_START, this);
+      vs.removePointerListener (div, core.POINTER_START, this);
       
       this._div_list.remove (0);
     }
@@ -17157,7 +17189,7 @@ SegmentedButton.prototype = {
       // WP7 does not manage box model (then use inline-block instead of)
       if (width) util.setElementStyle (div, {"width": width + '%'});
 
-      div.addEventListener (core.POINTER_START, this);
+      vs.addPointerListener (div, core.POINTER_START, this);
       
       this._div_list.push (div);
       subView.appendChild (div);
@@ -17190,7 +17222,7 @@ SegmentedButton.prototype = {
     if (e.type === core.POINTER_START)
     {
       // prevent multi touch events
-      if (core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+      if (e.nbPointers > 1) { return; }
       
       // hack to retrieve the correct source (the bug occurs on iOS)
       target = e.target;

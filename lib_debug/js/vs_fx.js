@@ -3043,7 +3043,7 @@ util.defineClassProperties (StackController, {
   
         if (!this._owner_handler_event_extended)
         {
-          this._owner.view.addEventListener (core.POINTER_START, this._owner, false);
+          vs.addPointerListener (this._owner.view, core.POINTER_START, this._owner, false);
           this._owner_handler_event = this._owner.handleEvent;
           this._owner.handleEvent = this.handleEvent;
         }
@@ -3056,7 +3056,7 @@ util.defineClassProperties (StackController, {
         
         if (this._owner_handler_event_extended)
         {
-          this._owner.view.removeEventListener (core.POINTER_START, this._owner, false);
+          vs.removePointerListener (this._owner.view, core.POINTER_START, this._owner, false);
           this._owner.handleEvent = this._owner_handler_event;
           
           this._owner_handler_event_extended = false;
@@ -3211,6 +3211,13 @@ var SlideController = vs.core.createClass ({
    */
   _transition_in : null,
 
+  /**
+   *
+   * @protected
+   * @type {number}
+   */
+  _animation_mode : 0,
+
   /********************************************************************
                     Define class properties
   ********************************************************************/
@@ -3261,6 +3268,29 @@ var SlideController = vs.core.createClass ({
         this._transition_out_right.duration = this._animation_duration + 'ms';
         this._transition_in.duration = this._animation_duration + 'ms';
       }
+    },
+    
+    'animationMode': {
+      /** 
+       * Set XXX
+       * @name vs.fx.SlideController#animationMode 
+       * @type {number}
+       */ 
+      set : function (v)
+      {
+        if (!v) { v = 0; }
+        if (v !== SlideController.POURCENTAGE &&
+            v !== SlideController.PIXEL) return;
+        if (this._animation_mode === v) return;
+        
+        this._animation_mode = v;
+        
+        util.free (this._transition_out_right);
+        util.free (this._transition_out_left);
+        
+        this._setUpAnimations ();
+        this._updateViewSize ();
+      }
     }
   },
 
@@ -3272,14 +3302,7 @@ var SlideController = vs.core.createClass ({
 
     if (!arguments.length) return;
   
-    this._transition_out_left = new Animation (['translate', '${x}%,${y}%,0']);
-    this._transition_out_left.x = 0;
-    this._transition_out_left.y = 0;
-    
-    this._transition_out_right = new Animation (['translate', '${x}%,${y}%,0']);
-    this._transition_out_right.x = 0;
-    this._transition_out_right.y = 0;
-
+    this._setUpAnimations ();
     this._transition_in = new Animation (['translate', '0,0,0']);
  
     this.animationDuration = SlideController.ANIMATION_DURATION;
@@ -3292,32 +3315,79 @@ var SlideController = vs.core.createClass ({
    * @protected
    * @function
    */
+  _setUpAnimations : function ()
+  {
+    switch (this._animation_mode)
+    {
+      case SlideController.POURCENTAGE:
+        this._transition_out_left = new Animation (['translate', '${x}%,${y}%,0']);
+        this._transition_out_right = new Animation (['translate', '${x}%,${y}%,0']);
+      break;
+
+      case SlideController.PIXEL:
+        this._transition_out_left = new Animation (['translate', '${x}px,${y}px,0']);
+        this._transition_out_right = new Animation (['translate', '${x}px,${y}px,0']);
+      break;
+    }
+
+    this._transition_out_left.x = 0;
+    this._transition_out_left.y = 0;
+    this._transition_out_left.duration = this._animation_duration + 'ms';
+    this._transition_out_right.duration = this._animation_duration + 'ms';
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
   _updateViewSize : function ()
   {
-    var i, state_id, state, transform;
+    var i, state_id, state, transform, delta, size;
+    switch (this._animation_mode)
+    {
+      case SlideController.POURCENTAGE:
+        delta = 100;
+        delta_str = delta + "%";
+      break;
+
+      case SlideController.PIXEL:
+        size = this._owner.size;
+        
+        if (this._orientation === SlideController.HORIZONTAL)
+        {
+          delta = size [0];
+        }
+        else if (this._orientation === SlideController.VERTICAL)
+        {
+          delta = size [1];
+        }
+        delta_str = delta + "px";
+      break;
+    }
+
     if (this._orientation === SlideController.HORIZONTAL)
     {
-      this._transition_out_left.x = -100;
+      this._transition_out_left.x = -delta;
       this._transition_out_left.y = 0;
-      this._transition_out_right.x = 100;
+      this._transition_out_right.x = delta;
       this._transition_out_right.y = 0;
     }
     else if (this._orientation === SlideController.VERTICAL)
     {
       this._transition_out_left.x = 0;
-      this._transition_out_left.y = -100;
+      this._transition_out_left.y = -delta;
       this._transition_out_right.x = 0;
-      this._transition_out_right.y = 100;
+      this._transition_out_right.y = delta;
     }
     
     // define transformation for view before current one
     if (this._orientation === SlideController.HORIZONTAL)
     {
-      transform = "translate3D(-100%,0,0)";
+      transform = "translate3D(-" + delta_str + ",0,0)";
     }
     else if (this._orientation === SlideController.VERTICAL)
     {
-      transform = "translate3D(0,-100%,0)";
+      transform = "translate3D(0,-" + delta_str + ",0)";
     }
     
     for (i = 0; i < this._states_array.length; i++)
@@ -3332,11 +3402,11 @@ var SlideController = vs.core.createClass ({
         // define transformation for view after current one
         if (this._orientation === SlideController.HORIZONTAL)
         {
-          transform = "translate3D(100%,0,0)";
+          transform = "translate3D(" + delta_str + ",0,0)";
         }
         else if (this._orientation === SlideController.VERTICAL)
         {
-          transform = "translate3D(0,100%,0)";
+          transform = "translate3D(0," + delta_str + ",0)";
         }
         
         // set no transformation for the current one
@@ -3445,15 +3515,35 @@ var SlideController = vs.core.createClass ({
    */
   configureNewComponent : function (comp)
   {
-    var transform;
+    var transform, delta_str, size;
           
+    switch (this._animation_mode)
+    {
+      case SlideController.POURCENTAGE:
+        delta_str = "100%";
+      break;
+
+      case SlideController.PIXEL:
+        size = this._owner.size;
+        
+        if (this._orientation === SlideController.HORIZONTAL)
+        {
+          delta_str = size [0] + "px";
+        }
+        else if (this._orientation === SlideController.VERTICAL)
+        {
+          delta_str = size [1] + "px";
+        }
+      break;
+    }
+
     if (this._orientation === SlideController.HORIZONTAL)
     {
-      transform = "translate3D(100%,0,0)";
+      transform = "translate3D(" + delta_str + ",0,0)";
     }
     else if (this._orientation === SlideController.VERTICAL)
     {
-      transform = "translate3D(0,100%,0)";
+      transform = "translate3D(0," + delta_str + ",0)";
     }
 
     comp.view.style.webkitTransitionDuration = '0';
@@ -3489,8 +3579,8 @@ var SlideController = vs.core.createClass ({
         {  this.__pos = event.clientY; }
       }
 
-      document.addEventListener (core.POINTER_END, this, true);
-      document.addEventListener (core.POINTER_MOVE, this, true);
+      vs.addPointerListener (document, core.POINTER_END, this, true);
+      vs.addPointerListener (document, core.POINTER_MOVE, this, true);
       
       this.animationDuration = 0;
       this.__delta = 0;
@@ -3536,8 +3626,8 @@ var SlideController = vs.core.createClass ({
           this.animationDuration = duration;
         }
       }
-      document.removeEventListener (core.POINTER_END, this, true);
-      document.removeEventListener (core.POINTER_MOVE, this, true);
+      vs.removePointerListener (document, core.POINTER_END, this, true);
+      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
     }
   },
   
@@ -3580,7 +3670,7 @@ var SlideController = vs.core.createClass ({
         {
           self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
         }
-        if (clb) clb.call (this.owner);
+        if (clb) clb.call (self._owner);
       } catch (e) { console.error (e); }
     },
     
@@ -3636,6 +3726,23 @@ SlideController.HORIZONTAL = 0;
  * @const
  */
 SlideController.VERTICAL = 1;
+
+
+/**
+ * Horizontal slide (defaut)
+ *
+ * @name vs.fx.SlideController.POURCENTAGE
+ * @const
+ */
+SlideController.POURCENTAGE = 0;
+
+/**
+ * Vertical slide
+ *
+ * @name vs.fx.SlideController.PIXEL
+ * @const
+ */
+SlideController.PIXEL = 1;
 
 /********************************************************************
                       Export
@@ -4586,8 +4693,8 @@ var CardController = vs.core.createClass ({
         {  this.__pos = event.clientY; }
       }
 
-      document.addEventListener (core.POINTER_END, this, true);
-      document.addEventListener (core.POINTER_MOVE, this, true);
+      vs.addPointerListener (document, core.POINTER_END, this, true);
+      vs.addPointerListener (document, core.POINTER_MOVE, this, true);
     }
     else if (event.type === core.POINTER_MOVE)
     {
@@ -4793,8 +4900,8 @@ var CardController = vs.core.createClass ({
           }
         }
       }
-      document.removeEventListener (core.POINTER_END, this, true);
-      document.removeEventListener (core.POINTER_MOVE, this, true);
+      vs.removePointerListener (document, core.POINTER_END, this, true);
+      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
     }
   },
   
@@ -5108,8 +5215,8 @@ CubicController.prototype = {
         {  this.__pos = event.clientY; }
       }
 
-      document.addEventListener (core.POINTER_END, this, true);
-      document.addEventListener (core.POINTER_MOVE, this, true);
+      vs.addPointerListener (document, core.POINTER_END, this, true);
+      vs.addPointerListener (document, core.POINTER_MOVE, this, true);
       
       this.animationDuration = 0;
     }
@@ -5237,8 +5344,8 @@ CubicController.prototype = {
           }
         }
       }
-      document.removeEventListener (core.POINTER_END, this, true);
-      document.removeEventListener (core.POINTER_MOVE, this, true);
+      vs.removePointerListener (document, core.POINTER_END, this, true);
+      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
     }
   },
   
