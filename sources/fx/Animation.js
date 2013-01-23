@@ -243,7 +243,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     if (dur === 0) forceCallback = true;
     
     if (!forceCallback)
-      vs.addPointerListener (comp.view, TRANSITION_END, callback, false);
+      comp.view.addEventListener (TRANSITION_END, callback, false);
      else setTimeout (function () {
       callback ({currentTarget: comp.view});
     }, 0);
@@ -348,7 +348,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     if (dur === 0) forceCallback = true;
 
     if (!forceCallback)
-      vs.addPointerListener (comp.view, ANIMATION_END, callback, false);
+      comp.view.addEventListener (ANIMATION_END, callback, false);
     else setTimeout (function () {
       callback ({currentTarget: comp.view});
     }, 0);
