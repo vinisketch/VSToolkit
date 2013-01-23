@@ -286,6 +286,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
     }
     if (transform)
     {
+      var matrix = comp._calculateTransformMatrix ();
+      transform = matrix.toString () + ' ' + transform;
       setElementTransform (comp.view, transform);
     }
   
@@ -439,6 +441,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
       }
       if (transform)
       {
+        var matrix = comp._calculateTransformMatrix ();
+        transform = matrix.toString () + ' ' + transform;
         style += TRANSFORM + ': ' + transform + ';';
       }
 
