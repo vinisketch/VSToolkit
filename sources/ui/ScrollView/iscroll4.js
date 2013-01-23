@@ -298,7 +298,7 @@ iScroll.prototype = {
 	
 	_start: function (e) {
 		var that = this,
-			point = hasTouch ? e.touches[0] : e,
+			point = e.pointerList[0],
 			matrix, x, y,
 			c1, c2;
 
@@ -319,13 +319,13 @@ iScroll.prototype = {
 		that.dirY = 0;
 
 		// Gesture start
-		if (that.options.zoom && hasTouch && e.nbPointers > 1) {
-			c1 = m.abs(e.touches[0].pageX-e.touches[1].pageX);
-			c2 = m.abs(e.touches[0].pageY-e.touches[1].pageY);
+		if (that.options.zoom && e.nbPointers > 1) {
+			c1 = m.abs(e.pointerList[0].pageX-e.pointerList[1].pageX);
+			c2 = m.abs(e.pointerList[0].pageY-e.pointerList[1].pageY);
 			that.touchesDistStart = m.sqrt(c1 * c1 + c2 * c2);
 
-			that.originX = m.abs(e.touches[0].pageX + e.touches[1].pageX - that.wrapperOffsetLeft * 2) / 2 - that.x;
-			that.originY = m.abs(e.touches[0].pageY + e.touches[1].pageY - that.wrapperOffsetTop * 2) / 2 - that.y;
+			that.originX = m.abs(e.pointerList[0].pageX + e.pointerList[1].pageX - that.wrapperOffsetLeft * 2) / 2 - that.x;
+			that.originY = m.abs(e.pointerList[0].pageY + e.pointerList[1].pageY - that.wrapperOffsetTop * 2) / 2 - that.y;
 
 			if (that.options.onZoomStart) that.options.onZoomStart.call(that, e);
 		}
@@ -369,7 +369,7 @@ iScroll.prototype = {
 	
 	_move: function (e) {
 		var that = this,
-			point = hasTouch ? e.touches[0] : e,
+			point = e.pointerList[0],
 			deltaX = point.pageX - that.pointX,
 			deltaY = point.pageY - that.pointY,
 			newX = that.x + deltaX,
@@ -380,9 +380,9 @@ iScroll.prototype = {
 		if (that.options.onBeforeScrollMove) that.options.onBeforeScrollMove.call(that, e);
 
 		// Zoom
-		if (that.options.zoom && hasTouch && e.nbPointers > 1) {
-			c1 = m.abs(e.touches[0].pageX - e.touches[1].pageX);
-			c2 = m.abs(e.touches[0].pageY - e.touches[1].pageY);
+		if (that.options.zoom && e.nbPointers > 1) {
+			c1 = m.abs(e.pointerList[0].pageX - e.pointerList[1].pageX);
+			c2 = m.abs(e.pointerList[0].pageY - e.pointerList[1].pageY);
 			that.touchesDist = m.sqrt(c1*c1+c2*c2);
 
 			that.zoomed = true;
@@ -449,10 +449,10 @@ iScroll.prototype = {
 	},
 	
 	_end: function (e) {
-		if (hasTouch && e.nbPointers !== 0) return;
+		if (e.nbPointers !== 0) return;
 
 		var that = this,
-			point = hasTouch ? e.changedTouches[0] : e,
+			point = e, // TODO hasTouch ? e.changedTouches[0] : e,
 			target, ev,
 			momentumX = { dist:0, time:0 },
 			momentumY = { dist:0, time:0 },
@@ -817,11 +817,13 @@ iScroll.prototype = {
 	},
 
 	_bind: function (type, el, bubble) {
-		(el || this.scroller).addEventListener(type, this, !!bubble);
+//		(el || this.scroller).addEventListener(type, this, !!bubble);
+		vs.addPointerListener ((el || this.scroller), type, this, !!bubble);
 	},
 
 	_unbind: function (type, el, bubble) {
-		(el || this.scroller).removeEventListener(type, this, !!bubble);
+//		(el || this.scroller).removeEventListener(type, this, !!bubble);
+		vs.removePointerListener ((el || this.scroller), type, this, !!bubble);
 	},
 
 
