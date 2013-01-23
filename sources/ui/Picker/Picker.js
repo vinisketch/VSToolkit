@@ -764,10 +764,12 @@ Picker.prototype = {
    */
   _scrollStart: function (e)
   {
+    if (e.nbPointers > 1) return false;
+    
     e.preventDefault ();
     e.stopPropagation ();
     
-    var point = core.EVENT_SUPPORT_TOUCH ? e.targetTouches[0]: e;
+    var point = e.pointerList [0];
     this._active_slot = undefined;
 
     var css = this._getComputedStyle (this._frame_view);
@@ -874,7 +876,7 @@ Picker.prototype = {
     e.preventDefault ();
     e.stopPropagation ();
 
-    var point = core.EVENT_SUPPORT_TOUCH ? e.targetTouches[0]: e;
+    var point = e.pointerList [0];
     var topDelta = point.clientY - this.startY;
     var slot_elem = this._slots_elements[this._active_slot];
 
