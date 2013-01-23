@@ -172,13 +172,23 @@ Event.prototype =
 // positive integers.
 var MOUSE_ID = 31337;
 
-function Pointer (evt, type, identifier)
+function Pointer (event, type, identifier)
 {
-  this.pageX = evt.pageX;
-  this.pageY = evt.pageY;
+  this.configureWithEvent (event)
   this.type = type;
   this.identifier = identifier;
 }
+
+Pointer.prototype.configureWithEvent = function (evt)
+{
+  this.pageX = evt.pageX;
+  this.pageY = evt.pageY;
+  this.clientX = evt.clientX;
+  this.clientY = evt.clientY;
+  this.target = evt.target;
+  this.currentTarget = evt.currentTarget;
+}
+
 
 var PointerTypes = {
   TOUCH: 2,
@@ -235,8 +245,7 @@ function buildMSPointerList (evt, remove)
   else
   {
     if (pointer) {
-      pointer.pageX = evt.pageX;
-      pointer.pageY = evt.pageY;
+      pointer.configureWithEvent (evt);
     }
     else
     {
