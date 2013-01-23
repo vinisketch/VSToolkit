@@ -452,7 +452,7 @@ iScroll.prototype = {
 		if (e.nbPointers !== 0) return;
 
 		var that = this,
-			point = e, // TODO hasTouch ? e.changedTouches[0] : e,
+			point = e.changedPointerList [0],
 			target, ev,
 			momentumX = { dist:0, time:0 },
 			momentumY = { dist:0, time:0 },
