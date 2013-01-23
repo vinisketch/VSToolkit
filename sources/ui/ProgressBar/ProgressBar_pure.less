@@ -1,0 +1,64 @@
+.vs_ui_progressbar
+{
+  height:10px;
+  .box-shadow(~"0 0 1px black, inset 0 1px 3px rgba(0,0,0,0.5)");
+  background-color: #F9F9F9;
+    
+  .border-radius(5px);
+  overflow: hidden;
+}
+
+.vs_ui_progressbar >div
+{
+  padding: 0px; margin: 0px;
+  position: relative;
+  top: 0px; left: 0px;
+  padding-left: 1px;
+  height: 10px;
+  min-width: 10px;
+  
+  .gradient(~"linear-gradient(180deg, #6DB3F2 0%, #54A3EE 50%, #3690F0 51%, #1E69DE 100%)");
+  .border-radius (5px);
+  
+  border: 1px solid rgba(0, 0, 125, 0.2);
+}
+
+@-webkit-keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+@-moz-keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+@-ms-keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+@-o-keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+@keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+.vs_ui_progressbar.indeterminate {
+  .gradient(~"linear-gradient(117deg, rgba(255, 255, 255, 0) 23%, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 1) 30%,rgba(255, 255, 255, 1) 70%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0) 77%)");
+  background-color: #388AD5;
+  background-repeat: repeat-x;
+  
+  background-position-x: 0%;
+
+  .background-size (20px 10px);
+  .animation-duration (10s);
+  .animation-iteration-count (infinite);
+  .animation-timing-function (linear);
+  .animation-name (vs_ui_progressbar_anim);
+}
+

@@ -1,0 +1,62 @@
+.vs_ui_combobox
+{
+  height: 43px;
+  border: 1px solid #DDD;
+  padding: 0px;
+ .base_radius;
+ .base_shadow;
+
+  font-weight: normal;
+  
+  font-family: @default_font;
+
+  .base_background;
+  padding-right: 27px;
+}
+
+.vs_ui_combobox:focus, .vs_ui_combobox:active
+{
+  color: #fff !important;
+  text-shadow: black 0 1px 0 !important;
+//  border: 1px solid #1080dd !important;
+  .base_background_selected;
+}
+
+.vs_ui_combobox > select
+{
+  .appearance(none);
+  padding-top: 2px;
+  color: inherit;
+}
+
+.vs_ui_combobox > select:focus {
+  outline: none;
+}
+
+.vs_ui_combobox::after
+{
+  background: transparent;
+
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  line-height: normal;
+  vertical-align: baseline;
+  background-image: none;
+  
+  font-size: 22px;
+
+  color: #666;
+  top: 10px;
+  content: "\f0dc";
+  border: none;
+  margin: 0px;
+  right: 20px;
+}
+
+.vs_ui_combobox:active:after
+{
+  color: #fff !important;
+  text-shadow: black 0 1px 0 !important;
+}

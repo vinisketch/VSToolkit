@@ -1,0 +1,68 @@
+.vs_ui_picker
+{
+  height: 180px;
+  .base_background;
+  font:bold 18pt/30pt @default_font;
+  color: black;
+  overflow: hidden;
+  border: 1px solid #DDD;
+  .base_radius;
+  
+  text-shadow: 0px 1px rgba(255,255,255,0.7);
+}
+
+.vs_ui_picker .slots {
+  top: 50%;
+  height: 44px;
+  overflow: visible;
+  .box-shadow(0px 2px 3px black, 0px -2px 3px black);
+  .base_background_selected;
+  .box-orient(horizontal);
+  .translate(0, -22px);
+}
+
+.vs_ui_picker .slots > div {
+  .box-flex(1);
+  height:180px;
+  margin-top:-70px;
+  padding:0;
+  border-left:2px solid #0d0e0f;
+}
+
+.vs_ui_picker .slots div:first-child {
+  border-left:none;
+}
+
+.vs_ui_picker ul {
+  padding: 70px 0 0 0;
+}
+
+.vs_ui_picker li {
+  font: normal 24px/44px @default_font;
+  background: none;
+}
+
+.vs_ui_picker .frame {
+  .translate(0, -44px);
+  left:0; right:0;
+  height:100%;
+  border-width:16px;
+  .base_radius;
+
+  .box-shadow(
+    inset 0px 3px 10px rgba(0,0,0,0.7),
+    inset 0px -3px 10px rgba(0,0,0,0.7),
+    inset 0px 20px 50px rgba(0,0,0,0.3),
+    inset 0px -20px 50px rgba(0,0,0,0.3));
+    
+  border: 1px solid #ddd;
+}
+
+.vs_ui_picker .buttons_incr,
+.vs_ui_picker .buttons_decr {
+  display: none;
+}
+
+.vs_ui_picker .slots div.readonly {
+  background:#ddd;
+}

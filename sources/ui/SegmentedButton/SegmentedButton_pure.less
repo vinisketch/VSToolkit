@@ -1,0 +1,130 @@
+.vs_ui_segmentedbutton
+{
+  font-family: @default_font;
+  font-weight: normal;
+}
+
+.vs_ui_segmentedbutton > div
+{
+  .base_background;
+  .box-align(stretch);
+}
+
+.vs_ui_segmentedbutton > div > div
+{
+  .box-pack(center);
+  text-align: center;
+  .box-flex(1);
+}
+
+.vs_ui_segmentedbutton > div > div.selected {
+  .base_background_selected;
+  color: white;
+  text-shadow: black 0 1px 0;
+}
+
+.vs_ui_segmentedbutton.horizontal > div
+{
+  .box-orient(horizontal);
+}
+
+.vs_ui_segmentedbutton.vertical > div
+{
+  .box-orient(vertical);
+}
+
+.vs_ui_segmentedbutton.horizontal > div > div {
+  border-left: 1px solid #DDD;  
+  border-right: 1px solid transparent;  
+}
+
+.vs_ui_segmentedbutton.horizontal > div > div:first-child {
+  border-left: 0px;  
+}
+
+.vs_ui_segmentedbutton.vertical > div > div {
+  border-top: 1px solid #DDD;  
+  border-bottom: 1px solid transparent;  
+}
+
+.vs_ui_segmentedbutton.vertical > div > div:first-child {
+  border-top: 0px;  
+}
+
+/***************************************************************************
+                          default button spec
+***************************************************************************/
+
+.vs_ui_segmentedbutton.default
+{
+  font-size: 20px;
+  
+  height: 43px;
+} 
+
+.vs_ui_segmentedbutton.default > div
+{
+  line-height:26px;
+  border: 1px solid #DDD;
+  .base_radius;
+  .base_shadow;
+}
+
+.vs_ui_segmentedbutton.default > div > div {
+  padding: 8px 8px 0 8px;
+}
+
+.vs_ui_segmentedbutton.default.horizontal > div > div:first-child {
+  .base_radius_left;
+}
+
+.vs_ui_segmentedbutton.default.horizontal > div > div:last-child {
+  .base_radius_right;
+}
+
+.vs_ui_segmentedbutton.default.vertical > div > div:first-child {
+  .base_radius_top;
+}
+
+.vs_ui_segmentedbutton.default.vertical > div > div:last-child {
+  .base_radius_bottom;
+}
+
+/***************************************************************************
+                          bar button spec
+***************************************************************************/
+
+.vs_ui_segmentedbutton.bar
+{
+  height: 27px;
+
+  font-size: 0.8em;
+}
+
+.vs_ui_segmentedbutton.bar > div
+{
+  line-height:18px;
+  border: 1px solid #DDD;
+  .small_radius;
+  .small_shadow;
+}
+
+.vs_ui_segmentedbutton.bar > div > div {
+  padding: 5px 5px 0 5px;
+}
+
+.vs_ui_segmentedbutton.bar.horizontal > div > div:first-child {
+  .small_radius_left;
+}
+
+.vs_ui_segmentedbutton.bar.horizontal > div > div:last-child {
+  .small_radius_right;
+}
+
+.vs_ui_segmentedbutton.bar.vertical > div > div:first-child {
+  .small_radius_top;
+}
+
+.vs_ui_segmentedbutton.bar.vertical > div > div:last-child {
+  .small_radius_bottom;
+}

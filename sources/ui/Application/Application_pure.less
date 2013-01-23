@@ -1,0 +1,98 @@
+@font-face {
+  font-family: 'nokiapuretext';
+  src: local('NokiaPureText'), url('NokiaPureText.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('fontawesome-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@default_font: nokiapuretext, helvetica;
+
+.base_background {
+  .gradient(~"linear-gradient(0deg, #FFF 0%, rgb(245,245,245) 100%)");
+}
+
+.red_background {
+  .gradient(~"linear-gradient(0deg, #ff5f56 0%, #ff4036 100%)");
+}
+
+.green_background {
+  .gradient(~"linear-gradient(0deg, #01BF00 0%, #079600 100%)");
+}
+
+.grey_background {
+  .gradient(~"linear-gradient(0deg, #797979 0%, #444 100%)");
+}
+
+.base_background_selected {
+  .gradient(~"linear-gradient(0deg, #1080dd 0%, #268ce0 100%) !important") ;
+}
+
+.base_radius {
+  .elliptic-rounded (12px, 15px);
+}
+
+.base_radius_left {
+  .elliptic-rounded-left (12px, 15px);
+}
+
+.base_radius_right {
+  .elliptic-rounded-right (12px, 15px);
+}
+
+.base_radius_top {
+  .elliptic-rounded-top (12px, 15px);
+}
+
+.base_radius_bottom {
+  .elliptic-rounded-bottom (12px, 15px);
+}
+
+.small_radius {
+  .elliptic-rounded (8px, 12px);
+}
+
+.small_radius_left {
+  .elliptic-rounded-left (8px, 12px);
+}
+
+.small_radius_right {
+  .elliptic-rounded-right (8px, 12px);
+}
+
+.small_radius_top {
+  .elliptic-rounded-top (8px, 12px);
+}
+
+.small_radius_bottom {
+  .elliptic-rounded-bottom (8px, 12px);
+}
+
+.base_shadow {
+  .box-shadow (0px 2px 0 #AAA);
+}
+
+.small_shadow {
+  .box-shadow (0px 1px 0 #AAA);
+}
+
+body {
+  font-family: @default_font;
+  font-size:18px;
+}
+
+body, body.light {
+  color: #282828;
+  background: #FFF;
+}
+
+body.dark {
+  color: #fff;
+  background: #000000;
+}

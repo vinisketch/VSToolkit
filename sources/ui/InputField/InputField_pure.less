@@ -1,0 +1,52 @@
+.vs_ui_inputfield
+{
+  height:38px;
+  font-size: inherit;
+  .base_radius;
+
+  .box-shadow (~'inset 0 0 4px rgba(0,0,0,0.4),0 1px 0 rgba(255,255,255,0.4)');
+  border: 1px solid rgba(0,0,0,0.3);
+  min-width: 200px;
+}
+
+.vs_ui_inputfield.focus
+{
+  margin: 0px;
+  border: #1080dd solid 1px;
+}
+
+.vs_ui_inputfield > input
+{
+  margin-left: 2px;
+  color: black;
+  font-family: @default_font;
+}
+
+.vs_ui_inputfield.focus > input
+{
+  background: transparent;
+  margin-top: 0px;
+  margin-left: 2px;
+}
+
+.vs_ui_inputfield .clear_button {
+  background: transparent;
+
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  line-height: normal;
+  vertical-align: baseline;
+  background-image: none;
+  
+  font-size: 22px;
+
+  color: #666;
+  top: 7px;
+}
+
+.vs_ui_inputfield .clear_button::before
+{
+  content: "\f057";
+}

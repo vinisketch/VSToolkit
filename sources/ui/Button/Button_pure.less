@@ -1,0 +1,170 @@
+/*
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+.vs_ui_button {
+  font-family: @default_font;
+  .base_background;
+}
+
+.vs_ui_button.pressed {
+  color: white !important;
+  text-shadow: black 0 1px 0 !important;
+  .base_background_selected;
+ }
+
+/***************************************************************************
+
+***************************************************************************/
+
+.vs_ui_button.nav,
+.vs_ui_button.nav_back,
+.vs_ui_button.nav_forward
+{
+  font-size: 0.8em;
+  height: 30px;
+  line-height:21px;
+
+  font-weight: normal;
+  text-shadow: none;
+
+  .small_radius;
+}
+
+.vs_ui_button.nav {
+  padding: 5px 12px 0px 12px;
+}
+
+.vs_ui_button.nav_back {
+  padding: 5px 12px 0px 20px;
+}
+
+.vs_ui_button.nav_forward {
+  padding: 5px 20px 0px 12px;
+}
+
+.vs_ui_button.nav,
+.vs_ui_button.nav_back,
+.vs_ui_button.nav_forward {
+  border: 1px solid #DDD;
+  color: #282828;
+
+  .base_shadow;
+}
+
+.vs_ui_button.nav.silver_ios_style,
+.vs_ui_button.nav.silver_style,
+.vs_ui_button.nav_back.silver_ios_style,
+.vs_ui_button.nav_back.silver_style,
+.vs_ui_button.nav_forward.silver_ios_style, 
+.vs_ui_button.nav_forward.silver_style {
+  .green_background;
+   color: #fff;
+}
+
+.vs_ui_button.nav.black_ios_style,
+.vs_ui_button.nav.black_style,
+.vs_ui_button.nav_back.black_ios_style,
+.vs_ui_button.nav_back.black_style,
+.vs_ui_button.nav_forward.black_ios_style, 
+.vs_ui_button.nav_forward.black_style {
+  .grey_background;
+  color: #fff;
+}
+
+.vs_ui_button.nav_back:before
+{
+  font-family: 'FontAwesome';
+  content: "";
+  margin-top: -9px;
+  border: 0;
+  position: absolute;
+  left: 6px;
+  top: 50%;
+}
+
+.vs_ui_button.nav_forward:after
+{
+  font-family: 'FontAwesome';
+  content: '';
+  margin-top: -9px;
+  border: 0;
+  position: absolute;
+  right: 6px;
+  top: 50%;
+}
+
+/***************************************************************************
+
+***************************************************************************/
+
+.vs_ui_button.default
+{
+  font-size: inherit;
+  
+  height: 43px;
+  border: 1px solid #DDD;
+
+  font-weight: normal;
+  
+  padding: 8px 16px 0px 16px;
+  line-height:28px;
+  font-size: 20px;
+  .base_radius;
+  .base_shadow;
+}
+
+.vs_ui_button.default.white 
+{
+  color: #282828;
+  text-shadow: white 0 1px 0;
+}
+
+.vs_ui_button.default.red
+{
+  color: white;
+  .red_background;
+  border: 1px solid #ff5f56 !important;
+  text-shadow: black 0 1px 0;
+}
+
+.vs_ui_button.default.red.pressed
+{
+  background: #992923 !important;
+  border: 1px solid #992923 !important;
+}
+
+.vs_ui_button.default.green
+{
+  color: white;
+  text-shadow: none;
+  .green_background;
+  border: 1px solid #01BF00 !important;
+}
+
+.vs_ui_button.default.green.pressed
+{
+  background: #079600 !important;
+  border: 1px solid #079600 !important;
+}
+
+.vs_ui_button.default.grey
+{
+  color: white;
+  text-shadow: none;
+  .grey_background;
+}
