@@ -120,13 +120,15 @@ core: core_debug
 	
 core_debug: ../lib_debug/js/vs_core.js
 
-../lib_debug/js/vs_core.js: core/dataflow.js core/Event.js core/EventSource.js core/Object.js core/Class.js core/Model.js core/Keyboard.js core/FSM.js core/Scheduler.js core/HTTPRequest.js core/DeviceConfiguration.js core/Array.js core/DataStorage.js core/LocalStorage.js
+../lib_debug/js/vs_core.js: core/dataflow.js core/Event.js core/PointerEvent.js core/GestureEvent.js core/EventSource.js core/Object.js core/Class.js core/Model.js core/Keyboard.js core/FSM.js core/Scheduler.js core/HTTPRequest.js core/DeviceConfiguration.js core/Array.js core/DataStorage.js core/LocalStorage.js
 	$(CAT) Header.js >> $@
 	$(CAT) core/core.js >> $@
 	$(CAT) core/Object.js >> $@
 	$(CAT) core/Class.js >> $@
 	$(CAT) core/Model.js >> $@
 	$(CAT) core/Event.js >> $@
+	$(CAT) core/PointerEvent.js >> $@
+	$(CAT) core/GestureEvent.js >> $@
 	$(CAT) core/EventSource.js >> $@
 	$(CAT) core/Keyboard.js >> $@
 	$(CAT) core/FSM.js >> $@
