@@ -2084,10 +2084,12 @@ View.prototype = {
   },
   
   /**
-   * @protected
+   *  Return the current transform matrix apply to this graphic Object.
+   * @public
    * @function
+   * @return {vs.CSSMatrix} the current transform matrix
    */
-  _calculateTransformMatrix: function ()
+  getCTM: function ()
   {
     var matrix = new vs.CSSMatrix (), transform, matrix_tmp;
     
@@ -2110,20 +2112,19 @@ View.prototype = {
    */
   _applyTransformation: function ()
   {
-    var matrix = this._calculateTransformMatrix ();
+    var matrix = this.getCTM ();
     
     setElementTransform (this.view, matrix.toString ());
     delete (matrix);
   }
   
-//   
-//   /**
+// *
 //    * @public
 //    * @function
-//    */
+//  
 //   getProjection: function (pos)
 //   {
-//     var matrix = this._calculateTransformMatrix ();   
+//     var matrix = this.getCTM ();   
 //     var matrix_tmp = new vs.CSSMatrix ();
 //         
 //     matrix_tmp = matrix_tmp.translate (pos.x, pos.y, pos.z || 0);
