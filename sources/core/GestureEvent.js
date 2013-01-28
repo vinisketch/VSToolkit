@@ -68,7 +68,11 @@ support.gestures =
   support.gesturechange && 
   support.gestureend;
 
-//if ('MSGestureEvent' in window) support.msGestures = true;
+if ('MSGestureEvent' in window) support.msGestures = true;
+
+// for now force non gesture native events
+support.gestures = false;
+support.msGestures = false;
 
 /*************************************************************/
 
@@ -96,6 +100,9 @@ function getAngle (pointer1, pointer2 )
 function getBarycentre (pointers)
 {
   var nb_pointer = pointers.length, index = 0, x = 0, y = 0;
+  if (nb_pointer === 0) return {X: 0, y: 0};
+  var dec = pointers[0].target.__init_pos;
+ 
   for (;index < nb_pointer; index++)
   {
     var pointer = pointers [index];
@@ -104,7 +111,7 @@ function getBarycentre (pointers)
     y += pointer.pageY;
   }
   
-  return {x: x / nb_pointer, y: y / nb_pointer};
+  return {x: x / nb_pointer - dec.x, y: y / nb_pointer - dec.y};
 };
 
 function getTranslate (pos1, pos2)
@@ -114,19 +121,20 @@ function getTranslate (pos1, pos2)
 
 var buildPaylaod = function (event, end)
 {
-  var barycentre = (end)?undefined:getBarycentre (event.pointerList);
+  var barycentre = (end)?undefined:getBarycentre (event.targetPointerList);
 
   return {
     scale: (end)?undefined:
-      getDistance (event.pointerList [0], event.pointerList [1]) / 
+      getDistance (event.targetPointerList [0], event.targetPointerList [1]) / 
       event.target.__init_distance,
     rotation: (end)?undefined:
-      getAngle (event.pointerList [0], event.pointerList [1]) - 
+      getAngle (event.targetPointerList [0], event.targetPointerList [1]) - 
       event.target.__init_angle,
     translation: (end)?undefined:
       getTranslate (barycentre, event.target.__init_barycentre),
     nbPointers : event.nbPointers,
     pointerList : event.pointerList,
+    targetPointerList: event.targetPointerList,
     barycentre : barycentre,
     changedPointerList: event.changedPointerList
   };
@@ -135,15 +143,22 @@ var buildPaylaod = function (event, end)
 var _gesture_follow = false;
 var gestureStartListener = function (event, listener)
 {
-  if (event.nbPointers < 2) return;
+  if (event.targetPointerList.length < 2) return;
   if (!_gesture_follow)
   {
     event.target.__init_distance =
-      getDistance (event.pointerList [0], event.pointerList [1]);
+      getDistance (event.targetPointerList [0], event.targetPointerList [1]);
     event.target.__init_angle =
-      getAngle (event.pointerList [0], event.pointerList [1]);
-    event.target.__init_barycentre = getBarycentre (event.pointerList);
-      
+      getAngle (event.targetPointerList [0], event.targetPointerList [1]);
+    
+    var comp = event.targetPointerList[0].target._comp_;
+    var init_pos = util.getElementAbsolutePosition (event.targetPointerList[0].target, true);
+//    init_pos = init_pos.matrixTransform (comp.getParentCTM ());
+    
+    event.target.__init_pos = init_pos;
+    var init_barycentre = getBarycentre (event.targetPointerList);
+    event.target.__init_barycentre = init_barycentre;
+       
     document.addEventListener (core.POINTER_MOVE, gestureChangeListener);
     document.addEventListener (core.POINTER_END, gestureEndListener);
     document.addEventListener (core.POINTER_CANCEL, gestureEndListener);
@@ -168,7 +183,7 @@ var gestureEndListener = function (event)
 {
   pointerEndHandler (event, function (event)
   {
-    if (event.nbPointers < 2)
+    if (event.targetPointerList.length < 2)
     {
       document.removeEventListener (core.POINTER_MOVE, gestureChangeListener);
       document.removeEventListener (core.POINTER_END, gestureEndListener);
@@ -191,6 +206,7 @@ function buildGestureList (evt)
   evt.pointerList = [
     new Pointer (evt, PointerTypes.TOUCH, MOUSE_ID)
   ];
+  evt.targetPointerList = evt.pointerList;
   evt.nbPointers = 1;
 }
 
@@ -234,11 +250,12 @@ else
 
 function touchToGestureListenerAdd (node, type, func, binding)
 {
+  var target_id = (binding.listener)?binding.listener.id:undefined;
   switch (type)
   {
     case core.GESTURE_START:
       binding.gesture_handler =
-        function (e) {pointerStartHandler (e, gestureStartListener)};
+        function (e) {pointerStartHandler (e, gestureStartListener, target_id)};
       node.addEventListener (core.POINTER_START, binding.gesture_handler);
       binding.handler = func;
 
@@ -257,20 +274,21 @@ function touchToGestureListenerAdd (node, type, func, binding)
 
 function gestureEventListenerAdd (node, type, func, binding)
 {
+  var target_id = (binding.listener)?binding.listener.id:undefined;
   switch (type)
   {
     case core.GESTURE_START:
-      binding.handler = function (e) {gestureIOSStartListener (e, func);};
+      binding.handler = function (e) {gestureIOSStartListener (e, func, target_id);};
       return true;
     break;
 
     case core.GESTURE_CHANGE:
-      binding.handler = function (e) {gestureIOSChangeListener (e, func);};
+      binding.handler = function (e) {gestureIOSChangeListener (e, func, target_id);};
       return true;
     break;
 
     case core.GESTURE_END:
-      binding.handler = function (e) {gestureIOSEndListener (e, func);};
+      binding.handler = function (e) {gestureIOSEndListener (e, func, target_id);};
       return true;
     break;
   }
@@ -278,16 +296,16 @@ function gestureEventListenerAdd (node, type, func, binding)
   return false;
 }
 
-
 var manageGestureListenerAdd =
   (support.gestures || support.msGestures)?gestureEventListenerAdd:touchToGestureListenerAdd;
 
 function touchToGestureListenerRemove (node, type, binding)
 {
+  var target_id = (binding.listener)?binding.listener.id:undefined;
   switch (type)
   {
     case core.GESTURE_START:
-      node.removeEventListener (core.POINTER_START, binding.gesture_handler);
+      node.removeEventListener (core.POINTER_START, binding.gesture_handler, target_id);
 
       return true;
     break;
