@@ -1,7 +1,6 @@
 .vs_ui_popover {
   font-family: Helvetica;
-  font-size: 12px;
-  
+
   z-index: 3000;
 
   position: absolute;
