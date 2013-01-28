@@ -54,6 +54,9 @@ var Application = function (config)
  */
 var Application_applications = {};
 
+var ORIENTATION_CHANGE_EVT =
+  'onorientationchange' in window ? 'orientationchange' : 'resize';
+
 vs.Application_applications = Application_applications;
 
 Application.prototype = {
@@ -105,6 +108,19 @@ Application.prototype = {
     document.addEventListener ('orientationChanged', function (e)
     {
       var pid = window.deviceConfiguration.setOrientation (e.orientation);
+      if (pid) { self.propagate ('deviceChanged', pid, null, true); }
+    });
+    
+    window.addEventListener (ORIENTATION_CHANGE_EVT, function (e)
+    {
+      var orientation = 0;
+      if (window.orientation) orientation = window.orientation;
+      else if (window.outerWidth > window.outerHeight) orientation = 90;
+      else orientation = 0;
+
+      if (orientation === window.deviceConfiguration.getOrientation ()) return;
+      
+      var pid = window.deviceConfiguration.setOrientation (orientation);
       if (pid) { self.propagate ('deviceChanged', pid, null, true); }
     });
   },
