@@ -48,7 +48,10 @@ var PointerTypes = {
 /**
  * Returns an array of all pointers currently on the screen.
  */
-function buildTouchList (evt)
+ 
+var pointerEvents = [];
+
+function buildTouchList (evt, target_id)
 {
   var pointers = [];
   evt.nbPointers = evt.touches.length;
@@ -59,6 +62,15 @@ function buildTouchList (evt)
     pointers.push (pointer);
   }
   evt.pointerList = pointers;
+  pointers = [];
+  for (var i = 0; i < evt.targetTouches.length; i++)
+  {
+    var touch = evt.targetTouches[i];
+    if (target_id && pointerEvents [touch.identifier] != target_id) continue;
+    var pointer = new Pointer (touch, PointerTypes.TOUCH, touch.identifier);
+    pointers.push (pointer);
+  }
+  evt.targetPointerList = pointers;
   pointers = [];
   for (var i = 0; i < evt.changedTouches.length; i++)
   {
@@ -77,12 +89,14 @@ function buildMouseList (evt, remove)
   {
     evt.nbPointers = 1;
     evt.pointerList = pointers;
+    evt.targetPointerList = pointers;
     evt.changedPointerList = [];
   }
   else
   {
     evt.nbPointers = 0;
     evt.pointerList = [];
+    evt.targetPointerList = pointers;
     evt.changedPointerList = pointers;
   }
 }
@@ -90,7 +104,7 @@ function buildMouseList (evt, remove)
 var all_pointers = {};
 var removed_pointers = {};
 
-function buildMSPointerList (evt, remove)
+function buildMSPointerList (evt, remove, target_id)
 {
   // Note: "this" is the element.
   var pointers = [];
@@ -130,6 +144,14 @@ function buildMSPointerList (evt, remove)
   for (id in all_pointers) { pointers.push (all_pointers [id]); }
   evt.nbPointers = pointers.length;
   evt.pointerList = pointers;
+  pointers = [];
+  for (id in all_pointers)
+  {
+    var pointer = all_pointers [id];
+//    if (target_id && pointerEvents [pointer.identifier] != target_id) continue;
+    pointers.push (pointer);
+  }
+  evt.targetPointerList = pointers;
   evt.changedPointerList = removePointers;
 }
 
@@ -155,20 +177,32 @@ function mouseUpHandler (event, listener)
 
 /*************** Touch event handlers *****************/
 
-function touchStartHandler (event, listener)
+function touchStartHandler (event, listener, target_id)
 {
+  var pointer, l = event.targetTouches.length;
+  for (var i = 0; i < l; i++)
+  {
+    pointer = event.targetTouches [i];
+    pointerEvents [pointer.identifier] = target_id;
+  }
   buildTouchList (event);
   listener (event);
 }
 
-function touchMoveHandler (event, listener)
+function touchMoveHandler (event, listener, target_id)
 {
-  buildTouchList (event);
+  buildTouchList (event, target_id);
   listener (event);
 }
 
 function touchEndHandler (event, listener)
 {
+  var pointer, l = event.targetTouches.length;
+  for (var i = 0; i < l; i++)
+  {
+    pointer = event.changedTouches [i];
+    pointerEvents [pointer.identifier] = undefined;
+  }
   buildTouchList (event);
   listener (event);
 }
@@ -200,9 +234,10 @@ var msRemovePointer = function (evt) {
   }
 }
 
-function msPointerDownHandler (event, listener)
+function msPointerDownHandler (event, listener, target_id)
 {
-  buildMSPointerList (event);
+  pointerEvents [event.pointerId] = target_id;
+  buildMSPointerList (event, false, target_id);
   listener (event);
   
   if (nbPointerListener === 0)
@@ -213,9 +248,9 @@ function msPointerDownHandler (event, listener)
   nbPointerListener ++;
 }
 
-function msPointerMoveHandler (event, listener)
+function msPointerMoveHandler (event, listener, target_id)
 {
-  buildMSPointerList (event);
+  buildMSPointerList (event, false, target_id);
   listener (event);
 }
 
@@ -274,15 +309,17 @@ function getBindingIndex (target, type, listener)
 
 function managePointerListenerAdd (node, type, func, binding)
 {
+  var target_id = (binding.listener)?binding.listener.id:undefined;
   switch (type)
   {
     case core.POINTER_START:
-      binding.handler = function (e) {pointerStartHandler (e, func);};
+      binding.handler = function (e) {pointerStartHandler (e, func, target_id);};
       return true;
     break;
   
     case core.POINTER_MOVE:
-      binding.handler = function (e) {pointerMoveHandler (e, func);};
+      
+      binding.handler = function (e) {pointerMoveHandler (e, func, target_id);};
       return true;
     break;
   
