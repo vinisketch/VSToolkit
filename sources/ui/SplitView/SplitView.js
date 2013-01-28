@@ -322,7 +322,7 @@ var SplitView = vs.core.createClass ({
     if (orientation === 90 || orientation === -90)
       this.orientation = SplitView.HORIZONTAL;
     else
-      this.orientation = SplitView.VERICAL; 
+      this.orientation = SplitView.VERTICAL; 
   },
   
   /**
