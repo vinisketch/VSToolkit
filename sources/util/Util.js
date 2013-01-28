@@ -1129,20 +1129,20 @@ function getElementOpacity (elem)
 
 /**
  * Compute the elements position in terms of the window viewport
- * Returns a key/value object {x, y}
+ * Returns a vs.Point {x, y}
  *
  *  @memberOf vs.util
  *
- * @return {Object} the x,y absolute position of a element
+ * @return {vs.Point} the x,y absolute position of a element
  **/
-function getElementAbsolutePosition (element)
+function getElementAbsolutePosition (element, force)
 {
   if (!element)
   { return null; }
-  if (element.getBoundingClientRect)
+  if (!force && element.getBoundingClientRect)
   {
     var rec = element.getBoundingClientRect ();
-    if (rec) { return { x:rec.left, y:rec.top }; } 
+    if (rec) { return new vs.Point (rec.left, rec.top); } 
   }
   var x = 0;
   var y = 0;
@@ -1167,7 +1167,7 @@ function getElementAbsolutePosition (element)
      y += parent.offsetTop - parent.scrollTop + borderYOffset;
      parent = parent.offsetParent;
   }
-  return { x:x, y:y };
+  return new vs.Point (x, y);
 }
 
 /**
