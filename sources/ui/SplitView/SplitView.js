@@ -101,6 +101,8 @@ var SplitView = vs.core.createClass ({
         this.removeClassName (this._mode);
         this._mode = v;
         this.addClassName (this._mode);
+        if (this._orientation === SplitView.VERTICAL) this._set_orientation (0);
+        else this._set_orientation (90);
       }
     },
   
@@ -233,7 +235,15 @@ var SplitView = vs.core.createClass ({
     else this.mode = SplitView.TABLET_MODE;
     
     if (this._orientation) this.orientation = this._orientation;
-    else this.orientation = SplitView.HORIZONTAL;
+    else
+    {
+      var orientation = window.deviceConfiguration.getOrientation ()
+
+      if (orientation === 0 || orientation === 180)
+        this.orientation = SplitView.VERTICAL;
+      else
+        this.orientation = SplitView.HORIZONTAL; 
+    }
     
     if (this._second_panel_position) this.secondPanelPosition = this._second_panel_position;
     else this.secondPanelPosition = SplitView.LEFT;
@@ -257,7 +267,7 @@ var SplitView = vs.core.createClass ({
       return;
     }
     
-    if (this._orientation === SplitView.HORIZONTAL)
+    if (this._mode === SplitView.MOBILE || this._orientation === SplitView.HORIZONTAL)
     {
       this._super (child, 'second_panel');
     }
@@ -336,7 +346,8 @@ var SplitView = vs.core.createClass ({
     child = this._left_views [0];
     if (child)
     {
-      if (orientation === 90 || orientation === -90)
+      if (this._mode === SplitView.MOBILE_MODE ||
+          orientation === 90 || orientation === -90)
       {
         this._pop_over.hide ();
         if (this._pop_over.isChild (child))
