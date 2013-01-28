@@ -40,8 +40,8 @@
  *  splitView.init ();
  *
  *  splitView.delegate = this;
- *  splitView.createAndAddComponent ('LeftPanel');
- *  splitView.createAndAddComponent ('RightPanel');
+ *  splitView.createAndAddComponent ('ManuPanel');
+ *  splitView.createAndAddComponent ('MainPanel');
  *
  *  ...
  *
@@ -104,6 +104,24 @@ var SplitView = vs.core.createClass ({
       }
     },
   
+    "secondPanelPosition": {
+      /** 
+       * Set the navigation panel position (LEFT, RIGHT, TOP, BOTTOM)
+       * @name vs.ui.SplitView#secondPanelPosition 
+       * @type {String}
+       */ 
+      set : function (v)
+      {
+        if (v !== SplitView.LEFT && v !== SplitView.RIGHT &&
+            v !== SplitView.TOP && v !== SplitView.BOTTOM)
+          return;
+      
+        this.removeClassName (this._second_panel_position);
+        this._second_panel_position = v;
+        this.addClassName (this._second_panel_position);
+      }
+    },
+  
     "orientation": {
       /** 
        * Set/get the split view mode (MOBILE, TABLET)
@@ -146,6 +164,12 @@ var SplitView = vs.core.createClass ({
    * @type {String}
    */
   _mode: '',
+
+   /**
+   * @protected
+   * @type {String}
+   */
+  _second_panel_position: '',
 
    /**
    * @protected
@@ -210,6 +234,9 @@ var SplitView = vs.core.createClass ({
     
     if (this._orientation) this.orientation = this._orientation;
     else this.orientation = SplitView.HORIZONTAL;
+    
+    if (this._second_panel_position) this.secondPanelPosition = this._second_panel_position;
+    else this.secondPanelPosition = SplitView.LEFT;
   },
 
   /**
@@ -223,7 +250,7 @@ var SplitView = vs.core.createClass ({
    */
   add : function (child, hole)
   {
-    if (hole === 'nav_panel') this._left_views.push (child);
+    if (hole === 'second_panel') this._left_views.push (child);
     else
     {
       this._super (child, 'main_panel');
@@ -232,7 +259,7 @@ var SplitView = vs.core.createClass ({
     
     if (this._orientation === SplitView.HORIZONTAL)
     {
-      this._super (child, 'nav_panel');
+      this._super (child, 'second_panel');
     }
     else
     {
@@ -319,7 +346,7 @@ var SplitView = vs.core.createClass ({
         
         if (!this.isChild (child))
         {
-          View.prototype.add.call (this, child, 'nav_panel');
+          View.prototype.add.call (this, child, 'second_panel');
         }
         child.show (child.refresh);
         
@@ -408,6 +435,11 @@ SplitView.TABLET_MODE = 'tablet';
 SplitView.MOBILE_MODE = 'mobile';
 SplitView.VERTICAL = 'vertical';
 SplitView.HORIZONTAL = 'horizontal';
+
+SplitView.RIGHT = 'right';
+SplitView.LEFT = 'left';
+SplitView.BOTTOM = 'bottom';
+SplitView.TOP = 'top';
 
 /********************************************************************
                       Export

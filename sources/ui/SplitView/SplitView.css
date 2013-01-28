@@ -30,17 +30,24 @@
   height: 100%;
 }
 
-.vs_ui_splitview {
+.vs_ui_splitview,
+.vs_ui_splitview.left,
+.vs_ui_splitview.right
+{
   display: -webkit-box;
   -webkit-box-orient: horizontal;
+}
+
+.vs_ui_splitview.top,
+.vs_ui_splitview.bottom
+{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 
 .vs_ui_splitview.tablet.horizontal > div:nth-child(1) {
   -webkit-box-flex: 0;
   box-flex: 0;
-  width: 30%;
-  height: 100%;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
   z-index: 1;
 }
 
@@ -48,10 +55,65 @@
   -webkit-box-flex: 0;
   box-flex: 0;
   position: relative;
-  width: 70%;
-  height: 100%;
   z-index: 0;
 }
+
+.vs_ui_splitview.tablet.horizontal > div:nth-child(1),
+.vs_ui_splitview.tablet.horizontal.left > div:nth-child(1),
+.vs_ui_splitview.tablet.horizontal.right > div:nth-child(1)
+{
+  width: 30%;
+  height: 100%;
+}
+
+.vs_ui_splitview.tablet.horizontal > div:nth-child(2),
+.vs_ui_splitview.tablet.horizontal.right > div:nth-child(2),
+.vs_ui_splitview.tablet.horizontal.top > div:nth-child(2)
+{
+  width: 70%;
+  height: 100%;
+}
+
+.vs_ui_splitview.tablet.horizontal.right {
+  -webkit-box-direction: reverse;
+}
+
+.vs_ui_splitview.tablet.horizontal.left > div:nth-child(1)
+{
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.vs_ui_splitview.tablet.horizontal.right > div:nth-child(1)
+{
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.vs_ui_splitview.tablet.horizontal.top > div:nth-child(1),
+.vs_ui_splitview.tablet.horizontal.bottom > div:nth-child(1) {
+  width: 100%;
+  height: 30%;
+}
+
+.vs_ui_splitview.tablet.horizontal.top > div:nth-child(2),
+.vs_ui_splitview.tablet.horizontal.bottom > div:nth-child(2) {
+  width: 100%;
+  height: 70%;
+}
+
+.vs_ui_splitview.tablet.horizontal.bottom {
+  -webkit-box-direction: reverse;
+}
+
+.vs_ui_splitview.tablet.horizontal.top > div:nth-child(1)
+{
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.vs_ui_splitview.tablet.horizontal.bottom > div:nth-child(1)
+{
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+}
+
 
 .vs_ui_splitview.tablet.vertical > div:nth-child(1) {
   display:none;
@@ -59,4 +121,5 @@
 
 .vs_ui_splitview.tablet.vertical > div:nth-child(2) {
   width: 100%;
+  height: 100%;
 }
