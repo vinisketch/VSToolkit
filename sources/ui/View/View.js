@@ -2107,6 +2107,30 @@ View.prototype = {
   },
   
   /**
+   *  Returns the current transform combination matrix generate by the
+   *  hierarchical parents of this graphic Object.
+   *  Its returns the multiplication of the parent's CTM and parent of parent's
+   *  CTM etc.
+   *  If the component has no parent it returns the identity matrix.
+   * @public
+   * @function
+   * @return {vs.CSSMatrix} the current transform matrix
+   */
+  getParentCTM: function ()
+  {
+    
+    function multiplyParentTCM (parent)
+    {
+      // no parent return identity matrix
+      if (!parent) return new vs.CSSMatrix ();
+      // apply parent transformation matrix recurcively 
+      return multiplyParentTCM (parent.__parent).multiply (parent.getCTM ());
+    }
+    
+    return multiplyParentTCM (this.__parent);
+  },
+  
+  /**
    * @protected
    * @function
    */
@@ -2117,30 +2141,6 @@ View.prototype = {
     setElementTransform (this.view, matrix.toString ());
     delete (matrix);
   }
-  
-// *
-//    * @public
-//    * @function
-//  
-//   getProjection: function (pos)
-//   {
-//     var matrix = this.getCTM ();   
-//     var matrix_tmp = new vs.CSSMatrix ();
-//         
-//     matrix_tmp = matrix_tmp.translate (pos.x, pos.y, pos.z || 0);
-//     matrix = matrix.multiply (matrix_tmp);
-//     
-//     var result = {
-//       x: matrix.m41,
-//       y: matrix.m42,
-//       z: matrix.m43,
-//     }
-//         
-//     delete (matrix);
-//     delete (matrix_tmp);
-//     
-//     return result;
-//   }
 };
 util.extendClass (View, core.EventSource);
 
