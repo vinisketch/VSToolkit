@@ -426,34 +426,35 @@ DeviceConfiguration.prototype = {
             pid.indexOf ('_l') === -1)) continue;
   
       this.setActiveStyleSheet (pid);
-      
-      this.orientation = orientation;
-      
-      /**
-       * @private
-       */
-      var orientationDidChangeFct = function ()
-      {
-        var id, comp;
-        for (id in core.Object._obs)
-        {
-          comp = core.Object._obs [id];
-          if (!comp || !comp.orientationDidChange) { continue; }
-          
-          comp.orientationDidChange (orientation);
-        }
-      }
-      if (!force)
-      {
-        setTimeout (orientationDidChangeFct, 100);
-      }
-      else
-      {
-        orientationDidChangeFct.call (this);
-      }
-      
-      return pid;
+      break;
     }
+      
+    this.orientation = orientation;
+  
+    /**
+     * @private
+     */
+    var orientationDidChangeFct = function ()
+    {
+      var id, comp;
+      for (id in core.Object._obs)
+      {
+        comp = core.Object._obs [id];
+        if (!comp || !comp.orientationDidChange) { continue; }
+      
+        comp.orientationDidChange (orientation);
+      }
+    }
+    if (!force)
+    {
+      setTimeout (orientationDidChangeFct, 100);
+    }
+    else
+    {
+      orientationDidChangeFct.call (this);
+    }
+  
+    return pid;
   },
     
   /**
