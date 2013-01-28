@@ -51,6 +51,10 @@ function DeviceConfiguration ()
   this.targets = {};
   
   this.browserDetect ();
+
+  if (window.orientation) this.orientation = window.orientation;
+  else if (window.outerWidth > window.outerHeight) this.orientation = 90;
+  else this.orientation = 0;
 }
 
 /**
