@@ -115,7 +115,6 @@ DeviceConfiguration.OS_ANDROID = 9;
  */
 DeviceConfiguration.OS_MEEGO = 10;
 
-
 /**
  * @name vs.core.DeviceConfiguration.SR_UNKNOWN 
  * @const
@@ -256,6 +255,30 @@ DeviceConfiguration.BROWSER_FIREFOX = 4;
  */
 DeviceConfiguration.BROWSER_MSIE = 5;
 
+/**
+ * @name vs.core.DeviceConfiguration.SCREEN_SIZE_UNKNOWN 
+ * @const
+ */
+DeviceConfiguration.SS_UNKNOWN = 0;
+
+/**
+ * @name vs.core.DeviceConfiguration.SCREEN_4_INCH 
+ * @const
+ */
+DeviceConfiguration.SS_4_INCH = 1;
+
+/**
+ * @name vs.core.DeviceConfiguration.SCREEN_7_INCH 
+ * @const
+ */
+DeviceConfiguration.SS_7_INCH = 2;
+
+/**
+ * @name vs.core.DeviceConfiguration.SCREEN_10_INCH 
+ * @const
+ */
+DeviceConfiguration.SS_10_INCH = 3;
+
 
 DeviceConfiguration.prototype = {
   
@@ -286,6 +309,13 @@ DeviceConfiguration.prototype = {
    * @type {number}
    */
   screenRatio : 0,
+
+  /** 
+   * Get the device's class type (4, 7, 10 inches)
+   * @name vs.core.DeviceConfiguration#screenSize 
+   * @type {number}
+   */
+  screenSize : DeviceConfiguration.SS_UNKNOWN,
 
   /**
    * @protected
@@ -349,6 +379,13 @@ DeviceConfiguration.prototype = {
         DeviceConfiguration._getScreenResolutionCode (width, height);
 
     this.screenRatio = height / width;
+    
+    var size = Math.sqrt (window.screen.width * window.screen.width +
+       window.screen.height * window.screen.height) / 160;
+       
+    if (size < 5) this.screenSize = DeviceConfiguration.SS_4_INCH;
+    else if (size < 9) this.screenSize = DeviceConfiguration.SS_7_INCH;
+    else if (size < 11) this.screenSize = DeviceConfiguration.SS_10_INCH;
   },
   
   /**
