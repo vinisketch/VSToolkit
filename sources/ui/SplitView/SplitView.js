@@ -223,7 +223,7 @@ var SplitView = vs.core.createClass ({
    */
   add : function (child, hole)
   {
-    if (hole === 'left_panel') this._left_views.push (child);
+    if (hole === 'nav_panel') this._left_views.push (child);
     else
     {
       this._super (child, 'main_panel');
@@ -232,7 +232,7 @@ var SplitView = vs.core.createClass ({
     
     if (this._orientation === SplitView.HORIZONTAL)
     {
-      this._super (child, 'left_panel');
+      this._super (child, 'nav_panel');
     }
     else
     {
@@ -319,7 +319,7 @@ var SplitView = vs.core.createClass ({
         
         if (!this.isChild (child))
         {
-          View.prototype.add.call (this, child, 'left_panel');
+          View.prototype.add.call (this, child, 'nav_panel');
         }
         child.show (child.refresh);
         
