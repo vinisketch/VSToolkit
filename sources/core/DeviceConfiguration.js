@@ -51,10 +51,8 @@ function DeviceConfiguration ()
   this.targets = {};
   
   this.browserDetect ();
-
-  if (window.orientation) this.orientation = window.orientation;
-  else if (window.outerWidth > window.outerHeight) this.orientation = 90;
-  else this.orientation = 0;
+  this.orientationDetect ();
+  this.screenDetect ();
 }
 
 /**
@@ -174,32 +172,53 @@ DeviceConfiguration.SR_FWVGA = 7;
 DeviceConfiguration.SR_SVGA = 8;
 
 /**
+ * @name vs.core.DeviceConfiguration.SR_DVGA 
+ * @const
+ * DVGA (960×640) 
+ */
+DeviceConfiguration.SR_DVGA = 9;
+
+/**
+ * @name vs.core.DeviceConfiguration.SR_WDVGA 
+ * @const
+ * WDVGA (1136×640) 
+ */
+DeviceConfiguration.SR_WDVGA = 10;
+
+/**
  * @name vs.core.DeviceConfiguration.SR_XGA 
  * @const
  * XGA (1024×768)
  */
-DeviceConfiguration.SR_XGA = 9;
+DeviceConfiguration.SR_XGA = 11;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_N_HD 
  * @const
  * nHD (640×360)
  */
-DeviceConfiguration.SR_N_HD = 10;
+DeviceConfiguration.SR_N_HD = 12;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_Q_HD 
  * @const
  * qHD (960×540)
  */
-DeviceConfiguration.SR_Q_HD = 11;
+DeviceConfiguration.SR_Q_HD = 13;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_WXGA 
  * @const
  * WXGA (1280×720/768/800)
  */
-DeviceConfiguration.SR_WXGA = 12;
+DeviceConfiguration.SR_WXGA = 14;
+
+/**
+ * @name vs.core.DeviceConfiguration.SR_QXGA 
+ * @const
+ * QXGA (2048x1536)
+ */
+DeviceConfiguration.SR_QXGA = 15;
 
 /**
  * @name vs.core.DeviceConfiguration.BROWSER_UNKNOWN 
@@ -299,6 +318,40 @@ DeviceConfiguration.prototype = {
   },
   
   /**
+   * @protected
+   * @function
+   */
+  orientationDetect : function ()
+  {
+    if (window.orientation) this.orientation = window.orientation;
+    else if (window.outerWidth > window.outerHeight) this.orientation = 90;
+    else this.orientation = 0;
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  screenDetect : function ()
+  {
+    var pixelRation = window.devicePixelRatio;
+    if (!pixelRation) pixelRation = 1;
+    var width = window.screen.width * pixelRation;
+    var height = window.screen.height * pixelRation;
+    if (width > height)
+    {
+      var temp = width
+      width = height;
+      height = temp;
+    }
+    
+    this.screenResolution =
+        DeviceConfiguration._getScreenResolutionCode (width, height);
+
+    this.screenRatio = height / width;
+  },
+  
+  /**
    * Returns the current GUI orientation.
    * <p/>
    * Be careful this API does not return the device orientation, which can be
@@ -337,7 +390,8 @@ DeviceConfiguration.prototype = {
     {
       this.os = DeviceConfiguration.OS_IOS;
       this.screenResolution = DeviceConfiguration.SR_HVGA;
-      this.screenRatio = 3/2;
+      if (did.indexOf ("_3_2") != -1) { this.screenRatio = 3/2; }
+      else if (did.indexOf ("_16_9") != -1) { this.screenRatio = 16/9; }
     }
     else if (did.indexOf ("ipad") != -1)
     {
@@ -493,10 +547,13 @@ DeviceConfiguration._getScreenResolutionCode = function (width, height)
   if (width === 480 && height === 800) return DeviceConfiguration.SR_WVGA;
   if (width === 320 && height === 854) return DeviceConfiguration.SR_WFVGA;
   if (width === 600 && height === 800) return DeviceConfiguration.SR_SVGA;
+  if (width === 640 && height === 960) return DeviceConfiguration.SR_DVGA
+  if (width === 640 && height === 1136) return DeviceConfiguration.SR_WDVGA
   if (width === 768 && height === 1024) return DeviceConfiguration.SR_XGA;
   if (width === 360 && height === 640) return DeviceConfiguration.SR_N_HD;
   if (width === 540 && height === 960) return DeviceConfiguration.SR_Q_HD;
   if (width === 800 && height === 1280) return DeviceConfiguration.SR_WXGA;
+  if (width === 1536 && height === 2048) return DeviceConfiguration.SR_QXGA;
 }
 
 /**
