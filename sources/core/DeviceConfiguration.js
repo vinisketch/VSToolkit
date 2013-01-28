@@ -364,10 +364,22 @@ DeviceConfiguration.prototype = {
    */
   screenDetect : function ()
   {
-    var pixelRation = window.devicePixelRatio;
+    var pixelRation = window.devicePixelRatio, width, height;
     if (!pixelRation) pixelRation = 1;
-    var width = window.screen.width * pixelRation;
-    var height = window.screen.height * pixelRation;
+    
+    if (this.os >= DeviceConfiguration.OS_IOS && 
+        this.os <= DeviceConfiguration.OS_MEEGO)
+    {
+      // MOBILE DEVICES
+      width = window.screen.width;
+      height = window.screen.height;
+    }
+    else
+    {
+      // DESKTOP
+      width = window.outerWidth;
+      height = window.outerHeight;
+    }
     if (width > height)
     {
       var temp = width
@@ -380,10 +392,9 @@ DeviceConfiguration.prototype = {
 
     this.screenRatio = height / width;
     
-    var size = Math.sqrt (window.screen.width * window.screen.width +
-       window.screen.height * window.screen.height) / 160;
+    var size = Math.sqrt (width * width + height * height) / (160 * pixelRation);
        
-    if (size < 5) this.screenSize = DeviceConfiguration.SS_4_INCH;
+    if (size < 6) this.screenSize = DeviceConfiguration.SS_4_INCH;
     else if (size < 9) this.screenSize = DeviceConfiguration.SS_7_INCH;
     else if (size < 11) this.screenSize = DeviceConfiguration.SS_10_INCH;
   },
@@ -589,6 +600,8 @@ DeviceConfiguration._getScreenResolutionCode = function (width, height)
   if (width === 768 && height === 1024) return DeviceConfiguration.SR_XGA;
   if (width === 360 && height === 640) return DeviceConfiguration.SR_N_HD;
   if (width === 540 && height === 960) return DeviceConfiguration.SR_Q_HD;
+  if (width === 720 && height === 1280) return DeviceConfiguration.SR_WXGA;
+  if (width === 768 && height === 1280) return DeviceConfiguration.SR_WXGA;
   if (width === 800 && height === 1280) return DeviceConfiguration.SR_WXGA;
   if (width === 1536 && height === 2048) return DeviceConfiguration.SR_QXGA;
 }
