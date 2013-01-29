@@ -1305,9 +1305,10 @@ function isElementVisible (elem)
  **/
 function removeAllElementChild (elem)
 {
-  if (!elem) { return; }
+  if (!elem || !elem.childElements) { return; }
   
-  while (elem.firstChild)
+  var l = elem.childElements ().length;
+  while (l--)
   {
     elem.removeChild (elem.firstChild);
   }
