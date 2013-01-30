@@ -159,3 +159,19 @@ section p i::before {
   margin-right: 5px;
   font-weight: bold;
 }
+
+.yellow {
+  background-color:rgb(235, 232, 160);
+}
+
+.blue {
+  background-color:rgb(156, 225, 228);
+}
+
+.green {
+  background-color:rgb(203, 233, 196);
+}
+
+.pink {
+  background-color:rgb(253, 213, 248);
+}
