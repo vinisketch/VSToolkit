@@ -54,13 +54,15 @@ all :: release
 Debug :: debug
 Release :: release
 
-release :: clean makedirs util core ui fx data ext av ext_fx doc
+release :: clean makedirs extern_libs core ui fx data ext av ext_fx doc
+	-$(COMPILE) --js=../lib_debug/js/vs_util.js --js_output_file=../lib/js/vs_util.js
 	-$(CP) ../lib_debug/css/*.png ../lib/css/
 	-$(CP) ../lib_debug/css/*.ttf ../lib/css/
+	-$(CP) ../lib_debug/css/*.eot ../lib/css/
 	-$(MKPATH) ../lib/css/toolbar_icons
 	-$(CP) ../lib_debug/css/toolbar_icons/*.png ../lib/css/toolbar_icons/
 
-debug :: clean_debug makedirs util_debug core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug
+debug :: clean_debug makedirs extern_libs core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug
 
 clean :: clean_debug_libs clean_libs clean_docs
 clean_debug :: clean_debug_libs clean_docs
@@ -69,6 +71,7 @@ clean_debug_libs:
 	-$(RM_RF)  ../lib_debug/css/*.css
 	-$(RM_RF)  ../lib_debug/css/*.png
 	-$(RM_RF)  ../lib_debug/css/*.ttf
+	-$(RM_RF)  ../lib_debug/css/*.eot
 	-$(RM_RF)  ../lib_debug/css/toolbar_icons
 	-$(RM_RF)  ../lib_debug/js/*.js
 
@@ -76,6 +79,7 @@ clean_libs:
 	-$(RM_RF)  ../lib/css/*.css
 	-$(RM_RF)  ../lib/css/*.png
 	-$(RM_RF)  ../lib/css/*.ttf
+	-$(RM_RF)  ../lib/css/*.eot
 	-$(RM_RF)  ../lib/css/toolbar_icons
 	-$(RM_RF)  ../lib/js/*.js
 
@@ -96,21 +100,6 @@ doc:
 	-$(GENDOC) -c=../docs/conf/vs-jsdoc.conf
 	-$(RM_F) ../docs/files.html
 	-$(CP) ../docs/conf/index.html ../docs/index.html
-	
-###                    Utils
-##############################################################
-
-util: util_debug
-	-$(COMPILE) --js=../lib_debug/js/vs_util.js --js_output_file=../lib/js/vs_util.js
-	
-util_debug: ../lib_debug/js/vs_util.js
-
-../lib_debug/js/vs_util.js: util/FirminCSSMatrix.js util/Util.js
-	$(CAT) Header.js >> $@
-	$(CAT) VS.js >> $@
-	$(CAT) util/FirminCSSMatrix.js >> $@
-	$(CAT) util/Util.js >> $@
-	$(CAT) Footer.js >> $@
 
 ###                     Core
 ##############################################################
@@ -120,7 +109,7 @@ core: core_debug
 	
 core_debug: ../lib_debug/js/vs_core.js
 
-../lib_debug/js/vs_core.js: core/dataflow.js core/Event.js core/PointerEvent.js core/GestureEvent.js core/EventSource.js core/Object.js core/Class.js core/Model.js core/Keyboard.js core/FSM.js core/Scheduler.js core/HTTPRequest.js core/DeviceConfiguration.js core/Array.js core/DataStorage.js core/LocalStorage.js
+../lib_debug/js/vs_core.js: core/dataflow.js core/Event.js core/EventSource.js core/Object.js core/Class.js core/Model.js core/Keyboard.js core/FSM.js core/Scheduler.js core/HTTPRequest.js core/DeviceConfiguration.js core/Array.js core/DataStorage.js core/LocalStorage.js
 	$(CAT) Header.js >> $@
 	$(CAT) core/core.js >> $@
 	$(CAT) core/Point.js >> $@
@@ -128,8 +117,6 @@ core_debug: ../lib_debug/js/vs_core.js
 	$(CAT) core/Class.js >> $@
 	$(CAT) core/Model.js >> $@
 	$(CAT) core/Event.js >> $@
-	$(CAT) core/PointerEvent.js >> $@
-	$(CAT) core/GestureEvent.js >> $@
 	$(CAT) core/EventSource.js >> $@
 	$(CAT) core/Keyboard.js >> $@
 	$(CAT) core/FSM.js >> $@
@@ -346,6 +333,7 @@ copy_ui_img:
 	
 copy_widgets_font:
 	$(CP) ui/Application/*.ttf ../lib_debug/css/
+	$(CP) ui/Application/*.eot ../lib_debug/css/
 
 ###                     FX
 ##############################################################
@@ -462,3 +450,29 @@ ext_fx_debug: ../lib_debug/js/vs_ext_fx.js
 	$(CAT) ext/Ext.js >> $@
 	$(CAT) ext/fx/Animation.js >> $@
 	$(CAT) Footer.js >> $@
+
+###                    libs
+##############################################################
+
+extern_libs: ../lib_debug/js/vs_util.js ../lib_debug/js/vs_gesture.js
+	$(CAT) VS.js >> ../lib_debug/js/vs_tmp.js
+	$(CAT) ../lib_debug/js/firminCSSMatrix.js >> ../lib_debug/js/vs_tmp.js
+	$(CAT) ../lib_debug/js/vs_util.js >> ../lib_debug/js/vs_tmp.js
+	$(CAT) ../lib_debug/js/vs_gesture.js >> ../lib_debug/js/vs_tmp.js
+	$(RM) ../lib_debug/js/firminCSSMatrix.js
+	$(RM) ../lib_debug/js/vs_util.js
+	$(RM) ../lib_debug/js/vs_gesture.js
+	$(MV) ../lib_debug/js/vs_tmp.js ../lib_debug/js/vs_util.js
+	
+../lib_debug/js/vs_util.js:
+	-$(MKPATH) tmp/
+	git clone https://github.com/dthevenin/Util.git tmp
+	-$(CP) tmp/build/vs_util.js ../lib_debug/js/vs_util.js
+	-$(CP) tmp/build/firminCSSMatrix.js ../lib_debug/js/firminCSSMatrix.js
+	-$(RM_RF) tmp
+	
+../lib_debug/js/vs_gesture.js:
+	-$(MKPATH) tmp/
+	git clone https://github.com/dthevenin/Gesture.git tmp
+	-$(CP) tmp/build/vs_gesture.js ../lib_debug/js/vs_gesture.js
+	-$(RM_RF) tmp

@@ -21,26 +21,8 @@
  */
 FORCE_EVENT_PROPAGATION_DELAY = false;
 
-/* touch event messages */
-/**
- * @name vs.core.EVENT_SUPPORT_TOUCH
- */
-var EVENT_SUPPORT_TOUCH = false;
 var EVENT_SUPPORT_GESTURE = false;
 var hasMSPointer = window.navigator.msPointerEnabled;
-
-if (typeof document != "undefined" && 'createTouch' in document)
-  EVENT_SUPPORT_TOUCH = true;
-  
-else if (hasMSPointer) { EVENT_SUPPORT_TOUCH = true; }
-  
-else if (typeof document != "undefined" &&
-    window.navigator && window.navigator.userAgent)
-{
-  if (window.navigator.userAgent.indexOf ('Android') !== -1 ||
-      window.navigator.userAgent.indexOf ('BlackBerry') !== -1)
-  { EVENT_SUPPORT_TOUCH = true; }
-}
 
 
 /** 
@@ -49,7 +31,7 @@ else if (typeof document != "undefined" &&
  * @type {String}
  * @const
  */ 
-core.POINTER_START;
+core.POINTER_START = vs.POINTER_START;
 
 /** 
  * Move pointer event (mousemove, touchmove, )
@@ -57,7 +39,7 @@ core.POINTER_START;
  * @type {String}
  * @const
  */ 
-core.POINTER_MOVE;
+core.POINTER_MOVE = vs.POINTER_MOVE;
 
 /** 
  * End pointer event (mouseup, touchend, )
@@ -65,7 +47,7 @@ core.POINTER_MOVE;
  * @type {String}
  * @const
  */ 
-core.POINTER_END;
+core.POINTER_END = vs.POINTER_END;
 
 /** 
  * Cancel pointer event (mouseup, touchcancel, )
@@ -73,22 +55,31 @@ core.POINTER_END;
  * @type {String}
  * @const
  */ 
-core.POINTER_CANCEL;
+core.POINTER_CANCEL = vs.POINTER_CANCEL;
 
-if (EVENT_SUPPORT_TOUCH)
-{
-  core.POINTER_START = hasMSPointer ? 'MSPointerDown' : 'touchstart';
-  core.POINTER_MOVE = hasMSPointer ? 'MSPointerMove' : 'touchmove';
-  core.POINTER_END = hasMSPointer ? 'MSPointerUp' : 'touchend';
-  core.POINTER_CANCEL = hasMSPointer ? 'MSPointerCancel' : 'touchcancel';
-}
-else
-{
-  core.POINTER_START = 'mousedown';
-  core.POINTER_MOVE = 'mousemove';
-  core.POINTER_END = 'mouseup';
-  core.POINTER_CANCEL = 'mouseup';
-}
+/** 
+ * Start gesture event
+ * @name vs.core.GESTURE_START
+ * @type {String}
+ * @const
+ */ 
+core.GESTURE_START = vs.GESTURE_START;
+
+/** 
+ * Change gesture event
+ * @name vs.core.GESTURE_MOVE 
+ * @type {String}
+ * @const
+ */ 
+core.GESTURE_CHANGE = vs.GESTURE_CHANGE;
+
+/** 
+ * End gesture event
+ * @name vs.core.GESTURE_END 
+ * @type {String}
+ * @const
+ */ 
+core.GESTURE_END = vs.GESTURE_END;
 
 /**
  *  @class
@@ -173,5 +164,10 @@ Event.prototype =
 /** @private */
 core.Event = Event;
 core.FORCE_EVENT_PROPAGATION_DELAY = FORCE_EVENT_PROPAGATION_DELAY;
-core.EVENT_SUPPORT_TOUCH = EVENT_SUPPORT_TOUCH;
+
+/* touch event messages */
+/**
+ * @name vs.core.EVENT_SUPPORT_TOUCH
+ */
+core.EVENT_SUPPORT_TOUCH = vs.EVENT_SUPPORT_TOUCH;
 core.EVENT_SUPPORT_GESTURE = EVENT_SUPPORT_GESTURE;
