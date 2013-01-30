@@ -106,6 +106,40 @@ var SplitView = vs.core.createClass ({
       }
     },
   
+    "hideMainPanelButton": {
+      /** 
+       * Set the XXX
+       * @name vs.ui.SplitView#hideMainPanelButton 
+       * @type {vs.ui.View}
+       */ 
+      set : function (v)
+      {
+        this._hide_main_panel_button = v;
+        if (this._mode == SplitView.TABLET_MODE)
+        {
+          this._hide_main_panel_button.hide ();
+        }
+        this._hide_main_panel_button.bind ('select', this);
+      }
+    },
+  
+    "showPopOverButton": {
+      /** 
+       * Set the XXX
+       * @name vs.ui.SplitView#showPopOverButton 
+       * @type {vs.ui.View}
+       */ 
+      set : function (v)
+      {
+        this._show_pop_over_button = v;
+        if (this._mode == SplitView.MOBILE_MODE)
+        {
+          this._show_pop_over_button.hide ();
+        }
+        this._show_pop_over_button.bind ('select', this);
+      }
+    },
+  
     "secondPanelPosition": {
       /** 
        * Set the navigation panel position (LEFT, RIGHT, TOP, BOTTOM)
@@ -365,6 +399,7 @@ var SplitView = vs.core.createClass ({
         {
           this._delegate.willShowView (child, this._pop_over);
         }
+        if (this._show_pop_over_button) this._show_pop_over_button.hide ();
       }
       else
       {
@@ -380,7 +415,9 @@ var SplitView = vs.core.createClass ({
         this._pop_over.size =
           [this._fisrt_view_width + 2 * this._pop_over_border_width, 500];
         
-        if (this._delegate && this._delegate.willShowView)
+         if (this._show_pop_over_button) this._show_pop_over_button.show ();
+         
+       if (this._delegate && this._delegate.willShowView)
         {
           this._delegate.willHideView (child, this._pop_over);
         }
@@ -424,6 +461,8 @@ var SplitView = vs.core.createClass ({
   {
     if (this._mode !== SplitView.MOBILE_MODE) return;
 
+    if (this._hide_main_panel_button) this._hide_main_panel_button.show ();
+    
     this.addClassName ('main_view_visible');
   },
   
@@ -433,8 +472,21 @@ var SplitView = vs.core.createClass ({
   hideMainView : function ()
   {
     if (this._mode !== SplitView.MOBILE_MODE) return;
+    
+    if (this._hide_main_panel_button) this._hide_main_panel_button.hide ();
 
     this.removeClassName ('main_view_visible');
+  },
+  
+  notify : function (e) {
+    var self = this;
+    
+    if (e.type == 'select' && e.src == this._hide_main_panel_button) {
+      this.hideMainView ();
+    }
+    if (e.type == 'select' && e.src == this._show_pop_over_button) {
+      this.showPopOver ([20, 20]);
+    }
   }
 });
 
