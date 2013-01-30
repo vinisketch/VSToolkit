@@ -3,314 +3,195 @@ var Widgets = vs.core.createClass ({
   parent: vs.ui.Application,
 
   applicationStarted : function (event) {
-    this.list = new vs.ui.List ({id: 'widgets_list'}).init ();
-    this.add (this.list);
-    this.list.model = [
+    this.splitView = new vs.ui.SplitView ({
+      mode: vs.ui.SplitView.TABLET_MODE
+    }).init ();
+    this.leftView = new vs.ui.View ().init ();
+    this.rightView = new vs.ui.View ().init ();
+    this.add (this.splitView);
+    this.splitView.add (this.leftView, 'second_panel');
+    this.splitView.add (this.rightView, 'main_panel');
+    
+    this.layout = vs.ui.View.ABSOLUTE_LAYOUT;
+    
+    this.panelsIndexes = [];
+    
+    this.setupSplitViewMode ();
+    this.setupMainNavigation ();
+    this.setupWidgetsPanels ();
+    
+    window.splitView = this.splitView;
+  },
+  
+  setupMainNavigation : function (event) {
+    this.navBar = new vs.ui.NavigationBar ().init ();
+    this.leftView.add (this.navBar);
+    this.leftView.layout = vs.ui.View.ABSOLUTE_LAYOUT;
+
+    this.backButton = new vs.ui.Button ({
+      type: vs.ui.Button.NAVIGATION_BACK_TYPE,
+      text: "Back",
+      position: [8, 6]
+    }).init ();
+    this.backButton.bind ('select', this);
+    this.navBar.add (this.backButton);
+    var backId = this.backButton.id;
+  
+    this.leftController = new vs.fx.NavigationController (this.leftView, this.navBar);
+    this.leftController.init ();
+
+    this.mainList = new vs.ui.List ({
+      position:[0, 44],
+      hasArrow: true,
+      scroll: true
+    }).init ();
+    this.mainList.setStyle ('bottom', '0px');
+    var mainState = this.leftController.push (this.mainList);
+    this.leftController.configureNavigationBarState (this.mainList.id, []);
+    this.leftController.initialComponent = this.mainList.id;
+ 
+    this.mainList.model = [
+      {title: 'UI Components'},
+      {title: 'Animations'},
+      {title: 'Transformations'},
+      {title: 'Pointer&Gesture'}
+    ];
+    
+    this.mainList.bind ('itemselect', this);
+    
+    this.widgetList = new vs.ui.List ({position:[0, 44]}).init ();
+    this.widgetList.setStyle ('bottom', '0px');
+    var id = this.leftController.push (this.widgetList);
+    this.leftController.configureNavigationBarState (id, [{comp: backId}]);
+    this.leftController.configureTransition (mainState, id, 'UI Components');
+ 
+    this.widgetList.model = [
       {title: 'Button'},
+      {title: 'Fields and Combobox'},
+      {title: 'Pickers'},
+      {title: 'Selectors'},
       {title: 'Progress&Slider'},
-      {title: 'Tab list'}
+      {title: 'List'},
+      {title: 'Tab List'},
+      {title: 'Block List'},
+      {title: 'Images'},
+      {title: 'Map'}
     ];
     
-    this.list.bind ('itemselect', this);
-  
-    this.panels = {};
-    var panel = this.initButtonsPanel ();
-    this.add (panel);
-    panel.hide ();
-    panel.bind ('close', this);
-    this.panels.Button = panel;
-
-    var panel = this.initButtonsProgressSlider ();
-    this.add (panel);
-    panel.hide ();
-    panel.bind ('close', this);
-    this.panels['Progress&Slider'] = panel;
-    
-    var panel = this.initTabList ();
-    this.add (panel);
-    panel.hide ();
-    panel.bind ('close', this);
-    this.panels ['Tab list'] = panel; 
+    this.widgetList.bind ('itemselect', this);
   },
   
+  setupWidgetsPanels : function (event) {
+    var navBar = new vs.ui.NavigationBar ().init ();
+    this.rightView.add (navBar);
+
+    var controller = new vs.fx.SlideController (this.rightView);
+    this.mainController = controller;
+    controller.init ();
+     
+    var stateId = controller.push (initButtonsPanel ());
+    this.panelsIndexes.push ('Button');
+
+    controller.push (initFieldsPanel ());
+    this.panelsIndexes.push ('Fields and Combobox');
+
+    stateId = controller.push (initPickersPanel ());
+    this.panelsIndexes.push ('Pickers');
+    
+    stateId = controller.push (initSelectorsPanel ());
+    this.panelsIndexes.push ('Selectors');
+    
+    stateId = controller.push (initButtonsProgressSlider ());
+    this.panelsIndexes.push ('Progress&Slider');
+    
+    stateId = controller.push (initStandardList ());
+    this.panelsIndexes.push ('List'); 
+
+    stateId = controller.push (initTabList ());
+    this.panelsIndexes.push ('Tab List'); 
+
+    stateId = controller.push (initBlockList ());
+    this.panelsIndexes.push ('Block List'); 
+
+    stateId = controller.push (initImages ());
+    this.panelsIndexes.push ('Images');
+
+    stateId = controller.push (initMapPanel ());
+    this.panelsIndexes.push ('Map');
+
+    stateId = controller.push (initAnimations ());
+    this.panelsIndexes.push ('Animations');
+
+    stateId = controller.push (initTransformations ());
+    this.panelsIndexes.push ('Transformations');
+
+    stateId = controller.push (initPointerGesture ());
+    this.panelsIndexes.push ('Pointer&Gesture');
+
+    navBar.add (this.mainBackButton);
+    navBar.add (this.menuButton);
+  },
+  
+  setupSplitViewMode : function ()
+  {
+    this.mainBackButton = new vs.ui.Button ({
+      type: vs.ui.Button.NAVIGATION_BACK_TYPE,
+      text: "Back",
+      position: [8, 6]
+    }).init ();
+    
+    this.splitView.hideMainPanelButton = this.mainBackButton;
+   
+    this.menuButton = new vs.ui.Button ({
+      type: vs.ui.Button.NAVIGATION_TYPE,
+      text: "=",
+      position: [8, 6]
+    }).init ();
+     
+    this.splitView.showPopOverButton = this.menuButton;
+  
+    if (window.deviceConfiguration.screenSize === vs.core.DeviceConfiguration.SS_4_INCH)
+      this.splitView.mode = vs.ui.SplitView.MOBILE_MODE;
+    else
+      this.splitView.mode = vs.ui.SplitView.TABLET_MODE;
+  },
+
   notify : function (e) {
-    if (e.type == 'close') {
-      if (this.current_panel) {
-        this.current_panel.hide ();
-        this.current_panel = null;
+    var self = this;
+    
+    if (e.type == 'select' && e.src == this.backButton) {
+      this.leftController.notify ({type: 'back'});
+    }
+    else if (e.type == 'itemselect' && e.src == this.mainList) {
+      var msg = e.data.item.title;
+      if (msg === "Animations" || msg === "Transformations" || msg === "Pointer&Gesture")
+      {
+        this.mainController.goToViewAt (
+          this.panelsIndexes.indexOf (msg), function () {
+            self.splitView.showMainView ();
+          }, false
+        );
       }
-      this.list.show ();
+      else this.leftController.notify ({type: msg});
     }
-    else if (e.type == 'itemselect') {
-      this.current_panel = this.panels [e.data.item.title];
-      this.list.hide ();
-      this.current_panel.show ();
+    else if (e.type == 'itemselect' && e.src == this.widgetList) {
+      this.mainController.goToViewAt (
+        this.panelsIndexes.indexOf (e.data.item.title), function () {
+          self.splitView.showMainView ();
+        }, false
+      );     
     }
-  },
-  
-  buildGenericPanel : function () {
-    var view = new vs.ui.View ({layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
-    view.addClassName ('panel');
-    view.notify = function () { 
-      this.propagate ('close');
-    };
-    
-    var button = new vs.ui.Button ({
-      position:[10, 10], text: "✖", size:[30, 30]
-    }).init ();
-    button.addClassName ("close");
-    view.add (button);
-    button.bind ('select', view);
-    
-    return view;
-  },
-  
-  initButtonsPanel : function () {
-    var view = this.buildGenericPanel ();
-    
-    var button = new vs.ui.Button ({
-      position:[20, 50], text: "hello", size:[130, 43]
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[170, 50], text: "hello", size:[130, 43],
-      style: vs.ui.Button.GREEN_STYLE
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[20, 110], text: "hello", size:[130, 43],
-      style: vs.ui.Button.GREY_STYLE
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[170, 110], text: "hello", size:[130, 43],
-      style: vs.ui.Button.RED_STYLE
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[20, 170], text: "hello", size:[70, 30],
-      type: vs.ui.Button.NAVIGATION_TYPE
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[20, 220], text: "hello", size:[70, 30],
-      type: vs.ui.Button.NAVIGATION_BACK_TYPE
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[20, 270], text: "hello", size:[70, 30],
-      type: vs.ui.Button.NAVIGATION_FORWARD_TYPE
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[120, 170], text: "hello", size:[70, 30],
-      type: vs.ui.Button.NAVIGATION_TYPE,
-      style: vs.ui.Button.BLACK_STYLE
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[120, 220], text: "hello", size:[70, 30],
-      type: vs.ui.Button.NAVIGATION_BACK_TYPE,
-      style: vs.ui.Button.BLACK_STYLE
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[120, 270], text: "hello", size:[70, 30],
-      type: vs.ui.Button.NAVIGATION_FORWARD_TYPE,
-      style: vs.ui.Button.BLACK_STYLE
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[220, 170], text: "hello", size:[70, 30],
-      type: vs.ui.Button.NAVIGATION_TYPE,
-      style: vs.ui.Button.SILVER_STYLE
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[220, 220], text: "hello", size:[70, 30],
-      type: vs.ui.Button.NAVIGATION_BACK_TYPE,
-      style: vs.ui.Button.SILVER_STYLE
-    }).init ();
-    view.add (button);
-  
-    button = new vs.ui.Button ({
-      position:[220, 270], text: "hello", size:[70, 30],
-      type: vs.ui.Button.NAVIGATION_FORWARD_TYPE,
-      style: vs.ui.Button.SILVER_STYLE
-    }).init ();
-    view.add (button);
-    
-    return view;
-  },
-  
-  initButtonsProgressSlider: function () {
-    var view = this.buildGenericPanel ();
-    
-    var progress1 =
-      new vs.ui.ProgressBar ({position:[20, 50], size:[280, 10]}).init ();
-  
-    var progress2 =
-      new vs.ui.ProgressBar ({position:[20, 80], size:[280, 10]}).init ();
-    progress2.indeterminate = true;
-  
-    var progress3 =
-      new vs.ui.ProgressBar ({position:[20, 110], size:[100, 10], 
-      range: [50, 80]}).init ();
-  
-    view.add (progress1);
-    view.add (progress2);
-    view.add (progress3);
-    
-    var slider = new vs.ui.Slider ({position:[20, 150], size:[280, 10]}).init ();
-    view.add (slider);
-
-    slider.bind ('continuous_change', this, function (e) {progress1.index = e.data;});
-  
-    slider = new vs.ui.Slider ({position:[50, 200], size:[10, 100], 
-      orientation:vs.ui.Slider.VERTICAL, range: [50, 60]}).init ();
-    view.add (slider);
-  
-    slider.bind ('continuous_change', this, function (e) {progress3.index = e.data;});
-
-    return view;
-  },
-  
-  initTabList : function () {
-    var view = this.buildGenericPanel ();
-    view.addClassName ('tab_list');
-
-    var listItems = new vs.ui.List ({
-      id: 'list_items',
-      scroll: true,
-      type: vs.ui.List.TAB_LIST
-    });
-    listItems.init ();
-    view.add (listItems);
-        
-    // Set the data list items
-    listItems.data = [
-      'a',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'b',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'c',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      'd',
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'e',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'f',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'g',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      'h',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      'i',
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'j',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'k',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'l',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'm',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      'n',
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'o',
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'p',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'q',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      'r',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      's',
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      't',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'u',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'v',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'w',
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      {title: 'Strange image', url: "resources/image1.jpeg"},
-      'x',
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'y',
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-      'z',
-      {title: 'Strange image Bis', url: "resources/image2.jpeg"},
-      {title: 'The dream house', url: "resources/image3.jpeg"},
-    ];
-    
-    return view;
   }
-
 });
+
+function buildPanel (id) {
+  var view = new vs.ui.View ({
+    id: id,
+    layout:vs.ui.View.ABSOLUTE_LAYOUT
+  }).init ();
+  view.addClassName ('panel');  
+  return view;
+};
 
 function loadApplication () {
   new Widgets ({id:"widgets"}).init ();

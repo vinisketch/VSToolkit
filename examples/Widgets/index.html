@@ -1,32 +1,43 @@
 <!DOCTYPE html>
-<html>
+<html id="widgets" x-hag-ref="widgets">
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, target-densityDpi=160, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
     <title>Widgets</title>
- 
-    <script src="../js/codemirror.js"></script>
-    <script src="../js/javascript.js"></script>
-    <script src="../js/css.js"></script>
-    <script src="../js/playground.js"></script>
-    <link rel="stylesheet" href="../css/codemirror.css">
-    <link rel="stylesheet" href="../css/vsd.css">
-    <link rel="stylesheet" type="text/css" href="../css/ex_index.css">
+    <style>
+      ::selection {background: transparent;}
+    </style>
 
-    <script>
-      window.app_docs = [
-        {url: 'js/Widgets.js', type:JS_DOC, data:''},
-        {url: 'css/Widgets.css', type:CSS_DOC, data:''},
-      ]
-    </script>
+    <link rel="stylesheet" type="text/css" href="../../lib/css/vs_ui.css">
+    <link rel="stylesheet" type="text/css" href="../../lib/css/vs_ui_pure.css">
+    <link rel="stylesheet" type="text/css" href="../../lib/css/vs_ext.css">
+    <link rel="stylesheet" type="text/css" href="../../lib/css/vs_ext_pure.css">
+    <link rel="stylesheet" type="text/css" href="../../lib/css/ie10.css">
+    <link rel="stylesheet" type="text/css" href="css/Widgets.css">
+
+    <script type="text/javascript" src="../../lib/js/vs_util.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_core.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_data.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_ui.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_fx.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_ext.js"></script>
+    <script type="text/javascript" src="../../lib/js/vs_ext_fx.js"></script>
+    <script type="text/javascript" src="js/Buttons.js"></script>
+    <script type="text/javascript" src="js/Fields.js"></script>
+    <script type="text/javascript" src="js/Selectors.js"></script>
+    <script type="text/javascript" src="js/Pickers.js"></script>
+    <script type="text/javascript" src="js/Map.js"></script>
+    <script type="text/javascript" src="js/Sliders.js"></script>
+    <script type="text/javascript" src="js/Lists.js"></script>
+    <script type="text/javascript" src="js/Images.js"></script>
+    <script type="text/javascript" src="js/Map.js"></script>
+    <script type="text/javascript" src="js/Animations.js"></script>
+    <script type="text/javascript" src="js/Transformations.js"></script>
+    <script type="text/javascript" src="js/PointerGesture.js"></script>
+    <script type="text/javascript" src="js/Widgets.js"></script>
 
   </head>
-  <body>
-    <iframe id="playground"></iframe>
-
-    <a class="button" href="../index.html">Back</a>
-    <button class="button" onclick="runApplication ();">Run</button>
-    <select id="files" onchange="changeDocument (event)"></select>
-    <a class="button_doc"  href="../../docs/index.html">Doc</a>
-    <textarea id="code" name="code"></textarea>
+  <body class="theme application" x-hag-hole="children" onload="loadApplication ()">
+    <div class="application_templates" style="display: none; "></div>
   </body>
 </html>
