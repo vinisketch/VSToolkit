@@ -25,12 +25,14 @@ input[type="radio"].pressed + label,
 
 input[type="radio"]:after
 {
+  -webkit-box-sizing: border-box;
   content:url(iOSRadioButton.png);
   margin-top: -13px;
 }
 
 input[type="radio"]:checked:after
 {
+  -webkit-box-sizing: border-box;
   content:url(iOSRadioButton_sel.png);
 }
 

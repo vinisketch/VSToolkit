@@ -25,6 +25,7 @@ input[type="checkbox"].pressed + label,
 
 input[type="checkbox"]:after
 {
+  -webkit-box-sizing: border-box;
   content:url(iOSCheckButton.png);
   margin-top: -13px;
 }

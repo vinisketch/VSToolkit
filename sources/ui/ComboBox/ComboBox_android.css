@@ -19,5 +19,6 @@
 
 .vs_ui_combobox:after
 {
+  -webkit-box-sizing: border-box;
   margin-top: 17px;
 }

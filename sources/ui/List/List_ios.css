@@ -13,6 +13,7 @@ li.pressed
 .vs_ui_list.BlockList.arrow > ul > li > ul > li::after,
 .vs_ui_list.TabList.arrow > ul > li > ul > li::after
 {
+  -webkit-box-sizing: border-box;
   content:url(SimpleListNext.png);
   margin-top: -8px;
 }

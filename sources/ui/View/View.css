@@ -1,47 +1,35 @@
 * {
   /* prevent callout to copy image, etc when tap to hold */
   -webkit-touch-callout: none; 
+  -moz-touch-callout: none; 
   touch-callout: none; 
   
   /* prevent webkit from resizing text to fit */
   -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
   text-size-adjust: none; 
   
   /* make transparent link selection, adjust last value opacity 0 to 1.0 */
-  -webkit-tap-highlight-color: rgba(0,0,0,0); 
-  tap-highlight-color: rgba(0,0,0,0); 
+  -webkit-tap-highlight-color: none; 
+  -mozt-text-size-adjust: none;
+  tap-highlight-color: none; 
   
   /* prevent copy paste, to allow, change 'none' to 'text' */
   -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   
   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
+
+  cursor: default;
 
   padding: 0px;
   margin: 0px;
 }
 ::selection { background: transparent; }
-
-*: {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
-
-  -webkit-user-select: none;
-  user-select: none;
-  
-  cursor: default;
-
-  pointer-events: none;
-}
-
-*:after, *:before {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-}
 
 .vs_ui_view
 {

@@ -25,6 +25,7 @@ input[type="radio"].pressed + label,
 
 input[type="radio"]:after
 {
+  -webkit-box-sizing: border-box;
   width: 20px;
   height: 20px;
   border: 1px solid #999;
@@ -38,6 +39,7 @@ input[type="radio"]:after
 
 input[type="radio"]:checked:after
 {
+  -webkit-box-sizing: border-box;
   content: ' ';
   background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, from(#9DC3F3), color-stop(0.02, #5899EB), color-stop(0.3, #3985E7), color-stop(0.65, #1A70DD), to(#1559AF)) !important;
   border: 1px solid #777;

@@ -41,6 +41,7 @@
 
 .vs_ui_combobox::after
 {
+  -webkit-box-sizing: border-box;
   border-color: #DDD transparent transparent;
   border-style: solid;
   border-width: 8px;

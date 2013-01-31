@@ -9,6 +9,7 @@
 }
 
 .vs_ext_ui_gmap_info::before {
+  -webkit-box-sizing: border-box;
   border-color: #333 transparent transparent transparent;
   border-style: solid;
   border-width: 10px 10px 0px 10px;
@@ -20,6 +21,7 @@
 }
 
 .vs_ext_ui_gmap_info::after {
+  -webkit-box-sizing: border-box;
   display: block;
   width: 0px;
   height: 0px;

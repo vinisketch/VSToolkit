@@ -1,30 +1,3 @@
-* {
-  /* prevent callout to copy image, etc when tap to hold */
-  -webkit-touch-callout: none; 
-  -moz-touch-callout: none; 
-  touch-callout: none; 
-  
-  /* prevent webkit from resizing text to fit */
-  -webkit-text-size-adjust: none;
-  -moz-text-size-adjust: none;
-  text-size-adjust: none; 
-  
-  /* make transparent link selection, adjust last value opacity 0 to 1.0 */
-  -webkit-text-size-adjust: none;
-  -mozt-text-size-adjust: none;
-  tap-highlight-color: rgba(0,0,0,0); 
-  
-  /* prevent copy paste, to allow, change 'none' to 'text' */
-  .user-select(none);
-  .box-sizing(border-box);
-}
-::selection { background: transparent; }
-
-*:after, *:before {
-  .box-sizing(border-box);
-  .user-select(none);
-}
-
 /********************************************************************
                     Vertical Layout
 *********************************************************************/

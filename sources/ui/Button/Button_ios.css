@@ -132,6 +132,7 @@
 }
 
 .vs_ui_button.nav_back > div::before {
+  -webkit-box-sizing: border-box;
   content: '';
   z-index: 0;
   border-left: solid 1px #484E59;
@@ -151,6 +152,7 @@
 }
 
 .vs_ui_button.nav_forward > div::after {
+  -webkit-box-sizing: border-box;
   content: '';
   z-index: 0;
   border-left: solid 1px #484E59;
