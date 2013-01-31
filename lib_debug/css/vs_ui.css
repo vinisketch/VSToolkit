@@ -18,47 +18,35 @@ body {
 }* {
   /* prevent callout to copy image, etc when tap to hold */
   -webkit-touch-callout: none; 
+  -moz-touch-callout: none; 
   touch-callout: none; 
   
   /* prevent webkit from resizing text to fit */
   -webkit-text-size-adjust: none;
+  -moz-text-size-adjust: none;
   text-size-adjust: none; 
   
   /* make transparent link selection, adjust last value opacity 0 to 1.0 */
-  -webkit-tap-highlight-color: rgba(0,0,0,0); 
-  tap-highlight-color: rgba(0,0,0,0); 
+  -webkit-tap-highlight-color: none; 
+  -mozt-text-size-adjust: none;
+  tap-highlight-color: none; 
   
   /* prevent copy paste, to allow, change 'none' to 'text' */
   -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   user-select: none;
   
   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
   box-sizing: border-box;
+
+  cursor: default;
 
   padding: 0px;
   margin: 0px;
 }
 ::selection { background: transparent; }
-
-*: {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-
-  -webkit-text-size-adjust: none;
-  text-size-adjust: none;
-
-  -webkit-user-select: none;
-  user-select: none;
-  
-  cursor: default;
-
-  pointer-events: none;
-}
-
-*:after, *:before {
-  -webkit-box-sizing: border-box;
-  box-sizing: border-box;
-}
 
 .vs_ui_view
 {
@@ -201,17 +189,24 @@ body {
   height: 100%;
 }
 
-.vs_ui_splitview {
+.vs_ui_splitview,
+.vs_ui_splitview.left,
+.vs_ui_splitview.right
+{
   display: -webkit-box;
   -webkit-box-orient: horizontal;
+}
+
+.vs_ui_splitview.top,
+.vs_ui_splitview.bottom
+{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
 }
 
 .vs_ui_splitview.tablet.horizontal > div:nth-child(1) {
   -webkit-box-flex: 0;
   box-flex: 0;
-  width: 30%;
-  height: 100%;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
   z-index: 1;
 }
 
@@ -219,10 +214,65 @@ body {
   -webkit-box-flex: 0;
   box-flex: 0;
   position: relative;
-  width: 70%;
-  height: 100%;
   z-index: 0;
 }
+
+.vs_ui_splitview.tablet.horizontal > div:nth-child(1),
+.vs_ui_splitview.tablet.horizontal.left > div:nth-child(1),
+.vs_ui_splitview.tablet.horizontal.right > div:nth-child(1)
+{
+  width: 30%;
+  height: 100%;
+}
+
+.vs_ui_splitview.tablet.horizontal > div:nth-child(2),
+.vs_ui_splitview.tablet.horizontal.right > div:nth-child(2),
+.vs_ui_splitview.tablet.horizontal.top > div:nth-child(2)
+{
+  width: 70%;
+  height: 100%;
+}
+
+.vs_ui_splitview.tablet.horizontal.right {
+  -webkit-box-direction: reverse;
+}
+
+.vs_ui_splitview.tablet.horizontal.left > div:nth-child(1)
+{
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.vs_ui_splitview.tablet.horizontal.right > div:nth-child(1)
+{
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+}
+
+.vs_ui_splitview.tablet.horizontal.top > div:nth-child(1),
+.vs_ui_splitview.tablet.horizontal.bottom > div:nth-child(1) {
+  width: 100%;
+  height: 30%;
+}
+
+.vs_ui_splitview.tablet.horizontal.top > div:nth-child(2),
+.vs_ui_splitview.tablet.horizontal.bottom > div:nth-child(2) {
+  width: 100%;
+  height: 70%;
+}
+
+.vs_ui_splitview.tablet.horizontal.bottom {
+  -webkit-box-direction: reverse;
+}
+
+.vs_ui_splitview.tablet.horizontal.top > div:nth-child(1)
+{
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.vs_ui_splitview.tablet.horizontal.bottom > div:nth-child(1)
+{
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+}
+
 
 .vs_ui_splitview.tablet.vertical > div:nth-child(1) {
   display:none;
@@ -230,6 +280,7 @@ body {
 
 .vs_ui_splitview.tablet.vertical > div:nth-child(2) {
   width: 100%;
+  height: 100%;
 }
 .vs_ui_scrollview {
   overflow: hidden;
@@ -326,6 +377,8 @@ body {
   overflow: hidden;
   padding: 0px;
   margin: 0px;
+  width: 100%;
+  height: 100%;
 }
 
 .vs_ui_scrollimageview > img {
@@ -500,6 +553,7 @@ li {
 
 .vs_ui_list.arrow ul li:after
 {
+  -webkit-box-sizing: border-box;
   position: absolute;
   right: 10px;
   top: 50%;
@@ -659,6 +713,7 @@ li {
 
 .vs_ui_combobox::after
 {
+  -webkit-box-sizing: border-box;
   border-color: #DDD transparent transparent;
   border-style: solid;
   border-width: 8px;
@@ -763,6 +818,7 @@ input[type="checkbox"]
 
 input[type="checkbox"]:after
 {
+  -webkit-box-sizing: border-box;
   position: absolute;
   right: 10px;
   top: 50%;
@@ -1080,6 +1136,8 @@ input[type="checkbox"]:after
   top: 0px; bottom: 0px;
   left: 0px;
 }.vs_ui_imageview {
+  width: 100%;
+  height: 100%;
 }
 .vs_ui_inputfield {
   min-width: 150px;
@@ -1140,8 +1198,7 @@ input[type="text"] {
   right: 35px;
 }.vs_ui_popover {
   font-family: Helvetica;
-  font-size: 12px;
-  
+
   z-index: 3000;
 
   position: absolute;

@@ -241,6 +241,7 @@ ul.pressed li > div
 .vs_ui_list.DefaultList.arrow > ul > li:after,
 .vs_ui_list.TabList.arrow > ul > li > ul > li:after
 {
+  -webkit-box-sizing: border-box;
   margin-top: -8px;
   content:url(SimpleListNextSel.png);
 }
@@ -258,6 +259,7 @@ ul.pressed li > div
 
 .vs_ui_list.BlockList.arrow > ul > li > ul > li:after
 {
+  -webkit-box-sizing: border-box;
   margin-top: -8px;
   content:url(SimpleListNext.png);
 }
@@ -358,12 +360,14 @@ input[type="radio"].pressed + label,
 
 input[type="radio"]:after
 {
+  -webkit-box-sizing: border-box;
   content:url(androidRadioButton.png);
   margin-top: -16px;
 }
 
 input[type="radio"]:checked:after
 {
+  -webkit-box-sizing: border-box;
   content:url(androidRadioButton_sel.png);
 }
 
@@ -432,6 +436,7 @@ input[type="checkbox"].pressed + label,
 
 input[type="checkbox"]:after
 {
+  -webkit-box-sizing: border-box;
   content:url(androidCheckButton.png);
   margin-top: -16px;
 }
@@ -688,6 +693,7 @@ input[type="checkbox"]:checked:after
 
 .vs_ui_combobox:after
 {
+  -webkit-box-sizing: border-box;
   margin-top: 17px;
 }/*
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
@@ -964,6 +970,7 @@ textarea:focus {
 }
 
 .vs_ui_segmentedbutton.default > div > div:before {
+  -webkit-box-sizing: border-box;
   display: block;
   position: relative;
   content: '';

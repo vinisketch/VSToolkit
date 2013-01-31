@@ -2630,10 +2630,12 @@ View.prototype = {
   },
   
   /**
-   * @protected
+   *  Return the current transform matrix apply to this graphic Object.
+   * @public
    * @function
+   * @return {vs.CSSMatrix} the current transform matrix
    */
-  _calculateTransformMatrix: function ()
+  getCTM: function ()
   {
     var matrix = new vs.CSSMatrix (), transform, matrix_tmp;
     
@@ -2651,41 +2653,40 @@ View.prototype = {
   },
   
   /**
+   *  Returns the current transform combination matrix generate by the
+   *  hierarchical parents of this graphic Object.
+   *  Its returns the multiplication of the parent's CTM and parent of parent's
+   *  CTM etc.
+   *  If the component has no parent it returns the identity matrix.
+   * @public
+   * @function
+   * @return {vs.CSSMatrix} the current transform matrix
+   */
+  getParentCTM: function ()
+  {
+    
+    function multiplyParentTCM (parent)
+    {
+      // no parent return identity matrix
+      if (!parent) return new vs.CSSMatrix ();
+      // apply parent transformation matrix recurcively 
+      return multiplyParentTCM (parent.__parent).multiply (parent.getCTM ());
+    }
+    
+    return multiplyParentTCM (this.__parent);
+  },
+  
+  /**
    * @protected
    * @function
    */
   _applyTransformation: function ()
   {
-    var matrix = this._calculateTransformMatrix ();
+    var matrix = this.getCTM ();
     
     setElementTransform (this.view, matrix.toString ());
     delete (matrix);
   }
-  
-//   
-//   /**
-//    * @public
-//    * @function
-//    */
-//   getProjection: function (pos)
-//   {
-//     var matrix = this._calculateTransformMatrix ();   
-//     var matrix_tmp = new vs.CSSMatrix ();
-//         
-//     matrix_tmp = matrix_tmp.translate (pos.x, pos.y, pos.z || 0);
-//     matrix = matrix.multiply (matrix_tmp);
-//     
-//     var result = {
-//       x: matrix.m41,
-//       y: matrix.m42,
-//       z: matrix.m43,
-//     }
-//         
-//     delete (matrix);
-//     delete (matrix_tmp);
-//     
-//     return result;
-//   }
 };
 util.extendClass (View, core.EventSource);
 
@@ -3292,6 +3293,9 @@ var Application = function (config)
  */
 var Application_applications = {};
 
+var ORIENTATION_CHANGE_EVT =
+  'onorientationchange' in window ? 'orientationchange' : 'resize';
+
 vs.Application_applications = Application_applications;
 
 Application.prototype = {
@@ -3343,6 +3347,19 @@ Application.prototype = {
     document.addEventListener ('orientationChanged', function (e)
     {
       var pid = window.deviceConfiguration.setOrientation (e.orientation);
+      if (pid) { self.propagate ('deviceChanged', pid, null, true); }
+    });
+    
+    window.addEventListener (ORIENTATION_CHANGE_EVT, function (e)
+    {
+      var orientation = 0;
+      if (window.orientation) orientation = window.orientation;
+      else if (window.outerWidth > window.outerHeight) orientation = 90;
+      else orientation = 0;
+
+      if (orientation === window.deviceConfiguration.getOrientation ()) return;
+      
+      var pid = window.deviceConfiguration.setOrientation (orientation);
       if (pid) { self.propagate ('deviceChanged', pid, null, true); }
     });
   },
@@ -3773,8 +3790,8 @@ ui.Application = Application;
  *  splitView.init ();
  *
  *  splitView.delegate = this;
- *  splitView.createAndAddComponent ('LeftPanel');
- *  splitView.createAndAddComponent ('RightPanel');
+ *  splitView.createAndAddComponent ('ManuPanel');
+ *  splitView.createAndAddComponent ('MainPanel');
  *
  *  ...
  *
@@ -3834,6 +3851,60 @@ var SplitView = vs.core.createClass ({
         this.removeClassName (this._mode);
         this._mode = v;
         this.addClassName (this._mode);
+        if (this._orientation === SplitView.VERTICAL) this._set_orientation (0);
+        else this._set_orientation (90);
+      }
+    },
+  
+    "hideMainPanelButton": {
+      /** 
+       * Set the XXX
+       * @name vs.ui.SplitView#hideMainPanelButton 
+       * @type {vs.ui.View}
+       */ 
+      set : function (v)
+      {
+        this._hide_main_panel_button = v;
+        if (this._mode == SplitView.TABLET_MODE)
+        {
+          this._hide_main_panel_button.hide ();
+        }
+        this._hide_main_panel_button.bind ('select', this);
+      }
+    },
+  
+    "showPopOverButton": {
+      /** 
+       * Set the XXX
+       * @name vs.ui.SplitView#showPopOverButton 
+       * @type {vs.ui.View}
+       */ 
+      set : function (v)
+      {
+        this._show_pop_over_button = v;
+        if (this._mode == SplitView.MOBILE_MODE)
+        {
+          this._show_pop_over_button.hide ();
+        }
+        this._show_pop_over_button.bind ('select', this);
+      }
+    },
+  
+    "secondPanelPosition": {
+      /** 
+       * Set the navigation panel position (LEFT, RIGHT, TOP, BOTTOM)
+       * @name vs.ui.SplitView#secondPanelPosition 
+       * @type {String}
+       */ 
+      set : function (v)
+      {
+        if (v !== SplitView.LEFT && v !== SplitView.RIGHT &&
+            v !== SplitView.TOP && v !== SplitView.BOTTOM)
+          return;
+      
+        this.removeClassName (this._second_panel_position);
+        this._second_panel_position = v;
+        this.addClassName (this._second_panel_position);
       }
     },
   
@@ -3879,6 +3950,12 @@ var SplitView = vs.core.createClass ({
    * @type {String}
    */
   _mode: '',
+
+   /**
+   * @protected
+   * @type {String}
+   */
+  _second_panel_position: '',
 
    /**
    * @protected
@@ -3942,7 +4019,18 @@ var SplitView = vs.core.createClass ({
     else this.mode = SplitView.TABLET_MODE;
     
     if (this._orientation) this.orientation = this._orientation;
-    else this.orientation = SplitView.HORIZONTAL;
+    else
+    {
+      var orientation = window.deviceConfiguration.getOrientation ()
+
+      if (orientation === 0 || orientation === 180)
+        this.orientation = SplitView.VERTICAL;
+      else
+        this.orientation = SplitView.HORIZONTAL; 
+    }
+    
+    if (this._second_panel_position) this.secondPanelPosition = this._second_panel_position;
+    else this.secondPanelPosition = SplitView.LEFT;
   },
 
   /**
@@ -3956,16 +4044,16 @@ var SplitView = vs.core.createClass ({
    */
   add : function (child, hole)
   {
-    if (hole === 'left_panel') this._left_views.push (child);
+    if (hole === 'second_panel') this._left_views.push (child);
     else
     {
       this._super (child, 'main_panel');
       return;
     }
     
-    if (this._orientation === SplitView.HORIZONTAL)
+    if (this._mode === SplitView.MOBILE || this._orientation === SplitView.HORIZONTAL)
     {
-      this._super (child, 'left_panel');
+      this._super (child, 'second_panel');
     }
     else
     {
@@ -4028,7 +4116,7 @@ var SplitView = vs.core.createClass ({
     if (orientation === 90 || orientation === -90)
       this.orientation = SplitView.HORIZONTAL;
     else
-      this.orientation = SplitView.VERICAL; 
+      this.orientation = SplitView.VERTICAL; 
   },
   
   /**
@@ -4042,7 +4130,8 @@ var SplitView = vs.core.createClass ({
     child = this._left_views [0];
     if (child)
     {
-      if (orientation === 90 || orientation === -90)
+      if (this._mode === SplitView.MOBILE_MODE ||
+          orientation === 90 || orientation === -90)
       {
         this._pop_over.hide ();
         if (this._pop_over.isChild (child))
@@ -4052,7 +4141,7 @@ var SplitView = vs.core.createClass ({
         
         if (!this.isChild (child))
         {
-          View.prototype.add.call (this, child, 'left_panel');
+          View.prototype.add.call (this, child, 'second_panel');
         }
         child.show (child.refresh);
         
@@ -4060,6 +4149,7 @@ var SplitView = vs.core.createClass ({
         {
           this._delegate.willShowView (child, this._pop_over);
         }
+        if (this._show_pop_over_button) this._show_pop_over_button.hide ();
       }
       else
       {
@@ -4075,7 +4165,9 @@ var SplitView = vs.core.createClass ({
         this._pop_over.size =
           [this._fisrt_view_width + 2 * this._pop_over_border_width, 500];
         
-        if (this._delegate && this._delegate.willShowView)
+         if (this._show_pop_over_button) this._show_pop_over_button.show ();
+         
+       if (this._delegate && this._delegate.willShowView)
         {
           this._delegate.willHideView (child, this._pop_over);
         }
@@ -4119,6 +4211,8 @@ var SplitView = vs.core.createClass ({
   {
     if (this._mode !== SplitView.MOBILE_MODE) return;
 
+    if (this._hide_main_panel_button) this._hide_main_panel_button.show ();
+    
     this.addClassName ('main_view_visible');
   },
   
@@ -4128,8 +4222,21 @@ var SplitView = vs.core.createClass ({
   hideMainView : function ()
   {
     if (this._mode !== SplitView.MOBILE_MODE) return;
+    
+    if (this._hide_main_panel_button) this._hide_main_panel_button.hide ();
 
     this.removeClassName ('main_view_visible');
+  },
+  
+  notify : function (e) {
+    var self = this;
+    
+    if (e.type == 'select' && e.src == this._hide_main_panel_button) {
+      this.hideMainView ();
+    }
+    if (e.type == 'select' && e.src == this._show_pop_over_button) {
+      this.showPopOver ([20, 20]);
+    }
   }
 });
 
@@ -4141,6 +4248,11 @@ SplitView.TABLET_MODE = 'tablet';
 SplitView.MOBILE_MODE = 'mobile';
 SplitView.VERTICAL = 'vertical';
 SplitView.HORIZONTAL = 'horizontal';
+
+SplitView.RIGHT = 'right';
+SplitView.LEFT = 'left';
+SplitView.BOTTOM = 'bottom';
+SplitView.TOP = 'top';
 
 /********************************************************************
                       Export
@@ -5634,7 +5746,7 @@ iScroll.prototype = {
 		if (e.nbPointers !== 0) return;
 
 		var that = this,
-			point = e, // TODO hasTouch ? e.changedTouches[0] : e,
+			point = e.changedPointerList [0],
 			target, ev,
 			momentumX = { dist:0, time:0 },
 			momentumY = { dist:0, time:0 },
@@ -17431,7 +17543,7 @@ View.prototype.html_template = "\
 
 SplitView.prototype.html_template = "\
 <div class='vs_ui_splitview'>\
-  <div x-hag-hole='left_panel'></div>\
+  <div x-hag-hole='second_panel'></div>\
   <div x-hag-hole='main_panel'></div>\
 </div>\
 ";

@@ -136,6 +136,7 @@ body {
 }
 
 .vs_ui_button.nav_back > div::before {
+  -webkit-box-sizing: border-box;
   content: '';
   z-index: 0;
   border-left: solid 1px #484E59;
@@ -155,6 +156,7 @@ body {
 }
 
 .vs_ui_button.nav_forward > div::after {
+  -webkit-box-sizing: border-box;
   content: '';
   z-index: 0;
   border-left: solid 1px #484E59;
@@ -334,6 +336,7 @@ li.pressed
 .vs_ui_list.BlockList.arrow > ul > li > ul > li::after,
 .vs_ui_list.TabList.arrow > ul > li > ul > li::after
 {
+  -webkit-box-sizing: border-box;
   content:url(SimpleListNext.png);
   margin-top: -8px;
 }
@@ -469,12 +472,14 @@ input[type="radio"].pressed + label,
 
 input[type="radio"]:after
 {
+  -webkit-box-sizing: border-box;
   content:url(iOSRadioButton.png);
   margin-top: -13px;
 }
 
 input[type="radio"]:checked:after
 {
+  -webkit-box-sizing: border-box;
   content:url(iOSRadioButton_sel.png);
 }
 
@@ -539,6 +544,7 @@ input[type="checkbox"].pressed + label,
 
 input[type="checkbox"]:after
 {
+  -webkit-box-sizing: border-box;
   content:url(iOSCheckButton.png);
   margin-top: -13px;
 }
@@ -817,6 +823,7 @@ input[type="checkbox"]:checked:after
 
 .vs_ui_combobox:after
 {
+  -webkit-box-sizing: border-box;
   margin-top: 17px;
 }.vs_ui_popover.withHeader >.header {
   height: 38px;

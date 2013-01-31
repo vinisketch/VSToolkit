@@ -100,6 +100,92 @@ core.createUniqueId = createUniqueId;/**
   
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
+ 
+ Use code from Canto.js Copyright 2010 Steven Levithan <stevenlevithan.com>
+*/
+
+/**
+ *  @class
+ *  vs.Point is an (x, y) coordinate pair. 
+ *  When you use an vs.Point object in matrix operations, the object is 
+ *  treated as a vector of the following form <x, y, 1>
+ *
+ * @author David Thevenin
+ *
+ *  @constructor
+ *  Main constructor
+ *
+ * @name vs.Point
+ *
+ * @param {Number} the x-coordinate value.
+ * @param {Number} the y-coordinate value.
+*/
+function Point (x, y)
+{
+  if (util.isNumber (x)) this.x = x;
+  if (util.isNumber (y)) this.y = y;
+}
+
+Point.prototype = {
+
+  /*****************************************************************
+   *
+   ****************************************************************/
+   
+   x: 0,
+   y: 0,
+  
+  /*****************************************************************
+   *              
+   ****************************************************************/
+   
+  /**
+   * Applies the given 2×3 matrix transformation on this Point object and 
+   * returns a new, transformed Point object.
+   *
+   * @name vs.Point#matrixTransform
+   * @function
+   * @public
+   * @param {vs.CSSMatrix} matrix he matrix
+   * @returns {vs.Point} the matrix
+   */
+  matrixTransform : function (matrix)
+  {
+    var matrix_tmp = new vs.CSSMatrix ();
+
+    matrix_tmp = matrix_tmp.translate (this.x, this.y, this.z || 0);
+    matrix = matrix.multiply (matrix_tmp);
+
+    var result = new Point (matrix.m41, matrix.m42);
+
+    delete (matrix_tmp);
+    delete (matrix);
+
+    return result;
+  }
+};
+
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+vs.Point = Point;
+/**
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /********************************************************************
@@ -1429,25 +1515,8 @@ core.Model = Model;
  */
 FORCE_EVENT_PROPAGATION_DELAY = false;
 
-/* touch event messages */
-/**
- * @name vs.core.EVENT_SUPPORT_TOUCH
- */
-var EVENT_SUPPORT_TOUCH = false;
+var EVENT_SUPPORT_GESTURE = false;
 var hasMSPointer = window.navigator.msPointerEnabled;
-
-if (typeof document != "undefined" && 'createTouch' in document)
-  EVENT_SUPPORT_TOUCH = true;
-  
-else if (hasMSPointer) { EVENT_SUPPORT_TOUCH = true; }
-  
-else if (typeof document != "undefined" &&
-    window.navigator && window.navigator.userAgent)
-{
-  if (window.navigator.userAgent.indexOf ('Android') !== -1 ||
-      window.navigator.userAgent.indexOf ('BlackBerry') !== -1)
-  { EVENT_SUPPORT_TOUCH = true; }
-}
 
 
 /** 
@@ -1456,7 +1525,7 @@ else if (typeof document != "undefined" &&
  * @type {String}
  * @const
  */ 
-core.POINTER_START;
+core.POINTER_START = vs.POINTER_START;
 
 /** 
  * Move pointer event (mousemove, touchmove, )
@@ -1464,7 +1533,7 @@ core.POINTER_START;
  * @type {String}
  * @const
  */ 
-core.POINTER_MOVE;
+core.POINTER_MOVE = vs.POINTER_MOVE;
 
 /** 
  * End pointer event (mouseup, touchend, )
@@ -1472,7 +1541,7 @@ core.POINTER_MOVE;
  * @type {String}
  * @const
  */ 
-core.POINTER_END;
+core.POINTER_END = vs.POINTER_END;
 
 /** 
  * Cancel pointer event (mouseup, touchcancel, )
@@ -1480,22 +1549,31 @@ core.POINTER_END;
  * @type {String}
  * @const
  */ 
-core.POINTER_CANCEL;
+core.POINTER_CANCEL = vs.POINTER_CANCEL;
 
-if (EVENT_SUPPORT_TOUCH)
-{
-  core.POINTER_START = hasMSPointer ? 'MSPointerDown' : 'touchstart';
-  core.POINTER_MOVE = hasMSPointer ? 'MSPointerMove' : 'touchmove';
-  core.POINTER_END = hasMSPointer ? 'MSPointerUp' : 'touchend';
-  core.POINTER_CANCEL = hasMSPointer ? 'MSPointerCancel' : 'touchcancel';
-}
-else
-{
-  core.POINTER_START = 'mousedown';
-  core.POINTER_MOVE = 'mousemove';
-  core.POINTER_END = 'mouseup';
-  core.POINTER_CANCEL = 'mouseup';
-}
+/** 
+ * Start gesture event
+ * @name vs.core.GESTURE_START
+ * @type {String}
+ * @const
+ */ 
+core.GESTURE_START = vs.GESTURE_START;
+
+/** 
+ * Change gesture event
+ * @name vs.core.GESTURE_MOVE 
+ * @type {String}
+ * @const
+ */ 
+core.GESTURE_CHANGE = vs.GESTURE_CHANGE;
+
+/** 
+ * End gesture event
+ * @name vs.core.GESTURE_END 
+ * @type {String}
+ * @const
+ */ 
+core.GESTURE_END = vs.GESTURE_END;
 
 /**
  *  @class
@@ -1574,325 +1652,19 @@ Event.prototype =
   }
 };
 
-// TODO(smus): Come up with a better solution for this. This is bad because
-// it might conflict with a touch ID. However, giving negative IDs is also
-// bad because of code that makes assumptions about touch identifiers being
-// positive integers.
-var MOUSE_ID = 31337;
-
-function Pointer (event, type, identifier)
-{
-  this.configureWithEvent (event)
-  this.type = type;
-  this.identifier = identifier;
-}
-
-Pointer.prototype.configureWithEvent = function (evt)
-{
-  this.pageX = evt.pageX;
-  this.pageY = evt.pageY;
-  this.clientX = evt.clientX;
-  this.clientY = evt.clientY;
-  this.target = evt.target;
-  this.currentTarget = evt.currentTarget;
-}
-
-
-var PointerTypes = {
-  TOUCH: 2,
-  PEN: 3,
-  MOUSE: 4
-};
-
-function setMouse (mouseEvent)
-{
-  mouseEvent.target.mouseEvent = mouseEvent;
-}
-
-function unsetMouse (mouseEvent)
-{
-  mouseEvent.target.mouseEvent = null;
-}
-
-/**
- * Returns an array of all pointers currently on the screen.
- */
-function buildTouchList (evt)
-{
-  var pointers = [];
-  evt.nbPointers = evt.touches.length;
-  for (var i = 0; i < evt.nbPointers; i++)
-  {
-    var touch = evt.touches[i];
-    var pointer = new Pointer (touch, PointerTypes.TOUCH, touch.identifier);
-    pointers.push (pointer);
-  }
-  evt.pointerList = pointers;
-}
-
-function buildMouseList (evt)
-{
-  var pointers = [];
-  pointers.push (new Pointer (evt, PointerTypes.MOUSE, MOUSE_ID));
-  evt.nbPointers = 1;
-  evt.pointerList = pointers;
-}
-
-var all_pointers = {};
-
-function buildMSPointerList (evt, remove)
-{
-  // Note: "this" is the element.
-  var pointers = [];
-  var id = evt.pointerId, pointer = all_pointers [id];
-  
-  if (remove)
-  {
-    if (pointer) delete (all_pointers [pointer.identifier]);
-  }
-  else
-  {
-    if (pointer) {
-      pointer.configureWithEvent (evt);
-    }
-    else
-    {
-      pointer = new Pointer (evt, evt.pointerType, id);
-      all_pointers [id] = pointer;
-    }
-  }
-  for (id in all_pointers) { pointers.push (all_pointers [id]); }
-  evt.nbPointers = pointers.length;
-  evt.pointerList = pointers;
-}
-
-/*************** Mouse event handlers *****************/
-
-function mouseDownHandler (event, listener)
-{
-  buildMouseList (event);
-  listener (event);
-}
-
-function mouseMoveHandler(event, listener)
-{
-  buildMouseList (event);
-  listener (event);
-}
-
-function mouseUpHandler (event, listener)
-{
-  buildMouseList (event);
-  listener (event);
-}
-
-/*************** Touch event handlers *****************/
-
-function touchStartHandler (event, listener)
-{
-  buildTouchList (event);
-  listener (event);
-}
-
-function touchMoveHandler (event, listener)
-{
-  buildTouchList (event);
-  listener (event);
-}
-
-function touchEndHandler (event, listener)
-{
-  buildTouchList (event);
-  listener (event);
-}
-
-function touchCancelHandler (event, listener)
-{
-  buildTouchList (event);
-  listener (event, listener);
-}
-
-/*************** MSIE Pointer event handlers *****************/
-
-// remove the pointer from the list of availables pointer
-var nbPointerListener = 0;
-var msRemovePointer = function (evt) {
-  var id = evt.pointerId, pointer = all_pointers [id];
-
-  if (pointer)
-  {
-    delete (all_pointers [pointer.identifier]);
-    nbPointerListener --;
-  }
-
-  if (nbPointerListener === 0)
-  {
-    document.removeEventListener ('MSPointerUp', msRemovePointer);
-    document.removeEventListener ('MSPointerCancel', msRemovePointer);
-  }
-}
-
-
-function msPointerDownHandler (event, listener)
-{
-  buildMSPointerList (event);
-  listener (event);
-  
-  if (nbPointerListener === 0)
-  {
-    document.addEventListener ('MSPointerUp', msRemovePointer);
-    document.addEventListener ('MSPointerCancel', msRemovePointer);
-  }
-  nbPointerListener ++;
-}
-
-function msPointerMoveHandler (event, listener)
-{
-  buildMSPointerList (event);
-  listener (event);
-}
-
-function msPointerUpHandler (event, listener)
-{
-  buildMSPointerList (event, true);
-  listener (event);
-}
-
-function msPointerCancelHandler (event, listener)
-{
-  buildMSPointerList (event, true);
-  listener (event);
-}
-
-/*************************************************************/
-
-var pointerStartHandler, pointerMoveHandler, pointerEndHandle, pointerCancelHandler;
-
-if (EVENT_SUPPORT_TOUCH)
-{
-  if (hasMSPointer)
-  {
-    pointerStartHandler = msPointerDownHandler;
-    pointerMoveHandler = msPointerMoveHandler;
-    pointerEndHandler = msPointerUpHandler;
-    pointerCancelHandler = msPointerCancelHandler;
-  }
-  else
-  {
-    pointerStartHandler = touchStartHandler;
-    pointerMoveHandler = touchMoveHandler;
-    pointerEndHandler = touchEndHandler;
-    pointerCancelHandler = touchCancelHandler;
-  }
-}
-else
-{
-  pointerStartHandler = mouseDownHandler;
-  pointerMoveHandler = mouseMoveHandler;
-  pointerEndHandler = mouseUpHandler;
-  pointerCancelHandler = mouseUpHandler;
-}
-
-function getBindingIndex (target, type, listener)
-{
-  if (!type || !listener || !listener.__event_listeners) return -1;
-  for (var i = 0; i < listener.__event_listeners.length; i++)
-  {
-    var binding = listener.__event_listeners [i];
-    if (binding.target === target && binding.type === type && binding.listener === listener)
-      return i;
-  }
-  return -1;
-}
-
-/**
- * Option 2: Replace addEventListener with a custom version.
- */
-function addPointerListener (node, type, listener, useCapture)
-{
-  if (!listener) {
-    console.error ("addPointerListener no listener");
-    return;
-  }
-  var func = listener;
-  if (!util.isFunction (listener))
-  {
-    func = listener.handleEvent;
-    if (util.isFunction (func)) func = func.bind (listener);
-  }
-  
-  if (getBindingIndex (node, type, listener) !== -1)
-  {
-    console.error ("addPointerListener binding already existing");
-    return;
-  }
-  
-  if (!listener.__event_listeners) listener.__event_listeners = [];
-
-  var binding = {
-    target: node,
-    type: type,
-    listener: listener
-  };
-  listener.__event_listeners.push (binding);
-
-  switch (type)
-  {
-    case core.POINTER_START:
-      binding.handler = function (e) {pointerStartHandler (e, func);};
-    break;
-  
-    case core.POINTER_MOVE:
-      binding.handler = function (e) {pointerMoveHandler (e, func);};
-    break;
-  
-    case core.POINTER_END:
-      binding.handler = function (e) {pointerEndHandler (e, func);};
-    break;
-  
-    case core.POINTER_CANCEL:
-      binding.handler = function (e) {pointerCancelHandler (e, func);};
-    break;
-  
-    default:
-      binding.handler = listener;
-    break;
-  }
-
-  node.addEventListener (type, binding.handler, useCapture);
-}
-
-function removePointerListener (node, type, listener, useCapture)
-{
-  if (!listener) {
-    console.error ("removePointerListener no listener");
-    return;
-  }
-  
-  var index = getBindingIndex (node, type, listener);
-  if (index === -1)
-  {
-    console.error ("removePointerListener no binding");
-    return;
-  }
-  var binding = listener.__event_listeners [index];
-  listener.__event_listeners.remove (index);
-
-  node.removeEventListener (type, binding.handler, useCapture);
-  delete (binding);
-}
-
 /********************************************************************
                       Export
 *********************************************************************/
 /** @private */
 core.Event = Event;
 core.FORCE_EVENT_PROPAGATION_DELAY = FORCE_EVENT_PROPAGATION_DELAY;
-core.EVENT_SUPPORT_TOUCH = EVENT_SUPPORT_TOUCH;
 
-vs.removePointerListener = removePointerListener;
-vs.addPointerListener = addPointerListener;
-vs.PointerTypes = PointerTypes;
+/* touch event messages */
+/**
+ * @name vs.core.EVENT_SUPPORT_TOUCH
+ */
+core.EVENT_SUPPORT_TOUCH = vs.EVENT_SUPPORT_TOUCH;
+core.EVENT_SUPPORT_GESTURE = EVENT_SUPPORT_GESTURE;
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
@@ -4841,6 +4613,8 @@ function DeviceConfiguration ()
   this.targets = {};
   
   this.browserDetect ();
+  this.orientationDetect ();
+  this.screenDetect ();
 }
 
 /**
@@ -4903,7 +4677,6 @@ DeviceConfiguration.OS_ANDROID = 9;
  */
 DeviceConfiguration.OS_MEEGO = 10;
 
-
 /**
  * @name vs.core.DeviceConfiguration.SR_UNKNOWN 
  * @const
@@ -4960,32 +4733,53 @@ DeviceConfiguration.SR_FWVGA = 7;
 DeviceConfiguration.SR_SVGA = 8;
 
 /**
+ * @name vs.core.DeviceConfiguration.SR_DVGA 
+ * @const
+ * DVGA (960×640) 
+ */
+DeviceConfiguration.SR_DVGA = 9;
+
+/**
+ * @name vs.core.DeviceConfiguration.SR_WDVGA 
+ * @const
+ * WDVGA (1136×640) 
+ */
+DeviceConfiguration.SR_WDVGA = 10;
+
+/**
  * @name vs.core.DeviceConfiguration.SR_XGA 
  * @const
  * XGA (1024×768)
  */
-DeviceConfiguration.SR_XGA = 9;
+DeviceConfiguration.SR_XGA = 11;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_N_HD 
  * @const
  * nHD (640×360)
  */
-DeviceConfiguration.SR_N_HD = 10;
+DeviceConfiguration.SR_N_HD = 12;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_Q_HD 
  * @const
  * qHD (960×540)
  */
-DeviceConfiguration.SR_Q_HD = 11;
+DeviceConfiguration.SR_Q_HD = 13;
 
 /**
  * @name vs.core.DeviceConfiguration.SR_WXGA 
  * @const
  * WXGA (1280×720/768/800)
  */
-DeviceConfiguration.SR_WXGA = 12;
+DeviceConfiguration.SR_WXGA = 14;
+
+/**
+ * @name vs.core.DeviceConfiguration.SR_QXGA 
+ * @const
+ * QXGA (2048x1536)
+ */
+DeviceConfiguration.SR_QXGA = 15;
 
 /**
  * @name vs.core.DeviceConfiguration.BROWSER_UNKNOWN 
@@ -5023,6 +4817,30 @@ DeviceConfiguration.BROWSER_FIREFOX = 4;
  */
 DeviceConfiguration.BROWSER_MSIE = 5;
 
+/**
+ * @name vs.core.DeviceConfiguration.SCREEN_SIZE_UNKNOWN 
+ * @const
+ */
+DeviceConfiguration.SS_UNKNOWN = 0;
+
+/**
+ * @name vs.core.DeviceConfiguration.SCREEN_4_INCH 
+ * @const
+ */
+DeviceConfiguration.SS_4_INCH = 1;
+
+/**
+ * @name vs.core.DeviceConfiguration.SCREEN_7_INCH 
+ * @const
+ */
+DeviceConfiguration.SS_7_INCH = 2;
+
+/**
+ * @name vs.core.DeviceConfiguration.SCREEN_10_INCH 
+ * @const
+ */
+DeviceConfiguration.SS_10_INCH = 3;
+
 
 DeviceConfiguration.prototype = {
   
@@ -5054,6 +4872,13 @@ DeviceConfiguration.prototype = {
    */
   screenRatio : 0,
 
+  /** 
+   * Get the device's class type (4, 7, 10 inches)
+   * @name vs.core.DeviceConfiguration#screenSize 
+   * @type {number}
+   */
+  screenSize : DeviceConfiguration.SS_UNKNOWN,
+
   /**
    * @protected
    * @function
@@ -5082,6 +4907,58 @@ DeviceConfiguration.prototype = {
 
     this.os = searchString (DeviceConfiguration._data_OS) ||
       DeviceConfiguration.OS_UNKNOWN;
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  orientationDetect : function ()
+  {
+    if (window.orientation) this.orientation = window.orientation;
+    else if (window.outerWidth > window.outerHeight) this.orientation = 90;
+    else this.orientation = 0;
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  screenDetect : function ()
+  {
+    var pixelRation = window.devicePixelRatio, width, height;
+    if (!pixelRation) pixelRation = 1;
+    
+    if (this.os >= DeviceConfiguration.OS_IOS && 
+        this.os <= DeviceConfiguration.OS_MEEGO)
+    {
+      // MOBILE DEVICES
+      width = window.screen.width;
+      height = window.screen.height;
+    }
+    else
+    {
+      // DESKTOP
+      width = window.outerWidth;
+      height = window.outerHeight;
+    }
+    if (width > height)
+    {
+      var temp = width
+      width = height;
+      height = temp;
+    }
+    
+    this.screenResolution =
+        DeviceConfiguration._getScreenResolutionCode (width, height);
+
+    this.screenRatio = height / width;
+    
+    var size = Math.sqrt (width * width + height * height) / (160 * pixelRation);
+       
+    if (size < 6) this.screenSize = DeviceConfiguration.SS_4_INCH;
+    else if (size < 9) this.screenSize = DeviceConfiguration.SS_7_INCH;
+    else if (size < 11) this.screenSize = DeviceConfiguration.SS_10_INCH;
   },
   
   /**
@@ -5123,7 +5000,8 @@ DeviceConfiguration.prototype = {
     {
       this.os = DeviceConfiguration.OS_IOS;
       this.screenResolution = DeviceConfiguration.SR_HVGA;
-      this.screenRatio = 3/2;
+      if (did.indexOf ("_3_2") != -1) { this.screenRatio = 3/2; }
+      else if (did.indexOf ("_16_9") != -1) { this.screenRatio = 16/9; }
     }
     else if (did.indexOf ("ipad") != -1)
     {
@@ -5216,34 +5094,35 @@ DeviceConfiguration.prototype = {
             pid.indexOf ('_l') === -1)) continue;
   
       this.setActiveStyleSheet (pid);
-      
-      this.orientation = orientation;
-      
-      /**
-       * @private
-       */
-      var orientationDidChangeFct = function ()
-      {
-        var id, comp;
-        for (id in core.Object._obs)
-        {
-          comp = core.Object._obs [id];
-          if (!comp || !comp.orientationDidChange) { continue; }
-          
-          comp.orientationDidChange (orientation);
-        }
-      }
-      if (!force)
-      {
-        setTimeout (orientationDidChangeFct, 100);
-      }
-      else
-      {
-        orientationDidChangeFct.call (this);
-      }
-      
-      return pid;
+      break;
     }
+      
+    this.orientation = orientation;
+  
+    /**
+     * @private
+     */
+    var orientationDidChangeFct = function ()
+    {
+      var id, comp;
+      for (id in core.Object._obs)
+      {
+        comp = core.Object._obs [id];
+        if (!comp || !comp.orientationDidChange) { continue; }
+      
+        comp.orientationDidChange (orientation);
+      }
+    }
+    if (!force)
+    {
+      setTimeout (orientationDidChangeFct, 100);
+    }
+    else
+    {
+      orientationDidChangeFct.call (this);
+    }
+  
+    return pid;
   },
     
   /**
@@ -5278,10 +5157,15 @@ DeviceConfiguration._getScreenResolutionCode = function (width, height)
   if (width === 480 && height === 800) return DeviceConfiguration.SR_WVGA;
   if (width === 320 && height === 854) return DeviceConfiguration.SR_WFVGA;
   if (width === 600 && height === 800) return DeviceConfiguration.SR_SVGA;
+  if (width === 640 && height === 960) return DeviceConfiguration.SR_DVGA
+  if (width === 640 && height === 1136) return DeviceConfiguration.SR_WDVGA
   if (width === 768 && height === 1024) return DeviceConfiguration.SR_XGA;
   if (width === 360 && height === 640) return DeviceConfiguration.SR_N_HD;
   if (width === 540 && height === 960) return DeviceConfiguration.SR_Q_HD;
+  if (width === 720 && height === 1280) return DeviceConfiguration.SR_WXGA;
+  if (width === 768 && height === 1280) return DeviceConfiguration.SR_WXGA;
   if (width === 800 && height === 1280) return DeviceConfiguration.SR_WXGA;
+  if (width === 1536 && height === 2048) return DeviceConfiguration.SR_QXGA;
 }
 
 /**

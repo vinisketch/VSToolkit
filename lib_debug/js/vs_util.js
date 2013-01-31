@@ -1,25 +1,3 @@
-/** @license
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
-  contributors. All rights reserved
-  
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published
-  by the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU Lesser General Public License for more details.
-  
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-(function (window, undefined) {
-
-var document = window.document;
-
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
@@ -105,7 +83,11 @@ window.vs.ext.ui = {};
  */
 window.vs.ext.fx = {};
 
-window.vs.SUPPORT_3D_TRANSFORM = false
+window.vs.SUPPORT_3D_TRANSFORM = false;
+
+(function () {
+ if (typeof exports === 'undefined') { exports = this; }
+
 /**
  *  class FirminCSSMatrix
  *
@@ -137,12 +119,12 @@ window.vs.SUPPORT_3D_TRANSFORM = false
  **/
 FirminCSSMatrix = function(domstr) {
   this.m11 = this.m22 = this.m33 = this.m44 = 1;
-  
+
          this.m12 = this.m13 = this.m14 =
   this.m21 =        this.m23 = this.m24 =
   this.m31 = this.m32 =      this.m34 =
   this.m41 = this.m42 = this.m43        = 0;
-  
+
   if (typeof domstr == "string") {
     this.setMatrixValue(domstr);
   }
@@ -206,13 +188,13 @@ FirminCSSMatrix.determinant3x3 = function(a1, a2, a3, b1, b2, b3, c1, c2, c3) {
  **/
 FirminCSSMatrix.determinant4x4 = function(m) {
   var determinant3x3 = FirminCSSMatrix.determinant3x3,
-  
+
   // Assign to individual variable names to aid selecting correct elements
   a1 = m.m11, b1 = m.m21, c1 = m.m31, d1 = m.m41,
   a2 = m.m12, b2 = m.m22, c2 = m.m32, d2 = m.m42,
   a3 = m.m13, b3 = m.m23, c3 = m.m33, d3 = m.m43,
   a4 = m.m14, b4 = m.m24, c4 = m.m34, d4 = m.m44;
-  
+
   return a1 * determinant3x3(b2, b3, b4, c2, c3, c4, d2, d3, d4) -
        b1 * determinant3x3(a2, a3, a4, c2, c3, c4, d2, d3, d4) +
        c1 * determinant3x3(a2, a3, a4, b2, b3, b4, d2, d3, d4) -
@@ -336,12 +318,12 @@ FirminCSSMatrix.determinant4x4 = function(m) {
  ["m41", "e"],
  ["m42", "f"]].forEach(function(pair) {
   var key3d = pair[0], key2d = pair[1];
-  
+
   Object.defineProperty(FirminCSSMatrix.prototype, key2d, {
     set: function(val) {
       this[key3d] = val;
     },
-    
+  
     get: function() {
       return this[key3d];
     }
@@ -371,27 +353,27 @@ FirminCSSMatrix.prototype.multiply = function(otherMatrix) {
   var a = otherMatrix,
     b = this,
     c = new FirminCSSMatrix();
-  
+
   c.m11 = a.m11 * b.m11 + a.m12 * b.m21 + a.m13 * b.m31 + a.m14 * b.m41;
   c.m12 = a.m11 * b.m12 + a.m12 * b.m22 + a.m13 * b.m32 + a.m14 * b.m42;
   c.m13 = a.m11 * b.m13 + a.m12 * b.m23 + a.m13 * b.m33 + a.m14 * b.m43;
   c.m14 = a.m11 * b.m14 + a.m12 * b.m24 + a.m13 * b.m34 + a.m14 * b.m44;
-  
+
   c.m21 = a.m21 * b.m11 + a.m22 * b.m21 + a.m23 * b.m31 + a.m24 * b.m41;
   c.m22 = a.m21 * b.m12 + a.m22 * b.m22 + a.m23 * b.m32 + a.m24 * b.m42;
   c.m23 = a.m21 * b.m13 + a.m22 * b.m23 + a.m23 * b.m33 + a.m24 * b.m43;
   c.m24 = a.m21 * b.m14 + a.m22 * b.m24 + a.m23 * b.m34 + a.m24 * b.m44;
-  
+
   c.m31 = a.m31 * b.m11 + a.m32 * b.m21 + a.m33 * b.m31 + a.m34 * b.m41;
   c.m32 = a.m31 * b.m12 + a.m32 * b.m22 + a.m33 * b.m32 + a.m34 * b.m42;
   c.m33 = a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33 + a.m34 * b.m43;
   c.m34 = a.m31 * b.m14 + a.m32 * b.m24 + a.m33 * b.m34 + a.m34 * b.m44;
-  
+
   c.m41 = a.m41 * b.m11 + a.m42 * b.m21 + a.m43 * b.m31 + a.m44 * b.m41;
   c.m42 = a.m41 * b.m12 + a.m42 * b.m22 + a.m43 * b.m32 + a.m44 * b.m42;
   c.m43 = a.m41 * b.m13 + a.m42 * b.m23 + a.m43 * b.m33 + a.m44 * b.m43;
   c.m44 = a.m41 * b.m14 + a.m42 * b.m24 + a.m43 * b.m34 + a.m44 * b.m44;
-  
+
   return c;
 };
 
@@ -416,33 +398,33 @@ FirminCSSMatrix.prototype.isIdentityOrTranslation = function() {
 FirminCSSMatrix.prototype.adjoint = function() {
   var result = new FirminCSSMatrix(), t = this,
     determinant3x3 = FirminCSSMatrix.determinant3x3,
-    
+  
     a1 = t.m11, b1 = t.m12, c1 = t.m13, d1 = t.m14,
     a2 = t.m21, b2 = t.m22, c2 = t.m23, d2 = t.m24,
     a3 = t.m31, b3 = t.m32, c3 = t.m33, d3 = t.m34,
     a4 = t.m41, b4 = t.m42, c4 = t.m43, d4 = t.m44;
-  
+
   // Row column labeling reversed since we transpose rows & columns
   result.m11 =  determinant3x3(b2, b3, b4, c2, c3, c4, d2, d3, d4);
   result.m21 = -determinant3x3(a2, a3, a4, c2, c3, c4, d2, d3, d4);
   result.m31 =  determinant3x3(a2, a3, a4, b2, b3, b4, d2, d3, d4);
   result.m41 = -determinant3x3(a2, a3, a4, b2, b3, b4, c2, c3, c4);
-  
+
   result.m12 = -determinant3x3(b1, b3, b4, c1, c3, c4, d1, d3, d4);
   result.m22 =  determinant3x3(a1, a3, a4, c1, c3, c4, d1, d3, d4);
   result.m32 = -determinant3x3(a1, a3, a4, b1, b3, b4, d1, d3, d4);
   result.m42 =  determinant3x3(a1, a3, a4, b1, b3, b4, c1, c3, c4);
-  
+
   result.m13 =  determinant3x3(b1, b2, b4, c1, c2, c4, d1, d2, d4);
   result.m23 = -determinant3x3(a1, a2, a4, c1, c2, c4, d1, d2, d4);
   result.m33 =  determinant3x3(a1, a2, a4, b1, b2, b4, d1, d2, d4);
   result.m43 = -determinant3x3(a1, a2, a4, b1, b2, b4, c1, c2, c4);
-  
+
   result.m14 = -determinant3x3(b1, b2, b3, c1, c2, c3, d1, d2, d3);
   result.m24 =  determinant3x3(a1, a2, a3, c1, c2, c3, d1, d2, d3);
   result.m34 = -determinant3x3(a1, a2, a3, b1, b2, b3, d1, d2, d3);
   result.m44 =  determinant3x3(a1, a2, a3, b1, b2, b3, c1, c2, c3);
-  
+
   return result;
 };
 
@@ -453,35 +435,35 @@ FirminCSSMatrix.prototype.adjoint = function() {
  **/
 FirminCSSMatrix.prototype.inverse = function() {
   var inv, det, result, i, j;
-  
+
   if (this.isIdentityOrTranslation()) {
     inv = new FirminCSSMatrix();
-    
+  
     if (!(this.m41 === 0 && this.m42 === 0 && this.m43 === 0)) {
       inv.m41 = -this.m41;
       inv.m42 = -this.m42;
       inv.m43 = -this.m43;
     }
-    
+  
     return inv;
   }
-  
+
   // Calculate the adjoint matrix
   result = this.adjoint();
-  
+
   // Calculate the 4x4 determinant
   det = FirminCSSMatrix.determinant4x4(this);
-  
+
   // If the determinant is zero, then the inverse matrix is not unique
   if (Math.abs(det) < 1e-8) return null;
-  
+
   // Scale the adjoint matrix to get the inverse
   for (i = 1; i < 5; i++) {
     for (j = 1; j < 5; j++) {
       result[("m" + i) + j] /= det;
     }
   }
-  
+
   return result;
 };
 
@@ -500,56 +482,56 @@ FirminCSSMatrix.prototype.inverse = function() {
  **/
 FirminCSSMatrix.prototype.rotate = function(rx, ry, rz) {
   var degreesToRadians = FirminCSSMatrix.degreesToRadians;
-  
+
   if (typeof rx != "number" || isNaN(rx)) rx = 0;
-  
+
   if ((typeof ry != "number" || isNaN(ry)) &&
     (typeof rz != "number" || isNaN(rz))) {
     rz = rx;
     rx = 0;
     ry = 0;
   }
-  
+
   if (typeof ry != "number" || isNaN(ry)) ry = 0;
   if (typeof rz != "number" || isNaN(rz)) rz = 0;
-  
+
   rx = degreesToRadians(rx);
   ry = degreesToRadians(ry);
   rz = degreesToRadians(rz);
-  
+
   var tx = new FirminCSSMatrix(),
     ty = new FirminCSSMatrix(),
     tz = new FirminCSSMatrix(),
     sinA, cosA, sinA2;
-  
+
   rz /= 2;
   sinA = Math.sin(rz);
   cosA = Math.cos(rz);
   sinA2 = sinA * sinA;
-  
+
   // Matrices are identity outside the assigned values
   tz.m11 = tz.m22 = 1 - 2 * sinA2;
   tz.m12 = tz.m21 = 2 * sinA * cosA;
   tz.m21 *= -1;
-  
+
   ry /= 2;
   sinA  = Math.sin(ry);
   cosA  = Math.cos(ry);
   sinA2 = sinA * sinA;
-  
+
   ty.m11 = ty.m33 = 1 - 2 * sinA2;
   ty.m13 = ty.m31 = 2 * sinA * cosA;
   ty.m13 *= -1;
-  
+
   rx /= 2;
   sinA = Math.sin(rx);
   cosA = Math.cos(rx);
   sinA2 = sinA * sinA;
-  
+
   tx.m22 = tx.m33 = 1 - 2 * sinA2;
   tx.m23 = tx.m32 = 2 * sinA * cosA;
   tx.m32 *= -1;
-  
+
   return tz.multiply(ty).multiply(tx).multiply(this);
 };
 
@@ -574,16 +556,16 @@ FirminCSSMatrix.prototype.rotateAxisAngle = function(x, y, z, a) {
   if (typeof z != "number" || isNaN(z)) z = 0;
   if (typeof a != "number" || isNaN(a)) a = 0;
   if (x === 0 && y === 0 && z === 0) z = 1;
-  
+
   var t = new FirminCSSMatrix(),
     len = Math.sqrt(x * x + y * y + z * z),
     cosA, sinA, sinA2, csA, x2, y2, z2;
-  
+
   a   = (FirminCSSMatrix.degreesToRadians(a) || 0) / 2;
   cosA  = Math.cos(a);
   sinA  = Math.sin(a);
   sinA2 = sinA * sinA;
-  
+
   // Bad vector, use something sensible
   if (len === 0) {
     x = 0;
@@ -594,7 +576,7 @@ FirminCSSMatrix.prototype.rotateAxisAngle = function(x, y, z, a) {
     y /= len;
     z /= len;
   }
-  
+
   // Optimise cases where axis is along major axis
   if (x === 1 && y === 0 && z === 0) {
     t.m22 = t.m33 = 1 - 2 * sinA2;
@@ -613,7 +595,7 @@ FirminCSSMatrix.prototype.rotateAxisAngle = function(x, y, z, a) {
     x2  = x * x;
     y2  = y * y;
     z2  = z * z;
-    
+  
     t.m11 = 1 - 2 * (y2 + z2) * sinA2;
     t.m12 = 2 * (x * y * sinA2 + z * csA);
     t.m13 = 2 * (x * z * sinA2 - y * csA);
@@ -624,7 +606,7 @@ FirminCSSMatrix.prototype.rotateAxisAngle = function(x, y, z, a) {
     t.m32 = 2 * (z * y * sinA2 - x * csA);
     t.m33 = 1 - 2 * (x2 + y2) * sinA2;
   }
-  
+
   return this.multiply(t);
 };
 
@@ -640,15 +622,15 @@ FirminCSSMatrix.prototype.rotateAxisAngle = function(x, y, z, a) {
  **/
 FirminCSSMatrix.prototype.scale = function(scaleX, scaleY, scaleZ) {
   var transform = new FirminCSSMatrix();
-  
+
   if (typeof scaleX != "number" || isNaN(scaleX)) scaleX = 1;
   if (typeof scaleY != "number" || isNaN(scaleY)) scaleY = scaleX;
   if (typeof scaleZ != "number" || isNaN(scaleZ)) scaleZ = 1;
-  
+
   transform.m11 = scaleX;
   transform.m22 = scaleY;
   transform.m33 = scaleZ;
-  
+
   return this.multiply(transform);
 };
 
@@ -662,15 +644,15 @@ FirminCSSMatrix.prototype.scale = function(scaleX, scaleY, scaleZ) {
  **/
 FirminCSSMatrix.prototype.translate = function(x, y, z) {
   var t = new FirminCSSMatrix();
-  
+
   if (typeof x != "number" || isNaN(x)) x = 0;
   if (typeof y != "number" || isNaN(y)) y = 0;
   if (typeof z != "number" || isNaN(z)) z = 0;
-  
+
   t.m41 = x;
   t.m42 = y;
   t.m43 = z;
-  
+
   return this.multiply(t);
 };
 
@@ -687,23 +669,23 @@ FirminCSSMatrix.prototype.setMatrixValue = function(domstr) {
     domstr = domstr.trim();
   var mstr   = domstr.match(/^matrix(3d)?\(\s*(.+)\s*\)$/),
     is3d, chunks, len, points, i, chunk;
-  
+
   if (!mstr) return;
-  
+
   is3d   = !!mstr[1];
   chunks = mstr[2].split(/\s*,\s*/);
   len    = chunks.length;
   points = new Array(len);
-  
+
   if ((is3d && len !== 16) || !(is3d || len === 6)) return;
-  
+
   for (i = 0; i < len; i++) {
     chunk = chunks[i];
     if (chunk.match(/^-?\d+(\.\d+)?$/)) {
       points[i] = parseFloat(chunk);
     } else return;
   }
-  
+
   for (i = 0; i < len; i++) {
     point = is3d ?
       ("m" + (Math.floor(i / 4) + 1)) + (i % 4 + 1) :
@@ -719,7 +701,7 @@ FirminCSSMatrix.prototype.setMatrixValue = function(domstr) {
  **/
 FirminCSSMatrix.prototype.toString = function() {
   var self = this, points, prefix;
-  
+
   if (this.isAffine()) {
     prefix = "matrix(";
     points = ["a", "b", "c", "d", "e", "f"];
@@ -730,11 +712,107 @@ FirminCSSMatrix.prototype.toString = function() {
           "m31", "m32", "m33", "m34",
           "m41", "m42", "m43", "m44"];
   }
-  
+
   return prefix + points.map(function(p) {
     return self[p].toFixed(6);
   }).join(", ") + ")";
-};/**
+};
+exports.FirminCSSMatrix = FirminCSSMatrix;
+}).call(this);
+(function(){ 
+ if (typeof exports === 'undefined') { exports = this; }
+ var vs = exports.vs || {}; exports.vs = vs;
+
+var util = vs.util = {};
+
+/**
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ 
+ Use code from Canto.js Copyright 2010 Steven Levithan <stevenlevithan.com>
+*/
+  
+/**
+ *  @class
+ *  vs.Point is an (x, y) coordinate pair. 
+ *  When you use an vs.Point object in matrix operations, the object is 
+ *  treated as a vector of the following form <x, y, 1>
+ *
+ * @author David Thevenin
+ *
+ *  @constructor
+ *  Main constructor
+ *
+ * @name vs.Point
+ *
+ * @param {Number} the x-coordinate value.
+ * @param {Number} the y-coordinate value.
+*/
+function Point (x, y)
+{
+  if (util.isNumber (x))
+  this.x = x;
+  if (util.isNumber (y))
+  this.y = y;
+}
+
+Point.prototype = {
+
+  /*****************************************************************
+   *
+   ****************************************************************/
+ 
+   x: 0,
+   y: 0,
+
+  /*****************************************************************
+   *              
+   ****************************************************************/
+ 
+  /**
+   * Applies the given 2×3 matrix transformation on this Point object and 
+   * returns a new, transformed Point object.
+   *
+   * @name vs.Point#matrixTransform
+   * @function
+   * @public
+   * @param {vs.CSSMatrix} matrix he matrix
+   * @returns {vs.Point} the matrix
+   */
+  matrixTransform : function (matrix)
+  {
+    var matrix_tmp = new CSSMatrix ();
+
+    matrix_tmp = matrix_tmp.translate (this.x, this.y, this.z || 0);
+    matrix = matrix.multiply (matrix_tmp);
+
+    var result = new Point (matrix.m41, matrix.m42);
+
+    delete (matrix_tmp);
+    delete (matrix);
+
+    return result;
+  }
+};
+
+/********************************************************************
+                      Export
+*********************************************************************/
+vs.Point = Point;
+/**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
   
@@ -757,12 +835,6 @@ FirminCSSMatrix.prototype.toString = function() {
 *********************************************************************/
 
 var document = (typeof window != "undefined")?window.document:null;
-
-/**
- *  @private
- */
-var vs = window.vs,
-  util = vs.util;
 
 /**
  * Create our "vsTest" element and style that we do most feature tests on.
@@ -828,19 +900,24 @@ vs.CSSMatrix = ('WebKitCSSMatrix' in window)?window.WebKitCSSMatrix:
  * @param {Function} callback A parameter specifying a function to call
  *        when it's time to update your animation for the next repaint.
  */
-vs.requestAnimationFrame = window.requestAnimationFrame ||
+var requestAnimationFrame = 
+  window.requestAnimationFrame ||
   window.webkitRequestAnimationFrame ||
   window.mozRequestAnimationFrame ||
   window.oRequestAnimationFrame ||
   window.msRequestAnimationFrame ||
   function (callback) { window.setTimeout (callback, 1000 / 60); };
 
-vs.cancelRequestAnimationFrame = window.cancelRequestAnimationFrame ||
+vs.requestAnimationFrame = requestAnimationFrame.bind (window);
+
+var cancelRequestAnimationFrame = window.cancelRequestAnimationFrame ||
   window.webkitCancelAnimationFrame ||
   window.mozCancelAnimationFrame ||
   window.oCancelAnimationFrame ||
   window.msCancelAnimationFrame ||
   clearTimeout;
+
+vs.cancelRequestAnimationFrame = cancelRequestAnimationFrame.bind (window);
 
 /********************************************************************
 
@@ -1865,20 +1942,20 @@ function getElementOpacity (elem)
 
 /**
  * Compute the elements position in terms of the window viewport
- * Returns a key/value object {x, y}
+ * Returns a vs.Point {x, y}
  *
  *  @memberOf vs.util
  *
- * @return {Object} the x,y absolute position of a element
+ * @return {vs.Point} the x,y absolute position of a element
  **/
-function getElementAbsolutePosition (element)
+function getElementAbsolutePosition (element, force)
 {
   if (!element)
   { return null; }
-  if (element.getBoundingClientRect)
+  if (!force && element.getBoundingClientRect)
   {
     var rec = element.getBoundingClientRect ();
-    if (rec) { return { x:rec.left, y:rec.top }; } 
+    if (rec) { return new vs.Point (rec.left, rec.top); } 
   }
   var x = 0;
   var y = 0;
@@ -1903,7 +1980,7 @@ function getElementAbsolutePosition (element)
      y += parent.offsetTop - parent.scrollTop + borderYOffset;
      parent = parent.offsetParent;
   }
-  return { x:x, y:y };
+  return new vs.Point (x, y);
 }
 
 /**
@@ -2041,9 +2118,10 @@ function isElementVisible (elem)
  **/
 function removeAllElementChild (elem)
 {
-  if (!elem) { return; }
+  if (!elem || !elem.childElements) { return; }
   
-  while (elem.firstChild)
+  var l = elem.childElements ().length;
+  while (l--)
   {
     elem.removeChild (elem.firstChild);
   }
@@ -2670,5 +2748,1030 @@ util.extend (util, {
   _extend_api1:         _extend_api1, // export only for testing purpose
   _extend_api2:         _extend_api2 // export only for testing purpose
 });
+}).call(this);
+(function(){ 
+ if (typeof exports === 'undefined') { exports = this; }
+ var vs = exports.vs, util = vs.util;
 
-})(window);
+var
+  CSSMatrix = (vs && vs.CSSMatrix),
+  HTMLElement = (window && window.HTMLElement);
+
+/*****************************************************************
+ *                Transformation methods
+ ****************************************************************/
+ 
+/**
+ *  Move the view in x, y.
+ * 
+ * @param x {int} translation over the x axis
+ * @param y {int} translation over the y axis
+ */
+function translate (x, y)
+{
+  if (this._vs_node_tx === x && this._vs_node_ty === y) { return; }
+  
+  this._vs_node_tx = x;
+  this._vs_node_ty = y;
+  
+  applyTransformation (this);
+};
+
+/**
+ *  Rotate the view about the horizontal and vertical axes.
+ *  <p/>The angle units is radians.
+ * 
+ * @param r {float} rotion angle
+ */
+function rotate (r)
+{
+  if (this._vs_node_r === r) { return; }
+  
+  this._vs_node_r = r;
+  
+  applyTransformation (this);
+};
+
+/**
+ *  Scale the view
+ *  <p/>The scale is limited by a max and min scale value.
+ * 
+ * @param s {float} scale value
+ */
+function scale (s)
+{    
+  if (this._vs_node_s === s) { return; }
+
+  this._vs_node_s = s;
+  
+  applyTransformation (this);
+};
+
+/**
+ *  Define a new transformation matrix, using the transformation origin 
+ *  set as parameter.
+ *
+ * @param {vs.Point} origin is a object reference a x and y position
+ */
+function setNewTransformOrigin (origin)
+{
+  if (!origin) { return; }
+//    if (!util.isNumber (origin.x) || !util.isNumber (origin.y)) { return; }
+  if (!this._vs_node_origin) this._vs_node_origin = [0, 0];
+
+  // Save current transform into a matrix
+  var matrix = new CSSMatrix ();
+  matrix = matrix.translate
+    (this._vs_node_origin [0], this._vs_node_origin [1], 0);
+  matrix = matrix.translate (this._vs_node_tx, this._vs_node_ty, 0);
+  matrix = matrix.rotate (0, 0, this._vs_node_r);
+  matrix = matrix.scale (this._vs_node_s, this._vs_node_s, 1);
+  matrix = matrix.translate
+    (-this._vs_node_origin [0], -this._vs_node_origin [1], 0);
+
+  if (!this._vs_transform) this._vs_transform = matrix;
+  {
+    this._vs_transform = matrix.multiply (this._vs_transform);
+    delete (matrix);
+  }
+  
+  // Init a new transform space
+  this._vs_node_tx = 0;
+  this._vs_node_ty = 0;
+  this._vs_node_s = 1;
+  this._vs_node_r = 0;
+  
+  this._vs_node_origin = [origin.x, origin.y];
+};
+
+
+/**
+ *  Remove all previous transformations set for this view
+ */
+function clearTransformStack ()
+{
+  if (this._vs_transform) delete (this._vs_transform);
+  this._vs_transform = undefined;
+};
+
+/**
+ *  Return the current transform matrix apply to this graphic Object.
+ *
+ * @return {CSSMatrix} the current transform matrix
+ */
+function getCTM ()
+{
+  var matrix = new CSSMatrix (), transform, matrix_tmp;
+  if (!this._vs_node_origin) this._vs_node_origin = [0, 0];
+  
+  // apply current transformation
+  matrix = matrix.translate (this._vs_node_origin [0], this._vs_node_origin [1], 0);
+  matrix = matrix.translate (this._vs_node_tx, this._vs_node_ty, 0);
+  matrix = matrix.rotate (0, 0, this._vs_node_r);
+  matrix = matrix.scale (this._vs_node_s, this._vs_node_s, 1);
+  matrix = matrix.translate (-this._vs_node_origin [0], -this._vs_node_origin [1], 0);    
+
+  
+  // apply previous transformations and return the matrix
+  if (this._vs_transform) return matrix.multiply (this._vs_transform);
+  else return matrix;
+};
+
+/**
+ *  Returns the current transform combination matrix generate by the
+ *  hierarchical parents of this graphic Object.
+ *  Its returns the multiplication of the parent's CTM and parent of parent's
+ *  CTM etc.
+ *  If the component has no parent it returns the identity matrix.
+ * 
+ * @return {CSSMatrix} the current transform matrix
+ */
+function getParentCTM ()
+{
+  
+  function multiplyParentTCM (parent)
+  {
+    // no parent return identity matrix
+    if (!parent) return new CSSMatrix ();
+    // apply parent transformation matrix recurcively 
+    return multiplyParentTCM (parent.parentNode).multiply (parent.vsGetCTM ());
+  }
+  
+  return multiplyParentTCM (this.parentNode);
+};
+
+/**
+ */
+function applyTransformation (node)
+{
+  var matrix = node.vsGetCTM ();
+  
+  util.setElementTransform (node, matrix.toString ());
+  delete (matrix);
+};
+
+util.extend (HTMLElement.prototype, {
+  _vs_node_tx:                  0,
+  _vs_node_ty:                  0,
+  _vs_node_s:              1,
+  _vs_node_r:             0,
+  vsTranslate:                   translate,
+  vsRotate:                      rotate,
+  vsScale:                       scale,
+  vsSetNewTransformOrigin:       setNewTransformOrigin,
+  vsClearTransformStack:         clearTransformStack,
+  vsGetCTM:                      getCTM,
+  vsGetParentCTM:                getParentCTM
+});
+}).call(this);
+(function(){ 
+ if (typeof exports === 'undefined') { exports = this; }
+ var vs = exports.vs, util = vs.util;
+
+/**
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/* touch event messages */
+/**
+ * @name vs.core.EVENT_SUPPORT_TOUCH
+ */
+var EVENT_SUPPORT_TOUCH = false;
+var EVENT_SUPPORT_GESTURE = false;
+var hasMSPointer = window.navigator.msPointerEnabled;
+
+if (typeof document != "undefined" && 'createTouch' in document)
+  EVENT_SUPPORT_TOUCH = true;
+
+else if (hasMSPointer) { EVENT_SUPPORT_TOUCH = true; }
+
+else if (typeof document != "undefined" &&
+    window.navigator && window.navigator.userAgent)
+{
+  if (window.navigator.userAgent.indexOf ('Android') !== -1 ||
+      window.navigator.userAgent.indexOf ('BlackBerry') !== -1)
+  { EVENT_SUPPORT_TOUCH = true; }
+}
+
+
+var POINTER_START, POINTER_MOVE, POINTER_END, POINTER_CANCEL;
+
+if (EVENT_SUPPORT_TOUCH)
+{
+  POINTER_START = hasMSPointer ? 'MSPointerDown' : 'touchstart';
+  POINTER_MOVE = hasMSPointer ? 'MSPointerMove' : 'touchmove';
+  POINTER_END = hasMSPointer ? 'MSPointerUp' : 'touchend';
+  POINTER_CANCEL = hasMSPointer ? 'MSPointerCancel' : 'touchcancel';
+}
+else
+{
+  POINTER_START = 'mousedown';
+  POINTER_MOVE = 'mousemove';
+  POINTER_END = 'mouseup';
+  POINTER_CANCEL = 'mouseup';
+}
+
+// TODO(smus): Come up with a better solution for this. This is bad because
+// it might conflict with a touch ID. However, giving negative IDs is also
+// bad because of code that makes assumptions about touch identifiers being
+// positive integers.
+var MOUSE_ID = 31337;
+
+function Pointer (event, type, identifier)
+{
+  this.configureWithEvent (event)
+  this.type = type;
+  this.identifier = identifier;
+}
+
+Pointer.prototype.configureWithEvent = function (evt)
+{
+  this.pageX = evt.pageX;
+  this.pageY = evt.pageY;
+  this.clientX = evt.clientX;
+  this.clientY = evt.clientY;
+  this.target = evt.target;
+  this.currentTarget = evt.currentTarget;
+}
+
+var PointerTypes = {
+  TOUCH: 2,
+  PEN: 3,
+  MOUSE: 4
+};
+
+/**
+ * Returns an array of all pointers currently on the screen.
+ */
+
+var pointerEvents = [];
+
+function buildTouchList (evt, target_id)
+{
+  var pointers = [];
+  evt.nbPointers = evt.touches.length;
+  for (var i = 0; i < evt.nbPointers; i++)
+  {
+    var touch = evt.touches[i];
+    var pointer = new Pointer (touch, PointerTypes.TOUCH, touch.identifier);
+    pointers.push (pointer);
+  }
+  evt.pointerList = pointers;
+  pointers = [];
+  for (var i = 0; i < evt.targetTouches.length; i++)
+  {
+    var touch = evt.targetTouches[i];
+    if (target_id && pointerEvents [touch.identifier] != target_id) continue;
+    var pointer = new Pointer (touch, PointerTypes.TOUCH, touch.identifier);
+    pointers.push (pointer);
+  }
+  evt.targetPointerList = pointers;
+  pointers = [];
+  for (var i = 0; i < evt.changedTouches.length; i++)
+  {
+    var touch = evt.changedTouches[i];
+    var pointer = new Pointer (touch, PointerTypes.TOUCH, touch.identifier);
+    pointers.push (pointer);
+  }
+  evt.changedPointerList = pointers;
+}
+
+function buildMouseList (evt, remove)
+{
+  var pointers = [];
+  pointers.push (new Pointer (evt, PointerTypes.MOUSE, MOUSE_ID));
+  if (!remove)
+  {
+    evt.nbPointers = 1;
+    evt.pointerList = pointers;
+    evt.targetPointerList = pointers;
+    evt.changedPointerList = [];
+  }
+  else
+  {
+    evt.nbPointers = 0;
+    evt.pointerList = [];
+    evt.targetPointerList = pointers;
+    evt.changedPointerList = pointers;
+  }
+}
+
+var all_pointers = {};
+var removed_pointers = {};
+
+function buildMSPointerList (evt, remove, target_id)
+{
+  // Note: "this" is the element.
+  var pointers = [];
+  var removePointers = [];
+  var id = evt.pointerId, pointer = all_pointers [id];
+
+  if (remove)
+  {
+    if (pointer)
+    {
+      removed_pointers [id] = pointer;
+      delete (all_pointers [id]);
+    }
+    else
+    {
+      pointer = removed_pointers [id];
+      if (!pointer)
+      {
+        pointer = new Pointer (evt, evt.pointerType, id);
+        removed_pointers [id] = pointer;
+      }
+    }
+    for (id in removed_pointers) { removePointers.push (removed_pointers [id]); }
+    removed_pointers = {};
+  }
+  else
+  {
+    if (pointer) {
+      pointer.configureWithEvent (evt);
+    }
+    else
+    {
+      pointer = new Pointer (evt, evt.pointerType, id);
+      all_pointers [id] = pointer;
+    }
+  }
+  for (id in all_pointers) { pointers.push (all_pointers [id]); }
+  evt.nbPointers = pointers.length;
+  evt.pointerList = pointers;
+  pointers = [];
+  for (id in all_pointers)
+  {
+    var pointer = all_pointers [id];
+//    if (target_id && pointerEvents [pointer.identifier] != target_id) continue;
+    pointers.push (pointer);
+  }
+  evt.targetPointerList = pointers;
+  evt.changedPointerList = removePointers;
+}
+
+/*************** Mouse event handlers *****************/
+
+function mouseDownHandler (event, listener)
+{
+  buildMouseList (event);
+  listener (event);
+}
+
+function mouseMoveHandler(event, listener)
+{
+  buildMouseList (event);
+  listener (event);
+}
+
+function mouseUpHandler (event, listener)
+{
+  buildMouseList (event, true);
+  listener (event);
+}
+
+/*************** Touch event handlers *****************/
+
+function touchStartHandler (event, listener, target_id)
+{
+  var pointer, l = event.targetTouches.length;
+  for (var i = 0; i < l; i++)
+  {
+    pointer = event.targetTouches [i];
+    pointerEvents [pointer.identifier] = target_id;
+  }
+  buildTouchList (event);
+  listener (event);
+}
+
+function touchMoveHandler (event, listener, target_id)
+{
+  buildTouchList (event, target_id);
+  listener (event);
+}
+
+function touchEndHandler (event, listener)
+{
+  var pointer, l = event.targetTouches.length;
+  for (var i = 0; i < l; i++)
+  {
+    pointer = event.changedTouches [i];
+    pointerEvents [pointer.identifier] = undefined;
+  }
+  buildTouchList (event);
+  listener (event);
+}
+
+function touchCancelHandler (event, listener)
+{
+  buildTouchList (event);
+  listener (event, listener);
+}
+
+/*************** MSIE Pointer event handlers *****************/
+
+// remove the pointer from the list of availables pointer
+var nbPointerListener = 0;
+var msRemovePointer = function (evt) {
+  var id = evt.pointerId, pointer = all_pointers [id];
+
+  if (pointer)
+  {
+    removed_pointers [pointer.identifier] = pointer;
+    delete (all_pointers [pointer.identifier]);
+  }
+  nbPointerListener --;
+
+  if (nbPointerListener === 0)
+  {
+    document.removeEventListener ('MSPointerUp', msRemovePointer);
+    document.removeEventListener ('MSPointerCancel', msRemovePointer);
+  }
+}
+
+function msPointerDownHandler (event, listener, target_id)
+{
+  pointerEvents [event.pointerId] = target_id;
+  buildMSPointerList (event, false, target_id);
+  listener (event);
+
+  if (nbPointerListener === 0)
+  {
+    document.addEventListener ('MSPointerUp', msRemovePointer);
+    document.addEventListener ('MSPointerCancel', msRemovePointer);
+  }
+  nbPointerListener ++;
+}
+
+function msPointerMoveHandler (event, listener, target_id)
+{
+  buildMSPointerList (event, false, target_id);
+  listener (event);
+}
+
+function msPointerUpHandler (event, listener)
+{
+  buildMSPointerList (event, true);
+  listener (event);
+}
+
+function msPointerCancelHandler (event, listener)
+{
+  buildMSPointerList (event, true);
+  listener (event);
+}
+
+/*************************************************************/
+
+var pointerStartHandler, pointerMoveHandler, pointerEndHandle, pointerCancelHandler;
+
+if (EVENT_SUPPORT_TOUCH)
+{
+  if (hasMSPointer)
+  {
+    pointerStartHandler = msPointerDownHandler;
+    pointerMoveHandler = msPointerMoveHandler;
+    pointerEndHandler = msPointerUpHandler;
+    pointerCancelHandler = msPointerCancelHandler;
+  }
+  else
+  {
+    pointerStartHandler = touchStartHandler;
+    pointerMoveHandler = touchMoveHandler;
+    pointerEndHandler = touchEndHandler;
+    pointerCancelHandler = touchCancelHandler;
+  }
+}
+else
+{
+  pointerStartHandler = mouseDownHandler;
+  pointerMoveHandler = mouseMoveHandler;
+  pointerEndHandler = mouseUpHandler;
+  pointerCancelHandler = mouseUpHandler;
+}
+
+function getBindingIndex (target, type, listener)
+{
+  if (!type || !listener || !listener.__event_listeners) return -1;
+  for (var i = 0; i < listener.__event_listeners.length; i++)
+  {
+    var binding = listener.__event_listeners [i];
+    if (binding.target === target && binding.type === type && binding.listener === listener)
+      return i;
+  }
+  return -1;
+}
+
+function managePointerListenerAdd (node, type, func, binding)
+{
+  var target_id = (binding.listener)?binding.listener.id:undefined;
+  switch (type)
+  {
+    case POINTER_START:
+      binding.handler = function (e) {pointerStartHandler (e, func, target_id);};
+      return true;
+    break;
+
+    case POINTER_MOVE:
+    
+      binding.handler = function (e) {pointerMoveHandler (e, func, target_id);};
+      return true;
+    break;
+
+    case POINTER_END:
+      binding.handler = function (e) {pointerEndHandler (e, func);};
+      return true;
+    break;
+
+    case POINTER_CANCEL:
+      binding.handler = function (e) {pointerCancelHandler (e, func);};
+      return true;
+    break;
+  }
+  return false;
+}
+
+function managePointerListenerRemove (node, type, binding)
+{
+  switch (type)
+  {
+    case POINTER_START:
+    case POINTER_MOVE:
+    case POINTER_END:
+    case POINTER_CANCEL:
+      return true;
+    break;
+  }
+  return false;
+}
+
+/**
+ * Option 2: Replace addEventListener with a custom version.
+ */
+function addPointerListener (node, type, listener, useCapture)
+{
+  if (!listener) {
+    console.error ("addPointerListener no listener");
+    return;
+  }
+  var func = listener;
+  if (!util.isFunction (listener))
+  {
+    func = listener.handleEvent;
+    if (util.isFunction (func)) func = func.bind (listener);
+  }
+
+  if (getBindingIndex (node, type, listener) !== -1)
+  {
+    console.error ("addPointerListener binding already existing");
+    return;
+  }
+
+  if (!listener.__event_listeners) listener.__event_listeners = [];
+
+  var binding = {
+    target: node,
+    type: type,
+    listener: listener
+  };
+  listener.__event_listeners.push (binding);
+
+  if (!managePointerListenerAdd (node, type, func, binding))
+  {
+    if (!manageGestureListenerAdd (node, type, func, binding))
+    {
+      binding.handler = func;
+    }
+  }
+
+  node.addEventListener (type, binding.handler, useCapture);
+}
+
+function removePointerListener (node, type, listener, useCapture)
+{
+  if (!listener) {
+    console.error ("removePointerListener no listener");
+    return;
+  }
+
+  var index = getBindingIndex (node, type, listener);
+  if (index === -1)
+  {
+    console.error ("removePointerListener no binding");
+    return;
+  }
+  var binding = listener.__event_listeners [index];
+  listener.__event_listeners.remove (index);
+
+  if (!managePointerListenerRemove (node, type, binding))
+  {
+    if (!manageGestureListenerRemove (node, type, binding))
+    {}
+  }
+
+  node.removeEventListener (type, binding.handler, useCapture);
+  delete (binding);
+}
+
+function createCustomEvent (eventName, target, payload)
+{
+  var event = document.createEvent ('Event');
+  event.initEvent (eventName, true, true);
+  for (var k in payload) {
+    event[k] = payload[k];
+  }
+  target.dispatchEvent (event);
+};
+
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+vs.createCustomEvent = createCustomEvent;
+vs.removePointerListener = removePointerListener;
+vs.addPointerListener = addPointerListener;
+vs.PointerTypes = PointerTypes;
+
+/** 
+ * Start pointer event (mousedown, touchstart, )
+ * @name vs.POINTER_START
+ * @type {String}
+ * @const
+ */ 
+vs.POINTER_START = POINTER_START;
+
+/** 
+ * Move pointer event (mousemove, touchmove, )
+ * @name vs.POINTER_MOVE 
+ * @type {String}
+ * @const
+ */ 
+vs.POINTER_MOVE = POINTER_MOVE;
+
+/** 
+ * End pointer event (mouseup, touchend, )
+ * @name vs.POINTER_END 
+ * @type {String}
+ * @const
+ */ 
+vs.POINTER_END = POINTER_END;
+
+/** 
+ * Cancel pointer event (mouseup, touchcancel, )
+ * @name vs.POINTER_CANCEL 
+ * @type {String}
+ * @const
+ */ 
+vs.POINTER_CANCEL = POINTER_CANCEL;
+/**
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+var GESTURE_START, GESTURE_CHANGE, GESTURE_END;
+
+var support = {};
+
+var events = [
+  'gesturestart',
+  'gesturechange',
+  'gestureend'
+];
+
+var el = document.createElement ('div');
+
+for (var i = 0; i < events.length; i++)
+{
+  var eventName = events[i];
+  eventName = 'on' + eventName;
+  var isSupported = (eventName in util.vsTestElem);
+  if (!isSupported)
+  {
+    util.vsTestElem.setAttribute(eventName, 'return;');
+    isSupported = typeof util.vsTestElem[eventName] == 'function';
+  }
+  support [events[i]] = isSupported;
+}
+
+support.gestures =
+  support.gesturestart && 
+  support.gesturechange && 
+  support.gestureend;
+
+if ('MSGestureEvent' in window) support.msGestures = true;
+
+// for now force non gesture native events
+support.gestures = false;
+support.msGestures = false;
+
+/*************************************************************/
+
+/**
+ * calculate the distance between two Pointers
+ * @param   Pointer  pos1 { x: int, y: int }
+ * @param   Pointer  pos2 { x: int, y: int }
+ */
+function getDistance (pointer1, pointer2)
+{
+  var x = pointer2.pageX - pointer1.pageX, y = pointer2.pageY - pointer1.pageY;
+  return Math.sqrt ((x * x) + (y * y));
+};
+
+/**
+ * calculate the angle between two points
+ * @param   Pointer  pointer1 { x: int, y: int }
+ * @param   Pointer  pointer2 { x: int, y: int }
+ */
+function getAngle (pointer1, pointer2 )
+{
+  return Math.atan2 (pointer2.pageY - pointer1.pageY, pointer2.pageX - pointer1.pageX) * 180 / Math.PI;
+};
+
+var __init_distance = 0, __init_angle = 0, __init_centroid, __init_pos;
+
+function getCentroid (pointers)
+{
+  var nb_pointer = pointers.length, index = 0, x = 0, y = 0;
+  if (nb_pointer === 0) return {X: 0, y: 0};
+ 
+  for (;index < nb_pointer; index++)
+  {
+    var pointer = pointers [index];
+    
+    x += pointer.pageX;
+    y += pointer.pageY;
+  }
+  
+  return {x: x / nb_pointer - __init_pos.x, y: y / nb_pointer - __init_pos.y};
+};
+
+function getTranslate (pos1, pos2)
+{
+  return [pos1.x - pos2.x, pos1.y - pos2.y];
+}
+
+var buildPaylaod = function (event, end)
+{
+  var centroid = (end)?undefined:getCentroid (event.targetPointerList);
+
+  return {
+    scale: (end)?undefined:
+      getDistance (event.targetPointerList [0], event.targetPointerList [1]) /
+        __init_distance,
+    rotation: (end)?undefined:
+      getAngle (event.targetPointerList [0], event.targetPointerList [1]) - 
+        __init_angle,
+    translation: (end)?undefined: getTranslate (centroid, __init_centroid),
+    nbPointers : event.nbPointers,
+    pointerList : event.pointerList,
+    targetPointerList: event.targetPointerList,
+    centroid : centroid,
+    changedPointerList: event.changedPointerList
+  };
+};
+
+var _gesture_follow = false;
+var gestureStartListener = function (event, listener)
+{
+  if (event.targetPointerList.length < 2) return;
+  if (!_gesture_follow)
+  {
+    __init_distance =
+      getDistance (event.targetPointerList [0], event.targetPointerList [1]);
+    __init_angle =
+      getAngle (event.targetPointerList [0], event.targetPointerList [1]);
+    
+    var comp = event.targetPointerList[0].target._comp_;
+    __init_pos = util.getElementAbsolutePosition (event.targetPointerList[0].target, true);
+//    init_pos = init_pos.matrixTransform (comp.getParentCTM ());
+    
+     __init_centroid = getCentroid (event.targetPointerList);
+       
+    document.addEventListener (vs.POINTER_MOVE, gestureChangeListener);
+    document.addEventListener (vs.POINTER_END, gestureEndListener);
+    document.addEventListener (vs.POINTER_CANCEL, gestureEndListener);
+    createCustomEvent (GESTURE_START, event.target, buildPaylaod (event));
+    _gesture_follow = true;
+  }
+  else
+  {
+    createCustomEvent (GESTURE_CHANGE, event.target, buildPaylaod (event));
+  }
+};
+
+var gestureChangeListener = function (event)
+{
+  pointerMoveHandler (event, function (event)
+  {
+    createCustomEvent (GESTURE_CHANGE, event.target, buildPaylaod (event));
+  });
+};
+
+var gestureEndListener = function (event)
+{
+  pointerEndHandler (event, function (event)
+  {
+    if (event.targetPointerList.length < 2)
+    {
+      document.removeEventListener (vs.POINTER_MOVE, gestureChangeListener);
+      document.removeEventListener (vs.POINTER_END, gestureEndListener);
+      document.removeEventListener (vs.POINTER_CANCEL, gestureEndListener);
+      _gesture_follow = false;
+      createCustomEvent (GESTURE_END, event.target, buildPaylaod (event, true));
+    }
+    else
+    {
+      createCustomEvent (GESTURE_CHANGE, event.target, buildPaylaod (event));
+    }
+  });
+};
+
+function buildGestureList (evt)
+{
+  evt.centroid = {x: evt.pageX, y: evt.pageY};
+  evt.translation = getTranslate (evt.centroid, __init_centroid);
+  evt.pointerList = [
+    new Pointer (evt, PointerTypes.TOUCH, MOUSE_ID)
+  ];
+  evt.targetPointerList = evt.pointerList;
+  evt.nbPointers = 1;
+}
+
+var gestureIOSStartListener = function (event, listener)
+{
+  __init_centroid = {x: event.pageX, y: event.pageY};
+  buildGestureList (event);
+  listener (event);
+};
+
+var gestureIOSChangeListener = function (event, listener)
+{
+  buildGestureList (event);
+  listener (event);
+};
+
+var gestureIOSEndListener = function (event, listener)
+{
+  buildGestureList (event);
+  listener (event);
+};
+
+if (support.msGestures)
+{
+  GESTURE_START = 'MSGestureStart';
+  GESTURE_CHANGE = 'MSGestureChange';
+  GESTURE_END = 'MSGestureEnd';
+}
+else if (support.gestures)
+{
+  GESTURE_START = 'gesturestart';
+  GESTURE_CHANGE = 'gesturechange';
+  GESTURE_END = 'gestureend';
+}
+else
+{
+  GESTURE_START = '_gesture_start';
+  GESTURE_CHANGE = '_gesture_change';
+  GESTURE_END = '_gesture_end';
+}
+
+function touchToGestureListenerAdd (node, type, func, binding)
+{
+  var target_id = (binding.listener)?binding.listener.id:undefined;
+  switch (type)
+  {
+    case GESTURE_START:
+      binding.gesture_handler =
+        function (e) {pointerStartHandler (e, gestureStartListener, target_id)};
+      node.addEventListener (vs.POINTER_START, binding.gesture_handler);
+      binding.handler = func;
+
+      return true;
+    break;
+
+    case GESTURE_CHANGE:
+    case GESTURE_END:
+      binding.handler = func;
+      return true;
+    break;
+  }
+
+  return false;
+}
+
+function gestureEventListenerAdd (node, type, func, binding)
+{
+  var target_id = (binding.listener)?binding.listener.id:undefined;
+  switch (type)
+  {
+    case GESTURE_START:
+      binding.handler = function (e) {gestureIOSStartListener (e, func, target_id);};
+      return true;
+    break;
+
+    case GESTURE_CHANGE:
+      binding.handler = function (e) {gestureIOSChangeListener (e, func, target_id);};
+      return true;
+    break;
+
+    case GESTURE_END:
+      binding.handler = function (e) {gestureIOSEndListener (e, func, target_id);};
+      return true;
+    break;
+  }
+
+  return false;
+}
+
+var manageGestureListenerAdd =
+  (support.gestures || support.msGestures)?gestureEventListenerAdd:touchToGestureListenerAdd;
+
+function touchToGestureListenerRemove (node, type, binding)
+{
+  var target_id = (binding.listener)?binding.listener.id:undefined;
+  switch (type)
+  {
+    case GESTURE_START:
+      node.removeEventListener (vs.POINTER_START, binding.gesture_handler, target_id);
+
+      return true;
+    break;
+
+    case GESTURE_CHANGE:
+    case GESTURE_END:
+      return true;
+    break;
+  }
+
+  return false;
+}
+
+function gestureListenerRemove (node, type, binding)
+{
+  switch (type)
+  {
+    case GESTURE_START:
+    case GESTURE_CHANGE:
+    case GESTURE_END:
+      return true;
+    break;
+  }
+
+  return false;
+}
+
+var manageGestureListenerRemove =
+  (support.gestures || support.msGestures)?gestureListenerRemove:touchToGestureListenerRemove;
+  
+/** 
+ * Start gesture event
+ * @name vs.GESTURE_START
+ * @type {String}
+ * @const
+ */ 
+vs.GESTURE_START = GESTURE_START;
+
+/** 
+ * Move gesture event
+ * @name vs.GESTURE_CHANGE 
+ * @type {String}
+ * @const
+ */ 
+vs.GESTURE_CHANGE = GESTURE_CHANGE;
+
+/** 
+ * End gesture event
+ * @name vs.GESTURE_END 
+ * @type {String}
+ * @const
+ */ 
+vs.GESTURE_END = GESTURE_END;
+
+}).call(this);

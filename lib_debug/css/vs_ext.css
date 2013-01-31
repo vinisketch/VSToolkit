@@ -17,6 +17,7 @@
 
 .vs_ext_ui_gmap input[type="checkbox"]:after
 {
+  -webkit-box-sizing: border-box;
   top: -4px;
   right: 0px;
 }
@@ -27,6 +28,7 @@
 }
 
 .vs_ext_ui_gmap_info::before {
+  -webkit-box-sizing: border-box;
   display: block;
   width: 0px;
   height: 0px;

@@ -1,39 +1,3 @@
-* {
-  /* prevent callout to copy image, etc when tap to hold */
-
-  -webkit-touch-callout: none;
-  -moz-touch-callout: none;
-  touch-callout: none;
-  /* prevent webkit from resizing text to fit */
-
-  -moz-text-size-adjust: none;
-  text-size-adjust: none;
-  /* make transparent link selection, adjust last value opacity 0 to 1.0 */
-
-  -webkit-text-size-adjust: none;
-  -mozt-text-size-adjust: none;
-  tap-highlight-color: rgba(0, 0, 0, 0);
-  /* prevent copy paste, to allow, change 'none' to 'text' */
-
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
-::selection {
-  background: transparent;
-}
-*:after,
-*:before {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-}
 /********************************************************************
                     Vertical Layout
 *********************************************************************/
@@ -136,14 +100,9 @@
   box-flex: 1;
 }
 @font-face {
-  font-family: 'nokiapuretext';
-  src: local('NokiaPureText'), url('NokiaPureText.ttf') format('truetype');
-  font-weight: normal;
-  font-style: normal;
-}
-@font-face {
   font-family: 'FontAwesome';
-  src: url('fontawesome-webfont.ttf') format('truetype');
+  src: url('fontawesome-webfont.eot');
+  src: url('fontawesome-webfont.eot?#iefix') format('embedded-opentype'), url('fontawesome-webfont.ttf') format('truetype');
   font-weight: normal;
   font-style: normal;
 }
@@ -424,6 +383,12 @@ body.dark {
   color: #fff;
 }
 .vs_ui_button.nav_back:before {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   font-family: 'FontAwesome';
   content: "";
   margin-top: -9px;
@@ -433,6 +398,12 @@ body.dark {
   top: 50%;
 }
 .vs_ui_button.nav_forward:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   font-family: 'FontAwesome';
   content: '';
   margin-top: -9px;
@@ -515,6 +486,12 @@ li.pressed {
   text-shadow: black 0 1px 0 !important;
 }
 .vs_ui_list.arrow ul li:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   font-family: 'FontAwesome';
   content: '';
   top: 50%;
@@ -1249,8 +1226,12 @@ ul > li:first-child {
 }
 input[type="radio"] {
   position: relative;
+  background: transparent;
   color: inherit;
   height: 40px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 input[type="radio"].pressed + label,
 .vs_ui_radiobutton label.pressed {
@@ -1263,6 +1244,12 @@ input[type="radio"].pressed + label,
   text-shadow: black 0 1px 0 !important;
 }
 input[type="radio"]:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   color: white;
   display: block;
   width: 25px;
@@ -1291,8 +1278,8 @@ input[type="radio"]:after {
 }
 input[type="radio"]:checked:after {
   content: "•";
-  font: 35px/25px nokiapuretext;
-  padding-left: 4px;
+  font: 42px/25px nokiapuretext;
+  padding-left: 5px;
 }
 input[type="radio"].pressed:after {
   color: #CCC;
@@ -1341,8 +1328,12 @@ input[type="radio"].pressed:after {
 }
 input[type="checkbox"] {
   position: relative;
+  background: transparent;
   color: inherit;
   height: 40px;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 }
 input[type="checkbox"].pressed + label,
 .vs_ui_checkbox label.pressed {
@@ -1355,6 +1346,12 @@ input[type="checkbox"].pressed + label,
   text-shadow: black 0 1px 0 !important;
 }
 input[type="checkbox"]:after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   color: white;
   display: block;
   width: 25px;
@@ -1383,8 +1380,8 @@ input[type="checkbox"]:after {
 }
 input[type="checkbox"]:checked:after {
   content: "•";
-  font: 35px/25px nokiapuretext;
-  padding-left: 4px;
+  font: 42px/25px nokiapuretext;
+  padding-left: 5px;
 }
 input[type="checkbox"].pressed:after {
   color: #CCC;
@@ -1523,6 +1520,12 @@ input[type="checkbox"].pressed:after {
   outline: none;
 }
 .vs_ui_combobox::after {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
   background: transparent;
   font-family: FontAwesome;
   font-weight: normal;
