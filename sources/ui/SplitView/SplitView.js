@@ -462,13 +462,21 @@ var SplitView = vs.core.createClass ({
   /**
    * @function
    */
-  showMainView : function ()
+  showMainView : function (instant)
   {
+    var self = this;
     if (this._mode !== SplitView.MOBILE_MODE) return;
 
     if (this._hide_main_panel_button) this._hide_main_panel_button.show ();
     
-    this.addClassName ('main_view_visible');
+    if (instant) {
+      self.addClassName ('main_view_visible');
+      return;
+    }
+    setTimeout (
+      function () { self.addClassName ('main_view_visible'); },
+      View.UNSELECT_DELAY
+    );
   },
   
   /**
