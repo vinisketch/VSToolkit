@@ -259,7 +259,7 @@ InputField.prototype = {
   _didEnable : function ()
   {
     if (this._enable) this._text_field.removeAttribute ('disabled');
-    else this._text_field.setAttribute ('disabled');
+    else this._text_field.setAttribute ('disabled', true);
   },
   
   /**
