@@ -75,7 +75,7 @@
   -ms-transform: translate(-100%, 0px);
   transform: translate(-100%, 0px);
 }
-.vs_ui_splitview {
+.vs_ui_splitview.tablet {
   -webkit-box-orient: horizontal;
   -moz-box-orient: horizontal;
   box-orient: horizontal;

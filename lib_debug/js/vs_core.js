@@ -1660,10 +1660,6 @@ core.Event = Event;
 core.FORCE_EVENT_PROPAGATION_DELAY = FORCE_EVENT_PROPAGATION_DELAY;
 
 /* touch event messages */
-/**
- * @name vs.core.EVENT_SUPPORT_TOUCH
- */
-core.EVENT_SUPPORT_TOUCH = vs.EVENT_SUPPORT_TOUCH;
 core.EVENT_SUPPORT_GESTURE = EVENT_SUPPORT_GESTURE;
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 

@@ -3552,6 +3552,7 @@ var SlideController = vs.core.createClass ({
 
     comp.view.style.webkitTransitionDuration = '0';
     setElementTransform (comp.view, transform);
+    comp.hide ();
   },
 
   /*********************************************************
@@ -3668,6 +3669,7 @@ var SlideController = vs.core.createClass ({
     
     var self = this, callback = function ()
     {
+      fromComp.hide ();
       try
       {
         if (self._delegate && self._delegate.controllerAnimationDidEnd)
@@ -3684,21 +3686,24 @@ var SlideController = vs.core.createClass ({
       try
       {
         toComp.show ();
-        if (instant)
-        {
-          var inDurations = animationIn.durations;
-          animationIn.durations = '0s';
-          var outDurations = animationOut.durations;
-          animationOut.durations = '0s';
-        }
-        animationIn.process (toComp, callback, self);
-        animationOut.process (fromComp); 
+        toComp.refresh ();
+        setTimeout (function () {
+          if (instant)
+          {
+            var inDurations = animationIn.durations;
+            animationIn.durations = '0s';
+            var outDurations = animationOut.durations;
+            animationOut.durations = '0s';
+          }
+          animationIn.process (toComp, callback, self);
+          animationOut.process (fromComp); 
 
-        if (instant)
-        {
-          animationIn.durations = inDurations;
-          animationOut.durations = outDurations;
-        }
+          if (instant)
+          {
+            animationIn.durations = inDurations;
+            animationOut.durations = outDurations;
+          }
+        }, 0);
       }
       catch (e) { console.error (e); }
     };

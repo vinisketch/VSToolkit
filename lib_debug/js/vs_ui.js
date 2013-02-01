@@ -3839,7 +3839,7 @@ var SplitView = vs.core.createClass ({
   
     "mode": {
       /** 
-       * Set the split view mode (MOBILE, TABLET)
+       * Set/get the split view mode (MOBILE, TABLET)
        * @name vs.ui.SplitView#mode 
        * @type {String}
        */ 
@@ -3853,6 +3853,11 @@ var SplitView = vs.core.createClass ({
         this.addClassName (this._mode);
         if (this._orientation === SplitView.VERTICAL) this._set_orientation (0);
         else this._set_orientation (90);
+      },
+      
+      get : function ()
+      {
+        return this._mode;
       }
     },
   
@@ -4021,7 +4026,7 @@ var SplitView = vs.core.createClass ({
     if (this._orientation) this.orientation = this._orientation;
     else
     {
-      var orientation = window.deviceConfiguration.getOrientation ()
+      var orientation = window.deviceConfiguration.getOrientation ();
 
       if (orientation === 0 || orientation === 180)
         this.orientation = SplitView.VERTICAL;
@@ -4207,13 +4212,21 @@ var SplitView = vs.core.createClass ({
   /**
    * @function
    */
-  showMainView : function ()
+  showMainView : function (instant)
   {
+    var self = this;
     if (this._mode !== SplitView.MOBILE_MODE) return;
 
     if (this._hide_main_panel_button) this._hide_main_panel_button.show ();
     
-    this.addClassName ('main_view_visible');
+    if (instant) {
+      self.addClassName ('main_view_visible');
+      return;
+    }
+    setTimeout (
+      function () { self.addClassName ('main_view_visible'); },
+      View.UNSELECT_DELAY
+    );
   },
   
   /**
@@ -5315,15 +5328,15 @@ var m = Math,
 	isTouchPad = (/hp-tablet/gi).test(navigator.appVersion),
 
   has3d = vs.SUPPORT_3D_TRANSFORM,
-  hasTouch = vs.core.EVENT_SUPPORT_TOUCH,
+  hasTouch = 'ontouchstart' in window,
   hasTransform = vs.SUPPORT_CSS_TRANSFORM,
   hasTransitionEnd = hasTransform,
 
 	RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize',
-	START_EV = vs.core.POINTER_START,
-	MOVE_EV = vs.core.POINTER_MOVE,
-	END_EV = vs.core.POINTER_END,
-	CANCEL_EV = vs.core.POINTER_CANCEL,
+	START_EV = vs.POINTER_START,
+	MOVE_EV = vs.POINTER_MOVE,
+	END_EV = vs.POINTER_END,
+	CANCEL_EV = vs.POINTER_CANCEL,
 	TRNEND_EV = vs.TRANSITION_END,
 
 	nextFrame = vs.requestAnimationFrame,

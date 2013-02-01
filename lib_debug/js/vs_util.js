@@ -1415,14 +1415,8 @@ function isElement (object)
  *
  * @param {Object} object The object to test.
  **/
-function isArray (object)
-{
-  if (typeof Array.isArray == 'function')
-  {
-    return Array.isArray (object);
-  }
-  return _toString.call (object) === ARRAY_CLASS;
-};
+var isArray = Array.isArray ||
+  function (object) { return _toString.call (object) === ARRAY_CLASS;};
 
 /**
  *  Returns `true` if `object` is an Function; `false` otherwise.
@@ -1476,7 +1470,7 @@ function isString (object)
  **/
 function isNumber (object)
 {
-  return _toString.call (object) === NUMBER_CLASS;
+  return typeof object === 'number' && isFinite(object);
 };
 
 /**
@@ -2118,9 +2112,9 @@ function isElementVisible (elem)
  **/
 function removeAllElementChild (elem)
 {
-  if (!elem || !elem.childElements) { return; }
+  if (!elem || !elem.childElementCount) { return; }
   
-  var l = elem.childElements ().length;
+  var l = elem.childElementCount;
   while (l--)
   {
     elem.removeChild (elem.firstChild);
