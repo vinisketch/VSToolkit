@@ -84,6 +84,10 @@ body {
   background-color: blue;
 }
 
+#buttons {
+  margin-top: 200px;
+  padding: 10px;
+}
 #buttons > * {
   margin: 5px;
 }
