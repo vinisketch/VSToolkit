@@ -89,7 +89,7 @@ var SplitView = vs.core.createClass ({
   
     "mode": {
       /** 
-       * Set the split view mode (MOBILE, TABLET)
+       * Set/get the split view mode (MOBILE, TABLET)
        * @name vs.ui.SplitView#mode 
        * @type {String}
        */ 
@@ -103,6 +103,11 @@ var SplitView = vs.core.createClass ({
         this.addClassName (this._mode);
         if (this._orientation === SplitView.VERTICAL) this._set_orientation (0);
         else this._set_orientation (90);
+      },
+      
+      get : function ()
+      {
+        return this._mode;
       }
     },
   
@@ -271,7 +276,7 @@ var SplitView = vs.core.createClass ({
     if (this._orientation) this.orientation = this._orientation;
     else
     {
-      var orientation = window.deviceConfiguration.getOrientation ()
+      var orientation = window.deviceConfiguration.getOrientation ();
 
       if (orientation === 0 || orientation === 180)
         this.orientation = SplitView.VERTICAL;
