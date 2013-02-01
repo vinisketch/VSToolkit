@@ -59,7 +59,10 @@ var Widgets = vs.core.createClass ({
     
     this.mainList.bind ('itemselect', this);
     
-    this.widgetList = new vs.ui.List ({position:[0, 44]}).init ();
+    this.widgetList = new vs.ui.List ({
+      position:[0, 44],
+      scroll: true
+    }).init ();
     this.widgetList.setStyle ('bottom', '0px');
     var id = this.leftController.push (this.widgetList);
     this.leftController.configureNavigationBarState (id, [{comp: backId}]);
@@ -166,20 +169,31 @@ var Widgets = vs.core.createClass ({
       var msg = e.data.item.title;
       if (msg === "Animations" || msg === "Transformations" || msg === "Pointer&Gesture")
       {
-        this.mainController.goToViewAt (
-          this.panelsIndexes.indexOf (msg), function () {
-            self.splitView.showMainView ();
-          }, false
-        );
+        if (this.splitView.mode == vs.ui.SplitView.TABLET_MODE) {
+          this.mainController.goToViewAt (this.panelsIndexes.indexOf (msg));
+        }
+        else {
+          this.mainController.goToViewAt (this.panelsIndexes.indexOf (msg), null, true);
+          this.splitView.showMainView ();
+        }
       }
-      else this.leftController.notify ({type: msg});
+      else {
+        this.leftController.notify ({type: msg});
+        this.widgetList.refresh ();
+      }
     }
     else if (e.type == 'itemselect' && e.src == this.widgetList) {
-      this.mainController.goToViewAt (
-        this.panelsIndexes.indexOf (e.data.item.title), function () {
-          self.splitView.showMainView ();
-        }, false
-      );     
+      if (this.splitView.mode == vs.ui.SplitView.TABLET_MODE) {
+        this.mainController.goToViewAt (
+          this.panelsIndexes.indexOf (e.data.item.title), null, false
+        ); 
+      }
+      else {
+        this.mainController.goToViewAt (
+          this.panelsIndexes.indexOf (e.data.item.title), null, true
+        ); 
+        this.splitView.showMainView ();
+      }    
     }
   }
 });

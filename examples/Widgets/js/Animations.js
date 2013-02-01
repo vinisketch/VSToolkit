@@ -1,6 +1,5 @@
 function initAnimations () {
   var view = buildPanel ();
-  view.layout = vs.ui.View.VERTICAL_LAYOUT;
   
   var animations = [
     'Bounce', 'Shake', 'Swing', 'Pulse', 'FlipInX', 'FlipOutX',
@@ -10,7 +9,7 @@ function initAnimations () {
 
   var viewToAnimate = new vs.ui.View ({id: 'view_to_animate'}).init ();
   view.add (viewToAnimate);
- // viewToAnimate.translate (-50, 0);
+  viewToAnimate.translate (-50, 0);
   
   var buttons = new vs.ui.View ({
     id: 'buttons',
