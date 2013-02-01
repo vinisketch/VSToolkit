@@ -391,6 +391,17 @@ GMap.prototype = {
     this._center_mark.setMap (null);
   },
 
+  /**
+   * @protected
+   * @function
+   */
+  refresh : function ()
+  {
+    if (!this._gmap) return;
+    
+    google.maps.event.trigger (this._gmap, "resize");
+  },
+
 /********************************************************************
                   Annotations management
 ********************************************************************/

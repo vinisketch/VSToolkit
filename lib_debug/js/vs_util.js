@@ -2112,9 +2112,9 @@ function isElementVisible (elem)
  **/
 function removeAllElementChild (elem)
 {
-  if (!elem || !elem.childElementCount) { return; }
+  if (!elem || !elem.childNodes) { return; }
   
-  var l = elem.childElementCount;
+  var l = elem.childNodes.length;
   while (l--)
   {
     elem.removeChild (elem.firstChild);

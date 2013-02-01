@@ -75,30 +75,6 @@
   -ms-transform: translate(-100%, 0px);
   transform: translate(-100%, 0px);
 }
-.vs_ui_splitview.tablet {
-  -webkit-box-orient: horizontal;
-  -moz-box-orient: horizontal;
-  box-orient: horizontal;
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-align: start;
-  -moz-box-align: start;
-  box-align: start;
-}
-.vs_ui_splitview.tablet.horizontal > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-pack: start;
-  -moz-box-pack: start;
-  box-pack: start;
-  -webkit-box-flex: 1;
-  -moz-box-flex: 1;
-  -ms-box-flex: 1;
-  -o-box-flex: 1;
-  box-flex: 1;
-}
 @font-face {
   font-family: 'FontAwesome';
   src: url('fontawesome-webfont.eot');
@@ -760,7 +736,7 @@ ul > li:first-child {
   right: 40px;
   left: 0px;
   padding: 4px;
-  padding-top: 5px;
+  padding-top: 7px;
   display: none;
 }
 .vs_ui_switch .toggle_off {
@@ -769,7 +745,7 @@ ul > li:first-child {
   left: 0px;
   right: 35px;
   padding: 4px;
-  padding-top: 5px;
+  padding-top: 7px;
   -webkit-transform: none;
   -moz-transform: none;
   -o-transform: none;
