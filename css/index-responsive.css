@@ -44,7 +44,7 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 520px) {
   header > h1 {
     float: left;
     font-size: 28px;
