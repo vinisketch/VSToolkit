@@ -3,11 +3,11 @@
   <head>
     <meta charset='utf-8'>
     <title>VSToolkit @ GitHub</title>
-    <script type="text/javascript" src="js/highlight.pack.js"></script> 
-    <link rel="stylesheet" rev="stylesheet" href="css/index.css" media="screen" />
-    <link rel="stylesheet" href="css/zenburn.css">
-    <link rel="stylesheet" href="css/bender.css">
-    <link rel="stylesheet" rev="stylesheet" href="css/index-responsive.css" media="screen" />
+    <script type="text/javascript" src="http://dthevenin.github.com/javascripts/highlight.pack.js"></script> 
+    <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/index.css" media="screen" />
+    <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/vs.css">
+    <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/bender.css">
+    <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/index-responsive.css" media="screen" />
     <meta name="viewport" content="initial-scale=1.0,user-scalable=no">
   </head>
   <body>
@@ -243,9 +243,37 @@ function loadApplication () {
         </p>
         </section>
       <section id="examples">
-        <h2>
-          Examples 
-        </h2>
+        <h2>Examples</h2>
+        <div class="tiles examples">
+          <div class="text blue">
+            <span>
+              Kitchen Sink
+            </span>
+            <p>
+              The Kitchen Sink is an app that showcases all of the UI widgets. 
+              Its a great introduction to the framework. 
+              <br />
+              <i>
+                Widgets, animation, Pointer/Gesture events
+              </i>
+              <br />
+              <br />
+              <a href="examples/Widgets/index.html" class="button small">Fullscreen version</a>
+            </p>
+          </div>
+          <div class="text green">
+            <span>FlipBook</span>
+            <p>
+            This demonstration implements a flip book effect.
+            <br />
+            <i>Template, Event.</i>
+            <br />
+            <br />
+            <a href="examples/FlipBook/flip.html" class="button small">Fullscreen version</a>
+            </p>
+          </div>
+        </div>
+        <h2>Playground</h2>
         <div class="tiles examples">
           <div class="text yellow">
             <span>HelloWorld</span>
@@ -254,8 +282,9 @@ function loadApplication () {
               <br />
               <i>Animations.</i>
               <br />
-            <a href="examples/HelloWorld/index.html">Playground</a>
-            <a href="examples/HelloWorld/helloworld.html">Fullscreen version</a>
+              <br />
+              <a href="examples/HelloWorld/index.html" class="button small">Playground</a>
+              <a href="examples/HelloWorld/helloworld.html" class="button small">Fullscreen version</a>
             </p>
           </div>
           <div class="text green">
@@ -267,8 +296,9 @@ function loadApplication () {
               <br />
               <i>Animations.</i>
               <br />
-            <a href="examples/Animations/index.html">Playground</a>
-            <a href="examples/Animations/animations.html">Fullscreen version</a>
+              <br />
+              <a href="examples/Animations/index.html" class="button small">Playground</a>
+              <a href="examples/Animations/animations.html" class="button small">Fullscreen version</a>
             </p>
           </div>
           <div class="text pink">
@@ -279,25 +309,12 @@ function loadApplication () {
               <br />
               <i>Animations.</i>
               <br />
-            <a href="examples/ExtAnimations/index.html">Playground</a>
-            <a href="examples/ExtAnimations/animations.html">Fullscreen version</a>
+              <br />
+              <a href="examples/ExtAnimations/index.html" class="button small">Playground</a>
+              <a href="examples/ExtAnimations/animations.html" class="button small">Fullscreen version</a>
             </p>
           </div>
-          <div class="text blue">
-            <span>
-              Widgets
-            </span>
-            <p>
-              This demo presents widgets the toolkit provide. (still under dev…) 
-              <br />
-              <i>
-                Widgets.
-              </i>
-              <br />
-            <a href="examples/Widgets/index.html">Fullscreen version</a>
-            </p>
-          </div>
-          <div class="text pink">
+          <div class="text green">
             <span>
               Todos
             </span>
@@ -308,8 +325,9 @@ function loadApplication () {
                 Model, LocalStorage, Widgets.
               </i>
               <br />
-            <a href="examples/Todos/index.html">Playground</a>
-            <a href="examples/Todos/todos.html">Fullscreen version</a>
+              <br />
+              <a href="examples/Todos/index.html" class="button small">Playground</a>
+              <a href="examples/Todos/todos.html" class="button small">Fullscreen version</a>
             </p>
           </div>
           <div class="text blue">
@@ -323,8 +341,9 @@ function loadApplication () {
                 Controller, Widgets, Scrolling.
               </i>
               <br />
-            <a href="examples/RSSViewer/index.html">Playground</a>
-            <a href="examples/RSSViewer/rssviewer.html">Fullscreen version</a>
+              <br />
+              <a href="examples/RSSViewer/index.html" class="button small">Playground</a>
+              <a href="examples/RSSViewer/rssviewer.html" class="button small">Fullscreen version</a>
             </p>
           </div>
           <div class="text yellow">
@@ -338,19 +357,9 @@ function loadApplication () {
                 Component, Class.
               </i>
               <br />
-            <a href="examples/Component/index.html">Playground</a>
-            <a href="examples/Component/component.html">Fullscreen version</a>
-            </p>
-          </div>
-          <div class="text green">
-            <span><a name="comp"></a>FlipBook</span>
-            <p>
-            This demonstration implements a flip book effect.
-            <br />
-            <i>Template, Event.</i>
-            <br />
-            <a href="examples/FlipBook/index.html">Playground</a>
-            <a href="examples/FlipBook/flip.html">Fullscreen version</a>
+              <br />
+              <a href="examples/Component/index.html" class="button small">Playground</a>
+              <a href="examples/Component/component.html" class="button small">Fullscreen version</a>
             </p>
           </div>
         </div>
@@ -433,7 +442,7 @@ myView.style = "color:blue";
       hljs.initHighlightingOnLoad();
     </script>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>
-    <script type="text/javascript" src="js/waypoints.min.js"></script>
-    <script type="text/javascript" src="js/index.js"></script> 
+    <script type="text/javascript" src="http://dthevenin.github.com/javascripts/waypoints.min.js"></script>
+    <script type="text/javascript" src="http://dthevenin.github.com/javascripts/index.js"></script> 
   </body>
 </html>
