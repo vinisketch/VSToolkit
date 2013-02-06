@@ -116,7 +116,8 @@ var MyView = vs.core.createClass ({
       vs.addPointerListener (document, vs.POINTER_END, this);
       this._binding_ = true;
       
-      this._start_pos = [e.pageX, e.pageY];
+      var pointer = e.targetPointerList [0];
+      this._start_pos = [pointer.pageX, pointer.pageY];
       this.setNewTransformOrigin ({x: 0, y: 0});
     }
     else if (this._binding)
@@ -131,8 +132,10 @@ var MyView = vs.core.createClass ({
   {
     if (e.nbPointers !== 1) return;
     
+    var pointer = e.targetPointerList [0];
+    
     this.translation =
-      [e.pageX - this._start_pos [0], e.pageY - this._start_pos [1]];
+      [pointer.pageX - this._start_pos [0], pointer.pageY - this._start_pos [1]];
 
     this.__update_debug (e.pointerList, e.changedPointerList, false);
   },
@@ -153,7 +156,7 @@ var MyView = vs.core.createClass ({
   {
     vs.addPointerListener (document, vs.GESTURE_CHANGE, this);
     vs.addPointerListener (document, vs.GESTURE_END, this);
-    this.setNewTransformOrigin (e.barycentre);
+    this.setNewTransformOrigin (e.centroid);
 
     this.__update_debug (e.pointerList, e.changedPointerList, false, e.rotation);
   },
@@ -208,17 +211,17 @@ var MyView = vs.core.createClass ({
       y += pointer.pageY;
     }
     
-    var barycentre = this._debugs ['barycentre'];
-    if (!barycentre)
+    var centroid = this._debugs ['centroid'];
+    if (!centroid)
     {
-      barycentre = document.createElement ('div');
-      barycentre.className = '__debug__barycentre';
-      this._debugs ['barycentre'] = barycentre;
-      document.body.appendChild (barycentre, this.view);
+      centroid = document.createElement ('div');
+      centroid.className = '__debug__centroid';
+      this._debugs ['centroid'] = centroid;
+      document.body.appendChild (centroid, this.view);
     }
-    vs.util.setElementPos (barycentre, x / nb_pointer - 10, y / nb_pointer - 10);
-    if (vs.util.isNumber (angle)) barycentre.innerHTML = Math.floor (angle);
-    else barycentre.innerHTML = "";
+    vs.util.setElementPos (centroid, x / nb_pointer - 10, y / nb_pointer - 10);
+    if (vs.util.isNumber (angle)) centroid.innerHTML = Math.floor (angle);
+    else centroid.innerHTML = "";
     
     // remove old pointers trace
     for (var index = 0; index < pointersToRemove.length; index++)
