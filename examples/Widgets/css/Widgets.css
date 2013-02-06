@@ -9,9 +9,16 @@ body {
   background-color: #E9E9E9;
 }
 
-#widgets_list, .panel {
+#widgets_list {
   width: 100%;
   height: 100%;
+}
+
+.panel {
+  width: 100%;
+  top: 45px;
+  bottom: 0px;
+  height: auto;
 }
 
 .vs_ui_button.close {
@@ -40,4 +47,68 @@ body {
 
 .gmap_info .subtitle {
   font-size: 0.8em;
+}
+
+#demo_img_1,
+#demo_img_2,
+#demo_img_3 {
+}
+
+#demos_images > * {
+  width: 33%;
+  height: 33%;
+  font-size: 0.7em;
+}
+
+#map_search {
+  top: 0px;
+  left: 0px;
+  right: 0px;
+}
+
+#myMap {
+  top: 48px;
+  bottom: 0px;
+  height: auto;
+}
+
+#view_to_animate {
+  margin: 50px 0px 50px 50%;
+  width: 100px; height: 100px;
+  background-color: red;
+}
+
+#view_to_transform {
+  margin: 50px 0px 50px 50%;
+  width: 100px; height: 100px;
+  background-color: blue;
+}
+
+#buttons {
+  margin-top: 200px;
+  padding: 10px;
+}
+#buttons > * {
+  margin: 5px;
+}
+
+.__debug__pointer {
+  background-color: red;
+  width: 30px;
+  height: 30px;
+  border-radius: 15px;
+  position: absolute;
+  z-index: 1000;
+}
+
+.__debug__centroid {
+  background-color: blue;
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  position: absolute;
+  color: white;
+  text-align: center;
+  font-size: 3;
+  z-index: 1001;
 }
