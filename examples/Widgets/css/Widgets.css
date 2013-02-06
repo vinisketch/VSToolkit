@@ -98,8 +98,10 @@ body {
   height: 30px;
   border-radius: 15px;
   position: absolute;
+  z-index: 1000;
 }
-.__debug__barycentre {
+
+.__debug__centroid {
   background-color: blue;
   width: 20px;
   height: 20px;
@@ -108,4 +110,5 @@ body {
   color: white;
   text-align: center;
   font-size: 3;
+  z-index: 1001;
 }
