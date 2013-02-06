@@ -1,6 +1,5 @@
 function initButtonsPanel () {
-  var view = buildPanel ();
-  view.scroll = vs.ui.ScrollView.VERTICAL_SCROLL
+  var view = buildPanel();
   
   var button = new vs.ui.Button ({
     position:[20, 10], text: "hello"

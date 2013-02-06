@@ -9,7 +9,6 @@ function initMapPanel () {
   view.layout = vs.ui.View.ABSOLUTE_LAYOUT;
 
   var searchField = new vs.ui.InputField ({
-    id: 'map_search',
     type: vs.ui.InputField.SEARCH
   }).init ();
   view.add (searchField);
@@ -17,7 +16,6 @@ function initMapPanel () {
   searchField.enable = false;
   
   var map = new vs.ext.ui.GMap ({
-    id: 'myMap',
     zoomControl: true,
     streetViewControl: true
   }).init ();
