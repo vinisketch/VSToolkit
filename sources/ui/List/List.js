@@ -425,7 +425,7 @@ function tabListRenderData (itemsSelectable)
     {
       title = item; index ++;
       var elem = document.createElement ('div');
-      elem.innerHTML = title [0];
+      util.setElementInnerText (elem, title [0]);
       elem._index_ = title_index++;
       _direct_access.appendChild (elem);
     }

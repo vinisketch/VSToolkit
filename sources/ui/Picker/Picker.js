@@ -426,7 +426,7 @@ Picker.prototype = {
     else
     {
       button_incr.className = "button_incr";
-      button_incr.innerHTML = '+';
+      util.setElementInnerText (button_incr, '+');
       button_incr.slotPosition = i;
     }
 
@@ -446,7 +446,7 @@ Picker.prototype = {
     else
     {
       button_decr.className = 'button_decr';
-      button_decr.innerHTML = '-';
+      util.setElementInnerText (button_decr, '-');
       button_decr.slotPosition = i;
     }
 
