@@ -166,7 +166,7 @@ SegmentedButton.prototype = {
   {
     if (!this.view) { return; }
     
-    this.view.innerHTML = "";
+    util.removeAllElementChild (this.view);
     
     while (this._div_list.length)
     {

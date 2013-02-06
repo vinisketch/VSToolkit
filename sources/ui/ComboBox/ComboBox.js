@@ -115,7 +115,7 @@ ComboBox.prototype = {
     
     if (this._mode === ComboBox.NORMAL_MODE)
     {
-      this._select.innerHTML = "";
+      util.removeAllElementChild (this._select);
         
       this._items = {};
   

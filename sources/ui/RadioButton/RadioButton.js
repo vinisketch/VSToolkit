@@ -85,7 +85,7 @@ RadioButton.prototype = {
     this.__scroll_start = 0;
   
     // removes all items;
-    this._list_items.innerHTML = '';
+    util.removeAllElementChild (this._list_items);
   
     while (this._items.length)
     {

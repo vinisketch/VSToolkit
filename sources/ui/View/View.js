@@ -428,7 +428,7 @@ View.prototype = {
 //       if (!a || !hole) { continue; }
 //       
 //       // @WARNING pas completement correct
-//       hole.innerHTML = '';
+//      util.removeAllElementChild (hole);
       
 //       if (a instanceof Array)
 //       {

@@ -194,7 +194,8 @@ Picker.prototype = {
     vs.removePointerListener (document, core.POINTER_START, this, false);
     vs.removePointerListener (document, core.POINTER_MOVE, this, false);
 
-    this._slots_view.innerHTML = "";
+    util.removeAllElementChild (this._slots_view);
+
     delete (this._data);
     delete (this._slots_elements);
     delete (this._frame_view);
@@ -294,7 +295,7 @@ Picker.prototype = {
    */
   _remove_all_slots: function ()
   {
-    this._slots_view.innerHTML = "";
+    util.removeAllElementChild (this._slots_view);
 
     delete (this._slots_elements);
     this._slots_elements = [];

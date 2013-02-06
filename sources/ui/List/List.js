@@ -356,7 +356,7 @@ function blockListRenderData (itemsSelectable)
 // remove all children
   this._freeListItems ();
   
-  _list_items.innerHTML = "";
+  util.removeAllElementChild (_list_items);
 
   if (SUPPORT_3D_TRANSFORM)
     setElementTransform (_list_items, 'translate3d(0,0,0)');
@@ -403,8 +403,8 @@ function tabListRenderData (itemsSelectable)
 // remove all children
   this._freeListItems ();
   
-  _list_items.innerHTML = "";
-  _direct_access.innerHTML = "";
+  util.removeAllElementChild (_list_items);
+  util.removeAllElementChild (_direct_access);
 
   if (SUPPORT_3D_TRANSFORM)
     util.setElementTransform (_list_items, 'translate3d(0,0,0)');
@@ -459,8 +459,8 @@ function defaultListRenderData (itemsSelectable)
 // remove all children
   this._freeListItems ();
   
-  _list_items.innerHTML = "";
-
+  util.removeAllElementChild (_list_items);
+  
   if (SUPPORT_3D_TRANSFORM)
     setElementTransform (_list_items, 'translate3d(0,0,0)');
   else
