@@ -1121,11 +1121,11 @@ function createInfoWindowClass ()
       var value = info[key]; value = (value)?value:"";
       text = text.replace ('{' + key + '}', value);
     }
-    div.innerHTML = text;
+    util.safeInnerHTML (div, text);
     
     if (!this.view) this.createView ();
     
-    this.view.innerHTML = div.firstElementChild.innerHTML;
+    util.safeInnerHTML (this.view, div.firstElementChild.innerHTML);
     this.view.className = div.firstElementChild.className;
   };
   

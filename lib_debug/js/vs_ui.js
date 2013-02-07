@@ -242,13 +242,7 @@ Template.prototype =
     }
     if (!view_node)
     {
-      view_node = document.createElement ('div');
-      view_node.innerHTML = str;
-      view_node = view_node.firstElementChild;
-      if (view_node)
-      {
-        view_node.parentElement.removeChild (view_node);
-      }
+      view_node = Template.parseHTML (str);
     }    
 
     /**
@@ -539,6 +533,30 @@ var _evalPath = function (root, path)
   return null;
 };
 
+Template.parseHTML = function (html)
+{
+  var div = document.createElement ('div');
+  try
+  {
+    // MS Window 8 management
+    if (MSApp && MSApp.execUnsafeLocalFunction)
+      MSApp.execUnsafeLocalFunction (function() {
+        div.innerHTML = html;
+      });
+    else
+      div.innerHTML = html;
+
+    div = div.firstElementChild;
+    if (div) div.parentElement.removeChild (div);
+  }
+  catch (e)
+  {
+    console.error ("vs.ui.Template.parseHTML failed:");
+    console.error (e);
+    return undefined;
+  }
+  return div;
+}
 /********************************************************************
                       Export
 *********************************************************************/
@@ -974,7 +992,7 @@ View.prototype = {
 //       if (!a || !hole) { continue; }
 //       
 //       // @WARNING pas completement correct
-//       hole.innerHTML = '';
+//      util.removeAllElementChild (hole);
       
 //       if (a instanceof Array)
 //       {
@@ -1013,14 +1031,8 @@ View.prototype = {
     // 4) no node exists, generate a warning a create a div node.
     if (this.html_template)
     {
-      node = document.createElement ('div');
-      node.innerHTML = this.html_template;
-      node = node.firstElementChild;
-      if (node)
-      {
-        node.parentElement.removeChild (node);
-        return node;
-      }
+      node = Template.parseHTML (this.html_template);
+      if (node) return node;
     }
     if (util.isFunction (this.constructor))
     { compName = this.constructor.name; }
@@ -1288,20 +1300,7 @@ View.prototype = {
         xmlRequest = null;
       }
       
-      div = document.createElement ('div');
-      div.innerHTML = data;
-      
-      children = div.childNodes;
-      i = 0;
-      len = children.length;
-      while (i < len && !view)
-      {
-        if (children.item (i).nodeType === 1) /// ELEMENT_NODE
-        {
-          view = children.item (i);
-        }
-        i++;
-      }
+      view = Template.parseHTML (data);
     }
     config.node = view;
     obj = null;
@@ -3070,27 +3069,6 @@ util.defineClassProperties (View, {
 });
 
 View._ref_template_reg = /(\w+)#(\w+)/;
-
-View.createTemplate = function (html)
-{
-  var div = document.createElement ('div');
-  try
-  {
-    div.innerHTML = html;
-    div = div.firstElementChild;
-  }
-  catch (e)
-  {
-    console.error ("vs.ui.View.createTemplate failed: " + e);
-    return undefined;
-  }
-//   while (div)
-//   {
-//     if (div.nodeType === 1) { return div; }
-//     div = div.nextSibling;
-//   }
-  return undefined;
-}
 
 /********************************************************************
                       Export
@@ -9143,7 +9121,7 @@ function blockListRenderData (itemsSelectable)
 // remove all children
   this._freeListItems ();
   
-  _list_items.innerHTML = "";
+  util.removeAllElementChild (_list_items);
 
   if (SUPPORT_3D_TRANSFORM)
     setElementTransform (_list_items, 'translate3d(0,0,0)');
@@ -9190,8 +9168,8 @@ function tabListRenderData (itemsSelectable)
 // remove all children
   this._freeListItems ();
   
-  _list_items.innerHTML = "";
-  _direct_access.innerHTML = "";
+  util.removeAllElementChild (_list_items);
+  util.removeAllElementChild (_direct_access);
 
   if (SUPPORT_3D_TRANSFORM)
     util.setElementTransform (_list_items, 'translate3d(0,0,0)');
@@ -9212,7 +9190,7 @@ function tabListRenderData (itemsSelectable)
     {
       title = item; index ++;
       var elem = document.createElement ('div');
-      elem.innerHTML = title [0];
+      util.setElementInnerText (elem, title [0]);
       elem._index_ = title_index++;
       _direct_access.appendChild (elem);
     }
@@ -9246,8 +9224,8 @@ function defaultListRenderData (itemsSelectable)
 // remove all children
   this._freeListItems ();
   
-  _list_items.innerHTML = "";
-
+  util.removeAllElementChild (_list_items);
+  
   if (SUPPORT_3D_TRANSFORM)
     setElementTransform (_list_items, 'translate3d(0,0,0)');
   else
@@ -10091,7 +10069,7 @@ ComboBox.prototype = {
     
     if (this._mode === ComboBox.NORMAL_MODE)
     {
-      this._select.innerHTML = "";
+      util.removeAllElementChild (this._select);
         
       this._items = {};
   
@@ -10383,7 +10361,7 @@ RadioButton.prototype = {
     this.__scroll_start = 0;
   
     // removes all items;
-    this._list_items.innerHTML = '';
+    util.removeAllElementChild (this._list_items);
   
     while (this._items.length)
     {
@@ -10654,7 +10632,7 @@ CheckBox.prototype = {
     this.__scroll_start = 0;
   
     // removes all items;
-    this._list_items.innerHTML = '';
+    util.removeAllElementChild (this._list_items);
   
     while (this._items.length)
     {
@@ -16000,7 +15978,8 @@ Picker.prototype = {
     vs.removePointerListener (document, core.POINTER_START, this, false);
     vs.removePointerListener (document, core.POINTER_MOVE, this, false);
 
-    this._slots_view.innerHTML = "";
+    util.removeAllElementChild (this._slots_view);
+
     delete (this._data);
     delete (this._slots_elements);
     delete (this._frame_view);
@@ -16100,7 +16079,7 @@ Picker.prototype = {
    */
   _remove_all_slots: function ()
   {
-    this._slots_view.innerHTML = "";
+    util.removeAllElementChild (this._slots_view);
 
     delete (this._slots_elements);
     this._slots_elements = [];
@@ -16154,7 +16133,7 @@ Picker.prototype = {
     {
       out += '<li>' + data.values[i] + '<' + '/li>';
     }
-    ul.innerHTML = out;
+    util.safeInnerHTML (ul, out);
     
     if (this._mode === Picker.MODE_ANDROID)
     {
@@ -16231,7 +16210,7 @@ Picker.prototype = {
     else
     {
       button_incr.className = "button_incr";
-      button_incr.innerHTML = '+';
+      util.setElementInnerText (button_incr, '+');
       button_incr.slotPosition = i;
     }
 
@@ -16251,7 +16230,7 @@ Picker.prototype = {
     else
     {
       button_decr.className = 'button_decr';
-      button_decr.innerHTML = '-';
+      util.setElementInnerText (button_decr, '-');
       button_decr.slotPosition = i;
     }
 
@@ -17277,7 +17256,7 @@ SegmentedButton.prototype = {
   {
     if (!this.view) { return; }
     
-    this.view.innerHTML = "";
+    util.removeAllElementChild (this.view);
     
     while (this._div_list.length)
     {
@@ -17309,7 +17288,7 @@ SegmentedButton.prototype = {
     {
       var div = document.createElement ('div');
       div._index = i;
-      div.innerHTML = this._items [i];
+      util.setElementInnerText (div, this._items [i]);
       
       // WP7 does not manage box model (then use inline-block instead of)
       if (width) util.setElementStyle (div, {"width": width + '%'});
