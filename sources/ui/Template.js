@@ -188,13 +188,7 @@ Template.prototype =
     }
     if (!view_node)
     {
-      view_node = document.createElement ('div');
-      view_node.innerHTML = str;
-      view_node = view_node.firstElementChild;
-      if (view_node)
-      {
-        view_node.parentElement.removeChild (view_node);
-      }
+      view_node = Template.parseHTML (str);
     }    
 
     /**
@@ -485,6 +479,30 @@ var _evalPath = function (root, path)
   return null;
 };
 
+Template.parseHTML = function (html)
+{
+  var div = document.createElement ('div');
+  try
+  {
+    // MS Window 8 management
+    if (MSApp && MSApp.execUnsafeLocalFunction)
+      MSApp.execUnsafeLocalFunction (function() {
+        div.innerHTML = html;
+      });
+    else
+      div.innerHTML = html;
+
+    div = div.firstElementChild;
+    if (div) div.parentElement.removeChild (div);
+  }
+  catch (e)
+  {
+    console.error ("vs.ui.Template.parseHTML failed:");
+    console.error (e);
+    return undefined;
+  }
+  return div;
+}
 /********************************************************************
                       Export
 *********************************************************************/

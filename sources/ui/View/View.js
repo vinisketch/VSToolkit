@@ -467,14 +467,8 @@ View.prototype = {
     // 4) no node exists, generate a warning a create a div node.
     if (this.html_template)
     {
-      node = document.createElement ('div');
-      node.innerHTML = this.html_template;
-      node = node.firstElementChild;
-      if (node)
-      {
-        node.parentElement.removeChild (node);
-        return node;
-      }
+      node = Template.parseHTML (this.html_template);
+      if (node) return node;
     }
     if (util.isFunction (this.constructor))
     { compName = this.constructor.name; }
@@ -742,20 +736,7 @@ View.prototype = {
         xmlRequest = null;
       }
       
-      div = document.createElement ('div');
-      div.innerHTML = data;
-      
-      children = div.childNodes;
-      i = 0;
-      len = children.length;
-      while (i < len && !view)
-      {
-        if (children.item (i).nodeType === 1) /// ELEMENT_NODE
-        {
-          view = children.item (i);
-        }
-        i++;
-      }
+      view = Template.parseHTML (data);
     }
     config.node = view;
     obj = null;
@@ -2524,27 +2505,6 @@ util.defineClassProperties (View, {
 });
 
 View._ref_template_reg = /(\w+)#(\w+)/;
-
-View.createTemplate = function (html)
-{
-  var div = document.createElement ('div');
-  try
-  {
-    div.innerHTML = html;
-    div = div.firstElementChild;
-  }
-  catch (e)
-  {
-    console.error ("vs.ui.View.createTemplate failed: " + e);
-    return undefined;
-  }
-//   while (div)
-//   {
-//     if (div.nodeType === 1) { return div; }
-//     div = div.nextSibling;
-//   }
-  return undefined;
-}
 
 /********************************************************************
                       Export
