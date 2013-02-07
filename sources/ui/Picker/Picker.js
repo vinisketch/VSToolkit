@@ -349,7 +349,7 @@ Picker.prototype = {
     {
       out += '<li>' + data.values[i] + '<' + '/li>';
     }
-    ul.innerHTML = out;
+    util.safeInnerHTML (ul, out);
     
     if (this._mode === Picker.MODE_ANDROID)
     {
