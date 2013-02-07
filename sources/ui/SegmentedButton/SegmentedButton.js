@@ -198,7 +198,7 @@ SegmentedButton.prototype = {
     {
       var div = document.createElement ('div');
       div._index = i;
-      div.innerHTML = this._items [i];
+      util.setElementInnerText (div, this._items [i]);
       
       // WP7 does not manage box model (then use inline-block instead of)
       if (width) util.setElementStyle (div, {"width": width + '%'});
