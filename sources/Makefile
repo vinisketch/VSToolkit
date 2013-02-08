@@ -454,13 +454,15 @@ ext_fx_debug: ../lib_debug/js/vs_ext_fx.js
 ###                    libs
 ##############################################################
 
-extern_libs: ../lib_debug/js/vs_util.js ../lib_debug/js/vs_gesture.js
+extern_libs: ../lib_debug/js/vs_util.js ../lib_debug/js/vs_transform.js ../lib_debug/js/vs_gesture.js
 	$(CAT) VS.js >> ../lib_debug/js/vs_tmp.js
 	$(CAT) ../lib_debug/js/firminCSSMatrix.js >> ../lib_debug/js/vs_tmp.js
 	$(CAT) ../lib_debug/js/vs_util.js >> ../lib_debug/js/vs_tmp.js
+	$(CAT) ../lib_debug/js/vs_transform.js >> ../lib_debug/js/vs_tmp.js
 	$(CAT) ../lib_debug/js/vs_gesture.js >> ../lib_debug/js/vs_tmp.js
 	$(RM) ../lib_debug/js/firminCSSMatrix.js
 	$(RM) ../lib_debug/js/vs_util.js
+	$(RM) ../lib_debug/js/vs_transform.js
 	$(RM) ../lib_debug/js/vs_gesture.js
 	$(MV) ../lib_debug/js/vs_tmp.js ../lib_debug/js/vs_util.js
 	
@@ -469,6 +471,12 @@ extern_libs: ../lib_debug/js/vs_util.js ../lib_debug/js/vs_gesture.js
 	git clone https://github.com/dthevenin/Util.git tmp
 	-$(CP) tmp/build/vs_util.js ../lib_debug/js/vs_util.js
 	-$(CP) tmp/build/firminCSSMatrix.js ../lib_debug/js/firminCSSMatrix.js
+	-$(RM_RF) tmp
+	
+../lib_debug/js/vs_transform.js:
+	-$(MKPATH) tmp/
+	git clone https://github.com/dthevenin/Transform.git tmp
+	-$(CP) tmp/build/vs_transform.js ../lib_debug/js/vs_transform.js
 	-$(RM_RF) tmp
 	
 ../lib_debug/js/vs_gesture.js:
