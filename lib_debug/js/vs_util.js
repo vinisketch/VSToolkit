@@ -86,7 +86,6 @@ window.vs.ext.fx = {};
 window.vs.SUPPORT_3D_TRANSFORM = false;
 
 (function () {
- if (typeof exports === 'undefined') { exports = this; }
 
 /**
  *  class FirminCSSMatrix
@@ -717,13 +716,10 @@ FirminCSSMatrix.prototype.toString = function() {
     return self[p].toFixed(6);
   }).join(", ") + ")";
 };
-exports.FirminCSSMatrix = FirminCSSMatrix;
+this.FirminCSSMatrix = FirminCSSMatrix;
 }).call(this);
 (function(){ 
- if (typeof exports === 'undefined') { exports = this; }
- var vs = exports.vs || {}; exports.vs = vs;
-
-var util = vs.util = {};
+ var vs = this.vs = this.vs || {}, util = vs.util = {};
 
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
@@ -2760,8 +2756,7 @@ util.extend (util, {
 });
 }).call(this);
 (function(){ 
- if (typeof exports === 'undefined') { exports = this; }
- var vs = exports.vs, util = vs.util;
+ var vs = this.vs, util = vs.util;
 
 var
   CSSMatrix = (vs && vs.CSSMatrix),
@@ -2935,8 +2930,7 @@ util.extend (HTMLElement.prototype, {
 });
 }).call(this);
 (function(){ 
- if (typeof exports === 'undefined') { exports = this; }
- var vs = exports.vs, util = vs.util;
+ var vs = this.vs = this.vs || {}, util = vs.util = vs.util || {};
 
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
@@ -2957,9 +2951,6 @@ util.extend (HTMLElement.prototype, {
 */
 
 /* touch event messages */
-/**
- * @name vs.core.EVENT_SUPPORT_TOUCH
- */
 var EVENT_SUPPORT_TOUCH = false;
 var EVENT_SUPPORT_GESTURE = false;
 var hasMSPointer = window.navigator.msPointerEnabled;
@@ -3410,7 +3401,6 @@ function createCustomEvent (eventName, target, payload)
 /********************************************************************
                       Export
 *********************************************************************/
-/** @private */
 vs.createCustomEvent = createCustomEvent;
 vs.removePointerListener = removePointerListener;
 vs.addPointerListener = addPointerListener;
