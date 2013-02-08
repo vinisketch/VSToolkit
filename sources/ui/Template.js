@@ -1,17 +1,17 @@
 /**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
   contributors. All rights reserved
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -95,7 +95,7 @@ Template.prototype =
    *
    * @name vs.ui.Template#toString
    * @function
-   * 
+   *
    * @return {String} HTML String of the template
    */
   toString : function ()
@@ -107,39 +107,39 @@ Template.prototype =
    *
    * @name vs.ui.Template#compileView
    * @function
-   * 
-   * @param {String} viewName The view class Name. By default vs.ui.View. 
-   *                 [optional] 
+   *
+   * @param {String} viewName The view class Name. By default vs.ui.View.
+   *                 [optional]
    * @return {vs.ui.View} the View
    */
   compileView : function (viewName)
   {
     var view_node = this._compile ();
-    
+
     function resolveClass (name)
     {
       if (!name) return null;
-      
+
       var namespaces = name.split ('.');
       var base = window;
       while (base && namespaces.length) {
         base = base [namespaces.shift ()];
       }
-      
+
       return base;
     }
-    
+
     var viewClass = resolveClass (viewName);
     if (!vs.util.isFunction (viewClass)) viewClass = vs.ui.View;
 
     var view = new viewClass ({node: view_node});
-    
+
     this._addPropertiesToObject (view);
-    
+
     view.init ();
     return view;
   },
-  
+
   /**
    * @private
    */
@@ -149,7 +149,7 @@ Template.prototype =
     this.__properties_path = [];
     this.__prop_nodes = [];
     var self = this;
-        
+
     /**
      * Replacement function
      * Replace a Template tag into a temporary index code
@@ -170,7 +170,7 @@ Template.prototype =
     // 1) parse and index the html string
     self._regexp_templ.lastIndex = 0; // reset the regex
     var str = self._str.replace (self._regexp_templ, replace_fnc);
-    
+
     // 2) the template is indexed, now parse it for generating the
     // DOM fragment
     var view_node;
@@ -189,7 +189,7 @@ Template.prototype =
     if (!view_node)
     {
       view_node = Template.parseHTML (str);
-    }    
+    }
 
     /**
      * Node parsing function
@@ -220,10 +220,10 @@ Template.prototype =
                   (value.substring (index, result.index));
                 node.insertBefore (text_node, node_temp);
               }
-              
+
               self.__prop_nodes [parseInt (result[1], 10)] = node_temp;
               index = result.index + result[0].length;
-              
+
               result = self._regexp_index.exec (value);
               if (result)
               {
@@ -255,13 +255,13 @@ Template.prototype =
         }
       }
       parseNodes (node.childNodes);
-      parseNodes (node.attributes);     
+      parseNodes (node.attributes);
     }
     parseNode (view_node);
-    
+
     return view_node;
   },
-    
+
   /**
    * @private
    */
@@ -277,16 +277,16 @@ Template.prototype =
       var path = this.__properties_path [l];
       var node = this.__prop_nodes [l];
       if (!node) { continue; }
-      
+
       node_ref.push ([prop_name, node]);
       _create_property (obj, prop_name, node, path);
     }
-    
+
     // clone surcharge
     obj._clone = _view_clone;
     obj.__node__ref__ = node_ref;
   },
-    
+
  /**
    * Returns an HTML String of this template with the specified values.
    *
@@ -295,27 +295,27 @@ Template.prototype =
    *
    * @name vs.ui.Template#apply
    * @function
-   * 
+   *
    * @param {Object} values The template values.
    * @return {String} The HTML string
    */
   apply : function (values)
   {
     if (!values) return this._str;
-    
+
     function replace_fnc (str, key, p1, p2, offset, html)
     {
       var value = values [key];
-      
+
       if (p2)
       {
         var keys = p2.split ('.'), i = 0;
         while (value && i < keys.length) value = value [keys [i++]];
       }
-      
+
       return value;
     }
-  
+
     return this._str.replace (this._regexp_templ, replace_fnc);
   }
 };
@@ -337,7 +337,7 @@ var _create_property = function (view, prop_name, node, path)
         this.propertyChange (_prop_name);
       };
     }(node, '_' + prop_name, path));
-  
+
     desc.get = (function (node, _prop_name)
     {
       return function ()
@@ -358,7 +358,7 @@ var _create_property = function (view, prop_name, node, path)
         this.propertyChange (_prop_name);
       };
     }(node, '_' + prop_name, path));
-  
+
     desc.get = (function (node, _prop_name)
     {
       return function ()
@@ -379,7 +379,7 @@ var _view_clone = function (obj, cloned_map)
   vs.ui.View.prototype._clone.call (this, obj, cloned_map);
 //  var view_cloned = obj.__config__.node;
   var view_cloned = obj.view;
-  
+
   var node_ref = this.__node__ref__, node_ref_cloned = [], path, node_cloned;
   if (view_cloned && node_ref && node_ref.length)
   {
@@ -388,9 +388,9 @@ var _view_clone = function (obj, cloned_map)
     {
       var link = node_ref [i], node = link [1], prop_name = link [0];
       path = _getPath (this.view, node);
-      
+
       node_cloned = _evalPath (view_cloned, path);
-    
+
       node_ref_cloned.push ([prop_name, node_cloned]);
 
       _create_property (obj, prop_name, node_cloned);
@@ -408,7 +408,7 @@ var _getPath = function (root, node, path)
 {
   var count = 1;
   path = path || [];
-  
+
   // 1) manage node atribute
   if (node.nodeType === 2)
   {
@@ -416,10 +416,10 @@ var _getPath = function (root, node, path)
     {
       path = _getPath (root, node.ownerElement, path);
     }
-    path.push ([2, node.nodeName.toLowerCase ()]); 
+    path.push ([2, node.nodeName.toLowerCase ()]);
     return path;
   }
-  
+
   // 2) current node is the root : stop
   if (root === node) { return path;}
 
@@ -446,10 +446,10 @@ var _getPath = function (root, node, path)
 var _evalPath = function (root, path)
 {
   if (!path || !path.length || !root) { return root; }
-  
+
   var info = path.shift (), attrs, l, node_temp, sibbling,
     type = info [0], nodeName = info [1], count;
-  
+
   // 1) manage node atribute
   if (type === 2)
   {
@@ -475,7 +475,7 @@ var _evalPath = function (root, path)
       sibbling = sibbling.nextSibling;
     }
   }
-  
+
   return null;
 };
 
@@ -485,8 +485,8 @@ Template.parseHTML = function (html)
   try
   {
     // MS Window 8 management
-    if (MSApp && MSApp.execUnsafeLocalFunction)
-      MSApp.execUnsafeLocalFunction (function() {
+    if (window.MSApp && window.MSApp.execUnsafeLocalFunction)
+      window.MSApp.execUnsafeLocalFunction (function() {
         div.innerHTML = html;
       });
     else
