@@ -132,6 +132,13 @@ VSObject.prototype =
   {},
   
   /**
+   * @protected
+   * @function
+   */
+  componentDidInitialize : function ()
+  {},
+  
+  /**
    * @deprecated
    * @private
    */
