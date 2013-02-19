@@ -21,6 +21,7 @@
  * @constructor
  * @name vs.ui.ImageView
  * @extends vs.ui.View
+ * An vs.ui.ImageView embeds an image in your application.
  */
 function ImageView (config)
 {
