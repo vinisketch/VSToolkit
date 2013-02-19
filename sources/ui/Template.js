@@ -328,16 +328,16 @@ var _create_property = function (view, prop_name, node, path)
   var desc = {};
   if (node.nodeType === 3) //TEXT_NODE
   {
-    desc.set = (function (node, _prop_name, path)
+    desc.set = (function (node, prop_name, _prop_name, path)
     {
       return function (v)
       {
         this [_prop_name] = v;
         node.data = v;
-        this.propertyChange (_prop_name);
+        this.propertyChange (prop_name);
       };
-    }(node, '_' + prop_name, path));
-
+    }(node, prop_name, '_' + util.underscore (prop_name), path));
+  
     desc.get = (function (node, _prop_name)
     {
       return function ()
@@ -345,20 +345,20 @@ var _create_property = function (view, prop_name, node, path)
         this [_prop_name] = node.data
         return this[_prop_name];
       };
-    }(node, '_' + prop_name));
+    }(node, '_' + util.underscore (prop_name)));
   }
   else if (node.nodeType === 2) //ATTRIBUTE_NODE
   {
-    desc.set = (function (node, _prop_name, path)
+    desc.set = (function (node, prop_name, _prop_name, path)
     {
       return function (v)
       {
         this [_prop_name] = v;
         node.value = v;
-        this.propertyChange (_prop_name);
+        this.propertyChange (prop_name);
       };
-    }(node, '_' + prop_name, path));
-
+    }(node, prop_name, '_' + util.underscore (prop_name), path));
+  
     desc.get = (function (node, _prop_name)
     {
       return function ()
@@ -366,7 +366,7 @@ var _create_property = function (view, prop_name, node, path)
         this [_prop_name] = node.value
         return this[_prop_name];
       };
-    }(node, '_' + prop_name));
+    }(node, '_' + util.underscore (prop_name)));
   }
   vs.util.defineProperty (view, prop_name, desc);
 };
