@@ -87,7 +87,7 @@
   -webkit-box-flex: 0;
   box-flex: 0;
 
-  position: relative;
+  position: static;
 }
 
 /********************************************************************
@@ -115,7 +115,7 @@
   -webkit-box-flex: 0;
   box-flex: 0;
 
-  position: relative;
+  position: static;
 }
 
 /********************************************************************
