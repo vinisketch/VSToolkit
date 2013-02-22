@@ -11,7 +11,9 @@ li.pressed
   text-shadow: black 0 1px 0 !important;
 }
 
-.vs_ui_list.arrow ul li:after
+.vs_ui_list.DefaultList.arrow > ul > li::after,
+.vs_ui_list.BlockList.arrow > ul > li > ul > li::after,
+.vs_ui_list.TabList.arrow > ul > li > ul > li::after
 {
   .box-sizing(border-box);
   .user-select(none);
@@ -19,7 +21,7 @@ li.pressed
   content: '';
   top: 50%;
   position: absolute;
-  .translateY(-45%);
+  .translateY(-30%);
 }
 
 /********************************************************************
