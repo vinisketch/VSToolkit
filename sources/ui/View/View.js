@@ -197,6 +197,12 @@ View.prototype = {
   _visible: true,
   
   /**
+   * @protected
+   * @type {number}
+   */
+  _magnet: 0,
+  
+  /**
    * @private
    * @type {Array.<int>}
    */
@@ -601,6 +607,21 @@ View.prototype = {
     this.view.setAttribute ('x-hag-comp', this.id);
 
     this._parse_view (this.view);
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  componentDidInitialize : function ()
+  {
+    core.EventSource.prototype.componentDidInitialize.call (this);
+    if (this._magnet) this.view.style.setProperty ('position', 'fixed', null);
+
+    if (this._magnet === 5)
+    {
+      this._applyTransformation ();
+    }
   },
       
   /**
@@ -1103,6 +1124,23 @@ View.prototype = {
    * @protected
    * @function
    */
+  _setMagnet : function (code)
+  {
+    if (!util.isNumber (code) || code < 0 || code > 5) return;
+    
+    this._magnet = code;
+    if (this._magnet)
+    {  this.view.style.setProperty ('position', 'fixed', null); }
+    else
+    {  this.view.style.removeProperty ('position'); }
+    
+    this._updateSizeAndPos ();
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
   _updateSizeAndPos : function ()
   {
     this._updateSize (); 
@@ -1165,6 +1203,9 @@ View.prototype = {
       sPosB = pHeight - (pos[1] + size [1]) + 'px';
     }
     
+    if (this._magnet === 2) sPosB = '0px';
+    if (this._magnet === 4) sPosR = '0px';
+
     style = view.style;  
     style.width = width;
     style.height = height;
@@ -1178,7 +1219,10 @@ View.prototype = {
    */
   _updatePos : function ()
   {
-    var pos = this._pos, size = this._size, pWidth = 0, pHeight = 0,
+    var
+      x = this._pos [0], y = this._pos [1],
+      w = this._size [0], h = this._size [1],
+      pWidth = 0, pHeight = 0,
       sPosL = 'auto', sPosT = 'auto', sPosR = 'auto', sPosB = 'auto',
       aH = this._autosizing [0], aV = this._autosizing [1],
       view = this.view, parentElement, style;
@@ -1193,27 +1237,39 @@ View.prototype = {
       pHeight = parentElement.offsetHeight;
     }
     
+    if (this._magnet === 1) y = 0;
+    if (this._magnet === 3) x = 0;
+    
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
-    { sPosL = pos[0] + 'px'; }
+    { sPosL = x + 'px'; }
     else if ((aH === 2 || aH === 0) && pWidth)
-//    { sPosL = Math.round (pos[0] / pWidth * 100) + '%'; }
-    { sPosL = (pos[0] / pWidth * 100) + '%'; }
+//    { sPosL = Math.round (x / pWidth * 100) + '%'; }
+    { sPosL = (x / pWidth * 100) + '%'; }
     
     if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
     {
-      sPosR = pWidth - (pos[0] + size [0]) + 'px';
+      sPosR = pWidth - (x + w) + 'px';
     }
 
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
-    { sPosT = pos[1] + 'px'; }
+    { sPosT = y + 'px'; }
     else if ((aV === 2 || aV === 0) && pHeight)
-//    { sPosT = Math.round (pos[1]  / pHeight * 100) + '%'; }
-    { sPosT = (pos[1]  / pHeight * 100) + '%'; }
+//    { sPosT = Math.round (y / pHeight * 100) + '%'; }
+    { sPosT = (y / pHeight * 100) + '%'; }
 
     if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
     {
-      sPosB = pHeight - (pos[1] + size [1]) + 'px';
+      sPosB = pHeight - (y + h) + 'px';
     }
+
+    if (this._magnet === 2) { sPosT = 'auto'; sPosB = '0px'; }
+    if (this._magnet === 4) { sPosL = 'auto'; sPosR = '0px'; }
+
+    if (this._magnet === 5) {
+      sPosT = '50%'; sPosB = 'auto';
+      sPosL = '50%'; sPosR = 'auto';
+    }
+    this._applyTransformation ();
 
     style = view.style;  
     style.left = sPosL;
@@ -2117,9 +2173,16 @@ View.prototype = {
    */
   _applyTransformation: function ()
   {
-    var matrix = this.getCTM ();
+    var
+      matrix = this.getCTM (),
+      transform = matrix.toString ();
     
-    setElementTransform (this.view, matrix.toString ());
+    if (this._magnet === 5)
+    {
+      transform += " translate(-50%,-50%)";
+    }
+
+    setElementTransform (this.view, transform);
     delete (matrix);
   }
 };
@@ -2221,6 +2284,19 @@ util.defineClassProperties (View, {
       
       if (!this.view) { return; }
       this._updateSizeAndPos ();
+    }
+  },
+  'magnet': {
+  
+    /** 
+     * Set magnet
+     * @name vs.ui.View#magnet 
+     * 
+     * @type Number
+     */ 
+    set : function (code)
+    {
+      this._setMagnet (code);
     }
   },
   'visible': {
