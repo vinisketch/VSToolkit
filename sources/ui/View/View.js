@@ -1897,6 +1897,25 @@ View.prototype = {
     util.removeClassName.apply (this.view, args);
   },
   
+  /**
+   *  Toggle CSS className
+   *
+   *  <p>
+   *  @example
+   *  myObject.toggleClassName ('selected');
+   *
+   * @name vs.ui.View#toggleClassName 
+   * @function
+   *
+   * @param {String} className the className to add/remove
+   */
+  toggleClassName: function (className)
+  {
+    if (!this.view || !util.isString (className)) { return; }
+    
+    util.toggleClassName (this.view, className);
+  },
+  
 /********************************************************************
                   
 ********************************************************************/
