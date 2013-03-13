@@ -1016,7 +1016,7 @@ View.prototype = {
    *  you should set delay to 'true' otherwise you application will be stuck.
    *  But be careful this options add an overlay in the event propagation.
    *  For debug purpose or more secure coding you can force delay to true, for
-   *  all bind using global variable FORCE_EVENT_PROPAGATION_DELAY.<br/>
+   *  all bind using global variable vs.core.FORCE_EVENT_PROPAGATION_DELAY.<br/>
    *  You just have set as true (vs.core.FORCE_EVENT_PROPAGATION_DELAY = true)
    *  at beginning of your program.
    *
