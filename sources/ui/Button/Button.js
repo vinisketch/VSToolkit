@@ -375,7 +375,7 @@ util.defineClassProperties (Button, {
      */ 
     set : function (v)
     {
-      if (typeof (v) === "undefined") { v = ''; }
+      if (v === null || typeof (v) === "undefined") { v = ''; }
       else if (util.isNumber (v)) { v = '' + v; }
       else if (!util.isString (v))
       {

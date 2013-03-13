@@ -139,7 +139,7 @@ DefaultListItem.prototype = {
    */ 
   set title (v)
   {
-    if (typeof (v) === "undefined") { v = ''; }
+    if (v === null || typeof (v) === "undefined") { v = ''; }
     else if (util.isNumber (v)) { v = '' + v; }
     else if (!util.isString (v))
     {
@@ -159,7 +159,7 @@ DefaultListItem.prototype = {
    */ 
   set label (v)
   {
-    if (typeof (v) === "undefined") { v = ''; }
+    if (v === null || typeof (v) === "undefined") { v = ''; }
     else if (util.isNumber (v)) { v = '' + v; }
     else if (!util.isString (v))
     {
@@ -220,7 +220,7 @@ SimpleListItem.prototype = {
    */ 
   set title (v)
   {
-    if (typeof (v) === "undefined") { v = ''; }
+    if (v === null || typeof (v) === "undefined") { v = ''; }
     else if (util.isNumber (v)) { v = '' + v; }
     else if (!util.isString (v))
     {
