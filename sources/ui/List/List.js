@@ -602,6 +602,12 @@ List.prototype = {
    * @private
    * @type {number}
    */
+  _selected_index: 0,
+  
+  /**
+   * @private
+   * @type {number}
+   */
   _selected_item: 0,
   
   /**
@@ -882,15 +888,16 @@ List.prototype = {
    */
   _updateSelectItem : function (item)
   {
-    this._selected_item = item._comp_.index;
+    this._selected_index = item._comp_.index;
+    this._selected_item = this._model.item (this._selected_index);
     if (item._comp_ && item._comp_.didSelect) item._comp_.didSelect ();
     
     this.propertyChange ();
                 
     this.propagate ('itemselect',
     {
-      index: this._selected_item,
-      item: this._model.item (this._selected_item)
+      index: this._selected_index,
+      item: this._selected_item
     });
   },
   
@@ -1053,11 +1060,24 @@ util.defineClassProperties (List, {
     }
   },
   
+  'selectedIndex': {
+    /** 
+     * Getter for selectedIndex.
+     * @name vs.ui.List#selectedIndex 
+     * @type {number}
+     */ 
+    get : function ()
+    {
+      return this._selected_index;
+    }
+  },
+  
+  
   'selectedItem': {
     /** 
      * Getter for selectedItem.
      * @name vs.ui.List#selectedItem 
-     * @type {number}
+     * @type {Object}
      */ 
     get : function ()
     {
