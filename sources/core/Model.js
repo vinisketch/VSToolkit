@@ -294,8 +294,11 @@ Model.prototype = {
     var list_bind, event, handler;
     
     this.__should_propagate_changes__ = true;
+    
+    if (!spec) spec = 'change';
+    else 'change:' + spec;
 
-    event = new Event (this, spec || 'change:' + spec);
+    event = new Event (this, spec, data);
     
     try
     {
