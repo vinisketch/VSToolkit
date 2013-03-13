@@ -289,7 +289,7 @@ Model.prototype = {
    * 
    * @param {String} action the event specification [optional]
    */
-  change : function (spec, doNotManageLinks)
+  change : function (spec, data, doNotManageLinks)
   {
     var list_bind, event, handler;
     
@@ -397,7 +397,7 @@ Model.prototype = {
       { this.__links__ [l] [property] = this [property]; }
       else while (l--) { this.__links__ [l].configure (this); }
 
-      this.change (null, true);
+      this.change (null, null, true);
     }
   }
 };

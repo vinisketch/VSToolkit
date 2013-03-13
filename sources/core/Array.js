@@ -144,7 +144,7 @@ VSArray.prototype = {
     
     this._data.splice.apply (this._data, args);
     if (this.hasToPropagateChange ())
-      this.change ('add', args[0], args.length - 2);
+      this.change ('add', {from: args[0], to: args.length - 2});
   },
     
   /**
@@ -166,7 +166,7 @@ VSArray.prototype = {
   remove : function (from, to)
   {
     this._data.remove (from, to);
-    if (this.hasToPropagateChange ()) this.change ('remove', from, to);
+    if (this.hasToPropagateChange ()) this.change ('remove', {from: from, to: to});
   },
   
   /**
