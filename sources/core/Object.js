@@ -193,7 +193,7 @@ VSObject.prototype =
       else
       {
         // one by one property copy
-        props = config.getProperties ();
+        props = config.getModelProperties ();
         for (i = 0; i < props.length; i++)
         {
           key = props [i];
@@ -231,11 +231,11 @@ VSObject.prototype =
   /**
    *  Returns the list of object's properties name <p>
    *
-   * @name vs.core.Object#getProperties
+   * @name vs.core.Object#getModelProperties
    * @function
    * @return {Array} Array of name of properties
    */
-  getProperties : function ()
+  getModelProperties : function ()
   {
     if (!this.constructor._properties_) return [];
     
@@ -430,7 +430,7 @@ VSObject.prototype =
       if (this.__model)
       {
         this.__model.unlinkTo (this);
-        var props = this.__model.getProperties (); l = props.length,
+        var props = this.__model.getModelProperties (); l = props.length,
           config = {};
         while (l--) { config [props[l]] = null; }
         this.configure (config);
