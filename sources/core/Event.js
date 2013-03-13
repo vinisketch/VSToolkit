@@ -19,7 +19,7 @@
 /**
  * @name vs.core.FORCE_EVENT_PROPAGATION_DELAY
  */
-FORCE_EVENT_PROPAGATION_DELAY = false;
+core.FORCE_EVENT_PROPAGATION_DELAY = false;
 
 var EVENT_SUPPORT_GESTURE = false;
 var hasMSPointer = window.navigator.msPointerEnabled;
@@ -163,7 +163,6 @@ Event.prototype =
 *********************************************************************/
 /** @private */
 core.Event = Event;
-core.FORCE_EVENT_PROPAGATION_DELAY = FORCE_EVENT_PROPAGATION_DELAY;
 
 /* touch event messages */
 core.EVENT_SUPPORT_GESTURE = EVENT_SUPPORT_GESTURE;

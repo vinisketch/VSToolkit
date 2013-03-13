@@ -24,7 +24,7 @@ function Handler (_spec, _obj, _func, _delay)
 {
   this.spec = _spec;
   this.obj = _obj;
-  this.delay = FORCE_EVENT_PROPAGATION_DELAY?true:_delay;
+  this.delay = core.FORCE_EVENT_PROPAGATION_DELAY?true:_delay;
   if (util.isFunction (_func))
   {
     this.func_ptr = _func;
@@ -46,6 +46,68 @@ Handler.prototype.destructor = function ()
   delete (this.func_ptr);
   delete (this.func);
 };
+
+var _event_bursts = [], _is_events_propagating = false;
+
+/**
+ *  @private
+ */
+function _continue_propagation ()
+{
+  if (_is_events_propagating || _event_bursts.length === 0) return;
+  
+  _is_events_propagating = true;
+  
+  (function (burst) {
+    var n = i = burst.list_bind.length;
+    function end_propagation ()
+    {
+      n--;
+      if (n <= 0)
+      {
+        _is_events_propagating = false;
+        _continue_propagation ();
+      }
+    }
+    var func = function ()
+    {
+      try {
+        if (this.handler.func_ptr)
+        {
+          // call function
+          this.handler.func_ptr.call (this.handler.obj, this.event);
+        }
+        else if (this.handler.func)
+        {
+          // specific notify method
+          this.handler.obj[this.handler.func] (this.event);
+        }
+        else
+        {
+          // default notify method
+          this.handler.obj.notify (this.event);
+        }
+      } catch (e) {
+        console.error (e);
+      }
+      end_propagation ();
+    };
+    
+    if (i == 0) end_propagation (); // should not occures
+    else while (i > 0)
+    {
+      /** @private */
+      var data = {
+        handler : burst.list_bind [--i],
+        event : burst.event
+      };
+    
+      if (burst.delay || data.handler.delay)
+      { setTimeout (func.bind (data), 0); }
+      else { func.call (data); }
+    }
+  }) (_event_bursts.shift ());
+}
 
 /**
  *  @class
@@ -160,8 +222,8 @@ EventSource.prototype =
    *  you should set delay to 'true' otherwise you application will be stuck.
    *  But be careful this options add an overlay in the event propagation.
    *  For debug purpose or more secure coding you can force delay to true, for
-   *  all bind using global variable FORCE_EVENT_PROPAGATION_DELAY.<br/>
-   *  You just have set as true (FORCE_EVENT_PROPAGATION_DELAY = true)
+   *  all bind using global variable vs.core.FORCE_EVENT_PROPAGATION_DELAY.<br/>
+   *  You just have set as true (vs.core.FORCE_EVENT_PROPAGATION_DELAY = true)
    *  at beginning of your program.
    *
    * @name vs.core.EventSource#bind
@@ -255,8 +317,8 @@ EventSource.prototype =
    */
   propagate : function (type, data, srcTarget, delay)
   {
-    var list_bind = this.__bindings__ [type], event, i, handler, func;
-    if (!list_bind)
+    var list_bind = this.__bindings__ [type], event;
+    if (!list_bind || list_bind.length === 0)
     {
       if (this.__parent)
       {
@@ -265,42 +327,17 @@ EventSource.prototype =
       }
       return;
     }
+  
     event = new Event (this, type, data);
     if (srcTarget) { event.srcTarget = srcTarget; }
-    
-    i = list_bind.length;
-    try
-    {
-      func = function ()
-      {
-        if (handler.func_ptr)
-        {
-          // call function
-          handler.func_ptr.call (handler.obj, event);
-        }
-        else if (handler.func)
-        {
-          handler.obj[handler.func] (event); // specific notify method
-        }
-        else
-        {
-          handler.obj.notify (event); // default notify method
-        }
-      };
-
-      while (i--)
-      {
-        /** @private */
-        handler = list_bind [i];    
-        
-        if (delay || handler.delay) { setTimeout (func, 0); }
-        else { func.call (this); }
-      }
+  
+    var burst = {
+      list_bind : list_bind,
+      event : event,
+      delay: delay
     }
-    catch (e)
-    {
-      console.error (e);
-    }
+    _event_bursts.push (burst);
+    _continue_propagation ();
   },
 
   /**
@@ -314,7 +351,7 @@ EventSource.prototype =
    */
   notify : function (event)
   {
-     this.propagate (event.type, event.data);
+    this.propagate (event.type, event.data);
   },
   
   /**
