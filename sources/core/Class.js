@@ -206,7 +206,11 @@ function _setProperties (klass, properties)
       {
         return function (v)
         {
-          this[_path][_prop_name] = v;
+          var base = this, namespaces = _path.split ('.');
+          while (base && namespaces.length) {
+            base = base [namespaces.shift ()];
+          }
+          if (base) base [_prop_name] = v;
           this.propertyChange (_prop_name);
         };
       }(result[1], result[2]));
@@ -215,7 +219,11 @@ function _setProperties (klass, properties)
       {
         return function ()
         {
-          return this[_path][_prop_name];
+          var base = this, namespaces = _path.split ('.');
+          while (base && namespaces.length) {
+            base = base [namespaces.shift ()];
+          }
+          if (base) return base [_prop_name];
         };
       }(result[1], result[2]));
     }
