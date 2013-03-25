@@ -337,7 +337,16 @@ VSObject.prototype =
   {
     this.__i__ = false;
   },
-  
+
+  /**
+   * @public
+   * @function
+   */
+  isDeleted : function ()
+  {
+    return !this.__i__;
+  },
+
   /**
    * Manually force properties change propagation.
    * <br/>
