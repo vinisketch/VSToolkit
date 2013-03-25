@@ -178,10 +178,10 @@ Model.prototype = {
   {
     if (!obj) { return; }
     var list_bind, handler;
-    
-    spec = spec || 'change'
-    handler = new Handler (spec, obj, func, false);    
-    
+
+    spec = (spec)? 'change:' + spec : 'change';
+    handler = new Handler (spec, obj, func, false);
+
     list_bind = this.__bindings__ [spec];
     if (!list_bind)
     {
@@ -206,33 +206,33 @@ Model.prototype = {
    */
   unbindChange : function (spec, obj, func)
   {
-    if (!spec) spec = 'change';
+    spec = (spec)? 'change:' + spec : 'change';
 
     function unbind (list_bind)
     {
       if (!list_bind) return;
-      
-      var bind, i = 0;
+
+      var handler, i = 0;
       while (i < list_bind.length)
       {
-        bind = list_bind [i];
-        if (bind.spec === spec)
+        handler = list_bind [i];
+        if (handler.spec === spec)
         {
-          if (bind.obj === obj)
+          if (handler.obj === obj)
           {
             if (util.isString (func) || util.isFunction (func) )
             {
-              if (bind.func === func || bind.func_ptr === func)
+              if (handler.func === func || handler.func_ptr === func)
               {
                 list_bind.remove (i);
-                util.free (bind);
+                util.free (handler);
               }
               else { i++; }
             }
             else
             {
               list_bind.remove (i);
-              util.free (bind);
+              util.free (handler);
             }
           }
           else { i++; }
@@ -294,12 +294,10 @@ Model.prototype = {
     var list_bind, event, handler;
     
     this.__should_propagate_changes__ = true;
-    
-    if (!spec) spec = 'change';
-    else 'change:' + spec;
 
+    spec = (spec)? 'change:' + spec : 'change';
     event = new Event (this, spec, data);
-    
+
     try
     {
       // 1) manage links propagation
@@ -334,8 +332,10 @@ Model.prototype = {
           }
         }
       };
-      
-      if (spec && spec != 'change') _change (this.__bindings__ [spec]);
+
+      //propagate retrictive bindings
+      if (spec !== 'change') _change (this.__bindings__ [spec]);
+      //propagate general change
       _change (this.__bindings__ ['change']);
     }
     catch (e)
