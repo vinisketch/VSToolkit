@@ -1,20 +1,20 @@
 /**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
   contributors. All rights reserved
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
- 
+
  Use code from Canto.js Copyright 2010 Steven Levithan <stevenlevithan.com>
 */
 
@@ -44,14 +44,14 @@ VSArray.prototype = {
   /*****************************************************************
    *
    ****************************************************************/
-   
+
    _data: null,
    _model_class: null,
-  
+
   /*****************************************************************
-   *              
+   *
    ****************************************************************/
-   
+
   /**
    * @name vs.core.Array#initComponent
    * @function
@@ -61,11 +61,11 @@ VSArray.prototype = {
    {
      this._data = [];
    },
-  
+
   /*****************************************************************
-   *              
+   *
    ****************************************************************/
-  
+
   /**
    * Returns the nth element
    *
@@ -78,7 +78,7 @@ VSArray.prototype = {
   {
     return this._data [index];
   },
-  
+
   /**
    * @private
    * @name vs.core.Array#_instanceModel
@@ -100,10 +100,10 @@ VSArray.prototype = {
         console.error (e.toString ());
       }
     }
-    
+
     return obj;
   },
-  
+
   /**
    * Adds one or more elements to the end of an array and returns the
    * new length of the array.
@@ -118,21 +118,21 @@ VSArray.prototype = {
     var args = [], i = 0;
     for (;i < arguments.length; i++)
     { args.push (this._instanciateModel (arguments[i])); }
-    
+
     this._data.push.apply (this._data, args);
-    
+
     if (this.hasToPropagateChange ()) this.change ('add');
-    
+
     return this.length;
   },
-  
+
   /**
    * Adds one or more elements to the end of an array and returns the
    *
    * @name vs.core.Array#addAtIndex
    * @function
    *
-   * @param {number} index the position 
+   * @param {number} index the position
    * @param {element1, ..., elementN} datas
    */
   addAtIndex : function ()
@@ -141,14 +141,14 @@ VSArray.prototype = {
     var args = [], i = 1;
     for (;i < arguments.length; i++)
     { args.push (this._instanciateModel (arguments[i])); }
-    
+
     this._data.splice.apply (this._data, args);
     if (this.hasToPropagateChange ())
       this.change ('add', {from: args[0], to: args.length - 2});
   },
-    
+
   /**
-   * Removes the elements in the specified interval of this Array.<br/> 
+   * Removes the elements in the specified interval of this Array.<br/>
    * Shifts any subsequent elements to the left (subtracts one from
    * their indices).<br/>
    *
@@ -168,9 +168,9 @@ VSArray.prototype = {
     this._data.remove (from, to);
     if (this.hasToPropagateChange ()) this.change ('remove', {from: from, to: to});
   },
-  
+
   /**
-   * Removes all elements of this Array.<br/> 
+   * Removes all elements of this Array.<br/>
    * @name vs.core.Array#removeAll
    * @function
    */
@@ -179,7 +179,7 @@ VSArray.prototype = {
     this._data = [];
     if (this.hasToPropagateChange ()) this.change ('removeall');
   },
-  
+
   /**
    *  .
    *
@@ -192,9 +192,9 @@ VSArray.prototype = {
     throw ("method not yet implemented");
 //    this._data.push ();
   },
-  
+
   /*****************************************************************
-   *              
+   *
    ****************************************************************/
 
   /**
@@ -208,7 +208,7 @@ VSArray.prototype = {
   toJSON : function ()
   {
     var json = this._toJSON ("{"), i = 0, obj;
-    
+
     json += ", \"data\": [";
     for (;i < this._data.length; i++)
     {
@@ -218,62 +218,50 @@ VSArray.prototype = {
       else json += JSON.stringify (obj);
       if (i < this._data.length - 1) json += ',';
     }
-    
+
     json += "]}";
     return json;
   },
-  
+
   /**
-   *  Set objet's properties from JSON stringification.<p/>
-   *  This can be used when retrieve data from serialization.
-   *
-   * @name vs.core.Array#parseJSON
-   * @function
-   * @param {String} json The JSON String
+   * @protected
    */
-  parseJSON : function (json)
+  parseData : function (obj)
   {
-    try {
-      var obj = (json && util.parseJSON (json)) || {}, i, key, _model, item,
-        self = this;
-      
-      function fillArray (data)
-      {
-        self._data = [];
-        for (i = 0; i < data.length; i++)
-        {
-          item = data [i];
-          if (self._model_class)
-          {
-            _model = new self._model_class ();
-            _model.init ();
-          
-            for (key in item) { _model ['_' + key] = item [key]; }
-            self.add (_model);
-          }
-          else self.add (item);
-        }
-      };
-  
-      if (util.isArray (obj))
-      {
-        fillArray (obj);
-      }
-      else for (key in obj)
-      {
-        this._data = [];
-        if (key == 'data')
-        {
-          fillArray (obj.data);
-        }
-        else this ['_' + key] = obj [key];
-      }
-    }
-    catch (e)
+    var i, key, _model, item, self = this;
+
+    function fillArray (data)
     {
-      console.error ("vs.core.Array.parseJSON failed. " + e.toString ());
+      self._data = [];
+      for (i = 0; i < data.length; i++)
+      {
+        item = data [i];
+        if (self._model_class)
+        {
+          _model = new self._model_class ();
+          _model.init ();
+
+          for (key in item) { _model ['_' + key] = item [key]; }
+          self.add (_model);
+        }
+        else self.add (item);
+      }
+    };
+
+    if (util.isArray (obj))
+    {
+      fillArray (obj);
     }
-  },
+    else for (key in obj)
+    {
+      this._data = [];
+      if (key == 'data')
+      {
+        fillArray (obj.data);
+      }
+      else this ['_' + key] = obj [key];
+    }
+  }
 };
 util.extendClass (VSArray, core.Model);
 
@@ -286,27 +274,27 @@ util.defineClassProperties (VSArray, {
     /**
      * Set data elements for the array
      *
-     * @name vs.core.Array#data 
+     * @name vs.core.Array#data
      * @type {Array | vs.core.Array}
      */
     set : function (v)
     {
       if (!this.__i__) throw ("Component not initialized");
-      
+
       if (util.isArray (v)) this._data = v.slice ();
       else if (v instanceof VSArray)
       {
         this._data = v._data.slice ();
       }
       else return;
-      
+
       if (this.hasToPropagateChange ()) this.change ('add');
     },
-    
+
     /**
      * Returns an array of elements
      *
-     * @name vs.core.Array#data 
+     * @name vs.core.Array#data
      * @type {Array}
      */
     get : function ()
@@ -315,12 +303,12 @@ util.defineClassProperties (VSArray, {
       return this._data.slice ();
     }
   },
-  
+
   "length" : {
     /**
      * Reflects the number of elements in an array.
      *
-     * @name vs.core.Array#length 
+     * @name vs.core.Array#length
      * @type {number}
      */
     get : function ()
@@ -329,18 +317,18 @@ util.defineClassProperties (VSArray, {
       return this._data.length;
     }
   },
-  
+
   "modelClass" : {
     /**
      * Set this property to specify the model class that the Array contains
      *
-     * @name vs.core.Array#modelClass 
+     * @name vs.core.Array#modelClass
      * @type {vs.core.Model}
      */
     set : function (v)
     {
       if (!(v instanceof Function)) return;
-      
+
       this._model_class = v;
     }
   }

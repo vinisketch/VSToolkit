@@ -267,10 +267,22 @@ VSObject.prototype =
   parseJSON : function (json)
   {
     try {
-      var obj = (json && util.parseJSON (json)) || {}, value, result;
+      this.parseData ((json && util.parseJSON (json)) || {});
+    }
+    catch (e)
+    {
+      console.error ("vs.core.Object.parseJSON failed. " + e.toString ());
+    }
+  },
 
-      for (var key in obj)
-      {
+  /**
+   * @protected
+   */
+  parseData : function (obj)
+  {
+    var key, value, result;
+    for (key in obj)
+    {
 //         value = obj [key];
 //         if (util.isString (value))
 //         {
@@ -281,12 +293,7 @@ VSObject.prototype =
 //           }
 //           else this ['_' + key] = value; // String
 //         }
-        this ['_' + key] = value;
-      }
-    }
-    catch (e)
-    {
-      console.error ("vs.core.Object.parseJSON failed. " + e.toString ());
+      this ['_' + util.underscore (key)] = value;
     }
   },
 
