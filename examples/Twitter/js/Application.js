@@ -110,9 +110,9 @@ var TheApplication = vs.core.createClass ({
 
     var searchField = new vs.ui.InputField ({
       type: vs.ui.InputField.SEARCH,
-      size : [80, 32],
+      id: 'twitter_search',
       placeholder: 'search',
-      magnet: 5
+      magnet: 4
     }).init ();
     this.navBar.add (searchField);
 

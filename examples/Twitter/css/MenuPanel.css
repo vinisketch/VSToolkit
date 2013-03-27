@@ -54,3 +54,9 @@
   background-image: -webkit-linear-gradient(top, #0D0C0B 0%, #222 15%, #222 100%) !important;;
   border-top: 1px solid #0D0C0B !important;
 }
+
+#twitter_search {
+  width: 80px;
+  height: 32px;
+  margin: 6px 10px 0 0;
+}
