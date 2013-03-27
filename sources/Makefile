@@ -1,30 +1,30 @@
 ##############################################################
 ##                    COPYRIGHT NOTICE
 ##
-##  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+##  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
 ##  contributors. All rights reserved
-##  
+##
 ##  This program is free software: you can redistribute it and/or modify
 ##  it under the terms of the GNU Lesser General Public License as published
 ##  by the Free Software Foundation, either version 3 of the License, or
 ##  (at your option) any later version.
-##  
+##
 ##  This program is distributed in the hope that it will be useful,
 ##  but WITHOUT ANY WARRANTY; without even the implied warranty of
 ##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ##  GNU Lesser General Public License for more details.
-##  
+##
 ##  You should have received a copy of the GNU Lesser General Public License
 ##  along with this program. If not, see <http://www.gnu.org/licenses/>.
 ##############################################################
 
-###                     Declaration 
+###                     Declaration
 ##############################################################
 
 SHELL = /bin/sh
 CHMOD = chmod
 CP = cp
-XTEMP = ../tools/manage_template.sh 
+XTEMP = ../tools/manage_template.sh
 MV = mv
 NOOP = $(SHELL) -c true
 RM_F = rm -f
@@ -43,7 +43,7 @@ JAVA = java
 COMPILE = $(JAVA) -jar ../tools/ext/closurecompiler/compiler.jar --language_in=ECMASCRIPT5
 COMPILE_ADV = $(JAVA) -jar ../tools/ext/closurecompiler/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS
 COMPILE_YUI = $(JAVA) -cp ../../../lib/yuicompressor/jargs-1.0.jar:../tools/ext/yuicompressor/rhino-1.6R7.jar -jar ../tools/ext/yuicompressor/yuicompressor-2.4.2.jar
-GENDOC = $(JAVA) -jar ../tools/ext/jsdoc-toolkit/jsrun.jar ../tools/ext/jsdoc-toolkit/app/run.js 
+GENDOC = $(JAVA) -jar ../tools/ext/jsdoc-toolkit/jsrun.jar ../tools/ext/jsdoc-toolkit/app/run.js
 COMPILE_LESS = lessc
 
 ###                         RELEASE
@@ -86,7 +86,7 @@ clean_libs:
 clean_docs:
 	-$(RM_RF) ../docs/*.html
 	-$(RM_RF) ../docs/symbols/*.html
-		
+
 makedirs:
 	-$(MKPATH) ../lib_debug/
 	-$(MKPATH) ../lib_debug/js/
@@ -95,8 +95,8 @@ makedirs:
 	-$(MKPATH) ../lib/js/
 	-$(MKPATH) ../lib/css/
 	-$(MKPATH) ../docs/symbols/
-	
-doc: 
+
+doc:
 	-$(GENDOC) -c=../docs/conf/vs-jsdoc.conf
 	-$(RM_F) ../docs/files.html
 	-$(CP) ../docs/conf/index.html ../docs/index.html
@@ -106,10 +106,10 @@ doc:
 
 core: core_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_core.js --js_output_file=../lib/js/vs_core.js
-	
+
 core_debug: ../lib_debug/js/vs_core.js
 
-../lib_debug/js/vs_core.js: core/dataflow.js core/Event.js core/EventSource.js core/Object.js core/Class.js core/Model.js core/Keyboard.js core/FSM.js core/Scheduler.js core/HTTPRequest.js core/DeviceConfiguration.js core/Array.js core/DataStorage.js core/LocalStorage.js
+../lib_debug/js/vs_core.js: core/dataflow.js core/Event.js core/EventSource.js core/Object.js core/Class.js core/Model.js core/Keyboard.js core/FSM.js core/Scheduler.js core/HTTPRequest.js core/AjaxJSONP.js core/DeviceConfiguration.js core/Array.js core/DataStorage.js core/LocalStorage.js
 	$(CAT) Header.js >> $@
 	$(CAT) core/core.js >> $@
 	$(CAT) core/Point.js >> $@
@@ -124,6 +124,7 @@ core_debug: ../lib_debug/js/vs_core.js
 	$(CAT) core/Scheduler.js >> $@
 	$(CAT) core/DeviceConfiguration.js >> $@
 	$(CAT) core/HTTPRequest.js >> $@
+	$(CAT) core/AjaxJSONP.js >> $@
 	$(CAT) core/Array.js >> $@
 	$(CAT) core/DataStorage.js >> $@
 	$(CAT) core/LocalStorage.js >> $@
@@ -142,7 +143,7 @@ ui: ui_debug
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_pure.css -o ../lib/css/vs_ui_pure.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_bb.css -o ../lib/css/vs_ui_bb.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_pure.css -o ../lib/css/vs_ui_pure.css --type css --charset UTF8
-	
+
 ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css ../lib_debug/css/vs_ui_pure.less ../lib_debug/css/vs_ui_bb.css copy_ui_img copy_widgets_font
 	-$(CP) ui/view/ie10.css ../lib_debug/css/ie10.css
 	-$(COMPILE_LESS) ../lib_debug/css/vs_ui_pure.less ../lib_debug/css/vs_ui_pure.css
@@ -195,7 +196,7 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	$(XTEMP) List ui/List/List.html
 	$(XTEMP) NavigationBar ui/NavigationBar/NavigationBar.html
 	$(XTEMP) ToolBar ui/ToolBar/ToolBar.html
-	$(XTEMP) Canvas ui/Canvas/Canvas.html 
+	$(XTEMP) Canvas ui/Canvas/Canvas.html
 	$(XTEMP) ProgressBar ui/ProgressBar/ProgressBar.html
 	$(XTEMP) TextLabel ui/TextLabel/TextLabel.html
 	$(XTEMP) RadioButton ui/RadioButton/RadioButton.html
@@ -209,7 +210,7 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	$(XTEMP) Picker ui/Picker/Picker.html
 	$(XTEMP) SegmentedButton ui/SegmentedButton/SegmentedButton.html
 	$(XTEMP) SVGView ui/SVGView/SVGView.html
-	
+
 ../lib_debug/css/vs_ui.css: ui/View/View.css ui/SplitView/SplitView.css ui/ScrollImageView/ScrollImageView.css ui/Button/Button.css ui/List/List.css ui/NavigationBar/NavigationBar.css ui/TextLabel/TextLabel.css ui/ToolBar/ToolBar.css ui/Canvas/Canvas.css ui/ProgressBar/ProgressBar.css ui/Application/Application.css ui/View/ScrollBar.css ui/ComboBox/ComboBox.css ui/RadioButton/RadioButton.css ui/CheckBox/CheckBox.css ui/Slider/Slider.css ui/InputField/InputField.css ui/ScrollView/ScrollView.css ui/ImageView/ImageView.css ui/PopOver/PopOver.css  ui/Switch/Switch.css ui/Picker/Picker.css ui/SVGView/SVGView.css ui/SegmentedButton/SegmentedButton.css
 	$(CAT) ui/Application/Application.css >> $@
 	$(CAT) ui/View/View.css >> $@
@@ -310,7 +311,7 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	$(CAT) ui/SegmentedButton/SegmentedButton_bb.css >> $@
 	$(CAT) ui/Picker/Picker_bb.css >> $@
 	$(CAT) ext/ui/Accordion/Accordion_bb.css >> $@
-	
+
 copy_ui_img:
 	$(CP) ui/ComboBox/iOS* ../lib_debug/css
 	$(CP) ui/Button/bb* ../lib_debug/css
@@ -330,7 +331,7 @@ copy_ui_img:
 	$(CP) ui/Picker/iOS* ../lib_debug/css
 	-$(MKPATH) ../lib_debug/css/toolbar_icons/
 	$(CP) -r ui/ToolBar/toolbar_icons/*.png ../lib_debug/css/toolbar_icons/
-	
+
 copy_widgets_font:
 	$(CP) ui/Application/*.ttf ../lib_debug/css/
 	$(CP) ui/Application/*.eot ../lib_debug/css/
@@ -340,7 +341,7 @@ copy_widgets_font:
 
 fx: fx_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_fx.js --js_output_file=../lib/js/vs_fx.js
-	
+
 fx_debug: ../lib_debug/js/vs_fx.js
 
 ../lib_debug/js/vs_fx.js: fx/FX.js fx/Animation.js
@@ -355,13 +356,13 @@ fx_debug: ../lib_debug/js/vs_fx.js
 	$(CAT) fx/CubicController.js >> $@
 	$(CAT) fx/OpacityController.js >> $@
 	$(CAT) Footer.js >> $@
-	
+
 ###                     Data
 ##############################################################
 
 data: data_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_data.js --js_output_file=../lib/js/vs_data.js
-	
+
 data_debug: ../lib_debug/js/vs_data.js
 
 ../lib_debug/js/vs_data.js: data/Data.js data/URL.js data/GoogleSearch.js data/GoogleSearch.js
@@ -371,14 +372,14 @@ data_debug: ../lib_debug/js/vs_data.js
 	$(CAT) data/RSSRequester.js >> $@
 	$(CAT) data/GoogleSearch.js >> $@
 	$(CAT) Footer.js >> $@
-	
+
 ###                     AV
 ##############################################################
 
 av: av_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_av.js --js_output_file=../lib/js/vs_av.js
 	-$(COMPILE_YUI) ../lib_debug/css/vs_av.css -o ../lib/css/vs_av.css --type css --charset UTF8
-	
+
 av_debug: copy_av_html ../lib_debug/js/vs_av.js ../lib_debug/css/vs_av.css
 
 ../lib_debug/js/vs_av.js: av/AV.js av/Video/Video.js av/Audio.js
@@ -389,14 +390,14 @@ av_debug: copy_av_html ../lib_debug/js/vs_av.js ../lib_debug/css/vs_av.css
 	$(CAT) template.js >> $@
 	$(RM_F) template.js
 	$(CAT) Footer.js >> $@
-	
+
 ../lib_debug/css/vs_av.css:
 	$(CAT) av/Video/Video.css >> $@
 
 copy_av_html: av/Video/Video.html
 	$(RM_F) template.js
 	$(XTEMP) Video av/Video/Video.html
-	
+
 ###                     Extension
 ##############################################################
 
@@ -405,7 +406,7 @@ ext: ext_debug
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ext.css -o ../lib/css/vs_ext.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ext_ios.css -o ../lib/css/vs_ext_ios.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ext_android.css -o ../lib/css/vs_ext_android.css --type css --charset UTF8
-	
+
 ext_debug: copy_ext_ui_html ../lib_debug/js/vs_ext.js ../lib_debug/css/vs_ext.css ../lib_debug/css/vs_ext_ios.css ../lib_debug/css/vs_ext_android.css copy_ext_ui_img
 
 ../lib_debug/js/vs_ext.js: ext/Ext.js ext/ui/GMap/GMap.js ext/ui/Carousel/Carousel.js
@@ -417,7 +418,7 @@ ext_debug: copy_ext_ui_html ../lib_debug/js/vs_ext.js ../lib_debug/css/vs_ext.cs
 	$(CAT) template.js >> $@
 	$(RM_F) template.js
 	$(CAT) Footer.js >> $@
-	
+
 ../lib_debug/css/vs_ext.css:
 	$(CAT) ext/ui/GMap/GMap.css >> $@
 	$(CAT) ext/ui/Carousel/Carousel.css >> $@
@@ -438,11 +439,11 @@ copy_ext_ui_html: ext/ui/GMap/GMap.html
 	$(XTEMP) Accordion ext/ui/Accordion/Accordion.html
 
 copy_ext_ui_img:
-	$(CP) ext/ui/GMap/ios_marker.png ../lib_debug/css 
+	$(CP) ext/ui/GMap/ios_marker.png ../lib_debug/css
 
 ext_fx: ext_fx_debug
 	-$(COMPILE) --js=../lib_debug/js/vs_ext_fx.js --js_output_file=../lib/js/vs_ext_fx.js
-	
+
 ext_fx_debug: ../lib_debug/js/vs_ext_fx.js
 
 ../lib_debug/js/vs_ext_fx.js: ext/Ext.js ext/fx/Animation.js
@@ -465,20 +466,20 @@ extern_libs: ../lib_debug/js/vs_util.js ../lib_debug/js/vs_transform.js ../lib_d
 	$(RM) ../lib_debug/js/vs_transform.js
 	$(RM) ../lib_debug/js/vs_gesture.js
 	$(MV) ../lib_debug/js/vs_tmp.js ../lib_debug/js/vs_util.js
-	
+
 ../lib_debug/js/vs_util.js:
 	-$(MKPATH) tmp/
 	git clone https://github.com/dthevenin/Util.git tmp
 	-$(CP) tmp/build/vs_util.js ../lib_debug/js/vs_util.js
 	-$(CP) tmp/build/firminCSSMatrix.js ../lib_debug/js/firminCSSMatrix.js
 	-$(RM_RF) tmp
-	
+
 ../lib_debug/js/vs_transform.js:
 	-$(MKPATH) tmp/
 	git clone https://github.com/dthevenin/Transform.git tmp
 	-$(CP) tmp/build/vs_transform.js ../lib_debug/js/vs_transform.js
 	-$(RM_RF) tmp
-	
+
 ../lib_debug/js/vs_gesture.js:
 	-$(MKPATH) tmp/
 	git clone https://github.com/dthevenin/Gesture.git tmp
