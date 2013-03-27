@@ -173,23 +173,7 @@ Template.prototype =
 
     // 2) the template is indexed, now parse it for generating the
     // DOM fragment
-    var view_node;
-    if (DOMParser)
-    {
-      doc = new DOMParser ().parseFromString (str, 'text/html');
-      if (doc)
-      {
-        doc_elem = doc.documentElement;
-        if (doc_elem instanceof HTMLElement)
-        {
-          view_node = document.importNode (doc_elem, true);
-        }
-      }
-    }
-    if (!view_node)
-    {
-      view_node = Template.parseHTML (str);
-    }
+    var view_node = Template.parseHTML (str);
 
     /**
      * Node parsing function
@@ -337,7 +321,7 @@ var _create_property = function (view, prop_name, node, path)
         this.propertyChange (prop_name);
       };
     }(node, prop_name, '_' + util.underscore (prop_name), path));
-  
+
     desc.get = (function (node, _prop_name)
     {
       return function ()
@@ -358,7 +342,7 @@ var _create_property = function (view, prop_name, node, path)
         this.propertyChange (prop_name);
       };
     }(node, prop_name, '_' + util.underscore (prop_name), path));
-  
+
     desc.get = (function (node, _prop_name)
     {
       return function ()
