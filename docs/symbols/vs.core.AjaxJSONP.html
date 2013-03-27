@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - vs.ui.PopOver</title>
+		<title>JsDoc Reference - vs.core.AjaxJSONP</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -546,7 +546,7 @@ hr:last-child {
 <!-- ============================== class title ============================ -->
     <div class="classTitle">
       
-      Class vs.ui.PopOver
+      Class vs.core.AjaxJSONP
     </div>
 
 		<div id="scrollable">
@@ -556,39 +556,16 @@ hr:last-child {
 			<p class="description">
 				
 				<b>Extends</b>
-					<a href="../symbols/vs.ui.View.html">vs.ui.View</a>.<br /><br />
+					<a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>.<br /><br />
 				
 			
-				The vs.ui.PopOver view allows you to present information temporarily on top of
- your existing views. This view should not be draw over the entire screen.
- <p/>
- To display properly (with the arrow) the popover you have to use the method 
- how" with 2 following parameters:
- <ul>
-   <li/>The coordinate [x, y] on screen, specify the point
-        which is pointed by the popover
-   <li/>The popover position related the to first parameter
-          (ABOVE, BELOW, RIGHT, LEFT). 
- </ul>
-
- The popover is composed of tree views.
- <ul>
-   <li/>The main subView (vs.ui.View). This is the main view in which you can
-        add any widgets you want to present. The insertion peg is name
-        'children'. This view should presents information associate to the
-        user task. <br/>For adding view, you should use the method "add" of the 
-        popover
-   <li/>The second and third views are the header and footer views. They are
-        deactivated by default. These views are usefull to presents 
-        information related to navigation, for instance navigation buttons,
-        cancel/validation button, etc. 
- </ul>
+				It performs a JSONP request to fetch data from another domain.
 	
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.ui.PopOver.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.core.AjaxJSONP.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -601,9 +578,9 @@ hr:last-child {
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/vs.ui.PopOver.html#constructor">vs.ui.PopOver</a></b>(config)
+								<b><a href="../symbols/vs.core.AjaxJSONP.html#constructor">vs.core.AjaxJSONP</a></b>(config)
 							</div>
-							<div class="description">The vs.ui.PopOver class</div>
+							<div class="description">The AjaxJSONP class</div>
 						</td>
 					</tr>
 				</tbody>
@@ -614,7 +591,7 @@ hr:last-child {
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.ui.PopOver.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.core.AjaxJSONP.">
 					<caption>Field Summary</caption>
 					<thead>
 						<tr>
@@ -625,22 +602,12 @@ hr:last-child {
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								vs.ui.PopOver.<b><a href="../symbols/vs.ui.PopOver.html#.ABOVE">ABOVE</a></b>
+								<b><a href="../symbols/vs.core.AjaxJSONP.html#responseJson">responseJson</a></b>
 								</div>
-								<div class="description">The popover is positioned above the reference point</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.ui.PopOver.<b><a href="../symbols/vs.ui.PopOver.html#.BELOW">BELOW</a></b>
-								</div>
-								<div class="description">The popover is positioned below the reference point</div>
+								<div class="description">Return request result as Javascript Object</div>
 							</td>
 						</tr>
 					
@@ -648,39 +615,9 @@ hr:last-child {
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/vs.ui.PopOver.html#hasFooter">hasFooter</a></b>
+								<b><a href="../symbols/vs.core.AjaxJSONP.html#url">url</a></b>
 								</div>
-								<div class="description">Activate/deactivate the footer space.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/vs.ui.PopOver.html#hasHeader">hasHeader</a></b>
-								</div>
-								<div class="description">Activate/deactivate the header space.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.ui.PopOver.<b><a href="../symbols/vs.ui.PopOver.html#.LEFT">LEFT</a></b>
-								</div>
-								<div class="description">The popover is positioned at left of the reference point</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.ui.PopOver.<b><a href="../symbols/vs.ui.PopOver.html#.RIGHT">RIGHT</a></b>
-								</div>
-								<div class="description">The popover is positioned at right of the reference point</div>
+								<div class="description">Setter for the url</div>
 							</td>
 						</tr>
 					
@@ -690,7 +627,7 @@ hr:last-child {
 				
 				
 				<dl class="inheritsList">
-				<dt>Fields borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#autosizing">autosizing</a>, <a href="../symbols/vs.ui.View.html#bubbling">bubbling</a>, <a href="../symbols/vs.ui.View.html#enable">enable</a>, <a href="../symbols/vs.ui.View.html#hideAnimation">hideAnimation</a>, <a href="../symbols/vs.ui.View.html#layout">layout</a>, <a href="../symbols/vs.ui.View.html#magnet">magnet</a>, <a href="../symbols/vs.ui.View.html#maxScale">maxScale</a>, <a href="../symbols/vs.ui.View.html#minScale">minScale</a>, <a href="../symbols/vs.ui.View.html#position">position</a>, <a href="../symbols/vs.ui.View.html#rotation">rotation</a>, <a href="../symbols/vs.ui.View.html#scaling">scaling</a>, <a href="../symbols/vs.ui.View.html#setHideAnimation">setHideAnimation</a>, <a href="../symbols/vs.ui.View.html#setShowAnimation">setShowAnimation</a>, <a href="../symbols/vs.ui.View.html#showAnimmation">showAnimmation</a>, <a href="../symbols/vs.ui.View.html#size">size</a>, <a href="../symbols/vs.ui.View.html#transformOrigin">transformOrigin</a>, <a href="../symbols/vs.ui.View.html#translation">translation</a>, <a href="../symbols/vs.ui.View.html#visible">visible</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
+				<dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
 				</dl>
 				
 			
@@ -699,7 +636,7 @@ hr:last-child {
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.ui.PopOver.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.core.AjaxJSONP.">
 					<caption>Method Summary</caption>
 					<thead>
 						<tr>
@@ -712,18 +649,9 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.PopOver.html#hide">hide</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/vs.core.AjaxJSONP.html#send">send</a></b>()
 								</div>
-								<div class="description">Hides the popover</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.PopOver.html#show">show</a></b>(coordinate, position)
-								</div>
-								<div class="description">Shows and positions the popover according a given coordinate.</div>
+								<div class="description"></div>
 							</td>
 						</tr>
 					
@@ -733,7 +661,7 @@ hr:last-child {
 				
 				
 				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#add">add</a>, <a href="../symbols/vs.ui.View.html#addClassName">addClassName</a>, <a href="../symbols/vs.ui.View.html#addCssRule">addCssRule</a>, <a href="../symbols/vs.ui.View.html#addCssRules">addCssRules</a>, <a href="../symbols/vs.ui.View.html#animate">animate</a>, <a href="../symbols/vs.ui.View.html#bind">bind</a>, <a href="../symbols/vs.ui.View.html#createAndAddComponent">createAndAddComponent</a>, <a href="../symbols/vs.ui.View.html#getBorder">getBorder</a>, <a href="../symbols/vs.ui.View.html#getComputedStyle">getComputedStyle</a>, <a href="../symbols/vs.ui.View.html#getMargin">getMargin</a>, <a href="../symbols/vs.ui.View.html#getPadding">getPadding</a>, <a href="../symbols/vs.ui.View.html#getStyle">getStyle</a>, <a href="../symbols/vs.ui.View.html#hasClassName">hasClassName</a>, <a href="../symbols/vs.ui.View.html#isChild">isChild</a>, <a href="../symbols/vs.ui.View.html#notifyToParent">notifyToParent</a>, <a href="../symbols/vs.ui.View.html#redraw">redraw</a>, <a href="../symbols/vs.ui.View.html#remove">remove</a>, <a href="../symbols/vs.ui.View.html#removeAllChild">removeAllChild</a>, <a href="../symbols/vs.ui.View.html#removeClassName">removeClassName</a>, <a href="../symbols/vs.ui.View.html#rotate">rotate</a>, <a href="../symbols/vs.ui.View.html#scale">scale</a>, <a href="../symbols/vs.ui.View.html#setStyle">setStyle</a>, <a href="../symbols/vs.ui.View.html#setStyles">setStyles</a>, <a href="../symbols/vs.ui.View.html#setVisible">setVisible</a>, <a href="../symbols/vs.ui.View.html#toggleClassName">toggleClassName</a>, <a href="../symbols/vs.ui.View.html#translate">translate</a>, <a href="../symbols/vs.ui.View.html#unbind">unbind</a>, <a href="../symbols/vs.ui.View.html#viewDidAdd">viewDidAdd</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
+				<dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#bind">bind</a>, <a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a>, <a href="../symbols/vs.core.EventSource.html#unbind">unbind</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
 				</dl>
 				
 			
@@ -748,35 +676,19 @@ hr:last-child {
 				</div>
 				
 				<div class="fixedFont">
-						<b>vs.ui.PopOver</b>(config)
+						<b>vs.core.AjaxJSONP</b>(config)
 				</div>
 				
 				<div class="description">
-					The vs.ui.PopOver class
-					<br /><i>Author: </i>David Thevenin.
+					The AjaxJSONP class
+					
 				</div>
 				
 				
 				
-				<pre class="code">  // PopOver creation
-  var popOver = new vs.ui.PopOver ();
-  popOver.init ();
-
-  // PopOver main view construction
-  var list = new vs.ui.List ();
-  list.init ();
-  list.data = data;
-  popOver.add (list, 'children');
-
-  // PopOver footer view activation and init
-  popOver.hasFooter = true;
-  var cancelButton = new vs.ui.Button ();
-  cancelButton.init ();
-  cancelButton.text = "Cancel";
-  popOver.add (cancelButton, 'footer');
-
-  // PopOver draw
-  popOver.show ([300, 100], vs.ui.PopOver.RIGHT);</pre>
+				<pre class="code"> var xhr = new vs.core.AjaxJSONP ({url: "http..."}).init ();
+ xhr.bind ('jsonload', this, this.processRSS);
+ xhr.send ();</pre>
 				
 				
 				
@@ -789,7 +701,7 @@ hr:last-child {
 								<span class="light fixedFont">{Object}</span>  <b>config</b>
 								
 							</dt>
-								<dd>the configuration structure [mandatory]</dd>
+								<dd>the configuration structure</dd>
 						
 						</dl>
 					
@@ -809,66 +721,17 @@ hr:last-child {
 					Field Detail
 				</div>
 				
-					<a name=".ABOVE"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.ui.PopOver.</span><b>ABOVE</b>
-					
-					</div>
-					<div class="description">
-						The popover is positioned above the reference point
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".BELOW"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.ui.PopOver.</span><b>BELOW</b>
-					
-					</div>
-					<div class="description">
-						The popover is positioned below the reference point
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="hasFooter"> </a>
+					<a name="responseJson"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{boolean}</span>
-					<b>hasFooter</b>
+					<span class="light">{Document}</span>
+					<b>responseJson</b>
 					
 					</div>
 					<div class="description">
-						Activate/deactivate the footer space. If its activate, you can
-add child to this view.
+						Return request result as Javascript Object
 						
 					</div>
-					
-					
-					
-					<pre class="code">  myPopOver.hasFooter = true;
-  button = new vs.ui.Button (...);
-  myPopOver.add (button, 'footer');</pre>
 					
 					
 
@@ -879,64 +742,15 @@ add child to this view.
 
 					<hr />
 				
-					<a name="hasHeader"> </a>
+					<a name="url"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{boolean}</span>
-					<b>hasHeader</b>
+					<span class="light">{String}</span>
+					<b>url</b>
 					
 					</div>
 					<div class="description">
-						Activate/deactivate the header space. If its activate, you can
-add child to this view.
-						
-					</div>
-					
-					
-					
-					<pre class="code">  myPopOver.hasHeader = true;
-  button = new vs.ui.Button (...);
-  myPopOver.add (button, 'header');</pre>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".LEFT"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.ui.PopOver.</span><b>LEFT</b>
-					
-					</div>
-					<div class="description">
-						The popover is positioned at left of the reference point
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".RIGHT"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.ui.PopOver.</span><b>RIGHT</b>
-					
-					</div>
-					<div class="description">
-						The popover is positioned at right of the reference point
+						Setter for the url
 						
 					</div>
 					
@@ -957,66 +771,20 @@ add child to this view.
 					Method Detail
 				</div>
 				
-					<a name="hide"> </a>
+					<a name="send"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>hide</b>()
+					<b>send</b>()
 					
 					</div>
 					<div class="description">
-						Hides the popover
+						
 						
 					</div>
 					
 					
 					
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="show"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>show</b>(coordinate, position)
-					
-					</div>
-					<div class="description">
-						Shows and positions the popover according a given coordinate.
- <p/>
- The position is defined by a coordinate and position of the popover
- related to the coordinate. can be vs.ui.PopOver.ABOVE, 
- vs.ui.PopOver.BELOW, vs.ui.PopOver.RIGHT, vs.ui.PopOver.LEFT
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<b>coordinate</b>
-									
-								</dt>
-								<dd>[Array] the coordinate of screen for the popover position</dd>
-							
-								<dt>
-									<b>position</b>
-									
-								</dt>
-								<dd>[number] the position of the popover related to the
-    coordinate.</dd>
-							
-							</dl>
 						
 						
 						
