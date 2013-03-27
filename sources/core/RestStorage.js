@@ -228,10 +228,10 @@ RestStorage.prototype = {
           for (var i = 0; i < ps.length; i ++)
           {
             var prop_name = ps[i], value = model ['_' + prop_name];
-            if (prop_name === "id") continue
-            if (typeof value == "undefined") continue;
-            if (j++) url += ';';
-            url += prop_name + '=' + value;
+            if (prop_name === "id" || prop_name === 'modelClass') continue
+            if (!util.isString (value) && !util.isNumber (value)) continue;
+            if (j++) url += '&';
+            url += prop_name + '=' + escape (value);
           }
         }
 
@@ -278,10 +278,10 @@ RestStorage.prototype = {
           for (var i = 0; i < ps.length; i ++)
           {
             var prop_name = ps[i], value = model ['_' + prop_name];
-            if (prop_name === "id") continue
+            if (prop_name === "id" || prop_name === 'modelClass') continue
             if (!util.isString (value) && !util.isNumber (value)) continue;
             if (j++) url += '&';
-            url += prop_name + '=' + value;
+            url += prop_name + '=' + escape (value);
           }
         }
 
