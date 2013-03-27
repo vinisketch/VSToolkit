@@ -1187,7 +1187,8 @@ input[type="text"] {
 .vs_ui_inputfield.focus > input
 {
   right: 35px;
-}.vs_ui_popover {
+}
+.vs_ui_popover {
   font-family: Helvetica;
 
   z-index: 3000;

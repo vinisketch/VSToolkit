@@ -5786,6 +5786,13 @@ var AjaxJSONP = core.createClass ({
       clearTimeout (abortTimeout)
       removeScript ();
       delete window[callbackName];
+
+      if (!data) return;
+      if (data.error)
+      {
+        self.propagate ('loaderror', data.error);
+        return;
+      }
       self._response_json = data;
       self.propertyChange ();
       self.propagate ('jsonload', data);
@@ -6642,10 +6649,10 @@ RestStorage.prototype = {
           for (var i = 0; i < ps.length; i ++)
           {
             var prop_name = ps[i], value = model ['_' + prop_name];
-            if (prop_name === "id") continue
-            if (typeof value == "undefined") continue;
-            if (j++) url += ';';
-            url += prop_name + '=' + value;
+            if (prop_name === "id" || prop_name === 'modelClass') continue
+            if (!util.isString (value) && !util.isNumber (value)) continue;
+            if (j++) url += '&';
+            url += prop_name + '=' + escape (value);
           }
         }
 
@@ -6692,10 +6699,10 @@ RestStorage.prototype = {
           for (var i = 0; i < ps.length; i ++)
           {
             var prop_name = ps[i], value = model ['_' + prop_name];
-            if (prop_name === "id") continue
-            if (typeof value == "undefined") continue;
-            if (j++) url += ';';
-            url += prop_name + '=' + value;
+            if (prop_name === "id" || prop_name === 'modelClass') continue
+            if (!util.isString (value) && !util.isNumber (value)) continue;
+            if (j++) url += '&';
+            url += prop_name + '=' + escape (value);
           }
         }
 

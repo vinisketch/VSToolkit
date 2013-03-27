@@ -675,8 +675,14 @@ ul > li:first-child {
   vertical-align: baseline;
   background-image: none;
   font-size: 22px;
+  height: 22px;
+  -webkit-transform: translate(0, -50%);
+  -moz-transform: translate(0, -50%);
+  -o-transform: translate(0, -50%);
+  -ms-transform: translate(0, -50%);
+  transform: translate(0, -50%);
+  top: 50%;
   color: #666;
-  top: 7px;
 }
 .vs_ui_inputfield .clear_button::before {
   content: "\f057";
