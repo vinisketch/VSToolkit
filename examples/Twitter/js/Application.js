@@ -59,7 +59,7 @@ var TheApplication = vs.core.createClass ({
 
     var button = new vs.ui.Button ({
       type: vs.ui.Button.NAVIGATION_TYPE,
-      text: 'settings',
+      text: 'Accounts',
       position : [6, 6]
     }).init ();
     this.navBar.add (button);
