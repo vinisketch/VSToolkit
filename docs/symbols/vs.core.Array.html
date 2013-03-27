@@ -386,8 +386,6 @@ hr:last-child {
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Array.html">Array</a></li>
-	
 	<li><a href="../symbols/vs.html">vs</a></li>
 	
 	<li><a href="../symbols/vs.av.html">vs.av</a></li>
@@ -694,15 +692,6 @@ new length of the array.</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.core.Array.html#parseJSON">parseJSON</a></b>(json)
-								</div>
-								<div class="description">Set objet's properties from JSON stringification.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/vs.core.Array.html#remove">remove</a></b>(from, to)
 								</div>
 								<div class="description">Removes the elements in the specified interval of this Array.</div>
@@ -733,7 +722,7 @@ new length of the array.</div>
 				
 				
 				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/vs.core.Model.html">vs.core.Model</a>: </dt><dd><a href="../symbols/vs.core.Model.html#bindChange">bindChange</a>, <a href="../symbols/vs.core.Model.html#change">change</a>, <a href="../symbols/vs.core.Model.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Model.html#stopPropagation">stopPropagation</a>, <a href="../symbols/vs.core.Model.html#unbindChange">unbindChange</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getProperties">getProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
+				<dt>Methods borrowed from class <a href="../symbols/vs.core.Model.html">vs.core.Model</a>: </dt><dd><a href="../symbols/vs.core.Model.html#bindChange">bindChange</a>, <a href="../symbols/vs.core.Model.html#change">change</a>, <a href="../symbols/vs.core.Model.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Model.html#stopPropagation">stopPropagation</a>, <a href="../symbols/vs.core.Model.html#unbindChange">unbindChange</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
 				</dl>
 				
 			
@@ -1005,42 +994,6 @@ new length of the array.
 
 					<hr />
 				
-					<a name="parseJSON"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>parseJSON</b>(json)
-					
-					</div>
-					<div class="description">
-						Set objet's properties from JSON stringification.<p/>
- This can be used when retrieve data from serialization.
-						
-					</div>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>json</b>
-									
-								</dt>
-								<dd>The JSON String</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="remove"> </a>
 					<div class="fixedFont">
 					
@@ -1049,7 +1002,7 @@ new length of the array.
 					
 					</div>
 					<div class="description">
-						Removes the elements in the specified interval of this Array.<br/> 
+						Removes the elements in the specified interval of this Array.<br/>
 Shifts any subsequent elements to the left (subtracts one from
 their indices).<br/>
 						

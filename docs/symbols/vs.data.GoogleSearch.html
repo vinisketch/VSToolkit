@@ -386,8 +386,6 @@ hr:last-child {
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Array.html">Array</a></li>
-	
 	<li><a href="../symbols/vs.html">vs</a></li>
 	
 	<li><a href="../symbols/vs.av.html">vs.av</a></li>
@@ -612,6 +610,26 @@ Events:
 					<tbody>
 					
 						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.data.GoogleSearch.html#addresses">addresses</a></b>
+								</div>
+								<div class="description">Getter to retrieve addresses matching a strAddress or a coordinate</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.data.GoogleSearch.html#engineLoaded">engineLoaded</a></b>
+								</div>
+								<div class="description">Return true if the Search Engine is loaded, false other wise.</div>
+							</td>
+						</tr>
+					
+						<tr>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
@@ -638,6 +656,27 @@ Events:
 								vs.data.GoogleSearch.<b><a href="../symbols/vs.data.GoogleSearch.html#.LOCAL_SEARCH_ENGINE">LOCAL_SEARCH_ENGINE</a></b>
 								</div>
 								<div class="description">The Google Local Search allows you to execute map searches.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.data.GoogleSearch.html#position">position</a></b>
+								</div>
+								<div class="description">Getter/setter to get a GPS coordinate associate to a strAddress or for
+looking the address associate to this coordinate</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.data.GoogleSearch.html#strAddress">strAddress</a></b>
+								</div>
+								<div class="description">Setter for the address to look for.</div>
 							</td>
 						</tr>
 					
@@ -692,7 +731,7 @@ from the Google Video Search service.</div>
 				
 				
 				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#bind">bind</a>, <a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a>, <a href="../symbols/vs.core.EventSource.html#unbind">unbind</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getProperties">getProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
+				<dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#bind">bind</a>, <a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a>, <a href="../symbols/vs.core.EventSource.html#unbind">unbind</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
 				</dl>
 				
 			
@@ -750,6 +789,49 @@ from the Google Video Search service.</div>
 					Field Detail
 				</div>
 				
+					<a name="addresses"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Array}</span>
+					<b>addresses</b>
+					
+					</div>
+					<div class="description">
+						Getter to retrieve addresses matching a strAddress or a coordinate
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="engineLoaded"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{RSSFeed}</span>
+					<b>engineLoaded</b>
+					
+					</div>
+					<div class="description">
+						Return true if the Search Engine is loaded, false other wise.
+The Component can be used only if the search engine is loaded.
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name=".ERROR_CODE_STR"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -801,6 +883,49 @@ from the Google Video Search service.</div>
 					</div>
 					<div class="description">
 						The Google Local Search allows you to execute map searches.
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="position"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Array}</span>
+					<b>position</b>
+					
+					</div>
+					<div class="description">
+						Getter/setter to get a GPS coordinate associate to a strAddress or for
+looking the address associate to this coordinate
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="strAddress"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>strAddress</b>
+					
+					</div>
+					<div class="description">
+						Setter for the address to look for.
 						
 					</div>
 					

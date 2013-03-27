@@ -386,8 +386,6 @@ hr:last-child {
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Array.html">Array</a></li>
-	
 	<li><a href="../symbols/vs.html">vs</a></li>
 	
 	<li><a href="../symbols/vs.av.html">vs.av</a></li>
@@ -712,6 +710,16 @@ hr:last-child {
    <li /> vs.ui.View.ABSOLUTE_LAYOUT
    <li /> vs.ui.View.FLOW_LAYOUT
 </ul></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.ui.View.html#magnet">magnet</a></b>
+								</div>
+								<div class="description">Set magnet</div>
 							</td>
 						</tr>
 					
@@ -1146,6 +1154,17 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#toggleClassName">toggleClassName</a></b>(className)
+								</div>
+								<div class="description">Toggle CSS className
+
+ <p></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#translate">translate</a></b>(x, y)
 								</div>
 								<div class="description">Move the view in x, y.</div>
@@ -1178,7 +1197,7 @@ hr:last-child {
 				
 				
 				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getProperties">getProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
+				<dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
 				</dl>
 				
 			
@@ -1267,7 +1286,7 @@ hr:last-child {
 					<a name="autosizing"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{<a href="../symbols/Array.html">Array</a>}</span>
+					<span class="light">{Array}</span>
 					<b>autosizing</b>
 					
 					</div>
@@ -1461,6 +1480,27 @@ hr:last-child {
 
 					<hr />
 				
+					<a name="magnet"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Number}</span>
+					<b>magnet</b>
+					
+					</div>
+					<div class="description">
+						Set magnet
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
 					<a name="maxScale"> </a>
 					<div class="fixedFont">
 					
@@ -1527,7 +1567,7 @@ hr:last-child {
 					<a name="position"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{<a href="../symbols/Array.html">Array</a>}</span>
+					<span class="light">{Array}</span>
 					<b>position</b>
 					
 					</div>
@@ -2033,7 +2073,7 @@ obj.visible = true <=> obj.show (), obj.visible = false <=> obj.hide (),
 								<dd>CSS Selector</dd>
 							
 								<dt>
-									<span class="light fixedFont">{<a href="../symbols/Array.html">Array</a>}</span> <b>rules</b>
+									<span class="light fixedFont">{Array}</span> <b>rules</b>
 									
 								</dt>
 								<dd>the array of rules</dd>
@@ -2142,7 +2182,7 @@ Options :
  you should set delay to 'true' otherwise you application will be stuck.
  But be careful this options add an overlay in the event propagation.
  For debug purpose or more secure coding you can force delay to true, for
- all bind using global variable FORCE_EVENT_PROPAGATION_DELAY.<br/>
+ all bind using global variable vs.core.FORCE_EVENT_PROPAGATION_DELAY.<br/>
  You just have set as true (vs.core.FORCE_EVENT_PROPAGATION_DELAY = true)
  at beginning of your program.
 						
@@ -3035,6 +3075,47 @@ Options :
 					
 					
 					
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="toggleClassName"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>toggleClassName</b>(className)
+					
+					</div>
+					<div class="description">
+						Toggle CSS className
+
+ <p>
+						
+					</div>
+					
+					
+					
+					<pre class="code"> myObject.toggleClassName ('selected');</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>className</b>
+									
+								</dt>
+								<dd>the className to add/remove</dd>
+							
+							</dl>
 						
 						
 						

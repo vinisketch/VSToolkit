@@ -386,8 +386,6 @@ hr:last-child {
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Array.html">Array</a></li>
-	
 	<li><a href="../symbols/vs.html">vs</a></li>
 	
 	<li><a href="../symbols/vs.av.html">vs.av</a></li>
@@ -606,8 +604,8 @@ hr:last-child {
 								<div class="fixedFont">
 								<b><a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a></b>
 								</div>
-								<div class="description">Returns a property descriptor for an own property (that is, one directly 
-present on an object, not present by dint of being along an object's 
+								<div class="description">Returns a property descriptor for an own property (that is, one directly
+present on an object, not present by dint of being along an object's
 prototype chain) of a given object.</div>
 							</td>
 						</tr>
@@ -618,7 +616,7 @@ prototype chain) of a given object.</div>
 								<div class="fixedFont">
 								<b><a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a></b>
 								</div>
-								<div class="description">Returns a property descriptor for a property (along the object's 
+								<div class="description">Returns a property descriptor for a property (along the object's
 prototype chain) of a given object.</div>
 							</td>
 						</tr>
@@ -715,7 +713,7 @@ prototype chain) of a given object.</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#getProperties">getProperties</a></b>()
+								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a></b>()
 								</div>
 								<div class="description">Returns the list of object's properties name <p></div>
 							</td>
@@ -735,7 +733,7 @@ prototype chain) of a given object.</div>
 							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#link">link</a></b>(model)
 								</div>
-								<div class="description">The method allows to link a model to an other object (a view for 
+								<div class="description">The method allows to link a model to an other object (a view for
 instance).</div>
 							</td>
 						</tr>
@@ -840,8 +838,8 @@ instance).</div>
 					
 					</div>
 					<div class="description">
-						Returns a property descriptor for an own property (that is, one directly 
-present on an object, not present by dint of being along an object's 
+						Returns a property descriptor for an own property (that is, one directly
+present on an object, not present by dint of being along an object's
 prototype chain) of a given object.
 						
 					</div>
@@ -863,7 +861,7 @@ prototype chain) of a given object.
 					
 					</div>
 					<div class="description">
-						Returns a property descriptor for a property (along the object's 
+						Returns a property descriptor for a property (along the object's
 prototype chain) of a given object.
 						
 					</div>
@@ -1062,7 +1060,7 @@ prototype chain) of a given object.
 					<pre class="code"> var myObject = new vs.core.Object ({id: 'myobject'});
  myObject.init ();
 
- myObject.configure ({prop1: "1", prop2: 'hello', ..}); 
+ myObject.configure ({prop1: "1", prop2: 'hello', ..});
  <=>
  myObject.prop1 = "1";
  myObject.prop2 = "hello";
@@ -1078,7 +1076,7 @@ prototype chain) of a given object.
 									<span class="light fixedFont">{Object}</span> <b>config</b>
 									
 								</dt>
-								<dd>the associated array used for configuring the 
+								<dd>the associated array used for configuring the
        object.</dd>
 							
 							</dl>
@@ -1092,11 +1090,11 @@ prototype chain) of a given object.
 
 					<hr />
 				
-					<a name="getProperties"> </a>
+					<a name="getModelProperties"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{<a href="../symbols/Array.html">Array</a>}</span>
-					<b>getProperties</b>()
+					<span class="light">{Array}</span>
+					<b>getModelProperties</b>()
 					
 					</div>
 					<div class="description">
@@ -1114,7 +1112,7 @@ prototype chain) of a given object.
 							<dl class="detailList">
 							<dt class="heading">Returns:</dt>
 							
-								<dd><span class="light fixedFont">{<a href="../symbols/Array.html">Array</a>}</span> Array of name of properties</dd>
+								<dd><span class="light fixedFont">{Array}</span> Array of name of properties</dd>
 							
 							</dl>
 						
@@ -1167,17 +1165,17 @@ prototype chain) of a given object.
 					
 					</div>
 					<div class="description">
-						The method allows to link a model to an other object (a view for 
+						The method allows to link a model to an other object (a view for
 instance).<br />
 This is a simple way to create a MVC architecture; each model
 modification will be propagated to the view.<br/><br/>
 Linking is quite different than dataflow.<br/>
 You can use linking to connect 2 objects with the same properties name.
 <br/>
-With dataflow its possible to connect a set of object, and define precisely 
+With dataflow its possible to connect a set of object, and define precisely
 witch properties are connected together.<br/>
 <br/>
-Please notice that dataflow propagation is more optimized than linking 
+Please notice that dataflow propagation is more optimized than linking
 propagation.
 						
 					</div>
@@ -1188,7 +1186,7 @@ propagation.
  var myView = new MyView ().init ();
 
  myView.link (myModel);
- 
+
  myModel.prop = "value"; // the myView.prop will be automatically updated.
  ...
  myModel.stopPropagation ();

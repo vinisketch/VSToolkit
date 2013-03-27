@@ -386,8 +386,6 @@ hr:last-child {
 	
 	<li><i><a href="../symbols/_global_.html">_global_</a></i></li>
 	
-	<li><a href="../symbols/Array.html">Array</a></li>
-	
 	<li><a href="../symbols/vs.html">vs</a></li>
 	
 	<li><a href="../symbols/vs.av.html">vs.av</a></li>
@@ -559,11 +557,11 @@ hr:last-child {
 			
 				vs.core.Model is a class that defines the basic Model mechanisms to implement
 a MVC like architecture. If you need to implement a MVC component, you
-should extend this class.<br/><br/> >>>> THIS CODE IS STILL UNDER BETA AND 
+should extend this class.<br/><br/> >>>> THIS CODE IS STILL UNDER BETA AND
 THE API MAY CHANGE IN THE FUTURE <<< <p>
 WikiPedia gives this following definition of a model:<br>
-"The model manages the behavior and data of the application, responds to 
-requests for information about its state (usually from the view), and 
+"The model manages the behavior and data of the application, responds to
+requests for information about its state (usually from the view), and
 responds to instructions to change state (usually from the controller)"
 <p>
 The Model class exposes 2 kinds of mechanisms you will need:
@@ -573,7 +571,7 @@ The Model class exposes 2 kinds of mechanisms you will need:
 </ul>
 
 <p/>
- 
+
 <p/>
 The fallowing example show a TodoModel class with three properties
 	
@@ -685,7 +683,7 @@ bind your object (the observer) to this object using 'bindChange' method.</div>
 				
 				
 				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getProperties">getProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
+				<dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
 				</dl>
 				
 			
@@ -721,14 +719,14 @@ bind your object (the observer) to this object using 'bindChange' method.</div>
     done: vs.core.Object.PROPERTY_IN_OUT,
     date: vs.core.Object.PROPERTY_OUT
   },
- 
+
   // Initialization
   initComponent : function ()
   {
     this._date = new Date ();
     this._done = false;
     this._content = "";
-  } 
+  }
 });
 
 var myModel = new TodoModel ({content:"Something to do"});
@@ -844,7 +842,7 @@ bind your object (the observer) to this object using 'bindChange' method.
 					<div class="description">
 						Manually trigger the "change" event.
 If you have deactivated propagation using myModel.stopPropagation ()
-in order to aggregate changes to a model, you will want to call 
+in order to aggregate changes to a model, you will want to call
 myModel.change () when you're all finished.
 <p>
 Calling myModel.change () reactivate automatic change propagation
@@ -923,7 +921,7 @@ properties have been modified.
 						Configure the model to do not propagate event change.<br/>
 In order to aggregate rapid changes to a model, you will deactivate
 change event propagate.
-After all change are finish you can manual call model.change () to 
+After all change are finish you can manual call model.change () to
 trigger the event.
 <p>
 Calling model.change () will reactivate event propagation.
