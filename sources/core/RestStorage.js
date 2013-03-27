@@ -17,7 +17,36 @@
 */
 
 /**
-*/
+ *  @extends vs.core.DataStorage
+ *  @class vs.core.RestStorage
+ *  is an implementation of DataStorage for REST service
+ *  <br/><br/> >>>> THIS CODE IS STILL UNDER BETA AND
+ *  THE API MAY CHANGE IN THE FUTURE <<< <p>
+ *  SUPPORT only load for now.
+ *
+ *  @example
+ *   var todoList = vs.core.Array ();
+ *   todoList.init ();
+ *
+ *   var restSource = new vs.core.RestStorage ({
+ *     url: "https://xxx"
+ *   }).init ();
+ *   restSource.registerModel ("todoslistOne", todosList);
+ *   restSource.registerModel ("todoslistTwo", todosList);
+ *   // Load all models
+ *   restSource.load ();
+ *   // Load only todoslistOne model
+ *   restSource.load ("todoslistOne");
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *  Main constructor
+ *
+ * @name vs.core.RestStorage
+ *
+ * @param {Object} config the configuration structure
+ */
 function RestStorage (config)
 {
   this.parent = DataStorage;
@@ -28,7 +57,20 @@ function RestStorage (config)
   this._headers = {};
 }
 
+/**
+ * Configure the RestStorage to use HttpRequest. Default configuration.
+ * @name vs.core.RestStorage.XHR
+ * @see vs.core.RestStorage#mode
+ * @const
+ */
 RestStorage.XHR = 0;
+
+/**
+ * Configure the RestStorage to use JSONP
+ * @name vs.core.RestStorage.JSONP
+ * @see vs.core.RestStorage#mode
+ * @const
+ */
 RestStorage.JSONP = 1;
 
 RestStorage.prototype = {
@@ -40,7 +82,7 @@ RestStorage.prototype = {
   /**
    *
    * @protected
-   * @type {vs.core.HTTPRequest}
+   * @type {Object}
    */
   _xhrs: null,
 

@@ -24,8 +24,7 @@
  * @name vs.core.AjaxJSONP
  * @events jsonload, loaderror
  * @class
- * It provides scripted client functionality for transferring data between
- * a client and a server.
+ * It performs a JSONP request to fetch data from another domain.
  *
  *  @constructor
  *   Creates a new AjaxJSONP.
@@ -38,25 +37,19 @@
  *  </ul>
  *  <p>
  * @example
- *  var xhr = new vs.core.AjaxJSONP ({url: "http..."});
- *  xhr.init ();
- *  xhr.bind ('xmlload', this, this.processRSS);
+ *  var xhr = new vs.core.AjaxJSONP ({url: "http..."}).init ();
+ *  xhr.bind ('jsonload', this, this.processRSS);
  *  xhr.send ();
  *
  * @param {Object} config the configuration structure
  */
-AjaxJSONP = function (config)
-{
-  this.parent = core.EventSource;
-  this.parent (config);
-  this.constructor = AjaxJSONP;
-};
+var AjaxJSONP core.createClass ({
 
-AjaxJSONP.prototype = {
+  parent: core.EventSource,
 
- /*********************************************************
- *                  private data
- *********************************************************/
+  /*********************************************************
+  *                  private data
+  *********************************************************/
 
   /**
    *
@@ -72,6 +65,38 @@ AjaxJSONP.prototype = {
    */
   __index: 0,
 
+  /*********************************************************
+  *                  Properties
+  *********************************************************/
+
+  properties : {
+    "url": {
+      /**
+       * Setter for the url
+       * @name vs.core.AjaxJSONP#url
+       * @type String
+       */
+      set : function (v)
+      {
+        if (!util.isString (v)) { return; }
+
+        this._url = v;
+      }
+    },
+
+    'responseJson': {
+      /**
+       * Return request result as Javascript Object
+       * @name vs.core.AjaxJSONP#responseJson
+       * @type Document
+       */
+      get : function ()
+      {
+        return this._response_json;
+      }
+    }
+  },
+
  /*********************************************************
  *                   management
  *********************************************************/
@@ -80,10 +105,8 @@ AjaxJSONP.prototype = {
    *
    * @name vs.core.AjaxJSONP#send
    * @function
-   *
-   * @param {String} data The data to send [optional]
    */
-  send : function (data)
+  send : function ()
   {
     var
       self = this,
@@ -105,48 +128,14 @@ AjaxJSONP.prototype = {
         self.propagate ('loaderror', 'Impossible to load data');
       }, 3000);
 
-    window [callbackName] = function (data) {
+    window [callbackName] = function (data)
+    {
       clearTimeout (abortTimeout)
       removeScript ();
       delete window[callbackName];
-      this._response_json = data;
+      self._response_json = data;
+      self.propertyChange ();
       self.propagate ('jsonload', data);
-    }
-
-//    serializeData(options)
-
-  }
-};
-util.extendClass (AjaxJSONP, core.EventSource);
-
-/********************************************************************
-                  Define class properties
-********************************************************************/
-
-util.defineClassProperties (AjaxJSONP, {
-  "url": {
-    /**
-     * Setter for the url
-     * @name vs.core.AjaxJSONP#url
-     * @type String
-     */
-    set : function (v)
-    {
-      if (!util.isString (v)) { return; }
-
-      this._url = v;
-    }
-  },
-
-  'responseJson': {
-    /**
-     * Return request result as Javascript Object
-     * @name vs.core.AjaxJSONP#responseJson
-     * @type Document
-     */
-    get : function ()
-    {
-      return this._response_json;
     }
   }
 });
