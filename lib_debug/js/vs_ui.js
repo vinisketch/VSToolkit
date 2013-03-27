@@ -382,16 +382,16 @@ var _create_property = function (view, prop_name, node, path)
   var desc = {};
   if (node.nodeType === 3) //TEXT_NODE
   {
-    desc.set = (function (node, _prop_name, path)
+    desc.set = (function (node, prop_name, _prop_name, path)
     {
       return function (v)
       {
         this [_prop_name] = v;
         node.data = v;
-        this.propertyChange (_prop_name);
+        this.propertyChange (prop_name);
       };
-    }(node, '_' + prop_name, path));
-
+    }(node, prop_name, '_' + util.underscore (prop_name), path));
+  
     desc.get = (function (node, _prop_name)
     {
       return function ()
@@ -399,20 +399,20 @@ var _create_property = function (view, prop_name, node, path)
         this [_prop_name] = node.data
         return this[_prop_name];
       };
-    }(node, '_' + prop_name));
+    }(node, '_' + util.underscore (prop_name)));
   }
   else if (node.nodeType === 2) //ATTRIBUTE_NODE
   {
-    desc.set = (function (node, _prop_name, path)
+    desc.set = (function (node, prop_name, _prop_name, path)
     {
       return function (v)
       {
         this [_prop_name] = v;
         node.value = v;
-        this.propertyChange (_prop_name);
+        this.propertyChange (prop_name);
       };
-    }(node, '_' + prop_name, path));
-
+    }(node, prop_name, '_' + util.underscore (prop_name), path));
+  
     desc.get = (function (node, _prop_name)
     {
       return function ()
@@ -420,7 +420,7 @@ var _create_property = function (view, prop_name, node, path)
         this [_prop_name] = node.value
         return this[_prop_name];
       };
-    }(node, '_' + prop_name));
+    }(node, '_' + util.underscore (prop_name)));
   }
   vs.util.defineProperty (view, prop_name, desc);
 };
@@ -759,6 +759,12 @@ View.prototype = {
    * @type {boolean}
    */
   _visible: true,
+  
+  /**
+   * @protected
+   * @type {number}
+   */
+  _magnet: 0,
   
   /**
    * @private
@@ -1166,6 +1172,21 @@ View.prototype = {
 
     this._parse_view (this.view);
   },
+  
+  /**
+   * @protected
+   * @function
+   */
+  componentDidInitialize : function ()
+  {
+    core.EventSource.prototype.componentDidInitialize.call (this);
+    if (this._magnet) this.view.style.setProperty ('position', 'fixed', null);
+
+    if (this._magnet === 5)
+    {
+      this._applyTransformation ();
+    }
+  },
       
   /**
    * Notifies that the component's view was added to the DOM.<br/>
@@ -1559,7 +1580,7 @@ View.prototype = {
    *  you should set delay to 'true' otherwise you application will be stuck.
    *  But be careful this options add an overlay in the event propagation.
    *  For debug purpose or more secure coding you can force delay to true, for
-   *  all bind using global variable FORCE_EVENT_PROPAGATION_DELAY.<br/>
+   *  all bind using global variable vs.core.FORCE_EVENT_PROPAGATION_DELAY.<br/>
    *  You just have set as true (vs.core.FORCE_EVENT_PROPAGATION_DELAY = true)
    *  at beginning of your program.
    *
@@ -1667,6 +1688,23 @@ View.prototype = {
    * @protected
    * @function
    */
+  _setMagnet : function (code)
+  {
+    if (!util.isNumber (code) || code < 0 || code > 5) return;
+    
+    this._magnet = code;
+    if (this._magnet)
+    {  this.view.style.setProperty ('position', 'fixed', null); }
+    else
+    {  this.view.style.removeProperty ('position'); }
+    
+    this._updateSizeAndPos ();
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
   _updateSizeAndPos : function ()
   {
     this._updateSize (); 
@@ -1729,6 +1767,9 @@ View.prototype = {
       sPosB = pHeight - (pos[1] + size [1]) + 'px';
     }
     
+    if (this._magnet === 2) sPosB = '0px';
+    if (this._magnet === 4) sPosR = '0px';
+
     style = view.style;  
     style.width = width;
     style.height = height;
@@ -1742,7 +1783,10 @@ View.prototype = {
    */
   _updatePos : function ()
   {
-    var pos = this._pos, size = this._size, pWidth = 0, pHeight = 0,
+    var
+      x = this._pos [0], y = this._pos [1],
+      w = this._size [0], h = this._size [1],
+      pWidth = 0, pHeight = 0,
       sPosL = 'auto', sPosT = 'auto', sPosR = 'auto', sPosB = 'auto',
       aH = this._autosizing [0], aV = this._autosizing [1],
       view = this.view, parentElement, style;
@@ -1757,27 +1801,39 @@ View.prototype = {
       pHeight = parentElement.offsetHeight;
     }
     
+    if (this._magnet === 1) y = 0;
+    if (this._magnet === 3) x = 0;
+    
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
-    { sPosL = pos[0] + 'px'; }
+    { sPosL = x + 'px'; }
     else if ((aH === 2 || aH === 0) && pWidth)
-//    { sPosL = Math.round (pos[0] / pWidth * 100) + '%'; }
-    { sPosL = (pos[0] / pWidth * 100) + '%'; }
+//    { sPosL = Math.round (x / pWidth * 100) + '%'; }
+    { sPosL = (x / pWidth * 100) + '%'; }
     
     if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
     {
-      sPosR = pWidth - (pos[0] + size [0]) + 'px';
+      sPosR = pWidth - (x + w) + 'px';
     }
 
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
-    { sPosT = pos[1] + 'px'; }
+    { sPosT = y + 'px'; }
     else if ((aV === 2 || aV === 0) && pHeight)
-//    { sPosT = Math.round (pos[1]  / pHeight * 100) + '%'; }
-    { sPosT = (pos[1]  / pHeight * 100) + '%'; }
+//    { sPosT = Math.round (y / pHeight * 100) + '%'; }
+    { sPosT = (y / pHeight * 100) + '%'; }
 
     if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
     {
-      sPosB = pHeight - (pos[1] + size [1]) + 'px';
+      sPosB = pHeight - (y + h) + 'px';
     }
+
+    if (this._magnet === 2) { sPosT = 'auto'; sPosB = '0px'; }
+    if (this._magnet === 4) { sPosL = 'auto'; sPosR = '0px'; }
+
+    if (this._magnet === 5) {
+      sPosT = '50%'; sPosB = 'auto';
+      sPosL = '50%'; sPosR = 'auto';
+    }
+    this._applyTransformation ();
 
     style = view.style;  
     style.left = sPosL;
@@ -2405,6 +2461,25 @@ View.prototype = {
     util.removeClassName.apply (this.view, args);
   },
   
+  /**
+   *  Toggle CSS className
+   *
+   *  <p>
+   *  @example
+   *  myObject.toggleClassName ('selected');
+   *
+   * @name vs.ui.View#toggleClassName 
+   * @function
+   *
+   * @param {String} className the className to add/remove
+   */
+  toggleClassName: function (className)
+  {
+    if (!this.view || !util.isString (className)) { return; }
+    
+    util.toggleClassName (this.view, className);
+  },
+  
 /********************************************************************
                   
 ********************************************************************/
@@ -2681,9 +2756,16 @@ View.prototype = {
    */
   _applyTransformation: function ()
   {
-    var matrix = this.getCTM ();
+    var
+      matrix = this.getCTM (),
+      transform = matrix.toString ();
     
-    setElementTransform (this.view, matrix.toString ());
+    if (this._magnet === 5)
+    {
+      transform += " translate(-50%,-50%)";
+    }
+
+    setElementTransform (this.view, transform);
     delete (matrix);
   }
 };
@@ -2785,6 +2867,19 @@ util.defineClassProperties (View, {
       
       if (!this.view) { return; }
       this._updateSizeAndPos ();
+    }
+  },
+  'magnet': {
+  
+    /** 
+     * Set magnet
+     * @name vs.ui.View#magnet 
+     * 
+     * @type Number
+     */ 
+    set : function (code)
+    {
+      this._setMagnet (code);
     }
   },
   'visible': {
@@ -7823,7 +7918,7 @@ util.defineClassProperty (TextArea, "value", {
    */
   set : function (v)
   {
-    if (typeof (v) === "undefined") { v = ''; }
+    if (v === null || typeof (v) === "undefined") { v = ''; }
     else if (util.isNumber (v)) { v = '' + v; }
     else if (!util.isString (v))
     {
@@ -8228,7 +8323,7 @@ util.defineClassProperties (Button, {
      */ 
     set : function (v)
     {
-      if (typeof (v) === "undefined") { v = ''; }
+      if (v === null || typeof (v) === "undefined") { v = ''; }
       else if (util.isNumber (v)) { v = '' + v; }
       else if (!util.isString (v))
       {
@@ -8904,7 +8999,7 @@ DefaultListItem.prototype = {
    */ 
   set title (v)
   {
-    if (typeof (v) === "undefined") { v = ''; }
+    if (v === null || typeof (v) === "undefined") { v = ''; }
     else if (util.isNumber (v)) { v = '' + v; }
     else if (!util.isString (v))
     {
@@ -8924,7 +9019,7 @@ DefaultListItem.prototype = {
    */ 
   set label (v)
   {
-    if (typeof (v) === "undefined") { v = ''; }
+    if (v === null || typeof (v) === "undefined") { v = ''; }
     else if (util.isNumber (v)) { v = '' + v; }
     else if (!util.isString (v))
     {
@@ -8985,7 +9080,7 @@ SimpleListItem.prototype = {
    */ 
   set title (v)
   {
-    if (typeof (v) === "undefined") { v = ''; }
+    if (v === null || typeof (v) === "undefined") { v = ''; }
     else if (util.isNumber (v)) { v = '' + v; }
     else if (!util.isString (v))
     {
@@ -9367,6 +9462,12 @@ List.prototype = {
    * @private
    * @type {number}
    */
+  _selected_index: 0,
+  
+  /**
+   * @private
+   * @type {number}
+   */
   _selected_item: 0,
   
   /**
@@ -9647,15 +9748,16 @@ List.prototype = {
    */
   _updateSelectItem : function (item)
   {
-    this._selected_item = item._comp_.index;
+    this._selected_index = item._comp_.index;
+    this._selected_item = this._model.item (this._selected_index);
     if (item._comp_ && item._comp_.didSelect) item._comp_.didSelect ();
     
     this.propertyChange ();
                 
     this.propagate ('itemselect',
     {
-      index: this._selected_item,
-      item: this._model.item (this._selected_item)
+      index: this._selected_index,
+      item: this._selected_item
     });
   },
   
@@ -9818,11 +9920,24 @@ util.defineClassProperties (List, {
     }
   },
   
+  'selectedIndex': {
+    /** 
+     * Getter for selectedIndex.
+     * @name vs.ui.List#selectedIndex 
+     * @type {number}
+     */ 
+    get : function ()
+    {
+      return this._selected_index;
+    }
+  },
+  
+  
   'selectedItem': {
     /** 
      * Getter for selectedItem.
      * @name vs.ui.List#selectedItem 
-     * @type {number}
+     * @type {Object}
      */ 
     get : function ()
     {
@@ -11867,7 +11982,7 @@ util.defineClassProperty (ToolBar.Text, "text", {
    */ 
   set : function (v)
   {
-    if (typeof (v) === "undefined") { v = ''; }
+    if (v === null || typeof (v) === "undefined") { v = ''; }
     else if (util.isNumber (v)) { v = '' + v; }
     else if (!util.isString (v))
     {
@@ -12428,7 +12543,7 @@ util.defineClassProperty (TextLabel, "text", {
    */
   set : function (v)
   {
-    if (typeof (v) === "undefined") { v = ''; }
+    if (v === null || typeof (v) === "undefined") { v = ''; }
     else if (util.isNumber (v)) { v = '' + v; }
     else if (!util.isString (v))
     {
@@ -14137,6 +14252,7 @@ ui.Slider = Slider;
  * @constructor
  * @name vs.ui.ImageView
  * @extends vs.ui.View
+ * An vs.ui.ImageView embeds an image in your application.
  */
 function ImageView (config)
 {
@@ -14605,7 +14721,7 @@ util.defineClassProperties (InputField, {
      */
     set : function (v)
     {
-      if (typeof (v) === "undefined") { v = ''; }
+      if (v === null || typeof (v) === "undefined") { v = ''; }
       else if (util.isNumber (v)) { v = '' + v; }
       else if (!util.isString (v))
       {
@@ -14681,7 +14797,7 @@ util.defineClassProperties (InputField, {
      */
     set : function (v)
     {
-      if (typeof (v) === "undefined") { v = ''; }
+      if (v === null || typeof (v) === "undefined") { v = ''; }
       else if (util.isNumber (v)) { v = '' + v; }
       else if (!util.isString (v))
       {
@@ -15696,7 +15812,7 @@ util.defineClassProperties (Switch, {
         return;
       }
   
-      if (typeof (v) === "undefined") { v = ''; }
+      if (v === null || typeof (v) === "undefined") { v = ''; }
       else if (util.isNumber (v)) { v = '' + v; }
       else if (!util.isString (v))
       {
@@ -15732,7 +15848,7 @@ util.defineClassProperties (Switch, {
         return;
       }
   
-      if (typeof (v) === "undefined") { v = ''; }
+      if (v === null || typeof (v) === "undefined") { v = ''; }
       else if (util.isNumber (v)) { v = '' + v; }
       else if (!util.isString (v))
       {

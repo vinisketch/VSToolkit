@@ -1468,6 +1468,8 @@ var GoogleSearch = function (config)
   GoogleSearch.loadService (this);
 
   this.ERROR_CODE = 0;
+  this._addresses = [];
+  this._position = [];
 }
 
 /** @private */
@@ -1559,6 +1561,10 @@ GoogleSearch.prototype = {
   __init_ok : false,
   __engine_to_init : 0,
   __end_init_clb : null,
+  _engine_loaded : false,
+  _str_address: '',
+  _addresses: null,
+  _position: null,
  
   /**
    * @private
@@ -1604,7 +1610,9 @@ GoogleSearch.prototype = {
         (google.search.Search.SMALL_RESULTSET);
       this.__video_search.setNoHtmlGeneration ();
     }
+    this._engine_loaded = true;
     this.propagate ('engineload');
+    this.propertyChange ('engineLoaded');
   },
   
 /********************************************************************
@@ -1742,6 +1750,7 @@ GoogleSearch.prototype = {
         clb.call (ctx, null);
         return;
       }
+      self._addresses = [];
       var result = {
         title: '',
         addressLine: '',
@@ -1760,7 +1769,9 @@ GoogleSearch.prototype = {
       result.postalCode = results[0].postalCode;
       result.locale = self.countryToLocal (result.country_code);
       
+      self._addresses.push (result);
       clb.call (ctx, result);
+      self.propertyChange ('addresses');
     };
     this._googleLocalSearch (data, search_clb);
   },
@@ -1828,7 +1839,10 @@ GoogleSearch.prototype = {
       result [0] = parseFloat (results[0].lat);
       result [1] = parseFloat (results[0].lng);
       
-      clb.call (ctx, result);
+      self._position = result;
+      
+      clb.call (ctx, result.slice ());
+      self.propertyChange ('position');
     }
     this._googleLocalSearch (data, search_clb);
   },
@@ -1863,11 +1877,12 @@ GoogleSearch.prototype = {
     var data = '"' + info + '"';
     var self = this;
     var search_clb = function (results) {
-      var result = [];
+      self._addresses = [];
       
       if (!results)
       {
-        clb.call (ctx, result);
+        clb.call (ctx, []);
+        self.propertyChange ('addresses');
         return;
       }
       
@@ -1882,15 +1897,93 @@ GoogleSearch.prototype = {
         entry.country_code = results[i].country;
         entry.postalCode = results[i].postalCode;
         
-        result.push (entry);
+        self._addresses.push (entry);
       }
       
-      clb.call (ctx, result);
+      clb.call (ctx, self._addresses.slice ());
+      self.propertyChange ('addresses');
     }
     this._googleLocalSearch (data, search_clb);
   }
 };
 util.extendClass (GoogleSearch, core.EventSource);
+
+/********************************************************************
+                  Define class properties
+********************************************************************/
+
+util.defineClassProperties (GoogleSearch, {
+  "strAddress": {
+
+    /** 
+     * Setter for the address to look for.
+     * @name vs.data.GoogleSearch#strAddress 
+     * @type String
+     */ 
+    set : function (v)
+    {
+      if (!util.isString (v)) return;
+      
+      this._str_address = v;
+      var self = this;
+      // Full address search
+      this.searchAddress (v, function (result) {
+        // GPS coordinate search
+        self.addressToGPSCoordinate (v, function (coord) {
+        }, this);
+      }, this);
+    }
+  },
+  
+  "addresses": {
+    /** 
+     * Getter to retrieve addresses matching a strAddress or a coordinate
+     * @name vs.data.GoogleSearch#addresses 
+     * @type Array
+     */ 
+    get : function (v)
+    {
+      return this._addresses;
+    }
+  },
+  
+  'position': {
+    /** 
+     * Getter/setter to get a GPS coordinate associate to a strAddress or for
+     * looking the address associate to this coordinate
+     * @name vs.data.GoogleSearch#position 
+     * @type Array
+     */ 
+    set : function (v)
+    {
+      if (!util.isArray (v) || v.length !== 2) return;
+      if (!util.isNumber (v[0]) || !util.isNumber (v[1])) return;
+      
+      // Full address search
+      this.GPSCoordinateToAddress (v, function (result) {}, this);
+    },
+    
+    /** 
+     */ 
+    get : function ()
+    {
+      return this._position;
+    }
+  },
+  
+  'engineLoaded': {
+    /** 
+     * Return true if the Search Engine is loaded, false other wise.
+     * The Component can be used only if the search engine is loaded.
+     * @name vs.data.GoogleSearch#engineLoaded 
+     * @type RSSFeed
+     */ 
+    get : function ()
+    {
+      return this._engine_loaded;
+    }
+  }
+});
 
 /********************************************************************
                       Export

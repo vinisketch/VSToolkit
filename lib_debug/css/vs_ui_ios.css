@@ -589,7 +589,7 @@ input[type="checkbox"]:checked:after
 }
 
 .vs_ui_slider .handle {
-  position:absolute;
+  position:relative;
   width: 23px;
   height: 23px;
   border-radius: 12px;

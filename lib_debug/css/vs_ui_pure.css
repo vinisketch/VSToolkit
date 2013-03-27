@@ -461,7 +461,9 @@ li.pressed {
   color: white !important;
   text-shadow: black 0 1px 0 !important;
 }
-.vs_ui_list.arrow ul li:after {
+.vs_ui_list.DefaultList.arrow > ul > li::after,
+.vs_ui_list.BlockList.arrow > ul > li > ul > li::after,
+.vs_ui_list.TabList.arrow > ul > li > ul > li::after {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -472,11 +474,11 @@ li.pressed {
   content: '';
   top: 50%;
   position: absolute;
-  -webkit-transform: translateY(-45%);
-  -moz-transform: translateY(-45%);
-  -o-transform: translateY(-45%);
-  -ms-transform: translateY(-45%);
-  transform: translateY(-45%);
+  -webkit-transform: translateY(-30%);
+  -moz-transform: translateY(-30%);
+  -o-transform: translateY(-30%);
+  -ms-transform: translateY(-30%);
+  transform: translateY(-30%);
 }
 /********************************************************************
                 Default List Item CSS
@@ -717,11 +719,13 @@ ul > li:first-child {
   font-weight: normal;
   padding-top: 1px;
 }
+.vs_ui_switch > div {
+  position: relative;
+}
 .vs_ui_switch > div:first-child {
   display: none;
 }
 .vs_ui_switch > div:nth-child(2) {
-  position: absolute;
   top: 0px;
   min-height: 35px;
   -webkit-transform: none;
@@ -1071,10 +1075,12 @@ ul > li:first-child {
   width: 9px;
 }
 .vs_ui_slider .handle {
-  position: absolute;
+  position: relative;
   width: 28px;
   height: 28px;
-  border-radius: 14px;
+  -webkit-border-radius: 8px 8px;
+  -moz-border-radius: 8px / 12px;
+  border-radius: 8px / 12px;
   border: 1px solid #777;
   background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQtdWNnZy1nZW5lcmF0ZWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0UyRTJFMiIgc3RvcC1vcGFjaXR5PSIxIi8+PHN0b3Agb2Zmc2V0PSIyJSIgc3RvcC1jb2xvcj0iI0UyRTJFMiIgc3RvcC1vcGFjaXR5PSIxIi8+PHN0b3Agb2Zmc2V0PSIyJSIgc3RvcC1jb2xvcj0iI0M5QzlDOSIgc3RvcC1vcGFjaXR5PSIxIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjRUFFQUVBIiBzdG9wLW9wYWNpdHk9IjEiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZ3JhZC11Y2dnLWdlbmVyYXRlZCkiIC8+PC9zdmc+);
   background-image: -moz-linear-gradient(-90deg, #E2E2E2 0%, #E2E2E2 2%, #C9C9C9 2%, #EAEAEA 100%);
