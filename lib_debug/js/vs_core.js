@@ -5684,7 +5684,7 @@ core.HTTPRequest = HTTPRequest;
  *
  * @param {Object} config the configuration structure
  */
-var AjaxJSONP core.createClass ({
+var AjaxJSONP = core.createClass ({
 
   parent: core.EventSource,
 
@@ -5752,7 +5752,19 @@ var AjaxJSONP core.createClass ({
     var
       self = this,
       callbackName = 'jsonp' + self._id + (self.__index++),
-      script_src = self._url + "&callback=" + callbackName,
+      urlCallback = "callback=" + callbackName,
+      script_src = self._url, lastIndex = script_src.length - 1;
+
+    if (script_src [lastIndex] === '?')
+      script_src += urlCallback;
+    else if (script_src [lastIndex] === '/')
+      script_src = script_src.substr (0, lastIndex) + "?" + urlCallback;
+    else if (script_src.indexOf ('?') !== "-1")
+      script_src += "&" + urlCallback;
+    else
+      script_src += "?" + urlCallback;
+
+    var
       script = util.importFile (script_src, null, null, 'js'),
       removeScript = function ()
       {
