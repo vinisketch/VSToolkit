@@ -4,7 +4,7 @@
 }
 
 .tweet_item {
-  padding: 10px 10px 10px 70px;
+  padding: 5px 10px 5px 60px;
   min-height: 60px;
   border-bottom: 1px solid #EEE;
   font-family: helvetica;
@@ -19,7 +19,7 @@
 .tweet_item img {
   width: 50px; height: 50px;
   float: left;
-  margin: 0px 10px 0px -60px;
+  margin: 0px 5px 0px -55px;
   border-radius: 5px;
 }
 
