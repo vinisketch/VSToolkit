@@ -1,0 +1,51 @@
+.carrouselView {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	-webkit-user-select: none;
+	left: 50%;
+	top: 50%;
+	margin-top:-200px;
+
+	-webkit-transform-style: preserve-3d;
+	-webkit-transform: rotateY(-90deg);
+  -webkit-transform-origin: 0% 0%;
+}
+
+div {
+  -webkit-transform-style: preserve-3d;
+}
+
+.carrouselView > * {
+  -webkit-transform-origin: 50% 50%;
+}
+
+.image {
+	position: absolute;
+	left: 0px;
+	top: 0px;
+  width: 250px;
+  height: 200px;
+	-webkit-backface-visibility: hidden;
+}
+
+.image img {
+  width: 250px;
+}
+
+.image .place {
+  display: none;
+}
+
+.image .description {
+  display: none;
+}
+
+
+.image:hover .place {
+  display: relative;
+}
+
+.image:active .description {
+  display: relative;
+}
