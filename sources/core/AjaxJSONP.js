@@ -145,6 +145,13 @@ var AjaxJSONP = core.createClass ({
       clearTimeout (abortTimeout)
       removeScript ();
       delete window[callbackName];
+
+      if (!data) return;
+      if (data.error)
+      {
+        self.propagate ('loaderror', data.error);
+        return;
+      }
       self._response_json = data;
       self.propertyChange ();
       self.propagate ('jsonload', data);
