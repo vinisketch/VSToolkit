@@ -164,6 +164,7 @@ body {
 
 .vs_ui_splitview > div {
   position: absolute;
+  overflow: hidden;
 }
 
 /***       TABLET mode      */
