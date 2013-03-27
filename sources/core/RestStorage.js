@@ -279,8 +279,8 @@ RestStorage.prototype = {
           {
             var prop_name = ps[i], value = model ['_' + prop_name];
             if (prop_name === "id") continue
-            if (typeof value == "undefined") continue;
-            if (j++) url += ';';
+            if (!util.isString (value) && !util.isNumber (value)) continue;
+            if (j++) url += '&';
             url += prop_name + '=' + value;
           }
         }
