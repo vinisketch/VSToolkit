@@ -1,17 +1,17 @@
 /**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
   contributors. All rights reserved
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -23,34 +23,52 @@ function RestStorage (config)
   this.parent = DataStorage;
   this.parent (config);
   this.constructor = RestStorage;
-  
+
   this._xhrs = {};
+  this._headers = {};
 }
+
+RestStorage.XHR = 0;
+RestStorage.JSONP = 1;
 
 RestStorage.prototype = {
 
   /*****************************************************************
    *
    ****************************************************************/
-   
+
   /**
    *
    * @protected
-   * @type {vs.core.RestStorage}
+   * @type {vs.core.HTTPRequest}
    */
   _xhrs: null,
-  
+
+  /**
+   *
+   * @protected
+   * @type {}
+   */
+  _mode: 0,
+
+  /**
+   *
+   * @protected
+   * @type {Object}
+   */
+  _headers: null,
+
   /**
    *
    * @protected
    * @type {String}
    */
   _url: '',
-  
+
   /*****************************************************************
-   *              
+   *
    ****************************************************************/
-   
+
   /**
    * @protected
    * @function
@@ -59,7 +77,7 @@ RestStorage.prototype = {
   {
     DataStorage.prototype.initComponent.call (this);
   },
-   
+
   /**
    * @protected
    * @function
@@ -68,11 +86,32 @@ RestStorage.prototype = {
   {
     DataStorage.prototype.destructor.call (this);
   },
-  
+
+  /**
+   *
+   * @name vs.core.RestStorage#setHeaders
+   * @function
+   * An object of additional header key/value pairs to send along with the
+   * HTTP request.
+   *
+   * @param {Object} obj A <key/string> object
+   */
+  setHeaders : function (obj)
+  {
+    if (!obj) return;
+
+    this._headers = {};
+
+    for (var key in obj)
+    {
+      this._headers [key] = obj [key];
+    }
+  },
+
   /*****************************************************************
-   *              
+   *
    ****************************************************************/
-  
+
   /**
    * Save models. If a name is specified, it saves only the model
    * associated to the name.
@@ -88,7 +127,7 @@ RestStorage.prototype = {
     {
       var json, model = self.__models__ [name];
       if (!model) return;
-      
+
       try
       {
         if (model.toJSON) json = model.toJSON ();
@@ -99,15 +138,15 @@ RestStorage.prototype = {
         error.log (e);
         self.propagate ("error", e);
       }
-      
+
       RestStorage.setItem (name, json);
     }
     if (name) _save (name);
     else for (var name in this.__models__) _save (name);
-    
+
     self.propagate ("save");
   },
-  
+
   /**
    * Load models. If a name is specified, it load only the model
    * associated to the name.
@@ -118,26 +157,36 @@ RestStorage.prototype = {
    */
   load : function (name)
   {
+    if (this._mode === RestStorage.XHR) this._load_xhr (name);
+    if (this._mode === RestStorage.JSONP) this._load_jsonp (name);
+  },
+
+  /**
+   * @private
+   */
+  _load_xhr : function (name)
+  {
     var type = "GET";
-    
+
     var dataType = 'xml';
-      
+
     var self = this;
     function _load (name)
     {
       try {
         var model = self.__models__ [name];
         if (!model) return;
-        
+
         var url = self._url + name + '.json';
-        
-        var ps = model.getProperties (), j = 0;
+
+        var ps = model.getModelProperties (), j = 0;
         if (ps && ps.length)
         {
           url += '?';
           for (var i = 0; i < ps.length; i ++)
           {
             var prop_name = ps[i], value = model ['_' + prop_name];
+            if (prop_name === "id") continue
             if (typeof value == "undefined") continue;
             if (j++) url += ';';
             url += prop_name + '=' + value;
@@ -146,8 +195,8 @@ RestStorage.prototype = {
 
         var xhr = new HTTPRequest ().init ();
         self._xhrs [xhr.id] = name;
-        xhr.bind ('textload', self, self._processResult);
-
+        xhr.bind ('textload', self, self._process_xhr_result);
+        xhr.setHeaders (self._headers);
         xhr.url = url;
         xhr.method = "GET";
         xhr.contentType = "application/json";
@@ -161,11 +210,58 @@ RestStorage.prototype = {
     if (name) _load (name);
     else for (var name in this.__models__) _load (name);
   },
-  
+
+ /**
+   * @private
+   */
+  _load_jsonp : function (name)
+  {
+    var type = "GET";
+
+    var dataType = 'xml';
+
+    var self = this;
+    function _load (name)
+    {
+      try {
+        var model = self.__models__ [name];
+        if (!model) return;
+
+        var url = self._url + name + '.json';
+
+        var ps = model.getModelProperties (), j = 0;
+        if (ps && ps.length)
+        {
+          url += '?';
+          for (var i = 0; i < ps.length; i ++)
+          {
+            var prop_name = ps[i], value = model ['_' + prop_name];
+            if (prop_name === "id") continue
+            if (typeof value == "undefined") continue;
+            if (j++) url += ';';
+            url += prop_name + '=' + value;
+          }
+        }
+
+        var xhr = new AjaxJSONP ().init ();
+        self._xhrs [xhr.id] = name;
+        xhr.bind ('jsonload', self, self._process_json_result);
+        xhr.url = url;
+        xhr.send ();
+      }
+      catch (e)
+      {
+        console.error ("LocalStorate.load failed. " + e.toString ());
+      }
+    }
+    if (name) _load (name);
+    else for (var name in this.__models__) _load (name);
+  },
+
   _sync : function (method, url, specific_data)
   {
 //     var params = {}, data = '';
-// 
+//
 //     // Ensure that we have the appropriate request data.
 //     if (method == 'POST' || method == 'PUT')
 //     {
@@ -175,42 +271,68 @@ RestStorage.prototype = {
 //       else
 //       { data = specific_data; }
 //     }
-// 
+//
 //     this._xhr.method = method;
 //     this._xhr.url = url;
-// 
+//
 //     // Make the request.
 //     this._xhr.send (data);
   },
-  
+
   /**
    * processes the received rss xml
    *
-   * @name vs.data.RSSRequester#processRSS 
+   * @name vs.data.RSSRequester#_process_xhr_result
    * @function
    *
    * @private
-   * @param Text rsstxt 
-   * @param Document rssxml 
+   * @param Text rsstxt
+   * @param Document rssxml
    */
-  _processResult : function (event)
+  _process_xhr_result : function (event)
   {
     var data = event.data, xhr = event.src;
     var model_name = this._xhrs [xhr.id];
-    xhr.unbind ('textload', this, this._processResult);
+    xhr.unbind ('textload', this, this._process_xhr_result);
     vs.util.free (xhr);
     delete (this._xhrs [xhr.id]);
-    
+
     if (!data)
     {
       console.error ("Failed to parse rss document that is null.");
       return false;
     }
-    
+
     var model = this.__models__ [model_name];
     if (!model) return;
-    
+
     model.parseJSON (data);
+    this.propagate ('load', model);
+  },
+
+  /**
+   * processes the received rss xml
+   *
+   * @name vs.data.RSSRequester#_process_json_result
+   * @function
+   *
+   * @private
+   * @param Text rsstxt
+   * @param Document rssxml
+   */
+  _process_json_result : function (event)
+  {
+    var data = event.data, xhr = event.src;
+    var model_name = this._xhrs [xhr.id];
+    xhr.unbind ('textload', this, this._process_json_result);
+    vs.util.free (xhr);
+    delete (this._xhrs [xhr.id]);
+
+    var model = this.__models__ [model_name];
+    if (!model) return;
+
+    model.parseData (data);
+    model.change ();
     this.propagate ('load', model);
   }
 };
@@ -222,26 +344,38 @@ vs.util.extendClass (RestStorage, DataStorage);
 
 vs.util.defineClassProperties (RestStorage, {
   "url": {
-    /** 
+    /**
      * Setter for the url
-     * @name vs.core.RestStorage#url 
+     * @name vs.core.RestStorage#url
      * @type String
-     */ 
+     */
     set : function (v)
     {
       if (!vs.util.isString (v)) { return; }
-      
+
       this._url = v;
     },
 
-    /** 
+    /**
      * Getter for the url
-     * @name vs.core.RestStorage#url 
+     * @name vs.core.RestStorage#url
      * @type String
-     */ 
+     */
     get : function (v)
     {
       return this._url;
+    }
+  },
+
+  "mode": {
+    /**
+     * Setter request mode
+     * @name vs.core.RestStorage#mode
+     * @type XHR | JSONP
+     */
+    set : function (v)
+    {
+      if (v === 0 || v === 1) this._mode = v;
     }
   }
 });
