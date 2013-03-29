@@ -5472,63 +5472,71 @@ HTTPRequest.prototype = {
   {
     var xhr = new XMLHttpRequest ();
 
-    this._response_text = null;
-    this._response_xml = null;
-
-    //prepare the xmlhttprequest object
-    xhr.open (this._method, this._url, true, this._login || null, this._password || null);
-    xhr.setRequestHeader ("Cache-Control", "no-cache");
-    xhr.setRequestHeader ("Pragma", "no-cache");
-
-    for (var key in this._headers)
+    try
     {
-      xhr.setRequestHeader (key, this._headers [key]);
-    }
-    this._headers = {};
+      this._response_text = null;
+      this._response_xml = null;
 
-    if (this._content_type)
-    { xhr.setRequestHeader('Content-Type', this._content_type); }
+      //prepare the xmlhttprequest object
+      xhr.open (this._method, this._url, true, this._login || null, this._password || null);
 
-    var self = this;
-    xhr.onreadystatechange = function ()
-    {
-      if (xhr.readyState === 4)
+      xhr.setRequestHeader ("Cache-Control", "no-cache");
+      xhr.setRequestHeader ("Pragma", "no-cache");
+
+      for (var key in this._headers)
       {
-        if (xhr.status === 200)
+        xhr.setRequestHeader (key, this._headers [key]);
+      }
+      this._headers = {};
+
+      if (this._content_type)
+      { xhr.setRequestHeader('Content-Type', this._content_type); }
+
+      var self = this;
+      xhr.onabort = function (e)
+      {
+        xhr.onload = xhr.onerror = xhr.onabort = null;
+        delete (xhr);
+        self.propagate ('loaderror', {'status': 'aborted'});
+      }
+      xhr.onerror = function (e)
+      {
+        xhr.onload = xhr.onerror = xhr.onabort = null;
+        delete (xhr);
+        self.propagate ('loaderror', {'status': 'failed', 'response':e});
+      }
+      xhr.onload = function ()
+      {
+        xhr.onload = xhr.onerror = xhr.onabort = null;
+        delete (xhr);
+        if (xhr.responseText)
         {
-          if (xhr.responseText)
-          {
-            self._response_text = xhr.responseText;
-            self._response_xml = xhr.responseXML;
+          self._response_text = xhr.responseText;
+          self._response_xml = xhr.responseXML;
 
-            self.propagateChange ();
+          self.propagateChange ();
 
-            self.propagate ('textload', self._response_text);
-            if (self._response_xml)
-              self.propagate ('xmlload', self._response_xml);
-          }
-          else
-          {
-            self.propagate ('loaderror', 'file not found.');
-            return false;
-          }
+          self.propagate ('textload', self._response_text);
+          if (self._response_xml)
+            self.propagate ('xmlload', self._response_xml);
         }
         else
         {
-          var data;
-          try {
-            data = JSON.parse (xhr.responseText);
-          } catch (e) {
-            data = xhr.responseText;
-          }
-          self.propagate ('loaderror', {'status': xhr.status, 'response':data});
+          self.propagate ('loaderror', 'file not found.');
           return false;
         }
       }
-    }
 
-    //send the request
-    xhr.send (data);
+      //send the request
+      xhr.send (data);
+    }
+    catch (e)
+    {
+      xhr.onload = xhr.onerror = xhr.onabort = null;
+      delete (xhr);
+      this.propagate ('loaderror', e);
+      return;
+    }
   }
 
 };
@@ -5701,6 +5709,13 @@ var AjaxJSONP = core.createClass ({
 
   /**
    *
+   * @protected
+   * @type {string}
+   */
+  _clb_param_name: 'callback',
+
+  /**
+   *
    * @private
    * @type {number}
    */
@@ -5722,6 +5737,20 @@ var AjaxJSONP = core.createClass ({
         if (!util.isString (v)) { return; }
 
         this._url = v;
+      }
+    },
+    "clbParamName": {
+      /**
+       * Setter for the name of the callback parameter in jsonp payload
+       * By default the value is 'callback'
+       * @name vs.core.AjaxJSONP#clbParamName
+       * @type String
+       */
+      set : function (v)
+      {
+        if (!util.isString (v)) { return; }
+
+        this._clb_param_name = v;
       }
     },
 
@@ -5752,15 +5781,15 @@ var AjaxJSONP = core.createClass ({
     var
       self = this,
       callbackName = 'jsonp' + self._id + (self.__index++),
-      urlCallback = "callback=" + callbackName,
+      urlCallback = this._clb_param_name + "=" + callbackName,
       script_src = self._url, lastIndex = script_src.length - 1;
 
     if (script_src [lastIndex] === '?')
       script_src += urlCallback;
-    else if (script_src [lastIndex] === '/')
-      script_src = script_src.substr (0, lastIndex) + "?" + urlCallback;
     else if (script_src.indexOf ('?') !== "-1")
       script_src += "&" + urlCallback;
+    else if (script_src [lastIndex] === '/')
+      script_src = script_src.substr (0, lastIndex) + "?" + urlCallback;
     else
       script_src += "?" + urlCallback;
 
