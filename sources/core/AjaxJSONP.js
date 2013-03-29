@@ -60,6 +60,13 @@ var AjaxJSONP = core.createClass ({
 
   /**
    *
+   * @protected
+   * @type {string}
+   */
+  _clb_param_name: 'callback',
+
+  /**
+   *
    * @private
    * @type {number}
    */
@@ -81,6 +88,20 @@ var AjaxJSONP = core.createClass ({
         if (!util.isString (v)) { return; }
 
         this._url = v;
+      }
+    },
+    "clbParamName": {
+      /**
+       * Setter for the name of the callback parameter in jsonp payload
+       * By default the value is 'callback'
+       * @name vs.core.AjaxJSONP#clbParamName
+       * @type String
+       */
+      set : function (v)
+      {
+        if (!util.isString (v)) { return; }
+
+        this._clb_param_name = v;
       }
     },
 
@@ -111,15 +132,15 @@ var AjaxJSONP = core.createClass ({
     var
       self = this,
       callbackName = 'jsonp' + self._id + (self.__index++),
-      urlCallback = "callback=" + callbackName,
+      urlCallback = this._clb_param_name + "=" + callbackName,
       script_src = self._url, lastIndex = script_src.length - 1;
 
     if (script_src [lastIndex] === '?')
       script_src += urlCallback;
-    else if (script_src [lastIndex] === '/')
-      script_src = script_src.substr (0, lastIndex) + "?" + urlCallback;
     else if (script_src.indexOf ('?') !== "-1")
       script_src += "&" + urlCallback;
+    else if (script_src [lastIndex] === '/')
+      script_src = script_src.substr (0, lastIndex) + "?" + urlCallback;
     else
       script_src += "?" + urlCallback;
 
