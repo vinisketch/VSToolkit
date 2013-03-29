@@ -6,56 +6,54 @@ var RSSViewer = vs.core.createClass ({
   initComponent : function ()
   {
     this._super ();
-    
+
     // main view
     this.navBar = new vs.ui.NavigationBar ();
     this.navBar.init ();
     this.add (this.navBar);
-    
-    this.backButton = new vs.ui.Button ({id:'back_button', text:'back'});
-    this.backButton.init ();
-    this.backButton.type = vs.ui.Button.NAVIGATION_BACK_TYPE;
-    this.backButton.style = vs.ui.Button.BLACK_STYLE;
+
+    this.backButton = new vs.ui.Button ({
+      id:'back_button', text:'back',
+      type : vs.ui.Button.NAVIGATION_BACK_TYPE
+    }).init ();
     this.navBar.add (this.backButton);
 
     // Feeds View
-    this.feedsView = new FeedsView({id:'feeds_view'});
-    this.feedsView.init ();
-    
+    this.feedsView = new FeedsView({id:'feeds_view'}).init ();
+
     // Feeds View
-    this.feedItems = new vs.ui.List ({id:'feed_items'});
-    this.feedItems.init ();
-    this.feedItems.hasArrow = true;
-    this.feedItems.scroll = true;
+    this.feedItems = new vs.ui.List ({
+      id:'feed_items',
+      hasArrow : true,
+      scroll : true
+    }).init ();
     this.feedItems.addClassName ('page');
     this.add (this.feedItems);
-    
+
     // Detail View
-    this.detailView = new DetailView ({id:'detail_view'});
-    this.detailView.init ();
+    this.detailView = new DetailView ({id:'detail_view'}).init ();
     this.add (this.detailView);
-    
-        
+
+
     // RSS Request
-    this.rssRequest = new vs.data.RSSRequester ();
-    this.rssRequest.init ();
+    this.rssRequest = new vs.data.RSSRequester ().init ();
     this.rssRequest.bind ('rssload', this);
     this.rssRequest.bind ('rssloaderror', this);
 
     // Views controller
     this.controller = new vs.fx.NavigationController (this, this.navBar);
     this.controller.init ();
-    
+
     this.controller.push (this.feedsView);
     this.controller.initialComponent = this.feedsView.id;
     this.controller.configureNavigationBarState (this.feedsView.id, []);
-    
+
     this.controller.push (this.feedItems);
     this.controller.configureNavigationBarState
       (this.feedItems.id, [{comp: 'back_button'}]);
     this.controller.configureTransition
       (this.feedsView.id, this.feedItems.id, 'goToFeed');
-    
+
     this.controller.push (this.detailView);
     this.controller.configureNavigationBarState
       (this.detailView.id, [{comp: 'back_button'}]);
@@ -66,7 +64,7 @@ var RSSViewer = vs.core.createClass ({
     this.feedsView.bind ('view_feed', this);
     this.feedItems.bind ('itemselect', this);
 
-    this.feedItems.layout = vs.ui.View.VERTICAL_LAYOUT; 
+    this.feedItems.layout = vs.ui.View.VERTICAL_LAYOUT;
   },
 
   applicationStarted : function (event)
