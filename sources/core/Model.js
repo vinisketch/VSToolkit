@@ -129,14 +129,14 @@ Model.prototype = {
 
     if (this._sync_service_) this._sync_service_.removeModel (this);
 
-    function deleteBindings (list_bind)
+    function deleteBindings (handler_list)
     {
-      if (!list_bind) return;
+      if (!handler_list) return;
 
-      var bind, l = list_bind.length;
+      var bind, l = handler_list.length;
       while (l--)
       {
-        bind = list_bind [l];
+        bind = handler_list [l];
         util.free (bind);
       }
     };
@@ -177,18 +177,18 @@ Model.prototype = {
   bindChange : function (spec, obj, func)
   {
     if (!obj) { return; }
-    var list_bind, handler;
+    var handler_list, handler;
 
     spec = (spec)? 'change:' + spec : 'change';
-    handler = new Handler (spec, obj, func, false);
+    handler = new Handler (obj, func);
 
-    list_bind = this.__bindings__ [spec];
-    if (!list_bind)
+    handler_list = this.__bindings__ [spec];
+    if (!handler_list)
     {
-      list_bind = [];
-      this.__bindings__ [spec] = list_bind;
+      handler_list = [];
+      this.__bindings__ [spec] = handler_list;
     }
-    list_bind.push (handler);
+    handler_list.push (handler);
   },
 
   /**
@@ -208,14 +208,14 @@ Model.prototype = {
   {
     spec = (spec)? 'change:' + spec : 'change';
 
-    function unbind (list_bind)
+    function unbind (handler_list)
     {
-      if (!list_bind) return;
+      if (!handler_list) return;
 
       var handler, i = 0;
-      while (i < list_bind.length)
+      while (i < handler_list.length)
       {
-        handler = list_bind [i];
+        handler = handler_list [i];
         if (handler.spec === spec)
         {
           if (handler.obj === obj)
@@ -224,14 +224,14 @@ Model.prototype = {
             {
               if (handler.func === func || handler.func_ptr === func)
               {
-                list_bind.remove (i);
+                handler_list.remove (i);
                 util.free (handler);
               }
               else { i++; }
             }
             else
             {
-              list_bind.remove (i);
+              handler_list.remove (i);
               util.free (handler);
             }
           }
@@ -307,39 +307,16 @@ Model.prototype = {
         while (l--) { this.__links__ [l].configure (this); }
       }
 
-      // 2) manage change event propagation
-      function _change (list_bind)
-      {
-        if (!list_bind) return;
-        var i = list_bind.length, handler;
-
-        while (i--)
-        {
-          /** @private */
-          handler = list_bind [i];
-
-          if (handler.func_ptr) // function pointer call
-          {
-            handler.func_ptr.call (handler.obj, event);
-          }
-          else if (handler.func) // function name call
-          {
-            handler.obj[handler.func] (event);
-          }
-          else // default notify method
-          {
-            handler.obj.notify (event);
-          }
-        }
-      };
-
       //propagate retrictive bindings
-      if (spec !== 'change') _change (this.__bindings__ [spec]);
+      if (spec !== 'change')
+        queueProcAsyncEvent (event, this.__bindings__ [spec]);
+
       //propagate general change
-      _change (this.__bindings__ ['change']);
+      queueProcAsyncEvent (event, this.__bindings__ ['change']);
     }
     catch (e)
     {
+      if (e.stack) console.error (e.stack);
       console.error (e);
     }
   },
