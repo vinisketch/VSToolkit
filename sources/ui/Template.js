@@ -468,13 +468,7 @@ Template.parseHTML = function (html)
   var div = document.createElement ('div');
   try
   {
-    // MS Window 8 management
-    if (window.MSApp && window.MSApp.execUnsafeLocalFunction)
-      window.MSApp.execUnsafeLocalFunction (function() {
-        div.innerHTML = html;
-      });
-    else
-      div.innerHTML = html;
+    util.safeInnerHTML (div, html);
 
     div = div.firstElementChild;
     if (div) div.parentElement.removeChild (div);
