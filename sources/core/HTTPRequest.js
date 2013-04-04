@@ -203,7 +203,6 @@ HTTPRequest.prototype = {
       return;
     }
   }
-
 };
 util.extendClass (HTTPRequest, core.EventSource);
 
