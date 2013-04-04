@@ -979,9 +979,6 @@ function _performAlternateYahooPipeRequest ()
       var value = data.value;
 
       this._pub_date = value.pubDate;
-      this._title = value.title;
-      this._link = value.link;
-      this._description = value.description;
       this._items = [];
 
       itemElements = value.items;
