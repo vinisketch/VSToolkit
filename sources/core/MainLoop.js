@@ -73,15 +73,20 @@ function queueProcAsyncEvent (event, handler_list)
     event : event
   }
 
+  // push the event to dispatch into the queue
   _events_queue.push (burst);
 
+  // request for the mainloop
   serviceLoop ();
 }
 
 /**
  * @private
+ * doOneAsyncEvent will dispache One event to all observers.
+ *
+ * @param {Handler} handler
  */
-function doOneAsynEvent (handler)
+function doOneAsyncEvent (handler)
 {
   if (_is_events_propagating) return;
 
@@ -145,11 +150,13 @@ function serviceLoop ()
 {
   if (_events_queue.length === 0) return;
 
-  if (_is_events_propagating) {
+  if (_is_events_propagating)
+  {
     // do the loop
     vs.requestAnimationFrame (serviceLoop);
     return;
   }
 
-  doOneAsynEvent ();
+  // dispache an event to observers
+  doOneAsyncEvent ();
 }
