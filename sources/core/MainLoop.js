@@ -83,10 +83,8 @@ function queueProcAsyncEvent (event, handler_list)
 /**
  * @private
  * doOneAsyncEvent will dispache One event to all observers.
- *
- * @param {Handler} handler
  */
-function doOneAsyncEvent (handler)
+function doOneAsyncEvent ()
 {
   if (_is_events_propagating) return;
 
@@ -104,6 +102,12 @@ function doOneAsyncEvent (handler)
     if (n <= 0) _is_events_propagating = false;
   }
 
+  /**
+   * @private
+   * doOneHandler will dispache One event to an observer.
+   *
+   * @param {Handler} handler
+   */
   function doOneHandler (handler)
   {
     if (handler) try
