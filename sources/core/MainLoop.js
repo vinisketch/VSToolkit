@@ -96,11 +96,7 @@ function doOneAsynEvent (handler)
   function end_propagation ()
   {
     n--;
-    if (n <= 0)
-    {
-      _is_events_propagating = false;
-      serviceLoop ();
-    }
+    if (n <= 0) _is_events_propagating = false;
   }
 
   function doOneHandler (handler)
@@ -143,12 +139,17 @@ function doOneAsynEvent (handler)
 
 /**
  * @private
+ * Mainloop core
  */
 function serviceLoop ()
 {
-  if (_is_events_propagating) return;
-
   if (_events_queue.length === 0) return;
+
+  if (_is_events_propagating) {
+    // do the loop
+    vs.requestAnimationFrame (serviceLoop);
+    return;
+  }
 
   doOneAsynEvent ();
 }
