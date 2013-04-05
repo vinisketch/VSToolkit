@@ -127,7 +127,7 @@ function doOneAsynEvent (handler)
     catch (e)
     {
       if (e.stack) console.error (e.stack);
-      console.error (e);
+      else console.error (e);
     }
     end_propagation ();
   };
