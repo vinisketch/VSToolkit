@@ -107,18 +107,18 @@ function doOneAsynEvent (handler)
   {
     if (handler) try
     {
-      if (handler.func_ptr)
+      if (util.isFunction (handler.func_ptr))
       {
         // call function
-        if (util.isFunction (handler.func_ptr))
         handler.func_ptr.call (handler.obj, event);
       }
-      else if (handler.func_name)
+      else if (util.isString (handler.func_name) &&
+               util.isFunction (handler.obj[handler.func_name]))
       {
         // specific notify method
         handler.obj[handler.func_name] (event);
       }
-      else
+      else if (util.isFunction (handler.obj.notify))
       {
         // default notify method
         handler.obj.notify (event);
