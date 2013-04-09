@@ -175,7 +175,7 @@ EventSource.prototype =
       {
         if (util.isString (func) || util.isFunction (func) )
         {
-          if (bind.func === func || bind.func_ptr === func)
+          if (bind.func_name === func || bind.func_ptr === func)
           {
             handler_list.remove (i);
             util.free (bind);
