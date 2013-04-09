@@ -171,26 +171,22 @@ EventSource.prototype =
     while (i < handler_list.length)
     {
       bind = handler_list [i];
-      if (bind.spec === spec)
+      if (bind.obj === obj)
       {
-        if (bind.obj === obj)
+        if (util.isString (func) || util.isFunction (func) )
         {
-          if (util.isString (func) || util.isFunction (func) )
-          {
-            if (bind.func === func || bind.func_ptr === func)
-            {
-              handler_list.remove (i);
-              util.free (bind);
-            }
-            else { i++; }
-          }
-          else
+          if (bind.func === func || bind.func_ptr === func)
           {
             handler_list.remove (i);
             util.free (bind);
           }
+          else { i++; }
         }
-        else { i++; }
+        else
+        {
+          handler_list.remove (i);
+          util.free (bind);
+        }
       }
       else { i++; }
     }
