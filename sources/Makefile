@@ -109,13 +109,14 @@ core: core_debug
 
 core_debug: ../lib_debug/js/vs_core.js
 
-../lib_debug/js/vs_core.js: core/dataflow.js core/Event.js core/EventSource.js core/Object.js core/Class.js core/Model.js core/Keyboard.js core/FSM.js core/Scheduler.js core/HTTPRequest.js core/AjaxJSONP.js core/DeviceConfiguration.js core/Array.js core/DataStorage.js core/LocalStorage.js
+../lib_debug/js/vs_core.js: core/dataflow.js core/MainLoop.js core/Event.js core/EventSource.js core/Object.js core/Class.js core/Model.js core/Keyboard.js core/FSM.js core/Scheduler.js core/HTTPRequest.js core/AjaxJSONP.js core/DeviceConfiguration.js core/Array.js core/DataStorage.js core/LocalStorage.js
 	$(CAT) Header.js >> $@
 	$(CAT) core/core.js >> $@
 	$(CAT) core/Point.js >> $@
 	$(CAT) core/Object.js >> $@
 	$(CAT) core/Class.js >> $@
 	$(CAT) core/Model.js >> $@
+	$(CAT) core/MainLoop.js >> $@
 	$(CAT) core/Event.js >> $@
 	$(CAT) core/EventSource.js >> $@
 	$(CAT) core/Keyboard.js >> $@
