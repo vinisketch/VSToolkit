@@ -2129,6 +2129,26 @@ View.prototype = {
   },
 
   /**
+   * Push a new transformation matrix into your component transformation
+   * stack.
+   *
+   * @public
+   * @function
+   *
+   * @param {vs.CSSMatrix} matrix the matrix you want to add
+   */
+  pushNewTransform : function (matrix)
+  {
+    if (!matrix) { return; }
+
+    if (!this._transforms_stack) this._transforms_stack = matrix;
+    else
+    {
+      this._transforms_stack = matrix.multiply (this._transforms_stack);
+    }
+  },
+
+  /**
    *  Remove all previous transformations set for this view
    * @public
    * @function
