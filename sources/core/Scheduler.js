@@ -238,6 +238,21 @@ function Task_PAR (tasksAndParams)
   if (arguments.length) this.setTasks (arguments);
 };
 
+/**
+ *  Methods that create a PAR group
+ *
+ *  <p>
+ *  @example
+ *
+ *  // Declare the Task_PAR
+ *  var group = vs.par ([rotate, comp1], [scale, comp2]);
+ *
+ *  // Start the task => start animations
+ *  group.start ();
+ *
+ * @param list List of task to start parallel with an optional
+ *  parameter
+ */
 vs.par = function ()
 {
   if (arguments.length === 0) return;
@@ -516,6 +531,21 @@ function Task_SEQ (tasksAndParams)
   if (arguments.length) this.setTasks (arguments);
 };
 
+/**
+ *  Methods that create a SEQ group
+ *
+ *  <p>
+ *  @example
+ *
+ *  // Declare the Task_PAR
+ *  var group = vs.seq ([scale, comp0], [rotate, comp0]);
+ *
+ *  // Start the task => start animations
+ *  group.start ();
+ *
+ * @param list List of task to start sequentially with an optional
+ *  parameter
+ */
 vs.seq = function ()
 {
   if (arguments.length === 0) return;
