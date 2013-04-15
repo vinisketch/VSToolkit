@@ -685,7 +685,7 @@ The delegate has to implement:
  par.start ();
 
  // Declare a PAR task including a SEC Task
- var seq = new Task_SEQ 
+ var seq = new Task_SEQ
    ([scale, comp0], new Task_PAR ([rotate, comp1], [rotate, comp2]));
  seq.delegate = this;
  seq.start ();</pre>

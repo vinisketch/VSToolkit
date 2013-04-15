@@ -759,6 +759,46 @@ transition effect</div>
 
 <!-- ============================== methods summary ======================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.<b><a href="../symbols/vs.html#.par">par</a></b>(list)
+								</div>
+								<div class="description">Methods that create a PAR group
+
+ <p></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.<b><a href="../symbols/vs.html#.seq">seq</a></b>(list)
+								</div>
+								<div class="description">Methods that create a SEQ group
+
+ <p></div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -1107,6 +1147,105 @@ transition effect
 			
 
 <!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name=".par"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.</span><b>par</b>(list)
+					
+					</div>
+					<div class="description">
+						Methods that create a PAR group
+
+ <p>
+						
+					</div>
+					
+					
+					
+					<pre class="code">
+ // Declare the Task_PAR
+ var group = vs.par ([rotate, comp1], [scale, comp2]);
+
+ // Start the task => start animations
+ group.start ();</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>list</b>
+									
+								</dt>
+								<dd>List of task to start parallel with an optional
+ parameter</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".seq"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.</span><b>seq</b>(list)
+					
+					</div>
+					<div class="description">
+						Methods that create a SEQ group
+
+ <p>
+						
+					</div>
+					
+					
+					
+					<pre class="code">
+ // Declare the Task_PAR
+ var group = vs.seq ([scale, comp0], [rotate, comp0]);
+
+ // Start the task => start animations
+ group.start ();</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>list</b>
+									
+								</dt>
+								<dd>List of task to start sequentially with an optional
+ parameter</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
 			
 			
 <!-- ============================== event details ========================= -->		

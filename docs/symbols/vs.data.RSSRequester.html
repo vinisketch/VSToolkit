@@ -561,6 +561,14 @@ hr:last-child {
 			
 				Instantiate a RSSRequester when you want load a rss feeds.
  The system works asynchronously
+
+The delegate that should be implemented:
+ <ul>
+   <li/>performAlternateRequest : function ()
+ </ul>
+ This delegate make a request if the HTTpRequest failed for instance
+ because of Cross Domain issue. The defautl delegate use Yahoo Pipes as
+ alternate request.
 	
 			</p>
 
@@ -682,7 +690,7 @@ hr:last-child {
 				<pre class="code"> var request = new RSSRequester ({});
  request.bind ('rssload', this, 'onRssload');
  request.bind ('rssloaderror', this, 'onError');
- 
+
  request.url = "http://feeds.arstechnica.com/arstechnica/index.xml";
  request.loadRSS ();</pre>
 				

@@ -605,9 +605,9 @@ hr:last-child {
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/vs.ui.SVGView.html#size">size</a></b>
+								<b><a href="../symbols/vs.ui.SVGView.html#contentData">contentData</a></b>
 								</div>
-								<div class="description">Set the image size</div>
+								<div class="description">Set the image url</div>
 							</td>
 						</tr>
 					
@@ -621,13 +621,23 @@ hr:last-child {
 							</td>
 						</tr>
 					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.ui.SVGView.html#viewBox">viewBox</a></b>
+								</div>
+								<div class="description">Set the image url</div>
+							</td>
+						</tr>
+					
 					</tbody>
 				</table>
 				
 				
 				
 				<dl class="inheritsList">
-				<dt>Fields borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#autosizing">autosizing</a>, <a href="../symbols/vs.ui.View.html#bubbling">bubbling</a>, <a href="../symbols/vs.ui.View.html#enable">enable</a>, <a href="../symbols/vs.ui.View.html#hideAnimation">hideAnimation</a>, <a href="../symbols/vs.ui.View.html#layout">layout</a>, <a href="../symbols/vs.ui.View.html#magnet">magnet</a>, <a href="../symbols/vs.ui.View.html#maxScale">maxScale</a>, <a href="../symbols/vs.ui.View.html#minScale">minScale</a>, <a href="../symbols/vs.ui.View.html#position">position</a>, <a href="../symbols/vs.ui.View.html#rotation">rotation</a>, <a href="../symbols/vs.ui.View.html#scaling">scaling</a>, <a href="../symbols/vs.ui.View.html#setHideAnimation">setHideAnimation</a>, <a href="../symbols/vs.ui.View.html#setShowAnimation">setShowAnimation</a>, <a href="../symbols/vs.ui.View.html#showAnimmation">showAnimmation</a>, <a href="../symbols/vs.ui.View.html#transformOrigin">transformOrigin</a>, <a href="../symbols/vs.ui.View.html#translation">translation</a>, <a href="../symbols/vs.ui.View.html#visible">visible</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
+				<dt>Fields borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#autosizing">autosizing</a>, <a href="../symbols/vs.ui.View.html#bubbling">bubbling</a>, <a href="../symbols/vs.ui.View.html#enable">enable</a>, <a href="../symbols/vs.ui.View.html#hideAnimation">hideAnimation</a>, <a href="../symbols/vs.ui.View.html#layout">layout</a>, <a href="../symbols/vs.ui.View.html#magnet">magnet</a>, <a href="../symbols/vs.ui.View.html#maxScale">maxScale</a>, <a href="../symbols/vs.ui.View.html#minScale">minScale</a>, <a href="../symbols/vs.ui.View.html#position">position</a>, <a href="../symbols/vs.ui.View.html#rotation">rotation</a>, <a href="../symbols/vs.ui.View.html#scaling">scaling</a>, <a href="../symbols/vs.ui.View.html#setHideAnimation">setHideAnimation</a>, <a href="../symbols/vs.ui.View.html#setShowAnimation">setShowAnimation</a>, <a href="../symbols/vs.ui.View.html#showAnimmation">showAnimmation</a>, <a href="../symbols/vs.ui.View.html#size">size</a>, <a href="../symbols/vs.ui.View.html#transformOrigin">transformOrigin</a>, <a href="../symbols/vs.ui.View.html#translation">translation</a>, <a href="../symbols/vs.ui.View.html#visible">visible</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
 				</dl>
 				
 			
@@ -664,9 +674,12 @@ hr:last-child {
 				
 				
 				
-				<pre class="code"> var svg = vs.ui.SVGView (config);
- svg.init ();
- svg.src = 'image.svg';</pre>
+				<pre class="code"> var svg = vs.ui.SVGView (config).init ();
+ svg.href = 'image.svg';
+ // or
+ svg.href = 'image.svg#id';
+ // or
+ svg.contentData = "<svg.... ";</pre>
 				
 				
 				
@@ -699,15 +712,15 @@ hr:last-child {
 					Field Detail
 				</div>
 				
-					<a name="size"> </a>
+					<a name="contentData"> </a>
 					<div class="fixedFont">
 					
 					
-					<b>size</b>
+					<b>contentData</b>
 					
 					</div>
 					<div class="description">
-						Set the image size
+						Set the image url
 						
 					</div>
 					
@@ -725,6 +738,27 @@ hr:last-child {
 					
 					
 					<b>src</b>
+					
+					</div>
+					<div class="description">
+						Set the image url
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="viewBox"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>viewBox</b>
 					
 					</div>
 					<div class="description">
