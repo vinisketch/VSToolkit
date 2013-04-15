@@ -1,17 +1,17 @@
 /**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
   contributors. All rights reserved
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -23,12 +23,12 @@
 //   this.parent (createId ());
 //   this.constructor = vs.core.Scheduler;
 // };
-// 
+//
 // Scheduler.prototype = {
-// 
+//
 // };
 //util.extendClass (Scheduler, EventSource);
-// 
+//
 
 /**
  *  The vs.core.Task class
@@ -80,9 +80,9 @@ Task.STOPPED = 0;
 Task.PAUSED = 2;
 
 Task.prototype = {
-  
+
 /********************************************************************
-                  
+
 ********************************************************************/
   /**
    * TaskDelegate.
@@ -103,7 +103,7 @@ Task.prototype = {
    *	@property
    */
   delegate : null,
-  
+
 /********************************************************************
                   States
 ********************************************************************/
@@ -113,9 +113,9 @@ Task.prototype = {
   _state : Task.STOPPED,
 
 /********************************************************************
-                  
+
 ********************************************************************/
- 
+
   /**
    *  Starts the task
    *
@@ -154,7 +154,7 @@ util.extendClass (Task, core.Object);
 
 util.defineClassProperty (Task, "state", {
 
-  /** 
+  /**
    *  Return the task State. <br />
    *  Possible values: {@link vs.core.Task.STARTED},
    *  {@link vs.core.Task.STOPPED},
@@ -162,7 +162,7 @@ util.defineClassProperty (Task, "state", {
    *
    * @name vs.core.Task#state
    *  @type {number}
-   */ 
+   */
   get : function ()
   {
     return this._state;
@@ -209,7 +209,7 @@ util.defineClassProperty (Task, "state", {
  *  par.start ();
  *
  *  // Declare a PAR task including a SEC Task
- *  var seq = new Task_SEQ 
+ *  var seq = new Task_SEQ
  *    ([scale, comp0], new Task_PAR ([rotate, comp1], [rotate, comp2]));
  *  seq.delegate = this;
  *  seq.start ();
@@ -231,32 +231,43 @@ function Task_PAR (tasksAndParams)
   this.parent = core.Object;
   this.parent ();
   this.constructor = Task_PAR;
-  
+
   this._tasksAndParams = [];
-  
+  this._state = Task.STOPPED;
+
   if (arguments.length) this.setTasks (arguments);
 };
 
+vs.par = function ()
+{
+  if (arguments.length === 0) return;
+
+  var task = new Task_PAR ();
+  task.setTasks (arguments);
+
+  return task;
+};
+
 Task_PAR.prototype = {
-  
+
 /********************************************************************
-                  
+
 ********************************************************************/
   /**
    *	@private
   */
   _tasksAndParams : null,
-  
+
   /**
    * taks ended
    *	@private
   */
   _tasksWillEnded : null,
-  
+
 /********************************************************************
-                  
+
 ********************************************************************/
- 
+
   /**
    *  Set tasks.
    *  The task has to be stopped
@@ -271,15 +282,15 @@ Task_PAR.prototype = {
   {
     if (this._state !== Task.STOPPED) { return false; }
     var i, taskAndparam, task, param;
-    
+
     this._tasksAndParams = [];
     for (i = 0; i < tasksAndParams.length; i ++)
     {
       taskAndparam = tasksAndParams [i];
       if (!taskAndparam) { continue; }
-      
+
       param = null; task = null;
-  
+
       if (util.isArray (taskAndparam))
       {
         if (taskAndparam.length === 1)
@@ -297,23 +308,23 @@ Task_PAR.prototype = {
         task = taskAndparam;
         param = null;
       }
-      
+
       if (!task)
       {
         console.warn ('Undefined task');
         continue;
       }
-      
+
       if (!task.start || !task.stop || !task.pause)
       {
         console.warn ('Invalid task: ' + task.toString ());
         continue;
       }
-      
+
       this._tasksAndParams.push ([task, param]);
     }
   },
-  
+
   /**
    *  Starts the task
    *
@@ -327,7 +338,7 @@ Task_PAR.prototype = {
     if (this._state === Task.STARTED) { return false; }
     this._tasksWillEnded = this._tasksAndParams.length;
     this._state = Task.STARTED;
-  
+
     var taskAndparam, i;
     for (i = 0; i < this._tasksAndParams.length; i ++)
     {
@@ -336,7 +347,7 @@ Task_PAR.prototype = {
       taskAndparam [0].delegate = this;
       taskAndparam [0].start ((taskAndparam [1])?taskAndparam [1]:param);
     }
-    
+
     return true;
   },
 
@@ -350,14 +361,14 @@ Task_PAR.prototype = {
   {
     if (this._state === Task.STOPPED) { return false; }
     this._state = Task.STOPPED;
-  
+
     var taskAndparam, i;
     for (i = 0; i < this._tasksAndParams.length; i ++)
     {
       taskAndparam = this._tasksAndParams [i];
       taskAndparam [0].stop ();
     }
-    
+
     return true;
   },
 
@@ -371,19 +382,19 @@ Task_PAR.prototype = {
   {
     if (this._state === Task.PAUSED) { return false; }
     this._state = Task.PAUSED;
-  
+
     var taskAndparam, i;
     for (i = 0; i < this._tasksAndParams.length; i ++)
     {
       taskAndparam = this._tasksAndParams [i];
       taskAndparam [0].pause ();
     }
-    
+
     return true;
   },
 
 /********************************************************************
-               delegate methodes   
+               delegate methodes
 ********************************************************************/
 
   /**
@@ -478,7 +489,7 @@ util.extendClass (Task_PAR, core.Object);
  *  seq.start ();
  *
  *  // Declare a PAR task including a SEC Task
- *  var seq = new Task_SEQ 
+ *  var seq = new Task_SEQ
  *    ([scale, comp0], new Task_PAR ([rotate, comp1], [rotate, comp2]));
  *  seq.delegate = this;
  *  seq.start ();
@@ -490,7 +501,7 @@ util.extendClass (Task_PAR, core.Object);
  *
  * @name vs.core.Task_SEQ
  *
- * @param list List of task to start sequentially with an optional 
+ * @param list List of task to start sequentially with an optional
  *  parameter
  */
 function Task_SEQ (tasksAndParams)
@@ -500,20 +511,31 @@ function Task_SEQ (tasksAndParams)
   this.constructor = Task_SEQ;
 
   this._tasksAndParams = [];
-  
+  this._state = Task.STOPPED;
+
   if (arguments.length) this.setTasks (arguments);
 };
 
+vs.seq = function ()
+{
+  if (arguments.length === 0) return;
+
+  var task = new Task_SEQ ();
+  task.setTasks (arguments);
+
+  return task;
+};
+
 Task_SEQ.prototype = {
-  
+
 /********************************************************************
-                  
+
 ********************************************************************/
   /**
    *	@private
   */
   _tasksAndParams : null,
-  
+
   /**
    *	@private
   */
@@ -523,11 +545,11 @@ Task_SEQ.prototype = {
    *	@private
   */
   _startParam : null,
-    
+
 /********************************************************************
-                  
+
 ********************************************************************/
- 
+
   /**
    *  Set tasks.
    *  The task has to be stopped
@@ -542,15 +564,15 @@ Task_SEQ.prototype = {
   {
     if (this._state !== Task.STOPPED) { return false; }
     var i, taskAndparam, task, param;
-    
+
     this._tasksAndParams = [];
     for (i = 0; i < tasksAndParams.length; i ++)
     {
       taskAndparam = tasksAndParams [i];
       if (!taskAndparam) { continue; }
-      
+
       param = null; task = null;
-  
+
       if (util.isArray (taskAndparam))
       {
         if (taskAndparam.length === 1)
@@ -568,23 +590,23 @@ Task_SEQ.prototype = {
         task = taskAndparam;
         param = null;
       }
-      
+
       if (!task)
       {
         console.warn ('Undefined task');
         continue;
       }
-      
+
       if (!task.start || !task.stop || !task.pause)
       {
         console.warn ('Invalid task: ' + task.toString ());
         continue;
       }
-      
+
       this._tasksAndParams.push ([task, param]);
     }
   },
-  
+
   /**
    *  Starts the task
    *
@@ -596,16 +618,16 @@ Task_SEQ.prototype = {
   {
     if (this._state === Task.STARTED) { return false; }
     this._state = Task.STARTED;
-    
+
     this._startParam = param;
-  
+
     var taskAndparam = this._tasksAndParams [this._nextTaskToStart];
     if (!taskAndparam) { return false; }
-    
+
     this._nextTaskToStart++;
     taskAndparam [0].delegate = this;
     taskAndparam [0].start ((taskAndparam [1])?taskAndparam [1]:param);
-    
+
     return true;
   },
 
@@ -619,13 +641,13 @@ Task_SEQ.prototype = {
   {
     if (this._state === Task.STOPPED) { return false; }
     this._state = Task.STOPPED;
-  
+
     var taskAndparam = this._tasksAndParams [this._nextTaskToStart - 1];
     if (!taskAndparam) { return false; }
 
     this._nextTaskToStart = 0;
     taskAndparam [0].stop ();
-    
+
     return true;
   },
 
@@ -640,17 +662,17 @@ Task_SEQ.prototype = {
   {
     if (this._state === Task.PAUSED) { return false; }
     this._state = Task.PAUSED;
-  
+
     var taskAndparam = this._tasksAndParams [this._nextTaskToStart - 1];
     if (!taskAndparam) { return false; }
 
     taskAndparam [0].pause ();
-    
+
     return true;
   },
 
 /********************************************************************
-               delegate methodes   
+               delegate methodes
 ********************************************************************/
 
   /**
@@ -722,7 +744,7 @@ util.extendClass (Task_SEQ, core.Object);
  *
  * @name vs.core.TaskWait
  *
- * @param time The time to wait, using millisecond 
+ * @param time The time to wait, using millisecond
  *  parameter
  */
 function TaskWait (time)
@@ -735,30 +757,30 @@ function TaskWait (time)
 };
 
 TaskWait.prototype = {
-  
+
 /********************************************************************
-                  
+
 ********************************************************************/
   /**
    *	@private
   */
   _time : 0,
   _left_time : 0,
-  
+
   /**
    *	@private
    */
   _timer : null,
-  
+
   /**
    *	@private
    */
   _start_time : 0,
-    
+
 /********************************************************************
-                  
+
 ********************************************************************/
-  
+
   /**
    *  Starts the task
    *
@@ -776,16 +798,16 @@ TaskWait.prototype = {
     { this._left_time = time; }
 
     this._state = Task.STARTED;
-    
+
     this._start_time = new Date ().getTime ();
     var self = this;
-    this._timer = setTimeout (function () 
-    { 
+    this._timer = setTimeout (function ()
+    {
       self._state = Task.STOPPED;
       if (self.delegate && self.delegate.taskDidEnd)
       { self.delegate.taskDidEnd (self); }
     }, time);
-    
+
     return true;
   },
 
@@ -799,15 +821,15 @@ TaskWait.prototype = {
   {
     if (this._state === Task.STOPPED) { return false; }
     this._state = Task.STOPPED;
-    
+
     clearTimeout (this._timer);
     this._timer = null;
-    
+
     this._left_time = this._time;
-    
+
     if (this.delegate && this.delegate.taskDidStop)
     { this.delegate.taskDidStop (this); }
-    
+
     return true;
   },
 
@@ -822,10 +844,10 @@ TaskWait.prototype = {
   {
     if (this._state === Task.PAUSED) { return false; }
     this._state = Task.PAUSED;
-  
+
     this._left_time =
       this._left_time - new Date ().getTime () + this._start_time;
-    
+
     if (this.delegate && this.delegate.taskDidPause)
     { this.delegate.taskDidPause (this); }
 
@@ -836,11 +858,11 @@ util.extendClass (TaskWait, core.Object);
 
 util.defineClassProperty (TaskWait, "state", {
 
-  /** 
+  /**
    * Set the task time, using millisecond. <br />
    * @name vs.core.TaskWait#time
    * @type {number}
-   */ 
+   */
   set : function (v)
   {
     if (!util.isNumber (v)) { return; }
