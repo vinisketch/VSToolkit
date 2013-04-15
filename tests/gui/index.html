@@ -3,7 +3,7 @@
   <head>
     <meta http-equiv="Content-type" content="text/html; charset=utf-8">
     <title>GUI Component Tests</title>
- 
+
     <link rel="stylesheet" type="text/css" href="css/index.css">
 
     <link rel="stylesheet" type="text/css" href="../css/vs_ui.css">
@@ -22,16 +22,17 @@
         {url: 'slider.js', image:'slider.jpg', text:'', result: 0},
         {url: 'progressBar.js', image:'progressBar.jpg', text:'', result: 0},
         {url: 'magnets.js', image:'magnets.jpg', text:'', result: 0},
+        {url: 'animate_par_seq.js', image:'animate_par_seq.jpg', text:'', result: 0},
         {url: 'svg.js', image:'svg.png', text:'', result: 0},
         {url: 'template_mvc.js', css: 'template_mvc.css', image:'template_mvc.jpg', text:'', result: 0}
       ];
-      
+
       window.index = -1;
-      
+
       function testResult () {
         test_view.innerHTML = '';
         result_view.style.display = 'none';
-        
+
         var text = '<span class="result">';
         var result = 0;
         for (var i = 0 ; i < tests.length; i++)
@@ -39,9 +40,9 @@
           result += window.tests [i].result;
         }
         text += "Result: " + result + "/" + (tests.length * 5);
-        
+
         text += '</span>';
-        
+
         text_view.innerHTML = text;
         document.getElementById ('button_not_ok').style.display = "none";
         document.getElementById ('button_ok').style.display = "none";
@@ -56,44 +57,44 @@
         }
 
         var test = window.tests [++index];
-        
+
         if (test.image)
         {
           result_view.src = 'images/' + test.image
           result_view.style.display = 'block';
         }
         else result_view.style.display = 'none';
-        
+
         text_view.innerHTML = test.text;
 
         test_view.innerHTML = '';
         vs.util.importFile (test.url, document, function ()
         { launchTest (test_view); }, 'js');
-        
+
         if (test.css)
         {
           vs.util.importFile ('css/' + test.css, document, null, 'css');
         }
       }
-    
+
       function test_not_ok ()
       {
         window.tests [index].result = 0;
         nextTest ();
       };
-      
+
       function test_ok ()
       {
         window.tests [index].result = 5;
         nextTest ();
       };
-      
+
       function initTest ()
       {
         window.test_view = document.getElementById ('test_view');
         window.result_view = document.querySelector ('#result_view img');
         window.text_view = document.getElementById ('text_view');
-        
+
         nextTest ();
       }
     </script>
