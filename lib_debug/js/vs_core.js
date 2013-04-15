@@ -1245,14 +1245,14 @@ Model.prototype = {
 
     if (this._sync_service_) this._sync_service_.removeModel (this);
 
-    function deleteBindings (list_bind)
+    function deleteBindings (handler_list)
     {
-      if (!list_bind) return;
+      if (!handler_list) return;
 
-      var bind, l = list_bind.length;
+      var bind, l = handler_list.length;
       while (l--)
       {
-        bind = list_bind [l];
+        bind = handler_list [l];
         util.free (bind);
       }
     };
@@ -1293,18 +1293,18 @@ Model.prototype = {
   bindChange : function (spec, obj, func)
   {
     if (!obj) { return; }
-    var list_bind, handler;
+    var handler_list, handler;
 
     spec = (spec)? 'change:' + spec : 'change';
-    handler = new Handler (spec, obj, func, false);
+    handler = new Handler (obj, func);
 
-    list_bind = this.__bindings__ [spec];
-    if (!list_bind)
+    handler_list = this.__bindings__ [spec];
+    if (!handler_list)
     {
-      list_bind = [];
-      this.__bindings__ [spec] = list_bind;
+      handler_list = [];
+      this.__bindings__ [spec] = handler_list;
     }
-    list_bind.push (handler);
+    handler_list.push (handler);
   },
 
   /**
@@ -1324,14 +1324,14 @@ Model.prototype = {
   {
     spec = (spec)? 'change:' + spec : 'change';
 
-    function unbind (list_bind)
+    function unbind (handler_list)
     {
-      if (!list_bind) return;
+      if (!handler_list) return;
 
       var handler, i = 0;
-      while (i < list_bind.length)
+      while (i < handler_list.length)
       {
-        handler = list_bind [i];
+        handler = handler_list [i];
         if (handler.spec === spec)
         {
           if (handler.obj === obj)
@@ -1340,14 +1340,14 @@ Model.prototype = {
             {
               if (handler.func === func || handler.func_ptr === func)
               {
-                list_bind.remove (i);
+                handler_list.remove (i);
                 util.free (handler);
               }
               else { i++; }
             }
             else
             {
-              list_bind.remove (i);
+              handler_list.remove (i);
               util.free (handler);
             }
           }
@@ -1423,39 +1423,16 @@ Model.prototype = {
         while (l--) { this.__links__ [l].configure (this); }
       }
 
-      // 2) manage change event propagation
-      function _change (list_bind)
-      {
-        if (!list_bind) return;
-        var i = list_bind.length, handler;
-
-        while (i--)
-        {
-          /** @private */
-          handler = list_bind [i];
-
-          if (handler.func_ptr) // function pointer call
-          {
-            handler.func_ptr.call (handler.obj, event);
-          }
-          else if (handler.func) // function name call
-          {
-            handler.obj[handler.func] (event);
-          }
-          else // default notify method
-          {
-            handler.obj.notify (event);
-          }
-        }
-      };
-
       //propagate retrictive bindings
-      if (spec !== 'change') _change (this.__bindings__ [spec]);
+      if (spec !== 'change')
+        queueProcAsyncEvent (event, this.__bindings__ [spec]);
+
       //propagate general change
-      _change (this.__bindings__ ['change']);
+      queueProcAsyncEvent (event, this.__bindings__ ['change']);
     }
     catch (e)
     {
+      if (e.stack) console.error (e.stack);
       console.error (e);
     }
   },
@@ -1527,6 +1504,172 @@ util.extendClass (Model, core.Object);
 *********************************************************************/
 /** @private */
 core.Model = Model;
+/**
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
+  contributors. All rights reserved
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+/*
+ *----------------------------------------------------------------------
+ *
+ * _DoOneEvent --
+ *
+ *  Process a single event of some sort.  If there's no work to
+ *  do, wait for an event to occur, then process it.
+ *
+ *
+ *----------------------------------------------------------------------
+ */
+
+/**
+ *  Structure used for managing events
+ *  @private
+ */
+function Handler (_obj, _func)
+{
+  this.obj = _obj;
+  if (util.isFunction (_func))
+  {
+    this.func_ptr = _func;
+  }
+  else if (util.isString (_func))
+  {
+    this.func_name = _func;
+  }
+}
+
+/**
+ * @private
+ */
+Handler.prototype.destructor = function ()
+{
+  delete (this.obj);
+  delete (this.func_ptr);
+  delete (this.func_name);
+};
+
+/**
+ * @private
+ */
+var _events_queue  = [], _is_events_propagating = false;
+
+/**
+ * @private
+ */
+function queueProcAsyncEvent (event, handler_list)
+{
+  if (!event || !handler_list) return;
+
+  var burst = {
+    handler_list : handler_list,
+    event : event
+  }
+
+  // push the event to dispatch into the queue
+  _events_queue.push (burst);
+
+  // request for the mainloop
+  serviceLoop ();
+}
+
+/**
+ * @private
+ * doOneAsyncEvent will dispache One event to all observers.
+ */
+function doOneAsyncEvent ()
+{
+  if (_is_events_propagating) return;
+
+  var burst = _events_queue.shift (),
+    handler_list = burst.handler_list,
+    n = handler_list.length,
+    i = n,
+    event = burst.event;
+
+  _is_events_propagating = true;
+
+  function end_propagation ()
+  {
+    n--;
+    if (n <= 0) _is_events_propagating = false;
+  }
+
+  /**
+   * @private
+   * doOneHandler will dispache One event to an observer.
+   *
+   * @param {Handler} handler
+   */
+  function doOneHandler (handler)
+  {
+    if (handler) try
+    {
+      if (util.isFunction (handler.func_ptr))
+      {
+        // call function
+        handler.func_ptr.call (handler.obj, event);
+      }
+      else if (util.isString (handler.func_name) &&
+               util.isFunction (handler.obj[handler.func_name]))
+      {
+        // specific notify method
+        handler.obj[handler.func_name] (event);
+      }
+      else if (util.isFunction (handler.obj.notify))
+      {
+        // default notify method
+        handler.obj.notify (event);
+      }
+    }
+    catch (e)
+    {
+      if (e.stack) console.error (e.stack);
+      else console.error (e);
+    }
+    end_propagation ();
+  };
+
+  if (!i) end_propagation (); // should not occures
+  else while (i > 0)
+  {
+    (function (handler) {
+      setTimeout (function () { doOneHandler(handler) }, 0);
+    }) (handler_list [--i])
+  }
+}
+
+/**
+ * @private
+ * Mainloop core
+ */
+function serviceLoop ()
+{
+  if (_events_queue.length === 0) return;
+
+  if (_is_events_propagating)
+  {
+    // do the loop
+    vs.requestAnimationFrame (serviceLoop);
+    return;
+  }
+
+  // dispache an event to observers
+  doOneAsyncEvent ();
+}
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
@@ -1696,119 +1839,26 @@ core.Event = Event;
 /* touch event messages */
 core.EVENT_SUPPORT_GESTURE = EVENT_SUPPORT_GESTURE;
 /**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
   contributors. All rights reserved
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
 /**
- *  Structure used for managing events
- *  @private
- */
-function Handler (_spec, _obj, _func, _delay)
-{
-  this.spec = _spec;
-  this.obj = _obj;
-  this.delay = core.FORCE_EVENT_PROPAGATION_DELAY?true:_delay;
-  if (util.isFunction (_func))
-  {
-    this.func_ptr = _func;
-  }
-  else
-  {
-    this.func = _func;
-  }
-}
-
-/**
- * @protected
- */
-Handler.prototype.destructor = function ()
-{
-  delete (this.spec);
-  delete (this.obj);
-  delete (this.delay);
-  delete (this.func_ptr);
-  delete (this.func);
-};
-
-var _event_bursts = [], _is_events_propagating = false;
-
-/**
- *  @private
- */
-function _continue_propagation ()
-{
-  if (_is_events_propagating || _event_bursts.length === 0) return;
-  
-  _is_events_propagating = true;
-  
-  (function (burst) {
-    var n = i = burst.list_bind.length;
-    function end_propagation ()
-    {
-      n--;
-      if (n <= 0)
-      {
-        _is_events_propagating = false;
-        _continue_propagation ();
-      }
-    }
-    var func = function ()
-    {
-      try {
-        if (this.handler.func_ptr)
-        {
-          // call function
-          this.handler.func_ptr.call (this.handler.obj, this.event);
-        }
-        else if (this.handler.func)
-        {
-          // specific notify method
-          this.handler.obj[this.handler.func] (this.event);
-        }
-        else
-        {
-          // default notify method
-          this.handler.obj.notify (this.event);
-        }
-      } catch (e) {
-        console.error (e);
-      }
-      end_propagation ();
-    };
-    
-    if (i == 0) end_propagation (); // should not occures
-    else while (i > 0)
-    {
-      /** @private */
-      var data = {
-        handler : burst.list_bind [--i],
-        event : burst.event
-      };
-    
-      if (burst.delay || data.handler.delay)
-      { setTimeout (func.bind (data), 0); }
-      else { func.call (data); }
-    }
-  }) (_event_bursts.shift ());
-}
-
-/**
  *  @class
- *  vs.core.EventSource is an  class that forms the basis of event and command 
+ *  vs.core.EventSource is an  class that forms the basis of event and command
  *  processing. All class that handles events must inherit form EventSource.
  *
  *  @extends vs.core.Object
@@ -1826,7 +1876,7 @@ function EventSource (config)
   this.parent = core.Object;
   this.parent (config);
   this.constructor = core.EventSource;
-  
+
   this.__bindings__ = {};
   this.__node_binds__ = {};
 }
@@ -1856,22 +1906,22 @@ EventSource.prototype =
    */
   destructor : function ()
   {
-    var spec, list_bind, i, handler, binds;
-    
+    var spec, handler_list, i, handler, binds;
+
     for (spec in this.__bindings__)
     {
-      list_bind = this.__bindings__ [spec];
-      if (!list_bind) { continue; }
-      while (list_bind.length)
+      handler_list = this.__bindings__ [spec];
+      if (!handler_list) { continue; }
+      while (handler_list.length)
       {
-        handler = list_bind.pop ();
+        handler = handler_list.pop ();
         util.free (handler);
       }
       delete (this.__bindings__ [spec]);
     }
-    
+
     delete (this.__bindings__);
-    
+
     for (spec in this.__node_binds__)
     {
       binds = this.__node_binds__ [spec];
@@ -1888,22 +1938,22 @@ EventSource.prototype =
       }
     }
     delete (this.__node_binds__);
-    
+
     VSObject.prototype.destructor.call (this);
   },
-  
+
   /**
    * @name vs.core.EventSource#_clone
    * @function
    * @private
-   * 
+   *
    * @param {vs.core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)
   {
     VSObject.prototype._clone.call (this, obj, cloned_map);
-    
+
     obj.__bindings__ = {};
     obj.__node_binds__ = {};
   },
@@ -1914,42 +1964,32 @@ EventSource.prototype =
    *  When you want listen an event generated by this object, you can
    *  bind your object (the observer) to this object using 'bind' method.
    *  <p>
-   *  Warning:<br>
-   *  If you know the process of your callback can take time or can be blocking
-   *  you should set delay to 'true' otherwise you application will be stuck.
-   *  But be careful this options add an overlay in the event propagation.
-   *  For debug purpose or more secure coding you can force delay to true, for
-   *  all bind using global variable vs.core.FORCE_EVENT_PROPAGATION_DELAY.<br/>
-   *  You just have set as true (vs.core.FORCE_EVENT_PROPAGATION_DELAY = true)
-   *  at beginning of your program.
    *
    * @name vs.core.EventSource#bind
    * @function
-   * 
+   *
    * @param {string} spec the event specification [mandatory]
    * @param {vs.core.Object} obj the object interested to catch the event [mandatory]
    * @param {string} func the name of a callback. If its not defined
    *        notify method will be called [optional]
-   * @param {boolean} delay if true the callback 'func' will be call within 
-   *        an other "simili thread". 
    */
-  bind : function (spec, obj, func, delay)
+  bind : function (spec, obj, func)
   {
-     if (!spec || !obj) { return; }
-    
+    if (!spec || !obj) { return; }
+
     /** @private */
-    var handler = new Handler (spec, obj, func, delay),
-      list_bind = this.__bindings__ [spec];
-    if (!list_bind)
+    var handler = new Handler (obj, func),
+      handler_list = this.__bindings__ [spec];
+    if (!handler_list)
     {
-      list_bind = [];
-      this.__bindings__ [spec] = list_bind; 
+      handler_list = [];
+      this.__bindings__ [spec] = handler_list;
     }
-    list_bind.push (handler);
-    
+    handler_list.push (handler);
+
     return handler;
   },
-  
+
   /**
    *  The event unbind method
    *  <p>
@@ -1957,7 +1997,7 @@ EventSource.prototype =
    *
    * @name vs.core.EventSource#unbind
    * @function
-   * 
+   *
    * @param {string} spec the event specification [mandatory]
    * @param {vs.core.Object} obj the object you want unbind [mandatory]
    * @param {string} func the name of a callback. If its not defined
@@ -1965,37 +2005,33 @@ EventSource.prototype =
    */
   unbind : function (spec, obj, func)
   {
-    var list_bind = this.__bindings__ [spec], i = 0, bind;
-    if (!list_bind) { return; }
+    var handler_list = this.__bindings__ [spec], i = 0, bind;
+    if (!handler_list) { return; }
 
-    while (i < list_bind.length)
+    while (i < handler_list.length)
     {
-      bind = list_bind [i];
-      if (bind.spec === spec)
+      bind = handler_list [i];
+      if (bind.obj === obj)
       {
-        if (bind.obj === obj)
+        if (util.isString (func) || util.isFunction (func) )
         {
-          if (util.isString (func) || util.isFunction (func) )
+          if (bind.func_name === func || bind.func_ptr === func)
           {
-            if (bind.func === func || bind.func_ptr === func)
-            {
-              list_bind.remove (i);
-              util.free (bind);
-            }
-            else { i++; }
-          }
-          else
-          {
-            list_bind.remove (i);
+            handler_list.remove (i);
             util.free (bind);
           }
+          else { i++; }
         }
-        else { i++; }
+        else
+        {
+          handler_list.remove (i);
+          util.free (bind);
+        }
       }
       else { i++; }
     }
   },
-  
+
   /**
    *  Propagate an event
    *  <p>
@@ -2004,18 +2040,16 @@ EventSource.prototype =
    *
    * @name vs.core.EventSource#propagate
    * @function
-   * 
+   *
    * @param {String} spec the event specification [mandatory]
    * @param {Object} data an optional data event [optional]
    * @param {vs.core.Object} srcTarget a event source, By default this object
    *        is the event source [mandatory]
-   * @param {boolean} delay if true the callback 'func' will be call within 
-   *        an other "simili thread". 
    */
-  propagate : function (type, data, srcTarget, delay)
+  propagate : function (type, data, srcTarget)
   {
-    var list_bind = this.__bindings__ [type], event;
-    if (!list_bind || list_bind.length === 0)
+    var handler_list = this.__bindings__ [type], event;
+    if (!handler_list || handler_list.length === 0)
     {
       if (this.__parent)
       {
@@ -2024,33 +2058,27 @@ EventSource.prototype =
       }
       return;
     }
-  
+
     event = new Event (this, type, data);
     if (srcTarget) { event.srcTarget = srcTarget; }
-  
-    var burst = {
-      list_bind : list_bind,
-      event : event,
-      delay: delay
-    }
-    _event_bursts.push (burst);
-    _continue_propagation ();
+
+    queueProcAsyncEvent (event, handler_list);
   },
 
   /**
-   * if this object receive an event it repropagates it if nobody has 
+   * if this object receive an event it repropagates it if nobody has
    * overcharged the notify method.
    *
    * @name vs.core.EventSource#notify
    * @function
-   * 
+   *
    * @protected
    */
   notify : function (event)
   {
     this.propagate (event.type, event.data);
   },
-  
+
   /**
    *  The event bind method to listen events form DOM
    *  <p>
@@ -2059,7 +2087,7 @@ EventSource.prototype =
    *
    * @name vs.core.EventSource#nodeBind
    * @function
-   * 
+   *
    * @param {Node} node the node to observe [mandatory]
    * @param {string} spec the event specification [mandatory]
    * @param {string|Function} func the name of a callback or the callback
@@ -2069,9 +2097,9 @@ EventSource.prototype =
   {
     if (!node) { return; }
     if (!util.isString (event)) { return; }
-    
+
     var self = this, func = null, handler = null, binds, key;
-    
+
     if (typeof (func_s) === "undefined") { func_s = 'notify'; }
     else if (util.isString (func_s))
     {
@@ -2092,7 +2120,7 @@ EventSource.prototype =
       func = func_s;
       func_s = func.name;
     }
-    
+
     if (!modifiers || modifiers === KEYBOARD.ANY_MASK)
     {
       /**
@@ -2101,13 +2129,13 @@ EventSource.prototype =
       handler = function (event)
       {
         // event.preventDefault ();
-        // event.stopPropagation (); // Seems this line of code bug with BB OS 
-        
+        // event.stopPropagation (); // Seems this line of code bug with BB OS
+
         try
         {
           event.src = event.currentTarget;
           event.data = event;
-  
+
           if (!func) { func = self [func_s]; }
           func.call (self, event);
         }
@@ -2123,11 +2151,11 @@ EventSource.prototype =
       {
         // event.preventDefault ();
         // event.stopPropagation ();
-        
+
         try
         {
           if (!modifiers &&
-            (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey)) 
+            (event.altKey || event.ctrlKey || event.shiftKey || event.metaKey))
           { return; }
           else if (modifiers === KEYBOARD.ALT && !event.altKey)
           { return; }
@@ -2139,7 +2167,7 @@ EventSource.prototype =
           { return; }
           event.src = event.currentTarget;
           event.data = event;
-  
+
           if (!func) { func = self [func_s]; }
           func.call (self, event);
         }
@@ -2149,7 +2177,7 @@ EventSource.prototype =
         }
       };
     }
-    
+
     // save data for nodeUnbind
     key = event + func_s;
     if (!this.__node_binds__)
@@ -2164,18 +2192,18 @@ EventSource.prototype =
       this.__node_binds__ [key] = binds;
     }
     binds.push ({n: node, h: handler});
-    
+
     // set the listener
     vs.addPointerListener (node, event, handler, false);
   },
-  
+
   /**
    *  Unbind a DOM event listening
    *  <p>
    *
    * @name vs.core.EventSource#nodeUnbind
    * @function
-   * 
+   *
    * @param {Node} node the node which is observed [mandatory]
    * @param {string} spec the event specification [mandatory]
    * @param {string} func the name of a callback. If its not defined
@@ -2206,7 +2234,7 @@ EventSource.prototype =
       func = func_s;
       func_s = func.name;
     }
-    
+
     key = event + func_s;
     binds = this.__node_binds__ [key];
     if (typeof (binds) === "undefined")
@@ -2228,23 +2256,23 @@ EventSource.prototype =
         i++;
       }
     }
-    
+
     // TODO WARNING pas bon, si plusieurs objets l'observe !!!
     node._object_ = undefined;
   },
-//   
+//
 //   /**
 //    *  Should be documented
 //    *
 //    * @name vs.core.EventSource#allDocumentBind
 //    * @function
-//    * 
+//    *
 //    */
 //   allDocumentBind : function (event, func)
 //   {
 //     this._allDocumentBind (document, event, func);
 //   },
-//   
+//
 //   /**
 //    * @private
 //    * @function
@@ -2252,10 +2280,10 @@ EventSource.prototype =
 //   _allDocumentBind : function (doc, event, func)
 //   {
 //     if (!doc) { return; }
-//     
+//
 //     // current document event management
 //     this.nodeBind (doc, event, func);
-//     
+//
 //     // children document event management
 //     var frame, iframes, i;
 //     if (doc.frames)
@@ -2276,7 +2304,7 @@ EventSource.prototype =
 //       }
 //     }
 //   },
-// 
+//
 //   /**
 //    *  Should be documented
 //    *
@@ -2288,7 +2316,7 @@ EventSource.prototype =
 //   {
 //     this._allDocumentUnbind (document, event, func);
 //   },
-//   
+//
 //   /**
 //    * @private
 //    * @function
@@ -2296,10 +2324,10 @@ EventSource.prototype =
 //   _allDocumentUnbind : function (doc, event, func)
 //   {
 //     if (!doc) { return; }
-//     
+//
 //     // current document event management
 //     this.nodeUnbind (doc, event, func);
-// 
+//
 //     // children document event management
 //     var frame, iframes, i;
 //     if (doc.frames)
@@ -3768,19 +3796,19 @@ vs._df_build = _df_build;
 core.DataFlow = DataFlow;
 
 /**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
   contributors. All rights reserved
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU Lesser General Public License as published
   by the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU Lesser General Public License for more details.
-  
+
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
@@ -3792,12 +3820,12 @@ core.DataFlow = DataFlow;
 //   this.parent (createId ());
 //   this.constructor = vs.core.Scheduler;
 // };
-// 
+//
 // Scheduler.prototype = {
-// 
+//
 // };
 //util.extendClass (Scheduler, EventSource);
-// 
+//
 
 /**
  *  The vs.core.Task class
@@ -3849,9 +3877,9 @@ Task.STOPPED = 0;
 Task.PAUSED = 2;
 
 Task.prototype = {
-  
+
 /********************************************************************
-                  
+
 ********************************************************************/
   /**
    * TaskDelegate.
@@ -3872,7 +3900,7 @@ Task.prototype = {
    *	@property
    */
   delegate : null,
-  
+
 /********************************************************************
                   States
 ********************************************************************/
@@ -3882,9 +3910,9 @@ Task.prototype = {
   _state : Task.STOPPED,
 
 /********************************************************************
-                  
+
 ********************************************************************/
- 
+
   /**
    *  Starts the task
    *
@@ -3923,7 +3951,7 @@ util.extendClass (Task, core.Object);
 
 util.defineClassProperty (Task, "state", {
 
-  /** 
+  /**
    *  Return the task State. <br />
    *  Possible values: {@link vs.core.Task.STARTED},
    *  {@link vs.core.Task.STOPPED},
@@ -3931,7 +3959,7 @@ util.defineClassProperty (Task, "state", {
    *
    * @name vs.core.Task#state
    *  @type {number}
-   */ 
+   */
   get : function ()
   {
     return this._state;
@@ -3978,7 +4006,7 @@ util.defineClassProperty (Task, "state", {
  *  par.start ();
  *
  *  // Declare a PAR task including a SEC Task
- *  var seq = new Task_SEQ 
+ *  var seq = new Task_SEQ
  *    ([scale, comp0], new Task_PAR ([rotate, comp1], [rotate, comp2]));
  *  seq.delegate = this;
  *  seq.start ();
@@ -4000,32 +4028,58 @@ function Task_PAR (tasksAndParams)
   this.parent = core.Object;
   this.parent ();
   this.constructor = Task_PAR;
-  
+
   this._tasksAndParams = [];
-  
+  this._state = Task.STOPPED;
+
   if (arguments.length) this.setTasks (arguments);
 };
 
+/**
+ *  Methods that create a PAR group
+ *
+ *  <p>
+ *  @example
+ *
+ *  // Declare the Task_PAR
+ *  var group = vs.par ([rotate, comp1], [scale, comp2]);
+ *
+ *  // Start the task => start animations
+ *  group.start ();
+ *
+ * @param list List of task to start parallel with an optional
+ *  parameter
+ */
+vs.par = function ()
+{
+  if (arguments.length === 0) return;
+
+  var task = new Task_PAR ();
+  task.setTasks (arguments);
+
+  return task;
+};
+
 Task_PAR.prototype = {
-  
+
 /********************************************************************
-                  
+
 ********************************************************************/
   /**
    *	@private
   */
   _tasksAndParams : null,
-  
+
   /**
    * taks ended
    *	@private
   */
   _tasksWillEnded : null,
-  
+
 /********************************************************************
-                  
+
 ********************************************************************/
- 
+
   /**
    *  Set tasks.
    *  The task has to be stopped
@@ -4040,15 +4094,15 @@ Task_PAR.prototype = {
   {
     if (this._state !== Task.STOPPED) { return false; }
     var i, taskAndparam, task, param;
-    
+
     this._tasksAndParams = [];
     for (i = 0; i < tasksAndParams.length; i ++)
     {
       taskAndparam = tasksAndParams [i];
       if (!taskAndparam) { continue; }
-      
+
       param = null; task = null;
-  
+
       if (util.isArray (taskAndparam))
       {
         if (taskAndparam.length === 1)
@@ -4066,23 +4120,23 @@ Task_PAR.prototype = {
         task = taskAndparam;
         param = null;
       }
-      
+
       if (!task)
       {
         console.warn ('Undefined task');
         continue;
       }
-      
+
       if (!task.start || !task.stop || !task.pause)
       {
         console.warn ('Invalid task: ' + task.toString ());
         continue;
       }
-      
+
       this._tasksAndParams.push ([task, param]);
     }
   },
-  
+
   /**
    *  Starts the task
    *
@@ -4096,7 +4150,7 @@ Task_PAR.prototype = {
     if (this._state === Task.STARTED) { return false; }
     this._tasksWillEnded = this._tasksAndParams.length;
     this._state = Task.STARTED;
-  
+
     var taskAndparam, i;
     for (i = 0; i < this._tasksAndParams.length; i ++)
     {
@@ -4105,7 +4159,7 @@ Task_PAR.prototype = {
       taskAndparam [0].delegate = this;
       taskAndparam [0].start ((taskAndparam [1])?taskAndparam [1]:param);
     }
-    
+
     return true;
   },
 
@@ -4119,14 +4173,14 @@ Task_PAR.prototype = {
   {
     if (this._state === Task.STOPPED) { return false; }
     this._state = Task.STOPPED;
-  
+
     var taskAndparam, i;
     for (i = 0; i < this._tasksAndParams.length; i ++)
     {
       taskAndparam = this._tasksAndParams [i];
       taskAndparam [0].stop ();
     }
-    
+
     return true;
   },
 
@@ -4140,19 +4194,19 @@ Task_PAR.prototype = {
   {
     if (this._state === Task.PAUSED) { return false; }
     this._state = Task.PAUSED;
-  
+
     var taskAndparam, i;
     for (i = 0; i < this._tasksAndParams.length; i ++)
     {
       taskAndparam = this._tasksAndParams [i];
       taskAndparam [0].pause ();
     }
-    
+
     return true;
   },
 
 /********************************************************************
-               delegate methodes   
+               delegate methodes
 ********************************************************************/
 
   /**
@@ -4247,7 +4301,7 @@ util.extendClass (Task_PAR, core.Object);
  *  seq.start ();
  *
  *  // Declare a PAR task including a SEC Task
- *  var seq = new Task_SEQ 
+ *  var seq = new Task_SEQ
  *    ([scale, comp0], new Task_PAR ([rotate, comp1], [rotate, comp2]));
  *  seq.delegate = this;
  *  seq.start ();
@@ -4259,7 +4313,7 @@ util.extendClass (Task_PAR, core.Object);
  *
  * @name vs.core.Task_SEQ
  *
- * @param list List of task to start sequentially with an optional 
+ * @param list List of task to start sequentially with an optional
  *  parameter
  */
 function Task_SEQ (tasksAndParams)
@@ -4269,20 +4323,46 @@ function Task_SEQ (tasksAndParams)
   this.constructor = Task_SEQ;
 
   this._tasksAndParams = [];
-  
+  this._state = Task.STOPPED;
+
   if (arguments.length) this.setTasks (arguments);
 };
 
+/**
+ *  Methods that create a SEQ group
+ *
+ *  <p>
+ *  @example
+ *
+ *  // Declare the Task_PAR
+ *  var group = vs.seq ([scale, comp0], [rotate, comp0]);
+ *
+ *  // Start the task => start animations
+ *  group.start ();
+ *
+ * @param list List of task to start sequentially with an optional
+ *  parameter
+ */
+vs.seq = function ()
+{
+  if (arguments.length === 0) return;
+
+  var task = new Task_SEQ ();
+  task.setTasks (arguments);
+
+  return task;
+};
+
 Task_SEQ.prototype = {
-  
+
 /********************************************************************
-                  
+
 ********************************************************************/
   /**
    *	@private
   */
   _tasksAndParams : null,
-  
+
   /**
    *	@private
   */
@@ -4292,11 +4372,11 @@ Task_SEQ.prototype = {
    *	@private
   */
   _startParam : null,
-    
+
 /********************************************************************
-                  
+
 ********************************************************************/
- 
+
   /**
    *  Set tasks.
    *  The task has to be stopped
@@ -4311,15 +4391,15 @@ Task_SEQ.prototype = {
   {
     if (this._state !== Task.STOPPED) { return false; }
     var i, taskAndparam, task, param;
-    
+
     this._tasksAndParams = [];
     for (i = 0; i < tasksAndParams.length; i ++)
     {
       taskAndparam = tasksAndParams [i];
       if (!taskAndparam) { continue; }
-      
+
       param = null; task = null;
-  
+
       if (util.isArray (taskAndparam))
       {
         if (taskAndparam.length === 1)
@@ -4337,23 +4417,23 @@ Task_SEQ.prototype = {
         task = taskAndparam;
         param = null;
       }
-      
+
       if (!task)
       {
         console.warn ('Undefined task');
         continue;
       }
-      
+
       if (!task.start || !task.stop || !task.pause)
       {
         console.warn ('Invalid task: ' + task.toString ());
         continue;
       }
-      
+
       this._tasksAndParams.push ([task, param]);
     }
   },
-  
+
   /**
    *  Starts the task
    *
@@ -4365,16 +4445,16 @@ Task_SEQ.prototype = {
   {
     if (this._state === Task.STARTED) { return false; }
     this._state = Task.STARTED;
-    
+
     this._startParam = param;
-  
+
     var taskAndparam = this._tasksAndParams [this._nextTaskToStart];
     if (!taskAndparam) { return false; }
-    
+
     this._nextTaskToStart++;
     taskAndparam [0].delegate = this;
     taskAndparam [0].start ((taskAndparam [1])?taskAndparam [1]:param);
-    
+
     return true;
   },
 
@@ -4388,13 +4468,13 @@ Task_SEQ.prototype = {
   {
     if (this._state === Task.STOPPED) { return false; }
     this._state = Task.STOPPED;
-  
+
     var taskAndparam = this._tasksAndParams [this._nextTaskToStart - 1];
     if (!taskAndparam) { return false; }
 
     this._nextTaskToStart = 0;
     taskAndparam [0].stop ();
-    
+
     return true;
   },
 
@@ -4409,17 +4489,17 @@ Task_SEQ.prototype = {
   {
     if (this._state === Task.PAUSED) { return false; }
     this._state = Task.PAUSED;
-  
+
     var taskAndparam = this._tasksAndParams [this._nextTaskToStart - 1];
     if (!taskAndparam) { return false; }
 
     taskAndparam [0].pause ();
-    
+
     return true;
   },
 
 /********************************************************************
-               delegate methodes   
+               delegate methodes
 ********************************************************************/
 
   /**
@@ -4491,7 +4571,7 @@ util.extendClass (Task_SEQ, core.Object);
  *
  * @name vs.core.TaskWait
  *
- * @param time The time to wait, using millisecond 
+ * @param time The time to wait, using millisecond
  *  parameter
  */
 function TaskWait (time)
@@ -4504,30 +4584,30 @@ function TaskWait (time)
 };
 
 TaskWait.prototype = {
-  
+
 /********************************************************************
-                  
+
 ********************************************************************/
   /**
    *	@private
   */
   _time : 0,
   _left_time : 0,
-  
+
   /**
    *	@private
    */
   _timer : null,
-  
+
   /**
    *	@private
    */
   _start_time : 0,
-    
+
 /********************************************************************
-                  
+
 ********************************************************************/
-  
+
   /**
    *  Starts the task
    *
@@ -4545,16 +4625,16 @@ TaskWait.prototype = {
     { this._left_time = time; }
 
     this._state = Task.STARTED;
-    
+
     this._start_time = new Date ().getTime ();
     var self = this;
-    this._timer = setTimeout (function () 
-    { 
+    this._timer = setTimeout (function ()
+    {
       self._state = Task.STOPPED;
       if (self.delegate && self.delegate.taskDidEnd)
       { self.delegate.taskDidEnd (self); }
     }, time);
-    
+
     return true;
   },
 
@@ -4568,15 +4648,15 @@ TaskWait.prototype = {
   {
     if (this._state === Task.STOPPED) { return false; }
     this._state = Task.STOPPED;
-    
+
     clearTimeout (this._timer);
     this._timer = null;
-    
+
     this._left_time = this._time;
-    
+
     if (this.delegate && this.delegate.taskDidStop)
     { this.delegate.taskDidStop (this); }
-    
+
     return true;
   },
 
@@ -4591,10 +4671,10 @@ TaskWait.prototype = {
   {
     if (this._state === Task.PAUSED) { return false; }
     this._state = Task.PAUSED;
-  
+
     this._left_time =
       this._left_time - new Date ().getTime () + this._start_time;
-    
+
     if (this.delegate && this.delegate.taskDidPause)
     { this.delegate.taskDidPause (this); }
 
@@ -4605,11 +4685,11 @@ util.extendClass (TaskWait, core.Object);
 
 util.defineClassProperty (TaskWait, "state", {
 
-  /** 
+  /**
    * Set the task time, using millisecond. <br />
    * @name vs.core.TaskWait#time
    * @type {number}
-   */ 
+   */
   set : function (v)
   {
     if (!util.isNumber (v)) { return; }
@@ -5538,7 +5618,6 @@ HTTPRequest.prototype = {
       return;
     }
   }
-
 };
 util.extendClass (HTTPRequest, core.EventSource);
 
