@@ -616,7 +616,7 @@ View.prototype = {
   componentDidInitialize : function ()
   {
     core.EventSource.prototype.componentDidInitialize.call (this);
-    if (this._magnet) this.view.style.setProperty ('position', 'fixed', null);
+    if (this._magnet) this.view.style.setProperty ('position', 'absolute', null);
 
     if (this._magnet === 5)
     {
@@ -1181,9 +1181,10 @@ View.prototype = {
 
     if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
     {
-      sPosR = pWidth - (pos[0] + size [0]) + 'px';
+      sPosR = pWidth - (pos[0] + size [0]);
+      if (sPosR < 0) sPosR = 0;
+      sPosR += 'px';
     }
-
 
     if (aV === 4 || aV === 1) { height = size[1] + 'px'; }
     else if (aV === 5 || aV === 7) { height = 'auto'; }
@@ -1200,7 +1201,9 @@ View.prototype = {
 
     if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
     {
-      sPosB = pHeight - (pos[1] + size [1]) + 'px';
+      sPosB = pHeight - (pos[1] + size [1]);
+      if (sPosB < 0) sPosB = 0;
+      sPosB += 'px';
     }
 
     if (this._magnet === 2) sPosB = '0px';
@@ -1248,7 +1251,9 @@ View.prototype = {
 
     if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
     {
-      sPosR = pWidth - (x + w) + 'px';
+      sPosR = pWidth - (x + w);
+      if (sPosR < 0) sPosR = 0;
+      sPosR += 'px';
     }
 
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
@@ -1259,7 +1264,9 @@ View.prototype = {
 
     if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
     {
-      sPosB = pHeight - (y + h) + 'px';
+      sPosB = pHeight - (y + h);
+      if (sPosB < 0) sPosB = 0;
+      sPosB += 'px';
     }
 
     if (this._magnet === 2) { sPosT = 'auto'; sPosB = '0px'; }
@@ -2615,6 +2622,20 @@ util.defineClassProperties (View, {
       {
         this.addClassName (this._layout);
       }
+    },
+  },
+  'innerHTML': {
+
+    /**
+     * This property allows to define both the HTML code and the text
+     * @name vs.ui.View#innerHTML
+     * @type String
+     */
+    set : function (v)
+    {
+      if (!this.view) return;
+
+      util.safeInnerHTML (this.view, v);
     },
   }
 });
