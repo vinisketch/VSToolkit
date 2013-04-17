@@ -87,7 +87,9 @@
   -webkit-box-flex: 0;
   box-flex: 0;
 
-  position: static;
+  top: 0px!important;
+  left: 0px!important;
+  position: relative;
 }
 
 /********************************************************************
@@ -115,7 +117,9 @@
   -webkit-box-flex: 0;
   box-flex: 0;
 
-  position: static;
+  top: 0px!important;
+  left: 0px!important;
+  position: relative;
 }
 
 /********************************************************************
@@ -138,5 +142,8 @@
 .vs_ui_view.flow_layout > *
 {
   display: inline-block;
-  position: static;
+
+  top: 0px!important;
+  left: 0px!important;
+  position: relative;
 }
