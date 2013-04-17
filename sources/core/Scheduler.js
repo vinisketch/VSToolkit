@@ -172,7 +172,7 @@ util.defineClassProperty (Task, "state", {
 /**
  *  The vs.core.Task_PAR class
  *
- *  @extends vs.core.Object
+ *  @extends vs.core.Task
  *
  *  @class
  *  Implements {@link vs.core.Task}.
@@ -228,7 +228,7 @@ util.defineClassProperty (Task, "state", {
 */
 function Task_PAR (tasksAndParams)
 {
-  this.parent = core.Object;
+  this.parent = core.Task;
   this.parent ();
   this.constructor = Task_PAR;
 
@@ -460,12 +460,12 @@ Task_PAR.prototype = {
     }
   }
 };
-util.extendClass (Task_PAR, core.Object);
+util.extendClass (Task_PAR, Task);
 
 /**
  *  The Task_SEQ class
  *
- *  @extends vs.core.Object
+ *  @extends vs.core.Task
  *
  *  @class
  *  Implements {@link vs.core.Task}.
@@ -521,7 +521,7 @@ util.extendClass (Task_PAR, core.Object);
  */
 function Task_SEQ (tasksAndParams)
 {
-  this.parent = core.Object;
+  this.parent = core.Task;
   this.parent ();
   this.constructor = Task_SEQ;
 
@@ -755,12 +755,12 @@ Task_SEQ.prototype = {
     }
   }
 };
-util.extendClass (Task_SEQ, core.Object);
+util.extendClass (Task_SEQ, Task);
 
 /**
  *  The vs.core.TaskWait class
  *
- *  @extends vs.core.Object
+ *  @extends vs.core.Task
  *
  *  @class
  *  Implements {@link vs.core.Task}.
@@ -779,9 +779,10 @@ util.extendClass (Task_SEQ, core.Object);
  */
 function TaskWait (time)
 {
-  this.parent = core.Object;
+  this.parent = core.Task;
   this.parent ();
   this.constructor = TaskWait;
+  this._state = Task.STOPPED;
 
   this.time = time;
 };
@@ -884,7 +885,7 @@ TaskWait.prototype = {
     return true;
   }
 };
-util.extendClass (TaskWait, core.Object);
+util.extendClass (TaskWait, Task);
 
 util.defineClassProperty (TaskWait, "state", {
 
