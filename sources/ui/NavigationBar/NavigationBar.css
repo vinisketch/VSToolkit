@@ -7,7 +7,7 @@
   z-index: 2000;
 }
 
-.vs_ui_navbar > div
+.vs_ui_navbar > *
 {
   position: absolute;
 }
