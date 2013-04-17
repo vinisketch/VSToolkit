@@ -132,6 +132,7 @@ SVGView.prototype = {
 
     var svg = document.createElementNS ("http://www.w3.org/2000/svg", 'svg');
 
+    util.removeAllElementChild (this.view);
     this.view.appendChild (svg);
     if (this._view_box) this.viewBox = this._view_box;
 
@@ -222,7 +223,7 @@ util.defineClassProperties (SVGView, {
     {
       if (!util.isString (v)) { return; }
 
-      this.removeAllElementChild (this.view);
+      util.removeAllElementChild (this.view);
       if (this.__object)
       {
         delete (this.__object);
