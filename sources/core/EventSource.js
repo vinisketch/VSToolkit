@@ -68,15 +68,21 @@ EventSource.prototype =
   {
     var spec, handler_list, i, handler, binds;
 
-    for (spec in this.__bindings__)
+    function deleteBindings (handler_list)
     {
-      handler_list = this.__bindings__ [spec];
-      if (!handler_list) { continue; }
-      while (handler_list.length)
+      if (!handler_list) return;
+
+      var bind, l = handler_list.length;
+      while (l--)
       {
-        handler = handler_list.pop ();
-        util.free (handler);
+        bind = handler_list [l];
+        util.free (bind);
       }
+    };
+
+    for (var spec in this.__bindings__)
+    {
+      deleteBindings (this.__bindings__ [spec]);
       delete (this.__bindings__ [spec]);
     }
 
@@ -165,31 +171,35 @@ EventSource.prototype =
    */
   unbind : function (spec, obj, func)
   {
-    var handler_list = this.__bindings__ [spec], i = 0, bind;
-    if (!handler_list) { return; }
-
-    while (i < handler_list.length)
+    function unbind (handler_list)
     {
-      bind = handler_list [i];
-      if (bind.obj === obj)
+      if (!handler_list) return;
+
+      var handler, i = 0;
+      while (i < handler_list.length)
       {
-        if (util.isString (func) || util.isFunction (func) )
+        handler = handler_list [i];
+        if (handler.obj === obj)
         {
-          if (bind.func_name === func || bind.func_ptr === func)
+          if (util.isString (func) || util.isFunction (func) )
+          {
+            if (handler.func_name === func || handler.func_ptr === func)
+            {
+              handler_list.remove (i);
+              util.free (handler);
+            }
+            else { i++; }
+          }
+          else
           {
             handler_list.remove (i);
-            util.free (bind);
+            util.free (handler);
           }
-          else { i++; }
-        }
-        else
-        {
-          handler_list.remove (i);
-          util.free (bind);
         }
       }
-      else { i++; }
-    }
+    };
+
+    unbind (this.__bindings__ [spec]);
   },
 
   /**
