@@ -19,7 +19,7 @@
 /**
  * The vs.core.Model class
  *
- * @extends vs.core.Object
+ * @extends vs.core.EventSource
  * @class
  * vs.core.Model is a class that defines the basic Model mechanisms to implement
  * a MVC like architecture. If you need to implement a MVC component, you
@@ -77,11 +77,10 @@
  */
 function Model (config)
 {
-  this.parent = core.Object;
+  this.parent = EventSource;
   this.parent (config);
   this.constructor = vs.core.Model;
 
-  this.__bindings__ = {};
   this.__links__ = [];
 }
 
@@ -90,12 +89,6 @@ Model.prototype = {
   /*****************************************************************
    *
    ****************************************************************/
-
-  /**
-   * @protected
-   * @type {Object}
-   */
-   __bindings__: null,
 
   /**
    * @protected
@@ -114,41 +107,6 @@ Model.prototype = {
    * @type {vs.core.DataStorage}
    */
    _sync_service_: null,
-
-  /*****************************************************************
-   *
-   ****************************************************************/
-
-  /**
-   * @protected
-   * @function
-   */
-  destructor: function ()
-  {
-    core.Object.prototype.destructor.call (this);
-
-    if (this._sync_service_) this._sync_service_.removeModel (this);
-
-    function deleteBindings (handler_list)
-    {
-      if (!handler_list) return;
-
-      var bind, l = handler_list.length;
-      while (l--)
-      {
-        bind = handler_list [l];
-        util.free (bind);
-      }
-    };
-
-    for (var spec in this.__bindings__)
-    {
-      deleteBindings (this.__bindings__ [spec]);
-      delete (this.__bindings__ [spec]);
-    }
-
-    delete (this.__bindings__);
-  },
 
   /*****************************************************************
    *
@@ -177,18 +135,8 @@ Model.prototype = {
   bindChange : function (spec, obj, func)
   {
     if (!obj) { return; }
-    var handler_list, handler;
 
-    spec = (spec)? 'change:' + spec : 'change';
-    handler = new Handler (obj, func);
-
-    handler_list = this.__bindings__ [spec];
-    if (!handler_list)
-    {
-      handler_list = [];
-      this.__bindings__ [spec] = handler_list;
-    }
-    handler_list.push (handler);
+    this.bind ((spec)? 'change:' + spec : 'change', obj, func);
   },
 
   /**
@@ -206,42 +154,7 @@ Model.prototype = {
    */
   unbindChange : function (spec, obj, func)
   {
-    spec = (spec)? 'change:' + spec : 'change';
-
-    function unbind (handler_list)
-    {
-      if (!handler_list) return;
-
-      var handler, i = 0;
-      while (i < handler_list.length)
-      {
-        handler = handler_list [i];
-        if (handler.spec === spec)
-        {
-          if (handler.obj === obj)
-          {
-            if (util.isString (func) || util.isFunction (func) )
-            {
-              if (handler.func === func || handler.func_ptr === func)
-              {
-                handler_list.remove (i);
-                util.free (handler);
-              }
-              else { i++; }
-            }
-            else
-            {
-              handler_list.remove (i);
-              util.free (handler);
-            }
-          }
-          else { i++; }
-        }
-        else { i++; }
-      }
-    };
-
-    unbind (this.__bindings__ [spec]);
+    this.unbind ((spec)? 'change:' + spec : 'change', obj, func);
   },
 
   /**
@@ -321,6 +234,28 @@ Model.prototype = {
     }
   },
 
+
+  /**
+   *  Propagate an event
+   *  <p>
+   *  All Object listening this EventSource will receive this new handled
+   *  event.
+   *
+   * @name vs.core.EventSource#propagate
+   * @function
+   *
+   * @param {String} spec the event specification [mandatory]
+   * @param {Object} data an optional data event [optional]
+   * @param {vs.core.Object} srcTarget a event source, By default this object
+   *        is the event source [mandatory]
+   */
+  propagate : function (type, data, srcTarget)
+  {
+    this.__should_propagate_changes__ = true;
+
+    EventSource.prototype.propagate.call (this, type, data, srcTarget);
+  },
+
   /**
    * @protected
    *
@@ -381,7 +316,7 @@ Model.prototype = {
     }
   }
 };
-util.extendClass (Model, core.Object);
+util.extendClass (Model, EventSource);
 
 /********************************************************************
                       Export
