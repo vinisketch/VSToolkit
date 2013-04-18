@@ -115,10 +115,10 @@ core_debug: ../lib_debug/js/vs_core.js
 	$(CAT) core/Point.js >> $@
 	$(CAT) core/Object.js >> $@
 	$(CAT) core/Class.js >> $@
-	$(CAT) core/Model.js >> $@
 	$(CAT) core/MainLoop.js >> $@
 	$(CAT) core/Event.js >> $@
 	$(CAT) core/EventSource.js >> $@
+	$(CAT) core/Model.js >> $@
 	$(CAT) core/Keyboard.js >> $@
 	$(CAT) core/FSM.js >> $@
 	$(CAT) core/Dataflow.js >> $@
