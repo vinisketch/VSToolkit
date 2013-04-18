@@ -33,7 +33,7 @@
  */
 function EventSource (config)
 {
-  this.parent = core.Object;
+  this.parent = VSObject;
   this.parent (config);
   this.constructor = core.EventSource;
 
