@@ -3416,7 +3416,7 @@ Application.prototype = {
     View.prototype.initComponent.call (this);
     this.preventScroll = true;
 
-    if (this.view instanceof HTMLElement)
+    if (this.view instanceof HTMLHtmlElement)
     {
       var html = this.view;
       html._comp_ = undefined;
