@@ -3416,25 +3416,28 @@ Application.prototype = {
     View.prototype.initComponent.call (this);
     this.preventScroll = true;
 
-    this.html = this.view;
-    this.html._comp_ = undefined;
-    
-    this.view = this.body = this.html.querySelector ('body');
-    if (!this.view)
+    if (this.view instanceof HTMLElement)
     {
-      console.error ("Invalid Application view");
-      return;
-    }
-    this.view._comp_ = this;
+      var html = this.view;
+      html._comp_ = undefined;
+    
+      // by default select the body element
+      this.view = html.querySelector ('body');
+      if (!this.view)
+      {
+        console.error ("Invalid Application view");
+        return;
+      }
+      this.view._comp_ = this;
 
-    this.html.removeAttribute ('id');
-    this.html.removeAttribute ('x-hag-ref');
-    this.html.removeAttribute ('x-hag-comp');
-        
+      html.removeAttribute ('id');
+      html.removeAttribute ('x-hag-ref');
+      html.removeAttribute ('x-hag-comp');
+    }
     this.view.setAttribute ('id', this.id);
     this.view.setAttribute ('x-hag-ref', this.id);
     this.view.setAttribute ('x-hag-comp', this.id);
-  
+
     var self = this;
     document.addEventListener ('orientationChanged', function (e)
     {
@@ -3733,7 +3736,7 @@ Application.stop = function ()
     obj = Application_applications [key];
     util.free (obj);
   }
-  Application_applications = [];
+  Application_applications = {};
 
   for (var key in vs.core.Object._obs)
   {
