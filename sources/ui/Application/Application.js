@@ -391,6 +391,22 @@ Application.start = function ()
 };
 
 /**
+ * @protected
+ */
+Application.stop = function ()
+{
+  // un peu bourin pour le moment
+  var key, obj;
+  for (key in Application_applications)
+  {
+    obj = Application_applications [key];
+    util.free (obj);
+  }
+  Application_applications = [];
+};
+
+
+/**
  * @private
  * @depretacted
  */
