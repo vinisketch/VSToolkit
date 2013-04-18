@@ -3859,6 +3859,18 @@ Task.prototype = {
 ********************************************************************/
 
   /**
+   *  Default task destructor
+   *
+   * @name vs.core.Task#destructor
+   * @function
+   */
+  destructor: function ()
+  {
+    this.stop ();
+    this._super ();
+  },
+  
+  /**
    *  Starts the task
    *
    * @name vs.core.Task#start
