@@ -3734,6 +3734,12 @@ Application.stop = function ()
     util.free (obj);
   }
   Application_applications = [];
+
+  for (var key in vs.core.Object._obs)
+  {
+    var obj = vs.core.Object._obs [key];
+    vs.util.free (obj);
+  }
 };
 
 
