@@ -59,7 +59,9 @@ Handler.prototype.destructor = function ()
 /**
  * @private
  */
-var _events_queue  = [], _is_events_propagating = false;
+var _events_queue  = [], _actions_queue  = [],
+  _is_events_propagating = false,
+  _is_actions_runing = false;
 
 /**
  * @private
@@ -148,19 +150,84 @@ function doOneAsyncEvent ()
 
 /**
  * @private
+ * doActions
+ */
+function doActions ()
+{
+  function end_burst ()
+  {
+    if (_actions_queue.length) doActions ();
+    else _is_actions_runing = false
+  }
+
+  function doBurst ()
+  {
+    _is_actions_runing = true;
+
+    var i = 0, l = this.length, func;
+    for (; i < l; i++)
+    {
+      func = this [i];
+      if (func) try
+      {
+        func.call ();
+      }
+      catch (e)
+      {
+        if (e.stack) console.error (e.stack);
+        else console.error (e);
+      }
+    }
+    end_burst ();
+  }
+
+  vs.requestAnimationFrame (doBurst.bind (_actions_queue));
+  _actions_queue = []
+}
+
+var _is_waiting = false;
+
+/**
+ * @private
  * Mainloop core
  */
 function serviceLoop ()
 {
-  if (_events_queue.length === 0) return;
+  if ((_events_queue.length === 0 && _actions_queue.length === 0) ||
+      _is_waiting) return;
+
+  function loop ()
+  {
+    _is_waiting = false;
+    serviceLoop ();
+  }
 
   if (_is_events_propagating)
   {
     // do the loop
-    vs.requestAnimationFrame (serviceLoop);
+    _actions_queue.push (loop);
+    if (!_is_actions_runing) doActions ();
     return;
   }
 
   // dispache an event to observers
-  doOneAsyncEvent ();
+  if (_events_queue.length) doOneAsyncEvent ();
+  if (!_is_actions_runing && _actions_queue.length) doActions ();
 }
+
+var scheduleAction = function (func, delay)
+{
+  if (!util.isFunction (func)) return;
+  if (util.isNumber (delay))
+  {
+    setTimeout (func, delay);
+    return;
+  }
+
+  // push the action to execute into the queue
+  _actions_queue.push (func);
+
+  // request for the mainloop
+  serviceLoop ();
+}
+vs.scheduleAction = scheduleAction;
