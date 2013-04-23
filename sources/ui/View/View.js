@@ -2226,7 +2226,7 @@ View.prototype = {
   {
     var
       matrix = this.getCTM (),
-      transform = matrix.toString ();
+      transform = matrix.getMatrix3dStr ();
 
     if (this._magnet === 5)
     {
