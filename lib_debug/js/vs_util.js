@@ -884,6 +884,33 @@ vs.CSSMatrix = ('WebKitCSSMatrix' in window)?window.WebKitCSSMatrix:
   ('MSCSSMatrix' in window)?window.MSCSSMatrix:FirminCSSMatrix;
 
 /**
+ *  vs.CSSMatrix#isAffine() -> Boolean
+ *
+ *  Determines whether the matrix is affine.
+ **/
+if (!vs.CSSMatrix.prototype.isAffine) {
+  vs.CSSMatrix.prototype.isAffine = function () {
+    return !(this.m13 || this.m14 || this.m23 || this.m24 || this.m31 ||
+      this.m32 ||this.m33 !== 1 && this.m34 || this.m43 || this.m44 !== 1);
+  }
+}
+
+/**
+ *  vs.CSSMatrix#vs.getMatrix3dStr() -> String
+ * @public
+ * @function
+ *
+ *  Returns a string representation of the 3d matrix.
+ **/
+vs.CSSMatrix.prototype.getMatrix3dStr = function () {
+  var points = [this.m11, this.m12, this.m13, this.m14,
+        this.m21, this.m22, this.m23, this.m24,
+        this.m31, this.m32, this.m33, this.m34,
+        this.m41, this.m42, this.m43, this.m44];
+  return "matrix3d(" + points.join(", ") + ")";
+}
+
+/**
  * Tells the browser that you wish to perform an animation and requests
  * that the browser schedule a repaint of the window for the next animation
  * frame. The method takes as an argument a callback to be invoked before
