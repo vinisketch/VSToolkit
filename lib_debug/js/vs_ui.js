@@ -2593,6 +2593,7 @@ View.prototype = {
    */
   translate: function (x, y)
   {
+    if (!util.isNumber (x) || !util.isNumber (y)) { return };
     if (this.__view_t_x === x && this.__view_t_y === y) { return; }
 
     this.__view_t_x = x;
@@ -2612,6 +2613,8 @@ View.prototype = {
    */
   rotate: function (r)
   {
+    if (!util.isNumber (r)) { return };
+
     if (this._rotation === r) { return; }
 
     this._rotation = r;
@@ -2630,6 +2633,8 @@ View.prototype = {
    */
   scale: function (s)
   {
+    if (!util.isNumber (s)) { return };
+
     if (s > this._max_scale) { s = this._max_scale; }
     if (s < this._min_scale) { s = this._min_scale; }
     if (this._scaling === s) { return; }
@@ -2763,7 +2768,7 @@ View.prototype = {
   {
     var
       matrix = this.getCTM (),
-      transform = matrix.toString ();
+      transform = matrix.getMatrix3dStr ();
 
     if (this._magnet === 5)
     {
@@ -2969,7 +2974,6 @@ util.defineClassProperties (View, {
     set : function (v)
     {
       if (!util.isArray (v) || v.length !== 2) { return };
-      if (!util.isNumber (v[0]) || !util.isNumber (v[1])) { return };
 
       this.translate (v[0], v[1]);
     },
@@ -2992,7 +2996,6 @@ util.defineClassProperties (View, {
      */
     set : function (v)
     {
-      if (!util.isNumber (v)) { return };
       this.rotate (v);
     },
 
@@ -3014,7 +3017,6 @@ util.defineClassProperties (View, {
      */
     set : function (v)
     {
-      if (!util.isNumber (v)) { return };
       this.scale (v);
     },
 
