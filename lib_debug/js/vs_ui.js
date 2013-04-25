@@ -893,7 +893,16 @@ View.prototype = {
    */
   refresh : function ()
   {
-    var key, a, i, child;
+    var key, a, i, child, view = this.view;
+    
+    // refresh element real size and position
+    if (view && view.parentElement)
+    {
+      this._size [0] = view.offsetWidth;
+      this._size [1] = view.offsetHeight;
+      this._pos [0] = view.offsetLeft;
+      this._pos [1] = view.offsetTop;
+    }
 
     for (key in this._children)
     {
@@ -1149,21 +1158,6 @@ View.prototype = {
     this.view.setAttribute ('x-hag-comp', this.id);
 
     this._parse_view (this.view);
-  },
-
-  /**
-   * @protected
-   * @function
-   */
-  componentDidInitialize : function ()
-  {
-    core.EventSource.prototype.componentDidInitialize.call (this);
-    if (this._magnet) this.view.style.setProperty ('position', 'absolute', null);
-
-    if (this._magnet === 5)
-    {
-      this._applyTransformation ();
-    }
   },
 
   /**
@@ -1672,11 +1666,12 @@ View.prototype = {
 
     this._magnet = code;
     if (this._magnet)
-    {  this.view.style.setProperty ('position', 'absolute', null); }
+    { this.view.style.setProperty ('position', 'absolute', null); }
     else
-    {  this.view.style.removeProperty ('position'); }
+    { this.view.style.removeProperty ('position'); }
 
     this._updateSizeAndPos ();
+    this._applyTransformation ();
   },
 
   /**
@@ -1713,7 +1708,6 @@ View.prototype = {
     {
       if (pWidth)
       {
-//        width = Math.round (size[0] / pWidth * 100) + '%';
         width = (size[0] / pWidth * 100) + '%';
       }
       else { width = size[0] + 'px'; }
@@ -1734,7 +1728,6 @@ View.prototype = {
     {
       if (pHeight)
       {
-//        height = Math.round (size[1] / pHeight * 100) + '%';
         height = (size[1] / pHeight * 100) + '%';
       }
       else { height = size[1] + 'px'; }
@@ -1788,7 +1781,6 @@ View.prototype = {
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
     { sPosL = x + 'px'; }
     else if ((aH === 2 || aH === 0) && pWidth)
-//    { sPosL = Math.round (x / pWidth * 100) + '%'; }
     { sPosL = (x / pWidth * 100) + '%'; }
 
     if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
@@ -1801,7 +1793,6 @@ View.prototype = {
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
     { sPosT = y + 'px'; }
     else if ((aV === 2 || aV === 0) && pHeight)
-//    { sPosT = Math.round (y / pHeight * 100) + '%'; }
     { sPosT = (y / pHeight * 100) + '%'; }
 
     if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
@@ -1818,7 +1809,6 @@ View.prototype = {
       sPosT = '50%'; sPosB = 'auto';
       sPosL = '50%'; sPosR = 'auto';
     }
-    this._applyTransformation ();
 
     style = view.style;
     style.left = sPosL;
@@ -2813,12 +2803,12 @@ util.defineClassProperties (View, {
      */
     get : function ()
     {
-      var view = this.view;
-      if (view && view.parentElement)
-      {
-        this._size [0] = view.offsetWidth;
-        this._size [1] = view.offsetHeight;
-      }
+//       var view = this.view;
+//       if (view && view.parentElement)
+//       {
+//         this._size [0] = view.offsetWidth;
+//         this._size [1] = view.offsetHeight;
+//       }
       return this._size.slice ();
     }
   },
@@ -2849,12 +2839,12 @@ util.defineClassProperties (View, {
      */
     get : function ()
     {
-      var view = this.view;
-      if (view && view.parentElement)
-      {
-        this._pos [0] = view.offsetLeft;
-        this._pos [1] = view.offsetTop;
-      }
+//       var view = this.view;
+//       if (view && view.parentElement)
+//       {
+//         this._pos [0] = view.offsetLeft;
+//         this._pos [1] = view.offsetTop;
+//       }
       return this._pos.slice ();
     }
   },
@@ -17854,7 +17844,7 @@ List.prototype.html_template = "\
 ";
 
 NavigationBar.prototype.html_template = "\
-<div class='vs_ui_navbar blue_ios_style' x-hag-hole='children'></div>\
+<div class='vs_ui_navbar' x-hag-hole='children'></div>\
 ";
 
 ToolBar.prototype.html_template = "\
