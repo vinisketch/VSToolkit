@@ -1276,7 +1276,6 @@ View.prototype = {
       sPosT = '50%'; sPosB = 'auto';
       sPosL = '50%'; sPosR = 'auto';
     }
-    this._applyTransformation ();
 
     style = view.style;
     style.left = sPosL;
