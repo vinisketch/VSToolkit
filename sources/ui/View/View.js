@@ -351,8 +351,17 @@ View.prototype = {
    */
   refresh : function ()
   {
-    var key, a, i, child;
+    var key, a, i, child, view = this.view;
     
+    // refresh element real size and position
+    if (view && view.parentElement)
+    {
+      this._size [0] = view.offsetWidth;
+      this._size [1] = view.offsetHeight;
+      this._pos [0] = view.offsetLeft;
+      this._pos [1] = view.offsetTop;
+    }
+
     for (key in this._children)
     {
       a = this._children [key];
@@ -2267,12 +2276,12 @@ util.defineClassProperties (View, {
      */
     get : function ()
     {
-      var view = this.view;
-      if (view && view.parentElement)
-      {
-        this._size [0] = view.offsetWidth;
-        this._size [1] = view.offsetHeight;
-      }
+//       var view = this.view;
+//       if (view && view.parentElement)
+//       {
+//         this._size [0] = view.offsetWidth;
+//         this._size [1] = view.offsetHeight;
+//       }
       return this._size.slice ();
     }
   },
@@ -2303,12 +2312,12 @@ util.defineClassProperties (View, {
      */
     get : function ()
     {
-      var view = this.view;
-      if (view && view.parentElement)
-      {
-        this._pos [0] = view.offsetLeft;
-        this._pos [1] = view.offsetTop;
-      }
+//       var view = this.view;
+//       if (view && view.parentElement)
+//       {
+//         this._pos [0] = view.offsetLeft;
+//         this._pos [1] = view.offsetTop;
+//       }
       return this._pos.slice ();
     }
   },
