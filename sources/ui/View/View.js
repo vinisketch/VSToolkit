@@ -1171,7 +1171,6 @@ View.prototype = {
     {
       if (pWidth)
       {
-//        width = Math.round (size[0] / pWidth * 100) + '%';
         width = (size[0] / pWidth * 100) + '%';
       }
       else { width = size[0] + 'px'; }
@@ -1192,7 +1191,6 @@ View.prototype = {
     {
       if (pHeight)
       {
-//        height = Math.round (size[1] / pHeight * 100) + '%';
         height = (size[1] / pHeight * 100) + '%';
       }
       else { height = size[1] + 'px'; }
@@ -1246,7 +1244,6 @@ View.prototype = {
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
     { sPosL = x + 'px'; }
     else if ((aH === 2 || aH === 0) && pWidth)
-//    { sPosL = Math.round (x / pWidth * 100) + '%'; }
     { sPosL = (x / pWidth * 100) + '%'; }
 
     if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
@@ -1259,7 +1256,6 @@ View.prototype = {
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
     { sPosT = y + 'px'; }
     else if ((aV === 2 || aV === 0) && pHeight)
-//    { sPosT = Math.round (y / pHeight * 100) + '%'; }
     { sPosT = (y / pHeight * 100) + '%'; }
 
     if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
