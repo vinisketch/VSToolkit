@@ -820,7 +820,8 @@ Animation.prototype = {
    */
   start: function (param)
   {
-    this.process (param);
+    var self = this;
+    vs.scheduleAction (function () {self.process (param);});
   }
 };
 util.extendClass (Animation, core.Task);
