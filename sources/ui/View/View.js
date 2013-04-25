@@ -352,7 +352,7 @@ View.prototype = {
   refresh : function ()
   {
     var key, a, i, child;
-
+    
     for (key in this._children)
     {
       a = this._children [key];
@@ -1130,11 +1130,12 @@ View.prototype = {
 
     this._magnet = code;
     if (this._magnet)
-    {  this.view.style.setProperty ('position', 'absolute', null); }
+    { this.view.style.setProperty ('position', 'absolute', null); }
     else
-    {  this.view.style.removeProperty ('position'); }
+    { this.view.style.removeProperty ('position'); }
 
     this._updateSizeAndPos ();
+    this._applyTransformation ();
   },
 
   /**
