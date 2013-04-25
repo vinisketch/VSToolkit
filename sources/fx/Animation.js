@@ -244,9 +244,9 @@ var procesAnimation = function (comp, animation, clb, ctx)
 
     if (!forceCallback)
       comp.view.addEventListener (TRANSITION_END, callback, false);
-     else setTimeout (function () {
+    else vs.scheduleAction (function () {
       callback ({currentTarget: comp.view});
-    }, 0);
+    });
 
     applyStyleTo ();
   };
@@ -351,9 +351,9 @@ var procesAnimation = function (comp, animation, clb, ctx)
 
     if (!forceCallback)
       comp.view.addEventListener (ANIMATION_END, callback, false);
-    else setTimeout (function () {
+    else vs.scheduleAction (function () {
       callback ({currentTarget: comp.view});
-    }, 0);
+    });
 
     anim_name = comp.getStyle (ANIMATION_NAME);
 
