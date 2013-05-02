@@ -672,6 +672,22 @@ View.prototype = {
   },
 
   /**
+   * @protected
+   * @function
+   */
+  componentDidInitialize : function ()
+  {
+    core.EventSource.prototype.componentDidInitialize.call (this);
+    if (this._magnet) this.view.style.setProperty ('position', 'absolute', null);
+
+    if (this._magnet === View.MAGNET_CENTER)
+    {
+      this._updateSizeAndPos ();
+      this._applyTransformation ();
+    }
+  },
+  
+  /**
    * Notifies that the component's view was added to the DOM.<br/>
    * You can override this method to perform additional tasks
    * associated with presenting the view.<br/>
