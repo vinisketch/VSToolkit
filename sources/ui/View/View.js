@@ -150,6 +150,52 @@ View.UNSELECT_DELAY = 300;
 View.MOVE_THRESHOLD = 20;
 
 /********************************************************************
+                    Magnet contants
+*********************************************************************/
+
+/**
+ * No magnet
+ * @name vs.ui.View.MAGNET_NONE
+ * @const
+ */
+View.MAGNET_NONE = 0;
+
+/**
+ * The widget will be fixed on left
+ * @name vs.ui.View.MAGNET_LEFT
+ * @const
+ */
+View.MAGNET_LEFT = 1;
+
+/**
+ * The widget will be fixed on bottom
+ * @name vs.ui.View.MAGNET_BOTTOM
+ * @const
+ */
+View.MAGNET_BOTTOM = 2;
+
+/**
+ * The widget will be fixed on top
+ * @name vs.ui.View.MAGNET_TOP
+ * @const
+ */
+View.MAGNET_TOP = 3;
+
+/**
+ * The widget will be fixed on right
+ * @name vs.ui.View.MAGNET_RIGHT
+ * @const
+ */
+View.MAGNET_RIGHT = 4;
+
+/**
+ * The widget will centered
+ * @name vs.ui.View.MAGNET_CENTER
+ * @const
+ */
+View.MAGNET_CENTER = 5;
+
+/********************************************************************
 
 *********************************************************************/
 
@@ -200,7 +246,7 @@ View.prototype = {
    * @protected
    * @type {number}
    */
-  _magnet: 0,
+  _magnet: View.MAGNET_NONE,
 
   /**
    * @private
@@ -1199,8 +1245,8 @@ View.prototype = {
       sPosB += 'px';
     }
 
-    if (this._magnet === 2) sPosB = '0px';
-    if (this._magnet === 4) sPosR = '0px';
+    if (this._magnet === View.MAGNET_BOTTOM) sPosB = '0px';
+    if (this._magnet === View.MAGNET_RIGHT) sPosR = '0px';
 
     style = view.style;
     style.width = width;
@@ -1233,8 +1279,8 @@ View.prototype = {
       pHeight = parentElement.offsetHeight;
     }
 
-    if (this._magnet === 1) y = 0;
-    if (this._magnet === 3) x = 0;
+    if (this._magnet === View.MAGNET_LEFT) y = 0;
+    if (this._magnet === View.MAGNET_TOP) x = 0;
 
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
     { sPosL = x + 'px'; }
@@ -1260,10 +1306,10 @@ View.prototype = {
       sPosB += 'px';
     }
 
-    if (this._magnet === 2) { sPosT = 'auto'; sPosB = '0px'; }
-    if (this._magnet === 4) { sPosL = 'auto'; sPosR = '0px'; }
+    if (this._magnet === View.MAGNET_BOTTOM) { sPosT = 'auto'; sPosB = '0px'; }
+    if (this._magnet === View.MAGNET_RIGHT) { sPosL = 'auto'; sPosR = '0px'; }
 
-    if (this._magnet === 5) {
+    if (this._magnet === View.MAGNET_CENTER) {
       sPosT = '50%'; sPosB = 'auto';
       sPosL = '50%'; sPosR = 'auto';
     }
@@ -2218,7 +2264,7 @@ View.prototype = {
       matrix = this.getCTM (),
       transform = matrix.getMatrix3dStr ();
 
-    if (this._magnet === 5)
+    if (this._magnet === View.MAGNET_CENTER)
     {
       transform += " translate(-50%,-50%)";
     }
