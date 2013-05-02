@@ -1488,7 +1488,6 @@ View.prototype = {
   setStyle : function (property, value)
   {
     if (!property) { return; }
-//    if (!this.view || !(this.view instanceof HTMLElement)) { return; }
     if (!this.view || !this.view.style ||
         !this.view.style.removeProperty || !this.view.style.setProperty)
     { return; }
@@ -1524,7 +1523,6 @@ View.prototype = {
   setStyles : function (style)
   {
     if (!style) { return; }
-//    if (!this.view || !(this.view instanceof HTMLElement)) { return; }
     if (!this.view || !this.view.style)
     { return; }
 
@@ -2297,7 +2295,6 @@ util.defineClassProperties (View, {
      */
     set : function (v)
     {
-      if (!v) { return; }
       if (!util.isArray (v) || v.length !== 2) { return; }
       if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
 
@@ -2314,15 +2311,10 @@ util.defineClassProperties (View, {
      */
     get : function ()
     {
-//       var view = this.view;
-//       if (view && view.parentElement)
-//       {
-//         this._size [0] = view.offsetWidth;
-//         this._size [1] = view.offsetHeight;
-//       }
       return this._size.slice ();
     }
   },
+  
   'position': {
     /**
      * Getter|Setter for position. Gives access to the position of the GUI
@@ -2350,15 +2342,10 @@ util.defineClassProperties (View, {
      */
     get : function ()
     {
-//       var view = this.view;
-//       if (view && view.parentElement)
-//       {
-//         this._pos [0] = view.offsetLeft;
-//         this._pos [1] = view.offsetTop;
-//       }
       return this._pos.slice ();
     }
   },
+  
   'autosizing': {
 
     /**
@@ -2380,6 +2367,7 @@ util.defineClassProperties (View, {
       this._updateSizeAndPos ();
     }
   },
+  
   'magnet': {
 
     /**
@@ -2393,6 +2381,7 @@ util.defineClassProperties (View, {
       this._setMagnet (code);
     }
   },
+  
   'visible': {
 
     /**
@@ -2419,6 +2408,7 @@ util.defineClassProperties (View, {
       return this._visible;
     }
   },
+  
   'bubbling': {
 
     /**
@@ -2432,6 +2422,7 @@ util.defineClassProperties (View, {
       else { this._bubbling = false; }
     }
   },
+  
   'enable': {
 
     /**
@@ -2506,6 +2497,7 @@ util.defineClassProperties (View, {
       return [this.__view_t_x, this.__view_t_y];
     }
   },
+  
   'rotation': {
 
     /**
@@ -2527,6 +2519,7 @@ util.defineClassProperties (View, {
       return this._rotation;
     }
   },
+  
   'scaling': {
 
     /**
@@ -2548,6 +2541,7 @@ util.defineClassProperties (View, {
       return this._scaling;
     }
   },
+  
   'minScale': {
 
     /**
@@ -2570,6 +2564,7 @@ util.defineClassProperties (View, {
       return this._min_scale;
     }
   },
+  
   'maxScale': {
 
     /**
@@ -2592,6 +2587,7 @@ util.defineClassProperties (View, {
       return this._max_scale;
     }
   },
+  
   'transformOrigin': {
 
     /**
@@ -2625,6 +2621,7 @@ util.defineClassProperties (View, {
       return this._transform_origin.slice ();
     }
   },
+  
   'showAnimmation': {
 
     /**
@@ -2637,6 +2634,7 @@ util.defineClassProperties (View, {
       this.setShowAnimation (v);
     }
   },
+  
   'hideAnimation': {
 
     /**
@@ -2649,6 +2647,7 @@ util.defineClassProperties (View, {
       this.setHideAnimation (v);
     }
   },
+  
   'layout': {
 
     /**
@@ -2687,6 +2686,7 @@ util.defineClassProperties (View, {
       }
     },
   },
+  
   'innerHTML': {
 
     /**
