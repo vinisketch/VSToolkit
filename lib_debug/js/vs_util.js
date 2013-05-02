@@ -1274,67 +1274,67 @@ function defineClassProperties (the_class, properties)
  * @private
  * @const
  */
-NULL_TYPE = 'Null';
+var NULL_TYPE = 'Null';
 
 /**
  * @private
  * @const
  */
-UNDEFINED_TYPE = 'Undefined';
+var UNDEFINED_TYPE = 'Undefined';
 
 /**
  * @private
  * @const
  */
-BOOLEAN_TYPE = 'Boolean';
+var BOOLEAN_TYPE = 'Boolean';
 
 /**
  * @private
  * @const
  */
-NUMBER_TYPE = 'Number';
+var NUMBER_TYPE = 'Number';
 
 /**
  * @private
  * @const
  */
-STRING_TYPE = 'String';
+var STRING_TYPE = 'String';
 
 /**
  * @private
  * @const
  */
-OBJECT_TYPE = 'Object';
+var OBJECT_TYPE = 'Object';
 
 /**
  * @private
  * @const
  */
-BOOLEAN_CLASS = '[object Boolean]';
+var BOOLEAN_CLASS = '[object Boolean]';
 
 /**
  * @private
  * @const
  */
-NUMBER_CLASS = '[object Number]';
+var NUMBER_CLASS = '[object Number]';
 
 /**
  * @private
  * @const
  */
-STRING_CLASS = '[object String]';
+var STRING_CLASS = '[object String]';
 
 /**
  * @private
  * @const
  */
-ARRAY_CLASS = '[object Array]';
+var ARRAY_CLASS = '[object Array]';
 
 /**
  * @private
  * @const
  */
-OBJECT_CLASS = '[object Object]';
+var OBJECT_CLASS = '[object Object]';
 
 /**
  * @private
@@ -1358,7 +1358,7 @@ function clone (object)
       {
         destination[property] = clone (object [property]);
       }
-      return destination; break;
+      return destination;
 
     case ARRAY_CLASS:
       destination = [];
@@ -1366,7 +1366,7 @@ function clone (object)
       {
         destination [i] = clone (object [i]);
       }
-      return destination; break;
+      return destination;
 
     case BOOLEAN_TYPE:
     case NUMBER_TYPE:
@@ -1375,7 +1375,7 @@ function clone (object)
     case NUMBER_CLASS:
     case STRING_CLASS:
     default:
-      return object; break;
+      return object;
   }
 };
 

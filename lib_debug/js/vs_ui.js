@@ -692,6 +692,52 @@ View.UNSELECT_DELAY = 300;
 View.MOVE_THRESHOLD = 20;
 
 /********************************************************************
+                    Magnet contants
+*********************************************************************/
+
+/**
+ * No magnet
+ * @name vs.ui.View.MAGNET_NONE
+ * @const
+ */
+View.MAGNET_NONE = 0;
+
+/**
+ * The widget will be fixed on left
+ * @name vs.ui.View.MAGNET_LEFT
+ * @const
+ */
+View.MAGNET_LEFT = 1;
+
+/**
+ * The widget will be fixed on bottom
+ * @name vs.ui.View.MAGNET_BOTTOM
+ * @const
+ */
+View.MAGNET_BOTTOM = 2;
+
+/**
+ * The widget will be fixed on top
+ * @name vs.ui.View.MAGNET_TOP
+ * @const
+ */
+View.MAGNET_TOP = 3;
+
+/**
+ * The widget will be fixed on right
+ * @name vs.ui.View.MAGNET_RIGHT
+ * @const
+ */
+View.MAGNET_RIGHT = 4;
+
+/**
+ * The widget will centered
+ * @name vs.ui.View.MAGNET_CENTER
+ * @const
+ */
+View.MAGNET_CENTER = 5;
+
+/********************************************************************
 
 *********************************************************************/
 
@@ -742,7 +788,7 @@ View.prototype = {
    * @protected
    * @type {number}
    */
-  _magnet: 0,
+  _magnet: View.MAGNET_NONE,
 
   /**
    * @private
@@ -788,6 +834,13 @@ View.prototype = {
    * @type {Array}
    */
   _size : null,
+
+   /**
+   * Opacity value
+   * @protected
+   * @type {number}
+   */
+  _opacity : 1,
 
    /**
    * Scale value
@@ -1160,6 +1213,22 @@ View.prototype = {
     this._parse_view (this.view);
   },
 
+  /**
+   * @protected
+   * @function
+   */
+  componentDidInitialize : function ()
+  {
+    core.EventSource.prototype.componentDidInitialize.call (this);
+    if (this._magnet) this.view.style.setProperty ('position', 'absolute', null);
+
+    if (this._magnet === View.MAGNET_CENTER)
+    {
+      this._updateSizeAndPos ();
+      this._applyTransformation ();
+    }
+  },
+  
   /**
    * Notifies that the component's view was added to the DOM.<br/>
    * You can override this method to perform additional tasks
@@ -1677,6 +1746,7 @@ View.prototype = {
   /**
    * @protected
    * @function
+   * This function cost a lot!
    */
   _updateSizeAndPos : function ()
   {
@@ -1693,7 +1763,7 @@ View.prototype = {
     var pos = this._pos, size = this._size, width, height, pWidth, pHeight,
       aH = this._autosizing [0], aV = this._autosizing [1], sPosB = 'auto', sPosR = 'auto', view = this.view, parentElement, style;
 
-    if (!view) { return; }
+    if (!view || size[0] < 0 || size[1] < 0) { return; }
 
     parentElement = view.parentElement;
     if (parentElement)
@@ -1741,8 +1811,8 @@ View.prototype = {
       sPosB += 'px';
     }
 
-    if (this._magnet === 2) sPosB = '0px';
-    if (this._magnet === 4) sPosR = '0px';
+    if (this._magnet === View.MAGNET_BOTTOM) sPosB = '0px';
+    if (this._magnet === View.MAGNET_RIGHT) sPosR = '0px';
 
     style = view.style;
     style.width = width;
@@ -1775,8 +1845,8 @@ View.prototype = {
       pHeight = parentElement.offsetHeight;
     }
 
-    if (this._magnet === 1) y = 0;
-    if (this._magnet === 3) x = 0;
+    if (this._magnet === View.MAGNET_LEFT) y = 0;
+    if (this._magnet === View.MAGNET_TOP) x = 0;
 
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
     { sPosL = x + 'px'; }
@@ -1802,10 +1872,10 @@ View.prototype = {
       sPosB += 'px';
     }
 
-    if (this._magnet === 2) { sPosT = 'auto'; sPosB = '0px'; }
-    if (this._magnet === 4) { sPosL = 'auto'; sPosR = '0px'; }
+    if (this._magnet === View.MAGNET_BOTTOM) { sPosT = 'auto'; sPosB = '0px'; }
+    if (this._magnet === View.MAGNET_RIGHT) { sPosL = 'auto'; sPosR = '0px'; }
 
-    if (this._magnet === 5) {
+    if (this._magnet === View.MAGNET_CENTER) {
       sPosT = '50%'; sPosB = 'auto';
       sPosL = '50%'; sPosR = 'auto';
     }
@@ -1977,7 +2047,6 @@ View.prototype = {
   setStyle : function (property, value)
   {
     if (!property) { return; }
-//    if (!this.view || !(this.view instanceof HTMLElement)) { return; }
     if (!this.view || !this.view.style ||
         !this.view.style.removeProperty || !this.view.style.setProperty)
     { return; }
@@ -2013,7 +2082,6 @@ View.prototype = {
   setStyles : function (style)
   {
     if (!style) { return; }
-//    if (!this.view || !(this.view instanceof HTMLElement)) { return; }
     if (!this.view || !this.view.style)
     { return; }
 
@@ -2760,7 +2828,7 @@ View.prototype = {
       matrix = this.getCTM (),
       transform = matrix.getMatrix3dStr ();
 
-    if (this._magnet === 5)
+    if (this._magnet === View.MAGNET_CENTER)
     {
       transform += " translate(-50%,-50%)";
     }
@@ -2786,7 +2854,6 @@ util.defineClassProperties (View, {
      */
     set : function (v)
     {
-      if (!v) { return; }
       if (!util.isArray (v) || v.length !== 2) { return; }
       if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
 
@@ -2803,15 +2870,10 @@ util.defineClassProperties (View, {
      */
     get : function ()
     {
-//       var view = this.view;
-//       if (view && view.parentElement)
-//       {
-//         this._size [0] = view.offsetWidth;
-//         this._size [1] = view.offsetHeight;
-//       }
       return this._size.slice ();
     }
   },
+  
   'position': {
     /**
      * Getter|Setter for position. Gives access to the position of the GUI
@@ -2839,15 +2901,10 @@ util.defineClassProperties (View, {
      */
     get : function ()
     {
-//       var view = this.view;
-//       if (view && view.parentElement)
-//       {
-//         this._pos [0] = view.offsetLeft;
-//         this._pos [1] = view.offsetTop;
-//       }
       return this._pos.slice ();
     }
   },
+  
   'autosizing': {
 
     /**
@@ -2869,6 +2926,7 @@ util.defineClassProperties (View, {
       this._updateSizeAndPos ();
     }
   },
+  
   'magnet': {
 
     /**
@@ -2882,6 +2940,7 @@ util.defineClassProperties (View, {
       this._setMagnet (code);
     }
   },
+  
   'visible': {
 
     /**
@@ -2908,6 +2967,7 @@ util.defineClassProperties (View, {
       return this._visible;
     }
   },
+  
   'bubbling': {
 
     /**
@@ -2921,6 +2981,7 @@ util.defineClassProperties (View, {
       else { this._bubbling = false; }
     }
   },
+  
   'enable': {
 
     /**
@@ -2953,6 +3014,24 @@ util.defineClassProperties (View, {
       return this._enable;
     }
   },
+  
+  'opacity': {
+
+    /**
+     * Change view opacity.
+     * @name vs.ui.View#opacity
+     * @type {number} [0, 1]
+     */
+    set : function (v)
+    {
+      if (!util.isNumber (v)) return;
+      if (v < 0 || v > 1) return;
+      
+      if (this.view) this.view.style.opacity = v;
+      this._opacity = v;
+    }
+  },
+  
   'translation': {
 
     /**
@@ -2977,6 +3056,7 @@ util.defineClassProperties (View, {
       return [this.__view_t_x, this.__view_t_y];
     }
   },
+  
   'rotation': {
 
     /**
@@ -2998,6 +3078,7 @@ util.defineClassProperties (View, {
       return this._rotation;
     }
   },
+  
   'scaling': {
 
     /**
@@ -3019,6 +3100,7 @@ util.defineClassProperties (View, {
       return this._scaling;
     }
   },
+  
   'minScale': {
 
     /**
@@ -3041,6 +3123,7 @@ util.defineClassProperties (View, {
       return this._min_scale;
     }
   },
+  
   'maxScale': {
 
     /**
@@ -3063,6 +3146,7 @@ util.defineClassProperties (View, {
       return this._max_scale;
     }
   },
+  
   'transformOrigin': {
 
     /**
@@ -3096,6 +3180,7 @@ util.defineClassProperties (View, {
       return this._transform_origin.slice ();
     }
   },
+  
   'showAnimmation': {
 
     /**
@@ -3108,6 +3193,7 @@ util.defineClassProperties (View, {
       this.setShowAnimation (v);
     }
   },
+  
   'hideAnimation': {
 
     /**
@@ -3120,6 +3206,7 @@ util.defineClassProperties (View, {
       this.setHideAnimation (v);
     }
   },
+  
   'layout': {
 
     /**
@@ -3158,6 +3245,7 @@ util.defineClassProperties (View, {
       }
     },
   },
+  
   'innerHTML': {
 
     /**
