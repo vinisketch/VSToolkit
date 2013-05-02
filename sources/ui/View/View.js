@@ -1221,7 +1221,7 @@ View.prototype = {
     var pos = this._pos, size = this._size, width, height, pWidth, pHeight,
       aH = this._autosizing [0], aV = this._autosizing [1], sPosB = 'auto', sPosR = 'auto', view = this.view, parentElement, style;
 
-    if (!view) { return; }
+    if (!view || size[0] < 0 || size[1] < 0) { return; }
 
     parentElement = view.parentElement;
     if (parentElement)
