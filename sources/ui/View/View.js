@@ -1204,6 +1204,7 @@ View.prototype = {
   /**
    * @protected
    * @function
+   * This function cost a lot!
    */
   _updateSizeAndPos : function ()
   {
