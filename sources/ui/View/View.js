@@ -294,6 +294,13 @@ View.prototype = {
   _size : null,
 
    /**
+   * Opacity value
+   * @protected
+   * @type {number}
+   */
+  _opacity : 1,
+
+   /**
    * Scale value
    * @protected
    * @type {number}
@@ -2457,6 +2464,24 @@ util.defineClassProperties (View, {
       return this._enable;
     }
   },
+  
+  'opacity': {
+
+    /**
+     * Change view opacity.
+     * @name vs.ui.View#opacity
+     * @type {number} [0, 1]
+     */
+    set : function (v)
+    {
+      if (!util.isNumber (v)) return;
+      if (v < 0 || v > 1) return;
+      
+      if (this.view) this.view.style.opacity = v;
+      this._opacity = v;
+    }
+  },
+  
   'translation': {
 
     /**
