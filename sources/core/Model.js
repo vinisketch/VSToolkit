@@ -314,6 +314,74 @@ Model.prototype = {
 
       this.change (null, null, true);
     }
+  },
+
+  /**
+   * @protected
+   */
+  parseData : function (obj)
+  {
+    var prop_name;
+      
+    for (prop_name in obj)
+    {
+      this._parse_property (prop_name, obj [prop_name]);
+    }
+  },
+
+  /**
+   * @protected
+   */
+  _parse_property : function (prop_name, value)
+  {
+    var
+      _properties_ = this.constructor._properties_,
+      desc, _prop_name = '_' + util.underscore (prop_name), model;
+
+    if (util.isArray (value))
+    {
+      model = new VSArray ({}).init ();
+      model.parseData (value);
+    }
+    else model = value;
+    
+    if (_properties_.indexOf (prop_name) === -1)
+    {
+      // add propperty
+      desc = {};
+      _prop_name = '_' + util.underscore (prop_name);
+      desc.set = (function (prop_name, _prop_name)
+      {
+        return function (v)
+        {
+          this[_prop_name] = v;
+          this.propertyChange (prop_name);
+        };
+      }(prop_name, _prop_name));
+      
+      desc.get = (function (_prop_name)
+      {
+        return function ()
+        {
+          return this[_prop_name];
+        };
+      }(_prop_name));
+      
+      util.defineProperty (this, prop_name, desc);
+    }
+
+
+//         if (util.isString (value))
+//         {
+//           result = util.__date_reg_exp.exec (value);
+//           if (result && result [1]) // JSON Date -> Date generation
+//           {
+//             this ['_' + key] = new Date (parseInt (result [1]));
+//           }
+//           else this ['_' + key] = value; // String
+//         }
+    
+    this [_prop_name] = model;
   }
 };
 util.extendClass (Model, EventSource);
