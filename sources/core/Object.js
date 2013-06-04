@@ -283,7 +283,7 @@ VSObject.prototype =
     var key, value, result;
     for (key in obj)
     {
-//         value = obj [key];
+      value = obj [key];
 //         if (util.isString (value))
 //         {
 //           result = util.__date_reg_exp.exec (value);
