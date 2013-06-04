@@ -281,7 +281,7 @@ function buildSection (list, title, index, itemsSelectable)
   var section = document.createElement ('li'), 
     title_view = document.createElement ('div'), 
     content = document.createElement ('ul'), 
-    cells, item, obj, data = list._model;
+    cells, item, obj, data = list._model, listItem;
 
   while (index < data.length)
   {
@@ -363,7 +363,8 @@ function blockListRenderData (itemsSelectable)
   else
     setElementTransform (_list_items, 'translate(0,0)');
 
-  this.view.removeChild (_list_items);
+  var parentElement = _list_items.parentElement;
+  parentElement.removeChild (_list_items);
   
   index = 0;
   util.setElementVisibility (_list_items, false);
@@ -381,7 +382,7 @@ function blockListRenderData (itemsSelectable)
     _list_items.appendChild (s[0]);
     index = s[1];
   }
-  this.view.appendChild (_list_items);
+  parentElement.appendChild (_list_items);
   {
     _list_items.style.width = 'auto';
   }
@@ -411,7 +412,8 @@ function tabListRenderData (itemsSelectable)
   else
     util.setElementTransform (_list_items, 'translate(0,0)');
 
-  this.view.removeChild (_list_items);
+  var parentElement = _list_items.parentElement;
+  parentElement.removeChild (_list_items);
   this.view.removeChild (_direct_access);
   
   index = 0;
@@ -434,7 +436,7 @@ function tabListRenderData (itemsSelectable)
     _list_items.appendChild (s[0]);
     index = s[1];
   }
-  this.view.appendChild (_list_items);
+  parentElement.appendChild (_list_items);
   this.view.appendChild (_direct_access);
   _list_items.style.width = 'auto';
   util.setElementVisibility (_list_items, true);
@@ -453,7 +455,7 @@ function defaultListRenderData (itemsSelectable)
   if (!this._model) { return; }
      
   var _list_items = this._list_items, index, item, title,
-    s, width, titles, i, items;
+    s, width, titles, i, items, listItem;
   if (!_list_items) { return; }
    
 // remove all children
@@ -466,7 +468,8 @@ function defaultListRenderData (itemsSelectable)
   else
     setElementTransform (_list_items, 'translate(0,0)');
 
-  this.view.removeChild (_list_items);
+  var parentElement = _list_items.parentElement;
+  parentElement.removeChild (_list_items);
   
   index = 0;
   util.setElementVisibility (_list_items, false);
@@ -502,7 +505,7 @@ function defaultListRenderData (itemsSelectable)
     listItem.__parent = this;
     index ++;
   }
-  this.view.appendChild (_list_items);
+  parentElement.appendChild (_list_items);
   _list_items.style.width = 'auto';
 
   util.setElementVisibility (_list_items, true);
