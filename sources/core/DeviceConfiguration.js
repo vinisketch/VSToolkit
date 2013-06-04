@@ -330,7 +330,7 @@ DeviceConfiguration.prototype = {
       {
         var dataString = data [i].string;
         var dataProp = data [i].prop;
-        this.versionSearchString = data[i].versionSearch || data[i].identity;
+//        this.versionSearchString = data[i].versionSearch || data[i].identity;
         if (dataString)
         {
           if (dataString.match (data[i].subString))
