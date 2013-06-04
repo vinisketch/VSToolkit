@@ -236,15 +236,17 @@ VSArray.prototype = {
       for (i = 0; i < data.length; i++)
       {
         item = data [i];
+        // set model
         if (self._model_class)
         {
-          _model = new self._model_class ();
-          _model.init ();
-
-          for (key in item) { _model ['_' + key] = item [key]; }
-          self.add (_model);
+          _model = new self._model_class ().init ();
         }
-        else self.add (item);
+        
+        // generic model
+        else _model = new Model ().init ();
+        
+        _model.parseData (item);
+        self.add (_model);
       }
     };
 
@@ -259,7 +261,7 @@ VSArray.prototype = {
       {
         fillArray (obj.data);
       }
-      else this ['_' + key] = obj [key];
+      else this._parse_property (key, obj [key]);
     }
   }
 };
