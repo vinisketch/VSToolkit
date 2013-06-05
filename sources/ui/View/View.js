@@ -405,7 +405,7 @@ View.prototype = {
   refresh : function ()
   {
     var key, a, i, child, view = this.view;
-    
+
     // refresh element real size and position
     if (view && view.parentElement)
     {
@@ -686,7 +686,7 @@ View.prototype = {
       this._applyTransformation ();
     }
   },
-  
+
   /**
    * Notifies that the component's view was added to the DOM.<br/>
    * You can override this method to perform additional tasks
@@ -702,12 +702,12 @@ View.prototype = {
     if (!view || !view.parentElement) return;
 
     // update the real element size and position
-    setTimeout (function () {
+    vs.scheduleAction (function () {
       self._size [0] = view.offsetWidth;
       self._size [1] = view.offsetHeight;
       self._pos [0] = view.offsetLeft;
       self._pos [1] = view.offsetTop;
-    }, 0);
+    });
   },
 
   /**
@@ -1608,19 +1608,19 @@ View.prototype = {
     var n = this.view, display = n.style.display, self = this;
 
     n.style.display = 'none';
-    setTimeout (function()
+    vs.scheduleAction (function()
     {
       if (display)
       { n.style.display = display; }
       else
       { n.style.removeProperty ('display'); }
 
-      setTimeout (function()
+      vs.scheduleAction (function()
       {
         self.refresh ();
         if (clb && clb instanceof Function) clb.call (self);
-      }, 0);
-    }, 0);
+      });
+    });
   },
 
   /**
@@ -1674,7 +1674,7 @@ View.prototype = {
       { this.__show_clb.call (this); }
       else
       {
-        setTimeout (function () {self.__show_clb.call (self);}, 0);
+        vs.scheduleAction (function () {self.__show_clb.call (self);});
       }
     }
   },
@@ -2246,7 +2246,6 @@ View.prototype = {
     matrix = matrix.scale (this._scaling, this._scaling, 1);
     matrix = matrix.translate (-this._transform_origin [0], -this._transform_origin [1], 0);
 
-
     // apply previous transformations and return the matrix
     if (this._transforms_stack) return matrix.multiply (this._transforms_stack);
     else return matrix;
@@ -2331,7 +2330,7 @@ util.defineClassProperties (View, {
       return this._size.slice ();
     }
   },
-  
+
   'position': {
     /**
      * Getter|Setter for position. Gives access to the position of the GUI
@@ -2362,7 +2361,7 @@ util.defineClassProperties (View, {
       return this._pos.slice ();
     }
   },
-  
+
   'autosizing': {
 
     /**
@@ -2384,7 +2383,7 @@ util.defineClassProperties (View, {
       this._updateSizeAndPos ();
     }
   },
-  
+
   'magnet': {
 
     /**
@@ -2398,7 +2397,7 @@ util.defineClassProperties (View, {
       this._setMagnet (code);
     }
   },
-  
+
   'visible': {
 
     /**
@@ -2425,7 +2424,7 @@ util.defineClassProperties (View, {
       return this._visible;
     }
   },
-  
+
   'bubbling': {
 
     /**
@@ -2439,7 +2438,7 @@ util.defineClassProperties (View, {
       else { this._bubbling = false; }
     }
   },
-  
+
   'enable': {
 
     /**
@@ -2472,7 +2471,7 @@ util.defineClassProperties (View, {
       return this._enable;
     }
   },
-  
+
   'opacity': {
 
     /**
@@ -2484,12 +2483,12 @@ util.defineClassProperties (View, {
     {
       if (!util.isNumber (v)) return;
       if (v < 0 || v > 1) return;
-      
+
       if (this.view) this.view.style.opacity = v;
       this._opacity = v;
     }
   },
-  
+
   'translation': {
 
     /**
@@ -2514,7 +2513,7 @@ util.defineClassProperties (View, {
       return [this.__view_t_x, this.__view_t_y];
     }
   },
-  
+
   'rotation': {
 
     /**
@@ -2536,7 +2535,7 @@ util.defineClassProperties (View, {
       return this._rotation;
     }
   },
-  
+
   'scaling': {
 
     /**
@@ -2558,7 +2557,7 @@ util.defineClassProperties (View, {
       return this._scaling;
     }
   },
-  
+
   'minScale': {
 
     /**
@@ -2581,7 +2580,7 @@ util.defineClassProperties (View, {
       return this._min_scale;
     }
   },
-  
+
   'maxScale': {
 
     /**
@@ -2604,7 +2603,7 @@ util.defineClassProperties (View, {
       return this._max_scale;
     }
   },
-  
+
   'transformOrigin': {
 
     /**
@@ -2638,7 +2637,7 @@ util.defineClassProperties (View, {
       return this._transform_origin.slice ();
     }
   },
-  
+
   'showAnimmation': {
 
     /**
@@ -2651,7 +2650,7 @@ util.defineClassProperties (View, {
       this.setShowAnimation (v);
     }
   },
-  
+
   'hideAnimation': {
 
     /**
@@ -2664,7 +2663,7 @@ util.defineClassProperties (View, {
       this.setHideAnimation (v);
     }
   },
-  
+
   'layout': {
 
     /**
@@ -2703,7 +2702,7 @@ util.defineClassProperties (View, {
       }
     },
   },
-  
+
   'innerHTML': {
 
     /**
