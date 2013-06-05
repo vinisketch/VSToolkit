@@ -575,6 +575,8 @@ VSObject.prototype =
     // property and function declaration copy
     for (key in this)
     {
+      // do not manage id or private member
+      if (key === '_id' || key.indexOf ('__') === 0) continue;  
       if (!this.hasOwnProperty (key)) continue;
 
       if (util.isFunction (this [key]) && !util.isFunction (obj [key]))
