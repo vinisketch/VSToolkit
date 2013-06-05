@@ -609,7 +609,7 @@ util.defineClassProperties (Switch, {
     set : function (v)
     {
       var self = this;
-      setTimeout (function () { self._setToggle (v); }, 10);
+      vs.scheduleAction (function () { self._setToggle (v); });
     },
   
     /** 

@@ -259,7 +259,7 @@ GMap.prototype = {
     this._gmap = new google.maps.Map (this.view, myOptions);
     
     var self = this;
-    setTimeout (function () { clear_view_style (self)}, 0);
+    vs.scheduleAction (function () { clear_view_style (self)});
   },
   
   /**
@@ -1126,7 +1126,7 @@ function createInfoWindowClass ()
  
         vs.removePointerListener (document, core.POINTER_END, this);
         vs.removePointerListener (document, core.POINTER_MOVE, this);
-        if (this.marker) setTimeout (function () {self.initMapEvent ();}, 0);
+        if (this.marker) vs.scheduleAction (function () {self.initMapEvent ();});
         util.removeClassName (this.view, "selected");
  
         return false;
@@ -1140,7 +1140,7 @@ function createInfoWindowClass ()
 
         vs.removePointerListener (document, core.POINTER_END, this);
         vs.removePointerListener (document, core.POINTER_MOVE, this);
-        if (this.marker) setTimeout (function () {self.initMapEvent ();}, 0);
+        if (this.marker) vs.scheduleAction (function () {self.initMapEvent ();});
         util.removeClassName (this.view, "selected");
         
         this.vs_map.annotationSelect (this.id);
@@ -1207,7 +1207,7 @@ function createInfoWindowClass ()
     }
 
     // update position to correctly manage the info bubble size
-    setTimeout (function ()
+    vs.scheduleAction (function ()
     {
       var width = div.offsetWidth;
       var height = div.offsetHeight;
@@ -1215,7 +1215,7 @@ function createInfoWindowClass ()
       div.style.left = position.x - Math.ceil(width/2) + 'px';
       div.style.top = position.y - height - icon_w + 'px';
       div.style.visibility = 'visible';
-    }, 0);
+    });
   };
 
   /**

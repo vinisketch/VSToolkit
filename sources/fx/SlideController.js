@@ -588,7 +588,7 @@ var SlideController = vs.core.createClass ({
       {
         toComp.show ();
         toComp.refresh ();
-        setTimeout (function () {
+        vs.scheduleAction (function () {
           if (instant)
           {
             var inDurations = animationIn.durations;
@@ -604,12 +604,12 @@ var SlideController = vs.core.createClass ({
             animationIn.durations = inDurations;
             animationOut.durations = outDurations;
           }
-        }, 0);
+        });
       }
       catch (e) { console.error (e); }
     };
     setPosition.process (toComp, function () {
-      setTimeout (function () {runAnimation ();}, 0);
+      vs.scheduleAction (function () {runAnimation ();});
     });
   } 
 });

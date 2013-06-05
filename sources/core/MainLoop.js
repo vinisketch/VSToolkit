@@ -143,7 +143,7 @@ function doOneAsyncEvent ()
   else while (i > 0)
   {
     (function (handler) {
-      setTimeout (function () { doOneHandler(handler) }, 0);
+      scheduleAction (function () { doOneHandler(handler) });
     }) (handler_list [--i])
   }
 }

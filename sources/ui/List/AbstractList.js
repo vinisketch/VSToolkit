@@ -161,6 +161,12 @@ AbstractList.prototype = {
    * @protected
    * @function
    */
+  propertiesDidChange: function () {this._modelChanged ()},
+  
+  /**
+   * @protected
+   * @function
+   */
   _renderData : function () {},
     
   /**

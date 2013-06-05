@@ -335,7 +335,7 @@ Model.prototype = {
   _parse_property : function (prop_name, value)
   {
     var
-      _properties_ = this.constructor._properties_,
+      _properties_ = this.getModelProperties (),
       desc, _prop_name = '_' + util.underscore (prop_name), model;
 
     if (util.isArray (value))
@@ -368,6 +368,8 @@ Model.prototype = {
       }(_prop_name));
       
       util.defineProperty (this, prop_name, desc);
+      if (!this.__properties__) this.__properties__ = [];
+      this.__properties__.push (prop_name);
     }
 
 

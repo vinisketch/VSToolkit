@@ -656,7 +656,7 @@ var CardController = vs.core.createClass ({
       catch (e) { console.error (e); }
     };
     if (setInitialPosAnimation) setInitialPosAnimation.process (toComp, function () {
-      setTimeout (function () {runAnimation ();}, 0);
+      vs.scheduleAction (function () {runAnimation ();});
     });
     else runAnimation ();
   } 

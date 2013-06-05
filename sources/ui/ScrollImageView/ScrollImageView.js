@@ -187,11 +187,11 @@ ScrollImageView.prototype = {
     this.propagate ('load');
     
     var self = this;
-    setTimeout (function ()
+    vs.scheduleAction (function ()
     {
       self.refresh ();
 //      self._applyInsideTransformation ();
-    }, 0);
+    });
   },
   
   /**

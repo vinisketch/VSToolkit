@@ -496,7 +496,7 @@ Controller.prototype = {
       }
       catch (e) { console.error (e); }
     };
-    setTimeout (function () {runAnimation ();}, 0);
+    vs.scheduleAction (function () {runAnimation ();});
   },
 
 

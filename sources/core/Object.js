@@ -43,7 +43,7 @@ function VSObject (config)
 
   if (config)
   {
-    this.__config__ = util.clone (config);
+    this.__config__ = config;//util.clone (config);
   }
 }
 
@@ -99,7 +99,8 @@ VSObject.prototype =
     if (this.__config__)
     {
       this.configure (this.__config__);
-      delete (this.__config__);
+      this.__config__ = null;
+//      delete (this.__config__);
     }
 
     // Call optional end initialization method
@@ -238,9 +239,12 @@ VSObject.prototype =
    */
   getModelProperties : function ()
   {
-    if (!this.constructor._properties_) return [];
+    var result = [];
+    if (this.__properties__) result = result.concat (this.__properties__);
+    if (this.constructor.__properties__)
+      result = result.concat (this.constructor.__properties__)
 
-    return this.constructor._properties_.slice ();
+    return result;
   },
 
   /**
@@ -307,7 +311,7 @@ VSObject.prototype =
   _toJSON : function (json)
   {
     var prop_name, value, str,
-      _properties_ = this.constructor._properties_, n = 0;
+      _properties_ = this.getModelProperties (), n = 0;
 
     if (!_properties_) return json;
 

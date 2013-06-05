@@ -974,7 +974,7 @@ var iScroll_prototype =
     
     that.animationDuration = time;
     that._scroll_pos (x, y);
-    if (!time) setTimeout(function () { that._scroll_transition_end(); }, 0);
+    if (!time) vs.scheduleAction(function () { that._scroll_transition_end(); });
   },
 
   /**

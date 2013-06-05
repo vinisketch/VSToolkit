@@ -389,7 +389,7 @@ Application.start = function ()
     obj = Application_applications [key];
     obj.propertyChange ();
     obj.applicationStarted ();
-    setTimeout (function () {obj.refresh ();}, 0);
+    vs.scheduleAction (function () {obj.refresh ();});
   }
 };
 
