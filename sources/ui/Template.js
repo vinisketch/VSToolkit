@@ -114,6 +114,11 @@ Template.prototype =
    */
   compileView : function (viewName)
   {
+    this.__properties = [];
+    this.__properties_path = [];
+    this.__prop_nodes = [];
+    this.__attr_eval_strs = [];
+
     var view_node = this._compile ();
 
     function resolveClass (name)
@@ -137,6 +142,12 @@ Template.prototype =
     this._addPropertiesToObject (view);
 
     view.init ();
+
+    delete (this.__properties);
+    delete (this.__properties_path);
+    delete (this.__prop_nodes);
+    delete (this.__attr_eval_strs);
+
     return view;
   },
 
@@ -145,9 +156,6 @@ Template.prototype =
    */
   _compile : function ()
   {
-    this.__properties = [];
-    this.__properties_path = [];
-    this.__prop_nodes = [];
     var self = this;
 
     /**
@@ -176,70 +184,100 @@ Template.prototype =
     var view_node = Template.parseHTML (str);
 
     /**
+     * Attributes parsing function
+     */
+    function parseAttributes (nodes)
+    {
+      if (!nodes) return;
+      var l = nodes.length;
+      while (l--)
+      {
+        var node_temp = nodes.item (l), result,
+          str = node_temp.value, indexs = [], index;
+
+        self._regexp_index.lastIndex = 0;// reset the regex
+        while ((result = self._regexp_index.exec (str)) !== null)
+        {
+          console.log (result);
+          index = parseInt (result[1], 10);
+          indexs.push (index);
+          self.__prop_nodes [index] = node_temp;
+        }
+        node_temp.value = '';
+        
+        for (var i = 0; i < indexs.length; i++) {
+          index = indexs [i];
+          str = str.replace (
+            "${*" + index + "*}",
+            "\"+this._" + util.underscore (self.__properties [i]) + "+\""
+          );
+        }
+
+        for (i = 0; i < indexs.length; i++) {
+          self.__attr_eval_strs [indexs [i]] = "\"" + str + "\"";
+        }
+      }
+    }
+
+    /**
+     * Nodes parsing function
+     */
+    function parseNodes (nodes)
+    {
+      if (!nodes) return;
+      var l = nodes.length;
+      while (l--)
+      {
+        var node_temp = nodes.item (l);
+        if (node_temp.nodeType === 3) // TEXT_NODE
+        {
+          var value = node_temp.data, result, index = 0, text_node;
+
+          self._regexp_index.lastIndex = 0;// reset the regex
+          node_temp.data = '';
+          result = self._regexp_index.exec (value);
+          while (result)
+          {
+            if (result.index)
+            {
+              text_node = document.createTextNode
+                (value.substring (index, result.index));
+              node.insertBefore (text_node, node_temp);
+            }
+
+            self.__prop_nodes [parseInt (result[1], 10)] = node_temp;
+            index = result.index + result[0].length;
+
+            result = self._regexp_index.exec (value);
+            if (result)
+            {
+              text_node = document.createTextNode ('');
+              if (node_temp.nextSibling)
+                node.insertAfter (text_node, node_temp.nextSibling);
+              else
+                node.appendChild (text_node);
+              node_temp = text_node;
+            }
+          }
+          text_node = document.createTextNode (value.substring (index));
+          node.insertBefore (text_node, node_temp);
+        }
+        else if (node_temp.nodeType === 1) // ELEMENT_NODE
+        {
+          parseNode (node_temp);
+        }
+      }
+    }
+
+    /**
      * Node parsing function
      * Parse the DOM fragment to retrieve attribute and text node
      * associated to a template tag
      */
     function parseNode (node)
     {
-      function parseNodes (nodes)
-      {
-        if (!nodes) return;
-        var l = nodes.length;
-        while (l--)
-        {
-          var node_temp = nodes.item (l);
-          if (node_temp.nodeType === 3) // TEXT_NODE
-          {
-            var value = node_temp.data;
-            node_temp.data = '';
-            self._regexp_index.lastIndex = 0;// reset the regex
-            var result = self._regexp_index.exec (value);
-            var index = 0;
-            while (result)
-            {
-              if (result.index)
-              {
-                var text_node = document.createTextNode
-                  (value.substring (index, result.index));
-                node.insertBefore (text_node, node_temp);
-              }
-
-              self.__prop_nodes [parseInt (result[1], 10)] = node_temp;
-              index = result.index + result[0].length;
-
-              result = self._regexp_index.exec (value);
-              if (result)
-              {
-                text_node = document.createTextNode ('');
-                if (node_temp.nextSibling)
-                  node.insertAfter (text_node, node_temp.nextSibling);
-                else
-                  node.appendChild (text_node);
-                node_temp = text_node;
-              }
-            }
-            var text_node = document.createTextNode (value.substring (index));
-            node.insertBefore (text_node, node_temp);
-          }
-          else if (node_temp.nodeType === 2) // ATTRIBUTE_NODE
-          {
-            self._regexp_index.lastIndex = 0;// reset the regex
-            var result = self._regexp_index.exec (node_temp.value);
-            if (result)
-            {
-              self.__prop_nodes [parseInt (result[1], 10)] = node_temp;
-              node_temp.value = '';
-            }
-          }
-          else if (node_temp.nodeType === 1) // ELEMENT_NODE
-          {
-            parseNode (node_temp);
-          }
-        }
-      }
       parseNodes (node.childNodes);
-      parseNodes (node.attributes);
+      parseAttributes (node.attributes);
     }
     parseNode (view_node);
 
@@ -257,13 +295,14 @@ Template.prototype =
     var l = this.__properties.length;
     while (l--)
     {
-      var prop_name = this.__properties [l];
-      var path = this.__properties_path [l];
-      var node = this.__prop_nodes [l];
+      var prop_name = this.__properties [l],
+        node = this.__prop_nodes [l],
+        str = this.__attr_eval_strs [l];
+      
       if (!node) { continue; }
 
       node_ref.push ([prop_name, node]);
-      _create_property (obj, prop_name, node, path);
+      _create_property (obj, prop_name, node, str);
     }
 
     // clone surcharge
@@ -289,11 +328,11 @@ Template.prototype =
 
     function replace_fnc (str, key, p1, p2, offset, html)
     {
-      var value = values [key];
+      var value = values [key], key;
 
       if (p2)
       {
-        var keys = p2.split ('.'), i = 0;
+        keys = p2.split ('.'), i = 0;
         while (value && i < keys.length) value = value [keys [i++]];
       }
 
@@ -307,12 +346,12 @@ Template.prototype =
 /**
  * @private
  */
-var _create_property = function (view, prop_name, node, path)
+var _create_property = function (view, prop_name, node, attr_eval_str)
 {
   var desc = {};
   if (node.nodeType === 3) //TEXT_NODE
   {
-    desc.set = (function (node, prop_name, _prop_name, path)
+    desc.set = (function (node, prop_name, _prop_name)
     {
       return function (v)
       {
@@ -320,7 +359,7 @@ var _create_property = function (view, prop_name, node, path)
         node.data = v;
         this.propertyChange (prop_name);
       };
-    }(node, prop_name, '_' + util.underscore (prop_name), path));
+    }(node, prop_name, '_' + util.underscore (prop_name)));
 
     desc.get = (function (node, _prop_name)
     {
@@ -333,15 +372,15 @@ var _create_property = function (view, prop_name, node, path)
   }
   else if (node.nodeType === 2) //ATTRIBUTE_NODE
   {
-    desc.set = (function (node, prop_name, _prop_name, path)
+    desc.set = (function (node, prop_name, _prop_name, attr_eval_str)
     {
       return function (v)
       {
         this [_prop_name] = v;
-        node.value = v;
+        node.value = eval(attr_eval_str);
         this.propertyChange (prop_name);
       };
-    }(node, prop_name, '_' + util.underscore (prop_name), path));
+    }(node, prop_name, '_' + util.underscore (prop_name), attr_eval_str));
 
     desc.get = (function (node, _prop_name)
     {
