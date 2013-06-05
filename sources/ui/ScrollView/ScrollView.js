@@ -241,58 +241,65 @@ ScrollView.prototype = {
       css = this._getComputedStyle (this.view), dx = 0, dy = 0;
     if (!this._sub_view) { return; }
     
-    View.prototype.refresh.call (this);
+    this._sub_view.style.height = '';
+    this._sub_view.style.width = '';
+    
+    function endRefresh () {
+      View.prototype.refresh.call (this);
  
-    if (css)
-    {
-      v = css ['border-right-width'];
-      dx += v?parseInt (v, 10):0;
-      v = css ['border-left-width'];
-      dx += v?parseInt (v, 10):0;
-      v = css ['border-top-width'];
-      dy += v?parseInt (v, 10):0;
-      v = css ['borde-bottom-width'];
-      dy += v?parseInt (v, 10):0;
-    }
+      if (css)
+      {
+        v = css ['border-right-width'];
+        dx += v?parseInt (v, 10):0;
+        v = css ['border-left-width'];
+        dx += v?parseInt (v, 10):0;
+        v = css ['border-top-width'];
+        dy += v?parseInt (v, 10):0;
+        v = css ['borde-bottom-width'];
+        dy += v?parseInt (v, 10):0;
+      }
 
-    width -= dx;
-    height -= dy;
+      width -= dx;
+      height -= dy;
     
-    child = this._sub_view.firstElementChild;
-    while (child)
-    {
-      v = child.offsetHeight + child.offsetTop;
-      if (v > height) { height = v; }
-      v = child.offsetWidth + child.offsetLeft;
-      if (v > width) { width = v; }
+      child = this._sub_view.firstElementChild;
+      while (child)
+      {
+        v = child.offsetHeight + child.offsetTop;
+        if (v > height) { height = v; }
+        v = child.offsetWidth + child.offsetLeft;
+        if (v > width) { width = v; }
       
-      child = child.nextElementSibling;
-    }
+        child = child.nextElementSibling;
+      }
     
-    if (this._scroll === ScrollView.SCROLL)
-    {
-      this._sub_view.style.width = width + 'px';
-      this._sub_view.style.height = height + 'px';
-    }
-    if (this._scroll === ScrollView.HORIZONTAL_SCROLL)
-    {
-      this._sub_view.style.width = width + 'px';
-      this._sub_view.style.height = this.size [1] - dx + 'px';
-    }
-    if (this._scroll === ScrollView.VERTICAL_SCROLL)
-    {
-      this._sub_view.style.width = this.size [0] - dy + 'px';
-      this._sub_view.style.height = height + 'px';
-    }
+      if (this._scroll === ScrollView.SCROLL)
+      {
+        this._sub_view.style.width = width + 'px';
+        this._sub_view.style.height = height + 'px';
+      }
+      if (this._scroll === ScrollView.HORIZONTAL_SCROLL)
+      {
+        this._sub_view.style.width = width + 'px';
+        this._sub_view.style.height = this.size [1] - dx + 'px';
+      }
+      if (this._scroll === ScrollView.VERTICAL_SCROLL)
+      {
+        this._sub_view.style.width = this.size [0] - dy + 'px';
+        this._sub_view.style.height = height + 'px';
+      }
     
-    if (this._scroll === ScrollView.NO_SCROLL)
-    {
-      size = this.size;
-      this._sub_view.style.width = size [0] + 'px';
-      this._sub_view.style.height = size [1] + 'px'
-    }
+      if (this._scroll === ScrollView.NO_SCROLL)
+      {
+        size = this.size;
+        this._sub_view.style.width = size [0] + 'px';
+        this._sub_view.style.height = size [1] + 'px'
+      }
 
-    if (this.__iscroll__) this.__iscroll__.refresh ();
+      if (this.__iscroll__) this.__iscroll__.refresh ();
+    }
+    
+    vs.scheduleAction (endRefresh.bind (this));
   },
     
   /**
