@@ -328,9 +328,9 @@ var SplitView = vs.core.createClass ({
   {
     var key, a, child;
   
-    for (key in this._children)
+    for (key in this.__children)
     {
-      a = this._children [key];
+      a = this.__children [key];
       if (!a) { continue; }
       
       if (a instanceof Array)
@@ -347,9 +347,9 @@ var SplitView = vs.core.createClass ({
         this.remove (a);
         util.free (a);
       }
-      delete (this._children [key]);
+      delete (this.__children [key]);
     }
-    this._children = {};
+    this.__children = {};
   },
 
   /**

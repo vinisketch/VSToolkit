@@ -189,9 +189,9 @@ NavigationBar.prototype = {
     if (this._current_state === state)
     {
       // hide all children except those have to be shown
-      for (key in this._children)
+      for (key in this.__children)
       {
-        children = this._children [key];
+        children = this.__children [key];
         if (util.isArray (children))
         {
           for (i = 0; i < children.length; i++)
@@ -276,9 +276,9 @@ NavigationBar.prototype = {
     length = objs_to_show.length;
     
     // hide all children except those have to be shown
-    for (key in this._children)
+    for (key in this.__children)
     {
-      children = this._children [key];
+      children = this.__children [key];
       if (util.isArray (children))
       {
         for (i = 0; i < children.length; i++)

@@ -373,9 +373,9 @@ View.prototype = {
     {
       this.__parent.remove (this);
     }
-    for (key in this._children)
+    for (key in this.__children)
     {
-      a = this._children [key];
+      a = this.__children [key];
       if (!a) { continue; }
 
       if (a instanceof Array)
@@ -388,9 +388,9 @@ View.prototype = {
       }
       else
       { util.free (a); }
-      delete (this._children [key]);
+      delete (this.__children [key]);
     }
-    this._children = {};
+    this.__children = {};
     delete (this.view);
 
     this.clearTransformStack ();
@@ -415,9 +415,9 @@ View.prototype = {
       this._pos [1] = view.offsetTop;
     }
 
-    for (key in this._children)
+    for (key in this.__children)
     {
-      a = this._children [key];
+      a = this.__children [key];
       if (!a) { continue; }
 
       if (a instanceof Array)
@@ -489,9 +489,9 @@ View.prototype = {
     // remove parent link
     obj.__parent = undefined;
 
-//     for (key in this._children)
+//     for (key in this.__children)
 //     {
-//       a = this._children [key];
+//       a = this.__children [key];
 //       hole = obj._holes [key];
 //       if (!a || !hole) { continue; }
 //
@@ -651,7 +651,7 @@ View.prototype = {
     this._autosizing = [4,4];
 
     this._holes = {};
-    this._children = {};
+    this.__children = {};
     this._pointerevent_handlers = [];
 
     if (!this.__config__) this.__config__ = {};
@@ -875,9 +875,9 @@ View.prototype = {
 
     var key, a, hole;
 
-    for (key in this._children)
+    for (key in this.__children)
     {
-      a = this._children [key];
+      a = this.__children [key];
       if (!a) { continue; }
 
       if (a === child || (a instanceof Array && a.indexOf (child) !== -1))
@@ -924,16 +924,16 @@ View.prototype = {
     else if (!extension) { key = View.ANY_PLACE; }
     else { key = extension; }
 
-    a = this._children [key];
+    a = this.__children [key];
     if (a && util.isArray (a)) { a.push (child); }
     else if (a)
     {
       b = [];
       b.push (a);
       b.push (child);
-      this._children [key] = b;
+      this.__children [key] = b;
     }
-    else { this._children [key] = child; }
+    else { this.__children [key] = child; }
 
     hole = this._holes [key];
     if (view && hole)
@@ -980,15 +980,15 @@ View.prototype = {
 
     if (view)
     {
-      for (key in this._children)
+      for (key in this.__children)
       {
-        a = this._children [key];
+        a = this.__children [key];
         if (!a) { continue; }
 
         if (a === child || (a instanceof Array && a.indexOf (child) !== -1))
         {
           if (a instanceof Array) {a.remove (child);}
-          else { delete (this._children [key]); }
+          else { delete (this.__children [key]); }
 
           hole = this._holes [key];
           if (hole) { hole.removeChild (view); }
@@ -1020,7 +1020,7 @@ View.prototype = {
     {
       var a, child;
 
-      a = self._children [ext];
+      a = self.__children [ext];
       if (!a) { return; }
 
       if (a instanceof Array)
@@ -1037,7 +1037,7 @@ View.prototype = {
         self.remove (a);
         util.free (a);
       }
-      delete (self._children [ext]);
+      delete (self.__children [ext]);
     };
 
     if (extension)
@@ -1046,11 +1046,11 @@ View.prototype = {
     }
     else
     {
-      for (key in self._children)
+      for (key in self.__children)
       {
         removeChildrenInHole (key);
       }
-      this._children = {};
+      this.__children = {};
     }
   },
 
