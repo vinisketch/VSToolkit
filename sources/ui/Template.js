@@ -196,75 +196,31 @@ Template.prototype =
           str = node_temp.value, indexs = [], index;
 
         self._regexp_index.lastIndex = 0;// reset the regex
-        while ((result = self._regexp_index.exec (str)) !== null)
+        result = self._regexp_index.exec (str);
+        if (result)
         {
-          console.log (result);
-          index = parseInt (result[1], 10);
-          indexs.push (index);
-          self.__prop_nodes [index] = node_temp;
-        }
-        node_temp.value = '';
-        
-        for (var i = 0; i < indexs.length; i++) {
-          index = indexs [i];
-          str = str.replace (
-            "${*" + index + "*}",
-            "\"+this._" + util.underscore (self.__properties [i]) + "+\""
-          );
-        }
-
-        for (i = 0; i < indexs.length; i++) {
-          self.__attr_eval_strs [indexs [i]] = "\"" + str + "\"";
-        }
-      }
-    }
-
-    /**
-     * Nodes parsing function
-     */
-    function parseNodes (nodes)
-    {
-      if (!nodes) return;
-      var l = nodes.length;
-      while (l--)
-      {
-        var node_temp = nodes.item (l);
-        if (node_temp.nodeType === 3) // TEXT_NODE
-        {
-          var value = node_temp.data, result, index = 0, text_node;
-
-          self._regexp_index.lastIndex = 0;// reset the regex
-          node_temp.data = '';
-          result = self._regexp_index.exec (value);
           while (result)
           {
-            if (result.index)
-            {
-              text_node = document.createTextNode
-                (value.substring (index, result.index));
-              node.insertBefore (text_node, node_temp);
-            }
-
-            self.__prop_nodes [parseInt (result[1], 10)] = node_temp;
-            index = result.index + result[0].length;
-
-            result = self._regexp_index.exec (value);
-            if (result)
-            {
-              text_node = document.createTextNode ('');
-              if (node_temp.nextSibling)
-                node.insertAfter (text_node, node_temp.nextSibling);
-              else
-                node.appendChild (text_node);
-              node_temp = text_node;
-            }
+            index = parseInt (result[1], 10);
+            indexs.push (index);
+            self.__prop_nodes [index] = node_temp;
+            result = self._regexp_index.exec (str);
           }
-          text_node = document.createTextNode (value.substring (index));
-          node.insertBefore (text_node, node_temp);
-        }
-        else if (node_temp.nodeType === 1) // ELEMENT_NODE
-        {
-          parseNode (node_temp);
+          node_temp.value = '';
+
+          for (var i = 0; i < indexs.length; i++)
+          {
+            index = indexs [i];
+            str = str.replace (
+              "${*" + index + "*}",
+              "\"+this._" + util.underscore (self.__properties [i]) + "+\""
+            );
+          }
+
+          for (i = 0; i < indexs.length; i++)
+          {
+            self.__attr_eval_strs [indexs [i]] = "\"" + str + "\"";
+          }
         }
       }
     }
@@ -276,6 +232,56 @@ Template.prototype =
      */
     function parseNode (node)
     {
+      /**
+       * Nodes parsing function
+       */
+      function parseNodes (nodes)
+      {
+        if (!nodes) return;
+        var l = nodes.length;
+        while (l--)
+        {
+          var node_temp = nodes.item (l);
+          if (node_temp.nodeType === 3) // TEXT_NODE
+          {
+            var value = node_temp.data, result, index = 0, text_node;
+
+            self._regexp_index.lastIndex = 0;// reset the regex
+            node_temp.data = '';
+            result = self._regexp_index.exec (value);
+            while (result)
+            {
+              if (result.index)
+              {
+                text_node = document.createTextNode
+                  (value.substring (index, result.index));
+                node.insertBefore (text_node, node_temp);
+              }
+
+              self.__prop_nodes [parseInt (result[1], 10)] = node_temp;
+              index = result.index + result[0].length;
+
+              result = self._regexp_index.exec (value);
+              if (result)
+              {
+                text_node = document.createTextNode ('');
+                if (node_temp.nextSibling)
+                  node.insertAfter (text_node, node_temp.nextSibling);
+                else
+                  node.appendChild (text_node);
+                node_temp = text_node;
+              }
+            }
+            text_node = document.createTextNode (value.substring (index));
+            node.insertBefore (text_node, node_temp);
+          }
+          else if (node_temp.nodeType === 1) // ELEMENT_NODE
+          {
+            parseNode (node_temp);
+          }
+        }
+      }
+
       parseNodes (node.childNodes);
       parseAttributes (node.attributes);
     }
@@ -386,10 +392,13 @@ var _create_property = function (view, prop_name, node, attr_eval_str)
     {
       return function ()
       {
-        this [_prop_name] = node.value
+//        this [_prop_name] = node.value
         return this[_prop_name];
       };
     }(node, '_' + util.underscore (prop_name)));
+    
+    // save this string for clone process
+    desc.set.__vs_attr_eval_str = attr_eval_str;
   }
   vs.util.defineProperty (view, prop_name, desc);
 };
@@ -403,7 +412,7 @@ var _view_clone = function (obj, cloned_map)
 //  var view_cloned = obj.__config__.node;
   var view_cloned = obj.view;
 
-  var node_ref = this.__node__ref__, node_ref_cloned = [], path, node_cloned;
+  var node_ref = this.__node__ref__, node_ref_cloned = [], path, node_cloned, desc;
   if (view_cloned && node_ref && node_ref.length)
   {
     var i = node_ref.length;
@@ -416,7 +425,8 @@ var _view_clone = function (obj, cloned_map)
 
       node_ref_cloned.push ([prop_name, node_cloned]);
 
-      _create_property (obj, prop_name, node_cloned);
+      desc = this.getPropertyDescriptor (prop_name)
+      _create_property (obj, prop_name, node_cloned, desc.set.__vs_attr_eval_str);
       obj.__node__ref__ = node_ref_cloned;
     }
   }
