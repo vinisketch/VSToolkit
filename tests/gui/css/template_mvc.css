@@ -1,8 +1,5 @@
-#test_view > div {
-  position: relative !important;
-}
-
 .contact {
+  position: relative !important;
   margin: 45px;
   width: 300px;
   font-size: 14px;
