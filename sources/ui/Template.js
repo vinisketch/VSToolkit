@@ -141,6 +141,9 @@ Template.prototype =
 
     this._addPropertiesToObject (view);
 
+    // clone surcharge
+    view._clone = _template_view_clone;
+
     view.init ();
 
     delete (this.__properties);
@@ -311,8 +314,6 @@ Template.prototype =
       _create_property (obj, prop_name, node, str);
     }
 
-    // clone surcharge
-    obj._clone = _view_clone;
     obj.__node__ref__ = node_ref;
   },
 
@@ -400,13 +401,13 @@ var _create_property = function (view, prop_name, node, attr_eval_str)
     // save this string for clone process
     desc.set.__vs_attr_eval_str = attr_eval_str;
   }
-  vs.util.defineProperty (view, prop_name, desc);
+  view.defineProperty (prop_name, desc);
 };
 
 /**
  * @private
  */
-var _view_clone = function (obj, cloned_map)
+var _template_view_clone = function (obj, cloned_map)
 {
   vs.ui.View.prototype._clone.call (this, obj, cloned_map);
 //  var view_cloned = obj.__config__.node;
@@ -430,6 +431,9 @@ var _view_clone = function (obj, cloned_map)
       obj.__node__ref__ = node_ref_cloned;
     }
   }
+
+  // clone surcharge
+  obj._clone = _template_view_clone;
 
   // rewrite properties to point cloned nodes
 };

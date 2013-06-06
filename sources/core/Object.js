@@ -500,6 +500,10 @@ VSObject.prototype =
         if (util.isArray (value)) { trg [prop_name] = value.slice (); }
         else { trg [prop_name] = src [prop_name]; }
       }
+      else {
+        if (!trg.__properties__) trg.__properties__ = [];
+        trg.__properties__.push (prop_name);
+      }
     }
 
     function _propertyDecl_api2 (prop_name, src, trg)
@@ -511,7 +515,11 @@ VSObject.prototype =
       if (desc && (desc.get || desc.set))
       {
         // the property description doesn't exist. Create it.
-        if (!desc_clone) { util.defineProperty (trg, prop_name, desc); }
+        if (!desc_clone) {
+          util.defineProperty (trg, prop_name, desc);
+          if (!trg.__properties__) trg.__properties__ = [];
+          trg.__properties__.push (prop_name);
+        }
       }
       // generic member copy
       else
@@ -655,11 +663,10 @@ VSObject.prototype =
    */
   defineProperty : function (prop_name, descriptor)
   {
-    if (this.isProperty (prop_name)) return;
-    
     util.defineProperty (this, prop_name, descriptor);
     if (!this.__properties__) this.__properties__ = [];
-    this.__properties__.push (prop_name);
+    if (this.__properties__.indexOf (prop_name) === -1)
+    { this.__properties__.push (prop_name); }
   },
 
   /**
