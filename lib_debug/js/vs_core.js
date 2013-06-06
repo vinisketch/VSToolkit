@@ -215,7 +215,7 @@ function VSObject (config)
 
   if (config)
   {
-    this.__config__ = util.clone (config);
+    this.__config__ = config;//util.clone (config);
   }
 }
 
@@ -271,7 +271,8 @@ VSObject.prototype =
     if (this.__config__)
     {
       this.configure (this.__config__);
-      delete (this.__config__);
+      this.__config__ = null;
+//      delete (this.__config__);
     }
 
     // Call optional end initialization method
@@ -402,20 +403,6 @@ VSObject.prototype =
   },
 
   /**
-   *  Returns the list of object's properties name <p>
-   *
-   * @name vs.core.Object#getModelProperties
-   * @function
-   * @return {Array} Array of name of properties
-   */
-  getModelProperties : function ()
-  {
-    if (!this.constructor._properties_) return [];
-
-    return this.constructor._properties_.slice ();
-  },
-
-  /**
    *  Returns a copy of the objet's properties for JSON stringification.<p/>
    *  This can be used for persistence or serialization.
    *
@@ -455,7 +442,7 @@ VSObject.prototype =
     var key, value, result;
     for (key in obj)
     {
-//         value = obj [key];
+      value = obj [key];
 //         if (util.isString (value))
 //         {
 //           result = util.__date_reg_exp.exec (value);
@@ -479,7 +466,7 @@ VSObject.prototype =
   _toJSON : function (json)
   {
     var prop_name, value, str,
-      _properties_ = this.constructor._properties_, n = 0;
+      _properties_ = this.getModelProperties (), n = 0;
 
     if (!_properties_) return json;
 
@@ -685,6 +672,10 @@ VSObject.prototype =
         if (util.isArray (value)) { trg [prop_name] = value.slice (); }
         else { trg [prop_name] = src [prop_name]; }
       }
+      else {
+        if (!trg.__properties__) trg.__properties__ = [];
+        trg.__properties__.push (prop_name);
+      }
     }
 
     function _propertyDecl_api2 (prop_name, src, trg)
@@ -696,7 +687,11 @@ VSObject.prototype =
       if (desc && (desc.get || desc.set))
       {
         // the property description doesn't exist. Create it.
-        if (!desc_clone) { util.defineProperty (trg, prop_name, desc); }
+        if (!desc_clone) {
+          util.defineProperty (trg, prop_name, desc);
+          if (!trg.__properties__) trg.__properties__ = [];
+          trg.__properties__.push (prop_name);
+        }
       }
       // generic member copy
       else
@@ -726,14 +721,15 @@ VSObject.prototype =
 
     function _propertyCopy_api2 (prop_name, src, trg)
     {
-      var desc = src.getOwnPropertyDescriptor (prop_name),
-        desc_clone = trg.getOwnPropertyDescriptor (prop_name);
-
+      var desc = src.getPropertyDescriptor (prop_name),
+        desc_clone = trg.getPropertyDescriptor (prop_name),
+        _prop_name = '_' + util.underscore (prop_name);
+      
       // Property value copy
       if (desc && desc_clone && (desc.get || desc.set))
       {
-        if (desc_clone.set) { trg [prop_name] = src ['_' + prop_name]; }
-        else { trg ['_' + prop_name] = src ['_' + prop_name]; }
+        if (desc_clone.set) { trg [prop_name] = src [_prop_name]; }
+        else { trg [_prop_name] = src [_prop_name]; }
       }
     }
 
@@ -743,11 +739,18 @@ VSObject.prototype =
     // property and function declaration copy
     for (key in this)
     {
-      if (!this.hasOwnProperty (key)) continue;
+      // do not manage id or private member
+      if (key === 'parent' || key === '_id' || key === 'constructor' ||
+          key.indexOf ('__') === 0) continue;  
+      if (!this.getPropertyDescriptor (key)) continue;
 
+      // function copy
       if (util.isFunction (this [key]) && !util.isFunction (obj [key]))
       { obj [key] = this [key]; }
-      else propertyDecl (key, this, obj);
+      
+      // property descriptor copy
+      else if (!obj.isProperty (key) && this.isProperty (key))
+      { propertyDecl (key, this, obj); }
     }
 
     obj.__i__ = false;
@@ -759,10 +762,10 @@ VSObject.prototype =
     // property values copy
     for (key in this)
     {
-      if (key == 'id' || key == '_id') continue;
-      if (!this.hasOwnProperty (key)) continue;
+      if (key === '_id') continue;  
 
-      propertyCopy (key, this, obj);
+      // property value copy
+      if (this.isProperty (key)) propertyCopy (key, this, obj);
     }
 
     // manage linking clone
@@ -790,6 +793,53 @@ VSObject.prototype =
   /*************************************************************
                   Properties introscpection
   *************************************************************/
+
+  /**
+   *  Returns the list of object's properties name <p>
+   *
+   * @name vs.core.Object#getModelProperties
+   * @function
+   * @return {Array} Array of name of properties
+   */
+  getModelProperties : function ()
+  {
+    var result = [];
+    if (this.__properties__) result = result.concat (this.__properties__);
+    if (this.constructor.__properties__)
+      result = result.concat (this.constructor.__properties__)
+
+    return result;
+  },
+
+  /**
+   *  Returns true if this component has a property with this name
+   *
+   * @name vs.core.Object#isProperty
+   * @function
+   * @return {boolean} true or false
+   */
+  isProperty : function (name)
+  {
+    if (this.__properties__ && this.__properties__.indexOf (name) !== -1) return true;
+    if (this.constructor.__properties__.indexOf (name) !== -1) return true;
+
+    return false;
+  },
+  
+  /**
+   * Defines a new property directly on an object
+   * @name vs.core.Object#defineProperty
+   *
+   * @param {String} prop_name The name of the property to be defined
+   * @param {Object} descriptor The descriptor for the property being defined
+   */
+  defineProperty : function (prop_name, descriptor)
+  {
+    util.defineProperty (this, prop_name, descriptor);
+    if (!this.__properties__) this.__properties__ = [];
+    if (this.__properties__.indexOf (prop_name) === -1)
+    { this.__properties__.push (prop_name); }
+  },
 
   /**
    * Returns a property descriptor for an own property (that is, one directly
@@ -1259,7 +1309,7 @@ function doOneAsyncEvent ()
   else while (i > 0)
   {
     (function (handler) {
-      setTimeout (function () { doOneHandler(handler) }, 0);
+      scheduleAction (function () { doOneHandler(handler) });
     }) (handler_list [--i])
   }
 }
@@ -2360,6 +2410,74 @@ Model.prototype = {
 
       this.change (null, null, true);
     }
+  },
+
+  /**
+   * @protected
+   */
+  parseData : function (obj)
+  {
+    var prop_name;
+      
+    for (prop_name in obj)
+    {
+      this._parse_property (prop_name, obj [prop_name]);
+    }
+  },
+
+  /**
+   * @protected
+   */
+  _parse_property : function (prop_name, value)
+  {
+    var
+      _properties_ = this.getModelProperties (),
+      desc, _prop_name = '_' + util.underscore (prop_name), model;
+
+    if (util.isArray (value))
+    {
+      model = new VSArray ({}).init ();
+      model.parseData (value);
+    }
+    else model = value;
+    
+    if (_properties_.indexOf (prop_name) === -1)
+    {
+      // add propperty
+      desc = {};
+      _prop_name = '_' + util.underscore (prop_name);
+      desc.set = (function (prop_name, _prop_name)
+      {
+        return function (v)
+        {
+          this[_prop_name] = v;
+          this.propertyChange (prop_name);
+        };
+      }(prop_name, _prop_name));
+      
+      desc.get = (function (_prop_name)
+      {
+        return function ()
+        {
+          return this[_prop_name];
+        };
+      }(_prop_name));
+      
+      this.defineProperty (prop_name, desc);
+    }
+
+
+//         if (util.isString (value))
+//         {
+//           result = util.__date_reg_exp.exec (value);
+//           if (result && result [1]) // JSON Date -> Date generation
+//           {
+//             this ['_' + key] = new Date (parseInt (result [1]));
+//           }
+//           else this ['_' + key] = value; // String
+//         }
+    
+    this [_prop_name] = model;
   }
 };
 util.extendClass (Model, EventSource);
@@ -5064,7 +5182,7 @@ DeviceConfiguration.prototype = {
       {
         var dataString = data [i].string;
         var dataProp = data [i].prop;
-        this.versionSearchString = data[i].versionSearch || data[i].identity;
+//        this.versionSearchString = data[i].versionSearch || data[i].identity;
         if (dataString)
         {
           if (dataString.match (data[i].subString))
@@ -6176,15 +6294,17 @@ VSArray.prototype = {
       for (i = 0; i < data.length; i++)
       {
         item = data [i];
+        // set model
         if (self._model_class)
         {
-          _model = new self._model_class ();
-          _model.init ();
-
-          for (key in item) { _model ['_' + key] = item [key]; }
-          self.add (_model);
+          _model = new self._model_class ().init ();
         }
-        else self.add (item);
+        
+        // generic model
+        else _model = new Model ().init ();
+        
+        _model.parseData (item);
+        self.add (_model);
       }
     };
 
@@ -6199,7 +6319,7 @@ VSArray.prototype = {
       {
         fillArray (obj.data);
       }
-      else this ['_' + key] = obj [key];
+      else this._parse_property (key, obj [key]);
     }
   }
 };

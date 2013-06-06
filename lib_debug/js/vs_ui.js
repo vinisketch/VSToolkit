@@ -168,6 +168,11 @@ Template.prototype =
    */
   compileView : function (viewName)
   {
+    this.__properties = [];
+    this.__properties_path = [];
+    this.__prop_nodes = [];
+    this.__attr_eval_strs = [];
+
     var view_node = this._compile ();
 
     function resolveClass (name)
@@ -190,7 +195,16 @@ Template.prototype =
 
     this._addPropertiesToObject (view);
 
+    // clone surcharge
+    view._clone = _template_view_clone;
+
     view.init ();
+
+    delete (this.__properties);
+    delete (this.__properties_path);
+    delete (this.__prop_nodes);
+    delete (this.__attr_eval_strs);
+
     return view;
   },
 
@@ -199,9 +213,6 @@ Template.prototype =
    */
   _compile : function ()
   {
-    this.__properties = [];
-    this.__properties_path = [];
-    this.__prop_nodes = [];
     var self = this;
 
     /**
@@ -230,12 +241,57 @@ Template.prototype =
     var view_node = Template.parseHTML (str);
 
     /**
+     * Attributes parsing function
+     */
+    function parseAttributes (nodes)
+    {
+      if (!nodes) return;
+      var l = nodes.length;
+      while (l--)
+      {
+        var node_temp = nodes.item (l), result,
+          str = node_temp.value, indexs = [], index;
+
+        self._regexp_index.lastIndex = 0;// reset the regex
+        result = self._regexp_index.exec (str);
+        if (result)
+        {
+          while (result)
+          {
+            index = parseInt (result[1], 10);
+            indexs.push (index);
+            self.__prop_nodes [index] = node_temp;
+            result = self._regexp_index.exec (str);
+          }
+          node_temp.value = '';
+
+          for (var i = 0; i < indexs.length; i++)
+          {
+            index = indexs [i];
+            str = str.replace (
+              "${*" + index + "*}",
+              "\"+this._" + util.underscore (self.__properties [i]) + "+\""
+            );
+          }
+
+          for (i = 0; i < indexs.length; i++)
+          {
+            self.__attr_eval_strs [indexs [i]] = "\"" + str + "\"";
+          }
+        }
+      }
+    }
+
+    /**
      * Node parsing function
      * Parse the DOM fragment to retrieve attribute and text node
      * associated to a template tag
      */
     function parseNode (node)
     {
+      /**
+       * Nodes parsing function
+       */
       function parseNodes (nodes)
       {
         if (!nodes) return;
@@ -245,16 +301,16 @@ Template.prototype =
           var node_temp = nodes.item (l);
           if (node_temp.nodeType === 3) // TEXT_NODE
           {
-            var value = node_temp.data;
-            node_temp.data = '';
+            var value = node_temp.data, result, index = 0, text_node;
+
             self._regexp_index.lastIndex = 0;// reset the regex
-            var result = self._regexp_index.exec (value);
-            var index = 0;
+            node_temp.data = '';
+            result = self._regexp_index.exec (value);
             while (result)
             {
               if (result.index)
               {
-                var text_node = document.createTextNode
+                text_node = document.createTextNode
                   (value.substring (index, result.index));
                 node.insertBefore (text_node, node_temp);
               }
@@ -273,18 +329,8 @@ Template.prototype =
                 node_temp = text_node;
               }
             }
-            var text_node = document.createTextNode (value.substring (index));
+            text_node = document.createTextNode (value.substring (index));
             node.insertBefore (text_node, node_temp);
-          }
-          else if (node_temp.nodeType === 2) // ATTRIBUTE_NODE
-          {
-            self._regexp_index.lastIndex = 0;// reset the regex
-            var result = self._regexp_index.exec (node_temp.value);
-            if (result)
-            {
-              self.__prop_nodes [parseInt (result[1], 10)] = node_temp;
-              node_temp.value = '';
-            }
           }
           else if (node_temp.nodeType === 1) // ELEMENT_NODE
           {
@@ -292,8 +338,9 @@ Template.prototype =
           }
         }
       }
+
       parseNodes (node.childNodes);
-      parseNodes (node.attributes);
+      parseAttributes (node.attributes);
     }
     parseNode (view_node);
 
@@ -311,17 +358,16 @@ Template.prototype =
     var l = this.__properties.length;
     while (l--)
     {
-      var prop_name = this.__properties [l];
-      var path = this.__properties_path [l];
-      var node = this.__prop_nodes [l];
+      var prop_name = this.__properties [l],
+        node = this.__prop_nodes [l],
+        str = this.__attr_eval_strs [l];
+      
       if (!node) { continue; }
 
       node_ref.push ([prop_name, node]);
-      _create_property (obj, prop_name, node, path);
+      _create_property (obj, prop_name, node, str);
     }
 
-    // clone surcharge
-    obj._clone = _view_clone;
     obj.__node__ref__ = node_ref;
   },
 
@@ -343,11 +389,11 @@ Template.prototype =
 
     function replace_fnc (str, key, p1, p2, offset, html)
     {
-      var value = values [key];
+      var value = values [key], key;
 
       if (p2)
       {
-        var keys = p2.split ('.'), i = 0;
+        keys = p2.split ('.'), i = 0;
         while (value && i < keys.length) value = value [keys [i++]];
       }
 
@@ -361,12 +407,12 @@ Template.prototype =
 /**
  * @private
  */
-var _create_property = function (view, prop_name, node, path)
+var _create_property = function (view, prop_name, node, attr_eval_str)
 {
   var desc = {};
   if (node.nodeType === 3) //TEXT_NODE
   {
-    desc.set = (function (node, prop_name, _prop_name, path)
+    desc.set = (function (node, prop_name, _prop_name)
     {
       return function (v)
       {
@@ -374,7 +420,7 @@ var _create_property = function (view, prop_name, node, path)
         node.data = v;
         this.propertyChange (prop_name);
       };
-    }(node, prop_name, '_' + util.underscore (prop_name), path));
+    }(node, prop_name, '_' + util.underscore (prop_name)));
 
     desc.get = (function (node, _prop_name)
     {
@@ -387,38 +433,41 @@ var _create_property = function (view, prop_name, node, path)
   }
   else if (node.nodeType === 2) //ATTRIBUTE_NODE
   {
-    desc.set = (function (node, prop_name, _prop_name, path)
+    desc.set = (function (node, prop_name, _prop_name, attr_eval_str)
     {
       return function (v)
       {
         this [_prop_name] = v;
-        node.value = v;
+        node.value = eval(attr_eval_str);
         this.propertyChange (prop_name);
       };
-    }(node, prop_name, '_' + util.underscore (prop_name), path));
+    }(node, prop_name, '_' + util.underscore (prop_name), attr_eval_str));
 
     desc.get = (function (node, _prop_name)
     {
       return function ()
       {
-        this [_prop_name] = node.value
+//        this [_prop_name] = node.value
         return this[_prop_name];
       };
     }(node, '_' + util.underscore (prop_name)));
+    
+    // save this string for clone process
+    desc.set.__vs_attr_eval_str = attr_eval_str;
   }
-  vs.util.defineProperty (view, prop_name, desc);
+  view.defineProperty (prop_name, desc);
 };
 
 /**
  * @private
  */
-var _view_clone = function (obj, cloned_map)
+var _template_view_clone = function (obj, cloned_map)
 {
   vs.ui.View.prototype._clone.call (this, obj, cloned_map);
 //  var view_cloned = obj.__config__.node;
   var view_cloned = obj.view;
 
-  var node_ref = this.__node__ref__, node_ref_cloned = [], path, node_cloned;
+  var node_ref = this.__node__ref__, node_ref_cloned = [], path, node_cloned, desc;
   if (view_cloned && node_ref && node_ref.length)
   {
     var i = node_ref.length;
@@ -431,10 +480,14 @@ var _view_clone = function (obj, cloned_map)
 
       node_ref_cloned.push ([prop_name, node_cloned]);
 
-      _create_property (obj, prop_name, node_cloned);
+      desc = this.getPropertyDescriptor (prop_name)
+      _create_property (obj, prop_name, node_cloned, desc.set.__vs_attr_eval_str);
       obj.__node__ref__ = node_ref_cloned;
     }
   }
+
+  // clone surcharge
+  obj._clone = _template_view_clone;
 
   // rewrite properties to point cloned nodes
 };
@@ -915,9 +968,9 @@ View.prototype = {
     {
       this.__parent.remove (this);
     }
-    for (key in this._children)
+    for (key in this.__children)
     {
-      a = this._children [key];
+      a = this.__children [key];
       if (!a) { continue; }
 
       if (a instanceof Array)
@@ -930,9 +983,9 @@ View.prototype = {
       }
       else
       { util.free (a); }
-      delete (this._children [key]);
+      delete (this.__children [key]);
     }
-    this._children = {};
+    this.__children = {};
     delete (this.view);
 
     this.clearTransformStack ();
@@ -947,7 +1000,7 @@ View.prototype = {
   refresh : function ()
   {
     var key, a, i, child, view = this.view;
-    
+
     // refresh element real size and position
     if (view && view.parentElement)
     {
@@ -957,9 +1010,9 @@ View.prototype = {
       this._pos [1] = view.offsetTop;
     }
 
-    for (key in this._children)
+    for (key in this.__children)
     {
-      a = this._children [key];
+      a = this.__children [key];
       if (!a) { continue; }
 
       if (a instanceof Array)
@@ -1031,29 +1084,29 @@ View.prototype = {
     // remove parent link
     obj.__parent = undefined;
 
-//     for (key in this._children)
-//     {
-//       a = this._children [key];
-//       hole = obj._holes [key];
-//       if (!a || !hole) { continue; }
+    for (key in this.__children)
+    {
+      a = this.__children [key];
+      hole = obj._holes [key];
+      if (!a || !hole) { continue; }
 //
-//       // @WARNING pas completement correct
-//      util.removeAllElementChild (hole);
+      // @WARNING pas completement correct
+      util.removeAllElementChild (hole);
 
-//       if (a instanceof Array)
-//       {
-//         l = a.length;
-//         while (l--)
-//         {
-//           child = a [l];
-//           obj.add (child.clone (null, cloned_map), key);
-//         }
-//       }
-//       else
-//       {
-//         obj.add (a.clone (null, cloned_map), key);
-//       }
-//    }
+      if (a instanceof Array)
+      {
+        l = a.length;
+        while (l--)
+        {
+          child = a [l];
+          obj.add (child.clone (null, cloned_map), key);
+        }
+      }
+      else
+      {
+        obj.add (a.clone (null, cloned_map), key);
+      }
+   }
   },
 
   /**
@@ -1193,7 +1246,7 @@ View.prototype = {
     this._autosizing = [4,4];
 
     this._holes = {};
-    this._children = {};
+    this.__children = {};
     this._pointerevent_handlers = [];
 
     if (!this.__config__) this.__config__ = {};
@@ -1228,7 +1281,7 @@ View.prototype = {
       this._applyTransformation ();
     }
   },
-  
+
   /**
    * Notifies that the component's view was added to the DOM.<br/>
    * You can override this method to perform additional tasks
@@ -1244,12 +1297,12 @@ View.prototype = {
     if (!view || !view.parentElement) return;
 
     // update the real element size and position
-    setTimeout (function () {
+    vs.scheduleAction (function () {
       self._size [0] = view.offsetWidth;
       self._size [1] = view.offsetHeight;
       self._pos [0] = view.offsetLeft;
       self._pos [1] = view.offsetTop;
-    }, 0);
+    });
   },
 
   /**
@@ -1417,9 +1470,9 @@ View.prototype = {
 
     var key, a, hole;
 
-    for (key in this._children)
+    for (key in this.__children)
     {
-      a = this._children [key];
+      a = this.__children [key];
       if (!a) { continue; }
 
       if (a === child || (a instanceof Array && a.indexOf (child) !== -1))
@@ -1466,16 +1519,16 @@ View.prototype = {
     else if (!extension) { key = View.ANY_PLACE; }
     else { key = extension; }
 
-    a = this._children [key];
+    a = this.__children [key];
     if (a && util.isArray (a)) { a.push (child); }
     else if (a)
     {
       b = [];
       b.push (a);
       b.push (child);
-      this._children [key] = b;
+      this.__children [key] = b;
     }
-    else { this._children [key] = child; }
+    else { this.__children [key] = child; }
 
     hole = this._holes [key];
     if (view && hole)
@@ -1522,15 +1575,15 @@ View.prototype = {
 
     if (view)
     {
-      for (key in this._children)
+      for (key in this.__children)
       {
-        a = this._children [key];
+        a = this.__children [key];
         if (!a) { continue; }
 
         if (a === child || (a instanceof Array && a.indexOf (child) !== -1))
         {
           if (a instanceof Array) {a.remove (child);}
-          else { delete (this._children [key]); }
+          else { delete (this.__children [key]); }
 
           hole = this._holes [key];
           if (hole) { hole.removeChild (view); }
@@ -1562,7 +1615,7 @@ View.prototype = {
     {
       var a, child;
 
-      a = self._children [ext];
+      a = self.__children [ext];
       if (!a) { return; }
 
       if (a instanceof Array)
@@ -1579,7 +1632,7 @@ View.prototype = {
         self.remove (a);
         util.free (a);
       }
-      delete (self._children [ext]);
+      delete (self.__children [ext]);
     };
 
     if (extension)
@@ -1588,11 +1641,11 @@ View.prototype = {
     }
     else
     {
-      for (key in self._children)
+      for (key in self.__children)
       {
         removeChildrenInHole (key);
       }
-      this._children = {};
+      this.__children = {};
     }
   },
 
@@ -2150,19 +2203,19 @@ View.prototype = {
     var n = this.view, display = n.style.display, self = this;
 
     n.style.display = 'none';
-    setTimeout (function()
+    vs.scheduleAction (function()
     {
       if (display)
       { n.style.display = display; }
       else
       { n.style.removeProperty ('display'); }
 
-      setTimeout (function()
+      vs.scheduleAction (function()
       {
         self.refresh ();
         if (clb && clb instanceof Function) clb.call (self);
-      }, 0);
-    }, 0);
+      });
+    });
   },
 
   /**
@@ -2216,7 +2269,7 @@ View.prototype = {
       { this.__show_clb.call (this); }
       else
       {
-        setTimeout (function () {self.__show_clb.call (self);}, 0);
+        vs.scheduleAction (function () {self.__show_clb.call (self);});
       }
     }
   },
@@ -2788,7 +2841,6 @@ View.prototype = {
     matrix = matrix.scale (this._scaling, this._scaling, 1);
     matrix = matrix.translate (-this._transform_origin [0], -this._transform_origin [1], 0);
 
-
     // apply previous transformations and return the matrix
     if (this._transforms_stack) return matrix.multiply (this._transforms_stack);
     else return matrix;
@@ -2873,7 +2925,7 @@ util.defineClassProperties (View, {
       return this._size.slice ();
     }
   },
-  
+
   'position': {
     /**
      * Getter|Setter for position. Gives access to the position of the GUI
@@ -2904,7 +2956,7 @@ util.defineClassProperties (View, {
       return this._pos.slice ();
     }
   },
-  
+
   'autosizing': {
 
     /**
@@ -2926,7 +2978,7 @@ util.defineClassProperties (View, {
       this._updateSizeAndPos ();
     }
   },
-  
+
   'magnet': {
 
     /**
@@ -2940,7 +2992,7 @@ util.defineClassProperties (View, {
       this._setMagnet (code);
     }
   },
-  
+
   'visible': {
 
     /**
@@ -2967,7 +3019,7 @@ util.defineClassProperties (View, {
       return this._visible;
     }
   },
-  
+
   'bubbling': {
 
     /**
@@ -2981,7 +3033,7 @@ util.defineClassProperties (View, {
       else { this._bubbling = false; }
     }
   },
-  
+
   'enable': {
 
     /**
@@ -3014,7 +3066,7 @@ util.defineClassProperties (View, {
       return this._enable;
     }
   },
-  
+
   'opacity': {
 
     /**
@@ -3026,12 +3078,12 @@ util.defineClassProperties (View, {
     {
       if (!util.isNumber (v)) return;
       if (v < 0 || v > 1) return;
-      
+
       if (this.view) this.view.style.opacity = v;
       this._opacity = v;
     }
   },
-  
+
   'translation': {
 
     /**
@@ -3056,7 +3108,7 @@ util.defineClassProperties (View, {
       return [this.__view_t_x, this.__view_t_y];
     }
   },
-  
+
   'rotation': {
 
     /**
@@ -3078,7 +3130,7 @@ util.defineClassProperties (View, {
       return this._rotation;
     }
   },
-  
+
   'scaling': {
 
     /**
@@ -3100,7 +3152,7 @@ util.defineClassProperties (View, {
       return this._scaling;
     }
   },
-  
+
   'minScale': {
 
     /**
@@ -3123,7 +3175,7 @@ util.defineClassProperties (View, {
       return this._min_scale;
     }
   },
-  
+
   'maxScale': {
 
     /**
@@ -3146,7 +3198,7 @@ util.defineClassProperties (View, {
       return this._max_scale;
     }
   },
-  
+
   'transformOrigin': {
 
     /**
@@ -3180,7 +3232,7 @@ util.defineClassProperties (View, {
       return this._transform_origin.slice ();
     }
   },
-  
+
   'showAnimmation': {
 
     /**
@@ -3193,7 +3245,7 @@ util.defineClassProperties (View, {
       this.setShowAnimation (v);
     }
   },
-  
+
   'hideAnimation': {
 
     /**
@@ -3206,7 +3258,7 @@ util.defineClassProperties (View, {
       this.setHideAnimation (v);
     }
   },
-  
+
   'layout': {
 
     /**
@@ -3245,7 +3297,7 @@ util.defineClassProperties (View, {
       }
     },
   },
-  
+
   'innerHTML': {
 
     /**
@@ -3800,7 +3852,7 @@ Application.start = function ()
     obj = Application_applications [key];
     obj.propertyChange ();
     obj.applicationStarted ();
-    setTimeout (function () {obj.refresh ();}, 0);
+    vs.scheduleAction (function () {obj.refresh ();});
   }
 };
 
@@ -4275,9 +4327,9 @@ var SplitView = vs.core.createClass ({
   {
     var key, a, child;
   
-    for (key in this._children)
+    for (key in this.__children)
     {
-      a = this._children [key];
+      a = this.__children [key];
       if (!a) { continue; }
       
       if (a instanceof Array)
@@ -4294,9 +4346,9 @@ var SplitView = vs.core.createClass ({
         this.remove (a);
         util.free (a);
       }
-      delete (this._children [key]);
+      delete (this.__children [key]);
     }
-    this._children = {};
+    this.__children = {};
   },
 
   /**
@@ -5445,7 +5497,7 @@ var iScroll_prototype =
     
     that.animationDuration = time;
     that._scroll_pos (x, y);
-    if (!time) setTimeout(function () { that._scroll_transition_end(); }, 0);
+    if (!time) vs.scheduleAction(function () { that._scroll_transition_end(); });
   },
 
   /**
@@ -6806,58 +6858,65 @@ ScrollView.prototype = {
       css = this._getComputedStyle (this.view), dx = 0, dy = 0;
     if (!this._sub_view) { return; }
     
-    View.prototype.refresh.call (this);
+    this._sub_view.style.height = '';
+    this._sub_view.style.width = '';
+    
+    function endRefresh () {
+      View.prototype.refresh.call (this);
  
-    if (css)
-    {
-      v = css ['border-right-width'];
-      dx += v?parseInt (v, 10):0;
-      v = css ['border-left-width'];
-      dx += v?parseInt (v, 10):0;
-      v = css ['border-top-width'];
-      dy += v?parseInt (v, 10):0;
-      v = css ['borde-bottom-width'];
-      dy += v?parseInt (v, 10):0;
-    }
+      if (css)
+      {
+        v = css ['border-right-width'];
+        dx += v?parseInt (v, 10):0;
+        v = css ['border-left-width'];
+        dx += v?parseInt (v, 10):0;
+        v = css ['border-top-width'];
+        dy += v?parseInt (v, 10):0;
+        v = css ['borde-bottom-width'];
+        dy += v?parseInt (v, 10):0;
+      }
 
-    width -= dx;
-    height -= dy;
+      width -= dx;
+      height -= dy;
     
-    child = this._sub_view.firstElementChild;
-    while (child)
-    {
-      v = child.offsetHeight + child.offsetTop;
-      if (v > height) { height = v; }
-      v = child.offsetWidth + child.offsetLeft;
-      if (v > width) { width = v; }
+      child = this._sub_view.firstElementChild;
+      while (child)
+      {
+        v = child.offsetHeight + child.offsetTop;
+        if (v > height) { height = v; }
+        v = child.offsetWidth + child.offsetLeft;
+        if (v > width) { width = v; }
       
-      child = child.nextElementSibling;
-    }
+        child = child.nextElementSibling;
+      }
     
-    if (this._scroll === ScrollView.SCROLL)
-    {
-      this._sub_view.style.width = width + 'px';
-      this._sub_view.style.height = height + 'px';
-    }
-    if (this._scroll === ScrollView.HORIZONTAL_SCROLL)
-    {
-      this._sub_view.style.width = width + 'px';
-      this._sub_view.style.height = this.size [1] - dx + 'px';
-    }
-    if (this._scroll === ScrollView.VERTICAL_SCROLL)
-    {
-      this._sub_view.style.width = this.size [0] - dy + 'px';
-      this._sub_view.style.height = height + 'px';
-    }
+      if (this._scroll === ScrollView.SCROLL)
+      {
+        this._sub_view.style.width = width + 'px';
+        this._sub_view.style.height = height + 'px';
+      }
+      if (this._scroll === ScrollView.HORIZONTAL_SCROLL)
+      {
+        this._sub_view.style.width = width + 'px';
+        this._sub_view.style.height = this.size [1] - dx + 'px';
+      }
+      if (this._scroll === ScrollView.VERTICAL_SCROLL)
+      {
+        this._sub_view.style.width = this.size [0] - dy + 'px';
+        this._sub_view.style.height = height + 'px';
+      }
     
-    if (this._scroll === ScrollView.NO_SCROLL)
-    {
-      size = this.size;
-      this._sub_view.style.width = size [0] + 'px';
-      this._sub_view.style.height = size [1] + 'px'
-    }
+      if (this._scroll === ScrollView.NO_SCROLL)
+      {
+        size = this.size;
+        this._sub_view.style.width = size [0] + 'px';
+        this._sub_view.style.height = size [1] + 'px'
+      }
 
-    if (this.__iscroll__) this.__iscroll__.refresh ();
+      if (this.__iscroll__) this.__iscroll__.refresh ();
+    }
+    
+    vs.scheduleAction (endRefresh.bind (this));
   },
     
   /**
@@ -7641,11 +7700,11 @@ ScrollImageView.prototype = {
     this.propagate ('load');
     
     var self = this;
-    setTimeout (function ()
+    vs.scheduleAction (function ()
     {
       self.refresh ();
 //      self._applyInsideTransformation ();
-    }, 0);
+    });
   },
   
   /**
@@ -8697,6 +8756,12 @@ AbstractList.prototype = {
    * @protected
    * @function
    */
+  propertiesDidChange: function () {this._modelChanged ()},
+  
+  /**
+   * @protected
+   * @function
+   */
   _renderData : function () {},
     
   /**
@@ -9265,7 +9330,7 @@ function buildSection (list, title, index, itemsSelectable)
   var section = document.createElement ('li'), 
     title_view = document.createElement ('div'), 
     content = document.createElement ('ul'), 
-    cells, item, obj, data = list._model;
+    cells, item, obj, data = list._model, listItem;
 
   while (index < data.length)
   {
@@ -9347,7 +9412,8 @@ function blockListRenderData (itemsSelectable)
   else
     setElementTransform (_list_items, 'translate(0,0)');
 
-  this.view.removeChild (_list_items);
+  var parentElement = _list_items.parentElement;
+  parentElement.removeChild (_list_items);
   
   index = 0;
   util.setElementVisibility (_list_items, false);
@@ -9365,7 +9431,7 @@ function blockListRenderData (itemsSelectable)
     _list_items.appendChild (s[0]);
     index = s[1];
   }
-  this.view.appendChild (_list_items);
+  parentElement.appendChild (_list_items);
   {
     _list_items.style.width = 'auto';
   }
@@ -9395,7 +9461,8 @@ function tabListRenderData (itemsSelectable)
   else
     util.setElementTransform (_list_items, 'translate(0,0)');
 
-  this.view.removeChild (_list_items);
+  var parentElement = _list_items.parentElement;
+  parentElement.removeChild (_list_items);
   this.view.removeChild (_direct_access);
   
   index = 0;
@@ -9418,7 +9485,7 @@ function tabListRenderData (itemsSelectable)
     _list_items.appendChild (s[0]);
     index = s[1];
   }
-  this.view.appendChild (_list_items);
+  parentElement.appendChild (_list_items);
   this.view.appendChild (_direct_access);
   _list_items.style.width = 'auto';
   util.setElementVisibility (_list_items, true);
@@ -9437,7 +9504,7 @@ function defaultListRenderData (itemsSelectable)
   if (!this._model) { return; }
      
   var _list_items = this._list_items, index, item, title,
-    s, width, titles, i, items;
+    s, width, titles, i, items, listItem;
   if (!_list_items) { return; }
    
 // remove all children
@@ -9450,7 +9517,8 @@ function defaultListRenderData (itemsSelectable)
   else
     setElementTransform (_list_items, 'translate(0,0)');
 
-  this.view.removeChild (_list_items);
+  var parentElement = _list_items.parentElement;
+  parentElement.removeChild (_list_items);
   
   index = 0;
   util.setElementVisibility (_list_items, false);
@@ -9486,7 +9554,7 @@ function defaultListRenderData (itemsSelectable)
     listItem.__parent = this;
     index ++;
   }
-  this.view.appendChild (_list_items);
+  parentElement.appendChild (_list_items);
   _list_items.style.width = 'auto';
 
   util.setElementVisibility (_list_items, true);
@@ -11228,9 +11296,9 @@ NavigationBar.prototype = {
     if (this._current_state === state)
     {
       // hide all children except those have to be shown
-      for (key in this._children)
+      for (key in this.__children)
       {
-        children = this._children [key];
+        children = this.__children [key];
         if (util.isArray (children))
         {
           for (i = 0; i < children.length; i++)
@@ -11315,9 +11383,9 @@ NavigationBar.prototype = {
     length = objs_to_show.length;
     
     // hide all children except those have to be shown
-    for (key in this._children)
+    for (key in this.__children)
     {
-      children = this._children [key];
+      children = this.__children [key];
       if (util.isArray (children))
       {
         for (i = 0; i < children.length; i++)
@@ -16003,7 +16071,7 @@ util.defineClassProperties (Switch, {
     set : function (v)
     {
       var self = this;
-      setTimeout (function () { self._setToggle (v); }, 10);
+      vs.scheduleAction (function () { self._setToggle (v); });
     },
   
     /** 

@@ -935,7 +935,7 @@ function RSSChannel (rssFeed, rssxml)
  *
  * @param {Object} config the configuration structure [mandatory]
 */
-RSSFeed = function (config)
+var RSSFeed = function (config)
 {
   this.parent = vs.core.EventSource;
   this.parent (config);
@@ -1264,7 +1264,7 @@ util.defineClassProperties (RSSFeed, {
  *
  * @param {Object} config the configuration structure [mandatory]
 */
-RSSRequester = function (config)
+var RSSRequester = function (config)
 {
   this.parent = RSSFeed;
   this.parent (config);
