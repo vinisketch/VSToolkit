@@ -367,9 +367,7 @@ Model.prototype = {
         };
       }(_prop_name));
       
-      util.defineProperty (this, prop_name, desc);
-      if (!this.__properties__) this.__properties__ = [];
-      this.__properties__.push (prop_name);
+      this.defineProperty (prop_name, desc);
     }
 
 

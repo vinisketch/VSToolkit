@@ -231,23 +231,6 @@ VSObject.prototype =
   },
 
   /**
-   *  Returns the list of object's properties name <p>
-   *
-   * @name vs.core.Object#getModelProperties
-   * @function
-   * @return {Array} Array of name of properties
-   */
-  getModelProperties : function ()
-  {
-    var result = [];
-    if (this.__properties__) result = result.concat (this.__properties__);
-    if (this.constructor.__properties__)
-      result = result.concat (this.constructor.__properties__)
-
-    return result;
-  },
-
-  /**
    *  Returns a copy of the objet's properties for JSON stringification.<p/>
    *  This can be used for persistence or serialization.
    *
@@ -558,14 +541,15 @@ VSObject.prototype =
 
     function _propertyCopy_api2 (prop_name, src, trg)
     {
-      var desc = src.getOwnPropertyDescriptor (prop_name),
-        desc_clone = trg.getOwnPropertyDescriptor (prop_name);
-
+      var desc = src.getPropertyDescriptor (prop_name),
+        desc_clone = trg.getPropertyDescriptor (prop_name),
+        _prop_name = '_' + util.underscore (prop_name);
+      
       // Property value copy
       if (desc && desc_clone && (desc.get || desc.set))
       {
-        if (desc_clone.set) { trg [prop_name] = src ['_' + prop_name]; }
-        else { trg ['_' + prop_name] = src ['_' + prop_name]; }
+        if (desc_clone.set) { trg [prop_name] = src [_prop_name]; }
+        else { trg [_prop_name] = src [_prop_name]; }
       }
     }
 
@@ -576,12 +560,17 @@ VSObject.prototype =
     for (key in this)
     {
       // do not manage id or private member
-      if (key === '_id' || key.indexOf ('__') === 0) continue;  
-      if (!this.hasOwnProperty (key)) continue;
+      if (key === 'parent' || key === '_id' || key === 'constructor' ||
+          key.indexOf ('__') === 0) continue;  
+      if (!this.getPropertyDescriptor (key)) continue;
 
+      // function copy
       if (util.isFunction (this [key]) && !util.isFunction (obj [key]))
       { obj [key] = this [key]; }
-      else propertyDecl (key, this, obj);
+      
+      // property descriptor copy
+      else if (!obj.isProperty (key) && this.isProperty (key))
+      { propertyDecl (key, this, obj); }
     }
 
     obj.__i__ = false;
@@ -593,10 +582,10 @@ VSObject.prototype =
     // property values copy
     for (key in this)
     {
-      if (key == 'id' || key == '_id') continue;
-      if (!this.hasOwnProperty (key)) continue;
+      if (key === '_id') continue;  
 
-      propertyCopy (key, this, obj);
+      // property value copy
+      if (this.isProperty (key)) propertyCopy (key, this, obj);
     }
 
     // manage linking clone
@@ -624,6 +613,54 @@ VSObject.prototype =
   /*************************************************************
                   Properties introscpection
   *************************************************************/
+
+  /**
+   *  Returns the list of object's properties name <p>
+   *
+   * @name vs.core.Object#getModelProperties
+   * @function
+   * @return {Array} Array of name of properties
+   */
+  getModelProperties : function ()
+  {
+    var result = [];
+    if (this.__properties__) result = result.concat (this.__properties__);
+    if (this.constructor.__properties__)
+      result = result.concat (this.constructor.__properties__)
+
+    return result;
+  },
+
+  /**
+   *  Returns true if this component has a property with this name
+   *
+   * @name vs.core.Object#isProperty
+   * @function
+   * @return {boolean} true or false
+   */
+  isProperty : function (name)
+  {
+    if (this.__properties__ && this.__properties__.indexOf (name) !== -1) return true;
+    if (this.constructor.__properties__.indexOf (name) !== -1) return true;
+
+    return false;
+  },
+  
+  /**
+   * Defines a new property directly on an object
+   * @name vs.core.Object#defineProperty
+   *
+   * @param {String} prop_name The name of the property to be defined
+   * @param {Object} descriptor The descriptor for the property being defined
+   */
+  defineProperty : function (prop_name, descriptor)
+  {
+    if (this.isProperty (prop_name)) return;
+    
+    util.defineProperty (this, prop_name, descriptor);
+    if (!this.__properties__) this.__properties__ = [];
+    this.__properties__.push (prop_name);
+  },
 
   /**
    * Returns a property descriptor for an own property (that is, one directly
