@@ -489,29 +489,29 @@ View.prototype = {
     // remove parent link
     obj.__parent = undefined;
 
-//     for (key in this.__children)
-//     {
-//       a = this.__children [key];
-//       hole = obj._holes [key];
-//       if (!a || !hole) { continue; }
+    for (key in this.__children)
+    {
+      a = this.__children [key];
+      hole = obj._holes [key];
+      if (!a || !hole) { continue; }
 //
-//       // @WARNING pas completement correct
-//      util.removeAllElementChild (hole);
+      // @WARNING pas completement correct
+      util.removeAllElementChild (hole);
 
-//       if (a instanceof Array)
-//       {
-//         l = a.length;
-//         while (l--)
-//         {
-//           child = a [l];
-//           obj.add (child.clone (null, cloned_map), key);
-//         }
-//       }
-//       else
-//       {
-//         obj.add (a.clone (null, cloned_map), key);
-//       }
-//    }
+      if (a instanceof Array)
+      {
+        l = a.length;
+        while (l--)
+        {
+          child = a [l];
+          obj.add (child.clone (null, cloned_map), key);
+        }
+      }
+      else
+      {
+        obj.add (a.clone (null, cloned_map), key);
+      }
+   }
   },
 
   /**
