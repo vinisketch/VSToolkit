@@ -11,11 +11,11 @@ function testTemplateNew()
 function testTemplateApply()
 {
   var t = '<span style="${style}">name:${lastname},${firstname}</span>';
-  var r = "<span style=\"color:blue\">name:Doo,John</span>"
+  var r = "<span style=\"color:blue\">name:Doe,John</span>"
   var template = new vs.ui.Template (t);
   
   var values = {
-    lastname : "Doo",
+    lastname : "Doe",
     firstname : "John",
     style : "color:blue"
   };
@@ -27,12 +27,12 @@ function testTemplateApply()
 function testViewCompile1 ()
 {
   var t = '<span style="${style}" class="huhu">name:${lastname},${firstname}</span>';
-  var r = "name:Doo,John"
+  var r = "name:Doe,John"
   var s = "color:blue"
   var template = new vs.ui.Template (t);
   var myView = template.compileView ();
   
-  myView.lastname = "Doo";
+  myView.lastname = "Doe";
   myView.firstname = "John";
   myView.style = "color:blue";
  
@@ -45,13 +45,13 @@ function testViewCompile1 ()
 function testViewCompile2 ()
 {
   var t = '<div><div style="${style}"><div>name:${lastname}</div></div>,<span>${firstname}</span></div>';
-  var r1 = "name:Doo"
+  var r1 = "name:Doe"
   var r2 = "John"
   var r3 = "color:blue"
   var template = new vs.ui.Template (t);
   var myView = template.compileView ();
   
-  myView.lastname = "Doo";
+  myView.lastname = "Doe";
   myView.firstname = "John";
   myView.style = "color:blue";
  
@@ -76,6 +76,41 @@ function testViewCompile3 ()
   assertEquals ('testViewCompile3 3', "hoho", myView2.view.textContent);
 }
 
+function testViewCompilePropRefeMultipleNode1 ()
+{
+  var t = '<div style="width:${size}px;height:${size}px">${size}</div>';
+  var template = new vs.ui.Template (t);
+  var myView = template.compileView ();
+  
+  assertNotNull ('testViewCompile4 1', template);
+  myView.size = "45";
+  assertEquals ('testViewCompile4 2', "45px", myView.view.style.width);
+  assertEquals ('testViewCompile4 3', "45px", myView.view.style.height);
+  assertEquals ('testViewCompile4 4', "45", myView.view.textContent);
+}
+
+function testViewCompilePropRefeMultipleNode2 ()
+{
+  var t =
+    '<div style="width:${size}px;height:${size}px">${size}' +
+      '<img style="width:${suze}px;height:${size}px">'+
+    '</img></div>';
+    
+  var template = new vs.ui.Template (t);
+  var myView = template.compileView ();
+  
+  myView.size = "45";
+  myView.suze = "48";
+  assertEquals ('testViewCompile5 1', "45px", myView.view.style.width);
+  assertEquals ('testViewCompile5 2', "45px", myView.view.style.height);
+
+  var img = myView.view.querySelector ('img');
+  assertEquals ('testViewCompile5 3', "48px", img.style.width);
+  assertEquals ('testViewCompile5 4', "45px", img.style.height);
+  
+  assertEquals ('testViewCompile5 5', "45", myView.view.textContent);
+}
+
 function testAttributes()
 {
   var t = '<div style="color:${color};position:${css_pos}"></div>';
@@ -92,11 +127,11 @@ function testAttributes()
 
 function testTemplateClone ()
 {
-  var t = '<div style="color:${color}">name:${lastname}<span>,${firstname}</span></div>';
+  var t = '<div style="color:${color}">name:${lastname}<span style="color:${color}">,${firstname}</span></div>';
   
-  var r1 = "name:Salut1<span>,Gars1</span>"
-  var r2 = "name:Salut2<span>,Gars2</span>"
-  var r3 = "name:Salut3<span>,Gars2</span>"
+  var r1 = "name:Salut1<span style=\"color:red\">,Gars1</span>"
+  var r2 = "name:Salut2<span style=\"color:red\">,Gars2</span>"
+  var r3 = "name:Salut3<span style=\"color:yellow\">,Gars2</span>"
 
   var myTemplate = new vs.ui.Template (t)
   
@@ -137,8 +172,16 @@ function testTemplateClone ()
   assertEquals ('testTemplateClone 10', r1, view1.view.innerHTML);
   assertEquals ('testTemplateClone 11', r2, view2.view.innerHTML);
   assertEquals ('testTemplateClone 12', r3, view3.view.innerHTML);
-
+  
   assertEquals ('testTemplateClone 13', "red", view1.view.style.color);
   assertEquals ('testTemplateClone 14', "red", view2.view.style.color);
   assertEquals ('testTemplateClone 15', "yellow", view3.view.style.color);
+
+  var span1 = view1.view.querySelector ('span');
+  var span2 = view2.view.querySelector ('span');
+  var span3 = view3.view.querySelector ('span');
+
+  assertEquals ('testTemplateClone 16', "red", span1.style.color);
+  assertEquals ('testTemplateClone 17', "red", span2.style.color);
+  assertEquals ('testTemplateClone 18', "yellow", span3.style.color);
 }
