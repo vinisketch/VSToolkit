@@ -166,10 +166,13 @@ Template.prototype =
      */
     function replace_fnc (str, key, p1, p2, offset, html)
     {
-      var i = self.__properties.length;
-      // a new property is found
-      self.__properties.push (key);
-
+      var i = self.__properties.indexOf (key);
+      if (i === -1)
+      {
+        i = self.__properties.length;
+        // a new property is found
+        self.__properties.push (key);
+      }
       return "\${*" + i + "*}";
     }
 
@@ -201,7 +204,9 @@ Template.prototype =
           {
             index = parseInt (result[1], 10);
             indexs.push (index);
-            self.__prop_nodes [index] = node_temp;
+            if (!self.__prop_nodes [index])
+            { self.__prop_nodes [index] = [node_temp]; }
+            else { self.__prop_nodes [index].push (node_temp); }
             result = self._regexp_index.exec (str);
           }
           node_temp.value = '';
@@ -242,7 +247,7 @@ Template.prototype =
           var node_temp = nodes.item (l);
           if (node_temp.nodeType === 3) // TEXT_NODE
           {
-            var value = node_temp.data, result, index = 0, text_node;
+            var value = node_temp.data, result, index = 0, i, text_node;
 
             self._regexp_index.lastIndex = 0;// reset the regex
             node_temp.data = '';
@@ -256,7 +261,12 @@ Template.prototype =
                 node.insertBefore (text_node, node_temp);
               }
 
-              self.__prop_nodes [parseInt (result[1], 10)] = node_temp;
+              i = parseInt (result[1], 10);
+              if (!self.__prop_nodes [i])
+              { self.__prop_nodes [i] = [node_temp]; }
+              else
+              { self.__prop_nodes [i].push (node_temp); }
+              
               index = result.index + result[0].length;
 
               result = self._regexp_index.exec (value);
@@ -300,13 +310,13 @@ Template.prototype =
     while (l--)
     {
       var prop_name = this.__properties [l],
-        node = this.__prop_nodes [l],
+        nodes = this.__prop_nodes [l],
         str = this.__attr_eval_strs [l];
       
-      if (!node) { continue; }
+      if (!nodes) { continue; }
 
-      node_ref.push ([prop_name, node]);
-      _create_property (obj, prop_name, node, str);
+      node_ref.push ([prop_name, nodes]);
+      _create_property (obj, prop_name, nodes, str);
     }
 
     obj.__node__ref__ = node_ref;
@@ -348,71 +358,47 @@ Template.prototype =
 /**
  * @private
  */
-var _create_property = function (view, prop_name, node, attr_eval_str)
+var _create_property = function (view, prop_name, nodes, attr_eval_str)
 {
   var desc = {}, _prop_name = '_' + util.underscore (prop_name);
-  if (node.nodeType === 3) //TEXT_NODE
-  {
-    desc.set = (function (node, prop_name, _prop_name)
-    {
-      return function (v)
-      {
-        this [_prop_name] = v;
-        node.data = v;
-        this.propertyChange (prop_name);
-      };
-    }(node, prop_name, _prop_name));
 
-    desc.get = (function (node, _prop_name)
-    {
-      return function ()
-      {
-        this [_prop_name] = node.data
-        return this[_prop_name];
-      };
-    }(node, _prop_name));
-  }
-  else if (node.nodeType === 2) //ATTRIBUTE_NODE
+  desc.set = (function (nodes, prop_name, _prop_name, attr_eval_str)
   {
-    if (node.name == 'value' && node.ownerElement.tagName == 'INPUT')
+    return function (v)
     {
-      // hack because of the strange input element and value attribute
-      // behavior
-      desc.set = (function (node, prop_name, _prop_name, attr_eval_str)
+      var i = 0, node, l = nodes.length, r;
+      this [_prop_name] = v;
+      for (; i < l; i++)
       {
-        return function (v)
+        node = nodes [i];
+        if (node.nodeType === 3) //TEXT_NODE
+        { node.data = v; }
+        else if (node.nodeType === 2)
         {
-          this [_prop_name] = v;
-          node.value = eval(attr_eval_str);
-          this.propertyChange (prop_name);
-        };
-      }(node.ownerElement, prop_name, _prop_name, attr_eval_str));
-    }
-    else
-    {
-      desc.set = (function (node, prop_name, _prop_name, attr_eval_str)
-      {
-        return function (v)
-        {
-          this [_prop_name] = v;
-          node.value = eval(attr_eval_str);
-          this.propertyChange (prop_name);
-        };
-      }(node, prop_name, _prop_name, attr_eval_str));
-    }
+          r = eval(attr_eval_str);
+          //ATTRIBUTE_NODE
+          if (node.name == 'value' && node.ownerElement.tagName == 'INPUT')
+          { node.ownerElement.value = r; }
+          //ATTRIBUTE_NODE
+          else
+          { node.value = r; }
+        }
+      }
+      this.propertyChange (prop_name);
+    };
+  }(nodes, prop_name, _prop_name, attr_eval_str));
 
-    desc.get = (function (node, _prop_name)
+  desc.get = (function (_prop_name)
+  {
+    return function ()
     {
-      return function ()
-      {
-//        this [_prop_name] = node.value
-        return this[_prop_name];
-      };
-    }(node, _prop_name));
-    
-    // save this string for clone process
-    desc.set.__vs_attr_eval_str = attr_eval_str;
-  }
+      return this[_prop_name];
+    };
+  }(_prop_name));
+
+  // save this string for clone process
+  desc.set.__vs_attr_eval_str = attr_eval_str;
+
   view.defineProperty (prop_name, desc);
 };
 
@@ -425,21 +411,21 @@ var _template_view_clone = function (obj, cloned_map)
 //  var view_cloned = obj.__config__.node;
   var view_cloned = obj.view;
 
-  var node_ref = this.__node__ref__, node_ref_cloned = [], path, node_cloned, desc;
+  var node_ref = this.__node__ref__, node_ref_cloned = [], paths, node_cloned, desc;
   if (view_cloned && node_ref && node_ref.length)
   {
     var i = node_ref.length;
     while (i--)
     {
-      var link = node_ref [i], node = link [1], prop_name = link [0];
-      path = _getPath (this.view, node);
+      var link = node_ref [i], nodes = link [1], prop_name = link [0];
+      paths = _getPaths (this.view, nodes);
 
-      node_cloned = _evalPath (view_cloned, path);
+      nodes_cloned = _evalPaths (view_cloned, paths);
 
-      node_ref_cloned.push ([prop_name, node_cloned]);
+      node_ref_cloned.push ([prop_name, nodes_cloned]);
 
       desc = this.getPropertyDescriptor (prop_name)
-      _create_property (obj, prop_name, node_cloned, desc.set.__vs_attr_eval_str);
+      _create_property (obj, prop_name, nodes_cloned, desc.set.__vs_attr_eval_str);
       obj.__node__ref__ = node_ref_cloned;
     }
   }
@@ -449,6 +435,16 @@ var _template_view_clone = function (obj, cloned_map)
 
   // rewrite properties to point cloned nodes
 };
+
+/**
+ * @private
+ */
+var _getPaths = function (root, nodes)
+{
+  var paths = [], i = 0, l = nodes.length;
+  for (; i < l; i++) paths.push (_getPath (root, nodes[i]));
+  return paths;
+}
 
 /**
  * @private
@@ -488,6 +484,16 @@ var _getPath = function (root, node, path)
   path.push ([1, node.nodeName.toLowerCase(), count]);
   return path;
 };
+
+/**
+ * @private
+ */
+var _evalPaths = function (root, paths)
+{
+  var nodes = [], i = 0, l = paths.length;
+  for (; i < l; i++) nodes.push (_evalPath (root, paths[i]));
+  return nodes;
+}
 
 /**
  * @private
