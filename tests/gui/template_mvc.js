@@ -74,7 +74,7 @@ function launchTest (test_view)
   
   window.c = new Contact ();
   c.firstname = 'John';
-  c.lastname = 'Doo';
+  c.lastname = 'Doe';
   c.companie = 'IBM';
   c.tels = ['34 8984 4389'];
   c.addresses = ['123 bd Saint Michel, 67000 Toulouse'];
@@ -85,7 +85,7 @@ function launchTest (test_view)
   
   test_view.appendChild (cloned_view.view);
 
-  c.lastname = 'DooDoo';
+  c.lastname = 'DoeDoe';
 
   var cc = c.clone ();
   cloned_view.link (cc);
