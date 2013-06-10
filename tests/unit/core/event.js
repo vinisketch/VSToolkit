@@ -1,23 +1,23 @@
 var free = _delete;
 
-function testABEventNew ()
+function testEventNew ()
 {
-  var o1 = new ABEvent ('src', 'type', 'data');
+  var o1 = new vs.core.Event ('src', 'type', 'data');
   
-  assertNotUndefined ('testABEventNew 1', o1);
-  assertEquals ('testABEventNew 2', 'src', o1.src);
-  assertEquals ('testABEventNew 3', 'type', o1.type);
-  assertEquals ('testABEventNew 4', 'data', o1.data);
-  assertEquals ('testABEventNew 5', o1.src, o1.srcTarget);
+  assertNotUndefined ('testEventNew 1', o1);
+  assertEquals ('testEventNew 2', 'src', o1.src);
+  assertEquals ('testEventNew 3', 'type', o1.type);
+  assertEquals ('testEventNew 4', 'data', o1.data);
+  assertEquals ('testEventNew 5', o1.src, o1.srcTarget);
 }
 
-function testABEventFree()
+function testEventFree()
 {
-  var o1 = new ABEvent ('src', 'type', 'data');
+  var o1 = new vs.core.Event ('src', 'type', 'data');
   
-  free (o1);
-  assertNull ('testABEventFree 1', o1.src);
-  assertEquals ('testABEventFree 2', "", o1.type);
-  assertNull ('testABEventFree 3', o1.data);
-  assertNull ('testABEventNew 5', o1.srcTarget);
+  vs.util.free (o1);
+  assertNull ('testEventFree 1', o1.src);
+  assertEquals ('testEventFree 2', "", o1.type);
+  assertNull ('testEventFree 3', o1.data);
+  assertNull ('testEventFree 5', o1.srcTarget);
 }
