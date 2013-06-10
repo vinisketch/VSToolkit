@@ -196,6 +196,7 @@ EventSource.prototype =
             util.free (handler);
           }
         }
+        else { i++; }
       }
     };
 
