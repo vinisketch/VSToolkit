@@ -39,13 +39,13 @@
  *  var myTemplate = new Template (str);
  * <br/>
  *  var values = {
- *    lastname : "Doo",
+ *    lastname : "Doe",
  *    firstname : "John",
  *    style : "color:blue"
  *  };
  * <br/>
  *  console.log (myTemplate.apply (values));
- *  // -> &lt;span style="color:blue"&gt;name:Doo,John&lt;/span&gt;
+ *  // -> &lt;span style="color:blue"&gt;name:Doe,John&lt;/span&gt;
  * </pre>
  *
  * Generating a vs.ui.View from the template:
@@ -57,7 +57,7 @@
  *  myApp.add (myView); //|| document.body.appendChild (myView.view);
  * <br/>
  *  // property changes, automatically update the DOM
- *  myView.lastname = "Doo";
+ *  myView.lastname = "Doe";
  *  myView.firstname = "John";
  *  myView.style = "color:blue";
  * <br/>
@@ -216,7 +216,7 @@ Template.prototype =
             index = indexs [i];
             str = str.replace (
               "${*" + index + "*}",
-              "\"+this._" + util.underscore (self.__properties [i]) + "+\""
+              "\"+this._" + util.underscore (self.__properties [index]) + "+\""
             );
           }
 
@@ -355,7 +355,7 @@ Template.prototype =
  */
 var _create_property = function (view, prop_name, node, attr_eval_str)
 {
-  var desc = {};
+  var desc = {}, _prop_name = '_' + util.underscore (prop_name);
   if (node.nodeType === 3) //TEXT_NODE
   {
     desc.set = (function (node, prop_name, _prop_name)
@@ -366,7 +366,7 @@ var _create_property = function (view, prop_name, node, attr_eval_str)
         node.data = v;
         this.propertyChange (prop_name);
       };
-    }(node, prop_name, '_' + util.underscore (prop_name)));
+    }(node, prop_name, _prop_name));
 
     desc.get = (function (node, _prop_name)
     {
@@ -375,19 +375,36 @@ var _create_property = function (view, prop_name, node, attr_eval_str)
         this [_prop_name] = node.data
         return this[_prop_name];
       };
-    }(node, '_' + util.underscore (prop_name)));
+    }(node, _prop_name));
   }
   else if (node.nodeType === 2) //ATTRIBUTE_NODE
   {
-    desc.set = (function (node, prop_name, _prop_name, attr_eval_str)
+    if (node.name == 'value' && node.ownerElement.tagName == 'INPUT')
     {
-      return function (v)
+      // hack because of the strange input element and value attribute
+      // behavior
+      desc.set = (function (node, prop_name, _prop_name, attr_eval_str)
       {
-        this [_prop_name] = v;
-        node.value = eval(attr_eval_str);
-        this.propertyChange (prop_name);
-      };
-    }(node, prop_name, '_' + util.underscore (prop_name), attr_eval_str));
+        return function (v)
+        {
+          this [_prop_name] = v;
+          node.value = eval(attr_eval_str);
+          this.propertyChange (prop_name);
+        };
+      }(node.ownerElement, prop_name, _prop_name, attr_eval_str));
+    }
+    else
+    {
+      desc.set = (function (node, prop_name, _prop_name, attr_eval_str)
+      {
+        return function (v)
+        {
+          this [_prop_name] = v;
+          node.value = eval(attr_eval_str);
+          this.propertyChange (prop_name);
+        };
+      }(node, prop_name, _prop_name, attr_eval_str));
+    }
 
     desc.get = (function (node, _prop_name)
     {
@@ -396,7 +413,7 @@ var _create_property = function (view, prop_name, node, attr_eval_str)
 //        this [_prop_name] = node.value
         return this[_prop_name];
       };
-    }(node, '_' + util.underscore (prop_name)));
+    }(node, _prop_name));
     
     // save this string for clone process
     desc.set.__vs_attr_eval_str = attr_eval_str;
