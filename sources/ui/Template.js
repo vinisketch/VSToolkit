@@ -115,7 +115,6 @@ Template.prototype =
   compileView : function (viewName)
   {
     this.__properties = [];
-    this.__properties_path = [];
     this.__prop_nodes = [];
     this.__attr_eval_strs = [];
 
@@ -147,7 +146,6 @@ Template.prototype =
     view.init ();
 
     delete (this.__properties);
-    delete (this.__properties_path);
     delete (this.__prop_nodes);
     delete (this.__attr_eval_strs);
 
@@ -171,9 +169,6 @@ Template.prototype =
       var i = self.__properties.length;
       // a new property is found
       self.__properties.push (key);
-
-      if (p2) self.__properties_path.push (p2.split ('.').shift ());
-      else self.__properties_path.push (null);
 
       return "\${*" + i + "*}";
     }
