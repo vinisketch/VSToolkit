@@ -143,7 +143,7 @@ function doOneAsyncEvent ()
   else while (i > 0)
   {
     (function (handler) {
-      scheduleAction (function () { doOneHandler(handler) });
+      vs.scheduleAction (function () { doOneHandler(handler) });
     }) (handler_list [--i])
   }
 }
@@ -181,8 +181,10 @@ function doActions ()
     end_burst ();
   }
 
-  vs.requestAnimationFrame (doBurst.bind (_actions_queue));
+  var clb = doBurst.bind (_actions_queue);
   _actions_queue = []
+  
+  vs.requestAnimationFrame (clb);
 }
 
 var _is_waiting = false;
@@ -215,7 +217,7 @@ function serviceLoop ()
   if (!_is_actions_runing && _actions_queue.length) doActions ();
 }
 
-var scheduleAction = function (func, delay)
+function scheduleAction (func, delay)
 {
   if (!util.isFunction (func)) return;
   if (util.isNumber (delay))
