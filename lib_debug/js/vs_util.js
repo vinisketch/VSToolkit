@@ -902,14 +902,28 @@ if (!vs.CSSMatrix.prototype.isAffine) {
  *
  *  Returns a string representation of the 3d matrix.
  **/
+var precision = 1000000;
 vs.CSSMatrix.prototype.getMatrix3dStr = function () {
-  var points = [this.m11, this.m12, this.m13, this.m14,
-        this.m21, this.m22, this.m23, this.m24,
-        this.m31, this.m32, this.m33, this.m34,
-        this.m41, this.m42, this.m43, this.m44];
+  var points = [
+    ~~(this.m11 * precision) / precision,
+    ~~(this.m12 * precision) / precision,
+    ~~(this.m13 * precision) / precision,
+    ~~(this.m14 * precision) / precision,
+    ~~(this.m21 * precision) / precision,
+    ~~(this.m22 * precision) / precision,
+    ~~(this.m23 * precision) / precision,
+    ~~(this.m24 * precision) / precision,
+    ~~(this.m31 * precision) / precision,
+    ~~(this.m32 * precision) / precision,
+    ~~(this.m33 * precision) / precision,
+    ~~(this.m34 * precision) / precision,
+    ~~(this.m41 * precision) / precision,
+    ~~(this.m42 * precision) / precision,
+    ~~(this.m43 * precision) / precision,
+    ~~(this.m44 * precision) / precision
+  ];
   return "matrix3d(" + points.join(", ") + ")";
 }
-
 /**
  * Tells the browser that you wish to perform an animation and requests
  * that the browser schedule a repaint of the window for the next animation
@@ -2216,7 +2230,7 @@ function setElementWebkitTransform (elem, transform)
  */
 function getElementWebkitTransform (elem, transform)
 {
-  if (elem) return window.getComputedStyle (elem).webkitTransform;
+  if (elem) return elem.style.webkitTransform;
 }
 
 /**
@@ -2233,7 +2247,7 @@ function setElementMSTransform (elem, transform)
  */
 function getElementMSTransform (elem, transform)
 {
-  if (elem) return window.getComputedStyle (elem).msTransform;
+  if (elem) return elem.style.msTransform;
 }
 
 /**
@@ -2250,7 +2264,7 @@ function setElementMozTransform (elem, transform)
  */
 function getElementMozTransform (elem, transform)
 {
-  if (elem) return window.getComputedStyle (elem).MozTransform;
+  if (elem) return elem.style.MozTransform;
 }
 
 /**
