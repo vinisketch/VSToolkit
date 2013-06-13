@@ -2569,6 +2569,8 @@ util.defineClassProperties (View, {
     {
       if (!util.isNumber (v)) { return };
       this._min_scale = v;
+      
+      if (this._scaling < this._min_scale) { this.scale (this._min_scale); }
     },
 
     /**
@@ -2592,6 +2594,8 @@ util.defineClassProperties (View, {
     {
       if (!util.isNumber (v)) { return };
       this._max_scale = v;
+      
+      if (this._scaling > this._max_scale) { this.scale (this._max_scale); }
     },
 
     /**
