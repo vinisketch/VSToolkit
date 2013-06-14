@@ -1189,8 +1189,6 @@ View.prototype = {
    */
   _setMagnet : function (code)
   {
-    if (!util.isNumber (code) || code < 0 || code > 5) return;
-
     this._magnet = code;
     if (this._magnet)
     { this.view.style.setProperty ('position', 'absolute', null); }
@@ -2376,6 +2374,9 @@ util.defineClassProperties (View, {
       if (!util.isArray (v) || v.length != 2) { return; }
       if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
 
+      if (this._autosizing [0] === v [0] && this._autosizing [1] === v [1])
+      { return; }
+
       this._autosizing [0] = v [0];
       this._autosizing [1] = v [1];
 
@@ -2394,6 +2395,8 @@ util.defineClassProperties (View, {
      */
     set : function (code)
     {
+      if (this._magnet === code) return;
+      if (!util.isNumber (code) || code < 0 || code > 5) return;
       this._setMagnet (code);
     }
   },
