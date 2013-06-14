@@ -435,7 +435,7 @@ View.prototype = {
   },
 
   /**
-   * @name vs.ui.View#_clone
+   * @name vs.ui.View#clone
    * @function
    * @private
    *
