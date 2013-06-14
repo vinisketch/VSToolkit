@@ -1241,19 +1241,6 @@ function defineClassProperty (the_class, prop_name, desc)
 }
 
 /**
- * @private
- */
-var _keys = (typeof Object.keys === 'function')?Object.keys: function (o)
-{
-  var array = new Array (), key;
-  for (key in o)
-  {
-    if (Object.prototype.hasOwnProperty.call (o, key)) { array.push (key); }
-  }
-  return array;
-};
-
-/**
  * Defines new or modifies existing properties directly on an 'class'.<br/><br/>
  *
  * @see vs.util.defineClassProperty
@@ -1270,12 +1257,11 @@ function defineClassProperties (the_class, properties)
     throw ("defineClassProperties on a Class without prototype");
   }
 
-  properties = Object (properties);
-  var keys = _keys (properties);
-  for (var i = 0; i < keys.length; i++)
+  var keys = Object.keys (properties), i = 0, l = keys.length, prop_name, desc;
+  for (; i < l; i++)
   {
-    var prop_name = keys[i]
-    var desc = properties[keys[i]];
+    prop_name = keys [i]
+    desc = properties [prop_name];
     defineClassProperty (the_class, prop_name, desc);
   }
 }
