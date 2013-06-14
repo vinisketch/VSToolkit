@@ -189,7 +189,7 @@ var _template_view_clone = function (config, cloned_map) {
  * @private
  */
 var _template_view__clone = function (obj, config, cloned_map) {
-  vs.ui.View.prototype._clone.call (this, obj, cloned_map);
+  ui.View.prototype._clone.call (this, obj, cloned_map);
 
   _instrument_component (obj, this.__shadow_view, config.node);
 
@@ -205,10 +205,10 @@ function _instrument_component (obj, shadow_view, node) {
   /**
    * @private
    */
-  var _create_node_property = function (view, prop_name, nodes, attr_eval_str) {
+  var _create_node_property = function (view, prop_name, nodes) {
     var desc = {}, _prop_name = '_' + util.underscore (prop_name);
 
-    desc.set = (function (nodes, prop_name, _prop_name, attr_eval_str) {
+    desc.set = (function (nodes, prop_name, _prop_name) {
       return function (v) {
         var i = 0, node, l = nodes.length, r;
         this [_prop_name] = v;
@@ -218,7 +218,7 @@ function _instrument_component (obj, shadow_view, node) {
             node.data = v;
           }
           else if (node.nodeType === 2) {
-            r = eval(attr_eval_str);
+            r = eval(node.__attr_eval_str);
             //ATTRIBUTE_NODE
             if (node.name == 'value' && node.ownerElement.tagName == 'INPUT') {
               node.ownerElement.value = r;
@@ -231,7 +231,7 @@ function _instrument_component (obj, shadow_view, node) {
         }
         this.propertyChange (prop_name);
       };
-    }(nodes, prop_name, _prop_name, attr_eval_str));
+    }(nodes, prop_name, _prop_name));
 
     desc.get = (function (_prop_name) {
       return function () {
@@ -240,7 +240,7 @@ function _instrument_component (obj, shadow_view, node) {
     }(_prop_name));
 
     // save this string for clone process
-    desc.set.__vs_attr_eval_str = attr_eval_str;
+//    desc.set.__vs_attr_eval_str = attr_eval_str;
 
     view.defineProperty (prop_name, desc);
   };
@@ -290,14 +290,14 @@ function _instrument_component (obj, shadow_view, node) {
     while (l--) {
       var prop_name = ctx.__all_properties [l],
         nodes = ctx.__prop_nodes [l],
-        str = ctx.__attr_eval_strs [l], paths, nodes_cloned;
+        paths, nodes_cloned;
       
       if (nodes) {
         paths = _getPaths (ctx.__node, nodes);
         nodes_cloned = _evalPaths (view_node, paths);
 
         node_ref.push ([prop_name, nodes]);
-        _create_node_property (obj, prop_name, nodes_cloned, str);
+        _create_node_property (obj, prop_name, nodes_cloned);
       }
     }
 
@@ -340,13 +340,12 @@ function _instanciate_shadow_view (shadow_view, data) {
 function _pre_compile_shadow_view (self, className) {
   var shadow_view = {};
   shadow_view.__prop_nodes = [];
-  shadow_view.__attr_eval_strs = [];
   shadow_view.__list_iterate_prop = {};
   shadow_view.__all_properties = [];
 
   shadow_view.__class = _resolveClass (className);
   if (!util.isFunction (shadow_view.__class)) {
-    shadow_view.__class = vs.ui.View;
+    shadow_view.__class = ui.View;
   }
 
   /**
@@ -402,10 +401,8 @@ function _pre_compile_shadow_view (self, className) {
             "\"+this._" + util.underscore (ctx.__all_properties [index]) + "+\""
           );
         }
-
-        for (i = 0; i < indexs.length; i++) {
-          ctx.__attr_eval_strs [indexs [i]] = "\"" + str + "\"";
-        }
+        
+        node_temp.__attr_eval_str = "\"" + str + "\"";
       }
     }
   }
@@ -429,12 +426,11 @@ function _pre_compile_shadow_view (self, className) {
       ctx.__list_iterate_prop [interate_attr] = shadow_view;
       
       shadow_view.__prop_nodes = [];
-      shadow_view.__attr_eval_strs = [];
       shadow_view.__list_iterate_prop = {};
       shadow_view.__parent_node = parentElement;
       shadow_view.__node = node;
       shadow_view.__all_properties = ctx.__all_properties;
-      shadow_view.__class = vs.ui.View;
+      shadow_view.__class = ui.View;
       
       ctx = shadow_view;
     }
@@ -503,9 +499,10 @@ function _pre_compile_shadow_view (self, className) {
  * @private
  */
 var _getPaths = function (root, nodes) {
-  var paths = [], i = 0, l = nodes.length;
+  var paths = [], i = 0, l = nodes.length, node;
   for (; i < l; i++) {
-    paths.push (_getPath (root, nodes[i]));
+    node = nodes[i];
+    paths.push ([_getPath (root, node), node.__attr_eval_str]);
   }
   return paths;
 }
@@ -554,9 +551,12 @@ var _getPath = function (root, node, path) {
  * @private
  */
 var _evalPaths = function (root, paths) {
-  var nodes = [], i = 0, l = paths.length;
+  var nodes = [], i = 0, l = paths.length, path, node;
   for (; i < l; i++) {
-    nodes.push (_evalPath (root, paths[i]));
+    path = paths[i];
+    node = _evalPath (root, path[0]);
+    node.__attr_eval_str = path[1];
+    nodes.push (node);
   }
   return nodes;
 }
