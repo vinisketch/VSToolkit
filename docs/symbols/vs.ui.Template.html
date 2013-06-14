@@ -621,7 +621,7 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.Template.html#compileView">compileView</a></b>(viewName)
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.Template.html#compileView">compileView</a></b>(className, data)
 								</div>
 								<div class="description"></div>
 							</td>
@@ -663,7 +663,8 @@ hr:last-child {
 <br/>
 Typical template description:
 <pre class='code'>
- var str = '&lt;span style="${style}"&gt;name:${lastname},${firstname}&lt;/span&gt;';
+ var str = '&lt;span style="${style}"&gt;name:${lastname}, \
+    ${firstname}&lt;/span&gt;';
 </pre>
 
 Expanding the template:
@@ -671,13 +672,13 @@ Expanding the template:
  var myTemplate = new Template (str);
 <br/>
  var values = {
-   lastname : "Doo",
+   lastname : "Doe",
    firstname : "John",
    style : "color:blue"
  };
 <br/>
  console.log (myTemplate.apply (values));
- // -> &lt;span style="color:blue"&gt;name:Doo,John&lt;/span&gt;
+ // -> &lt;span style="color:blue"&gt;name:Doe,John&lt;/span&gt;
 </pre>
 
 Generating a vs.ui.View from the template:
@@ -689,7 +690,7 @@ Generating a vs.ui.View from the template:
  myApp.add (myView); //|| document.body.appendChild (myView.view);
 <br/>
  // property changes, automatically update the DOM
- myView.lastname = "Doo";
+ myView.lastname = "Doe";
  myView.firstname = "John";
  myView.style = "color:blue";
 <br/>
@@ -780,7 +781,7 @@ Generating a vs.ui.View from the template:
 					<div class="fixedFont">
 					
 					<span class="light">{<a href="../symbols/vs.ui.View.html">vs.ui.View</a>}</span>
-					<b>compileView</b>(viewName)
+					<b>compileView</b>(className, data)
 					
 					</div>
 					<div class="description">
@@ -795,10 +796,17 @@ Generating a vs.ui.View from the template:
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
-									<span class="light fixedFont">{String}</span> <b>viewName</b>
+									<span class="light fixedFont">{String}</span> <b>className</b>
 									
 								</dt>
 								<dd>The view class Name. By default vs.ui.View.
+                [optional]</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object|Model}</span> <b>data</b>
+									
+								</dt>
+								<dd>The view data configuration | model
                 [optional]</dd>
 							
 							</dl>
