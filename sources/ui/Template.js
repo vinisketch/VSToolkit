@@ -145,11 +145,12 @@ Template.prototype = {
     if (!values) return this._str;
 
     function replace_fnc (str, key, p1, p2, offset, html) {
-      var value = values [key], key;
+      var value = values [key], key, keys, i, l;
 
-      if (p2) {
-        keys = p2.split ('.'), i = 0;
-        while (value && i < keys.length) value = value [keys [i++]];
+      if (offset) {
+        keys = p1.split ('.'); i = 1; l = keys.length;
+        value = values [keys[0]];
+        while (value && i < l) value = value [keys [i++]];
       }
 
       return value;
