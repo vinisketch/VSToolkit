@@ -3,7 +3,7 @@ var contact_tmp_str =
   <img src='' />\
   <div class='name'>${firstname} ${lastname}</div>\
   <div class='comp'>${companie}</div>\
-  <div class='tel' x-hag-hole='tels'><div data-iterate='tels'>${tel}</div></div>\
+  <div class='tel' x-hag-hole='tels'><div data-iterate='tels'>${@}</div></div>\
   <div class='address' x-hag-hole='addresses'><div data-iterate='addresses'>${address}</div></div>\
 </div>"
 
@@ -32,7 +32,7 @@ function launchTest (test_view)
   c.firstname = 'John';
   c.lastname = 'Doe';
   c.companie = 'IBM';
-  c.tels = [{tel:'34 8984 4389'}];
+  c.tels = ['34 8984 4389'];
   c.addresses = [{address:'123 bd Saint Michel, 67000 Toulouse'}];
   
   view.link (c);
@@ -47,7 +47,7 @@ function launchTest (test_view)
   cloned_view.link (cc);
 
   c.firstname = 'Jo';
-  c.tels.push ({tel:'34 8984 4380'});
+  c.tels.push ('34 8984 4380');
   c.addresses.push ({address:'145 bd Saint George, 67000 Toulouse'});
   c.propertyChange ('addresses');
   c.propertyChange ('tels');

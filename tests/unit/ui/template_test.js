@@ -189,6 +189,36 @@ function testIterate ()
   assertEquals ('testIterate 18',  '134 8984 4392', telsNode2[2].textContent);
 }
 
+var contact_tmp_str_bis = 
+"<div class=''>\
+  <div data-iterate='tels' class='tels'><div>${@}</div>\
+</div>"
+
+function testIterateAndUnamedProperty ()
+{
+  var tmp = new vs.ui.Template (contact_tmp_str_bis);
+  var obj = tmp.compileView ();
+
+  assertNotNull ('testIterateAndUnamedProperty 1', tmp);
+  assertNotNull ('testIterateAndUnamedProperty 2', obj);
+
+  var data = {};
+  data.tels = ['34 8984 4389', '34 8984 4390'];
+
+  obj.configure (data);
+  var view = obj.view;
+
+  assertNotNull ('testIterateAndUnamedProperty 3', view);
+
+  var
+    telsNode = view.querySelectorAll ('.tels');
+
+  assertNotNull ('testIterateAndUnamedProperty 4', telsNode);
+  assertEquals ('testIterateAndUnamedProperty 5', 2, telsNode.length);
+
+  assertEquals ('testIterateAndUnamedProperty 6',  '34 8984 4389', telsNode[0].textContent);
+  assertEquals ('testIterateAndUnamedProperty 7',  '34 8984 4390', telsNode[1].textContent);
+}
 
 function testTemplateClone ()
 {
