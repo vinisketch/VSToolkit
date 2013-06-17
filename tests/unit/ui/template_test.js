@@ -125,6 +125,71 @@ function testAttributes()
   assertEquals ('testAttributes 2', 'absolute', myView.view.style.position);
 }
 
+var contact_tmp_str = 
+"<div class=''>\
+  <img src='' />\
+  <div class='name'>${firstname} ${lastname}</div>\
+  <div class='comp'>${companie}</div>\
+  <div class='address'><div data-iterate='addresses'>${address}\
+    <div class='tel'><div data-iterate='tels'>${tel}</div></div>\
+  </div></div>\
+</div>"
+
+function testIterate ()
+{
+  var tmp = new vs.ui.Template (contact_tmp_str);
+  var obj = tmp.compileView ();
+
+  assertNotNull ('testIterate 1', tmp);
+  assertNotNull ('testIterate 2', obj);
+
+  var data = {};
+  data.firstname = 'John';
+  data.lastname = 'Doe';
+  data.companie = 'IBM';
+  data.addresses = [
+    {address:'123 bd Saint Michel, 67000 Toulouse',
+      tels : [{tel:'34 8984 4389'}, {tel:'34 8984 4390'}]},
+    {address:'129 Av Simon bolivar Paris, 75019',
+      tels : [{tel:'134 8984 4389'}, {tel:'134 8984 4391'}, {tel:'134 8984 4392'}]}
+      ];
+
+  obj.configure (data);
+  var view = obj.view;
+
+  assertNotNull ('testIterate 3', view);
+
+  var
+    nameNode = view.querySelector ('.name'),
+    compNode = view.querySelector ('.comp'),
+    adressesNodes = view.querySelectorAll ('.address > div');
+
+  assertNotNull ('testIterate 4', nameNode);
+  assertEquals ('testIterate 5', 'John Doe', nameNode.textContent);
+
+  assertNotNull ('testIterate 6', compNode);
+  assertEquals ('testIterate 7', 'IBM', compNode.textContent);
+
+  assertNotNull ('testIterate 8', adressesNodes);
+  assertEquals ('testIterate 9', 2, adressesNodes.length);
+
+  var
+    telsNode1 = adressesNodes[0].querySelectorAll ('.tel > div'),
+    telsNode2 = adressesNodes[1].querySelectorAll ('.tel > div');
+  
+  assertNotNull ('testIterate 10', telsNode1);
+  assertEquals ('testIterate 11', 2, telsNode1.length);
+  assertEquals ('testIterate 12',  '34 8984 4389', telsNode1[0].textContent);
+  assertEquals ('testIterate 13',  '34 8984 4390', telsNode1[1].textContent);
+  
+  assertNotNull ('testIterate 14', telsNode2);
+  assertEquals ('testIterate 15', 3, telsNode2.length);
+  assertEquals ('testIterate 16',  '134 8984 4389', telsNode2[0].textContent);
+  assertEquals ('testIterate 17',  '134 8984 4391', telsNode2[1].textContent);
+  assertEquals ('testIterate 18',  '134 8984 4392', telsNode2[2].textContent);
+}
+
+
 function testTemplateClone ()
 {
   var t = '<div style="color:${color}">name:${lastname}<span style="color:${color}">,${firstname}</span></div>';

@@ -43,6 +43,7 @@
   margin-top: 70px;
   margin-left: 110px;
   margin-bottom: 10px;
+  min-height: 15px;
 }
 
 .contact > div::before {
@@ -58,6 +59,7 @@
 .contact .address {
   margin-left: 110px;
   margin-bottom: 10px;
+  min-height: 15px;
 }
 
 .contact .address::before { content: 'address ';}
