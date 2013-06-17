@@ -82,7 +82,7 @@ Template.prototype = {
    * @Array
    */
   _str : null,
-  _regexp_templ : /\$\{([\w\-]+)(\.([\w\.]*)+)?\}/g,
+  _regexp_templ : /\$\{((([\w\-]+)(\.([\w\.]*)+)?)|@)\}/g,
   _regexp_index : /\$\{\*([\d]+)\*\}/g,
   _shadow_view : null,
 
@@ -159,7 +159,6 @@ Template.prototype = {
   }
 };
 
-
 function _resolveClass (name) {
   if (!name) { return null; }
 
@@ -202,6 +201,7 @@ var _template_view__clone = function (obj, config, cloned_map) {
 };
 
 function _instrument_component (obj, shadow_view, node) {
+
   /**
    * @private
    */
@@ -229,7 +229,8 @@ function _instrument_component (obj, shadow_view, node) {
             }
           }
         }
-        this.propertyChange (prop_name);
+        if (prop_name == '_$_') this.propertyChange ();
+        else this.propertyChange (prop_name);
       };
     }(nodes, prop_name, _prop_name));
 
@@ -297,7 +298,8 @@ function _instrument_component (obj, shadow_view, node) {
         nodes_cloned = _evalPaths (view_node, paths);
 
         node_ref.push ([prop_name, nodes]);
-        _create_node_property (obj, prop_name, nodes_cloned);
+        if (prop_name === '@') _create_node_property (obj, '_$_', nodes_cloned);
+        else _create_node_property (obj, prop_name, nodes_cloned);
       }
     }
 
@@ -330,6 +332,7 @@ function _instanciate_shadow_view (shadow_view, data) {
   if (data) {
     obj.configure (data);
   }
+  if (obj.isProperty ('_$_')) { obj._$_ = data; }
   
   return obj;
 };
