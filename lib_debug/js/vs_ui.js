@@ -136,7 +136,7 @@ Template.prototype = {
    * @Array
    */
   _str : null,
-  _regexp_templ : /\$\{([\w\-]+)(\.([\w\.]*)+)?\}/g,
+  _regexp_templ : /\$\{((([\w\-]+)(\.([\w\.]*)+)?)|@)\}/g,
   _regexp_index : /\$\{\*([\d]+)\*\}/g,
   _shadow_view : null,
 
@@ -199,11 +199,12 @@ Template.prototype = {
     if (!values) return this._str;
 
     function replace_fnc (str, key, p1, p2, offset, html) {
-      var value = values [key], key;
+      var value = values [key], key, keys, i, l;
 
-      if (p2) {
-        keys = p2.split ('.'), i = 0;
-        while (value && i < keys.length) value = value [keys [i++]];
+      if (offset) {
+        keys = p1.split ('.'); i = 1; l = keys.length;
+        value = values [keys[0]];
+        while (value && i < l) value = value [keys [i++]];
       }
 
       return value;
@@ -212,7 +213,6 @@ Template.prototype = {
     return this._str.replace (this._regexp_templ, replace_fnc);
   }
 };
-
 
 function _resolveClass (name) {
   if (!name) { return null; }
@@ -256,6 +256,7 @@ var _template_view__clone = function (obj, config, cloned_map) {
 };
 
 function _instrument_component (obj, shadow_view, node) {
+
   /**
    * @private
    */
@@ -283,7 +284,8 @@ function _instrument_component (obj, shadow_view, node) {
             }
           }
         }
-        this.propertyChange (prop_name);
+        if (prop_name == '_$_') this.propertyChange ();
+        else this.propertyChange (prop_name);
       };
     }(nodes, prop_name, _prop_name));
 
@@ -351,7 +353,8 @@ function _instrument_component (obj, shadow_view, node) {
         nodes_cloned = _evalPaths (view_node, paths);
 
         node_ref.push ([prop_name, nodes]);
-        _create_node_property (obj, prop_name, nodes_cloned);
+        if (prop_name === '@') _create_node_property (obj, '_$_', nodes_cloned);
+        else _create_node_property (obj, prop_name, nodes_cloned);
       }
     }
 
@@ -384,6 +387,7 @@ function _instanciate_shadow_view (shadow_view, data) {
   if (data) {
     obj.configure (data);
   }
+  if (obj.isProperty ('_$_')) { obj._$_ = data; }
   
   return obj;
 };
