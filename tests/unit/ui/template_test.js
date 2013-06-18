@@ -280,3 +280,42 @@ function testTemplateClone ()
   assertEquals ('testTemplateClone 17', "red", span2.style.color);
   assertEquals ('testTemplateClone 18', "yellow", span3.style.color);
 }
+
+function testTemplateWithClass () {
+
+  var template_view =
+"<div class='project'>\
+  <div class='name'>${name}</div>\
+  <div class='description'>${description}</div>\
+  <div class='tels'><div data-iterate='tels'>${@}</div></div>\
+</div>";
+
+  var MyView = vs.core.createClass ({
+    parent: vs.ui.View,
+    template: template_view
+  });
+
+  var comp = new MyView ().init ();
+
+  assertNotNull ('testTemplateWithClass 1', comp);
+  
+  comp.name = "huhu";
+  comp.description = "hehe";
+  comp.tels = [1, 2, 3];
+
+  var
+    nameNode = comp.view.querySelector ('.name'),
+    descNode = comp.view.querySelector ('.description'),
+    telsNodes = comp.view.querySelectorAll ('.tels > div');
+
+  assertEquals ('testTemplateWithClass 2', "huhu", comp._name);
+  assertEquals ('testTemplateWithClass 3', "huhu", nameNode.textContent);
+
+  assertEquals ('testTemplateWithClass 4', "hehe", comp._description);
+  assertEquals ('testTemplateWithClass 5', "hehe", descNode.textContent);
+
+  assertEquals ('testTemplateWithClass 6', 3, telsNodes.length);
+  assertEquals ('testTemplateWithClass 7',  '1', telsNodes[0].textContent);
+  assertEquals ('testTemplateWithClass 8',  '2', telsNodes[1].textContent);
+  assertEquals ('testTemplateWithClass 9',  '3', telsNodes[2].textContent);
+}
