@@ -396,7 +396,7 @@ function loadApplication () {
 Typical template description:
           <br />
           <br />
-<pre><code class="javascript">var str = '&lt;span style="${style}"&gt;name:${lastname},${firstname}&lt;/span&gt;';
+<pre><code class="javascript">var str = '&lt;span style="color:${color}"&gt;name:${lastname},${firstname}&lt;/span&gt;';
 </code></pre>
           <br />
         1- Expanding the template:
@@ -405,13 +405,13 @@ Typical template description:
 <pre><code class="javascript">var myTemplate = new Template (str);
 
 var values = {
-  lastname : "Doo",
+  lastname : "Doe",
   firstname : "John",
-  style : "color:blue"
+  color : "blue"
 };
 
 console.log (myTemplate.apply (values));
-// -> &lt;span style="color:blue"&gt;name:Doo,John&lt;/span&gt;
+// -> &lt;span style="color:blue"&gt;name:Doe,John&lt;/span&gt;
 </code></pre>
           <br />
         2- Generating a vs.ui.View from the template:
@@ -424,10 +424,66 @@ var myView = myTemplate.compileView ();
 myApp.add (myView);
 
 // property changes, automatically update the DOM
-myView.lastname = "Doo";
+myView.lastname = "Doe";
 myView.firstname = "John";
-myView.style = "color:blue";
+myView.color = "blue";
 </code></pre>
+          <br />
+        3- Create two views form the same template:
+          <br />
+          <br />
+First solution:          
+          <br />
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var myView1 = myTemplate.compileView ();
+myApp.add (myView1);
+
+var myView2 = myTemplate.compileView ();
+myApp.add (myView2);
+</code></pre>
+          <br />
+Second solution:          
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var myView1 = myTemplate.compileView ();
+myApp.add (myView1);
+
+var myView2 = myView1.clone ();
+myApp.add (myView2);
+</code></pre>
+          <br />
+        4- Iterate on data:
+          <br />
+          <br />
+Iteration on array of objects:          
+          <br />
+<pre><code class="javascript">var str =
+'&lt;div class="tels"&gt; \
+  &lt;div data-iterate="tels"&gt;${tel}&lt;/div&gt; \
+&lt;/div&gt;';
+</code></pre>
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var myView = myTemplate.compileView ();
+
+myView.tels = [{tel: '080 6555 8899'}, {tel: '080 5785 55445'}]
+</code></pre>
+          <br />
+Iteration on array of scalare:          
+          <br />
+<pre><code class="javascript">var str =
+'&lt;div class="tels"&gt; \
+  &lt;div data-iterate="tels"&gt;${@}&lt;/div&gt; \
+&lt;/div&gt;';
+</code></pre>
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var myView = myTemplate.compileView ();
+
+myView.tels = ['080 6555 8899', '080 5785 55445']
+</code></pre>
+          <br />
         </p>
         
         <h2>
