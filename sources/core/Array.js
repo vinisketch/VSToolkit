@@ -329,7 +329,7 @@ util.defineClassProperties (VSArray, {
      */
     set : function (v)
     {
-      if (!(v instanceof Function)) return;
+      if (!(util.isFunction (v))) return;
 
       this._model_class = v;
     }
