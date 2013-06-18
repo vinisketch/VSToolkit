@@ -156,6 +156,7 @@ ComboBox.prototype = {
     
     // PG Native GUI
     if (window.device && (
+          window.device.platform.indexOf ("iOS") !== -1 || 
           window.device.platform.indexOf ("iPhone") !== -1 || 
           window.device.platform.indexOf ("iPad") !== -1 || 
           window.device.platform.indexOf ("Android") !== -1)
