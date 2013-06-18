@@ -238,7 +238,7 @@ OpacityController.prototype = {
     if (output && this._output_action [output])
     {
       var clb = this._output_action [output];
-      if (clb instanceof Function)
+      if (util.isFunction (clb))
       {
         clb.call (this.owner, event);
       }
