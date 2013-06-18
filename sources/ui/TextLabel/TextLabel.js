@@ -17,8 +17,12 @@
 */
 
 /**
- * A TextLabel.
- * @constructor
+ * A ui.vs.TextLabel.
+ *
+ * @class
+ * A ui.vs.TextLabel component displays a unselectable text.
+ *
+ @constructor
  * @extends vs.ui.View
  * @name vs.ui.TextLabel
  */

@@ -17,10 +17,15 @@
 */
 
 /**
- * A vs.ui.TextArea.
+ * The vs.ui.TextArea component defines a multi-line text input control.
+ * A text area can hold an unlimited number of characters, and the text
+ * renders in a fixed-width font.
+ * 
  * @constructor
  * @name vs.ui.TextArea
  * @extends vs.ui.View
+ * @class
+ *  The vs.ui.TextArea component defines a multi-line text input control. A text area can hold an unlimited number of characters, and the text renders in a fixed-width font.
  *  <p>
  *  Events:
  *  <ul>
