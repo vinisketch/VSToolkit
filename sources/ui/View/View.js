@@ -527,8 +527,8 @@ View.prototype = {
     if (_template)
     {
       var template = new Template (_template);
-      var node = template._compile ();
-      template._addPropertiesToObject (this);
+      var node = template.__extend_component (this);
+      util.free (template);
       return node;
     }
 
