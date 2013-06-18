@@ -348,6 +348,7 @@ GMap.prototype = {
     if (!this._gmap) return;
     
     google.maps.event.trigger (this._gmap, "resize");
+    vs.ui.View.prototype.refresh.call (this);
   },
 
 /********************************************************************

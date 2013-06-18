@@ -182,6 +182,7 @@ ProgressBar.prototype = {
   refresh : function ()
   {
     this.index = this._index;
+    View.prototype.refresh.call (this);
   }
 };
 util.extendClass (ProgressBar, View);
