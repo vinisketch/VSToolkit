@@ -142,6 +142,7 @@ AbstractList.prototype = {
   refresh : function ()
   {
     if (this.__iscroll__) this.__iscroll__.refresh ();
+    View.prototype.refresh.call (this);
   },
 
   /**
