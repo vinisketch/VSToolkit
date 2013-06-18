@@ -414,7 +414,6 @@ Application.stop = function ()
   }
 };
 
-
 /**
  * @private
  * @depretacted
