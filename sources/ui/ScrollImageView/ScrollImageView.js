@@ -22,6 +22,9 @@
  *  @extends vs.ui.ScrollView
  *  @class
  *  An vs.ui.ScrollImageView embeds an image in your application.
+ *  It provides an efficient way to display images in a view while at the 
+ *  same time supporting a number of image transformation to fit the image
+ *  within the view space.
  *  <p>
  *  Events:
  *  <ul>
@@ -167,6 +170,7 @@ ScrollImageView.prototype = {
   refresh : function ()
   {
     if (this.__scroll_activated) { this._scroll_refresh (this._pinch); }
+    View.prototype.refresh.call (this);
   },
 
   /**
