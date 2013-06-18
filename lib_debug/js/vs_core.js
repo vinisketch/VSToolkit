@@ -3522,7 +3522,7 @@ Fsm.prototype =
     if (output && this._output_action [output])
     {
       var clb = this._output_action [output];
-      if (clb instanceof Function)
+      if (util.isFunction (clb))
       {
         clb.call (this.owner, event);
       }
@@ -6390,7 +6390,7 @@ util.defineClassProperties (VSArray, {
      */
     set : function (v)
     {
-      if (!(v instanceof Function)) return;
+      if (!(util.isFunction (v))) return;
 
       this._model_class = v;
     }

@@ -3971,7 +3971,6 @@ Application.stop = function ()
   }
 };
 
-
 /**
  * @private
  * @depretacted
@@ -7629,6 +7628,9 @@ ui.ScrollView = ScrollView;
  *  @extends vs.ui.ScrollView
  *  @class
  *  An vs.ui.ScrollImageView embeds an image in your application.
+ *  It provides an efficient way to display images in a view while at the 
+ *  same time supporting a number of image transformation to fit the image
+ *  within the view space.
  *  <p>
  *  Events:
  *  <ul>
@@ -7774,6 +7776,7 @@ ScrollImageView.prototype = {
   refresh : function ()
   {
     if (this.__scroll_activated) { this._scroll_refresh (this._pinch); }
+    View.prototype.refresh.call (this);
   },
 
   /**
@@ -8024,10 +8027,15 @@ ui.ScrollImageView = ScrollImageView;
 */
 
 /**
- * A vs.ui.TextArea.
+ * The vs.ui.TextArea component defines a multi-line text input control.
+ * A text area can hold an unlimited number of characters, and the text
+ * renders in a fixed-width font.
+ * 
  * @constructor
  * @name vs.ui.TextArea
  * @extends vs.ui.View
+ * @class
+ *  The vs.ui.TextArea component defines a multi-line text input control. A text area can hold an unlimited number of characters, and the text renders in a fixed-width font.
  *  <p>
  *  Events:
  *  <ul>
@@ -8831,6 +8839,7 @@ AbstractList.prototype = {
   refresh : function ()
   {
     if (this.__iscroll__) this.__iscroll__.refresh ();
+    View.prototype.refresh.call (this);
   },
 
   /**
@@ -10511,6 +10520,7 @@ ComboBox.prototype = {
     
     // PG Native GUI
     if (window.device && (
+          window.device.platform.indexOf ("iOS") !== -1 || 
           window.device.platform.indexOf ("iPhone") !== -1 || 
           window.device.platform.indexOf ("iPad") !== -1 || 
           window.device.platform.indexOf ("Android") !== -1)
@@ -12767,8 +12777,12 @@ ui.ToolBar = ToolBar;
 */
 
 /**
- * A TextLabel.
- * @constructor
+ * A ui.vs.TextLabel.
+ *
+ * @class
+ * A ui.vs.TextLabel component displays a unselectable text.
+ *
+ @constructor
  * @extends vs.ui.View
  * @name vs.ui.TextLabel
  */
@@ -13926,6 +13940,7 @@ ProgressBar.prototype = {
   refresh : function ()
   {
     this.index = this._index;
+    View.prototype.refresh.call (this);
   }
 };
 util.extendClass (ProgressBar, View);
