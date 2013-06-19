@@ -1616,7 +1616,7 @@ View.prototype = {
       vs.scheduleAction (function()
       {
         self.refresh ();
-        if (clb && clb instanceof Function) clb.call (self);
+        if (clb && util.isFunction (clb)) clb.call (self);
       });
     });
   },
