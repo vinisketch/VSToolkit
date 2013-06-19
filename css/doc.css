@@ -18,7 +18,7 @@ div.main_article {
   position: absolute;
   top: 60px;
   width: 100%;
-  bottom: 10px;
+  bottom: 0px;
 }
 
 div.main_article > iframe {
