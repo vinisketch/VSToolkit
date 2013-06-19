@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <title>Hello World</title>
+ 
+    <script src="../js/codemirror.js"></script>
+    <script src="../js/javascript.js"></script>
+    <script src="../js/css.js"></script>
+    <script src="../js/playground.js"></script>
+    <link rel="stylesheet" href="../css/codemirror.css">
+    <link rel="stylesheet" href="../css/vsd.css">
+    <link rel="stylesheet" type="text/css" href="../css/ex_index.css">
+
+    <script>
+      window.app_docs = [
+        {url: 'js/HelloWorld.js', type:JS_DOC, data:''},
+        {url: 'css/HelloWorld.css', type:CSS_DOC, data:''},
+      ]
+    </script>
+
+  </head>
+  <body>
+    <iframe id="playground"></iframe>
+
+    <a class="button" href="../../index.html">Back</a>
+    <button class="button" onclick="runApplication ();">Run</button>
+    <select id="files" onchange="changeDocument (event)"></select>
+    <a class="button_doc"  href="../../docs/index.html">Doc</a>
+    <textarea id="code" name="code"></textarea>
+  </body>
+</html>
