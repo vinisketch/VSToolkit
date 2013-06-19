@@ -41,10 +41,10 @@
     </header>
   <script type="text/javascript">
     function go (page){
-      document.querySelector('.main_article').src = "docs/" + page + '.html';
+      document.querySelector('.main_article > iframe').src = "docs/" + page + '.html';
     }
   </script>
-<iframe class="main_article" src="docs/introduction.html"></iframe>
+  <div class="main_article"><iframe src="docs/introduction.html"></iframe></div>
      <script type="text/javascript">
       var _gaq = _gaq || [];
       _gaq.push(['_setAccount', 'UA-15409542-4']);
@@ -56,5 +56,6 @@
         var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
       })();
     </script>
+    
  </body>
 </html>
