@@ -1,0 +1,76 @@
+header > h1 {
+  float: left;
+  font-size: 28px;
+  margin: 5px 0px 0px 15px;
+}
+
+header nav > ul > li > a {
+  width: 70px;
+  height: 35px;
+}
+
+iframe.main_article {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  margin-top: 50px;
+}
+
+@media (max-width: 520px) {
+  iframe.main_article {
+    margin-top: 40px;
+  }
+}
+
+article {
+  padding: 20px 20px 0 20px;  
+}
+
+h1, h2, h3, h4 {
+  font-family: inherit;
+  font-weight: bold;
+  color: inherit;
+  text-rendering: optimizelegibility;
+}
+
+
+h1 {
+  margin: 10px 0;
+  line-height: 20px;
+  font-size:38.5px;
+}
+
+h1 small {
+  font-size:24.5px;
+}
+
+h2 {
+  margin: 15px 0 15px 0;
+  line-height: 20px;
+  font-size:28.5px;
+}
+
+h3 {
+  margin: 10px 0;
+  line-height: 20px;
+  font-size:18.5px;
+}
+
+pre {
+  border: none;
+  margin: 10px 0;
+}
+
+code {
+  border-radius: 7px;
+}
+
+ul {
+  padding-left: 15px;
+  margin-bottom: 10px;
+}
+
+li {
+  display: list-item;
+  list-style-type: disc;
+}
