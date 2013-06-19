@@ -184,6 +184,35 @@ Template.prototype = {
   },
 
   /**
+   *
+   * @name vs.ui.Template#compileView
+   * @function
+   * @private
+   *
+   * @param {vs.ui.View} comp Extends a component with this template
+   *                 [mandatory]
+   * @return {HTMLElement} The component view
+   */
+   __extend_component : function (comp) {
+    if (!this._shadow_view) {
+      this._shadow_view = _pre_compile_shadow_view (this);
+    }
+    
+    var new_node = this._shadow_view.__node.cloneNode (true);
+    comp.view = new_node;
+  
+    _instrument_component (comp, this._shadow_view, new_node);
+  
+    // Clone data
+    comp.__shadow_view = this._shadow_view;
+    // Clone surcharge
+    comp.clone = _template_view_clone.bind (comp);
+    comp._clone = _template_view__clone.bind (comp);
+
+    return new_node;
+  },
+
+  /**
    * Returns an HTML String of this template with the specified values.
    *
    * @example
@@ -1209,8 +1238,8 @@ View.prototype = {
     if (_template)
     {
       var template = new Template (_template);
-      var node = template._compile ();
-      template._addPropertiesToObject (this);
+      var node = template.__extend_component (this);
+      util.free (template);
       return node;
     }
 
@@ -2298,7 +2327,7 @@ View.prototype = {
       vs.scheduleAction (function()
       {
         self.refresh ();
-        if (clb && clb instanceof Function) clb.call (self);
+        if (clb && util.isFunction (clb)) clb.call (self);
       });
     });
   },
