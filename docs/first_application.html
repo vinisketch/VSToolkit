@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>VSToolkit @ Template</title>
+  <script type="text/javascript" src="http://dthevenin.github.com/javascripts/highlight.pack.js"></script> 
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/index.css" media="screen" />
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/vs.css">
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/bender.css">
+  <link rel="stylesheet" href="../css/doc.css">
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/index-responsive.css" media="screen" />
+  <link rel="stylesheet" href="../css/zenburn.css" media="screen" />
+  <meta name="viewport" content="initial-scale=1.0,user-scalable=no">
+</head>
+<body>
+  <article class="toolkit-article">
+    <h1>Create your first application</h1>
+        <hr />
+    <p>
+      JavaScript bootstrap: "myApp.js"
+    </p>
+<pre><code class="javascript">var myApp = vs.core.createClass ({
+
+  /** parent class */
+  parent: vs.ui.Application,
+
+  /** called when vs.ui.Application.start (); is called */
+  applicationStarted : function (event) {
+  …
+  }
+});
+
+new myApp ({id:"_myApp_"}).init ();
+vs.ui.Application.start ();
+
+</code></pre> 
+    <p>
+      HTML 
+    </p>
+<pre><code class="html">&lt;!DOCTYPE html&gt;
+&lt;html id="_myApp_"&gt;
+&lt;head&gt;
+&lt;link rel="stylesheet" type="text/css" href="lib/css/vs_ui.css"&gt;
+&lt;link rel="stylesheet" type="text/css" href="lib/css/vs_ui_ios.css"&gt;
+&lt;link rel="stylesheet" type="text/css" href="css/myApp.css"&gt;
+
+&lt;script type="text/javascript" src="lib/js/vs_util.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="lib/js/vs_core.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="lib/js/vs_data.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="lib/js/vs_ui.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="lib/js/vs_fx.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="lib/js/vs_ext.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="lib/js/vs_ext_fx.js"&gt;&lt;/script&gt;
+&lt;script type="text/javascript" src="js/myApp.js"&gt;&lt;/script&gt;
+
+&lt;/head&gt;
+&lt;body class="application" x-hag-hole="children"
+    onload="loadApplication ()"&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre> 
+    <hr />
+    © 2013 David Thevenin, ViniSketch, IGEL.
+      <br />
+      <br />
+  </article>
+  
+  <script type="text/javascript">
+    hljs.tabReplace = '      ';
+    hljs.initHighlightingOnLoad();
+  </script>
+</body>
+</html>

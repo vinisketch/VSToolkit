@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>VSToolkit @ Template</title>
+  <script type="text/javascript" src="http://dthevenin.github.com/javascripts/highlight.pack.js"></script> 
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/index.css" media="screen" />
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/vs.css">
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/bender.css">
+  <link rel="stylesheet" href="../css/doc.css">
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/index-responsive.css" media="screen" />
+  <link rel="stylesheet" href="../css/zenburn.css" media="screen" />
+  <meta name="viewport" content="initial-scale=1.0,user-scalable=no">
+</head>
+<body>
+  <article class="toolkit-article">
+    <h1>Template</h1>
+    <hr />
+    <p>
+      Template is a simple way for creating view of a component.<br/>
+      A template is a HTML text fragment containing template tags. There is two ways to use template :
+      <ul>
+        <li> By expanding tags using values provides in an Object</li>
+        <li> By generating a vs.ui.View with properties linked to tags</li>
+      </ul>
+      <h3>Before you begin</h3>
+      Some useful resources:
+      <ul>
+        <li><a href="http://app.vinisketch.fr/docs/API_b2/symbols/vs.ui.Template.html">vs.ui.Template API</a>
+        <li><a href="xxx">Example of usage</a>
+      </ul>
+      <h2>Basic usage </h2>
+      <h3>Typical template description</h3>
+<pre><code class="javascript">var str = '&lt;span style="color:${color}"&gt;name:${lastname},${firstname}&lt;/span&gt;';
+</code></pre>
+      <br />
+      <h3>Expanding the template</h3>
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var values = {
+  lastname : "Doe",
+  firstname : "John",
+  color : "blue"
+};
+
+console.log (myTemplate.apply (values));
+
+// -> &lt;span style="color:blue"&gt;name:Doe,John&lt;/span&gt;
+</code></pre>
+      <br />
+    <h3>Generating a vs.ui.View from the template</h3>
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var myView = myTemplate.compileView ();
+
+myApp.add (myView);
+
+// property changes, automatically update the DOM
+myView.lastname = "Doe";
+myView.firstname = "John";
+myView.color = "blue";
+</code></pre>
+
+  The previous example creates a new component 'myView':
+  <ul>
+    <li>with a view build from the template
+    <li>with 3 new properties "lastname", "firstname" and "color"
+    <li>the modification of one of these properties will change the node value.
+  </ul>
+  This API will allow developer to easily implement a Model/View architectures.
+  The next part will explain how to implement a MVP architecture.
+  
+    <h2>Create multiple views from the same template</h2>
+In many case, developer needs to reuse the same template in order to create multiple views.
+Instead of instantiate n templates for n views, that will
+take time and use lot of memory, it better to build the views from the same
+template instance.
+    <h3>First solution: use compileView</h3>
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var myView1 = myTemplate.compileView ();
+myApp.add (myView1);
+
+var myView2 = myTemplate.compileView ();
+myApp.add (myView2);
+</code></pre>
+      <h3>Second solution: use clone</h3>
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var myView1 = myTemplate.compileView ();
+myApp.add (myView1);
+
+var myView2 = myView1.clone ();
+myApp.add (myView2);
+</code></pre>
+      <br />
+    <h2>Iterate on data</h2>
+    <h3>Iteration on array of objects</h3>
+
+<pre><code class="javascript">var str = '\
+&lt;div class="tels"&gt; \
+  &lt;div data-iterate="tels"&gt;${tel}&lt;/div&gt; \
+&lt;/div&gt;';
+</code></pre>
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var myView = myTemplate.compileView ();
+
+myView.tels = [{tel: '080 6555 8899'}, {tel: '080 5785 55445'}]
+</code></pre>
+
+<h3>Iteration on array of scalare</h3>
+
+<pre><code class="javascript">var str =
+'&lt;div class="tels"&gt; \
+&lt;div data-iterate="tels"&gt;${@}&lt;/div&gt; \
+&lt;/div&gt;';
+</code></pre>
+<pre><code class="javascript">var myTemplate = new Template (str);
+
+var myView = myTemplate.compileView ();
+
+myView.tels = ['080 6555 8899', '080 5785 55445']
+</code></pre>
+    </p>
+    
+    <hr />
+    © 2013 David Thevenin, ViniSketch, IGEL.
+      <br />
+      <br />
+  </article>
+  
+  <script type="text/javascript">
+    hljs.tabReplace = '      ';
+    hljs.initHighlightingOnLoad();
+  </script>
+</body>
+</html>

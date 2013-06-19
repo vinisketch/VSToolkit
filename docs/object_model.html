@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset='utf-8'>
+  <title>VSToolkit @ Template</title>
+  <script type="text/javascript" src="http://dthevenin.github.com/javascripts/highlight.pack.js"></script> 
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/index.css" media="screen" />
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/vs.css">
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/bender.css">
+  <link rel="stylesheet" href="../css/doc.css">
+  <link rel="stylesheet" href="http://dthevenin.github.com/stylesheets/index-responsive.css" media="screen" />
+  <link rel="stylesheet" href="../css/zenburn.css" media="screen" />
+  <meta name="viewport" content="initial-scale=1.0,user-scalable=no">
+</head>
+<body>
+  <article class="toolkit-article">
+    <h1>Object Model</h1>
+    <hr />
+        <h2>Create a class </h2>
+<pre><code class="javascript">var myClass = vs.core.createClass ({
+
+  // parent class
+  parent: vs.ui.View,
+
+  // properties declaration
+  properties : {text: vs.core.Object.PROPERTY_IN_OUT},
+
+  // prototype declaration
+  aMethod : function (p1, p2, …) {
+    this._super (p1, p2, …);
+    …
+  }, 
+  …
+});
+</code></pre>
+        
+        <h2>Instantiate an object from a class </h2>
+<pre><code>var config = {
+  id: 'xxx',
+  text: ''
+}
+
+// Object construction
+var obj = new myClass (config);
+
+// Object initialization
+obj.init ();
+
+// property manipulation
+obj.text = 'Hello';
+</code></pre> 
+        <h2>Properties </h2>
+        <h3>Basic declaration </h3>
+<pre>
+  <code>properties : {propName: vs.core.Object.PROPERTY_IN_OUT},</code>
+</pre> 
+        <p>
+          Possible export values are: 
+        </p>
+        <ul>
+          <li>vs.core.Object.PROPERTY_IN_OUT</li>
+          <li>vs.core.Object.PROPERTY_IN</li>
+          <li>vs.core.Object.PROPERTY_OUT</li>
+        </ul>
+        <h3>Descriptor declaration </h3>
+<pre><code class="javascript">properties : {
+  propName: {
+    set : function (v) {
+      …
+      this._prop_name = v;
+    },
+
+    get : function () {
+      …
+      return this._prop_name
+    }
+  }
+},
+</code></pre> 
+        <h3>Path declaration </h3>
+        <p>
+          This third syntax allows to easily export a child component's property. 
+        </p>
+        <p>
+          Within this example, my class exports as own property, the property named 'text' of its child 'textField'. 
+        </p>
+<pre>
+<code class="javascript">properties : {text: "textField#text"}</code>
+</pre> 
+        <p>
+          This declaration is similar to: 
+        </p>
+<pre><code class="javascript">properties : {
+  text: {
+    set : function (v) {
+      this.textField.text = v;
+    },
+
+    get : function () {
+      return this.textField.text;
+    }
+  }
+},
+</code></pre> 
+         <h2>Object life cycle </h2>
+   
+      <h3>Construction</h3>
+      
+        <ul>
+          <li>constructor</li>
+          <li>init</li>
+          <ul>
+            <li>initComponent</li>
+            <ul>
+              (create the view in case of UI object)
+              <li>configure</li>
+              <li>componentDidInitialize</li>
+            </ul>
+          </ul>
+        </ul>
+        
+        <h3>initComponent</h3>
+        
+        <h3>componentDidInitialize</h3>
+        Can be surcharge to know when the component is ready to use.
+        
+        
+        It is useful when you want to add event bindings on it self or on child.
+        
+      <h3>Add a view</h3>
+      
+        
+        <ul>
+          <li>add</li>
+          <ul>
+            <li>viewDidAdd</li>
+          </ul>
+        </ul>
+
+    <hr />
+    © 2013 David Thevenin, ViniSketch, IGEL.
+      <br />
+      <br />
+  </article>
+  
+  <script type="text/javascript">
+    hljs.tabReplace = '      ';
+    hljs.initHighlightingOnLoad();
+  </script>
+</body>
+</html>
