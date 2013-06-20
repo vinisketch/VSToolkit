@@ -5734,8 +5734,17 @@ HTTPRequest.prototype = {
       xhr.onload = function ()
       {
         xhr.onload = xhr.onerror = xhr.onabort = null;
-        delete (xhr);
-        if (xhr.responseText)
+        
+        function endWithError (message) {
+          self.propagate ('loaderror', message);
+          delete (xhr);
+          return false;
+        }
+        
+        // manage possible errors
+        if (xhr.readyState !== 4) return endWithError (xkr.statusText); 
+        
+        else if (xhr.status === 200)
         {
           self._response_text = xhr.responseText;
           self._response_xml = xhr.responseXML;
@@ -5745,11 +5754,16 @@ HTTPRequest.prototype = {
           self.propagate ('textload', self._response_text);
           if (self._response_xml)
             self.propagate ('xmlload', self._response_xml);
+          delete (xhr);
+          return true;
         }
+        
         else
         {
-          self.propagate ('loaderror', 'file not found.');
-          return false;
+          return endWithError ({
+            'status': xhr.statusText,
+            'response':xhr.response
+          });
         }
       }
 
