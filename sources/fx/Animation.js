@@ -102,13 +102,12 @@ var procesAnimation = function (comp, animation, clb, ctx)
     return false;
   }
 
-  var initWithParameters, parseValue, applySimpleAnimation, applyStyleTo,
-    runComplexAnimation, applyComplexAnimation,
+  var
     cssAnimation, anim_id = core.createId (),
     isComplex = isComplexAnimation (),
     forceCallback = false;
 
-  initWithParameters = function ()
+  function initWithParameters ()
   {
     var property;
     if (isComplex)
@@ -178,7 +177,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     }
   };
 
-  parseValue = function (v, data)
+  function parseValue (v, data)
   {
     var matches, i, props = [], prop;
 
@@ -214,7 +213,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     return 0;
   };
 
-  applySimpleAnimation = function ()
+  function applySimpleAnimation ()
   {
     initWithParameters ();
     var callback, i, self = this, dur;
@@ -251,7 +250,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     applyStyleTo ();
   };
 
-  applyStyleTo = function ()
+  function applyStyleTo ()
   {
     var data = (animation.keyFrames['100%'])?
       animation.keyFrames['100%']:animation, transform = '',
@@ -294,7 +293,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     comp.setStyle (TRANSITION_PROPERTY, properties.join (','));
   }
 
-  runComplexAnimation = function ()
+  function runComplexAnimation ()
   {
     initWithParameters ();
 
@@ -363,7 +362,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     comp.setStyle (ANIMATION_NAME, anim_name);
   }
 
-  applyComplexAnimation = function ()
+  function applyComplexAnimation ()
   {
     var data, key, style, i, property, transform, value,
     cssAnimation = document.createElement('style');
