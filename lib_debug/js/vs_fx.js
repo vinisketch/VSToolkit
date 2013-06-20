@@ -325,13 +325,12 @@ var procesAnimation = function (comp, animation, clb, ctx)
     return false;
   }
 
-  var initWithParameters, parseValue, applySimpleAnimation, applyStyleTo,
-    runComplexAnimation, applyComplexAnimation,
+  var
     cssAnimation, anim_id = core.createId (),
     isComplex = isComplexAnimation (),
-    forceCallback = false;
+    forceCallback = false, self = this;
 
-  initWithParameters = function ()
+  function initWithParameters ()
   {
     var property;
     if (isComplex)
@@ -401,7 +400,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     }
   };
 
-  parseValue = function (v, data)
+  function parseValue (v, data)
   {
     var matches, i, props = [], prop;
 
@@ -437,10 +436,10 @@ var procesAnimation = function (comp, animation, clb, ctx)
     return 0;
   };
 
-  applySimpleAnimation = function ()
+  function applySimpleAnimation ()
   {
     initWithParameters ();
-    var callback, i, self = this, dur;
+    var callback, i, dur;
 
     callback = function (event)
     {
@@ -474,7 +473,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     applyStyleTo ();
   };
 
-  applyStyleTo = function ()
+  function applyStyleTo ()
   {
     var data = (animation.keyFrames['100%'])?
       animation.keyFrames['100%']:animation, transform = '',
@@ -517,7 +516,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     comp.setStyle (TRANSITION_PROPERTY, properties.join (','));
   }
 
-  runComplexAnimation = function ()
+  function runComplexAnimation ()
   {
     initWithParameters ();
 
@@ -586,7 +585,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     comp.setStyle (ANIMATION_NAME, anim_name);
   }
 
-  applyComplexAnimation = function ()
+  function applyComplexAnimation ()
   {
     var data, key, style, i, property, transform, value,
     cssAnimation = document.createElement('style');
@@ -683,8 +682,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
     runComplexAnimation ();
   }
 
-  if (isComplex) { applyComplexAnimation (); }
-  else { applySimpleAnimation (); }
+  if (isComplex) { vs.scheduleAction (applyComplexAnimation); }
+  else { vs.scheduleAction (applySimpleAnimation); }
 
   return anim_id;
 };
@@ -1040,11 +1039,12 @@ Animation.prototype = {
    * @name vs.fx.Animation#start
    * @function
    * @param {any} param any parameter (scalar, Array, Object)
+   * @return {String} return the identifier of the animation process. You can
+   *       use it to stop the animation for instance.
    */
   start: function (param)
   {
-    var self = this;
-    vs.scheduleAction (function () {self.process (param);});
+    return this.process (param);
   }
 };
 util.extendClass (Animation, core.Task);
