@@ -105,7 +105,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
   var
     cssAnimation, anim_id = core.createId (),
     isComplex = isComplexAnimation (),
-    forceCallback = false;
+    forceCallback = false, self = this;
 
   function initWithParameters ()
   {
@@ -216,7 +216,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
   function applySimpleAnimation ()
   {
     initWithParameters ();
-    var callback, i, self = this, dur;
+    var callback, i, dur;
 
     callback = function (event)
     {
@@ -459,8 +459,8 @@ var procesAnimation = function (comp, animation, clb, ctx)
     runComplexAnimation ();
   }
 
-  if (isComplex) { applyComplexAnimation (); }
-  else { applySimpleAnimation (); }
+  if (isComplex) { vs.scheduleAction (applyComplexAnimation); }
+  else { vs.scheduleAction (applySimpleAnimation); }
 
   return anim_id;
 };
@@ -816,11 +816,12 @@ Animation.prototype = {
    * @name vs.fx.Animation#start
    * @function
    * @param {any} param any parameter (scalar, Array, Object)
+   * @return {String} return the identifier of the animation process. You can
+   *       use it to stop the animation for instance.
    */
   start: function (param)
   {
-    var self = this;
-    vs.scheduleAction (function () {self.process (param);});
+    return this.process (param);
   }
 };
 util.extendClass (Animation, core.Task);
