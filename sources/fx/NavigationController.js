@@ -172,7 +172,7 @@ NavigationController.SLIDE_ANIMATION = 2;
  *
  * @name vs.fx.NavigationController.DEFAULT_ANIMATION
  */
-NavigationController.DEFAULT_ANIMATION = 
+NavigationController.DEFAULT_ANIMATION =
   NavigationController.SLIDE_ANIMATION;
 
 /**
@@ -423,12 +423,8 @@ NavigationController.prototype = {
     var animation = this.__translate_out_right,
       duration = animation.duration;
     
-    // apply the transformation without animation (duration = 0s)
-    animation.duration = '0s';
-    
-    animation.process (comp, function () {
-      animation.duration = duration;
-    });
+    // apply the transformation without animation
+    animation.process (comp, null, null, true);
   },
 
   /**
@@ -533,12 +529,8 @@ util.defineClassProperties (NavigationController, {
           
       if (state && state.comp)
       {
-        // apply the transformation without animation (duration = 0s)
-        animation.duration = '0s';
-    
-        animation.process (state.comp, function () {
-          animation.duration = duration;
-        });
+        // apply the transformation without animation
+        animation.process (state.comp, null, null, true);
       }
     },
     

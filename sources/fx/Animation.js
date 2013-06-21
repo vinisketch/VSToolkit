@@ -88,7 +88,7 @@ function cancelAnimation (anim_id)
  * @return {String} return the identifier of the animation process. You can
  *       use it to stop the animation for instance.
  */
-var procesAnimation = function (comp, animation, clb, ctx)
+var procesAnimation = function (comp, animation, clb, ctx, now)
 {
   if (!animation || !comp || !comp.view)
   {
@@ -120,7 +120,11 @@ var procesAnimation = function (comp, animation, clb, ctx)
       comp.setStyle (TRANSFORM_ORIGIN, value);
     }
 
-    if (util.isString (animation.durations))
+    if (now)
+    {
+      comp.setStyle (property, 0);
+    }
+    else if (util.isString (animation.durations))
     {
       comp.setStyle (property, animation.durations);
     }
@@ -136,7 +140,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     if (isComplex) { property = ANIMATION_DELAY; }
     else { property = TRANSITION_DELAY; }
 
-    if (util.isNumber (animation.delay))
+    if (!now && util.isNumber (animation.delay))
     {
       comp.setStyle (property, animation.delay + 'ms');
     }
@@ -239,7 +243,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     // if durations is egal to 0, no event is generated a the end.
     // Then use a small time
     dur = parseFloat (comp.view.style.getPropertyValue (TRANSITION_DURATION));
-    if (dur === 0) forceCallback = true;
+    if (now || dur === 0) forceCallback = true;
 
     if (!forceCallback)
       comp.view.addEventListener (TRANSITION_END, callback, false);
@@ -346,7 +350,7 @@ var procesAnimation = function (comp, animation, clb, ctx)
     // if durations is egal to 0, no event is generated a the end.
     // Then use a small time
     dur = parseFloat (comp.view.style.getPropertyValue (ANIMATION_DURATION));
-    if (dur === 0) forceCallback = true;
+    if (now || dur === 0) forceCallback = true;
 
     if (!forceCallback)
       comp.view.addEventListener (ANIMATION_END, callback, false);
@@ -751,12 +755,15 @@ Animation.prototype = {
    * @param {Function} clb an optional callback to call at the end of animation
    * @param {Object} ctx an optional execution context associated to the
    *          callback
+   * @param {boolean} now an optional parameter use to apply a animation without
+   *          delay or duration. It useful for configuring the initial position
+   *          of UI component.
    * @return {String} return the identifier of the animation process. You can
    *       use it to stop the animation for instance.
    */
-  process : function (comp, clb, ctx)
+  process : function (comp, clb, ctx, now)
   {
-    return procesAnimation (comp, this, clb, ctx);
+    return procesAnimation (comp, this, clb, ctx, now);
   },
 
 /********************************************************************
