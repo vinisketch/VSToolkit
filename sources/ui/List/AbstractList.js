@@ -131,7 +131,6 @@ AbstractList.prototype = {
     
     this._list_items = this._sub_view = this._holes.item_children;
 
-    this._renderData (this._items_selectable);
     this.refresh ();
   },
     
@@ -397,7 +396,6 @@ util.defineClassProperties (AbstractList, {
         this._model = v;
         this._model.bindChange (null, this, this._modelChanged);
       }
-      else return;
     },
   
     /**
