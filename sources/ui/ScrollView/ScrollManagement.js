@@ -276,7 +276,7 @@ var iScroll_prototype =
 
     var that = this,
       point = core.EVENT_SUPPORT_TOUCH ? e.changedTouches[0] : e,
-      matrix;
+      transformMatrix, matrix;
 
     that.moved = false;
 
@@ -307,7 +307,9 @@ var iScroll_prototype =
 
       if (SUPPORT_3D_TRANSFORM)
       {
-        matrix = new WebKitCSSMatrix (getElementTransform (that.scroller));
+        transformMatrix = window.getComputedStyle (that.scroller).webkitTransform;
+        matrix = new vs.CSSMatrix(transformMatrix);
+
         if (matrix.m41 !== that._ab_view_t_x || matrix.m42 !== that._ab_view_t_y) {
           that._unbind ('webkitTransitionEnd');
           that._scroll_pos (matrix.m41, matrix.m42);

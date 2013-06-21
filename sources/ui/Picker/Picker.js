@@ -831,9 +831,11 @@ Picker.prototype = {
     // Stop and hold slot position
     if (SUPPORT_3D_TRANSFORM)
     {
-      var theTransform = getElementTransform (slot_elem);
-      theTransform = new vs.CSSMatrix(theTransform).m42;
-      if (theTransform != slot_elem.slotYPosition)
+      var
+        transformMatrix = window.getComputedStyle(slot_elem).webkitTransform,
+        pos_y = new vs.CSSMatrix(transformMatrix).m42;
+
+      if (pos_y != slot_elem.slotYPosition)
       {
         this._setPosition (this._active_slot, theTransform);
       }
