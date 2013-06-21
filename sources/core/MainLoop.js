@@ -59,7 +59,8 @@ Handler.prototype.destructor = function ()
 /**
  * @private
  */
-var _events_queue  = [], _actions_queue  = [],
+var _async_events_queue = [], _sync_event = null,
+  _actions_queue  = [],
   _is_events_propagating = false,
   _is_actions_runing = false;
 
@@ -76,12 +77,63 @@ function queueProcAsyncEvent (event, handler_list)
   }
 
   // push the event to dispatch into the queue
-  _events_queue.push (burst);
+  _async_events_queue.push (burst);
 
   // request for the mainloop
   serviceLoop ();
 }
 
+function queueProcSyncEvent (event, handler_list)
+{
+  if (!event || !handler_list) return;
+
+  var burst = {
+    handler_list : handler_list,
+    event : event
+  }
+
+  // push the event to dispatch into the queue
+  _sync_event = burst;
+
+  // request for the mainloop
+  serviceLoop ();
+}
+
+/**
+ * @private
+ * doOneHandler will dispache One event to an observer.
+ *
+ * @param {Handler} handler
+ */
+function doOneHandler (handler, end_propagation)
+{
+  if (handler) try
+  {
+    if (util.isFunction (handler.func_ptr))
+    {
+      // call function
+      handler.func_ptr.call (handler.obj, event);
+    }
+    else if (util.isString (handler.func_name) &&
+             util.isFunction (handler.obj[handler.func_name]))
+    {
+      // specific notify method
+      handler.obj[handler.func_name] (event);
+    }
+    else if (util.isFunction (handler.obj.notify))
+    {
+      // default notify method
+      handler.obj.notify (event);
+    }
+  }
+  catch (e)
+  {
+    if (e.stack) console.error (e.stack);
+    else console.error (e);
+  }
+  if (end_propagation) end_propagation ();
+};
+  
 /**
  * @private
  * doOneAsyncEvent will dispache One event to all observers.
@@ -90,7 +142,7 @@ function doOneAsyncEvent ()
 {
   if (_is_events_propagating) return;
 
-  var burst = _events_queue.shift (),
+  var burst = _async_events_queue.shift (),
     handler_list = burst.handler_list,
     n = handler_list.length,
     i = n,
@@ -104,48 +156,26 @@ function doOneAsyncEvent ()
     if (n <= 0) _is_events_propagating = false;
   }
 
-  /**
-   * @private
-   * doOneHandler will dispache One event to an observer.
-   *
-   * @param {Handler} handler
-   */
-  function doOneHandler (handler)
-  {
-    if (handler) try
-    {
-      if (util.isFunction (handler.func_ptr))
-      {
-        // call function
-        handler.func_ptr.call (handler.obj, event);
-      }
-      else if (util.isString (handler.func_name) &&
-               util.isFunction (handler.obj[handler.func_name]))
-      {
-        // specific notify method
-        handler.obj[handler.func_name] (event);
-      }
-      else if (util.isFunction (handler.obj.notify))
-      {
-        // default notify method
-        handler.obj.notify (event);
-      }
-    }
-    catch (e)
-    {
-      if (e.stack) console.error (e.stack);
-      else console.error (e);
-    }
-    end_propagation ();
-  };
-
   if (!i) end_propagation (); // should not occures
   else while (i > 0)
   {
     (function (handler) {
-      vs.scheduleAction (function () { doOneHandler(handler) });
+      vs.scheduleAction (function () { doOneHandler(handler, end_propagation) });
     }) (handler_list [--i])
   }
+}
+
+function doOneSyncEvent ()
+{
+  var
+    handler_list = _sync_event.handler_list,
+    n = handler_list.length,
+    i = n,
+    event = _sync_event.event;
+
+  _sync_event = null;
+
+  while (i > 0) doOneHandler  (handler_list [--i]);
 }
 
 /**
@@ -195,7 +225,9 @@ var _is_waiting = false;
  */
 function serviceLoop ()
 {
-  if ((_events_queue.length === 0 && _actions_queue.length === 0) ||
+  if (_sync_event) doOneSyncEvent ();
+
+  if ((_async_events_queue.length === 0 && _actions_queue.length === 0) ||
       _is_waiting) return;
 
   function loop ()
@@ -213,7 +245,7 @@ function serviceLoop ()
   }
 
   // dispache an event to observers
-  if (_events_queue.length) doOneAsyncEvent ();
+  if (_async_events_queue.length) doOneAsyncEvent ();
   if (!_is_actions_runing && _actions_queue.length) doActions ();
 }
 
