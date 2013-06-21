@@ -720,6 +720,18 @@ util.defineClassProperty (VSObject, "id", {
   get : function () { return this._id; }
 });
 
+/**
+ * @private
+ */
+function _cloneValue (value)
+{
+  if (value && util.isFunction (value.clone)) return value.clone ();
+  else return util.clone (value);
+}
+
+/**
+ * @private
+ */
 function _propertyCloneValue_api1 (prop_name, src, trg)
 {
   var getter = src.__lookupGetter__ (prop_name),
@@ -730,11 +742,14 @@ function _propertyCloneValue_api1 (prop_name, src, trg)
   // Property value copy
   if (setter || getter)
   {
-    if (setter_clone) { trg [prop_name] = src [_prop_name]; }
-    else { trg [_prop_name] = src [_prop_name]; }
+    if (setter_clone) { trg [prop_name] = _cloneValue (src [_prop_name]); }
+    else { trg [_prop_name] = _cloneValue (src [_prop_name]); }
   }
 }
 
+/**
+ * @private
+ */
 function _propertyCloneValue_api2 (prop_name, src, trg)
 {
   var desc = src.getPropertyDescriptor (prop_name),
@@ -744,11 +759,14 @@ function _propertyCloneValue_api2 (prop_name, src, trg)
   // Property value copy
   if (desc && desc_clone && (desc.get || desc.set))
   {
-    if (desc_clone.set) { trg [prop_name] = src [_prop_name]; }
-    else { trg [_prop_name] = src [_prop_name]; }
+    if (desc_clone.set) { trg [prop_name] = _cloneValue (src [_prop_name]); }
+    else { trg [_prop_name] = _cloneValue (src [_prop_name]); }
   }
 }
 
+/**
+ * @private
+ */
 var propertyCloneValue =
   (Object.defineProperty)?_propertyCloneValue_api2:_propertyCloneValue_api1;
 
