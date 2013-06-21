@@ -705,37 +705,6 @@ VSObject.prototype =
     var propertyDecl =
       (Object.defineProperty)?_propertyDecl_api2:_propertyDecl_api1;
 
-    function _propertyCopy_api1 (prop_name, src, trg)
-    {
-      var getter = src.__lookupGetter__ (prop_name),
-        setter = src.__lookupSetter__ (prop_name),
-        setter_clone = trg.__lookupSetter__ (prop_name);
-
-      // Property value copy
-      if (setter || getter)
-      {
-        if (setter_clone) { trg [prop_name] = src ['_' + prop_name]; }
-        else { trg ['_' + prop_name] = src ['_' + prop_name]; }
-      }
-    }
-
-    function _propertyCopy_api2 (prop_name, src, trg)
-    {
-      var desc = src.getPropertyDescriptor (prop_name),
-        desc_clone = trg.getPropertyDescriptor (prop_name),
-        _prop_name = '_' + util.underscore (prop_name);
-      
-      // Property value copy
-      if (desc && desc_clone && (desc.get || desc.set))
-      {
-        if (desc_clone.set) { trg [prop_name] = src [_prop_name]; }
-        else { trg [_prop_name] = src [_prop_name]; }
-      }
-    }
-
-    var propertyCopy =
-      (Object.defineProperty)?_propertyCopy_api2:_propertyCopy_api1;
-
     // property and function declaration copy
     for (key in this)
     {
@@ -757,16 +726,10 @@ VSObject.prototype =
     obj.init ();
 
     // call object specific clone implementation
-    this._clone (obj, config, cloned_map);
+    this._clone (obj, cloned_map);
 
     // property values copy
-    for (key in this)
-    {
-      if (key === '_id') continue;  
-
-      // property value copy
-      if (this.isProperty (key)) propertyCopy (key, this, obj);
-    }
+    this._clone_properties_value (obj, cloned_map);
 
     // manage linking clone
     if (this.__model)
@@ -777,6 +740,27 @@ VSObject.prototype =
     }
 
     return obj;
+  },
+  
+   /**
+   * @name vs.core.Object#_clone_properties_value
+   * @function
+   * @protected
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone_properties_value : function (obj, cloned_map)
+  {
+    var key;
+    
+    for (key in this)
+    {
+      if (key === '_id') continue;
+
+      // property value copy
+      if (this.isProperty (key)) { propertyCloneValue (key, this, obj); }
+    }
   },
 
   /**
@@ -908,11 +892,62 @@ util.defineClassProperty (VSObject, "id", {
   get : function () { return this._id; }
 });
 
+/**
+ * @private
+ */
+function _cloneValue (value)
+{
+  if (value && util.isFunction (value.clone)) return value.clone ();
+  else return util.clone (value);
+}
+
+/**
+ * @private
+ */
+function _propertyCloneValue_api1 (prop_name, src, trg)
+{
+  var getter = src.__lookupGetter__ (prop_name),
+    setter = src.__lookupSetter__ (prop_name),
+    setter_clone = trg.__lookupSetter__ (prop_name),
+    _prop_name = '_' + util.underscore (prop_name);
+
+  // Property value copy
+  if (setter || getter)
+  {
+    if (setter_clone) { trg [prop_name] = _cloneValue (src [_prop_name]); }
+    else { trg [_prop_name] = _cloneValue (src [_prop_name]); }
+  }
+}
+
+/**
+ * @private
+ */
+function _propertyCloneValue_api2 (prop_name, src, trg)
+{
+  var desc = src.getPropertyDescriptor (prop_name),
+    desc_clone = trg.getPropertyDescriptor (prop_name),
+    _prop_name = '_' + util.underscore (prop_name);
+  
+  // Property value copy
+  if (desc && desc_clone && (desc.get || desc.set))
+  {
+    if (desc_clone.set) { trg [prop_name] = _cloneValue (src [_prop_name]); }
+    else { trg [_prop_name] = _cloneValue (src [_prop_name]); }
+  }
+}
+
+/**
+ * @private
+ */
+var propertyCloneValue =
+  (Object.defineProperty)?_propertyCloneValue_api2:_propertyCloneValue_api1;
+
 /********************************************************************
                       Static members
 *********************************************************************/
 /** @private */
 VSObject._obs = {};
+VSObject.__propertyCloneValue = propertyCloneValue;
 
 /********************************************************************
                       Export
