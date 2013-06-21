@@ -444,10 +444,112 @@ View.prototype = {
    */
   clone : function (config, cloned_map)
   {
+    function _getPaths (root, nodes)
+    {
+      var paths = [], i = 0, l = nodes.length, node;
+      for (; i < l; i++)
+      {
+        node = nodes[i];
+        paths.push ([node, _getPath (root, node)]);
+      }
+      return paths;
+    }
+
+    function _evalPaths (root, paths, clonedViews)
+    {
+      var nodes = [], i = 0, l = paths.length, path;
+      for (; i < l; i++)
+      {
+        path = paths[i];
+        clonedViews [path[0]] = _evalPath (root, path[1]);
+      }
+    }
+
+    function makeClonedNodeMap (comp, clonedViews)
+    {
+      var
+        clonedNode = comp.view.cloneNode (true),
+        nodes = [], paths;
+        
+      function manageChild (child)
+      {
+        if (child.__gui_object__hack_view__)
+        { nodes.push (child.__gui_object__hack_view__); }
+        else if (child.view) { nodes.push (child.view); }
+      
+        retreiveChildNodes (child);
+      }
+        
+      function retreiveChildNodes (comp)
+      {
+        var key, a, i, l, child;
+        for (key in comp.__children)
+        {
+          a = comp.__children [key];
+          if (!a) { continue; }
+          
+          if (util.isArray (a))
+          {
+            l = a.length;
+            for (i = 0; i < l; i++)
+            {
+              manageChild (a [i]);
+            }
+          }
+          else manageChild (a);
+        }
+      }
+      
+      retreiveChildNodes (comp);
+      
+      paths = _getPaths (comp.view, nodes);
+      _evalPaths (clonedNode, paths, clonedViews);
+      
+      return clonedNode;
+    }
+    
+    if (!cloned_map) { cloned_map = {}; }
+    if (!cloned_map.__views__) { cloned_map.__views__ = {}; }    
     if (!config) { config = {}; }
-    if (!config.node) { config.node = this.view.cloneNode (true); }
+    if (!config.node)
+    {
+      var node = cloned_map.__views__ [this.view];
+      if (!node)
+      {
+        node = makeClonedNodeMap (this, cloned_map.__views__);
+      }
+      config.node = node;
+    }
 
     return core.EventSource.prototype.clone.call (this, config, cloned_map);
+  },
+
+   /**
+   * @name vs.core.Object#_clone_properties_value
+   * @function
+   * @protected
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone_properties_value : function (obj, cloned_map)
+  {
+    for (key in this)
+    {
+      if (key === '_id') continue;
+
+      if (key == "size" || key == "position")
+      {
+        value = this.size;
+        if (!value || value.length !== 3 ||
+            (value[0] === 0 && value[1] === 0))
+        { continue; }
+      }
+  
+      // property value copy
+      if (this.isProperty (key))
+      { core.Object.__propertyCloneValue (key, this, obj); }
+    }
   },
 
   /**
@@ -494,9 +596,6 @@ View.prototype = {
       a = this.__children [key];
       hole = obj._holes [key];
       if (!a || !hole) { continue; }
-//
-      // @WARNING pas completement correct
-      util.removeAllElementChild (hole);
 
       if (a instanceof Array)
       {
@@ -504,14 +603,15 @@ View.prototype = {
         while (l--)
         {
           child = a [l];
-          obj.add (child.clone (null, cloned_map), key);
+          var cloned_comp = child.clone (null, cloned_map);
+          obj.add (cloned_comp, key);
         }
       }
       else
       {
         obj.add (a.clone (null, cloned_map), key);
       }
-   }
+    }
   },
 
   /**
@@ -970,7 +1070,7 @@ View.prototype = {
   {
     if (!child) { return; }
 
-    var key, a, hole, view;
+    var key, a, view;
 
     if (child.__gui_object__hack_view__)
     {
@@ -990,8 +1090,12 @@ View.prototype = {
           if (a instanceof Array) {a.remove (child);}
           else { delete (this.__children [key]); }
 
-          hole = this._holes [key];
-          if (hole) { hole.removeChild (view); }
+          if (view.parentElement)
+          {
+            view.parentElement.removeChild (view);
+          }
+//          hole = this._holes [key];
+//          if (hole) { hole.removeChild (view); }
 
           child.__parent = null;
           break;
