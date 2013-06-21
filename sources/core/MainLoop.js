@@ -105,7 +105,7 @@ function queueProcSyncEvent (event, handler_list)
  *
  * @param {Handler} handler
  */
-function doOneHandler (handler, end_propagation)
+function doOneHandler (handler, event, end_propagation)
 {
   if (handler) try
   {
@@ -160,7 +160,7 @@ function doOneAsyncEvent ()
   else while (i > 0)
   {
     (function (handler) {
-      vs.scheduleAction (function () { doOneHandler(handler, end_propagation) });
+      vs.scheduleAction (function () { doOneHandler (handler, event, end_propagation) });
     }) (handler_list [--i])
   }
 }
@@ -175,7 +175,7 @@ function doOneSyncEvent ()
 
   _sync_event = null;
 
-  while (i > 0) doOneHandler  (handler_list [--i]);
+  while (i > 0) doOneHandler (handler_list [--i], event);
 }
 
 /**
