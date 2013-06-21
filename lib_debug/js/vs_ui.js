@@ -5025,7 +5025,7 @@ var iScroll_prototype =
 
     var that = this,
       point = core.EVENT_SUPPORT_TOUCH ? e.changedTouches[0] : e,
-      matrix;
+      transformMatrix, matrix;
 
     that.moved = false;
 
@@ -5056,7 +5056,9 @@ var iScroll_prototype =
 
       if (SUPPORT_3D_TRANSFORM)
       {
-        matrix = new WebKitCSSMatrix (getElementTransform (that.scroller));
+        transformMatrix = window.getComputedStyle (that.scroller).webkitTransform;
+        matrix = new vs.CSSMatrix(transformMatrix);
+
         if (matrix.m41 !== that._ab_view_t_x || matrix.m42 !== that._ab_view_t_y) {
           that._unbind ('webkitTransitionEnd');
           that._scroll_pos (matrix.m41, matrix.m42);
@@ -8961,7 +8963,6 @@ AbstractList.prototype = {
     
     this._list_items = this._sub_view = this._holes.item_children;
 
-    this._renderData (this._items_selectable);
     this.refresh ();
   },
     
@@ -9227,7 +9228,6 @@ util.defineClassProperties (AbstractList, {
         this._model = v;
         this._model.bindChange (null, this, this._modelChanged);
       }
-      else return;
     },
   
     /**
@@ -10139,19 +10139,6 @@ List.prototype = {
    */
   _renderData : defaultListRenderData,
   
-  /**
-   * @protected
-   * @function
-   */
-  _modelChanged : function (event)
-  {
-    // TODO   on peut mieux faire : au lieu de faire
-    // un init skin qui vire tout et reconstruit tout, on pourrait
-    // ne gerer que la difference
-    this._renderData (this._items_selectable);
-    this.refresh ();
-  },
-
   /**
    * @protected
    * @function
@@ -17165,9 +17152,11 @@ Picker.prototype = {
     // Stop and hold slot position
     if (SUPPORT_3D_TRANSFORM)
     {
-      var theTransform = getElementTransform (slot_elem);
-      theTransform = new vs.CSSMatrix(theTransform).m42;
-      if (theTransform != slot_elem.slotYPosition)
+      var
+        transformMatrix = window.getComputedStyle(slot_elem).webkitTransform,
+        pos_y = new vs.CSSMatrix(transformMatrix).m42;
+
+      if (pos_y != slot_elem.slotYPosition)
       {
         this._setPosition (this._active_slot, theTransform);
       }
