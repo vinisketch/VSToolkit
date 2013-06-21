@@ -724,13 +724,14 @@ function _propertyCloneValue_api1 (prop_name, src, trg)
 {
   var getter = src.__lookupGetter__ (prop_name),
     setter = src.__lookupSetter__ (prop_name),
-    setter_clone = trg.__lookupSetter__ (prop_name);
+    setter_clone = trg.__lookupSetter__ (prop_name),
+    _prop_name = '_' + util.underscore (prop_name);
 
   // Property value copy
   if (setter || getter)
   {
-    if (setter_clone) { trg [prop_name] = src ['_' + prop_name]; }
-    else { trg ['_' + prop_name] = src ['_' + prop_name]; }
+    if (setter_clone) { trg [prop_name] = src [_prop_name]; }
+    else { trg [_prop_name] = src [_prop_name]; }
   }
 }
 
