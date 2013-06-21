@@ -14,13 +14,11 @@ var ListItem = vs.core.createClass ({
         
     var config = {};
     
-    config.node_ref = this.id + "#image";
-    this.image = new vs.ui.ImageView (config);
+    this.image = new vs.ui.ImageView ({node_ref: this.id + "#image"});
     this.image.init ();
     this.add (this.image);
         
-    config.node_ref = this.id + "#textlabel";
-    this.label = new vs.ui.TextLabel (config);
+    this.label = new vs.ui.TextLabel ({node_ref: this.id + "#textlabel"});
     this.label.init ();    
     this.add (this.label);
   }
