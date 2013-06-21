@@ -36,7 +36,7 @@ var MVC = vs.core.createClass ({
     
     window.c = new Contact ();
     c.firstname = 'John';
-    c.lastname = 'Doo';
+    c.lastname = 'Doe';
     c.companie = 'IBM';
     c.tel = '34 8984 4389';
     c.address = '123 bd Saint Michel, 67000 Toulouse';
