@@ -222,10 +222,10 @@ Model.prototype = {
 
       //propagate retrictive bindings
       if (spec !== 'change')
-        queueProcAsyncEvent (event, this.__bindings__ [spec]);
+        queueProcSyncEvent (event, this.__bindings__ [spec]);
 
       //propagate general change
-      queueProcAsyncEvent (event, this.__bindings__ ['change']);
+      queueProcSyncEvent (event, this.__bindings__ ['change']);
     }
     catch (e)
     {
