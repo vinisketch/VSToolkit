@@ -905,7 +905,7 @@ calculated.</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.fx.Animation.html#process">process</a></b>(comp, clb, ctx)
+								<div class="fixedFont"><b><a href="../symbols/vs.fx.Animation.html#process">process</a></b>(comp, clb, ctx, now)
 								</div>
 								<div class="description">Use this function for animate your graphic object.</div>
 							</td>
@@ -1676,7 +1676,7 @@ Parameters: <br />
 					<div class="fixedFont">
 					
 					<span class="light">{String}</span>
-					<b>process</b>(comp, clb, ctx)
+					<b>process</b>(comp, clb, ctx, now)
 					
 					</div>
 					<div class="description">
@@ -1722,6 +1722,14 @@ Parameters: <br />
 								</dt>
 								<dd>an optional execution context associated to the
          callback</dd>
+							
+								<dt>
+									<span class="light fixedFont">{boolean}</span> <b>now</b>
+									
+								</dt>
+								<dd>an optional parameter use to apply a animation without
+         delay or duration. It useful for configuring the initial position
+         of UI component.</dd>
 							
 							</dl>
 						
