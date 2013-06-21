@@ -10,11 +10,10 @@ html {
 }
 
 #list_items {
-  right: 10px;
+  width: 300px;
+  height: 300px;
   left: 10px;
   top: 70px;
-  bottom: 10px;
-  border: 1px solid #aaa;
 }
 
 #list_items::after {
