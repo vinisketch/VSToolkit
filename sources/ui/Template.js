@@ -217,10 +217,10 @@ var _template_view_clone = function (config, cloned_map) {
 /**
  * @private
  */
-var _template_view__clone = function (obj, config, cloned_map) {
+var _template_view__clone = function (obj, cloned_map) {
   ui.View.prototype._clone.call (this, obj, cloned_map);
 
-  _instrument_component (obj, this.__shadow_view, config.node);
+  _instrument_component (obj, this.__shadow_view, obj.view);
 
   // Clone data
   obj.__shadow_view = this.__shadow_view;
