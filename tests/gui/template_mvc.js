@@ -32,8 +32,8 @@ function launchTest (test_view)
   c.firstname = 'John';
   c.lastname = 'Doe';
   c.companie = 'IBM';
-  c.tels = ['34 8984 4389'];
-  c.addresses = [{address:'123 bd Saint Michel, 67000 Toulouse'}];
+  c.tels = ['34 8984 4380'];
+  c.addresses = [{address:'145 bd Saint George, 67000 Toulouse'}];
   
   view.link (c);
 
@@ -47,8 +47,8 @@ function launchTest (test_view)
   cloned_view.link (cc);
 
   c.firstname = 'Jo';
-  c.tels.push ('34 8984 4380');
-  c.addresses.push ({address:'145 bd Saint George, 67000 Toulouse'});
+  c.tels.push ('34 8984 4389');
+  c.addresses.push ({address:'123 bd Saint Michel, 67000 Toulouse'});
   c.propertyChange ('addresses');
   c.propertyChange ('tels');
   
