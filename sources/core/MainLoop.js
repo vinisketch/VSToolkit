@@ -33,15 +33,12 @@
  *  Structure used for managing events
  *  @private
  */
-function Handler (_obj, _func)
-{
+function Handler (_obj, _func) {
   this.obj = _obj;
-  if (util.isFunction (_func))
-  {
+  if (util.isFunction (_func)) {
     this.func_ptr = _func;
   }
-  else if (util.isString (_func))
-  {
+  else if (util.isString (_func)) {
     this.func_name = _func;
   }
 }
@@ -49,11 +46,34 @@ function Handler (_obj, _func)
 /**
  * @private
  */
-Handler.prototype.destructor = function ()
-{
+Handler.prototype.destructor = function () {
   delete (this.obj);
   delete (this.func_ptr);
   delete (this.func_name);
+};
+
+/**
+ *  Structure used for managing task
+ *  @private
+ */
+function TaskHandler (func, args) {
+  this.func_ptr = func;
+  this.args = args;
+}
+
+/**
+ * @private
+ */
+TaskHandler.prototype.run = function () {
+  this.func_ptr.apply (undefined);
+};
+
+/**
+ * @private
+ */
+TaskHandler.prototype.destructor = function () {
+  delete (this.args);
+  delete (this.func_ptr);
 };
 
 /**
@@ -62,13 +82,13 @@ Handler.prototype.destructor = function ()
 var _async_events_queue = [], _sync_event = null,
   _actions_queue  = [],
   _is_events_propagating = false,
-  _is_actions_runing = false;
+  _is_action_runing = false,
+  _is_waiting = false;
 
 /**
  * @private
  */
-function queueProcAsyncEvent (event, handler_list)
-{
+function queueProcAsyncEvent (event, handler_list) {
   if (!event || !handler_list) return;
 
   var burst = {
@@ -83,8 +103,7 @@ function queueProcAsyncEvent (event, handler_list)
   serviceLoop ();
 }
 
-function queueProcSyncEvent (event, handler_list)
-{
+function queueProcSyncEvent (event, handler_list) {
   if (!event || !handler_list) return;
 
   var burst = {
@@ -101,48 +120,10 @@ function queueProcSyncEvent (event, handler_list)
 
 /**
  * @private
- * doOneHandler will dispache One event to an observer.
- *
- * @param {Handler} handler
- */
-function doOneHandler (handler, event, end_propagation)
-{
-  if (handler) try
-  {
-    if (util.isFunction (handler.func_ptr))
-    {
-      // call function
-      handler.func_ptr.call (handler.obj, event);
-    }
-    else if (util.isString (handler.func_name) &&
-             util.isFunction (handler.obj[handler.func_name]))
-    {
-      // specific notify method
-      handler.obj[handler.func_name] (event);
-    }
-    else if (util.isFunction (handler.obj.notify))
-    {
-      // default notify method
-      handler.obj.notify (event);
-    }
-  }
-  catch (e)
-  {
-    if (e.stack) console.error (e.stack);
-    else console.error (e);
-  }
-  if (end_propagation) end_propagation ();
-};
-  
-/**
- * @private
  * doOneAsyncEvent will dispache One event to all observers.
  */
-function doOneAsyncEvent ()
-{
-  if (_is_events_propagating) return;
-
-  var burst = _async_events_queue.shift (),
+function doOneEvent (burst) {
+  var
     handler_list = burst.handler_list,
     n = handler_list.length,
     i = n,
@@ -150,118 +131,160 @@ function doOneAsyncEvent ()
 
   _is_events_propagating = true;
 
-  function end_propagation ()
-  {
+  function end_propagation () {
     n--;
     if (n <= 0) _is_events_propagating = false;
   }
 
+  /**
+   * @private
+   * doOneHandler will dispache One event to an observer.
+   *
+   * @param {Handler} handler
+   */
+  function doOneHandler (handler) {
+    if (handler) try {
+      if (util.isFunction (handler.func_ptr)) {
+        // call function
+        handler.func_ptr.call (handler.obj, event);
+      }
+      else if (util.isString (handler.func_name) &&
+               util.isFunction (handler.obj[handler.func_name]))
+      {
+        // specific notify method
+        handler.obj[handler.func_name] (event);
+      }
+      else if (util.isFunction (handler.obj.notify)) {
+        // default notify method
+        handler.obj.notify (event);
+      }
+    }
+    catch (e) {
+      if (e.stack) console.error (e.stack);
+      else console.error (e);
+    }
+    end_propagation ();
+  };
+
   if (!i) end_propagation (); // should not occures
-  else while (i > 0)
-  {
+  for (i = 0; i < n; i++) {
     (function (handler) {
-      vs.scheduleAction (function () { doOneHandler (handler, event, end_propagation) });
-    }) (handler_list [--i])
+      setImmediate (function () { doOneHandler(handler) });
+    }) (handler_list [i])
   }
-}
-
-function doOneSyncEvent ()
-{
-  var
-    handler_list = _sync_event.handler_list,
-    n = handler_list.length,
-    i = n,
-    event = _sync_event.event;
-
-  _sync_event = null;
-
-  while (i > 0) doOneHandler (handler_list [--i], event);
 }
 
 /**
  * @private
- * doActions
+ * doOneAsyncEvent will dispache One event to all observers.
  */
-function doActions ()
-{
-  function end_burst ()
-  {
-    if (_actions_queue.length) doActions ();
-    else _is_actions_runing = false
-  }
-
-  function doBurst ()
-  {
-    _is_actions_runing = true;
-
-    var i = 0, l = this.length, func;
-    for (; i < l; i++)
-    {
-      func = this [i];
-      if (func) try
-      {
-        func.call ();
-      }
-      catch (e)
-      {
-        if (e.stack) console.error (e.stack);
-        else console.error (e);
-      }
-    }
-    end_burst ();
-  }
-
-  var clb = doBurst.bind (_actions_queue);
-  _actions_queue = []
-  
-  vs.requestAnimationFrame (clb);
+function doOneAsyncEvent () {
+  if (_is_events_propagating) return;
+  doOneEvent (_async_events_queue.shift ());
 }
 
-var _is_waiting = false;
+/**
+ * @private
+ * doOneAsyncEvent will dispache One event to all observers.
+ */
+function doOneSyncEvent () {
+  doOneEvent (_sync_event);
+  _sync_event = null;
+}
+
+/**
+ * @private
+ * doAction
+ */
+function doAction () {
+
+  if (!_actions_queue.length) return;
+  
+  var action = _actions_queue.shift ();
+
+  if (action) try {
+    _is_action_runing = true;
+    action.run ();
+  }
+  catch (e) {
+    if (e.stack) console.error (e.stack);
+    else console.error (e);
+  }
+
+  vs.util.free (action);
+  _is_action_runing = false;
+
+  if (_actions_queue.length) { _delay_do_action (); }
+}
+
+function installPostMessageImplementation () {
+
+  var MESSAGE_PREFIX = "vs.core.scheduler" + Math.random ();
+
+  function onGlobalMessage (event) {
+    if (event.data === MESSAGE_PREFIX) {
+      doAction ();
+    }
+  }
+  
+  if (window.addEventListener) {
+    window.addEventListener ("message", onGlobalMessage, false);
+  }
+
+  return function () {
+    window.postMessage (MESSAGE_PREFIX, "*");
+  };
+}
+
+//var _delay_do_action = function () {vs.requestAnimationFrame (doAction)};
+
+var _delay_do_action = (window.postMessage)?installPostMessageImplementation():
+  function () {setTimeout (doAction, 0)};
+
+var setImmediate = window.setImmediate || function (func) {
+
+  // push the action to execute into the queue
+  _actions_queue.push (new TaskHandler (func));
+
+  // doAction
+  if (!_is_action_runing) _delay_do_action ();
+};
+vs.setImmediate = setImmediate;
 
 /**
  * @private
  * Mainloop core
  */
-function serviceLoop ()
-{
+function serviceLoop () {
+
   if (_sync_event) doOneSyncEvent ();
 
   if ((_async_events_queue.length === 0 && _actions_queue.length === 0) ||
       _is_waiting) return;
 
-  function loop ()
-  {
+  function loop () {
     _is_waiting = false;
     serviceLoop ();
   }
 
-  if (_is_events_propagating)
-  {
+  if (_is_events_propagating) {
     // do the loop
-    _actions_queue.push (loop);
-    if (!_is_actions_runing) doActions ();
+    setImmediate (loop);
     return;
   }
 
   // dispache an event to observers
+  if (!_is_action_runing && _actions_queue.length) _delay_do_action ();
   if (_async_events_queue.length) doOneAsyncEvent ();
-  if (!_is_actions_runing && _actions_queue.length) doActions ();
 }
 
-function scheduleAction (func, delay)
-{
+function scheduleAction (func, delay) {
   if (!util.isFunction (func)) return;
-  if (util.isNumber (delay))
-  {
+  if (util.isNumber (delay)) {
     setTimeout (func, delay);
     return;
   }
 
-  // push the action to execute into the queue
-  _actions_queue.push (func);
-
-  // request for the mainloop
-  serviceLoop ();
+  setImmediate (func);
 }
 vs.scheduleAction = scheduleAction;
