@@ -17158,7 +17158,7 @@ Picker.prototype = {
 
       if (pos_y != slot_elem.slotYPosition)
       {
-        this._setPosition (this._active_slot, theTransform);
+        this._setPosition (this._active_slot, pos_y);
       }
     }
     
