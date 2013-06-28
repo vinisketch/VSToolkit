@@ -278,13 +278,24 @@ function serviceLoop () {
   if (_async_events_queue.length) doOneAsyncEvent ();
 }
 
+var ON_NEXT_FRAME = '__on_next_frame__';
+
 function scheduleAction (func, delay) {
   if (!util.isFunction (func)) return;
-  if (util.isNumber (delay)) {
+  if (delay && util.isNumber (delay)) {
     setTimeout (func, delay);
-    return;
   }
-
-  setImmediate (func);
+  else if (delay === ON_NEXT_FRAME) {
+    vs.requestAnimationFrame (func);
+  }
+  else setImmediate (func);
 }
-vs.scheduleAction = scheduleAction;
+
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+util.extend (vs, {
+  scheduleAction: scheduleAction,
+  ON_NEXT_FRAME: ON_NEXT_FRAME
+});
