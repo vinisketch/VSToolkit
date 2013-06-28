@@ -278,8 +278,65 @@ function serviceLoop () {
   if (_async_events_queue.length) doOneAsyncEvent ();
 }
 
+/** 
+ * Schedule your action on next frame.
+ *
+ * @example
+ * vs.scheduleAction (function () {...}, vs.ON_NEXT_FRAME);
+ *
+ * @see vs.scheduleAction
+ *
+ * @name vs.ON_NEXT_FRAME 
+ * @type {String}
+ * @const
+ * @public
+ */ 
 var ON_NEXT_FRAME = '__on_next_frame__';
 
+/** 
+ * Schedule an action to be executed asynchronously.
+ * <br />
+ * There is three basic scheduling; the action can be executed:
+ * <ul>
+ *   <li>as soon as possible.
+ *   <li>on the next frame
+ *   <li>after a delay
+ * </ul>
+ *
+ * 1- As soon as possible<br />
+ * The action will be executed as soon as possible in a manner that is
+ * typically more efficient and consumes less power than the usual
+ * setTimeout(..., 0) pattern.<br />
+ * It based on setImmediate if it is available; otherwise it will use postMessage
+ * if it is possible and at least setTimeout(..., 0) pattern if previous APIs are
+ * not available.
+ *<br /><br />
+ *
+ * 2- On next frame<br />
+ * The action will be executed on next frame.<br />It is equivalent to use
+ * window.requestAnimationFrame.
+ *<br /><br />
+ *
+ * 2- After a delay<br />
+ * The action will be executed after a given delay in millisecond.<br />
+ * It is equivalent to use window.setTimeout(..., delay).
+ *
+ * @example
+ * // run asap
+ * vs.scheduleAction (function () {...});
+ * // run on next frame
+ * vs.scheduleAction (function () {...}, vs.ON_NEXT_FRAME);
+ * // run after 1s
+ * vs.scheduleAction (function () {...}, 1000);
+ *
+ * @name vs.scheduleAction 
+ * @type {String}
+ * @function
+ * @public
+ *
+ * @param {Function} func The action to run
+ * @param {(Number|String)} delay when run the action [optional]
+ */ 
 function scheduleAction (func, delay) {
   if (!util.isFunction (func)) return;
   if (delay && util.isNumber (delay)) {
