@@ -403,18 +403,13 @@ hr:last-child {
 			<h1 class="classTitle">Class Index</h1>
 
 			<div class='namespace_info'>
-				<h2>vs.av</h2>
-				Main ViniSketch Audio and Video .
+				<h2>vs</h2>
+				<a href="symbols/vs.html" sytle="color:black;"">Main ViniSketch toolkit namespace.</a>
 			</div>
 
 			<div class='class_info'>
-				<h2><a href="symbols/vs.av.Audio.html">vs.av.Audio</a></h2>
-				Implements <a href="symbols/vs.core.Task.html">vs.core.Task</a>.
-			</div>
-
-			<div class='class_info'>
-				<h2><a href="symbols/vs.av.Video.html">vs.av.Video</a></h2>
-				Implements <a href="symbols/vs.core.Task.html">vs.core.Task</a>.
+				<h2><a href="symbols/vs.html#.scheduleAction">vs.scheduleAction</a></h2>
+				Allows to executing a given operation asynchronously; replacing setTimeout(...,delay), ...
 			</div>
 
 			<div class='namespace_info'>
@@ -463,7 +458,13 @@ hr:last-child {
 				 vs.core.DataStorage is an abstract class for managing data save and laod.
 			</div>
 
-      <div class='class_info'>
+			<div class='class_info'>
+				<h2><a href="symbols/vs.core.DeviceConfiguration.html">vs.core.DeviceConfiguration</a></h2>
+    An vs.core.DeviceConfiguration object describes the device's hardware and software. 
+A global object is visible in the window global scope: window.deviceConfiguration.…
+			</div>
+			
+			<div class='class_info'>
         <h2><a href="symbols/vs.core.LocalStorage.html">vs.core.LocalStorage</a></h2>
         vs.core.LocalStorage is an implementation of DataStorage for storing data into HTML5 LocalStorage…
       </div>
@@ -521,6 +522,21 @@ hr:last-child {
 			<div class='class_info'>
 				<h2><a href="symbols/vs.data.URL.html">vs.data.URL</a></h2>
 
+			</div>
+
+			<div class='namespace_info'>
+				<h2>vs.av</h2>
+				Main ViniSketch Audio and Video .
+			</div>
+
+			<div class='class_info'>
+				<h2><a href="symbols/vs.av.Audio.html">vs.av.Audio</a></h2>
+				Implements <a href="symbols/vs.core.Task.html">vs.core.Task</a>.
+			</div>
+
+			<div class='class_info'>
+				<h2><a href="symbols/vs.av.Video.html">vs.av.Video</a></h2>
+				Implements <a href="symbols/vs.core.Task.html">vs.core.Task</a>.
 			</div>
 
 			<div class='namespace_info'>
@@ -662,7 +678,7 @@ hr:last-child {
 
 			<div class='class_info'>
 				<h2><a href="symbols/vs.ui.ImageView.html">vs.ui.ImageView</a></h2>
-
+				An vs.ui.ImageView embeds an image in your application.
 			</div>
 
 			<div class='class_info'>
@@ -675,7 +691,13 @@ hr:last-child {
 				The vs.ui.List class draw a list of ListItem and allows the user to
         select one object from it.
 			</div>
-
+			
+			<div class='class_info'>
+				<h2><a href="symbols/vs.ui.NavigationBar.html">vs.ui.NavigationBar</a></h2>
+				This bar is displayed at the top of the parent view, Typically it includes 
+				navigation buttons, or a title. But it can contains any custom widgets.
+			</div>
+			
 			<div class='class_info'>
 				<h2><a href="symbols/vs.ui.Picker.html">vs.ui.Picker</a></h2>
 				vs.ui.Picker defines a view that use a spinning-wheel or slot-machine
@@ -739,9 +761,15 @@ hr:last-child {
 
 			<div class='class_info'>
 				<h2><a href="symbols/vs.ui.TextArea.html">vs.ui.TextArea</a></h2>
-
+				The vs.ui.TextArea component defines a multi-line text input control.
+        A text area can hold an unlimited number of characters, and the text renders in a fixed-width font (usually Courier).
 			</div>
-
+			
+			<div class='class_info'>
+				<h2><a href="symbols/vs.ui.TextLabel.html">vs.ui.TextLabel</a></h2>
+        A ui.vs.TextLabel component displays a unselectable text.
+			</div>
+			
 			<div class='class_info'>
 				<h2><a href="symbols/vs.ui.ToolBar.html">vs.ui.ToolBar</a></h2>
 				The vs.ui.ToolBar class implements a control for selecting buttons.

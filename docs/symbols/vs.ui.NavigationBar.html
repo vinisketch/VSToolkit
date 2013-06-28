@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - vs.fx</title>
+		<title>JsDoc Reference - vs.ui.NavigationBar</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -550,7 +550,7 @@ hr:last-child {
 <!-- ============================== class title ============================ -->
     <div class="classTitle">
       
-      Namespace vs.fx
+      Class vs.ui.NavigationBar
     </div>
 
 		<div id="scrollable">
@@ -559,16 +559,21 @@ hr:last-child {
 <!-- ============================== class summary ========================== -->			
 			<p class="description">
 				
+				<b>Extends</b>
+					<a href="../symbols/vs.ui.View.html">vs.ui.View</a>.<br /><br />
 				
 			
-				Main ViniSketch animation...
+				This bar is displayed at the top of the parent view,
+ Typically it includes navigation buttons, or a title.
+ But it can contains any custom widgets.
+ <p>
 	
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.fx.">
-				<caption>Namespace Summary</caption>
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.ui.NavigationBar.">
+				<caption>Class Summary</caption>
 				<thead>
 					<tr>
 						<th scope="col">Constructor Attributes</th>
@@ -580,9 +585,10 @@ hr:last-child {
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/vs.fx.html#constructor">vs.fx</a></b>
+								<b><a href="../symbols/vs.ui.NavigationBar.html#constructor">vs.ui.NavigationBar</a></b>(config)
 							</div>
-							<div class="description"></div>
+							<div class="description">The vs.ui.NavivationBar class implements a view for controlling navigation
+ on content views.</div>
 						</td>
 					</tr>
 				</tbody>
@@ -593,7 +599,7 @@ hr:last-child {
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.fx.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.ui.NavigationBar.">
 					<caption>Field Summary</caption>
 					<thead>
 						<tr>
@@ -607,9 +613,39 @@ hr:last-child {
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								vs.fx.<b><a href="../symbols/vs.fx.html#.cancelAnimation">cancelAnimation</a></b>
+								vs.ui.NavigationBar.<b><a href="../symbols/vs.ui.NavigationBar.html#.BLACK_STYLE">BLACK_STYLE</a></b>
 								</div>
-								<div class="description">Cancel a playing animation</div>
+								<div class="description">Black style tab bar</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.NavigationBar.<b><a href="../symbols/vs.ui.NavigationBar.html#.BLACK_TRANSLUCIDE_STYLE">BLACK_TRANSLUCIDE_STYLE</a></b>
+								</div>
+								<div class="description">Black translucide style tab bar</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								vs.ui.NavigationBar.<b><a href="../symbols/vs.ui.NavigationBar.html#.DEFAULT_STYLE">DEFAULT_STYLE</a></b>
+								</div>
+								<div class="description">Blue style tab bar (defaut)</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/vs.ui.NavigationBar.html#style">style</a></b>
+								</div>
+								<div class="description">Getter|Setter for the tab bar style</div>
 							</td>
 						</tr>
 					
@@ -618,9 +654,71 @@ hr:last-child {
 				
 				
 				
+				<dl class="inheritsList">
+				<dt>Fields borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#autosizing">autosizing</a>, <a href="../symbols/vs.ui.View.html#bubbling">bubbling</a>, <a href="../symbols/vs.ui.View.html#enable">enable</a>, <a href="../symbols/vs.ui.View.html#hideAnimation">hideAnimation</a>, <a href="../symbols/vs.ui.View.html#innerHTML">innerHTML</a>, <a href="../symbols/vs.ui.View.html#layout">layout</a>, <a href="../symbols/vs.ui.View.html#magnet">magnet</a>, <a href="../symbols/vs.ui.View.html#maxScale">maxScale</a>, <a href="../symbols/vs.ui.View.html#minScale">minScale</a>, <a href="../symbols/vs.ui.View.html#opacity">opacity</a>, <a href="../symbols/vs.ui.View.html#position">position</a>, <a href="../symbols/vs.ui.View.html#rotation">rotation</a>, <a href="../symbols/vs.ui.View.html#scaling">scaling</a>, <a href="../symbols/vs.ui.View.html#setHideAnimation">setHideAnimation</a>, <a href="../symbols/vs.ui.View.html#setShowAnimation">setShowAnimation</a>, <a href="../symbols/vs.ui.View.html#showAnimmation">showAnimmation</a>, <a href="../symbols/vs.ui.View.html#size">size</a>, <a href="../symbols/vs.ui.View.html#transformOrigin">transformOrigin</a>, <a href="../symbols/vs.ui.View.html#translation">translation</a>, <a href="../symbols/vs.ui.View.html#visible">visible</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#defineProperty">defineProperty</a>, <a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
+				</dl>
+				
 			
 
 <!-- ============================== methods summary ======================== -->
+			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.ui.NavigationBar.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.NavigationBar.html#changeState">changeState</a></b>(state, conf)
+								</div>
+								<div class="description">Apply a state to the Navigatio Bar.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.NavigationBar.html#getStateItems">getStateItems</a></b>(state)
+								</div>
+								<div class="description">Return the list of visible widgets for a state name.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.NavigationBar.html#remove">remove</a></b>(child)
+								</div>
+								<div class="description">Remove the specified child component from this component.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.NavigationBar.html#setStateItems">setStateItems</a></b>(state, items)
+								</div>
+								<div class="description">Set a list of visible widgets per a state name.</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+				<dl class="inheritsList">
+				<dt>Methods borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#add">add</a>, <a href="../symbols/vs.ui.View.html#addClassName">addClassName</a>, <a href="../symbols/vs.ui.View.html#addCssRule">addCssRule</a>, <a href="../symbols/vs.ui.View.html#addCssRules">addCssRules</a>, <a href="../symbols/vs.ui.View.html#animate">animate</a>, <a href="../symbols/vs.ui.View.html#bind">bind</a>, <a href="../symbols/vs.ui.View.html#createAndAddComponent">createAndAddComponent</a>, <a href="../symbols/vs.ui.View.html#getBorder">getBorder</a>, <a href="../symbols/vs.ui.View.html#getComputedStyle">getComputedStyle</a>, <a href="../symbols/vs.ui.View.html#getMargin">getMargin</a>, <a href="../symbols/vs.ui.View.html#getPadding">getPadding</a>, <a href="../symbols/vs.ui.View.html#getStyle">getStyle</a>, <a href="../symbols/vs.ui.View.html#hasClassName">hasClassName</a>, <a href="../symbols/vs.ui.View.html#hide">hide</a>, <a href="../symbols/vs.ui.View.html#isChild">isChild</a>, <a href="../symbols/vs.ui.View.html#notifyToParent">notifyToParent</a>, <a href="../symbols/vs.ui.View.html#redraw">redraw</a>, <a href="../symbols/vs.ui.View.html#removeAllChild">removeAllChild</a>, <a href="../symbols/vs.ui.View.html#removeClassName">removeClassName</a>, <a href="../symbols/vs.ui.View.html#rotate">rotate</a>, <a href="../symbols/vs.ui.View.html#scale">scale</a>, <a href="../symbols/vs.ui.View.html#setStyle">setStyle</a>, <a href="../symbols/vs.ui.View.html#setStyles">setStyles</a>, <a href="../symbols/vs.ui.View.html#setVisible">setVisible</a>, <a href="../symbols/vs.ui.View.html#show">show</a>, <a href="../symbols/vs.ui.View.html#toggleClassName">toggleClassName</a>, <a href="../symbols/vs.ui.View.html#translate">translate</a>, <a href="../symbols/vs.ui.View.html#unbind">unbind</a>, <a href="../symbols/vs.ui.View.html#viewDidAdd">viewDidAdd</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#isProperty">isProperty</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
+				</dl>
+				
 			
 <!-- ============================== events summary ======================== -->
 			
@@ -629,21 +727,37 @@ hr:last-child {
 			
 			<div class="details"><a name="constructor"> </a>
 				<div class="sectionTitle">
-					Namespace Detail
+					Class Detail
 				</div>
 				
 				<div class="fixedFont">
-						<b>vs.fx</b>
+						<b>vs.ui.NavigationBar</b>(config)
 				</div>
 				
 				<div class="description">
-					
-					
+					The vs.ui.NavivationBar class implements a view for controlling navigation
+ on content views.
+					<br /><i>Author: </i>David Thevenin.
 				</div>
 				
 				
 				
+				<pre class="code"></pre>
 				
+				
+				
+				
+					
+						<dl class="detailList">
+						<dt class="heading">Parameters:</dt>
+						
+							<dt>
+								<span class="light fixedFont">{Object}</span>  <b>config</b>
+								
+							</dt>
+								<dd>the configuration structure [mandatory]</dd>
+						
+						</dl>
 					
 					
 					
@@ -661,15 +775,78 @@ hr:last-child {
 					Field Detail
 				</div>
 				
-					<a name=".cancelAnimation"> </a>
+					<a name=".BLACK_STYLE"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
 					
-					<span class="light">vs.fx.</span><b>cancelAnimation</b>
+					<span class="light">vs.ui.NavigationBar.</span><b>BLACK_STYLE</b>
 					
 					</div>
 					<div class="description">
-						Cancel a playing animation
+						Black style tab bar
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".BLACK_TRANSLUCIDE_STYLE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.NavigationBar.</span><b>BLACK_TRANSLUCIDE_STYLE</b>
+					
+					</div>
+					<div class="description">
+						Black translucide style tab bar
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".DEFAULT_STYLE"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ui.NavigationBar.</span><b>DEFAULT_STYLE</b>
+					
+					</div>
+					<div class="description">
+						Blue style tab bar (defaut)
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="style"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>style</b>
+					
+					</div>
+					<div class="description">
+						Getter|Setter for the tab bar style
 						
 					</div>
 					
@@ -685,6 +862,180 @@ hr:last-child {
 			
 
 <!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name="changeState"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>changeState</b>(state, conf)
+					
+					</div>
+					<div class="description">
+						Apply a state to the Navigatio Bar.
+ Only widgets associated to the state will be showed.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>state</b>
+									
+								</dt>
+								<dd>The state name</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Object}</span> <b>conf</b>
+									
+								</dt>
+								<dd>Optional configuration parameters 
+    Structure have to follow : {comp_id: {prop: value}}</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="getStateItems"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{Array}</span>
+					<b>getStateItems</b>(state)
+					
+					</div>
+					<div class="description">
+						Return the list of visible widgets for a state name.
+ Return undefined if the state is undefined.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>state</b>
+									
+								</dt>
+								<dd>The state name</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Array}</span> items The list of widget (pointers on widget)</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="remove"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>remove</b>(child)
+					
+					</div>
+					<div class="description">
+						Remove the specified child component from this component.
+						
+					</div>
+					
+					
+					
+					<pre class="code"> myObject.remove (myButton);</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{vs.ui.EventSource}</span> <b>child</b>
+									
+								</dt>
+								<dd>The component to be removed.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setStateItems"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>setStateItems</b>(state, items)
+					
+					</div>
+					<div class="description">
+						Set a list of visible widgets per a state name.
+
+ Widgets view will be automatically added to the navigation bar view
+ if its need.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>state</b>
+									
+								</dt>
+								<dd>The state name</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Array}</span> <b>items</b>
+									
+								</dt>
+								<dd>The list of widget (pointers on widget)</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
 			
 			
 <!-- ============================== event details ========================= -->		

@@ -500,6 +500,8 @@ hr:last-child {
 	
 	<li><a href="../symbols/vs.ui.List.html">vs.ui.List</a></li>
 	
+	<li><a href="../symbols/vs.ui.NavigationBar.html">vs.ui.NavigationBar</a></li>
+	
 	<li><a href="../symbols/vs.ui.Picker.html">vs.ui.Picker</a></li>
 	
 	<li><a href="../symbols/vs.ui.PopOver.html">vs.ui.PopOver</a></li>
@@ -525,6 +527,8 @@ hr:last-child {
 	<li><a href="../symbols/vs.ui.Template.html">vs.ui.Template</a></li>
 	
 	<li><a href="../symbols/vs.ui.TextArea.html">vs.ui.TextArea</a></li>
+	
+	<li><a href="../symbols/vs.ui.TextLabel.html">vs.ui.TextLabel</a></li>
 	
 	<li><a href="../symbols/vs.ui.ToolBar.html">vs.ui.ToolBar</a></li>
 	
@@ -678,6 +682,16 @@ sequence</div>
 							<td class="attributes">&lt;static&gt; &nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
+								vs.<b><a href="../symbols/vs.html#.ON_NEXT_FRAME">ON_NEXT_FRAME</a></b>
+								</div>
+								<div class="description">Schedule your action on next frame.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
 								vs.<b><a href="../symbols/vs.html#.TRANSFORM">TRANSFORM</a></b>
 								</div>
 								<div class="description">CSS property lets you modify the coordinate space of the CSS visual
@@ -779,6 +793,15 @@ transition effect</div>
 								<div class="description">Methods that create a PAR group
 
  <p></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.<b><a href="../symbols/vs.html#.scheduleAction">scheduleAction</a></b>(func, delay)
+								</div>
+								<div class="description">Schedule an action to be executed asynchronously.</div>
 							</td>
 						</tr>
 					
@@ -991,6 +1014,38 @@ sequence
 
 					<hr />
 				
+					<a name=".ON_NEXT_FRAME"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.</span><b>ON_NEXT_FRAME</b>
+					
+					</div>
+					<div class="description">
+						Schedule your action on next frame.
+						
+					</div>
+					
+					
+					
+					<pre class="code">vs.scheduleAction (function () {...}, vs.ON_NEXT_FRAME);</pre>
+					
+					
+
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">See:</dt>
+							
+							<dd><a href="../symbols/vs.html#.scheduleAction">vs.scheduleAction</a></dd>
+							
+							</dl>
+						
+						
+
+					<hr />
+				
 					<a name=".TRANSFORM"> </a>
 					<div class="fixedFont">&lt;static&gt; 
 					
@@ -1187,6 +1242,81 @@ transition effect
 								</dt>
 								<dd>List of task to start parallel with an optional
  parameter</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".scheduleAction"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.</span><b>scheduleAction</b>(func, delay)
+					
+					</div>
+					<div class="description">
+						Schedule an action to be executed asynchronously.
+<br />
+There is three basic scheduling; the action can be executed:
+<ul>
+  <li>as soon as possible.
+  <li>on the next frame
+  <li>after a delay
+</ul>
+
+1- As soon as possible<br />
+The action will be executed as soon as possible in a manner that is
+typically more efficient and consumes less power than the usual
+setTimeout(..., 0) pattern.<br />
+It based on setImmediate if it is available; otherwise it will use postMessage
+if it is possible and at least setTimeout(..., 0) pattern if previous APIs are
+not available.
+<br /><br />
+
+2- On next frame<br />
+The action will be executed on next frame.<br />It is equivalent to use
+window.requestAnimationFrame.
+<br /><br />
+
+2- After a delay<br />
+The action will be executed after a given delay in millisecond.<br />
+It is equivalent to use window.setTimeout(..., delay).
+						
+					</div>
+					
+					
+					
+					<pre class="code">// run asap
+vs.scheduleAction (function () {...});
+// run on next frame
+vs.scheduleAction (function () {...}, vs.ON_NEXT_FRAME);
+// run after 1s
+vs.scheduleAction (function () {...}, 1000);</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>func</b>
+									
+								</dt>
+								<dd>The action to run</dd>
+							
+								<dt>
+									<span class="light fixedFont">{(Number|String)}</span> <b>delay</b>
+									
+								</dt>
+								<dd>when run the action [optional]</dd>
 							
 							</dl>
 						
