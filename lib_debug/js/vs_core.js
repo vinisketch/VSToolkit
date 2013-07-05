@@ -1280,13 +1280,35 @@ TaskHandler.prototype.destructor = function () {
 /**
  * @private
  */
-var _async_events_queue = [], _sync_event = null,
+var
+  // Events queue. This array contains event structure for future propagation.
+  // This array is part of the algorithm that secure event propagation, in
+  // particular that avoids a event pass a previous one.
+  _async_events_queue = [],
+  
+  // Event reference on the current synchronous event.
+  _sync_event = null,
+  
+  // Actions queue. This array contains all actions (function for the moment)
+  // that have to be execute.
+  // This queue is used only in case we use our own implementation of 
+  // setImmediate.
   _actions_queue  = [],
+  // Boolean indicating if we are propagating a event or not.
+  // To secure event propagation, in particular to avoid a event pass a previous
+  // event, we manage a events queue and block new propagation if a event is
+  // in propagation.
   _is_events_propagating = false,
+  
+  // Boolean indicating if we are running an action or not.
+  // This boolean is used only in case we use our own implementation of 
+  // setImmediate.
   _is_action_runing = false,
   _is_waiting = false;
 
 /**
+ * Put an asynchronous event into the event queue and request the mainloop
+ *
  * @private
  */
 function queueProcAsyncEvent (event, handler_list) {
@@ -1304,6 +1326,11 @@ function queueProcAsyncEvent (event, handler_list) {
   serviceLoop ();
 }
 
+/**
+ * Setup a synchronous event and request the mainloop
+ *
+ * @private
+ */
 function queueProcSyncEvent (event, handler_list) {
   if (!event || !handler_list) return;
 
@@ -1320,10 +1347,14 @@ function queueProcSyncEvent (event, handler_list) {
 }
 
 /**
+ * doOneEvent will dispatch One event to all observers.
+ *
  * @private
- * doOneAsyncEvent will dispache One event to all observers.
+ * @param {Object} burst a event burst structure
+ * @param {Boolean} isSynchron if its true the callbacks are executed
+ *             synchronously, otherwise they are executed within a setImmediate
  */
-function doOneEvent (burst) {
+function doOneEvent (burst, isSynchron) {
   var
     handler_list = burst.handler_list,
     n = handler_list.length,
@@ -1332,15 +1363,16 @@ function doOneEvent (burst) {
 
   _is_events_propagating = true;
 
+  // Test is all observers have been called
   function end_propagation () {
     n--;
     if (n <= 0) _is_events_propagating = false;
   }
 
   /**
-   * @private
-   * doOneHandler will dispache One event to an observer.
+   * doOneHandler will dispatch One event to an observer.
    *
+   * @private
    * @param {Handler} handler
    */
   function doOneHandler (handler) {
@@ -1367,35 +1399,45 @@ function doOneEvent (burst) {
     end_propagation ();
   };
 
-  if (!i) end_propagation (); // should not occures
+  if (!i) end_propagation (); // should not occur
+  
+  // For each observers, schedule the handler call (callback execution)
   for (i = 0; i < n; i++) {
-    (function (handler) {
-      setImmediate (function () { doOneHandler(handler) });
-    }) (handler_list [i])
+    if (isSynchron) doOneHandler (handler_list [i])
+  
+    else (function (handler) {
+        setImmediate (function () { doOneHandler(handler) });
+      }) (handler_list [i])
   }
 }
 
 /**
+ * doOneAsyncEvent will dispatch One event to all observers.
+ *
  * @private
- * doOneAsyncEvent will dispache One event to all observers.
  */
 function doOneAsyncEvent () {
   if (_is_events_propagating) return;
+  
+  // dequeue the next event burst and do it
   doOneEvent (_async_events_queue.shift ());
 }
 
 /**
+ * doOneSyncEvent will dispatch the synchronous event to all observers.
+ *
  * @private
- * doOneAsyncEvent will dispache One event to all observers.
  */
 function doOneSyncEvent () {
-  doOneEvent (_sync_event);
+  doOneEvent (_sync_event, true);
   _sync_event = null;
 }
 
 /**
+ * doAction, execute one action. This method is called with our setImmediate
+ * implementation.
+ *
  * @private
- * doAction
  */
 function doAction () {
 
@@ -1418,6 +1460,12 @@ function doAction () {
   if (_actions_queue.length) { _delay_do_action (); }
 }
 
+/**
+ * doAction, execute one action. This method is called with our setImmediate
+ * implementation.
+ *
+ * @private
+ */
 function installPostMessageImplementation () {
 
   var MESSAGE_PREFIX = "vs.core.scheduler" + Math.random ();
@@ -1437,11 +1485,14 @@ function installPostMessageImplementation () {
   };
 }
 
-//var _delay_do_action = function () {vs.requestAnimationFrame (doAction)};
-
 var _delay_do_action = (window.postMessage)?installPostMessageImplementation():
   function () {setTimeout (doAction, 0)};
 
+/**
+ * Install our awn setImmediate implementation, if needs
+ *
+ * @private
+ */
 var setImmediate = window.setImmediate || function (func) {
 
   // push the action to execute into the queue
@@ -1450,11 +1501,25 @@ var setImmediate = window.setImmediate || function (func) {
   // doAction
   if (!_is_action_runing) _delay_do_action ();
 };
+
+/**
+ * This method is used to break-up long running operations and run a callback
+ * function immediately after the browser has completed other operations such
+ * as events and display updates.
+ *
+ * @example
+ * vs.setImmediate (function () {...});
+ *
+ * @see vs.scheduleAction
+ * @name vs.setImmediate 
+ * @param {Function} func The action to run
+ */
 vs.setImmediate = setImmediate;
 
 /**
- * @private
  * Mainloop core
+ *
+ * @private
  */
 function serviceLoop () {
 
@@ -1474,7 +1539,7 @@ function serviceLoop () {
     return;
   }
 
-  // dispache an event to observers
+  // dispatch an event to observers
   if (!_is_action_runing && _actions_queue.length) _delay_do_action ();
   if (_async_events_queue.length) doOneAsyncEvent ();
 }
