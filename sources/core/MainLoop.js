@@ -236,8 +236,6 @@ function installPostMessageImplementation () {
   };
 }
 
-//var _delay_do_action = function () {vs.requestAnimationFrame (doAction)};
-
 var _delay_do_action = (window.postMessage)?installPostMessageImplementation():
   function () {setTimeout (doAction, 0)};
 
