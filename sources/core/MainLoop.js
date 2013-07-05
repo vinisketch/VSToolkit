@@ -149,7 +149,9 @@ function queueProcSyncEvent (event, handler_list) {
  * doOneEvent will dispatch One event to all observers.
  *
  * @private
-  * @param {Object} burst a event burst structure
+ * @param {Object} burst a event burst structure
+ * @param {Boolean} isSynchron if its true the callbacks are executed
+ *             synchronously, otherwise they are executed within a setImmediate
  */
 function doOneEvent (burst, isSynchron) {
   var
@@ -196,7 +198,7 @@ function doOneEvent (burst, isSynchron) {
     end_propagation ();
   };
 
-  if (!i) end_propagation (); // should not occures
+  if (!i) end_propagation (); // should not occur
   
   // For each observers, schedule the handler call (callback execution)
   for (i = 0; i < n; i++) {
@@ -231,8 +233,10 @@ function doOneSyncEvent () {
 }
 
 /**
+ * doAction, execute one action. This method is called with our setImmediate
+ * implementation.
+ *
  * @private
- * doAction
  */
 function doAction () {
 
@@ -255,6 +259,12 @@ function doAction () {
   if (_actions_queue.length) { _delay_do_action (); }
 }
 
+/**
+ * doAction, execute one action. This method is called with our setImmediate
+ * implementation.
+ *
+ * @private
+ */
 function installPostMessageImplementation () {
 
   var MESSAGE_PREFIX = "vs.core.scheduler" + Math.random ();
@@ -277,6 +287,11 @@ function installPostMessageImplementation () {
 var _delay_do_action = (window.postMessage)?installPostMessageImplementation():
   function () {setTimeout (doAction, 0)};
 
+/**
+ * Install our awn setImmediate implementation, if needs
+ *
+ * @private
+ */
 var setImmediate = window.setImmediate || function (func) {
 
   // push the action to execute into the queue
@@ -285,11 +300,25 @@ var setImmediate = window.setImmediate || function (func) {
   // doAction
   if (!_is_action_runing) _delay_do_action ();
 };
+
+/**
+ * This method is used to break-up long running operations and run a callback
+ * function immediately after the browser has completed other operations such
+ * as events and display updates.
+ *
+ * @example
+ * vs.setImmediate (function () {...});
+ *
+ * @see vs.scheduleAction
+ * @name vs.setImmediate 
+ * @param {Function} func The action to run
+ */
 vs.setImmediate = setImmediate;
 
 /**
- * @private
  * Mainloop core
+ *
+ * @private
  */
 function serviceLoop () {
 
