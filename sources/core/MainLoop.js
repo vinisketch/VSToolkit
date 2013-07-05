@@ -151,7 +151,7 @@ function queueProcSyncEvent (event, handler_list) {
  * @private
   * @param {Object} burst a event burst structure
  */
-function doOneEvent (burst) {
+function doOneEvent (burst, isSynchron) {
   var
     handler_list = burst.handler_list,
     n = handler_list.length,
@@ -200,9 +200,11 @@ function doOneEvent (burst) {
   
   // For each observers, schedule the handler call (callback execution)
   for (i = 0; i < n; i++) {
-    (function (handler) {
-      setImmediate (function () { doOneHandler(handler) });
-    }) (handler_list [i])
+    if (isSynchron) doOneHandler (handler_list [i])
+  
+    else (function (handler) {
+        setImmediate (function () { doOneHandler(handler) });
+      }) (handler_list [i])
   }
 }
 
@@ -224,7 +226,7 @@ function doOneAsyncEvent () {
  * @private
  */
 function doOneSyncEvent () {
-  doOneEvent (_sync_event);
+  doOneEvent (_sync_event, true);
   _sync_event = null;
 }
 
