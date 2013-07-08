@@ -20,7 +20,7 @@
 /**
  *  The vs.ui.AbstractList class
  *
- *  @extends vs.ui.View
+ *  @extends vs.ui.ScrollView
  *  @class
  *  @author David Thevenin
  *
@@ -104,7 +104,7 @@ AbstractList.prototype = {
    */
   destructor: function ()
   {
-    View.prototype.destructor.call (this);
+    ScrollView.prototype.destructor.call (this);
     
     this._model.unbindChange (null, this, this._modelChanged);
     if (this._model_allocated) util.free (this._model);
@@ -117,7 +117,7 @@ AbstractList.prototype = {
    */
   initComponent: function ()
   {
-    View.prototype.initComponent.call (this);
+    ScrollView.prototype.initComponent.call (this);
     
     this._model = new vs.core.Array ();
     this._model.init ();
@@ -141,7 +141,7 @@ AbstractList.prototype = {
   refresh : function ()
   {
     if (this.__iscroll__) this.__iscroll__.refresh ();
-    View.prototype.refresh.call (this);
+    ScrollView.prototype.refresh.call (this);
   },
 
   /**
