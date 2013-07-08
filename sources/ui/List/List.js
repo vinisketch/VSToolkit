@@ -406,7 +406,7 @@ function tabListRenderData (itemsSelectable)
   this.__direct_access_letters = [];
   
   util.removeAllElementChild (_list_items);
-  util.removeAllElementChild (_direct_access);
+  if (_direct_access) util.removeAllElementChild (_direct_access);
 
   if (SUPPORT_3D_TRANSFORM)
     util.setElementTransform (_list_items, 'translate3d(0,0,0)');
@@ -415,7 +415,7 @@ function tabListRenderData (itemsSelectable)
 
   var parentElement = _list_items.parentElement;
   parentElement.removeChild (_list_items);
-  this.view.removeChild (_direct_access);
+  if (_direct_access) this.view.removeChild (_direct_access);
   
   index = 0;
   util.setElementVisibility (_list_items, false);
@@ -432,7 +432,7 @@ function tabListRenderData (itemsSelectable)
       util.setElementInnerText (elem, letter);
       this.__direct_access_letters.push (letter);
       elem._index_ = title_index++;
-      _direct_access.appendChild (elem);
+      if (_direct_access) _direct_access.appendChild (elem);
     }
 
     s = buildSection (this, title, index, itemsSelectable);
@@ -440,7 +440,7 @@ function tabListRenderData (itemsSelectable)
     index = s[1];
   }
   parentElement.appendChild (_list_items);
-  this.view.appendChild (_direct_access);
+  if (_direct_access) this.view.appendChild (_direct_access);
   _list_items.style.width = 'auto';
   util.setElementVisibility (_list_items, true);
 };
@@ -913,7 +913,7 @@ List.prototype = {
     var self = this;
     var bar_dim, bar_pos;
     
-    var getIndex = function (y) {
+    function getIndex (y) {
       if (!bar_dim || !bar_pos) return 0;
       var dy = y - bar_pos.y;
       if (dy < 0) dy = 0;
@@ -923,7 +923,7 @@ List.prototype = {
       return Math.floor (dy * nb_elem / bar_dim.height);
     };
     
-    var accessBarStart = function (e)
+    function accessBarStart (e)
     {
       e.stopPropagation ();
       e.preventDefault ();
@@ -969,6 +969,8 @@ List.prototype = {
 
       if (self._startScrolling) self._startScrolling ();
     };
+    
+    this.__access_bar_start = accessBarStart;
     
     var accessBarMove = function (e)
     {
@@ -1017,6 +1019,18 @@ List.prototype = {
 
     vs.addPointerListener
       (this._direct_access, core.POINTER_START, accessBarStart, false);
+  },
+  
+  remove_directAccessBar : function ()
+  {
+    vs.removePointerListener
+      (this._direct_access, core.POINTER_START, this.__access_bar_start, false);
+
+    this.view.removeChild (this._direct_access);
+    this._direct_access = undefined;
+    
+    this.view.removeChild (this._direct_access_value)
+    this._direct_access_value = undefined;
   },
   
   getTitlePosition : function (index)
@@ -1125,8 +1139,7 @@ util.defineClassProperties (List, {
         this._renderData = blockListRenderData;
         if (this._direct_access)
         {
-          this.view.removeChild (this._direct_access);
-          delete (this._direct_access);
+          this.remove_directAccessBar ()
         }
       }
       if (this._type === List.TAB_LIST)
@@ -1139,8 +1152,7 @@ util.defineClassProperties (List, {
         this._renderData = defaultListRenderData
         if (this._direct_access)
         {
-          this.view.removeChild (this._direct_access);
-          delete (this._direct_access);
+          this.remove_directAccessBar ();
         }
       }
       
