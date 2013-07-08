@@ -704,6 +704,7 @@ ScrollView.prototype = {
     {
       var options = {};
       options.bubbling = false;
+//      options.fadeScrollbar = true;
 //      options.bounce = false;
 //      options.momentum = false;
       options.hScroll = false;
@@ -723,8 +724,8 @@ ScrollView.prototype = {
       }
       
       // For any case, do not show the scroll bar
-//       options.hScrollbar = false;
-//       options.vScrollbar = false;
+       options.hScrollbar = false;
+       options.vScrollbar = false;
  
       this.__iscroll__ = new iScroll (this.view, this._sub_view, options);
 
