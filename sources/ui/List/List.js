@@ -403,6 +403,7 @@ function tabListRenderData (itemsSelectable)
    
 // remove all children
   this._freeListItems ();
+  this.__direct_access_letters = [];
   
   util.removeAllElementChild (_list_items);
   util.removeAllElementChild (_direct_access);
@@ -426,8 +427,10 @@ function tabListRenderData (itemsSelectable)
     if (util.isString (item))
     {
       title = item; index ++;
-      var elem = document.createElement ('div');
-      util.setElementInnerText (elem, title [0]);
+      var elem = document.createElement ('div'),
+        letter = title [0];
+      util.setElementInnerText (elem, letter);
+      this.__direct_access_letters.push (letter);
       elem._index_ = title_index++;
       _direct_access.appendChild (elem);
     }
@@ -901,6 +904,10 @@ List.prototype = {
     this._direct_access.className = 'direct_access';
     this.view.appendChild (this._direct_access);
     
+    this._direct_access_value = document.createElement ('div');
+    this._direct_access_value.className = 'direct_access_value';
+    this.view.appendChild (this._direct_access_value)
+
     this._acces_index = 0;
     
     var self = this;
@@ -929,7 +936,8 @@ List.prototype = {
       
       var _acces_index = e.srcElement._index_;
       if (!util.isNumber (_acces_index)) return;
-      
+      var letter = self.__direct_access_letters [_acces_index];
+     
       if (self._acces_index === _acces_index) return;
       self._acces_index = _acces_index;
       var newPos = -self.getTitlePosition (_acces_index);
@@ -953,6 +961,12 @@ List.prototype = {
       bar_pos = util.getElementAbsolutePosition (self._direct_access);
       bar_pos.y += 5;
 
+      var dy = _acces_index * bar_dim.height / 
+        self._direct_access.childElementCount + 10;
+
+      self._direct_access_value.style.opacity = 1;
+      self._direct_access_value.innerHTML = letter;
+
       if (self._startScrolling) self._startScrolling ();
     };
     
@@ -967,6 +981,7 @@ List.prototype = {
       if (self._acces_index === _acces_index) return;
       self._acces_index = _acces_index;
       var newPos = -self.getTitlePosition (_acces_index);
+      var letter = self.__direct_access_letters [_acces_index];
 
       if (newPos < self.__max_scroll) newPos = self.__max_scroll;
 
@@ -979,6 +994,11 @@ List.prototype = {
         util.setElementTransform
           (self._list_items, 'translate(0,' + newPos + 'px)');
 
+      var dy = _acces_index * bar_dim.height / 
+        self._direct_access.childElementCount + 10;
+      
+      self._direct_access_value.innerHTML = letter;
+      
       // animate the scroll
       if (self._scrollbar) self._scrollbar.setPosition (newPos);
 
@@ -989,6 +1009,8 @@ List.prototype = {
     {
       vs.removePointerListener (document, core.POINTER_MOVE, accessBarMove);
       vs.removePointerListener (document, core.POINTER_END, accessBarEnd);
+
+      self._direct_access_value.style.opacity = 0;
 
       if (self._endScrolling) self._endScrolling ();
     };

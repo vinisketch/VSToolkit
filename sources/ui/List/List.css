@@ -102,8 +102,7 @@ li {
   z-index: 10;
   width: 15px;
   height : auto;
-  right : 10px;
-  top : 15px;
+  right : 10px; top: 45%;
   background-color: transparent;
   position: absolute;
   border-radius: 7px;
@@ -112,8 +111,11 @@ li {
   text-shadow: none;
   background-color: rgba(125,125,125,0.2);
   padding: 5px 0;
+  -webkit-transform: translate3d(0, -50%, 0);
+  -moz-transform: translate3d(0, -50%, 0);
+  -ms-transform: translate3d(0, -50%, 0);
+  transform: translate3d(0, -50%, 0);
 }
-
 
 .vs_ui_list.TabList > .direct_access > div {
   font-weight: bold;
@@ -126,6 +128,23 @@ li {
   background-color: rgba(125,125,125,0.5);
   color: white;
   text-shadow: rgba(0,0,0,0.398438) 0 1px 0;
+}
+
+.vs_ui_list.TabList > .direct_access_value {
+  opacity: 0;
+  position: absolute;
+  top: 50%; left: 50%;
+  z-index: 10;
+  width: 45px;
+  height : 45px;
+  background-color: #444;
+  margin-top: -22px;
+  margin-left: -22px;
+  color: white;
+  text-align: center;
+  text-transform:capitalize;
+  line-height: 45px;
+  font-size: 25px;
 }
 
 /********************************************************************
