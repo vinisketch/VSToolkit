@@ -7549,6 +7549,7 @@ ScrollView.prototype = {
     {
       var options = {};
       options.bubbling = false;
+//      options.fadeScrollbar = true;
 //      options.bounce = false;
 //      options.momentum = false;
       options.hScroll = false;
@@ -7568,8 +7569,8 @@ ScrollView.prototype = {
       }
       
       // For any case, do not show the scroll bar
-//       options.hScrollbar = false;
-//       options.vScrollbar = false;
+       options.hScrollbar = false;
+       options.vScrollbar = false;
  
       this.__iscroll__ = new iScroll (this.view, this._sub_view, options);
 
@@ -8852,7 +8853,7 @@ ui.Button = Button;
 /**
  *  The vs.ui.AbstractList class
  *
- *  @extends vs.ui.View
+ *  @extends vs.ui.ScrollView
  *  @class
  *  @author David Thevenin
  *
@@ -8936,7 +8937,7 @@ AbstractList.prototype = {
    */
   destructor: function ()
   {
-    View.prototype.destructor.call (this);
+    ScrollView.prototype.destructor.call (this);
     
     this._model.unbindChange (null, this, this._modelChanged);
     if (this._model_allocated) util.free (this._model);
@@ -8949,7 +8950,7 @@ AbstractList.prototype = {
    */
   initComponent: function ()
   {
-    View.prototype.initComponent.call (this);
+    ScrollView.prototype.initComponent.call (this);
     
     this._model = new vs.core.Array ();
     this._model.init ();
@@ -8973,7 +8974,7 @@ AbstractList.prototype = {
   refresh : function ()
   {
     if (this.__iscroll__) this.__iscroll__.refresh ();
-    View.prototype.refresh.call (this);
+    ScrollView.prototype.refresh.call (this);
   },
 
   /**
@@ -9688,9 +9689,10 @@ function tabListRenderData (itemsSelectable)
    
 // remove all children
   this._freeListItems ();
+  this.__direct_access_letters = [];
   
   util.removeAllElementChild (_list_items);
-  util.removeAllElementChild (_direct_access);
+  if (_direct_access) util.removeAllElementChild (_direct_access);
 
   if (SUPPORT_3D_TRANSFORM)
     util.setElementTransform (_list_items, 'translate3d(0,0,0)');
@@ -9699,7 +9701,7 @@ function tabListRenderData (itemsSelectable)
 
   var parentElement = _list_items.parentElement;
   parentElement.removeChild (_list_items);
-  this.view.removeChild (_direct_access);
+  if (_direct_access) this.view.removeChild (_direct_access);
   
   index = 0;
   util.setElementVisibility (_list_items, false);
@@ -9711,10 +9713,12 @@ function tabListRenderData (itemsSelectable)
     if (util.isString (item))
     {
       title = item; index ++;
-      var elem = document.createElement ('div');
-      util.setElementInnerText (elem, title [0]);
+      var elem = document.createElement ('div'),
+        letter = title [0];
+      util.setElementInnerText (elem, letter);
+      this.__direct_access_letters.push (letter);
       elem._index_ = title_index++;
-      _direct_access.appendChild (elem);
+      if (_direct_access) _direct_access.appendChild (elem);
     }
 
     s = buildSection (this, title, index, itemsSelectable);
@@ -9722,7 +9726,7 @@ function tabListRenderData (itemsSelectable)
     index = s[1];
   }
   parentElement.appendChild (_list_items);
-  this.view.appendChild (_direct_access);
+  if (_direct_access) this.view.appendChild (_direct_access);
   _list_items.style.width = 'auto';
   util.setElementVisibility (_list_items, true);
 };
@@ -10186,12 +10190,16 @@ List.prototype = {
     this._direct_access.className = 'direct_access';
     this.view.appendChild (this._direct_access);
     
+    this._direct_access_value = document.createElement ('div');
+    this._direct_access_value.className = 'direct_access_value';
+    this.view.appendChild (this._direct_access_value)
+
     this._acces_index = 0;
     
     var self = this;
     var bar_dim, bar_pos;
     
-    var getIndex = function (y) {
+    function getIndex (y) {
       if (!bar_dim || !bar_pos) return 0;
       var dy = y - bar_pos.y;
       if (dy < 0) dy = 0;
@@ -10201,7 +10209,7 @@ List.prototype = {
       return Math.floor (dy * nb_elem / bar_dim.height);
     };
     
-    var accessBarStart = function (e)
+    function accessBarStart (e)
     {
       e.stopPropagation ();
       e.preventDefault ();
@@ -10212,9 +10220,10 @@ List.prototype = {
       vs.addPointerListener (document, core.POINTER_MOVE, accessBarMove, false);
       vs.addPointerListener (document, core.POINTER_END, accessBarEnd, false);
       
-      var _acces_index = e.srcElement._index_;
+      var _acces_index = e.pointerList[0].target._index_;
       if (!util.isNumber (_acces_index)) return;
-      
+      var letter = self.__direct_access_letters [_acces_index];
+     
       if (self._acces_index === _acces_index) return;
       self._acces_index = _acces_index;
       var newPos = -self.getTitlePosition (_acces_index);
@@ -10238,8 +10247,16 @@ List.prototype = {
       bar_pos = util.getElementAbsolutePosition (self._direct_access);
       bar_pos.y += 5;
 
+      var dy = _acces_index * bar_dim.height / 
+        self._direct_access.childElementCount + 10;
+
+      self._direct_access_value.style.opacity = 1;
+      self._direct_access_value.innerHTML = letter;
+
       if (self._startScrolling) self._startScrolling ();
     };
+    
+    this.__access_bar_start = accessBarStart;
     
     var accessBarMove = function (e)
     {
@@ -10252,6 +10269,7 @@ List.prototype = {
       if (self._acces_index === _acces_index) return;
       self._acces_index = _acces_index;
       var newPos = -self.getTitlePosition (_acces_index);
+      var letter = self.__direct_access_letters [_acces_index];
 
       if (newPos < self.__max_scroll) newPos = self.__max_scroll;
 
@@ -10264,6 +10282,11 @@ List.prototype = {
         util.setElementTransform
           (self._list_items, 'translate(0,' + newPos + 'px)');
 
+      var dy = _acces_index * bar_dim.height / 
+        self._direct_access.childElementCount + 10;
+      
+      self._direct_access_value.innerHTML = letter;
+      
       // animate the scroll
       if (self._scrollbar) self._scrollbar.setPosition (newPos);
 
@@ -10275,11 +10298,25 @@ List.prototype = {
       vs.removePointerListener (document, core.POINTER_MOVE, accessBarMove);
       vs.removePointerListener (document, core.POINTER_END, accessBarEnd);
 
+      self._direct_access_value.style.opacity = 0;
+
       if (self._endScrolling) self._endScrolling ();
     };
 
     vs.addPointerListener
       (this._direct_access, core.POINTER_START, accessBarStart, false);
+  },
+  
+  remove_directAccessBar : function ()
+  {
+    vs.removePointerListener
+      (this._direct_access, core.POINTER_START, this.__access_bar_start, false);
+
+    this.view.removeChild (this._direct_access);
+    this._direct_access = undefined;
+    
+    this.view.removeChild (this._direct_access_value)
+    this._direct_access_value = undefined;
   },
   
   getTitlePosition : function (index)
@@ -10388,8 +10425,7 @@ util.defineClassProperties (List, {
         this._renderData = blockListRenderData;
         if (this._direct_access)
         {
-          this.view.removeChild (this._direct_access);
-          delete (this._direct_access);
+          this.remove_directAccessBar ()
         }
       }
       if (this._type === List.TAB_LIST)
@@ -10402,8 +10438,7 @@ util.defineClassProperties (List, {
         this._renderData = defaultListRenderData
         if (this._direct_access)
         {
-          this.view.removeChild (this._direct_access);
-          delete (this._direct_access);
+          this.remove_directAccessBar ();
         }
       }
       
