@@ -659,11 +659,15 @@ ul > li:first-child {
   margin-left: 2px;
   color: black;
   font-family: nokiapuretext, helvetica;
+  left: 0px;
+  width: 100%;
+  padding: 0 12px 0 10px;
 }
 .vs_ui_inputfield.focus > input {
   background: transparent;
   margin-top: 0px;
   margin-left: 2px;
+  padding: 0 37px 0px 10px;
 }
 .vs_ui_inputfield .clear_button {
   background: transparent;
@@ -708,6 +712,7 @@ ul > li:first-child {
   font-family: nokiapuretext, helvetica;
   font-size: inherit;
   height: 35px;
+  width: 90px;
   border: 1px solid #DDD;
   padding: 0px;
   -webkit-border-radius: 12px 12px;
@@ -725,28 +730,12 @@ ul > li:first-child {
   font-weight: normal;
   padding-top: 1px;
 }
-.vs_ui_switch > div {
-  position: relative;
-}
-.vs_ui_switch > div:first-child {
-  display: none;
-}
-.vs_ui_switch > div:nth-child(2) {
-  top: 0px;
-  min-height: 35px;
-  -webkit-transform: none;
-  -moz-transform: none;
-  -o-transform: none;
-  -ms-transform: none;
-  transform: none;
-}
 .vs_ui_switch .toggle_on {
   color: inherit;
   text-shadow: none;
   right: 40px;
   left: 0px;
-  padding: 4px;
-  padding-top: 7px;
+  line-height: 33px;
   display: none;
 }
 .vs_ui_switch .toggle_off {
@@ -754,8 +743,7 @@ ul > li:first-child {
   text-shadow: none;
   left: 0px;
   right: 35px;
-  padding: 4px;
-  padding-top: 7px;
+  line-height: 33px;
   -webkit-transform: none;
   -moz-transform: none;
   -o-transform: none;
@@ -778,7 +766,7 @@ ul > li:first-child {
   z-index: 2;
   border: 1px solid #aaa;
   right: 3px;
-  top: 4px;
+  top: 3px;
   -webkit-transition: -webkit-transform 100ms linear;
   -moz-transition: -moz-transform 100ms linear;
   -o-transition: -o-transform 100ms linear;

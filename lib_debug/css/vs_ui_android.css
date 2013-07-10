@@ -721,34 +721,19 @@ input[type="checkbox"]:checked:after
   white-space: nowrap;
   
   min-height: 35px;
+  height: 0px;
 
   -webkit-border-radius: 6px;
   border: 1px solid #555;
 
-  -webkit-box-shadow: none;
-  -webkit-transition: none;
-
   color: #424142;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4)) !important;
-  text-shadow: none;
-}
-
-.vs_ui_switch >div:first-child {
-  display:none;
-}
-
-.vs_ui_switch >div:nth-child(2) {
-  top:0px;
-  min-height: 35px;
-  -webkit-transition: none;
 }
 
 .vs_ui_switch .toggle_on {
   color: inherit;
-  text-shadow: none;
 
-  right: 0px;
-  left: 0px;
+  width: 100%;
   padding: 5px;
   padding-bottom: 10px;
 
@@ -757,12 +742,11 @@ input[type="checkbox"]:checked:after
 
 .vs_ui_switch .toggle_off {
   color: inherit;
-  text-shadow: none;
-  left: 0px;
-  right: 0px;
+
+  width: 100%;
+
   padding: 5px;
   padding-bottom: 10px;
-  -webkit-transform: none;
   
   display: block;
 }

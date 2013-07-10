@@ -1376,41 +1376,33 @@ input[type="text"] {
   text-overflow: ellipsis;
   white-space: nowrap;
   
-  width: 100px;
+  width: 80px;
 
   overflow: hidden;
   position: relative;
 }
 
-.vs_ui_switch >div:first-child {
-}
-
-.vs_ui_switch.toggled >div:first-child {
-  -webkit-transform: scale(1, 1);
-  -ms-transform: scale(1, 1);
-}
-
-.vs_ui_switch >div:nth-child(2) {
-  position: relative;
-  height: 100%;
+.vs_ui_switch >div {
   width: 100%;
-  left: 0px;
+  height: 100%;
+  position: relative;
+}
+
+.vs_ui_switch >div>div {
+  position: absolute;
 }
 
 .vs_ui_switch .toggle_on {
-  position:absolute;
   height: 100%;
+  top:0px;
+  left:0px;
   text-align: center;
 }
 
 .vs_ui_switch .toggle_off {
-  position:absolute;
+  top:0px;
   height: 100%;
   text-align: center;
-}
-
-.vs_ui_switch .switch {
-  position:absolute;
 }
 .vs_ui_picker {
   left:0;
