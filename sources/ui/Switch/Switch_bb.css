@@ -26,10 +26,6 @@
   height: 30px;
 }
 
-.vs_ui_switch > div:first-child {
-  display: none;
-}
-
 .vs_ui_switch .toggle_on {
   top: 0px;
   left: 0px;

@@ -195,49 +195,15 @@ Switch.prototype = {
    */
   _setToggle: function (v)
   {
-    if (!this.__background_view)
-    {
-      console.warn ("vs.ui.Switch.toggled, none initialized comp: " + this.id);
-      return;
-    }
-
-    var left;
     if (v)
     {
       this._toggled = true;
-      if (this._mode === Switch.MODE_IOS ||
-               this._mode === Switch.MODE_WP7)
-      {
-        setElementTransform (this.__background_view, "scale(0, 1)");
-        setElementTransform (this.__toggles_view, "translate(0,0)");
-      }
-      else if (this._mode === Switch.MODE_DEFAULT ||
-               this._mode === Switch.MODE_ANDROID ||
-               this._mode === Switch.MODE_MEEGO ||
-               this._mode === Switch.MODE_SYMBIAN ||
-               this._mode === Switch.MODE_BLACKBERRY)
-      {
-        this.addClassName ('on');
-      }
+      this.addClassName ('on');
     }
     else
     {
       this._toggled = false;
-      if (this._mode === Switch.MODE_IOS ||
-               this._mode === Switch.MODE_WP7)
-      {
-        setElementTransform (this.__background_view, "scale(1, 1)");
-        setElementTransform (this.__toggles_view, 
-          "translate(-" + (this.size[0] - this.__width_switch) + "px,0)");
-      }
-      else if (this._mode === Switch.MODE_DEFAULT ||
-               this._mode === Switch.MODE_ANDROID ||
-               this._mode === Switch.MODE_MEEGO ||
-               this._mode === Switch.MODE_SYMBIAN ||
-               this._mode === Switch.MODE_BLACKBERRY)
-      {
-        this.removeClassName ('on');
-      }
+      this.removeClassName ('on');
     }
     this.propertyChange ();
   },
@@ -264,10 +230,6 @@ Switch.prototype = {
   {
     View.prototype.initComponent.call (this);
 
-    this.__background_view =
-      this.view.querySelector ('.vs_ui_switch >div:first-child');
-    this.__toggles_view =
-      this.view.querySelector ('.vs_ui_switch >div:nth-child(2)');
     this.__toggle_on_view =
       this.view.querySelector ('.vs_ui_switch .toggle_on');
     this.__toggle_off_view =
@@ -334,7 +296,7 @@ Switch.prototype = {
     switch (this._mode)
     {
       case Switch.MODE_IOS:
-        this.__width_switch = 40;
+        this.__width_switch = 28;
       break;
     
       case Switch.MODE_WP7:
