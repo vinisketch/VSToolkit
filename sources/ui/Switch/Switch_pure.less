@@ -23,6 +23,7 @@
   font-weight: normal;
   
   height: 35px;
+  width: 90px;
   
   border: 1px solid #DDD;
   padding: 0px;
@@ -35,28 +36,13 @@
   padding-top: 1px;
 }
 
-.vs_ui_switch >div {
-  position: relative;
-}
-
-.vs_ui_switch >div:first-child {
-  display:none;
-}
-
-.vs_ui_switch >div:nth-child(2) {
-  top:0px;
-  min-height: 35px;
-  .transform(none);
-}
-
 .vs_ui_switch .toggle_on {
   color: inherit;
   text-shadow: none;
 
   right: 40px;
   left: 0px;
-  padding: 4px;
-  padding-top: 7px;
+  line-height: 33px;
 
   display: none;
 }
@@ -66,8 +52,7 @@
   text-shadow: none;
   left: 0px;
   right: 35px;
-  padding: 4px;
-  padding-top: 7px;
+  line-height: 33px;
   .transform(none);
   
   display: block;
@@ -89,7 +74,7 @@
   z-index: 2;
   border: 1px solid #aaa;
   right: 3px;
-  top: 4px;
+  top: 3px;
   .transition(~"transform 100ms linear");
   .translate(0, 0);
   .gradient(~"linear-gradient(-90deg, #E2E2E2 0%, #E2E2E2 2%, #C9C9C9 2%, #EAEAEA 100%)");
