@@ -861,6 +861,19 @@ List.prototype = {
    * @protected
    * @function
    */
+  _modelChanged : function (event)
+  {
+    // TODO   on peut mieux faire : au lieu de faire
+    // un init skin qui vire tout et reconstruit tout, on pourrait
+    // ne gerer que la difference
+    this._renderData (this._items_selectable);
+    this.refresh ();
+  },
+
+  /**
+   * @protected
+   * @function
+   */
   _touchItemFeedback : function (item)
   {
     item._comp_.pressed = true;
@@ -1139,7 +1152,7 @@ util.defineClassProperties (List, {
         this._renderData = blockListRenderData;
         if (this._direct_access)
         {
-          this.remove_directAccessBar ()
+          this.remove_directAccessBar ();
         }
       }
       if (this._type === List.TAB_LIST)
