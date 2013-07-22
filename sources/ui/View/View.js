@@ -165,7 +165,7 @@ View.MAGNET_NONE = 0;
  * @name vs.ui.View.MAGNET_LEFT
  * @const
  */
-View.MAGNET_LEFT = 1;
+View.MAGNET_LEFT = 3;
 
 /**
  * The widget will be fixed on bottom
@@ -179,7 +179,7 @@ View.MAGNET_BOTTOM = 2;
  * @name vs.ui.View.MAGNET_TOP
  * @const
  */
-View.MAGNET_TOP = 3;
+View.MAGNET_TOP = 1;
 
 /**
  * The widget will be fixed on right
@@ -1310,103 +1310,52 @@ View.prototype = {
    */
   _updateSizeAndPos : function ()
   {
-    this._updateSize ();
-    this._updatePos ();
-  },
-
-  /**
-   * @protected
-   * @function
-   */
-  _updateSize: function ()
-  {
-    var pos = this._pos, size = this._size, width, height, pWidth, pHeight,
-      aH = this._autosizing [0], aV = this._autosizing [1], sPosB = 'auto', sPosR = 'auto', view = this.view, parentElement, style;
-
-    if (!view || size[0] < 0 || size[1] < 0) { return; }
-
-    parentElement = view.parentElement;
-    if (parentElement)
-    {
-      pWidth = parentElement.offsetWidth;
-      pHeight = parentElement.offsetHeight;
-    }
-
-    if (aH === 4 || aH === 1) { width = size[0] + 'px'; }
-    else if (aH === 5 || aH === 7) { width = 'auto'; }
-    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0)
-    {
-      if (pWidth)
-      {
-        width = (size[0] / pWidth * 100) + '%';
-      }
-      else { width = size[0] + 'px'; }
-    }
-
-    else { width = '100%'; }
-
-    if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
-    {
-      sPosR = pWidth - (pos[0] + size [0]);
-      if (sPosR < 0) sPosR = 0;
-      sPosR += 'px';
-    }
-
-    if (aV === 4 || aV === 1) { height = size[1] + 'px'; }
-    else if (aV === 5 || aV === 7) { height = 'auto'; }
-    else if (aV === 2 || aV === 3 || aV === 6 || aV === 0)
-    {
-      if (pHeight)
-      {
-        height = (size[1] / pHeight * 100) + '%';
-      }
-      else { height = size[1] + 'px'; }
-    }
-    else { height = '100%'; }
-
-    if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
-    {
-      sPosB = pHeight - (pos[1] + size [1]);
-      if (sPosB < 0) sPosB = 0;
-      sPosB += 'px';
-    }
-
-    if (this._magnet === View.MAGNET_BOTTOM) sPosB = '0px';
-    if (this._magnet === View.MAGNET_RIGHT) sPosR = '0px';
-
-    style = view.style;
-    style.width = width;
-    style.height = height;
-    style.right = sPosR;
-    style.bottom = sPosB;
-  },
-
-  /**
-   * @protected
-   * @function
-   */
-  _updatePos : function ()
-  {
     var
       x = this._pos [0], y = this._pos [1],
       w = this._size [0], h = this._size [1],
-      pWidth = 0, pHeight = 0,
+      width, height, pWidth = 0, pHeight = 0,
       sPosL = 'auto', sPosT = 'auto', sPosR = 'auto', sPosB = 'auto',
       aH = this._autosizing [0], aV = this._autosizing [1],
       view = this.view, parentElement, style;
 
     if (!view) { return; }
+    if (w < 0) { w = 0; }
+    if (h < 0) { h = 0; }
 
     parentElement = view.parentElement;
-
     if (parentElement)
     {
       pWidth = parentElement.offsetWidth;
       pHeight = parentElement.offsetHeight;
     }
 
-    if (this._magnet === View.MAGNET_LEFT) y = 0;
-    if (this._magnet === View.MAGNET_TOP) x = 0;
+    if (this._magnet === View.MAGNET_LEFT) x = 0;
+    if (this._magnet === View.MAGNET_TOP) y = 0;
+
+    if (aH === 4 || aH === 1) { width = w + 'px'; }
+    else if (aH === 5 || aH === 7) { width = 'auto'; }
+    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0)
+    {
+      if (pWidth)
+      {
+        width = (w / pWidth * 100) + '%';
+      }
+      else { width = w + 'px'; }
+    }
+
+    else { width = '100%'; }
+
+    if (aV === 4 || aV === 1) { height = h + 'px'; }
+    else if (aV === 5 || aV === 7) { height = 'auto'; }
+    else if (aV === 2 || aV === 3 || aV === 6 || aV === 0)
+    {
+      if (pHeight)
+      {
+        height = (h / pHeight * 100) + '%';
+      }
+      else { height = h + 'px'; }
+    }
+    else { height = '100%'; }
 
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
     { sPosL = x + 'px'; }
@@ -1442,78 +1391,11 @@ View.prototype = {
 
     style = view.style;
     style.left = sPosL;
-    style.top = sPosT;
     style.right = sPosR;
+    style.top = sPosT;
     style.bottom = sPosB;
-  },
-
-  /**
-   *  Returns the border value of the GUI View.
-   *
-   *  @example
-   *  myObject.getBorder ('top');
-   *  // -> 5
-   *
-   * @name vs.ui.View#getBorder
-   * @function
-   *
-   * @param {String} type the border pos (top | left | bottom | right)
-   * @return {Integer} value the border value
-   */
-  getBorder : function (type)
-  {
-    if (!this.view) { return 0; }
-//     var style = this.getStyle ('border-' + type + '-style');
-//
-//     if (style && style !== 'none' && style !== 'hidden' &&
-//       this.getStyle  ('border-' + type + '-width'))
-    {
-      var value = this.getComputedStyle ('border-' + type + '-width');
-      if (value) { return parseInt (value, 10); }
-    }
-    return 0;
-  },
-
-  /**
-   *  Returns the padding value of the GUI View.
-   *
-   *  @example
-   *  myObject.getPadding ('top');
-   *  // -> 5
-   *
-   * @name vs.ui.View#getPadding
-   * @function
-   *
-   * @param {String} type the padding pos (top | left | bottom | right)
-   * @return {Integer} value the padding value
-   */
-  getPadding : function (type)
-  {
-    if (!this.view) { return 0; }
-    var value = this.getComputedStyle ('padding-' + type);
-    if (!value) { return 0; }
-    return parseInt (value, 10);
-  },
-
-  /**
-   *  Returns the margin value of the GUI View.
-   *
-   *  @example
-   *  myObject.getMargin ('top');
-   *  // -> 5
-   *
-   * @name vs.ui.View#getMargin
-   * @function
-   *
-   * @param {String} type the margin pos (top | left | bottom | right)
-   * @return {Integer} value the margin value
-   */
-  getMargin : function (type)
-  {
-    if (!this.view) { return 0; }
-    var value = this.getComputedStyle ('margin-' + type);
-    if (!value) { return 0; }
-    return parseInt (value, 10);
+    style.width = width;
+    style.height = height;
   },
 
 /********************************************************************
@@ -2420,7 +2302,7 @@ util.defineClassProperties (View, {
       this._size [1] = v [1];
 
       if (!this.view) { return; }
-      this._updateSize ();
+      this._updateSizeAndPos ();
     },
 
     /**
@@ -2451,7 +2333,7 @@ util.defineClassProperties (View, {
       this._pos [1] = v [1];
 
       if (!this.view) { return; }
-      this._updatePos ();
+      this._updateSizeAndPos ();
     },
 
     /**
