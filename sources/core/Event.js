@@ -24,7 +24,6 @@ core.FORCE_EVENT_PROPAGATION_DELAY = false;
 var EVENT_SUPPORT_GESTURE = false;
 var hasMSPointer = window.navigator.msPointerEnabled;
 
-
 /** 
  * Start pointer event (mousedown, touchstart, )
  * @name vs.core.POINTER_START
