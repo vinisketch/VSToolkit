@@ -449,7 +449,7 @@ util.defineClassProperties (Slider, {
       this._size [1] = v [1];
       
       if (!this.view) { return; }
-      this._updateSize ();
+      this._updateSizeAndPos ();
       
       // re-apply the value
       this.value = this._value;

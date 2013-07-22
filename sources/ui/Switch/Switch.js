@@ -317,70 +317,52 @@ Switch.prototype = {
    * @protected
    * @function
    */
-  _updateSize: function ()
+  _updateSizeAndPos: function ()
   {
-    var pos = this._pos, size = this._size, width
-      aH = this._autosizing [0], aV = this._autosizing [1], sPosR = 'auto';
-    
-    if (this.view.parentNode)
-    {
-      pWidth = this.view.parentNode.offsetWidth;
-    }
-    
-    if (aH === 4 || aH === 1) { width = size[0] + 'px'; }
-    else if (aH === 5 || aH === 7) { width = 'auto'; }
-    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0)
-    {
-      if (pWidth)
-      {
-        width = Math.round (size[0] / pWidth * 100) + '%';
-      }
-      else { width = size[0] + 'px'; } 
-    }
-    
-    else { width = '100%'; }
-
-    if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
-    {
-      sPosR = pWidth - (pos[0] + size [0]) + 'px';
-    }
-    
-    this.view.style.width = width;
-    this.view.style.right = sPosR;
-    this.view.style.bottom = 'auto';
-    this.view.style.removeProperty ('height');
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  _updatePos : function ()
-  {
-    var pos = this._pos, size = this._size, pWidth = 0, pHeight = 0,
+    var
+      w = this._size [0], h = this._size [1],
+ 	  x = this._pos [0], y = this._pos [1], width
+      pWidth = 0, pHeight = 0,
       sPosL = 'auto', sPosT = 'auto', sPosR = 'auto',
       aH = this._autosizing [0], aV = this._autosizing [1];
-      
+    
     if (this.view.parentNode)
     {
       pWidth = this.view.parentNode.offsetWidth;
       pHeight = this.view.parentNode.offsetHeight;
     }
     
+    if (aH === 4 || aH === 1) { width = w + 'px'; }
+    else if (aH === 5 || aH === 7) { width = 'auto'; }
+    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0)
+    {
+      if (pWidth)
+      {
+        width = Math.round (w / pWidth * 100) + '%';
+      }
+      else { width = w + 'px'; } 
+    }
+    
+    else { width = '100%'; }
+    
+    
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
-    { sPosL = pos[0] + 'px'; }
+    { sPosL = x + 'px'; }
     else if ((aH === 2 || aH === 0) && pWidth)
-    { sPosL = Math.round (pos[0] / pWidth * 100) + '%'; }
+    { sPosL = Math.round (x / pWidth * 100) + '%'; }
     
     if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
     {
-      sPosR = pWidth - (pos[0] + size [0]) + 'px';
+      sPosR = pWidth - (x + w) + 'px';
     }
 
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
-    { sPosT = pos[1] + 'px'; }
+    { sPosT = y + 'px'; }
     else if ((aV === 2 || aV === 0) && pHeight)
-    { sPosT = Math.round (pos[1]  / pHeight * 100) + '%'; }
+    { sPosT = Math.round (y  / pHeight * 100) + '%'; }
+
+    this.view.style.width = width;
+    this.view.style.removeProperty ('height');
 
     this.view.style.left = sPosL;
     this.view.style.top = sPosT;

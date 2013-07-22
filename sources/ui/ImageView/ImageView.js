@@ -135,7 +135,7 @@ util.defineClassProperties (ImageView, {
       }
       this._size [0] = v [0];
       this._size [1] = v [1];
-      this._updateSize ();
+      this._updateSizeAndPos ();
     },
   
     /**

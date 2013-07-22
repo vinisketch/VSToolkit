@@ -399,7 +399,7 @@ util.defineClassProperties (Carousel, {
       this._size [1] = v [1];
       
       if (!this.view) { return; }
-      this._updateSize ();
+      this._updateSizeAndPos ();
   
       if (this._slideController && this._slideController.refresh)
       { this._slideController.refresh (); }

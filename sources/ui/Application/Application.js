@@ -150,20 +150,13 @@ Application.prototype = {
    * @protected
    * @function
    */
-  _updateSize: function ()
+  _updateSizeAndPos: function ()
   {
     this.view.style.width = this._size[0] + 'px';;
     this.view.style.height = this._size[1] + 'px';;
     this.view.style.right = 'auto';
     this.view.style.bottom = 'auto';
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  _updatePos : function ()
-  {
+
     this.view.style.left = this._pos[0] + 'px';
     this.view.style.top = this._pos[1] + 'px';
     this.view.style.right = 'auto';
@@ -283,7 +276,7 @@ util.defineClassProperties (Application, {
       this._size [1] = v [1];
       
       if (!this.view) { return; }
-      this._updateSize ();
+      this._updateSizeAndPos ();
       
       window.resizeTo (this._size [0], this._size [1]);
     },

@@ -433,7 +433,7 @@ util.defineClassProperties (Video, {
       this._size [1] = v [1];
       
       if (!this.view) { return; }
-      this._updateSize ();
+      this._updateSizeAndPos ();
   
       if (!this.__video_node)
       {
