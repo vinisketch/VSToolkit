@@ -97,7 +97,8 @@ var
   // To secure event propagation, in particular to avoid a event pass a previous
   // event, we manage a events queue and block new propagation if a event is
   // in propagation.
-  _is_events_propagating = false,
+  _is_async_events_propagating = false,
+  _is_sync_events_propagating = false,
   
   // Boolean indicating if we are running an action or not.
   // This boolean is used only in case we use our own implementation of 
@@ -157,15 +158,19 @@ function doOneEvent (burst, isSynchron) {
   var
     handler_list = burst.handler_list,
     n = handler_list.length,
-    i = n,
+    i = n, l = n,
     event = burst.event;
 
-  _is_events_propagating = true;
-
+  if (isSynchron) _is_sync_events_propagating = true;
+  else _is_async_events_propagating = true;
+  
   // Test is all observers have been called
   function end_propagation () {
-    n--;
-    if (n <= 0) _is_events_propagating = false;
+    l--;
+    if (l <= 0) {
+      if (isSynchron) _is_sync_events_propagating = false;
+			else _is_async_events_propagating = false;
+		}
   }
 
   /**
@@ -216,7 +221,7 @@ function doOneEvent (burst, isSynchron) {
  * @private
  */
 function doOneAsyncEvent () {
-  if (_is_events_propagating) return;
+  if (_is_async_events_propagating || _is_sync_events_propagating) return;
   
   // dequeue the next event burst and do it
   doOneEvent (_async_events_queue.shift ());
@@ -332,7 +337,7 @@ function serviceLoop () {
     serviceLoop ();
   }
 
-  if (_is_events_propagating) {
+  if (_is_async_events_propagating || _is_sync_events_propagating) {
     // do the loop
     setImmediate (loop);
     return;
