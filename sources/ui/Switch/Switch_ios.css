@@ -82,11 +82,11 @@
   border-radius: 14px;
   border: 1px solid #666;
 
-  -webkit-transition-property: left, -webkit-transform;
-  transition-property: left transform;
+  -webkit-transition-property: -webkit-transform;
+  transition-property: transform;
   
-  -webkit-transition-duration: 200ms;
-  transition-duration: 200ms;
+  -webkit-transition-duration: 150ms;
+  transition-duration: 150ms;
   
   -webkit-transition-timing-function: linear;
   transition-timing-function: linear;
@@ -97,9 +97,6 @@
 }
 
 .vs_ui_switch.on .switch {
-  -webkit-transform: translate3d(-100%, 0, 0);
-  transform: translate3d(-100%, 0, 0);
-  left: 100%;
 }
 
 .vs_ui_switch:active .switch

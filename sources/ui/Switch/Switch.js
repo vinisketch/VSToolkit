@@ -107,6 +107,7 @@ Switch.prototype = {
    */
   __touch_binding: false,
   __is_touched: false,
+  __switch_translate: 0,
     
   /**
    *
@@ -195,15 +196,26 @@ Switch.prototype = {
    */
   _setToggle: function (v)
   {
+  	this._initWidthSwitch ();
+  	
     if (v)
     {
       this._toggled = true;
       this.addClassName ('on');
+      if (this._mode === Switch.MODE_IOS)
+      {
+      	util.setElementTransform (this.__switch_view,
+      		"translate3d(" + this.__switch_translate + "px,0,0)");
+      }
     }
     else
     {
       this._toggled = false;
       this.removeClassName ('on');
+      if (this._mode === Switch.MODE_IOS)
+      {
+	      util.setElementTransform (this.__switch_view, "translate3d(0,0,0)");
+	    }
     }
     this.propertyChange ();
   },
@@ -243,32 +255,13 @@ Switch.prototype = {
       this.__touch_binding = true;
     }
 
-    var os_device = window.deviceConfiguration.os;
+    var os_device =  vs.ui.View.getDeviceCSSCode (); //window.deviceConfiguration.os;
+
     if (os_device == DeviceConfiguration.OS_IOS)
     {
       this._mode = Switch.MODE_IOS;
     }
-    else if (os_device == DeviceConfiguration.OS_ANDROID)
-    {
-      this._mode = Switch.MODE_ANDROID;
-    }
-    else if (os_device == DeviceConfiguration.OS_SYMBIAN)
-    {
-      this._mode = Switch.MODE_SYMBIAN;
-    }
-    else if (os_device == DeviceConfiguration.OS_MEEGO)
-    {
-      this._mode = Switch.MODE_MEEGO;
-    }
-    else if (os_device == DeviceConfiguration.OS_WP7)
-    {
-      this._mode = Switch.MODE_WP7;
-    }
-    else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
-    {
-      this._mode = Switch.MODE_BLACKBERRY;
-    }
-
+    
     if (this._text_on)
     {
       this.textOn = this._text_on;
@@ -289,28 +282,9 @@ Switch.prototype = {
     this.toggled = this._toggled;
   },
   
-  refresh : function ()
+  _initWidthSwitch : function ()
   {
-    View.prototype.refresh.call (this);
-
-    switch (this._mode)
-    {
-      case Switch.MODE_IOS:
-        this.__width_switch = 28;
-      break;
-    
-      case Switch.MODE_WP7:
-        this.__width_switch = 23;
-      break;
-
-      case Switch.MODE_BLACKBERRY:
-        this.__width_switch = 20;
-      break;
-
-      default:
-      // this method could not work if the view his not displaied
-      this.__width_switch = this.__switch_view.offsetWidth;
-    }
+		this.__switch_translate = this.view.offsetWidth - this.__switch_view.offsetWidth;
   },
   
   /**
@@ -321,7 +295,7 @@ Switch.prototype = {
   {
     var
       w = this._size [0], h = this._size [1],
- 	  x = this._pos [0], y = this._pos [1], width
+ 	    x = this._pos [0], y = this._pos [1], width,
       pWidth = 0, pHeight = 0,
       sPosL = 'auto', sPosT = 'auto', sPosR = 'auto',
       aH = this._autosizing [0], aV = this._autosizing [1];
