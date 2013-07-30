@@ -419,7 +419,7 @@ EventSource.prototype =
       data = binds [i];
       if (data.n === node)
       {
-        node.removeEventListener (event, data.h);
+        vs.removePointerListener (node, event, data.h, false);
         binds.remove (i);
       }
       else
