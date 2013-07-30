@@ -1314,13 +1314,13 @@ View.prototype = {
       x = this._pos [0], y = this._pos [1],
       w = this._size [0], h = this._size [1],
       width, height, pWidth = 0, pHeight = 0,
-      sPosL = 'auto', sPosT = 'auto', sPosR = 'auto', sPosB = 'auto',
+      left = 'auto', top = 'auto', right = 'auto', bottom = 'auto',
       aH = this._autosizing [0], aV = this._autosizing [1],
       view = this.view, parentElement, style;
 
     if (!view) { return; }
-    if (w < 0) { w = 0; }
-    if (h < 0) { h = 0; }
+//     if (w < 0) { w = 0; }
+//     if (h < 0) { h = 0; }
 
     parentElement = view.parentElement;
     if (parentElement)
@@ -1332,8 +1332,9 @@ View.prototype = {
     if (this._magnet === View.MAGNET_LEFT) x = 0;
     if (this._magnet === View.MAGNET_TOP) y = 0;
 
-    if (aH === 4 || aH === 1) { width = w + 'px'; }
+    if (w < 0) { width = ''; }
     else if (aH === 5 || aH === 7) { width = 'auto'; }
+    else if (aH === 4 || aH === 1) { width = w + 'px'; }
     else if (aH === 2 || aH === 3 || aH === 6 || aH === 0)
     {
       if (pWidth)
@@ -1345,8 +1346,9 @@ View.prototype = {
 
     else { width = '100%'; }
 
-    if (aV === 4 || aV === 1) { height = h + 'px'; }
+    if (h < 0) { height = ''; }
     else if (aV === 5 || aV === 7) { height = 'auto'; }
+    else if (aV === 4 || aV === 1) { height = h + 'px'; }
     else if (aV === 2 || aV === 3 || aV === 6 || aV === 0)
     {
       if (pHeight)
@@ -1358,42 +1360,42 @@ View.prototype = {
     else { height = '100%'; }
 
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
-    { sPosL = x + 'px'; }
+    { left = x + 'px'; }
     else if ((aH === 2 || aH === 0) && pWidth)
-    { sPosL = (x / pWidth * 100) + '%'; }
+    { left = (x / pWidth * 100) + '%'; }
 
-    if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
+    if ((w >=0) && (aH === 1 || aH === 3 || aH === 5 || aH === 7))
     {
-      sPosR = pWidth - (x + w);
-      if (sPosR < 0) sPosR = 0;
-      sPosR += 'px';
+      right = pWidth - (x + w);
+      if (right < 0) right = 0;
+      right += 'px';
     }
 
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
-    { sPosT = y + 'px'; }
+    { top = y + 'px'; }
     else if ((aV === 2 || aV === 0) && pHeight)
-    { sPosT = (y / pHeight * 100) + '%'; }
+    { top = (y / pHeight * 100) + '%'; }
 
-    if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
+    if ((h >= 0) && (aV === 1 || aV === 3 || aV === 5 || aV === 7))
     {
-      sPosB = pHeight - (y + h);
-      if (sPosB < 0) sPosB = 0;
-      sPosB += 'px';
+      bottom = pHeight - (y + h);
+      if (bottom < 0) bottom = 0;
+      bottom += 'px';
     }
 
-    if (this._magnet === View.MAGNET_BOTTOM) { sPosT = 'auto'; sPosB = '0px'; }
-    if (this._magnet === View.MAGNET_RIGHT) { sPosL = 'auto'; sPosR = '0px'; }
+    if (this._magnet === View.MAGNET_BOTTOM) { top = 'auto'; bottom = '0px'; }
+    if (this._magnet === View.MAGNET_RIGHT) { left = 'auto'; right = '0px'; }
 
     if (this._magnet === View.MAGNET_CENTER) {
-      sPosT = '50%'; sPosB = 'auto';
-      sPosL = '50%'; sPosR = 'auto';
+      top = '50%'; bottom = 'auto';
+      left = '50%'; right = 'auto';
     }
 
     style = view.style;
-    style.left = sPosL;
-    style.right = sPosR;
-    style.top = sPosT;
-    style.bottom = sPosB;
+    style.left = left;
+    style.right = right;
+    style.top = top;
+    style.bottom = bottom;
     style.width = width;
     style.height = height;
   },
@@ -2714,8 +2716,22 @@ util.defineClassProperties (View, {
 
 View._ref_template_reg = /(\w+)#(\w+)/;
 
+function getDeviceCSSCode ()
+{	
+	var el = document.createElement('div'), val;
+	el.className = 'device_test';
+	document.body.appendChild (el);
+	
+	val = document.defaultView.getComputedStyle (el,null).getPropertyValue("margin-top");
+
+	document.body.removeChild (el);
+
+	return parseInt (val || 0, 10);
+}
+
 /********************************************************************
                       Export
 *********************************************************************/
 /** @private */
 ui.View = View;
+View.getDeviceCSSCode = getDeviceCSSCode;
