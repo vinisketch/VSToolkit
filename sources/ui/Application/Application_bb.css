@@ -3,3 +3,8 @@ body {
   background-color: #EEE;
   color: black;
 }
+
+.device_test {
+	opacity: 0;
+	margin-top: 7px;
+}
