@@ -170,8 +170,13 @@ Slider.prototype = {
   {
     View.prototype.initComponent.call (this);
 
-    var os_device = window.deviceConfiguration.os;
-    if (os_device == DeviceConfiguration.OS_WP7)
+    var os_device =  vs.ui.View.getDeviceCSSCode (); //window.deviceConfiguration.os;
+
+    if (os_device == DeviceConfiguration.OS_IOS)
+    {
+      this.__handle_width = 28;
+    }
+    else if (os_device == DeviceConfiguration.OS_WP7)
     {
       this.__handle_width = 30;
     }
@@ -185,7 +190,7 @@ Slider.prototype = {
       this.__handle_height = 12;
       this.__handle_delta = 3;
     }
-    else { this.__handle_width = 23; } // ios
+    else { this.__handle_width = 23; }
     
     //1) find first Div.
     this.__handle = this.view.querySelector ('.handle');
