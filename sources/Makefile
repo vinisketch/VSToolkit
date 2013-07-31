@@ -240,7 +240,6 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	$(CAT) ui/SegmentedButton/SegmentedButton.css >> $@
 
 ../lib_debug/css/vs_ui_ios.css: ui/Application/Application_ios.css ui/Button/Button_ios.css ui/List/List_ios.css ui/NavigationBar/NavigationBar_ios.css ui/RadioButton/RadioButton_ios.css ui/CheckBox/CheckBox_ios.css ui/Slider/Slider_ios.css ui/ProgressBar/ProgressBar_ios.css ui/InputField/InputField_ios.css ui/TextArea/TextArea_ios.css ui/Picker/Picker_ios.css ui/Switch/Switch_ios.css ui/ComboBox/ComboBox_ios.css ui/PopOver/PopOver_ios.css ui/SegmentedButton/SegmentedButton_ios.css
-	$(CAT) ui/View/View_ios.css >> $@
 	$(CAT) ui/Application/Application_ios.css >> $@
 	$(CAT) ui/Button/Button_ios.css >> $@
 	$(CAT) ui/List/List_ios.css >> $@
@@ -259,7 +258,6 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	$(CAT) ui/SegmentedButton/SegmentedButton_ios.css >> $@
 
 ../lib_debug/css/vs_ui_android.css: ui/Application/Application_android.css ui/Button/Button_android.css ui/List/List_android.css ui/NavigationBar/NavigationBar_android.css ui/RadioButton/RadioButton_android.css ui/CheckBox/CheckBox_android.css ui/Slider/Slider_android.css ui/ProgressBar/ProgressBar_android.css ui/InputField/InputField_android.css ui/Picker/Picker_android.css ui/Switch/Switch_android.css ui/ComboBox/ComboBox_android.css ui/PopOver/PopOver_android.css ui/TextArea/TextArea_android.css ui/SegmentedButton/SegmentedButton_android.css
-	$(CAT) ui/View/View_android.css >> $@
 	$(CAT) ui/Application/Application_android.css >> $@
 	$(CAT) ui/Button/Button_android.css >> $@
 	$(CAT) ui/List/List_android.css >> $@
