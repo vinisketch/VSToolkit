@@ -312,6 +312,7 @@ EventSource.prototype =
         }
         catch (e)
         {
+          if (e.stack) console.log (e.stack)
           console.error (e);
         }
       };
@@ -344,6 +345,7 @@ EventSource.prototype =
         }
         catch (e)
         {
+          if (e.stack) console.log (e.stack)
           console.error (e);
         }
       };

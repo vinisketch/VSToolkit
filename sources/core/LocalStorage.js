@@ -88,6 +88,7 @@ LocalStorage.prototype = {
       }
       catch (e)
       {
+        if (e.stack) console.log (e.stack)
         error.log (e);
         self.propagate ("error", e);
       }

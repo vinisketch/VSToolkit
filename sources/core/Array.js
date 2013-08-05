@@ -97,6 +97,7 @@ VSArray.prototype = {
       }
       catch (e)
       {
+        if (e.stack) console.log (e.stack)
         console.error (e.toString ());
       }
     }
