@@ -876,7 +876,7 @@ View.MAGNET_NONE = 0;
  * @name vs.ui.View.MAGNET_LEFT
  * @const
  */
-View.MAGNET_LEFT = 1;
+View.MAGNET_LEFT = 3;
 
 /**
  * The widget will be fixed on bottom
@@ -890,7 +890,7 @@ View.MAGNET_BOTTOM = 2;
  * @name vs.ui.View.MAGNET_TOP
  * @const
  */
-View.MAGNET_TOP = 3;
+View.MAGNET_TOP = 1;
 
 /**
  * The widget will be fixed on right
@@ -2021,210 +2021,94 @@ View.prototype = {
    */
   _updateSizeAndPos : function ()
   {
-    this._updateSize ();
-    this._updatePos ();
-  },
-
-  /**
-   * @protected
-   * @function
-   */
-  _updateSize: function ()
-  {
-    var pos = this._pos, size = this._size, width, height, pWidth, pHeight,
-      aH = this._autosizing [0], aV = this._autosizing [1], sPosB = 'auto', sPosR = 'auto', view = this.view, parentElement, style;
-
-    if (!view || size[0] < 0 || size[1] < 0) { return; }
-
-    parentElement = view.parentElement;
-    if (parentElement)
-    {
-      pWidth = parentElement.offsetWidth;
-      pHeight = parentElement.offsetHeight;
-    }
-
-    if (aH === 4 || aH === 1) { width = size[0] + 'px'; }
-    else if (aH === 5 || aH === 7) { width = 'auto'; }
-    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0)
-    {
-      if (pWidth)
-      {
-        width = (size[0] / pWidth * 100) + '%';
-      }
-      else { width = size[0] + 'px'; }
-    }
-
-    else { width = '100%'; }
-
-    if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
-    {
-      sPosR = pWidth - (pos[0] + size [0]);
-      if (sPosR < 0) sPosR = 0;
-      sPosR += 'px';
-    }
-
-    if (aV === 4 || aV === 1) { height = size[1] + 'px'; }
-    else if (aV === 5 || aV === 7) { height = 'auto'; }
-    else if (aV === 2 || aV === 3 || aV === 6 || aV === 0)
-    {
-      if (pHeight)
-      {
-        height = (size[1] / pHeight * 100) + '%';
-      }
-      else { height = size[1] + 'px'; }
-    }
-    else { height = '100%'; }
-
-    if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
-    {
-      sPosB = pHeight - (pos[1] + size [1]);
-      if (sPosB < 0) sPosB = 0;
-      sPosB += 'px';
-    }
-
-    if (this._magnet === View.MAGNET_BOTTOM) sPosB = '0px';
-    if (this._magnet === View.MAGNET_RIGHT) sPosR = '0px';
-
-    style = view.style;
-    style.width = width;
-    style.height = height;
-    style.right = sPosR;
-    style.bottom = sPosB;
-  },
-
-  /**
-   * @protected
-   * @function
-   */
-  _updatePos : function ()
-  {
     var
       x = this._pos [0], y = this._pos [1],
       w = this._size [0], h = this._size [1],
-      pWidth = 0, pHeight = 0,
-      sPosL = 'auto', sPosT = 'auto', sPosR = 'auto', sPosB = 'auto',
+      width, height, pWidth = 0, pHeight = 0,
+      left = 'auto', top = 'auto', right = 'auto', bottom = 'auto',
       aH = this._autosizing [0], aV = this._autosizing [1],
       view = this.view, parentElement, style;
 
     if (!view) { return; }
+//     if (w < 0) { w = 0; }
+//     if (h < 0) { h = 0; }
 
     parentElement = view.parentElement;
-
     if (parentElement)
     {
       pWidth = parentElement.offsetWidth;
       pHeight = parentElement.offsetHeight;
     }
 
-    if (this._magnet === View.MAGNET_LEFT) y = 0;
-    if (this._magnet === View.MAGNET_TOP) x = 0;
+    if (this._magnet === View.MAGNET_LEFT) x = 0;
+    if (this._magnet === View.MAGNET_TOP) y = 0;
+
+    if (w < 0) { width = ''; }
+    else if (aH === 5 || aH === 7) { width = 'auto'; }
+    else if (aH === 4 || aH === 1) { width = w + 'px'; }
+    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0)
+    {
+      if (pWidth)
+      {
+        width = (w / pWidth * 100) + '%';
+      }
+      else { width = w + 'px'; }
+    }
+
+    else { width = '100%'; }
+
+    if (h < 0) { height = ''; }
+    else if (aV === 5 || aV === 7) { height = 'auto'; }
+    else if (aV === 4 || aV === 1) { height = h + 'px'; }
+    else if (aV === 2 || aV === 3 || aV === 6 || aV === 0)
+    {
+      if (pHeight)
+      {
+        height = (h / pHeight * 100) + '%';
+      }
+      else { height = h + 'px'; }
+    }
+    else { height = '100%'; }
 
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
-    { sPosL = x + 'px'; }
+    { left = x + 'px'; }
     else if ((aH === 2 || aH === 0) && pWidth)
-    { sPosL = (x / pWidth * 100) + '%'; }
+    { left = (x / pWidth * 100) + '%'; }
 
-    if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
+    if ((w >=0) && (aH === 1 || aH === 3 || aH === 5 || aH === 7))
     {
-      sPosR = pWidth - (x + w);
-      if (sPosR < 0) sPosR = 0;
-      sPosR += 'px';
+      right = pWidth - (x + w);
+      if (right < 0) right = 0;
+      right += 'px';
     }
 
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
-    { sPosT = y + 'px'; }
+    { top = y + 'px'; }
     else if ((aV === 2 || aV === 0) && pHeight)
-    { sPosT = (y / pHeight * 100) + '%'; }
+    { top = (y / pHeight * 100) + '%'; }
 
-    if (aV === 1 || aV === 3 || aV === 5 || aV === 7)
+    if ((h >= 0) && (aV === 1 || aV === 3 || aV === 5 || aV === 7))
     {
-      sPosB = pHeight - (y + h);
-      if (sPosB < 0) sPosB = 0;
-      sPosB += 'px';
+      bottom = pHeight - (y + h);
+      if (bottom < 0) bottom = 0;
+      bottom += 'px';
     }
 
-    if (this._magnet === View.MAGNET_BOTTOM) { sPosT = 'auto'; sPosB = '0px'; }
-    if (this._magnet === View.MAGNET_RIGHT) { sPosL = 'auto'; sPosR = '0px'; }
+    if (this._magnet === View.MAGNET_BOTTOM) { top = 'auto'; bottom = '0px'; }
+    if (this._magnet === View.MAGNET_RIGHT) { left = 'auto'; right = '0px'; }
 
     if (this._magnet === View.MAGNET_CENTER) {
-      sPosT = '50%'; sPosB = 'auto';
-      sPosL = '50%'; sPosR = 'auto';
+      top = '50%'; bottom = 'auto';
+      left = '50%'; right = 'auto';
     }
 
     style = view.style;
-    style.left = sPosL;
-    style.top = sPosT;
-    style.right = sPosR;
-    style.bottom = sPosB;
-  },
-
-  /**
-   *  Returns the border value of the GUI View.
-   *
-   *  @example
-   *  myObject.getBorder ('top');
-   *  // -> 5
-   *
-   * @name vs.ui.View#getBorder
-   * @function
-   *
-   * @param {String} type the border pos (top | left | bottom | right)
-   * @return {Integer} value the border value
-   */
-  getBorder : function (type)
-  {
-    if (!this.view) { return 0; }
-//     var style = this.getStyle ('border-' + type + '-style');
-//
-//     if (style && style !== 'none' && style !== 'hidden' &&
-//       this.getStyle  ('border-' + type + '-width'))
-    {
-      var value = this.getComputedStyle ('border-' + type + '-width');
-      if (value) { return parseInt (value, 10); }
-    }
-    return 0;
-  },
-
-  /**
-   *  Returns the padding value of the GUI View.
-   *
-   *  @example
-   *  myObject.getPadding ('top');
-   *  // -> 5
-   *
-   * @name vs.ui.View#getPadding
-   * @function
-   *
-   * @param {String} type the padding pos (top | left | bottom | right)
-   * @return {Integer} value the padding value
-   */
-  getPadding : function (type)
-  {
-    if (!this.view) { return 0; }
-    var value = this.getComputedStyle ('padding-' + type);
-    if (!value) { return 0; }
-    return parseInt (value, 10);
-  },
-
-  /**
-   *  Returns the margin value of the GUI View.
-   *
-   *  @example
-   *  myObject.getMargin ('top');
-   *  // -> 5
-   *
-   * @name vs.ui.View#getMargin
-   * @function
-   *
-   * @param {String} type the margin pos (top | left | bottom | right)
-   * @return {Integer} value the margin value
-   */
-  getMargin : function (type)
-  {
-    if (!this.view) { return 0; }
-    var value = this.getComputedStyle ('margin-' + type);
-    if (!value) { return 0; }
-    return parseInt (value, 10);
+    style.left = left;
+    style.right = right;
+    style.top = top;
+    style.bottom = bottom;
+    style.width = width;
+    style.height = height;
   },
 
 /********************************************************************
@@ -3131,7 +3015,7 @@ util.defineClassProperties (View, {
       this._size [1] = v [1];
 
       if (!this.view) { return; }
-      this._updateSize ();
+      this._updateSizeAndPos ();
     },
 
     /**
@@ -3162,7 +3046,7 @@ util.defineClassProperties (View, {
       this._pos [1] = v [1];
 
       if (!this.view) { return; }
-      this._updatePos ();
+      this._updateSizeAndPos ();
     },
 
     /**
@@ -3543,11 +3427,25 @@ util.defineClassProperties (View, {
 
 View._ref_template_reg = /(\w+)#(\w+)/;
 
+function getDeviceCSSCode ()
+{	
+	var el = document.createElement('div'), val;
+	el.className = 'device_test';
+	document.body.appendChild (el);
+	
+	val = document.defaultView.getComputedStyle (el,null).getPropertyValue("margin-top");
+
+	document.body.removeChild (el);
+
+	return parseInt (val || 0, 10);
+}
+
 /********************************************************************
                       Export
 *********************************************************************/
 /** @private */
 ui.View = View;
+View.getDeviceCSSCode = getDeviceCSSCode;
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
@@ -3840,20 +3738,13 @@ Application.prototype = {
    * @protected
    * @function
    */
-  _updateSize: function ()
+  _updateSizeAndPos: function ()
   {
     this.view.style.width = this._size[0] + 'px';;
     this.view.style.height = this._size[1] + 'px';;
     this.view.style.right = 'auto';
     this.view.style.bottom = 'auto';
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  _updatePos : function ()
-  {
+
     this.view.style.left = this._pos[0] + 'px';
     this.view.style.top = this._pos[1] + 'px';
     this.view.style.right = 'auto';
@@ -3973,7 +3864,7 @@ util.defineClassProperties (Application, {
       this._size [1] = v [1];
       
       if (!this.view) { return; }
-      this._updateSize ();
+      this._updateSizeAndPos ();
       
       window.resizeTo (this._size [0], this._size [1]);
     },
@@ -8120,7 +8011,7 @@ util.defineClassProperties (ScrollImageView, {
     
     this._size [0] = v [0];
     this._size [1] = v [1];
-    this._updateSize ();
+    this._updateSizeAndPos ();
   },
 
   /**
@@ -10147,6 +10038,19 @@ List.prototype = {
    * @protected
    * @function
    */
+  _modelChanged : function (event)
+  {
+    // TODO   on peut mieux faire : au lieu de faire
+    // un init skin qui vire tout et reconstruit tout, on pourrait
+    // ne gerer que la difference
+    this._renderData (this._items_selectable);
+    this.refresh ();
+  },
+
+  /**
+   * @protected
+   * @function
+   */
   _touchItemFeedback : function (item)
   {
     item._comp_.pressed = true;
@@ -10425,7 +10329,7 @@ util.defineClassProperties (List, {
         this._renderData = blockListRenderData;
         if (this._direct_access)
         {
-          this.remove_directAccessBar ()
+          this.remove_directAccessBar ();
         }
       }
       if (this._type === List.TAB_LIST)
@@ -13519,7 +13423,7 @@ util.defineClassProperty (Canvas, "size", {
     this._size [1] = v [1];
     
     if (!this.view) { return; }
-    this._updateSize ();
+    this._updateSizeAndPos ();
 
     if (!this.canvas_node)
     {
@@ -14380,8 +14284,13 @@ Slider.prototype = {
   {
     View.prototype.initComponent.call (this);
 
-    var os_device = window.deviceConfiguration.os;
-    if (os_device == DeviceConfiguration.OS_WP7)
+    var os_device =  vs.ui.View.getDeviceCSSCode (); //window.deviceConfiguration.os;
+
+    if (os_device == DeviceConfiguration.OS_IOS)
+    {
+      this.__handle_width = 28;
+    }
+    else if (os_device == DeviceConfiguration.OS_WP7)
     {
       this.__handle_width = 30;
     }
@@ -14395,7 +14304,7 @@ Slider.prototype = {
       this.__handle_height = 12;
       this.__handle_delta = 3;
     }
-    else { this.__handle_width = 23; } // ios
+    else { this.__handle_width = 23; }
     
     //1) find first Div.
     this.__handle = this.view.querySelector ('.handle');
@@ -14659,7 +14568,7 @@ util.defineClassProperties (Slider, {
       this._size [1] = v [1];
       
       if (!this.view) { return; }
-      this._updateSize ();
+      this._updateSizeAndPos ();
       
       // re-apply the value
       this.value = this._value;
@@ -14822,7 +14731,7 @@ util.defineClassProperties (ImageView, {
       }
       this._size [0] = v [0];
       this._size [1] = v [1];
-      this._updateSize ();
+      this._updateSizeAndPos ();
     },
   
     /**
@@ -15833,6 +15742,7 @@ Switch.prototype = {
    */
   __touch_binding: false,
   __is_touched: false,
+  __switch_translate: 0,
     
   /**
    *
@@ -15921,15 +15831,26 @@ Switch.prototype = {
    */
   _setToggle: function (v)
   {
+  	this._initWidthSwitch ();
+  	
     if (v)
     {
       this._toggled = true;
       this.addClassName ('on');
+      if (this._mode === Switch.MODE_IOS)
+      {
+      	util.setElementTransform (this.__switch_view,
+      		"translate3d(" + this.__switch_translate + "px,0,0)");
+      }
     }
     else
     {
       this._toggled = false;
       this.removeClassName ('on');
+      if (this._mode === Switch.MODE_IOS)
+      {
+	      util.setElementTransform (this.__switch_view, "translate3d(0,0,0)");
+	    }
     }
     this.propertyChange ();
   },
@@ -15969,32 +15890,13 @@ Switch.prototype = {
       this.__touch_binding = true;
     }
 
-    var os_device = window.deviceConfiguration.os;
+    var os_device =  vs.ui.View.getDeviceCSSCode (); //window.deviceConfiguration.os;
+
     if (os_device == DeviceConfiguration.OS_IOS)
     {
       this._mode = Switch.MODE_IOS;
     }
-    else if (os_device == DeviceConfiguration.OS_ANDROID)
-    {
-      this._mode = Switch.MODE_ANDROID;
-    }
-    else if (os_device == DeviceConfiguration.OS_SYMBIAN)
-    {
-      this._mode = Switch.MODE_SYMBIAN;
-    }
-    else if (os_device == DeviceConfiguration.OS_MEEGO)
-    {
-      this._mode = Switch.MODE_MEEGO;
-    }
-    else if (os_device == DeviceConfiguration.OS_WP7)
-    {
-      this._mode = Switch.MODE_WP7;
-    }
-    else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
-    {
-      this._mode = Switch.MODE_BLACKBERRY;
-    }
-
+    
     if (this._text_on)
     {
       this.textOn = this._text_on;
@@ -16015,98 +15917,61 @@ Switch.prototype = {
     this.toggled = this._toggled;
   },
   
-  refresh : function ()
+  _initWidthSwitch : function ()
   {
-    View.prototype.refresh.call (this);
-
-    switch (this._mode)
-    {
-      case Switch.MODE_IOS:
-        this.__width_switch = 28;
-      break;
-    
-      case Switch.MODE_WP7:
-        this.__width_switch = 23;
-      break;
-
-      case Switch.MODE_BLACKBERRY:
-        this.__width_switch = 20;
-      break;
-
-      default:
-      // this method could not work if the view his not displaied
-      this.__width_switch = this.__switch_view.offsetWidth;
-    }
+		this.__switch_translate = this.view.offsetWidth - this.__switch_view.offsetWidth;
   },
   
   /**
    * @protected
    * @function
    */
-  _updateSize: function ()
+  _updateSizeAndPos: function ()
   {
-    var pos = this._pos, size = this._size, width
-      aH = this._autosizing [0], aV = this._autosizing [1], sPosR = 'auto';
-    
-    if (this.view.parentNode)
-    {
-      pWidth = this.view.parentNode.offsetWidth;
-    }
-    
-    if (aH === 4 || aH === 1) { width = size[0] + 'px'; }
-    else if (aH === 5 || aH === 7) { width = 'auto'; }
-    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0)
-    {
-      if (pWidth)
-      {
-        width = Math.round (size[0] / pWidth * 100) + '%';
-      }
-      else { width = size[0] + 'px'; } 
-    }
-    
-    else { width = '100%'; }
-
-    if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
-    {
-      sPosR = pWidth - (pos[0] + size [0]) + 'px';
-    }
-    
-    this.view.style.width = width;
-    this.view.style.right = sPosR;
-    this.view.style.bottom = 'auto';
-    this.view.style.removeProperty ('height');
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  _updatePos : function ()
-  {
-    var pos = this._pos, size = this._size, pWidth = 0, pHeight = 0,
+    var
+      w = this._size [0], h = this._size [1],
+ 	    x = this._pos [0], y = this._pos [1], width,
+      pWidth = 0, pHeight = 0,
       sPosL = 'auto', sPosT = 'auto', sPosR = 'auto',
       aH = this._autosizing [0], aV = this._autosizing [1];
-      
+    
     if (this.view.parentNode)
     {
       pWidth = this.view.parentNode.offsetWidth;
       pHeight = this.view.parentNode.offsetHeight;
     }
     
+    if (aH === 4 || aH === 1) { width = w + 'px'; }
+    else if (aH === 5 || aH === 7) { width = 'auto'; }
+    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0)
+    {
+      if (pWidth)
+      {
+        width = Math.round (w / pWidth * 100) + '%';
+      }
+      else { width = w + 'px'; } 
+    }
+    
+    else { width = '100%'; }
+    
+    
     if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
-    { sPosL = pos[0] + 'px'; }
+    { sPosL = x + 'px'; }
     else if ((aH === 2 || aH === 0) && pWidth)
-    { sPosL = Math.round (pos[0] / pWidth * 100) + '%'; }
+    { sPosL = Math.round (x / pWidth * 100) + '%'; }
     
     if (aH === 1 || aH === 3 || aH === 5 || aH === 7)
     {
-      sPosR = pWidth - (pos[0] + size [0]) + 'px';
+      sPosR = pWidth - (x + w) + 'px';
     }
 
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
-    { sPosT = pos[1] + 'px'; }
+    { sPosT = y + 'px'; }
     else if ((aV === 2 || aV === 0) && pHeight)
-    { sPosT = Math.round (pos[1]  / pHeight * 100) + '%'; }
+    { sPosT = Math.round (y  / pHeight * 100) + '%'; }
+
+    this.view.style.width = width;
+    this.view.style.removeProperty ('height');
 
     this.view.style.left = sPosL;
     this.view.style.top = sPosT;

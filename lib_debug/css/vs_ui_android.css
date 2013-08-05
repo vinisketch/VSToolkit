@@ -7,6 +7,11 @@ body {
   font-family: droid;
   color: #f0f0f0;
   background: #181818;
+}
+
+.device_test {
+	opacity: 0;
+	margin-top: 9px;
 }/*
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved

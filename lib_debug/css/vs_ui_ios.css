@@ -2,6 +2,11 @@ body {
   font-family:Helvetica,Arial;
   color:black;
   background-color:white;
+}
+
+.device_test {
+	opacity: 0;
+	margin-top: 5px;
 }.vs_ui_button
 {
   font-family: Helvetica;
@@ -590,12 +595,12 @@ input[type="checkbox"]:checked:after
 
 .vs_ui_slider .handle {
   position:relative;
-  width: 23px;
-  height: 23px;
-  border-radius: 12px;
-  border: 1px solid #777;
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#E2E2E2), color-stop(2%,#E2E2E2), color-stop(2%,#C9C9C9), color-stop(100%,#EAEAEA));
-  -webkit-box-shadow: 0px 1px 2px rgba(0,0,0,0.5);
+
+  width: 28px; height: 28px;
+  border-radius: 14px;
+  border: 1px solid #666;
+
+  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#E2E2E2), color-stop(2%,#E2E2E2), color-stop(2%,#C9C9C9), color-stop(100%,#EAEAEA))
 }
 
 .vs_ui_slider .handle:active {
@@ -731,7 +736,7 @@ input[type="checkbox"]:checked:after
   border-radius: 14px;
 
   background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#ffffff), color-stop(50%,#f1f1f1), color-stop(51%,#e1e1e1), color-stop(100%,#f6f6f6));
-  box-shadow: 0 1px 0 #fff, inset 0 0 2px #d7dee3, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
+  box-shadow: inset 0 0 2px #d7dee3, inset 0 1px 0 #d7dee3, inset 0 1px 5px #d7dee3;
 }
 
 .vs_ui_switch.on {
@@ -786,11 +791,11 @@ input[type="checkbox"]:checked:after
   border-radius: 14px;
   border: 1px solid #666;
 
-  -webkit-transition-property: left, -webkit-transform;
-  transition-property: left transform;
+  -webkit-transition-property: -webkit-transform;
+  transition-property: transform;
   
-  -webkit-transition-duration: 200ms;
-  transition-duration: 200ms;
+  -webkit-transition-duration: 150ms;
+  transition-duration: 150ms;
   
   -webkit-transition-timing-function: linear;
   transition-timing-function: linear;
@@ -801,9 +806,6 @@ input[type="checkbox"]:checked:after
 }
 
 .vs_ui_switch.on .switch {
-  -webkit-transform: translate3d(-100%, 0, 0);
-  transform: translate3d(-100%, 0, 0);
-  left: 100%;
 }
 
 .vs_ui_switch:active .switch

@@ -264,6 +264,10 @@ body.dark {
   color: #fff;
   background: #000000;
 }
+.device_test {
+  opacity: 0;
+  margin-top: 0px;
+}
 /*
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
