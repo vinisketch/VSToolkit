@@ -234,7 +234,6 @@ Model.prototype = {
     }
   },
 
-
   /**
    *  Propagate an event
    *  <p>
@@ -302,8 +301,7 @@ Model.prototype = {
    */
   propertyChange : function (property)
   {
-    var df = _df_node_to_def [this._id];
-    if (df) { df.propagate (this._id, property); }
+    if (vs._default_df_) { vs._default_df_.propagate (this, property); }
 
     if (this.__should_propagate_changes__)
     {

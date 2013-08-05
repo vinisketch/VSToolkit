@@ -179,8 +179,7 @@ VSObject.prototype =
     if (typeof (config) !== 'object') { return; }
     var props, key, i, should_propagate = false, desc;
 
-    var df = _df_node_to_def [this._id];
-    if (df) df.pausePropagation ();
+    if (vs._default_df_) vs._default_df_.pausePropagation ();
 
     // Manage model
     if (config instanceof Model)
@@ -217,17 +216,15 @@ VSObject.prototype =
       }
     }
 
-    if (df)
-    {
-      df.restartPropagation ();
-      if (should_propagate)
-      {
-        if (this.propertiesDidChange) this.propertiesDidChange ();
-        df.propagate (this._id);
+    if (vs._default_df_) {
+      vs._default_df_.restartPropagation ();
+      if (should_propagate) {
+        vs._default_df_.propagate (this);
       }
     }
-    else if (should_propagate && this.propertiesDidChange)
-    { this.propertiesDidChange (); }
+    else if (should_propagate && this.propertiesDidChange) {
+      this.propertiesDidChange ();
+    }
   },
 
   /**
@@ -355,8 +352,9 @@ VSObject.prototype =
    */
   propertyChange : function (property)
   {
-    var df = _df_node_to_def [this._id];
-    if (df) { df.propagate (this._id, property); }
+    if (vs._default_df_) {
+      vs._default_df_.propagate (this, property);
+    }
   },
 
   /**
