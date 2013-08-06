@@ -398,6 +398,21 @@ VSObject.prototype =
       this.propertiesDidChange ();
     }
   },
+  
+  /**
+   *  This method is called by the dataflow algorithm when input properties have
+   *  been changed.
+   *  You should reimplement this method if you want make specific calculation
+   *  on properties changed, and/or modifying output properties.
+   *  If you have modifying an output property (and want to continue the
+   *  dataflow propagation) you have to return 'false' or nothing.
+   *  Otherwise return 'true' to and the propagation will terminate.
+   *
+   * @name vs.core.Object#propertiesDidChange
+   * @function
+   * @return {boolean} true if you wants stop de propagation, false otherwise
+   */
+  propertiesDidChange: function () { return false; },
 
   /**
    *  Returns a copy of the objet's properties for JSON stringification.<p/>
@@ -524,6 +539,7 @@ VSObject.prototype =
    */
   propertyChange : function (property)
   {
+    this.__input_property__did__change__ = true;
     if (vs._default_df_) {
       vs._default_df_.propagate (this, property);
     }
@@ -2618,7 +2634,7 @@ Model.prototype = {
    * Manually force dataflow properties change propagation.
    * <br/>
    * If no property name is specified, the system will assume all component's
-   * properties have been modified.
+   * input properties have been modified.
    *
    * @name vs.core.Model#propertyChange
    * @function
@@ -3978,51 +3994,86 @@ DataFlow.prototype = {
           fnc.call (obj_next, params [l]);
         }
 
-        obj_next.__should__call__has__changed__ = true;
+        obj_next.__input_property__did__change__ = true;
       }
     }
   },
-
+  
+  /**
+   * Propagates values along the dataflow graph
+   *
+   * @param {Object} comp, an optional component form witch start the
+   *                 propagation
+   */
   propagate : function (obj) {
   
+    // The graph is sorted and save into an array.
+    // Propagation consiste of take each object of tree, one by one, following
+    // the array order, and propagation value between node, and call
+    // propertiesDidChange method.
+  
+    // 1) the dataflow is propagating values, do nothing.
     if (this.is_propagating || this.__shouldnt_propagate__) { return; }
 
     this.is_propagating = true;
     
-    var i = 0, l = this.dataflow_node.length;
+    var i = 0, dataflow_node = this.dataflow_node, l = dataflow_node.length;
+    
+    // 2) manage the first object from which starting propagation
     if (obj) {
       // find the first node corresponding to the id
-      while (i < l && this.dataflow_node [i] !== obj) { i++; }
+      while (i < l && dataflow_node [i] !== obj) { i++; }
 
       // the node wad found. First data propagation
       if (i < l - 1) {
-        if (obj.propertiesDidChange) obj.propertiesDidChange ();
+        if (obj.propertiesDidChange) {
+          if (obj.propertiesDidChange ()) {
+            // true means output properties were not changed.
+            // => stop propagation
+
+            // end of propagation
+            this.is_propagating = false;
+            return;
+          }
+        }
         this.propagate_values (obj);
         i++;
       }
     }
 
-    // continue the propagation
+    // 3) continue the propagation to following nodes
     for (; i < l; i++) {
-      obj = this.dataflow_node [i];
+      obj = dataflow_node [i];
       if (!obj) { continue; }
 
-      if (obj.__should__call__has__changed__ && obj.propertiesDidChange) {
-        obj.propertiesDidChange ();
-        obj.__should__call__has__changed__ = false;
+      if (obj.__input_property__did__change__) {
+        obj.__input_property__did__change__ = false;
+        if (obj.propertiesDidChange) {
+          if (obj.propertiesDidChange ()) {
+            // true means output properties were not changed.
+            // => stop propagation
+            continue;
+          }
+        }
+        this.propagate_values (obj);
       }
-
-      this.propagate_values (obj);
     }
 
-    // end of propagation
+    // 4) end of propagation
     this.is_propagating = false;
   },
 
   /**
-   *  xxx
+   * Connect two components within the datalfow.
+   * After a connection, you have to call build method to compile the dataflow.
+   * Build can (should) be call when all connection are done (to avoid
+   * un-necessary calculation)
    *
-   *  @private
+   * @public
+   * @param {String|Object} obj_src the Component (or Id) source.
+   * @param {String|Array} property_out one or an array of output property name(s)
+   * @param {String|Object} obj_trg the Component (or Id) target.
+   * @param {String|Array} property_in one or an array of input property name(s)
    */
   connect : function (obj_src, property_out, obj_trg, property_in, func) {
     var
@@ -4097,14 +4148,14 @@ DataFlow.prototype = {
   },
 
   /**
-   *  Performs a topological sort on this DAG, so that getNodes returns the
-   *  ordered list of nodes.<p>
-   *  Returns true if the graph is acyclic, false otherwise. When the graph is
-   *  cyclic, the algorithm does at it best to partially order it and issues a
-   *  warning.
+   * Performs a topological sort on this DAG, so that getNodes returns the
+   * ordered list of nodes.<p>
+   * Returns true if the graph is acyclic, false otherwise. When the graph is
+   * cyclic, the algorithm does at it best to partially order it and issues a
+   * warning.
    *
-   *  @private
-   *  @return {boolean}
+   * @private
+   * @return {boolean}
    */
   _sort : function () {
     /// This method uses the classical sorting algorithm with cycle-detection.
@@ -4323,63 +4374,6 @@ DataFlow.prototype = {
     this.dataflow_edges = temp;
   }
 };
-
-var _df_node_to_def = {};
-
-function _df_node_register (df_id, ref, id)
-{
-  if (!df_id || !ref || !id) { return; }
-  var df = _df_node_to_def [df_id];
-  if (!df) { return; }
-  
-  df._node_link [ref] = id;
-  _df_node_to_def [id] = df;
-}
-vs._df_node_register = _df_node_register;
-
-function _df_create (id, ref)
-{
-  var df = new DataFlow ();
-  
-  df.ref = ref;
-  _df_node_to_def [id] = df;
-  
-  return df;
-}
-vs._df_create = _df_create;
-
-function _df_register_ref_node (id, data)
-{
-  if (!id || !data) { return; }
-  
-  var df = _df_node_to_def [id];
-  if (!df) { return; }
-  
-  df.register_ref_node (data);
-}
-vs._df_register_ref_node = _df_register_ref_node;
-
-function _df_register_ref_edges (id, data)
-{
-  if (!id || !data) {return;}
-  
-  var df = _df_node_to_def [id];
-  if (!df) { return; }
-  
-  df.register_ref_edges (data);
-}
-vs._df_register_ref_edges = _df_register_ref_edges;
-
-function _df_build (id)
-{
-  if (!id) { return; }
-  
-  var df = _df_node_to_def [id];
-  if (!df) {return;}
-  
-  df.build ();
-}
-vs._df_build = _df_build;
 
 /********************************************************************
                       Export
