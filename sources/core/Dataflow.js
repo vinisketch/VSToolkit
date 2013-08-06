@@ -430,63 +430,6 @@ DataFlow.prototype = {
   }
 };
 
-var _df_node_to_def = {};
-
-function _df_node_register (df_id, ref, id)
-{
-  if (!df_id || !ref || !id) { return; }
-  var df = _df_node_to_def [df_id];
-  if (!df) { return; }
-  
-  df._node_link [ref] = id;
-  _df_node_to_def [id] = df;
-}
-vs._df_node_register = _df_node_register;
-
-function _df_create (id, ref)
-{
-  var df = new DataFlow ();
-  
-  df.ref = ref;
-  _df_node_to_def [id] = df;
-  
-  return df;
-}
-vs._df_create = _df_create;
-
-function _df_register_ref_node (id, data)
-{
-  if (!id || !data) { return; }
-  
-  var df = _df_node_to_def [id];
-  if (!df) { return; }
-  
-  df.register_ref_node (data);
-}
-vs._df_register_ref_node = _df_register_ref_node;
-
-function _df_register_ref_edges (id, data)
-{
-  if (!id || !data) {return;}
-  
-  var df = _df_node_to_def [id];
-  if (!df) { return; }
-  
-  df.register_ref_edges (data);
-}
-vs._df_register_ref_edges = _df_register_ref_edges;
-
-function _df_build (id)
-{
-  if (!id) { return; }
-  
-  var df = _df_node_to_def [id];
-  if (!df) {return;}
-  
-  df.build ();
-}
-vs._df_build = _df_build;
-
 /********************************************************************
                       Export
 *********************************************************************/
