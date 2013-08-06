@@ -84,7 +84,7 @@ DataFlow.prototype = {
           fnc.call (obj_next, params [l]);
         }
 
-        obj_next.__should__call__has__changed__ = true;
+        obj_next.__input_property__did__change__ = true;
       }
     }
   },
@@ -95,14 +95,23 @@ DataFlow.prototype = {
 
     this.is_propagating = true;
     
-    var i = 0, l = this.dataflow_node.length;
+    var i = 0, dataflow_node = this.dataflow_node, l = dataflow_node.length;
     if (obj) {
       // find the first node corresponding to the id
-      while (i < l && this.dataflow_node [i] !== obj) { i++; }
+      while (i < l && dataflow_node [i] !== obj) { i++; }
 
       // the node wad found. First data propagation
       if (i < l - 1) {
-        if (obj.propertiesDidChange) obj.propertiesDidChange ();
+        if (obj.propertiesDidChange) {
+          if (obj.propertiesDidChange ()) {
+            // true means output properties were not changed.
+            // => stop propagation
+
+            // end of propagation
+            this.is_propagating = false;
+            return;
+          }
+        }
         this.propagate_values (obj);
         i++;
       }
@@ -110,15 +119,20 @@ DataFlow.prototype = {
 
     // continue the propagation
     for (; i < l; i++) {
-      obj = this.dataflow_node [i];
+      obj = dataflow_node [i];
       if (!obj) { continue; }
 
-      if (obj.__should__call__has__changed__ && obj.propertiesDidChange) {
-        obj.propertiesDidChange ();
-        obj.__should__call__has__changed__ = false;
+      if (obj.__input_property__did__change__) {
+        obj.__input_property__did__change__ = false;
+        if (obj.propertiesDidChange) {
+          if (obj.propertiesDidChange ()) {
+            // true means output properties were not changed.
+            // => stop propagation
+            continue;
+          }
+        }
+        this.propagate_values (obj);
       }
-
-      this.propagate_values (obj);
     }
 
     // end of propagation

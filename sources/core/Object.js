@@ -233,16 +233,14 @@ VSObject.prototype =
    *  You should reimplement this method if you want make specific calculation
    *  on properties changed, and/or modifying output properties.
    *  If you have modifying an output property (and want to continue the
-   *  dataflow propagation) you have to return 'true'. Otherwise return 'false'
-   *  and the propagation will terminate.
+   *  dataflow propagation) you have to return 'false' or nothing.
+   *  Otherwise return 'true' to and the propagation will terminate.
    *
    * @name vs.core.Object#propertiesDidChange
    * @function
-   * @return {boolean} true if an output properties changed, false otherwise
+   * @return {boolean} true if you wants stop de propagation, false otherwise
    */
-  propertiesDidChange: function () {
-    return false;
-  },
+  propertiesDidChange: function () { return false; },
 
   /**
    *  Returns a copy of the objet's properties for JSON stringification.<p/>
@@ -369,6 +367,7 @@ VSObject.prototype =
    */
   propertyChange : function (property)
   {
+    this.__input_property__did__change__ = true;
     if (vs._default_df_) {
       vs._default_df_.propagate (this, property);
     }

@@ -945,7 +945,9 @@ RSSRequester.prototype = {
   propertiesDidChange : function ()
   {
     this.loadRSS ();
-    return false;
+    
+    // stop the propagation, it will restart when RSS data will be loaded
+    return true; 
   },
 
 /********************************************************************
