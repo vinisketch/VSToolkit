@@ -88,14 +88,28 @@ DataFlow.prototype = {
       }
     }
   },
-
+  
+  /**
+   * Propagates values along the dataflow graph
+   *
+   * @param {Object} comp, an optional component form witch start the
+   *                 propagation
+   */
   propagate : function (obj) {
   
+    // The graph is sorted and save into an array.
+    // Propagation consiste of take each object of tree, one by one, following
+    // the array order, and propagation value between node, and call
+    // propertiesDidChange method.
+  
+    // 1) the dataflow is propagating values, do nothing.
     if (this.is_propagating || this.__shouldnt_propagate__) { return; }
 
     this.is_propagating = true;
     
     var i = 0, dataflow_node = this.dataflow_node, l = dataflow_node.length;
+    
+    // 2) manage the first object from which starting propagation
     if (obj) {
       // find the first node corresponding to the id
       while (i < l && dataflow_node [i] !== obj) { i++; }
@@ -117,7 +131,7 @@ DataFlow.prototype = {
       }
     }
 
-    // continue the propagation
+    // 3) continue the propagation to following nodes
     for (; i < l; i++) {
       obj = dataflow_node [i];
       if (!obj) { continue; }
@@ -135,14 +149,21 @@ DataFlow.prototype = {
       }
     }
 
-    // end of propagation
+    // 4) end of propagation
     this.is_propagating = false;
   },
 
   /**
-   *  xxx
+   * Connect two components within the datalfow.
+   * After a connection, you have to call build method to compile the dataflow.
+   * Build can (should) be call when all connection are done (to avoid
+   * un-necessary calculation)
    *
-   *  @private
+   * @public
+   * @param {String|Object} obj_src the Component (or Id) source.
+   * @param {String|Array} property_out one or an array of output property name(s)
+   * @param {String|Object} obj_trg the Component (or Id) target.
+   * @param {String|Array} property_in one or an array of input property name(s)
    */
   connect : function (obj_src, property_out, obj_trg, property_in, func) {
     var
@@ -217,14 +238,14 @@ DataFlow.prototype = {
   },
 
   /**
-   *  Performs a topological sort on this DAG, so that getNodes returns the
-   *  ordered list of nodes.<p>
-   *  Returns true if the graph is acyclic, false otherwise. When the graph is
-   *  cyclic, the algorithm does at it best to partially order it and issues a
-   *  warning.
+   * Performs a topological sort on this DAG, so that getNodes returns the
+   * ordered list of nodes.<p>
+   * Returns true if the graph is acyclic, false otherwise. When the graph is
+   * cyclic, the algorithm does at it best to partially order it and issues a
+   * warning.
    *
-   *  @private
-   *  @return {boolean}
+   * @private
+   * @return {boolean}
    */
   _sort : function () {
     /// This method uses the classical sorting algorithm with cycle-detection.
