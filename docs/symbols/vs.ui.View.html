@@ -1066,36 +1066,9 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#getBorder">getBorder</a></b>(type)
-								</div>
-								<div class="description">Returns the border value of the GUI View.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#getComputedStyle">getComputedStyle</a></b>(property)
 								</div>
 								<div class="description">Returns the given CSS property computed value the vs.ui.View view.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#getMargin">getMargin</a></b>(type)
-								</div>
-								<div class="description">Returns the margin value of the GUI View.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#getPadding">getPadding</a></b>(type)
-								</div>
-								<div class="description">Returns the padding value of the GUI View.</div>
 							</td>
 						</tr>
 					
@@ -1285,7 +1258,7 @@ hr:last-child {
 				
 				
 				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#isProperty">isProperty</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
+				<dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#isProperty">isProperty</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertiesDidChange">propertiesDidChange</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
 				</dl>
 				
 			
@@ -2551,53 +2524,6 @@ Options :
 
 					<hr />
 				
-					<a name="getBorder"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Integer}</span>
-					<b>getBorder</b>(type)
-					
-					</div>
-					<div class="description">
-						Returns the border value of the GUI View.
-						
-					</div>
-					
-					
-					
-					<pre class="code"> myObject.getBorder ('top');
- // -> 5</pre>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>type</b>
-									
-								</dt>
-								<dd>the border pos (top | left | bottom | right)</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Integer}</span> value the border value</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
 					<a name="getComputedStyle"> </a>
 					<div class="fixedFont">
 					
@@ -2640,100 +2566,6 @@ Options :
 							<dt class="heading">Returns:</dt>
 							
 								<dd><span class="light fixedFont">{String}</span> value the property value or null if</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="getMargin"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Integer}</span>
-					<b>getMargin</b>(type)
-					
-					</div>
-					<div class="description">
-						Returns the margin value of the GUI View.
-						
-					</div>
-					
-					
-					
-					<pre class="code"> myObject.getMargin ('top');
- // -> 5</pre>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>type</b>
-									
-								</dt>
-								<dd>the margin pos (top | left | bottom | right)</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Integer}</span> value the margin value</dd>
-							
-							</dl>
-						
-						
-						
-
-					<hr />
-				
-					<a name="getPadding"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{Integer}</span>
-					<b>getPadding</b>(type)
-					
-					</div>
-					<div class="description">
-						Returns the padding value of the GUI View.
-						
-					</div>
-					
-					
-					
-					<pre class="code"> myObject.getPadding ('top');
- // -> 5</pre>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{String}</span> <b>type</b>
-									
-								</dt>
-								<dd>the padding pos (top | left | bottom | right)</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-							<dl class="detailList">
-							<dt class="heading">Returns:</dt>
-							
-								<dd><span class="light fixedFont">{Integer}</span> value the padding value</dd>
 							
 							</dl>
 						

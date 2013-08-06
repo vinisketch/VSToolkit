@@ -777,6 +777,16 @@ instance).</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#propertiesDidChange">propertiesDidChange</a></b>()
+								</div>
+								<div class="description">This method is called by the dataflow algorithm when input properties have
+ been changed.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a></b>(property)
 								</div>
 								<div class="description">Manually force properties change propagation.</div>
@@ -1326,6 +1336,43 @@ propagation.
 						
 						
 						
+						
+						
+						
+
+					<hr />
+				
+					<a name="propertiesDidChange"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{boolean}</span>
+					<b>propertiesDidChange</b>()
+					
+					</div>
+					<div class="description">
+						This method is called by the dataflow algorithm when input properties have
+ been changed.
+ You should reimplement this method if you want make specific calculation
+ on properties changed, and/or modifying output properties.
+ If you have modifying an output property (and want to continue the
+ dataflow propagation) you have to return 'false' or nothing.
+ Otherwise return 'true' to and the propagation will terminate.
+						
+					</div>
+					
+					
+					
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{boolean}</span> true if you wants stop de propagation, false otherwise</dd>
+							
+							</dl>
 						
 						
 						
