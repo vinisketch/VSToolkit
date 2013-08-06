@@ -292,7 +292,7 @@ Model.prototype = {
    * Manually force dataflow properties change propagation.
    * <br/>
    * If no property name is specified, the system will assume all component's
-   * properties have been modified.
+   * input properties have been modified.
    *
    * @name vs.core.Model#propertyChange
    * @function
