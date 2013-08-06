@@ -945,6 +945,7 @@ RSSRequester.prototype = {
   propertiesDidChange : function ()
   {
     this.loadRSS ();
+    return false;
   },
 
 /********************************************************************

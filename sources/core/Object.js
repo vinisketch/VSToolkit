@@ -226,6 +226,23 @@ VSObject.prototype =
       this.propertiesDidChange ();
     }
   },
+  
+  /**
+   *  This method is called by the dataflow algorithm when input properties have
+   *  been changed.
+   *  You should reimplement this method if you want make specific calculation
+   *  on properties changed, and/or modifying output properties.
+   *  If you have modifying an output property (and want to continue the
+   *  dataflow propagation) you have to return 'true'. Otherwise return 'false'
+   *  and the propagation will terminate.
+   *
+   * @name vs.core.Object#propertiesDidChange
+   * @function
+   * @return {boolean} true if an output properties changed, false otherwise
+   */
+  propertiesDidChange: function () {
+    return false;
+  },
 
   /**
    *  Returns a copy of the objet's properties for JSON stringification.<p/>
