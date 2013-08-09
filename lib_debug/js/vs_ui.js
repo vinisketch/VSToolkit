@@ -1245,9 +1245,11 @@ View.prototype = {
    */
   _clone_properties_value : function (obj, cloned_map)
   {
+    var key;
+
     for (key in this)
     {
-      if (key === '_id') continue;
+      if (key == 'id') continue;
 
       if (key == "size" || key == "position")
       {
@@ -3972,6 +3974,7 @@ Application.start = function ()
     obj.applicationStarted ();
     vs.scheduleAction (function () {obj.refresh ();});
   }
+  vs.scheduleAction (function () {vs._default_df_.build ();});
 };
 
 /**
@@ -8205,13 +8208,13 @@ TextArea.prototype = {
       
       case 'change':
         this._value = this.view.value;
-        this.propertyChange ();
+        this.outPropertyChange ();
         this.propagate ('change', this._value);
         break;
         
       case  'textInput':
         this._value = this.view.value;
-        this.propertyChange ();
+        this.outPropertyChange ();
         this.propagate ('continuous_change', this._value);
         break;
     }
@@ -10078,7 +10081,7 @@ List.prototype = {
     this._selected_item = this._model.item (this._selected_index);
     if (item._comp_ && item._comp_.didSelect) item._comp_.didSelect ();
     
-    this.propertyChange ();
+    this.outPropertyChange ();
                 
     this.propagate ('itemselect',
     {
@@ -10669,7 +10672,7 @@ ComboBox.prototype = {
     if (event.type === 'change')
     {
       this._selected_item = this._select.value;
-      this.propertyChange ();
+      this.outPropertyChange ();
       this.propagate ('change', this._selected_item);
     }
     else if (event.type === 'blur')
@@ -10921,7 +10924,7 @@ RadioButton.prototype = {
     if (index >= 0 || index < this._items.length) 
     {
       this.selectedIndex = index;
-      this.propertyChange ();
+      this.outPropertyChange ();
       this.propagate ('change',
       {
         index: this._selected_index,
@@ -11193,7 +11196,7 @@ CheckBox.prototype = {
     if (index >= 0 || index < this._items.length) 
     {
       this.selectItem (index);
-      this.propertyChange ();
+      this.outPropertyChange ();
       
       items = new Array ();
       for (i = 0, l = this._selected_indexes.length; i < l; i ++)
@@ -14376,7 +14379,7 @@ Slider.prototype = {
       
       this.value = this.__v - delta * (this._range [1] - this._range [0]) / dec;
 
-      this.propertyChange ();
+      this.outPropertyChange ();
       this.propagate ('continuous_change', this._value);
       
       return false;
@@ -14931,7 +14934,7 @@ InputField.prototype = {
     this._value = '';
     this._activateDelete (false);
     
-    this.propertyChange ();
+    this.outPropertyChange ();
     this.propagate ('continuous_change', this._value);
     this.propagate ('change', this._value);
   },
@@ -15048,13 +15051,13 @@ InputField.prototype = {
     if (event.type === 'change')
     {
       this.changeData ();
-      this.propertyChange ();
+      this.outPropertyChange ();
       this.propagate ('change', this._value);
     }
     else if (event.type === 'input')
     {
       this.changeData ();
-      this.propertyChange ();
+      this.outPropertyChange ();
       this.propagate ('continuous_change', this._value);
     }
     else if (event.type === 'focus')
@@ -15855,7 +15858,7 @@ Switch.prototype = {
 	      util.setElementTransform (this.__switch_view, "translate3d(0,0,0)");
 	    }
     }
-    this.propertyChange ();
+    this.outPropertyChange ();
   },
 
   /**
@@ -15904,18 +15907,18 @@ Switch.prototype = {
     {
       this.textOn = this._text_on;
     }
-    else
-    {
-      this.textOn = "ON";
-    }
+//     else
+//     {
+//       this.textOn = "";//"ON";
+//     }
     if (this._text_off)
     {
       this.textOff = this._text_off;
     }
-    else
-    {
-      this.textOff = "OFF";
-    }
+//     else
+//     {
+//       this.textOff = "";//"OFF";
+//     }
 
     this.toggled = this._toggled;
   },
@@ -16905,7 +16908,7 @@ Picker.prototype = {
         this._delegate.pickerViewSelectRow (this);
       }
       this.propagate ('change', this._getSelectedValues ());
-      this.propertyChange ();
+      this.outPropertyChange ();
     }
   },
   
@@ -17877,7 +17880,7 @@ SegmentedButton.prototype = {
         item: this._items [this._selected_index]
       });
       
-      this.propertyChange ();
+      this.outPropertyChange ();
       
       return false;
     }
