@@ -217,7 +217,7 @@ Switch.prototype = {
 	      util.setElementTransform (this.__switch_view, "translate3d(0,0,0)");
 	    }
     }
-    this.propertyChange ();
+    this.outPropertyChange ();
   },
 
   /**
@@ -266,18 +266,18 @@ Switch.prototype = {
     {
       this.textOn = this._text_on;
     }
-    else
-    {
-      this.textOn = "ON";
-    }
+//     else
+//     {
+//       this.textOn = "";//"ON";
+//     }
     if (this._text_off)
     {
       this.textOff = this._text_off;
     }
-    else
-    {
-      this.textOff = "OFF";
-    }
+//     else
+//     {
+//       this.textOff = "";//"OFF";
+//     }
 
     this.toggled = this._toggled;
   },
