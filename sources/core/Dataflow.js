@@ -18,28 +18,34 @@
 
 var edge_id_counter = 1;
 
-function DataFlow () {
+function DataFlow (comp) {
+  
   // ordered node list Array<Object>
   this.dataflow_node = [];
 
   // edges from components Object[component.id] => Array[3] <Object, , properties>
   this.dataflow_edges = {};
   this.is_propagating = false;
-  this._node_link = {};
+//  this._node_link = {};
   this.__shouldnt_propagate__ = 0;
   
-  this._list_node = []
+  this._list_node = [];
   this._edges_from = {};
+  
+  if (comp && comp.__df__) {
+    comp.__df__.push (this);
+  }
 }
 
 DataFlow.prototype = {
-
+ 
   propagate_values : function (obj) {
-  
+ 
     var data = this.dataflow_edges [obj._id],
-      connectors, edges, j, k, l, obj,
+      connectors, edges, i = 0, j = 0, l = 0,
       fnc, descriptors,
-      edge, obj_next, connector, length, length_desc, func, params;
+      edge, obj_next,
+      length = 0, length_desc = 0, func = null, params;
     
     if (!data) { return; }
 
@@ -67,7 +73,9 @@ DataFlow.prototype = {
         
         if (func) {
           params = func.apply (window, params);
-          if (!util.isArray (params)) params = [params];
+          if (!util.isArray (params)) {
+            params = [params];
+          }
         }
         
         descriptors = edge [2]; // properties in
@@ -96,7 +104,7 @@ DataFlow.prototype = {
    *                 propagation
    */
   propagate : function (obj) {
-  
+
     // The graph is sorted and save into an array.
     // Propagation consiste of take each object of tree, one by one, following
     // the array order, and propagation value between node, and call
@@ -114,7 +122,7 @@ DataFlow.prototype = {
       // find the first node corresponding to the id
       while (i < l && dataflow_node [i] !== obj) { i++; }
 
-      // the node wad found. First data propagation
+      // the node was found. First data propagation
       if (i < l - 1) {
         if (obj.propertiesDidChange) {
           if (obj.propertiesDidChange ()) {
@@ -128,6 +136,9 @@ DataFlow.prototype = {
         }
         this.propagate_values (obj);
         i++;
+      }
+      else {
+        i = 0;
       }
     }
 
@@ -166,17 +177,31 @@ DataFlow.prototype = {
    * @param {String|Array} property_in one or an array of input property name(s)
    */
   connect : function (obj_src, property_out, obj_trg, property_in, func) {
+
     var
       cid_src, cid_trg, properties_out, properties_in,
       data, index, data_l,
       connections, edges,
       edge_id = edge_id_counter++, edge;
   
-    if (util.isString (obj_src)) cid_src = obj_src;
-    else cid_src = obj_src._id;
+    if (util.isString (obj_src)){
+      cid_src = obj_src;
+    }
+    else {
+      cid_src = obj_src._id;
+    }
+    
+    obj_src = VSObject._obs [cid_src]; if (!obj_src) { return; }
+    if (obj_src.__df__.indexOf (this) === -1) {
+      obj_src.__df__.push (this);
+    }
   
-    if (util.isString (obj_trg)) cid_trg = obj_trg;
-    else cid_trg = obj_trg._id;
+    if (util.isString (obj_trg)) {
+      cid_trg = obj_trg;
+    }
+    else {
+      cid_trg = obj_trg._id;
+    }
     
     // Properties out management
     if (util.isString (property_out)) {
@@ -186,7 +211,9 @@ DataFlow.prototype = {
       console.warn ("DataFlow.connect, error");
       return;
     }
-    else properties_out = property_out;
+    else {
+      properties_out = property_out;
+    }
   
     // Properties in management
     if (util.isString (property_in)) {
@@ -196,7 +223,9 @@ DataFlow.prototype = {
       console.warn ("DataFlow.connect, error");
       return;
     }
-    else properties_in = property_in;
+    else {
+      properties_in = property_in;
+    }
     
     if (!func && properties_in.length !== properties_out.length) {
       console.warn ("DataFlow.connect, error");
@@ -248,6 +277,7 @@ DataFlow.prototype = {
    * @return {boolean}
    */
   _sort : function () {
+
     /// This method uses the classical sorting algorithm with cycle-detection.
     /// See, e.g., http://www.cs.umb.edu/cs310/class23.html
     /// It is normally O(|E|) but this probably won't be the case here
@@ -256,40 +286,43 @@ DataFlow.prototype = {
     /// partially sorted instead of being not sorted at all.
 
     /// 1) Calculate in-degrees for nodes
-    var nb_node = this._list_node.length;
-    var indegrees = [];
+    var
+      nb_node = this._list_node.length,
+      indegrees = [], i, j, key, ids, index;
 
-    for (var i = 0; i < nb_node; i++) {
+    for (i = 0; i < nb_node; i++) {
       indegrees [i] = 0;
     }
 
-    for (var key in this._edges_from) {
+    for (key in this._edges_from) {
       /// FIXME: For more efficiency, store indexes into edges to avoid node
       /// search.
-      var ids = this._edges_from [key]
-      for (var j = 0; j < ids.length; j++) {
+      ids = this._edges_from [key];
+      for (j = 0; j < ids.length; j++) {
         //find the index of the node in the node list
-        var index = this._list_node.findItem (ids [j][0])
+        index = this._list_node.findItem (ids [j][0]);
         indegrees [index]++;
       }
     }
 
     /// 2) Initialization
-    var pending = this._list_node.slice ();
-    var sorted = [];
-    var violationcount = 0;
+    var
+      pending = this._list_node.slice (),
+      sorted = [], violationcount = 0;
 
     /// 3) Loop until everything has been sorted
-    while (pending.length != 0) {
+    while (pending.length !== 0) {
       /// Extract a node of minimal input degree and append it to list topsorted
-      var min_i = this._array_min (indegrees);
-      var indegree = indegrees [min_i];
+      var
+        min_i = this._array_min (indegrees),
+        indegree = indegrees [min_i];
+        
       indegrees.remove (min_i);
 
       var n_id = pending [min_i];
       pending.remove (min_i);
-      if (indegree > 0)
-      {
+      
+      if (indegree > 0) {
         violationcount++;
       }
       sorted.push (n_id);
@@ -297,16 +330,16 @@ DataFlow.prototype = {
       /// 4) Decrement indegrees of nodes m adjacent to n
       /// FIXME: For more efficiency, store adjacent nodes to avoid this search.
       /// Use an adjacency matrix implementation ?
-      var ids = this._edges_from [n_id];
+      ids = this._edges_from [n_id];
       if (ids) {
-        for (var j = 0; j < ids.length; j++) {
+        for (j = 0; j < ids.length; j++) {
           var mi =  pending.findItem (ids [j][0]);
-          if (mi != -1) indegrees [mi]--;
+          if (mi !== -1) {
+            indegrees [mi]--;
+          }
         }
       }
     }
-
-    delete (pending);
 
     /// 5) Update node list & return result
     this._list_node = sorted;
@@ -316,9 +349,9 @@ DataFlow.prototype = {
     if (violationcount > 0) {
       var edgecount = Object.keys (this._edges_from).length;
       console.warn (
-        "WARNING: Cycles detected during topological sort."
-        + violationcount + " dependencies out of " + edgecount
-        + " have been violated.\n");
+        "WARNING: Cycles detected during topological sort." +
+        "%d dependencies out of %d have been violated.\n",
+        violationcount, edgecount);
     }
     return !this.is_cyclic;
   },
@@ -347,25 +380,9 @@ DataFlow.prototype = {
   },
 
   build : function () {
-    this._sort ()
+    this._sort ();
 
-    this._ref_edges = this._edges_from;
-    this._ref_node = this._list_node;
-  
-    this._data_optimize ();
-  
-    this._ref_edges = undefined;
-    this._ref_node = undefined;
-  },
-
-  register_ref_node : function (data) {
-    if (!data) { return; }
-    this._ref_node = data;
-  },
-  
-  register_ref_edges : function (data) {
-    if (!data) { return; }
-    this._ref_edges = data;
+    this._data_optimize (this._edges_from, this._list_node);
   },
   
   /**
@@ -383,11 +400,10 @@ DataFlow.prototype = {
     if (this.__shouldnt_propagate__ < 0) this.__shouldnt_propagate__ = 0;
   },
 
-  _data_optimize : function () {
+  _data_optimize : function (_ref_edges, _ref_node) {
+    if (!_ref_node || !_ref_edges) { return; }
   
-    if (!this._ref_node || !this._ref_edges) { return; }
-  
-    var temp = [], i, j, k, ref,
+    var temp = [], i, j, k,
       data, data_temp,
       connections, connections_temp,
       edges, edges_temp,
@@ -395,11 +411,8 @@ DataFlow.prototype = {
       cid_src, cid_trg, obj_src, obj_trg,
       property_name, descriptor, properties, properties_temp;
     
-    for (i = 0; i < this._ref_node.length; i++) {
-      ref = this._ref_node [i];
-      cid_src = this._node_link [ref];
-      if (!cid_src) { cid_src = ref; }
-    
+    for (i = 0; i < _ref_node.length; i++) {
+      cid_src = _ref_node [i];    
       obj_src = VSObject._obs [cid_src]; if (!obj_src) { continue; }
     
       temp.push (obj_src);
@@ -407,23 +420,19 @@ DataFlow.prototype = {
     this.dataflow_node = temp;
   
     temp = {};
-    for (ref in this._ref_edges) {
-      cid_src = this._node_link [ref];
-      if (!cid_src) { cid_src = ref; }
-   
+    for (cid_src in _ref_edges) {
       obj_src = VSObject._obs [cid_src]; if (!obj_src) { continue; }
 
-      data = this._ref_edges [ref];
+      data = _ref_edges [cid_src];
       data_temp = [];
       temp [cid_src] = data_temp;
     
       if (data) for (i = 0; i < data.length; i++) {
         connections = data [i];
         connections_temp = [3];
+        
         data_temp.push (connections_temp);
-      
-        cid_trg = this._node_link [connections [0]];
-        if (!cid_trg) { cid_trg = connections [0]; }
+        cid_trg = connections [0];
         obj_trg = VSObject._obs [cid_trg];  if (!obj_trg) { continue; }
       
         connections_temp [0] = obj_trg;
@@ -439,23 +448,40 @@ DataFlow.prototype = {
           edges_temp.push (edge_temp);
 
           edge_temp [0] = edge [0]; // id copy
-          if (util.isFunction (edge [3])) edge_temp [3] = edge [3]; // function copy
+          if (util.isFunction (edge [3])) {
+            // function copy
+            edge_temp [3] = edge [3];
+          }
         
-          properties = edge [1], properties_temp = []; // manage out properties
+          // manage out properties
+          properties = edge [1], properties_temp = [];
           for (k = 0; k < properties.length; k++) {
             property_name = properties [k];
             descriptor = obj_src.getPropertyDescriptor (property_name);
-            if (!descriptor || !descriptor.get) { continue; }
-            properties_temp.push (descriptor.get);
+            if (!descriptor) { continue; }
+            if (descriptor.get) properties_temp.push (descriptor.get);
+            else {
+              properties_temp.push ((function (_prop_name) {
+                return function () { return this[_prop_name]; };
+              }('_' + util.underscore (property_name))));
+            }
           }
           edge_temp [1] = properties_temp;
       
-          properties = edge [2], properties_temp = []; // manage out properties
+          // manage in properties
+          properties = edge [2], properties_temp = [];
           for (k = 0; k < properties.length; k++) {
             property_name = properties [k];
             descriptor = obj_trg.getPropertyDescriptor (property_name);
-            if (!descriptor || !descriptor.set) { continue; }
-            properties_temp.push (descriptor.set);
+            if (!descriptor) { continue; }
+            if (descriptor.set) {
+              properties_temp.push (descriptor.set);
+            }
+            else {
+              properties_temp.push ((function (_prop_name) {
+                return function (v) { this[_prop_name] = v; };
+              }('_' + util.underscore (property_name))));
+            }
           }
           edge_temp [2] = properties_temp;
         }
