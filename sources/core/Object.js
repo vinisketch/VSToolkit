@@ -40,6 +40,8 @@ function VSObject (config)
   if (util.isString (config)) { this._id = config; }
   else if (config && config.id) { this._id = config.id; }
   else this._id = createId ();
+  
+  this.__df__ = [];
 
   if (config)
   {
@@ -60,12 +62,14 @@ VSObject.prototype =
    * @boolean
    */
    __i__: false,
+   __input_property__did__change__: false, 
 
   /**
    * @protected
    * @object
    */
    __config__: null,
+   __df__: null,
 
   /**
    *  Object default init. <p>
@@ -179,7 +183,10 @@ VSObject.prototype =
     if (typeof (config) !== 'object') { return; }
     var props, key, i, should_propagate = false, desc;
 
-    if (vs._default_df_) vs._default_df_.pausePropagation ();
+    if (this.__df__) 
+      this.__df__.forEach (function (df) {
+        df.pausePropagation ();
+      });
 
     // Manage model
     if (config instanceof Model)
@@ -216,11 +223,13 @@ VSObject.prototype =
       }
     }
 
-    if (vs._default_df_) {
-      vs._default_df_.restartPropagation ();
-      if (should_propagate) {
-        vs._default_df_.propagate (this);
-      }
+    if (this.__df__) {
+      this.__df__.forEach (function (df) {
+        df.restartPropagation ();
+        if (should_propagate) {
+          df.propagate (this);
+        }
+      });
     }
     else if (should_propagate && this.propertiesDidChange) {
       this.propertiesDidChange ();
@@ -367,10 +376,11 @@ VSObject.prototype =
    */
   propertyChange : function (property)
   {
-    this.__input_property__did__change__ = true;
-    if (vs._default_df_) {
-      vs._default_df_.propagate (this, property);
-    }
+    this.__input_property__did__change__ = true, self = this;
+    if (this.__df__) 
+      this.__df__.forEach (function (df) {
+        df.propagate (self, property);
+      });
   },
 
   /**
@@ -598,7 +608,7 @@ VSObject.prototype =
     
     for (key in this)
     {
-      if (key === '_id') continue;
+      if (key == 'id') continue;
 
       // property value copy
       if (this.isProperty (key)) { propertyCloneValue (key, this, obj); }
