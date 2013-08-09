@@ -384,6 +384,7 @@ Application.start = function ()
     obj.applicationStarted ();
     vs.scheduleAction (function () {obj.refresh ();});
   }
+  vs.scheduleAction (function () {vs._default_df_.build ();});
 };
 
 /**
