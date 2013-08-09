@@ -534,9 +534,11 @@ View.prototype = {
    */
   _clone_properties_value : function (obj, cloned_map)
   {
+    var key;
+
     for (key in this)
     {
-      if (key === '_id') continue;
+      if (key == 'id') continue;
 
       if (key == "size" || key == "position")
       {
