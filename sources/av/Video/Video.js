@@ -327,7 +327,7 @@ Video.prototype = {
       _timeupdate = function ()
     {
       self._current_time = self.__video_node.currentTime;
-      self.propertyChange ('currentTime');
+      self.outPropertyChange ('currentTime');
     };
     this.__video_node.addEventListener ('timeupdate', _timeupdate, false);
   },
@@ -342,7 +342,7 @@ Video.prototype = {
     {
       case 'volumechange':
         this._volume = this.__video_node.getAttribute ('volume');
-        this.propertyChange ('volume');
+        this.outPropertyChange ('volume');
         this.propagate ('volumechange', this._volume);
       break;
 

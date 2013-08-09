@@ -168,13 +168,13 @@ TextArea.prototype = {
       
       case 'change':
         this._value = this.view.value;
-        this.propertyChange ();
+        this.outPropertyChange ();
         this.propagate ('change', this._value);
         break;
         
       case  'textInput':
         this._value = this.view.value;
-        this.propertyChange ();
+        this.outPropertyChange ();
         this.propagate ('continuous_change', this._value);
         break;
     }

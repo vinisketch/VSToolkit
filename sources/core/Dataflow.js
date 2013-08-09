@@ -100,10 +100,16 @@ DataFlow.prototype = {
   /**
    * Propagates values along the dataflow graph
    *
+   * @protected
+   *
    * @param {Object} comp, an optional component form witch start the
    *                 propagation
+   * @param {Boolean} force force a full propagation, without test
+   *                  if properties have changed or not
+   * @param {Boolean} output_propagation, do a propagation, starting from
+   *         output property instead of input property (default configuration)
    */
-  propagate : function (obj) {
+  propagate : function (obj, force, output_propagation) {
 
     // The graph is sorted and save into an array.
     // Propagation consiste of take each object of tree, one by one, following
@@ -124,7 +130,7 @@ DataFlow.prototype = {
 
       // the node was found. First data propagation
       if (i < l - 1) {
-        if (obj.propertiesDidChange) {
+        if (!output_propagation && obj.propertiesDidChange) {
           if (obj.propertiesDidChange ()) {
             // true means output properties were not changed.
             // => stop propagation

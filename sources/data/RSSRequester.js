@@ -912,7 +912,7 @@ RSSRequester.prototype = {
 
     RSSChannel (this, rssDocument);
     this.propagate ('rssload', this);
-    this.propertyChange ();
+    this.outPropertyChange ();
   },
 
   /**
@@ -991,7 +991,7 @@ function _performAlternateYahooPipeRequest ()
         this._items.push (itemElements[i]);
       }
       this.propagate ('rssload', this);
-      this.propertyChange ();
+      this.outPropertyChange ();
     });
   ajaxp.bind ('loaderror', this, function (data)
     {

@@ -192,7 +192,7 @@ URL.prototype = {
       if ($1) self [o.q.name][$1] = $2;
     });
     
-    this.propertyChange ('src');
+    this.outPropertyChange ('src');
   }
 };
 util.extendClass (URL, core.Object);

@@ -379,10 +379,30 @@ VSObject.prototype =
     this.__input_property__did__change__ = true, self = this;
     if (this.__df__) 
       this.__df__.forEach (function (df) {
-        df.propagate (self, property);
+        df.propagate (self);
       });
   },
 
+
+  /**
+   * Manually force out properties change propagation.
+   * <br/>
+   * If no property name is specified, the system will assume all component's
+   * properties have been modified.
+   *
+   * @name vs.core.Object#outPropertyChange
+   * @function
+   *
+   * @param {String} property the name of the modified property.[optional]
+   */
+  outPropertyChange : function (property)
+  {
+    this.__input_property__did__change__ = true, self = this;
+    if (this.__df__) 
+      this.__df__.forEach (function (df) {
+        df.propagate (self, false, true);
+      });
+  },
   /**
    * Manually force properties change propagation.
    * <br/>

@@ -256,7 +256,7 @@ SegmentedButton.prototype = {
         item: this._items [this._selected_index]
       });
       
-      this.propertyChange ();
+      this.outPropertyChange ();
       
       return false;
     }

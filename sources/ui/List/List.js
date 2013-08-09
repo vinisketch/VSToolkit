@@ -898,7 +898,7 @@ List.prototype = {
     this._selected_item = this._model.item (this._selected_index);
     if (item._comp_ && item._comp_.didSelect) item._comp_.didSelect ();
     
-    this.propertyChange ();
+    this.outPropertyChange ();
                 
     this.propagate ('itemselect',
     {

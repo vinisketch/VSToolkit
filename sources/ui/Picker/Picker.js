@@ -719,7 +719,7 @@ Picker.prototype = {
         this._delegate.pickerViewSelectRow (this);
       }
       this.propagate ('change', this._getSelectedValues ());
-      this.propertyChange ();
+      this.outPropertyChange ();
     }
   },
   

@@ -301,7 +301,7 @@ Audio.prototype = {
     var self = this, _timeupdate = function ()
     {
       self._current_time = self.__audio.currentTime;
-      self.propertyChange ('currentTime');
+      self.outPropertyChange ('currentTime');
     };
     this.__audio.addEventListener ('timeupdate', _timeupdate, false);
   },
@@ -317,7 +317,7 @@ Audio.prototype = {
     {
       case 'volumechange':
         this._volume = this.__audio.volume;
-        this.propertyChange ('volume');
+        this.outPropertyChange ('volume');
         this.propagate ('volumechange', this._volume);
       break;
 

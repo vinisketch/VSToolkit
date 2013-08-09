@@ -259,7 +259,7 @@ Slider.prototype = {
       
       this.value = this.__v - delta * (this._range [1] - this._range [0]) / dec;
 
-      this.propertyChange ();
+      this.outPropertyChange ();
       this.propagate ('continuous_change', this._value);
       
       return false;

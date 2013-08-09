@@ -174,7 +174,7 @@ var AjaxJSONP = core.createClass ({
         return;
       }
       self._response_json = data;
-      self.propertyChange ();
+      self.outPropertyChange ();
       self.propagate ('jsonload', data);
     }
   }

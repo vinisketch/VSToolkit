@@ -172,7 +172,7 @@ RadioButton.prototype = {
     if (index >= 0 || index < this._items.length) 
     {
       this.selectedIndex = index;
-      this.propertyChange ();
+      this.outPropertyChange ();
       this.propagate ('change',
       {
         index: this._selected_index,

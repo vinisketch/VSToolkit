@@ -243,7 +243,7 @@ ComboBox.prototype = {
     if (event.type === 'change')
     {
       this._selected_item = this._select.value;
-      this.propertyChange ();
+      this.outPropertyChange ();
       this.propagate ('change', this._selected_item);
     }
     else if (event.type === 'blur')

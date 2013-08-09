@@ -211,7 +211,7 @@ CheckBox.prototype = {
     if (index >= 0 || index < this._items.length) 
     {
       this.selectItem (index);
-      this.propertyChange ();
+      this.outPropertyChange ();
       
       items = new Array ();
       for (i = 0, l = this._selected_indexes.length; i < l; i ++)

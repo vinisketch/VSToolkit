@@ -172,7 +172,7 @@ InputField.prototype = {
     this._value = '';
     this._activateDelete (false);
     
-    this.propertyChange ();
+    this.outPropertyChange ();
     this.propagate ('continuous_change', this._value);
     this.propagate ('change', this._value);
   },
@@ -289,13 +289,13 @@ InputField.prototype = {
     if (event.type === 'change')
     {
       this.changeData ();
-      this.propertyChange ();
+      this.outPropertyChange ();
       this.propagate ('change', this._value);
     }
     else if (event.type === 'input')
     {
       this.changeData ();
-      this.propertyChange ();
+      this.outPropertyChange ();
       this.propagate ('continuous_change', this._value);
     }
     else if (event.type === 'focus')

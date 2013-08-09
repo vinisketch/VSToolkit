@@ -127,7 +127,7 @@ li {
 .vs_ui_list.TabList > .direct_access:active {
   background-color: rgba(125,125,125,0.5);
   color: white;
-  text-shadow: rgba(0,0,0,0.398438) 0 1px 0;
+//  text-shadow: rgba(0,0,0,0.398438) 0 1px 0;
 }
 
 .vs_ui_list.TabList > .direct_access_value {
