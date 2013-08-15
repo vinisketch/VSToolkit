@@ -231,6 +231,9 @@ Slider.prototype = {
 
     // save the actual value for drag incrementation
     this.__v = this._value;
+    this.outPropertyChange ();
+    this.propagate ('continuous_change', this._value);
+    this.propagate ('change', this._value);
   },
   
   didDrag : function (info) {
