@@ -158,7 +158,11 @@ Slider.prototype = {
    */
   destructor: function ()
   {
-    vs.removePointerListener (this.__handle, core.POINTER_START, this, true);
+    if (this.__drag_recognizer)
+    {
+      this.removePointerRecognizer (this.__drag_recognizer);
+      this.__drag_recognizer = null;
+    }
     View.prototype.destructor.call (this);
   },
 
@@ -197,92 +201,58 @@ Slider.prototype = {
       
     // top/bottom click listening
     vs.addPointerListener (this.__handle, core.POINTER_START, this, true);
+    if (!this.__drag_recognizer)
+    {
+      this.__drag_recognizer = new DragRecognizer (this, this);
+      this.addPointerRecognizer (this.__drag_recognizer);
+    }
     
     this.orientation = this._orientation;
     this.value = this._value;
   },
   
-  /**
-   * @protected
-   * @function
-   */
-  handleEvent : function (e)
-  {
-    var dec, delta, pageY, pageX;
+  didDragStart : function (e) {
+    this.__handle_width = this.__handle.offsetWidth;
+    this.__handle_x = this.__handle.offsetLeft;
+    this.__handle_y = this.__handle.offsetTop;
 
-    if (e.type === core.POINTER_START)
-    {
-      // prevent multi touch events
-      if (e.nbPointers > 1) { return; }
-
-      // prevent objet keep event => prevent propagation
-      e.stopPropagation ();
-      e.preventDefault();
-
-      pageY = e.pointerList[0].pageY,
-      pageX = e.pointerList[0].pageX;
-
-      this.__drag_x = pageX;
-      this.__drag_y = pageY;
-      
-      this.__v = this._value;
-      this.__handle_width = this.__handle.offsetWidth;
-      
-      vs.addPointerListener (document, core.POINTER_MOVE, this, true);
-      vs.addPointerListener (document, core.POINTER_END, this, true);
-      vs.addPointerListener (this.__handle, core.POINTER_END, this, true);
-      
-      return false;
+    // set the new handler position
+    var clientX = e.pointerList[0].clientX;
+    var clientY = e.pointerList[0].clientY;
+    
+    if (this._orientation === 0) {
+      this.value = this._range [0] +
+        (this._range [1] - this._range [0]) * clientX / this.view.offsetWidth;
     }
-    else if (e.type === core.POINTER_MOVE)
-    {
-      // prevent multi touch events
-      if (e.nbPointers > 1) { return; }
-
-      // prevent objet keep event => prevent propagation
-      e.stopPropagation ();
-      e.preventDefault();
-
-      pageY = e.pointerList[0].pageY,
-      pageX = e.pointerList[0].pageX;
-
-      if (this._orientation === 0)
-      {
-        dec = this.view.offsetWidth - this.__handle_width;
-        delta = this.__drag_x - pageX;
-      }
-      else
-      {
-        dec = this.view.offsetHeight - this.__handle_width;
-        delta = this.__drag_y - pageY;
-      }
-      
-      this.value = this.__v - delta * (this._range [1] - this._range [0]) / dec;
-
-      this.outPropertyChange ();
-      this.propagate ('continuous_change', this._value);
-      
-      return false;
+    else {
+      this.value = this._range [0] +
+        (this._range [1] - this._range [0]) * clientY / this.view.offsetHeight;
     }
-    else if (e.type === core.POINTER_END)
-    {
-      // prevent multi touch events
-      if (e.nbPointers > 1) { return; }
 
-      // prevent objet keep event => prevent propagation
-      e.stopPropagation ();
-      e.preventDefault();
-
-      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
-      vs.removePointerListener (document, core.POINTER_END, this, true);
-      vs.removePointerListener (this.__handle, core.POINTER_END, this, true);
- 
-      this.propagate ('change', this._value);
-      
-      return false;
-    }
+    // save the actual value for drag incrementation
+    this.__v = this._value;
   },
- 
+  
+  didDrag : function (info) {
+    if (this._orientation === 0) {
+      dec = this.view.offsetWidth - this.__handle_width;
+      delta = info.dx;
+    }
+    else {
+      dec = this.view.offsetHeight - this.__handle_width;
+      delta = info.dy;
+    }
+    
+    this.value = this.__v + delta * (this._range [1] - this._range [0]) / dec;
+
+    this.outPropertyChange ();
+    this.propagate ('continuous_change', this._value);
+  },
+    
+  didDragEnd : function () {
+    this.propagate ('change', this._value);
+  },
+  
  /**********************************************************************
  
  *********************************************************************/
@@ -319,6 +289,7 @@ util.defineClassProperties (Slider, {
     {
       var height, width, x, y;
       
+      if (isNaN (v)) return;
       if (v < this._range [0]) { v = this._range [0]; }
       if (v > this._range [1]) { v = this._range [1]; }
       
