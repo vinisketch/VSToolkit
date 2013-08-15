@@ -386,6 +386,8 @@ body {
 .vs_ui_textlabel {
   display: block;
   word-wrap: break-word;
+  height: 20px;
+  width: 60px;
 }
 .vs_ui_textarea {
   min-height:30px;
@@ -394,8 +396,8 @@ body {
   margin: 0px;
   padding: 5px;
 
-  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 4px inset;
-  border-radius: 10px;
+//  -webkit-box-shadow: rgba(0, 0, 0, 0.2) 0px 1px 4px inset;
+//  border-radius: 10px;
   overflow: hidden;
   
   background-color: white;
@@ -695,10 +697,10 @@ li {
   font-weight: normal;
   color: black;
   
-  border: solid 1px black;
+//  border: solid 1px black;
   background: white;
   
-  border-radius: 5px;
+//  border-radius: 5px;
 }
 
 .vs_ui_combobox > select {

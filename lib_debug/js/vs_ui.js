@@ -710,6 +710,489 @@ Template.parseHTML = function (html) {
 /** @private */
 vs.ui.Template = Template;
 /*
+  Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), and
+  IGEL Co., Ltd. All rights reserved
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+function PointerRecognizer (obj, delegate) {
+  this.constructor = PointerRecognizer;
+
+  this.obj = obj;
+  this.delegate = delegate;
+}
+
+var POINTER_LISTENERS = [];
+
+PointerRecognizer.prototype = {
+
+  addPointerListener: function (node, type, listener, useCapture) {
+    if (!node || !type || !listener) return false;
+
+    var i = 0, len = POINTER_LISTENERS.length, binding;
+    for (; i < len; i++) {
+      binding = POINTER_LISTENERS [i];
+      if (binding.target === node &&
+          binding.type === type &&
+          binding.listener === listener) {
+        binding.nb ++;
+        return true;
+      }
+    }
+    
+    binding = {};
+    binding.target = node;
+    binding.type = type;
+    binding.listener = listener;
+    binding.nb = 1;
+    POINTER_LISTENERS.push (binding);
+    vs.addPointerListener (node, type, listener, useCapture);
+    return true;
+  },
+
+  removePointerListener: function (node, type, listener, useCapture) {
+    if (!node || !type || !listener) return false;
+
+    var i = 0, len = POINTER_LISTENERS.length, binding;
+    for (; i < len; i++) {
+      binding = POINTER_LISTENERS [i];
+      if (binding.target === node &&
+          binding.type === type &&
+          binding.listener === listener) {
+        binding.nb --;
+        if (binding.nb === 0) {
+          vs.removePointerListener (node, type, listener, useCapture);
+          POINTER_LISTENERS.remove (i);
+        }
+        return true;
+      }
+    }
+    
+    return false;
+  },
+
+  init: function () {},
+
+  uninit: function () {},
+
+  reset: function () {},
+
+  pointerStart: function (event) {},
+
+  pointerMove: function (event) {},
+
+  pointerEnd: function (event) {},
+
+  pointerCancel: function (event) {},
+
+  gestureStart: function (event) {},
+
+  gestureChange: function (event) {},
+
+  gestureEnd: function (event) {}
+};
+
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+ui.PointerRecognizer = PointerRecognizer;
+/*
+  Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), and
+  IGEL Co., Ltd. All rights reserved
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+function TapRecognizer (obj, delegate) {
+  this.parent = PointerRecognizer;
+  this.parent (obj, delegate);
+  this.constructor = TapRecognizer;
+}
+
+var MULTI_TAP_DELAY = 100;
+
+TapRecognizer.prototype = {
+
+  __is_touched: false,
+  __unselect_time_out: 0,
+  __did_tap_time_out: 0,
+  __tap_mode: 0,
+
+  init : function () {
+    this.addPointerListener (this.obj.view, core.POINTER_START, this.obj);
+    this.reset ();
+  },
+
+  uninit : function () {
+    this.removePointerListener (this.obj.view, core.POINTER_START, this.obj);
+  },
+
+  pointerStart: function (e) {
+    if (this.__is_touched) { return; }
+    // prevent multi touch events
+    if (e.nbPointers > 1) { return; }
+    
+    if (this.__tap_mode === 0) {
+      this.__tap_mode = 1;
+    }
+    
+    if (this.__unselect_time_out) {
+      clearTimeout (this.__unselect_time_out);
+      this.__unselect_time_out = 0;
+    }
+    else {
+      try {
+        if (this.delegate && this.delegate.setPressed)
+          this.delegate.setPressed (true, e);
+      } catch (e) {
+        console.log (e);
+      }
+    }
+
+    if (this.__did_tap_time_out) {
+      this.__tap_mode ++;
+      clearTimeout (this.__did_tap_time_out);
+      this.__did_tap_time_out = 0;
+    }
+  
+    this.addPointerListener (document, core.POINTER_END, this.obj);
+    this.addPointerListener (document, core.POINTER_MOVE, this.obj);
+  
+    this.__start_x = e.pointerList[0].pageX;
+    this.__start_y = e.pointerList[0].pageY;
+    this.__is_touched = true;
+  
+    return false;
+  },
+
+  pointerMove: function (e) {
+    if (!this.__is_touched) { return; }
+
+    var dx = e.pointerList[0].pageX - this.__start_x;
+    var dy = e.pointerList[0].pageY - this.__start_y;
+    
+    if (Math.abs (dx) + Math.abs (dy) < View.MOVE_THRESHOLD) {
+      // we still in selection mode
+      return false;
+    }
+
+    // cancel the selection mode
+    this.removePointerListener (document, core.POINTER_END, this.obj);
+    this.removePointerListener (document, core.POINTER_MOVE, this.obj);
+    this.__is_touched = false;
+
+    try {
+      if (this.delegate && this.delegate.setPressed)
+        this.delegate.setPressed (false, e);
+    } catch (e) {
+      console.log (e);
+    }
+  },
+
+  pointerEnd: function (e) {
+    if (!this.__is_touched) { return; }
+    this.__is_touched = false;
+    var self = this;
+  
+    this.removePointerListener (document, core.POINTER_END, this.obj);
+    this.removePointerListener (document, core.POINTER_MOVE, this.obj);
+
+    if (this.delegate && this.delegate.setPressed) {
+      this.__unselect_time_out = setTimeout (function () {
+        try {
+          self.delegate.setPressed (false, e);
+        } catch (e) {
+          console.log (e);
+        }
+        self.__unselect_time_out = 0;
+      }, View.UNSELECT_DELAY);        
+    }
+    
+    if (this.delegate && this.delegate.setPressed) {
+      this.__did_tap_time_out = setTimeout (function () {
+        try {
+          self.delegate.didTap (self.__tap_mode, e);
+        } catch (e) {
+          console.log (e);
+        }
+        self.__tap_mode = 0;
+        self.__did_tap_time_out = 0;
+      }, MULTI_TAP_DELAY);
+    } else {
+      self.__tap_mode = 0;
+    }
+  },
+
+  pointerCancel: function (e) {
+    return this.pointerEnd (e);
+  }
+};
+util.extendClass (TapRecognizer, PointerRecognizer);
+
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+ui.TapRecognizer = TapRecognizer;
+/*
+  Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), and
+  IGEL Co., Ltd. All rights reserved
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+function DragRecognizer (obj, delegate) {
+  this.parent = PointerRecognizer;
+  this.parent (obj, delegate);
+  this.constructor = DragRecognizer;     
+}
+
+DragRecognizer.prototype = {
+
+  __is_dragged: false,
+  
+  init : function () {
+    this.addPointerListener (this.obj.view, core.POINTER_START, this.obj);
+    this.reset ();
+  },
+
+  uninit : function () {
+    this.removePointerListener (this.obj.view, core.POINTER_START, this.obj);
+  },
+
+  pointerStart: function (e) {
+    if (this.__is_dragged) { return; }
+    // prevent multi touch events
+    if (e.nbPointers > 1) { return; }
+
+    this.__start_x = e.pointerList[0].pageX;
+    this.__start_y = e.pointerList[0].pageY;
+    this.__is_dragged = true;
+
+    this.addPointerListener (document, core.POINTER_END, this.obj);
+    this.addPointerListener (document, core.POINTER_MOVE, this.obj);
+  
+    try {
+      if (this.delegate && this.delegate.didDragStart)
+        this.delegate.didDragStart (e);
+    } catch (e) {
+      console.log (e);
+    }
+    return false;
+  },
+
+  pointerMove: function (e) {
+    if (!this.__is_dragged) { return; }
+
+    var dx = e.pointerList[0].pageX - this.__start_x;
+    var dy = e.pointerList[0].pageY - this.__start_y;
+    
+    try {
+      if (this.delegate && this.delegate.didDrag)
+        this.delegate.didDrag ({dx: dx, dy:dy}, e);
+    } catch (e) {
+      console.log (e);
+    }
+  },
+
+  pointerEnd: function (e) {
+    if (!this.__is_dragged) { return; }
+    this.__is_dragged = false;
+  
+    this.removePointerListener (document, core.POINTER_END, this.obj);
+    this.removePointerListener (document, core.POINTER_MOVE, this.obj);
+
+    try {
+      if (this.delegate && this.delegate.didDragEnd)
+        this.delegate.didDragEnd (e);
+    } catch (e) {
+      console.log (e);
+    }
+  },
+
+  pointerCancel: function (e) {
+    return this.pointerEnd (e);
+  }
+};
+util.extendClass (DragRecognizer, PointerRecognizer);
+
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+ui.DragRecognizer = DragRecognizer;/*
+  Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), and
+  IGEL Co., Ltd. All rights reserved
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+function PinchRecognizer (obj, delegate) {
+  this.parent = PointerRecognizer;
+  this.parent (obj, delegate);
+  this.constructor = PinchRecognizer;
+}
+
+PinchRecognizer.prototype = {
+
+  init : function () {
+    this.addPointerListener (this.obj.view, core.GESTURE_START, this.obj);
+    this.reset ();
+  },
+
+  uninit : function () {
+    this.removePointerListener (this.obj.view, core.GESTURE_START, this.obj);
+  },
+
+  gestureStart: function (e) {
+    this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
+    this.addPointerListener (document, core.GESTURE_END, this.obj);
+
+    return false;
+  },
+
+  gestureChange: function (event) {
+    try {
+      if (this.delegate && this.delegate.didPinchChange)
+        this.delegate.didPinchChange (event.scale, event);
+    } catch (e) {
+      console.log (e);
+    }
+  },
+
+  gestureEnd: function (e) {
+    this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
+    this.removePointerListener (document, core.GESTURE_END, this.obj);
+  },
+
+  pointerCancel: function (e) {
+    return this.pointerEnd (e);
+  }
+};
+util.extendClass (PinchRecognizer, PointerRecognizer);
+
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+ui.PinchRecognizer = PinchRecognizer;/*
+  Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), and
+  IGEL Co., Ltd. All rights reserved
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+
+function RotationRecognizer (obj, delegate) {
+  this.parent = PointerRecognizer;
+  this.parent (obj, delegate);
+  this.constructor = RotationRecognizer;
+}
+
+RotationRecognizer.prototype = {
+
+  init : function () {
+    this.addPointerListener (this.obj.view, core.GESTURE_START, this.obj);
+    this.reset ();
+  },
+
+  uninit : function () {
+    this.removePointerListener (this.obj.view, core.GESTURE_START, this.obj);
+  },
+
+  gestureStart: function (e) {
+    this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
+    this.addPointerListener (document, core.GESTURE_END, this.obj);
+
+    return false;
+  },
+
+  gestureChange: function (event) {
+    try {
+      if (this.delegate && this.delegate.didRotationChange)
+        this.delegate.didRotationChange (event.rotation, event);
+    } catch (e) {
+      console.log (e);
+    }
+  },
+
+  gestureEnd: function (e) {
+    this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
+    this.removePointerListener (document, core.GESTURE_END, this.obj);
+  },
+
+  pointerCancel: function (e) {
+    return this.pointerEnd (e);
+  }
+};
+util.extendClass (RotationRecognizer, PointerRecognizer);
+
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+ui.RotationRecognizer = RotationRecognizer;/*
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
   contributors. All rights reserved
 
@@ -789,6 +1272,8 @@ function View (config)
   this.parent = core.EventSource;
   this.parent (config);
   this.constructor = View;
+  
+  this.__pointer_recognizers = [];
 }
 
 /********************************************************************
@@ -2690,7 +3175,75 @@ View.prototype = {
    */
   handleEvent: function (e)
   {
-    this._propagateToParent (e);
+    if (this.__pointer_recognizers.length) {
+      
+      if (!this._enable) { return; }
+     
+      switch (e.type) {
+        case core.POINTER_START:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.pointerStart (e);
+          });
+        break;
+
+        case core.POINTER_MOVE:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.pointerMove (e);
+          });
+        break;
+
+        case core.POINTER_END:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.pointerEnd (e);
+          });
+        break;
+
+        case core.POINTER_CANCEL:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.pointerCancel (e);
+          });
+        break;
+
+        case core.GESTURE_START:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.gestureStart (e);
+          });
+          break;
+        
+        case core.GESTURE_CHANGE:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.gestureChange (e);
+          });
+          break;
+        
+        case core.GESTURE_END:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.gestureEnd (e);
+          });
+          break;
+      }
+    }
+    else this._propagateToParent (e);
+  },
+  
+  __pointer_recognizers: null,
+  
+  addPointerRecognizer: function (recognizer)
+  {
+    if (!recognizer instanceof PointerRecognizer) return;
+    
+    if (this.__pointer_recognizers.indexOf (recognizer) !== -1) return;
+    
+    this.__pointer_recognizers.push (recognizer);
+    recognizer.init ();
+  },
+
+  removePointerRecognizer: function (recognizer)
+  {
+    if (!recognizer instanceof PointerRecognizer) return;
+    
+    this.__pointer_recognizers.remove (recognizer);
+    recognizer.uninit ();
   },
 
   /**
@@ -8416,10 +8969,9 @@ Button.prototype = {
   /**
    *
    * @private
-   * @type {boolean}
+   * @type {PointerRecognizer}
    */
-  __touch_binding: false,
-  __is_touched: false,
+  __tap_recognizer: null,
 
   /**
    *
@@ -8478,7 +9030,7 @@ Button.prototype = {
    * @protected
    * @function
    */
-  _setPressed : function (v)
+  setPressed : function (v)
   {
     if (v)
     {
@@ -8492,16 +9044,21 @@ Button.prototype = {
     }
   },
   
+  didTap : function ()
+  {
+    this.propagate ('select');
+  },
+  
   /**
    * @protected
    * @function
    */
   destructor : function ()
   {
-    if (this.__touch_binding)
+    if (this.__tap_recognizer)
     {
-      vs.removePointerListener (this.view, core.POINTER_START, this);
-      this.__touch_binding = false;
+      this.removePointerRecognizer (this.__tap_recognizer);
+      this.__tap_recognizer = null;
     }
     View.prototype.destructor.call (this);
   },
@@ -8516,10 +9073,10 @@ Button.prototype = {
     
     this.text_view = this.view.firstElementChild;
 
-    if (!this.__touch_binding)
+    if (!this.__tap_recognizer)
     {
-      vs.addPointerListener (this.view, core.POINTER_START, this);
-      this.__touch_binding = true;
+      this.__tap_recognizer = new TapRecognizer (this, this);
+      this.addPointerRecognizer (this.__tap_recognizer);
     }
 
     if (this._text)
@@ -8533,93 +9090,6 @@ Button.prototype = {
     this.view.name = this.id;
     if (this._style) this.addClassName (this._style);
     if (this._type) this.addClassName (this._type);
-  },
-
-  /*****************************************************************
-   *               Pointer events management
-   ****************************************************************/
-    
-  /**
-   * @protected
-   * @function
-   */
-  handleEvent: function (e)
-  {
-    if (!this._enable) { return; }
-    var self = this;
-    
-    // by default cancel any default behavior to avoid scroll
-    e.preventDefault ();
-        
-    switch (e.type)
-    {
-      case core.POINTER_START:
-        if (this.__is_touched) { return; }
-        // prevent multi touch events
-        if (e.nbPointers > 1) { return; }
-        
-        // we keep the event
-        e.stopPropagation ();
-        
-        if (this.__button_time_out)
-        {
-          clearTimeout (this.__button_time_out);
-          this.__button_time_out = 0;
-        }
-        
-        this._setPressed (true);
-        vs.addPointerListener (document, core.POINTER_END, this);
-        vs.addPointerListener (document, core.POINTER_MOVE, this);
-        this.__start_x = e.pointerList[0].pageX;
-        this.__start_y = e.pointerList[0].pageY;
-        this.__is_touched = true;
-        
-        return false;
-      break;
-
-      case core.POINTER_MOVE:
-        if (!this.__is_touched) { return; }
-
-        var dx = e.pointerList[0].pageX - this.__start_x;
-        var dy = e.pointerList[0].pageY - this.__start_y;
-          
-        if (Math.abs (dx) + Math.abs (dy) < View.MOVE_THRESHOLD)
-        {
-          // we keep the event
-          e.stopPropagation ();
-          return false;
-        }
- 
-        vs.removePointerListener (document, core.POINTER_END, this);
-        vs.removePointerListener (document, core.POINTER_MOVE, this);
-        this.__is_touched = false;
-
-        this._setPressed (false);
-        
-        return false;
-      break;
-
-      case core.POINTER_END:
-        if (!this.__is_touched) { return; }
-        this.__is_touched = false;
-        
-        // we keep the event
-        e.stopPropagation ();
-
-        vs.removePointerListener (document, core.POINTER_END, this);
-        vs.removePointerListener (document, core.POINTER_MOVE, this);
-
-        this.__button_time_out = setTimeout (function ()
-        {
-          self._setPressed (false);
-          self.__button_time_out = 0;
-        }, View.UNSELECT_DELAY);        
-  
-        this.propagate ('select');
-        
-        return false;
-      break;
-    }
   }
 };
 util.extendClass (Button, View);
@@ -8772,6 +9242,14 @@ AbstractList.prototype = {
                  General data for the list
   *********************************************************************/
 
+  /**
+   *
+   * @private
+   * @type {PointerRecognizer}
+   */
+  __tap_recognizer: null,
+  __list_time_out: 0,
+
    /**
    * @protected
    * @type {boolean}
@@ -8833,6 +9311,12 @@ AbstractList.prototype = {
   {
     ScrollView.prototype.destructor.call (this);
     
+    if (this.__tap_recognizer)
+    {
+      this.removePointerRecognizer (this.__tap_recognizer);
+      this.__tap_recognizer = null;
+    }
+
     this._model.unbindChange (null, this, this._modelChanged);
     if (this._model_allocated) util.free (this._model);
     this._model_allocated = false;
@@ -8857,6 +9341,12 @@ AbstractList.prototype = {
     }
     
     this._list_items = this._sub_view = this._holes.item_children;
+
+    if (!this.__tap_recognizer)
+    {
+      this.__tap_recognizer = new TapRecognizer (this, this);
+      this.addPointerRecognizer (this.__tap_recognizer);
+    }
 
     this.refresh ();
   },
@@ -8921,105 +9411,51 @@ AbstractList.prototype = {
    * @protected
    * @function
    */
-  handleEvent : function (e)
+  setPressed : function (v, e)
   {
-    var elem = e.currentTarget, self = this, pageY, pageX,
-      time, pos, index;
-    
-    if (e.type === 'click')
+    if (v)
     {
-      // Cancel default behavior
-      e.stopPropagation ();
-      e.preventDefault();
-      return;
-    }
-    if (e.type === core.POINTER_START)
-    {
-      // prevent multi touch events
-      if (e.nbPointers > 1) { return; }
-
-      this.__touch_start = e.pointerList[0].pageY;
-  
-      vs.addPointerListener (document, core.POINTER_MOVE, this, false);
-      vs.addPointerListener (document, core.POINTER_END, this, false);
+      if (!this._items_selectable) { return false; }
       
-      if (!this._items_selectable)
-      { return false; }
-      
-      if (elem === this.view)
-      {
+      this.__elem = e.currentTarget;
+      if (this.__elem === this.view) {
         this.__elem = null;
         return;
       }
-      this.__elem = elem;
-
-      if (this.__list_time_out)
-      {
+      
+      if (this.__list_time_out) {
         clearTimeout (this.__list_time_out);
+        this.__list_time_out = 0;
       }
       if (this.__elem_to_unselect)
       {
         this._untouchItemFeedback (this.__elem_to_unselect);
         this.__elem_to_unselect = null;
       }
-
-      this.__list_time_out = setTimeout (function ()
-      {
-        self._touchItemFeedback (elem);
-        self.__list_time_out = 0;
-      }, View.SELECT_DELAY);
+      this.__elem_to_unselect = this.__elem;
+      this._touchItemFeedback (this.__elem);
     }
-    else if (e.type === core.POINTER_MOVE)
+    else
     {
-      pageY = e.pointerList[0].pageY;
-      this.__delta = pageY - this.__touch_start;  
-            
-      // this is a move, not a selection => deactivate the selected element
-      // if needs
-      if (this.__elem && (Math.abs (this.__delta) > View.MOVE_THRESHOLD))
+      if (!this.__list_time_out && this.__elem_to_unselect)
       {
-        if (this.__list_time_out)
-        {
-          clearTimeout (this.__list_time_out);
-          this.__list_time_out = 0;
-        }
-        this._untouchItemFeedback (this.__elem);
-        this.__elem = null;
-      }            
-    }
-    else if (e.type === core.POINTER_END)
-    {
-      // Stop tracking when the last finger is removed from this element
-      vs.removePointerListener (document, core.POINTER_MOVE, this);
-      vs.removePointerListener (document, core.POINTER_END, this);
-      
-      if (this.__delta) { this.__scroll_start += this.__delta; }
-      
-      // a item is selected. propagate the change
-      if (this.__elem)
-      {
-        if (this.__list_time_out)
-        {
-          clearTimeout (this.__list_time_out);
-          this._touchItemFeedback (this.__elem);
-        }
-
-        this.__elem_to_unselect = this.__elem;
-        
-        this.__list_time_out = setTimeout (function ()
-        {
-          self._untouchItemFeedback (self.__elem_to_unselect);
-          self.__elem_to_unselect = null;
-          self.__list_time_out = 0;
-        }, View.UNSELECT_DELAY);
-
-        this._updateSelectItem (this.__elem);
+        this._untouchItemFeedback (this.__elem_to_unselect);
+        this.__elem_to_unselect = null;
       }
-
-      this.__delta = 0;
-      this.__elem = null;
     }
-    return false;
+  },
+  
+  didTap : function ()
+  {
+    var self = this;
+    this.__elem_to_unselect = this.__elem;
+    this._updateSelectItem (this.__elem);
+
+    this.__list_time_out = setTimeout (function () {
+      self._untouchItemFeedback (self.__elem_to_unselect);
+      self.__elem_to_unselect = null;
+      self.__list_time_out = 0;
+    }, View.UNSELECT_DELAY);
   },
 
 //   /**
@@ -15746,8 +16182,7 @@ Switch.prototype = {
    * @private
    * @type {boolean}
    */
-  __touch_binding: false,
-  __is_touched: false,
+  __tap_recognizer: null,
   __switch_translate: 0,
     
   /**
@@ -15813,7 +16248,7 @@ Switch.prototype = {
    * @protected
    * @function
    */
-  _setSelected : function (v)
+  setPressed : function (v)
   {
     if (v)
     {
@@ -15861,16 +16296,22 @@ Switch.prototype = {
     this.outPropertyChange ();
   },
 
+  didTap : function ()
+  {
+    this._setToggle (!this._toggled);
+    this.propagate ('change', this._toggled);
+  },
+
   /**
    * @protected
    * @function
    */
   destructor : function ()
   {
-    if (this.__touch_binding)
+    if (this.__tap_recognizer)
     {
-      vs.removePointerListener (this.view, core.POINTER_START, this);
-      this.__touch_binding = false;
+      this.removePointerRecognizer (this.__tap_recognizer);
+      this.__tap_recognizer = null;
     }
     View.prototype.destructor.call (this);
   },
@@ -15890,10 +16331,10 @@ Switch.prototype = {
     this.__switch_view =
       this.view.querySelector ('.vs_ui_switch .switch');
 
-    if (!this.__touch_binding)
+    if (!this.__tap_recognizer)
     {
-      vs.addPointerListener (this.view, core.POINTER_START, this);
-      this.__touch_binding = true;
+      this.__tap_recognizer = new TapRecognizer (this, this);
+      this.addPointerRecognizer (this.__tap_recognizer);
     }
 
     var os_device =  vs.ui.View.getDeviceCSSCode (); //window.deviceConfiguration.os;
@@ -15983,100 +16424,7 @@ Switch.prototype = {
     this.view.style.top = sPosT;
     this.view.style.right = sPosR;
     this.view.style.bottom = 'auto';
-  },
-  
-  /*****************************************************************
-   *               Pointer events management
-   ****************************************************************/
-
-  /**
-   * @protected
-   * @function
-   */
-  handleEvent: function (e)
-  {
-    if (!this._enable) { return; }
-    var self = this;
-        
-    // by default cancel any default behavior to avoid scroll
-    e.preventDefault ();
-
-    switch (e.type)
-    {
-      case core.POINTER_START:
-        if (this.__is_touched) { return; }
-        // prevent multi touch events
-        if (e.nbPointers > 1) { return; }
-
-        // we keep the event
-        e.stopPropagation ();
-                
-        this._setSelected (true);
-        vs.addPointerListener (document, core.POINTER_END, this);
-        vs.addPointerListener (document, core.POINTER_MOVE, this);
-        this.__start_x = e.pointerList[0].pageX;
-        this.__start_y = e.pointerList[0].pageY;
-        this.__is_touched = true;
-        
-        return false;
-      break;
-
-      case core.POINTER_MOVE:
-        if (!this.__is_touched) { return; }
-
-        var dx = e.pointerList[0].pageX - this.__start_x;
-        var dy = e.pointerList[0].pageY - this.__start_y;
-        
-        // manage swipe and selection
-        if (this._mode === Switch.MODE_IOS)
-        {
-          if (Math.abs (dy) < View.MOVE_THRESHOLD && 
-            ((this._toggled && dx < 0 && dx > -this._size[0]) ||
-             (!this._toggled && dx > 0 && dx < this._size[0])))
-          {
-            // we keep the event
-            e.stopPropagation ();
-            return false;
-          }
-        }
-        else
-        {
-          if ((Math.abs (dy) + Math.abs (dy)) < View.MOVE_THRESHOLD)
-          {
-            // we keep the event
-            e.stopPropagation ();
-            return false;
-          }
-        }
-
-        vs.removePointerListener (document, core.POINTER_END, this);
-        vs.removePointerListener (document, core.POINTER_MOVE, this);
-        this.__is_touched = false;
-
-        this._setSelected (false);
-        
-        return false;
-      break;
-
-      case core.POINTER_END:
-        if (!this.__is_touched) { return; }
-        this.__is_touched = false;
-
-        // we keep the event
-        e.stopPropagation ();
-
-        vs.removePointerListener (document, core.POINTER_END, this);
-        vs.removePointerListener (document, core.POINTER_MOVE, this);
-
-        this._setSelected (false);
-
-        this._setToggle (!this._toggled);
-        this.propagate ('change', this._toggled);
-        
-        return false;
-      break;
-    }
-  }  
+  }
 };
 util.extendClass (Switch, View);
 
