@@ -45,6 +45,14 @@ AbstractList.prototype = {
                  General data for the list
   *********************************************************************/
 
+  /**
+   *
+   * @private
+   * @type {PointerRecognizer}
+   */
+  __tap_recognizer: null,
+  __list_time_out: 0,
+
    /**
    * @protected
    * @type {boolean}
@@ -106,6 +114,12 @@ AbstractList.prototype = {
   {
     ScrollView.prototype.destructor.call (this);
     
+    if (this.__tap_recognizer)
+    {
+      this.removePointerRecognizer (this.__tap_recognizer);
+      this.__tap_recognizer = null;
+    }
+
     this._model.unbindChange (null, this, this._modelChanged);
     if (this._model_allocated) util.free (this._model);
     this._model_allocated = false;
@@ -130,6 +144,12 @@ AbstractList.prototype = {
     }
     
     this._list_items = this._sub_view = this._holes.item_children;
+
+    if (!this.__tap_recognizer)
+    {
+      this.__tap_recognizer = new TapRecognizer (this, this);
+      this.addPointerRecognizer (this.__tap_recognizer);
+    }
 
     this.refresh ();
   },
@@ -194,106 +214,157 @@ AbstractList.prototype = {
    * @protected
    * @function
    */
-  handleEvent : function (e)
+  setPressed : function (v, e)
   {
-    var elem = e.currentTarget, self = this, pageY, pageX,
-      time, pos, index;
-    
-    if (e.type === 'click')
+    if (v)
     {
-      // Cancel default behavior
-      e.stopPropagation ();
-      e.preventDefault();
-      return;
-    }
-    if (e.type === core.POINTER_START)
-    {
-      // prevent multi touch events
-      if (e.nbPointers > 1) { return; }
-
-      this.__touch_start = e.pointerList[0].pageY;
-  
-      vs.addPointerListener (document, core.POINTER_MOVE, this, false);
-      vs.addPointerListener (document, core.POINTER_END, this, false);
+      if (!this._items_selectable) { return false; }
       
-      if (!this._items_selectable)
-      { return false; }
-      
-      if (elem === this.view)
-      {
+      this.__elem = e.currentTarget;
+      if (this.__elem === this.view) {
         this.__elem = null;
         return;
       }
-      this.__elem = elem;
-
-      if (this.__list_time_out)
-      {
+      
+      if (this.__list_time_out) {
         clearTimeout (this.__list_time_out);
+        this.__list_time_out = 0;
       }
       if (this.__elem_to_unselect)
       {
         this._untouchItemFeedback (this.__elem_to_unselect);
         this.__elem_to_unselect = null;
       }
-
-      this.__list_time_out = setTimeout (function ()
-      {
-        self._touchItemFeedback (elem);
-        self.__list_time_out = 0;
-      }, View.SELECT_DELAY);
+      this.__elem_to_unselect = this.__elem;
+      this._touchItemFeedback (this.__elem);
     }
-    else if (e.type === core.POINTER_MOVE)
+    else
     {
-      pageY = e.pointerList[0].pageY;
-      this.__delta = pageY - this.__touch_start;  
-            
-      // this is a move, not a selection => deactivate the selected element
-      // if needs
-      if (this.__elem && (Math.abs (this.__delta) > View.MOVE_THRESHOLD))
+      if (!this.__list_time_out && this.__elem_to_unselect)
       {
-        if (this.__list_time_out)
-        {
-          clearTimeout (this.__list_time_out);
-          this.__list_time_out = 0;
-        }
-        this._untouchItemFeedback (this.__elem);
-        this.__elem = null;
-      }            
-    }
-    else if (e.type === core.POINTER_END)
-    {
-      // Stop tracking when the last finger is removed from this element
-      vs.removePointerListener (document, core.POINTER_MOVE, this);
-      vs.removePointerListener (document, core.POINTER_END, this);
-      
-      if (this.__delta) { this.__scroll_start += this.__delta; }
-      
-      // a item is selected. propagate the change
-      if (this.__elem)
-      {
-        if (this.__list_time_out)
-        {
-          clearTimeout (this.__list_time_out);
-          this._touchItemFeedback (this.__elem);
-        }
-
-        this.__elem_to_unselect = this.__elem;
-        
-        this.__list_time_out = setTimeout (function ()
-        {
-          self._untouchItemFeedback (self.__elem_to_unselect);
-          self.__elem_to_unselect = null;
-          self.__list_time_out = 0;
-        }, View.UNSELECT_DELAY);
-
-        this._updateSelectItem (this.__elem);
+        this._untouchItemFeedback (this.__elem_to_unselect);
+        this.__elem_to_unselect = null;
       }
-
-      this.__delta = 0;
-      this.__elem = null;
     }
-    return false;
   },
+  
+  didTap : function ()
+  {
+    var self = this;
+    this.__elem_to_unselect = this.__elem;
+    this._updateSelectItem (this.__elem);
+
+    this.__list_time_out = setTimeout (function () {
+      self._untouchItemFeedback (self.__elem_to_unselect);
+      self.__elem_to_unselect = null;
+      self.__list_time_out = 0;
+    }, View.UNSELECT_DELAY);
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+//   handleEvent : function (e)
+//   {
+//     var elem = e.currentTarget, self = this, pageY, pageX,
+//       time, pos, index;
+//     
+//     if (e.type === 'click')
+//     {
+//       // Cancel default behavior
+//       e.stopPropagation ();
+//       e.preventDefault();
+//       return;
+//     }
+//     if (e.type === core.POINTER_START)
+//     {
+//       // prevent multi touch events
+//       if (e.nbPointers > 1) { return; }
+// 
+//       this.__touch_start = e.pointerList[0].pageY;
+//   
+//       vs.addPointerListener (document, core.POINTER_MOVE, this, false);
+//       vs.addPointerListener (document, core.POINTER_END, this, false);
+//       
+//       if (!this._items_selectable)
+//       { return false; }
+//       
+//       if (elem === this.view)
+//       {
+//         this.__elem = null;
+//         return;
+//       }
+//       this.__elem = elem;
+// 
+//       if (this.__list_time_out)
+//       {
+//         clearTimeout (this.__list_time_out);
+//       }
+//       if (this.__elem_to_unselect)
+//       {
+//         this._untouchItemFeedback (this.__elem_to_unselect);
+//         this.__elem_to_unselect = null;
+//       }
+// 
+//       this.__list_time_out = setTimeout (function ()
+//       {
+//         self._touchItemFeedback (elem);
+//         self.__list_time_out = 0;
+//       }, View.SELECT_DELAY);
+//     }
+//     else if (e.type === core.POINTER_MOVE)
+//     {
+//       pageY = e.pointerList[0].pageY;
+//       this.__delta = pageY - this.__touch_start;  
+//             
+//       // this is a move, not a selection => deactivate the selected element
+//       // if needs
+//       if (this.__elem && (Math.abs (this.__delta) > View.MOVE_THRESHOLD))
+//       {
+//         if (this.__list_time_out)
+//         {
+//           clearTimeout (this.__list_time_out);
+//           this.__list_time_out = 0;
+//         }
+//         this._untouchItemFeedback (this.__elem);
+//         this.__elem = null;
+//       }            
+//     }
+//     else if (e.type === core.POINTER_END)
+//     {
+//       // Stop tracking when the last finger is removed from this element
+//       vs.removePointerListener (document, core.POINTER_MOVE, this);
+//       vs.removePointerListener (document, core.POINTER_END, this);
+//       
+//       if (this.__delta) { this.__scroll_start += this.__delta; }
+//       
+//       // a item is selected. propagate the change
+//       if (this.__elem)
+//       {
+//         if (this.__list_time_out)
+//         {
+//           clearTimeout (this.__list_time_out);
+//           this._touchItemFeedback (this.__elem);
+//         }
+// 
+//         this.__elem_to_unselect = this.__elem;
+//         
+//         this.__list_time_out = setTimeout (function ()
+//         {
+//           self._untouchItemFeedback (self.__elem_to_unselect);
+//           self.__elem_to_unselect = null;
+//           self.__list_time_out = 0;
+//         }, View.UNSELECT_DELAY);
+// 
+//         this._updateSelectItem (this.__elem);
+//       }
+// 
+//       this.__delta = 0;
+//       this.__elem = null;
+//     }
+//     return false;
+//   },
 
 //   /**
 //    * @protected

@@ -153,10 +153,9 @@ Button.prototype = {
   /**
    *
    * @private
-   * @type {boolean}
+   * @type {PointerRecognizer}
    */
-  __touch_binding: false,
-  __is_touched: false,
+  __tap_recognizer: null,
 
   /**
    *
@@ -215,7 +214,7 @@ Button.prototype = {
    * @protected
    * @function
    */
-  _setPressed : function (v)
+  setPressed : function (v)
   {
     if (v)
     {
@@ -229,16 +228,21 @@ Button.prototype = {
     }
   },
   
+  didTap : function ()
+  {
+    this.propagate ('select');
+  },
+  
   /**
    * @protected
    * @function
    */
   destructor : function ()
   {
-    if (this.__touch_binding)
+    if (this.__tap_recognizer)
     {
-      vs.removePointerListener (this.view, core.POINTER_START, this);
-      this.__touch_binding = false;
+      this.removePointerRecognizer (this.__tap_recognizer);
+      this.__tap_recognizer = null;
     }
     View.prototype.destructor.call (this);
   },
@@ -253,10 +257,10 @@ Button.prototype = {
     
     this.text_view = this.view.firstElementChild;
 
-    if (!this.__touch_binding)
+    if (!this.__tap_recognizer)
     {
-      vs.addPointerListener (this.view, core.POINTER_START, this);
-      this.__touch_binding = true;
+      this.__tap_recognizer = new TapRecognizer (this, this);
+      this.addPointerRecognizer (this.__tap_recognizer);
     }
 
     if (this._text)
@@ -270,93 +274,6 @@ Button.prototype = {
     this.view.name = this.id;
     if (this._style) this.addClassName (this._style);
     if (this._type) this.addClassName (this._type);
-  },
-
-  /*****************************************************************
-   *               Pointer events management
-   ****************************************************************/
-    
-  /**
-   * @protected
-   * @function
-   */
-  handleEvent: function (e)
-  {
-    if (!this._enable) { return; }
-    var self = this;
-    
-    // by default cancel any default behavior to avoid scroll
-    e.preventDefault ();
-        
-    switch (e.type)
-    {
-      case core.POINTER_START:
-        if (this.__is_touched) { return; }
-        // prevent multi touch events
-        if (e.nbPointers > 1) { return; }
-        
-        // we keep the event
-        e.stopPropagation ();
-        
-        if (this.__button_time_out)
-        {
-          clearTimeout (this.__button_time_out);
-          this.__button_time_out = 0;
-        }
-        
-        this._setPressed (true);
-        vs.addPointerListener (document, core.POINTER_END, this);
-        vs.addPointerListener (document, core.POINTER_MOVE, this);
-        this.__start_x = e.pointerList[0].pageX;
-        this.__start_y = e.pointerList[0].pageY;
-        this.__is_touched = true;
-        
-        return false;
-      break;
-
-      case core.POINTER_MOVE:
-        if (!this.__is_touched) { return; }
-
-        var dx = e.pointerList[0].pageX - this.__start_x;
-        var dy = e.pointerList[0].pageY - this.__start_y;
-          
-        if (Math.abs (dx) + Math.abs (dy) < View.MOVE_THRESHOLD)
-        {
-          // we keep the event
-          e.stopPropagation ();
-          return false;
-        }
- 
-        vs.removePointerListener (document, core.POINTER_END, this);
-        vs.removePointerListener (document, core.POINTER_MOVE, this);
-        this.__is_touched = false;
-
-        this._setPressed (false);
-        
-        return false;
-      break;
-
-      case core.POINTER_END:
-        if (!this.__is_touched) { return; }
-        this.__is_touched = false;
-        
-        // we keep the event
-        e.stopPropagation ();
-
-        vs.removePointerListener (document, core.POINTER_END, this);
-        vs.removePointerListener (document, core.POINTER_MOVE, this);
-
-        this.__button_time_out = setTimeout (function ()
-        {
-          self._setPressed (false);
-          self.__button_time_out = 0;
-        }, View.UNSELECT_DELAY);        
-  
-        this.propagate ('select');
-        
-        return false;
-      break;
-    }
   }
 };
 util.extendClass (Button, View);
