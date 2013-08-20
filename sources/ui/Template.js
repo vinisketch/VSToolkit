@@ -512,7 +512,12 @@ function _pre_compile_shadow_view (self, className) {
             }
           }
           text_node = document.createTextNode (value.substring (index));
-          node.insertBefore (text_node, node_temp);
+          if (node_temp.nextSibling) {
+            node.insertBefore (text_node, node_temp.nextSibling);
+          }
+          else {
+            node.appendChild (text_node);
+          }
         }
         else if (node_temp.nodeType === 1) { // ELEMENT_NODE
           parseNode (node_temp, ctx);
