@@ -289,7 +289,7 @@ function _instrument_component (obj, shadow_view, node) {
       
         var i = 0, l = v.length, obj;
         this [_prop_name] = v;
-        parentElement.innerHTML = "";
+        util.removeAllElementChild (parentElement);
         for (; i < l; i++) {
           obj = _instanciate_shadow_view (shadow_view, v [i]);
           parentElement.appendChild (obj.view);
@@ -511,12 +511,15 @@ function _pre_compile_shadow_view (self, className) {
               node_temp = text_node;
             }
           }
-          text_node = document.createTextNode (value.substring (index));
-          if (node_temp.nextSibling) {
-            node.insertBefore (text_node, node_temp.nextSibling);
-          }
-          else {
-            node.appendChild (text_node);
+          var end_text = value.substring (index);
+          if (end_text) {
+            text_node = document.createTextNode (end_text);
+            if (node_temp.nextSibling) {
+              node.insertBefore (text_node, node_temp.nextSibling);
+            }
+            else {
+              node.appendChild (text_node);
+            }
           }
         }
         else if (node_temp.nodeType === 1) { // ELEMENT_NODE
