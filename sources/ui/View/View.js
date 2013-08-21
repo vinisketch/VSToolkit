@@ -463,7 +463,8 @@ View.prototype = {
       for (; i < l; i++)
       {
         path = paths[i];
-        clonedViews [path[0]] = _evalPath (root, path[1]);
+        if (!path.id) path.id = core.createId ();
+        clonedViews [path[0].id] = _evalPath (root, path[1]);
       }
     }
 
@@ -515,7 +516,7 @@ View.prototype = {
     if (!config) { config = {}; }
     if (!config.node)
     {
-      var node = cloned_map.__views__ [this.view];
+      var node = cloned_map.__views__ [this.view.id];
       if (!node)
       {
         node = makeClonedNodeMap (this, cloned_map.__views__);
