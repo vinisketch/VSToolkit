@@ -343,7 +343,7 @@ function _instrument_component (obj, shadow_view, node) {
       
         var i = 0, l = v.length, obj;
         this [_prop_name] = v;
-        parentElement.innerHTML = "";
+        util.removeAllElementChild (parentElement);
         for (; i < l; i++) {
           obj = _instanciate_shadow_view (shadow_view, v [i]);
           parentElement.appendChild (obj.view);
@@ -557,7 +557,7 @@ function _pre_compile_shadow_view (self, className) {
             if (result) {
               text_node = document.createTextNode ('');
               if (node_temp.nextSibling) {
-                node.insertAfter (text_node, node_temp.nextSibling);
+                node.insertBefore (text_node, node_temp.nextSibling);
               }
               else {
                 node.appendChild (text_node);
@@ -565,8 +565,16 @@ function _pre_compile_shadow_view (self, className) {
               node_temp = text_node;
             }
           }
-          text_node = document.createTextNode (value.substring (index));
-          node.insertBefore (text_node, node_temp);
+          var end_text = value.substring (index);
+          if (end_text) {
+            text_node = document.createTextNode (end_text);
+            if (node_temp.nextSibling) {
+              node.insertBefore (text_node, node_temp.nextSibling);
+            }
+            else {
+              node.appendChild (text_node);
+            }
+          }
         }
         else if (node_temp.nodeType === 1) { // ELEMENT_NODE
           parseNode (node_temp, ctx);
@@ -1657,7 +1665,8 @@ View.prototype = {
       for (; i < l; i++)
       {
         path = paths[i];
-        clonedViews [path[0]] = _evalPath (root, path[1]);
+        if (!path.id) path.id = core.createId ();
+        clonedViews [path[0].id] = _evalPath (root, path[1]);
       }
     }
 
@@ -1709,7 +1718,7 @@ View.prototype = {
     if (!config) { config = {}; }
     if (!config.node)
     {
-      var node = cloned_map.__views__ [this.view];
+      var node = cloned_map.__views__ [this.view.id];
       if (!node)
       {
         node = makeClonedNodeMap (this, cloned_map.__views__);
@@ -7537,6 +7546,7 @@ ScrollView.prototype = {
     this._sub_view.style.width = '';
     
     function endRefresh () {
+      if (!this.__i__) return; // component was deleted!
       View.prototype.refresh.call (this);
  
       if (css)
