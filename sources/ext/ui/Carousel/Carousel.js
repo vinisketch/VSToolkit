@@ -450,12 +450,12 @@ util.defineClassProperties (Carousel, {
       if (v)
       {
         this._indicators_visibility = true;
-        __setVisible (this.__indicators, true);
+        util.setElementVisibility (this.__indicators, true);
       }
       else
       {
         this._indicators_visibility = false
-        __setVisible (this.__indicators, false);
+        util.setElementVisibility (this.__indicators, false);
       }
     }
   },
