@@ -17,9 +17,9 @@
 */
 
 
-function TapRecognizer (obj, delegate) {
+function TapRecognizer (delegate) {
   this.parent = PointerRecognizer;
-  this.parent (obj, delegate);
+  this.parent (delegate);
   this.constructor = TapRecognizer;
 }
 
@@ -32,7 +32,9 @@ TapRecognizer.prototype = {
   __did_tap_time_out: 0,
   __tap_mode: 0,
 
-  init : function () {
+  init : function (obj) {
+    PointerRecognizer.prototype.init.call (this, obj);
+    
     this.addPointerListener (this.obj.view, core.POINTER_START, this.obj);
     this.reset ();
   },
