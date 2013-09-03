@@ -245,6 +245,7 @@ ScrollView.prototype = {
     this._sub_view.style.width = '';
     
     function endRefresh () {
+      if (!this.__i__) return; // component was deleted!
       View.prototype.refresh.call (this);
  
       if (css)
@@ -315,9 +316,9 @@ ScrollView.prototype = {
     }
     this._scroll = false;
     
-    if (this._sub_view)
+    if (this._sub_view && this._sub_view.parentElement)
     {
-      this.view.removeChild (this._sub_view);
+      this._sub_view.parentElement.removeChild (this._sub_view);
     }
     View.prototype.destructor.call (this);
     delete (this._sub_view);
@@ -879,14 +880,29 @@ util.defineClassProperties (ScrollView, {
 
     if (this._layout)
     {
-      util.removeClassName (this.view, this._layout);
+      util.removeClassName (this._sub_view, this._layout);
     }
     this._layout = v;
     if (this._layout)
     {
-      util.addClassName (this.view, this._layout);
+      util.addClassName (this._sub_view, this._layout);
     }
   }
+},
+
+'innerHTML': {
+
+  /**
+   * This property allows to define both the HTML code and the text
+   * @name vs.ui.ScrollView#innerHTML
+   * @type String
+   */
+  set : function (v)
+  {
+    if (!this._sub_view) return;
+
+    util.safeInnerHTML (this._sub_view, v);
+  },
 }
 });
 

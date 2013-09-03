@@ -203,7 +203,7 @@ Slider.prototype = {
     vs.addPointerListener (this.__handle, core.POINTER_START, this, true);
     if (!this.__drag_recognizer)
     {
-      this.__drag_recognizer = new DragRecognizer (this, this);
+      this.__drag_recognizer = new DragRecognizer (this);
       this.addPointerRecognizer (this.__drag_recognizer);
     }
     

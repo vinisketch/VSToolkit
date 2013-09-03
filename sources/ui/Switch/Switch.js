@@ -105,8 +105,7 @@ Switch.prototype = {
    * @private
    * @type {boolean}
    */
-  __touch_binding: false,
-  __is_touched: false,
+  __tap_recognizer: null,
   __switch_translate: 0,
     
   /**
@@ -172,7 +171,7 @@ Switch.prototype = {
    * @protected
    * @function
    */
-  _setSelected : function (v)
+  setPressed : function (v)
   {
     if (v)
     {
@@ -220,16 +219,22 @@ Switch.prototype = {
     this.outPropertyChange ();
   },
 
+  didTap : function ()
+  {
+    this._setToggle (!this._toggled);
+    this.propagate ('change', this._toggled);
+  },
+
   /**
    * @protected
    * @function
    */
   destructor : function ()
   {
-    if (this.__touch_binding)
+    if (this.__tap_recognizer)
     {
-      vs.removePointerListener (this.view, core.POINTER_START, this);
-      this.__touch_binding = false;
+      this.removePointerRecognizer (this.__tap_recognizer);
+      this.__tap_recognizer = null;
     }
     View.prototype.destructor.call (this);
   },
@@ -249,10 +254,10 @@ Switch.prototype = {
     this.__switch_view =
       this.view.querySelector ('.vs_ui_switch .switch');
 
-    if (!this.__touch_binding)
+    if (!this.__tap_recognizer)
     {
-      vs.addPointerListener (this.view, core.POINTER_START, this);
-      this.__touch_binding = true;
+      this.__tap_recognizer = new TapRecognizer (this);
+      this.addPointerRecognizer (this.__tap_recognizer);
     }
 
     var os_device =  vs.ui.View.getDeviceCSSCode (); //window.deviceConfiguration.os;
@@ -342,100 +347,7 @@ Switch.prototype = {
     this.view.style.top = sPosT;
     this.view.style.right = sPosR;
     this.view.style.bottom = 'auto';
-  },
-  
-  /*****************************************************************
-   *               Pointer events management
-   ****************************************************************/
-
-  /**
-   * @protected
-   * @function
-   */
-  handleEvent: function (e)
-  {
-    if (!this._enable) { return; }
-    var self = this;
-        
-    // by default cancel any default behavior to avoid scroll
-    e.preventDefault ();
-
-    switch (e.type)
-    {
-      case core.POINTER_START:
-        if (this.__is_touched) { return; }
-        // prevent multi touch events
-        if (e.nbPointers > 1) { return; }
-
-        // we keep the event
-        e.stopPropagation ();
-                
-        this._setSelected (true);
-        vs.addPointerListener (document, core.POINTER_END, this);
-        vs.addPointerListener (document, core.POINTER_MOVE, this);
-        this.__start_x = e.pointerList[0].pageX;
-        this.__start_y = e.pointerList[0].pageY;
-        this.__is_touched = true;
-        
-        return false;
-      break;
-
-      case core.POINTER_MOVE:
-        if (!this.__is_touched) { return; }
-
-        var dx = e.pointerList[0].pageX - this.__start_x;
-        var dy = e.pointerList[0].pageY - this.__start_y;
-        
-        // manage swipe and selection
-        if (this._mode === Switch.MODE_IOS)
-        {
-          if (Math.abs (dy) < View.MOVE_THRESHOLD && 
-            ((this._toggled && dx < 0 && dx > -this._size[0]) ||
-             (!this._toggled && dx > 0 && dx < this._size[0])))
-          {
-            // we keep the event
-            e.stopPropagation ();
-            return false;
-          }
-        }
-        else
-        {
-          if ((Math.abs (dy) + Math.abs (dy)) < View.MOVE_THRESHOLD)
-          {
-            // we keep the event
-            e.stopPropagation ();
-            return false;
-          }
-        }
-
-        vs.removePointerListener (document, core.POINTER_END, this);
-        vs.removePointerListener (document, core.POINTER_MOVE, this);
-        this.__is_touched = false;
-
-        this._setSelected (false);
-        
-        return false;
-      break;
-
-      case core.POINTER_END:
-        if (!this.__is_touched) { return; }
-        this.__is_touched = false;
-
-        // we keep the event
-        e.stopPropagation ();
-
-        vs.removePointerListener (document, core.POINTER_END, this);
-        vs.removePointerListener (document, core.POINTER_MOVE, this);
-
-        this._setSelected (false);
-
-        this._setToggle (!this._toggled);
-        this.propagate ('change', this._toggled);
-        
-        return false;
-      break;
-    }
-  }  
+  }
 };
 util.extendClass (Switch, View);
 

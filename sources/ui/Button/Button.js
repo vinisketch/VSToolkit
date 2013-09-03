@@ -259,7 +259,7 @@ Button.prototype = {
 
     if (!this.__tap_recognizer)
     {
-      this.__tap_recognizer = new TapRecognizer (this, this);
+      this.__tap_recognizer = new TapRecognizer (this);
       this.addPointerRecognizer (this.__tap_recognizer);
     }
 
