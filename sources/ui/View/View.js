@@ -2232,6 +2232,18 @@ View.prototype = {
     if (!origin) { return; }
     if (!util.isNumber (origin.x) || !util.isNumber (origin.y)) { return; }
 
+    this.flushTransformStack ();
+    
+    this._transform_origin = [origin.x, origin.y];
+  },
+
+  /**
+   *  Flush all current transformation, into the transformation stack.
+   * @public
+   * @function
+   */
+  flushTransformStack : function ()
+  {
     // Save current transform into a matrix
     var matrix = new vs.CSSMatrix ();
     matrix = matrix.translate
@@ -2253,8 +2265,6 @@ View.prototype = {
     this.__view_t_y = 0;
     this._scaling = 1;
     this._rotation = 0;
-
-    this._transform_origin = [origin.x, origin.y];
   },
 
   /**
