@@ -171,18 +171,20 @@ Switch.prototype = {
    * @protected
    * @function
    */
-  setPressed : function (v)
+  didTouch : function ()
   {
-    if (v)
-    {
-      this.addClassName ('selected');
-      this._selected = true;
-    }
-    else
-    {
-      this.removeClassName ('selected');
-      this._selected = false;
-    }
+    this.addClassName ('pressed');
+    this._selected = true;
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  didUntouch : function ()
+  {
+    this.removeClassName ('pressed');
+    this._selected = false;
   },
 
   /*****************************************************************
