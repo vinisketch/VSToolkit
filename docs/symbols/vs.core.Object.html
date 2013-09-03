@@ -494,6 +494,8 @@ hr:last-child {
 	
 	<li><a href="../symbols/vs.ui.ComboBox.html">vs.ui.ComboBox</a></li>
 	
+	<li><a href="../symbols/vs.ui.DragRecognizer.html">vs.ui.DragRecognizer</a></li>
+	
 	<li><a href="../symbols/vs.ui.ImageView.html">vs.ui.ImageView</a></li>
 	
 	<li><a href="../symbols/vs.ui.InputField.html">vs.ui.InputField</a></li>
@@ -504,11 +506,17 @@ hr:last-child {
 	
 	<li><a href="../symbols/vs.ui.Picker.html">vs.ui.Picker</a></li>
 	
+	<li><a href="../symbols/vs.ui.PinchRecognizer.html">vs.ui.PinchRecognizer</a></li>
+	
+	<li><a href="../symbols/vs.ui.PointerRecognizer.html">vs.ui.PointerRecognizer</a></li>
+	
 	<li><a href="../symbols/vs.ui.PopOver.html">vs.ui.PopOver</a></li>
 	
 	<li><a href="../symbols/vs.ui.ProgressBar.html">vs.ui.ProgressBar</a></li>
 	
 	<li><a href="../symbols/vs.ui.RadioButton.html">vs.ui.RadioButton</a></li>
+	
+	<li><a href="../symbols/vs.ui.RotationRecognizer.html">vs.ui.RotationRecognizer</a></li>
 	
 	<li><a href="../symbols/vs.ui.ScrollImageView.html">vs.ui.ScrollImageView</a></li>
 	
@@ -523,6 +531,8 @@ hr:last-child {
 	<li><a href="../symbols/vs.ui.SVGView.html">vs.ui.SVGView</a></li>
 	
 	<li><a href="../symbols/vs.ui.Switch.html">vs.ui.Switch</a></li>
+	
+	<li><a href="../symbols/vs.ui.TapRecognizer.html">vs.ui.TapRecognizer</a></li>
 	
 	<li><a href="../symbols/vs.ui.Template.html">vs.ui.Template</a></li>
 	
@@ -762,6 +772,15 @@ prototype chain) of a given object.</div>
 								</div>
 								<div class="description">The method allows to link a model to an other object (a view for
 instance).</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#outPropertyChange">outPropertyChange</a></b>(property)
+								</div>
+								<div class="description">Manually force out properties change propagation.</div>
 							</td>
 						</tr>
 					
@@ -1294,6 +1313,44 @@ propagation.
 									
 								</dt>
 								<dd>The model to link with</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="outPropertyChange"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>outPropertyChange</b>(property)
+					
+					</div>
+					<div class="description">
+						Manually force out properties change propagation.
+<br/>
+If no property name is specified, the system will assume all component's
+properties have been modified.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>property</b>
+									
+								</dt>
+								<dd>the name of the modified property.[optional]</dd>
 							
 							</dl>
 						
