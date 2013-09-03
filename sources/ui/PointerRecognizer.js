@@ -17,10 +17,9 @@
 */
 
 
-function PointerRecognizer (obj, delegate) {
+function PointerRecognizer (delegate) {
   this.constructor = PointerRecognizer;
 
-  this.obj = obj;
   this.delegate = delegate;
 }
 
@@ -73,7 +72,9 @@ PointerRecognizer.prototype = {
     return false;
   },
 
-  init: function () {},
+  init : function (obj) {
+    this.obj = obj;
+  },
 
   uninit: function () {},
 

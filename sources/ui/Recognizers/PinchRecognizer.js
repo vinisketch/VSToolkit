@@ -25,7 +25,9 @@ function PinchRecognizer (obj, delegate) {
 
 PinchRecognizer.prototype = {
 
-  init : function () {
+  init : function (obj) {
+    PointerRecognizer.prototype.init.call (this, obj);
+    
     this.addPointerListener (this.obj.view, core.GESTURE_START, this.obj);
     this.reset ();
   },

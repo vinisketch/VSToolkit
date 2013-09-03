@@ -27,7 +27,9 @@ DragRecognizer.prototype = {
 
   __is_dragged: false,
   
-  init : function () {
+  init : function (obj) {
+    PointerRecognizer.prototype.init.call (this, obj);
+    
     this.addPointerListener (this.obj.view, core.POINTER_START, this.obj);
     this.reset ();
   },

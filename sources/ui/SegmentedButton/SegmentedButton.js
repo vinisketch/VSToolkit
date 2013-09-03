@@ -376,7 +376,7 @@ util.defineClassProperties (SegmentedButton, {
     /** 
      * Getter|Setter to configure the buttons as toggle buttons or not.
      * By default SegmentedButton are toggle buttons
-     * @name vs.ui.SegmentedButton#isToggleButton 
+     * @name vs.ui.SegmentedButton#isToggleButtons 
      * @type {boolean}
      */ 
     set : function (v)
