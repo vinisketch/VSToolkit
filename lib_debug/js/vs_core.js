@@ -5418,7 +5418,7 @@ function DeviceConfiguration ()
 {
   this.orientation = null;
   this.deviceId = null;
-  this.targets = {};
+//  this.targets = {};
   
   this.browserDetect ();
   this.orientationDetect ();
@@ -5734,8 +5734,8 @@ DeviceConfiguration.prototype = {
    */
   screenDetect : function ()
   {
-    var pixelRation = window.devicePixelRatio, width, height;
-    if (!pixelRation) pixelRation = 1;
+    var pixelRatio = window.devicePixelRatio, width, height;
+    if (!pixelRatio) pixelRatio = 1;
     
     if (this.os >= DeviceConfiguration.OS_IOS && 
         this.os <= DeviceConfiguration.OS_MEEGO)
@@ -5762,7 +5762,7 @@ DeviceConfiguration.prototype = {
 
     this.screenRatio = height / width;
     
-    var size = Math.sqrt (width * width + height * height) / (160 * pixelRation);
+    var size = Math.sqrt (width * width + height * height) / (160 * pixelRatio);
        
     if (size < 6) this.screenSize = DeviceConfiguration.SS_4_INCH;
     else if (size < 9) this.screenSize = DeviceConfiguration.SS_7_INCH;
@@ -5856,6 +5856,67 @@ DeviceConfiguration.prototype = {
     }
   },
   
+  generateDeviceId : function ()
+  {
+    var did = "";
+
+    switch (this.os) {
+      case DeviceConfiguration.OS_IOS:
+        var width = window.screen.width;
+        var height = window.screen.height;
+        if (width === 320 || width === 480) did += "iphone";
+        if (width === 768 || width === 1024) did += "ipad";
+      break;
+ 
+      case DeviceConfiguration.OS_ANDROID:
+        did += "android"
+      break;
+ 
+      case DeviceConfiguration.OS_WP7:
+        did += "wp7"
+      break;
+ 
+      case DeviceConfiguration.OS_BLACK_BERRY:
+        did += "blackberry"
+      break;
+    }    
+
+    switch (this.screenSize) {
+      case DeviceConfiguration.SS_4_INCH:
+        did += "_3"
+      break;
+ 
+      case DeviceConfiguration.SS_7_INCH:
+        did += "_7"
+      break;
+ 
+      case DeviceConfiguration.SS_10_INCH:
+        did += "_10"
+      break;
+    }    
+
+    if (Math.abs (window.deviceConfiguration.screenRatio - 3/2) < 0.1) 
+      did += "_16_9";
+    else if (Math.abs (window.deviceConfiguration.screenRatio - 16/10) < 0.1) 
+      did += "_16_9";
+    else if (Math.abs (window.deviceConfiguration.screenRatio - 16/9) < 0.1) 
+      did += "_16_9";
+    
+    switch (this.orientation) {
+      case 90:
+      case -90:
+        did += "_l"
+      break;
+
+      case 0:
+      case 180:
+        did += "_p"
+      break;
+    }
+    
+    return did;
+  },
+
   /**
    * Set the GUI orientation
    *
@@ -5869,8 +5930,8 @@ DeviceConfiguration.prototype = {
     var pid, device, i, len, id, comp, 
       width = window.innerWidth, height = window.innerHeight, t;
     
-    if (this.orientation === orientation)
-    { return; }
+//     if (this.orientation === orientation)
+//     { return; }
     
     if (width > height)
     {
@@ -5890,20 +5951,20 @@ DeviceConfiguration.prototype = {
       { comp.orientationWillChange (orientation); }
     }
     
-    for (pid in this.targets)
-    {
-      device = this.targets [pid];
-      if (device.device !== this.deviceId) { continue; }
-          
-      // verify orientation matching with target id
-      if (((orientation !== 0 && orientation !== 180) || 
-            pid.indexOf ('_p') === -1) &&
-          ((orientation !== 90 && orientation !== -90) || 
-            pid.indexOf ('_l') === -1)) continue;
+//     for (pid in this.targets)
+//     {
+//       device = this.targets [pid];
+//       if (device.device !== this.deviceId) { continue; }
+//           
+//       // verify orientation matching with target id
+//       if (((orientation !== 0 && orientation !== 180) || 
+//             pid.indexOf ('_p') === -1) &&
+//           ((orientation !== 90 && orientation !== -90) || 
+//             pid.indexOf ('_l') === -1)) continue;
   
-      this.setActiveStyleSheet (pid);
-      break;
-    }
+      this.setActiveStyleSheet (this.deviceId);
+//       break;
+//     }
       
     this.orientation = orientation;
   
@@ -5949,7 +6010,7 @@ DeviceConfiguration.prototype = {
    */
   registerTargetId : function (tid, conf)
   {
-    this.targets [tid] = conf;
+//    this.targets [tid] = conf;
   }
 };
 
@@ -5958,6 +6019,8 @@ DeviceConfiguration.prototype = {
  */
 DeviceConfiguration._getScreenResolutionCode = function (width, height)
 {
+  width *= window.devicePixelRatio;
+  height *= window.devicePixelRatio;
   if (width === 240 && height === 320) return DeviceConfiguration.SR_QVGA;
   if (width === 240 && height === 400) return DeviceConfiguration.SR_WQVGA;
   if (width === 320 && height === 480) return DeviceConfiguration.SR_HVGA;
@@ -5965,7 +6028,7 @@ DeviceConfiguration._getScreenResolutionCode = function (width, height)
   if (width === 480 && height === 800) return DeviceConfiguration.SR_WVGA;
   if (width === 320 && height === 854) return DeviceConfiguration.SR_WFVGA;
   if (width === 600 && height === 800) return DeviceConfiguration.SR_SVGA;
-  if (width === 640 && height === 960) return DeviceConfiguration.SR_DVGA
+  if (width === 640 && height === 960) return DeviceConfiguration.SR_DVGA;
   if (width === 640 && height === 1136) return DeviceConfiguration.SR_WDVGA
   if (width === 768 && height === 1024) return DeviceConfiguration.SR_XGA;
   if (width === 360 && height === 640) return DeviceConfiguration.SR_N_HD;

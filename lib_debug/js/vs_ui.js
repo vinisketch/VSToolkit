@@ -735,11 +735,51 @@ vs.ui.Template = Template;
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-function PointerRecognizer (obj, delegate) {
+/**
+ *  The vs.ui.PointerRecognizer class
+ *
+ *  @class
+ *  vs.ui.PointerRecognizer is an abstract class that helps with detecting and
+ *  responding to the various UI pointer/gesture events common on devices.<br />
+ *  Build on top of PointerEvent API, PointerRecognizer will works with mouse
+ *  and/or touche devices.<br />
+ *
+ *  vs.ui.PointerRecognizer is an abstract class, with the following concrete
+ *  subclasses, one for each type of available recognizer:
+ *  <ul>
+ *    <li /> vs.ui.TapRecognizer
+ *    <li /> vs.ui.DragRecognizer
+ *    <li /> vs.ui.RotationRecognizer
+ *    <li /> vs.ui.PinchRecognizer
+ *  </ul>
+ *  <p>
+ *  Depending on the type of recognizer, there are various behaviors that you
+ *  can configure. For instance, with the vs.ui.TapRecognizer, you can specify
+ *  the number of taps and number of touches.<br />
+ * 
+ *  In response to recognized actions, a delegate method call to a delegate
+ *  object that you specify within the constructor. Depending on the type of
+ *  gesture additional information about the gesture may be available in the
+ *  delegate method, for example, the scale factor of a pinch.<br />
+ *
+ *  @example
+ *
+ *  @author David Thevenin
+ *  @see vs.ui.TapRecognizer
+ *  @see vs.ui.DragRecognizer
+ *  @see vs.ui.RotationRecognizer
+ *  @see vs.ui.PinchRecognizer
+ *
+ *  @constructor
+ *   Creates a new vs.ui.PointerRecognizer.
+ *
+ * @name vs.ui.PointerRecognizer
+ *
+ * @param {ReconizerDelegate} delegate the delegate [mandatory]
+ */
+function PointerRecognizer (delegate) {
   this.constructor = PointerRecognizer;
 
-  this.obj = obj;
   this.delegate = delegate;
 }
 
@@ -747,6 +787,16 @@ var POINTER_LISTENERS = [];
 
 PointerRecognizer.prototype = {
 
+  /**
+   * @name vs.ui.PointerRecognizer#addPointerListener
+   * @function
+   * @protected
+   *
+   * @param {HTMLElement} node The node to listen
+   * @param {String} type the event to listen
+   * @param {Function | Object} listener the listener
+   * @param {Boolean} useCapture 
+   */
   addPointerListener: function (node, type, listener, useCapture) {
     if (!node || !type || !listener) return false;
 
@@ -771,6 +821,16 @@ PointerRecognizer.prototype = {
     return true;
   },
 
+  /**
+   * @name vs.ui.PointerRecognizer#removePointerListener
+   * @function
+   * @protected
+   *
+   * @param {HTMLElement} node The node to listen
+   * @param {String} type the event to listen
+   * @param {Function | Object} listener the listener
+   * @param {Boolean} useCapture 
+   */
   removePointerListener: function (node, type, listener, useCapture) {
     if (!node || !type || !listener) return false;
 
@@ -792,24 +852,78 @@ PointerRecognizer.prototype = {
     return false;
   },
 
-  init: function () {},
+  /**
+   * @name vs.ui.PointerRecognizer#init
+   * @function
+   * @protected
+   *
+   * @param {vs.ui.View} obj The view object to listen
+   */
+  init : function (obj) {
+    this.obj = obj;
+  },
 
+  /**
+   * @name vs.ui.PointerRecognizer#uninit
+   * @function
+   * @protected
+   */
   uninit: function () {},
 
+  /**
+   * @name vs.ui.PointerRecognizer#reset
+   * @function
+   * @protected
+   */
   reset: function () {},
 
+  /**
+   * @name vs.ui.PointerRecognizer#pointerStart
+   * @function
+   * @protected
+   */
   pointerStart: function (event) {},
 
+  /**
+   * @name vs.ui.PointerRecognizer#pointerMove
+   * @function
+   * @protected
+   */
   pointerMove: function (event) {},
 
+  /**
+   * @name vs.ui.PointerRecognizer#pointerEnd
+   * @function
+   * @protected
+   */
   pointerEnd: function (event) {},
 
+  /**
+   * @name vs.ui.PointerRecognizer#pointerCancel
+   * @function
+   * @protected
+   */
   pointerCancel: function (event) {},
 
+  /**
+   * @name vs.ui.PointerRecognizer#gestureStart
+   * @function
+   * @protected
+   */
   gestureStart: function (event) {},
 
+  /**
+   * @name vs.ui.PointerRecognizer#gestureChange
+   * @function
+   * @protected
+   */
   gestureChange: function (event) {},
 
+  /**
+   * @name vs.ui.PointerRecognizer#gestureEnd
+   * @function
+   * @protected
+   */
   gestureEnd: function (event) {}
 };
 
@@ -836,10 +950,55 @@ ui.PointerRecognizer = PointerRecognizer;
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
-function TapRecognizer (obj, delegate) {
+/**
+ *  The vs.ui.TapRecognizer class
+ *
+ *  @extends vs.ui.PointerRecognizer
+ *
+ *  @class
+ *  vs.ui.TapRecognizer is a concrete subclass of vs.ui.PointerRecognizer that
+ *  looks for single or multiple taps/clicks.<br />
+ *
+ *  The TapRecognizer delegate has to implement following methods:
+ *  <ul>
+ *    <li /> didTouch (event). Call when the element is touched; It useful to
+ *      implement this method to implement a feedback on the event (for instance
+ *      add a pressed class)
+ *    <li /> didUntouch (event). Call when the element is untouched; It useful to
+ *      implement this method to implement a feedback on the event (for instance
+ *      remove a pressed class)
+ *    <li /> didTap (nb_tap, event). Call when the element si tap/click. nb_tap
+ *      is the number of tap/click.
+ *  </ul>
+ *  <p>
+ *
+ *  @example
+ *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
+ *  var recognizer = new TapRecognizer ({
+ *    didTouch (event) {
+ *      my_view.addClassName ("pressed");
+ *    },
+ *    didUntouch (event) {
+ *      my_view.removeClassName ("pressed");
+ *    },
+ *    didTap (nb_tap, event) {
+ *      my_view.hide ();
+ *    }
+ *  });
+ *  my_view.addPointerRecognizer (recognizer);
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *   Creates a new vs.ui.TapRecognizer.
+ *
+ * @name vs.ui.TapRecognizer
+ *
+ * @param {ReconizerDelegate} delegate the delegate [mandatory]
+ */
+function TapRecognizer (delegate) {
   this.parent = PointerRecognizer;
-  this.parent (obj, delegate);
+  this.parent (delegate);
   this.constructor = TapRecognizer;
 }
 
@@ -852,15 +1011,32 @@ TapRecognizer.prototype = {
   __did_tap_time_out: 0,
   __tap_mode: 0,
 
-  init : function () {
+  /**
+   * @name vs.ui.TapRecognizer#init
+   * @function
+   * @protected
+   */
+  init : function (obj) {
+    PointerRecognizer.prototype.init.call (this, obj);
+    
     this.addPointerListener (this.obj.view, core.POINTER_START, this.obj);
     this.reset ();
   },
 
+  /**
+   * @name vs.ui.TapRecognizer#uninit
+   * @function
+   * @protected
+   */
   uninit : function () {
     this.removePointerListener (this.obj.view, core.POINTER_START, this.obj);
   },
 
+  /**
+   * @name vs.ui.TapRecognizer#pointerStart
+   * @function
+   * @protected
+   */
   pointerStart: function (e) {
     if (this.__is_touched) { return; }
     // prevent multi touch events
@@ -876,8 +1052,8 @@ TapRecognizer.prototype = {
     }
     else {
       try {
-        if (this.delegate && this.delegate.setPressed)
-          this.delegate.setPressed (true, e);
+        if (this.delegate && this.delegate.didTouch)
+          this.delegate.didTouch (e);
       } catch (e) {
         console.log (e);
       }
@@ -899,6 +1075,11 @@ TapRecognizer.prototype = {
     return false;
   },
 
+  /**
+   * @name vs.ui.TapRecognizer#pointerMove
+   * @function
+   * @protected
+   */
   pointerMove: function (e) {
     if (!this.__is_touched) { return; }
 
@@ -916,13 +1097,18 @@ TapRecognizer.prototype = {
     this.__is_touched = false;
 
     try {
-      if (this.delegate && this.delegate.setPressed)
-        this.delegate.setPressed (false, e);
+      if (this.delegate && this.delegate.didTouch)
+        this.delegate.didUntouch (e);
     } catch (e) {
       console.log (e);
     }
   },
 
+  /**
+   * @name vs.ui.TapRecognizer#init
+   * @function
+   * @protected
+   */
   pointerEnd: function (e) {
     if (!this.__is_touched) { return; }
     this.__is_touched = false;
@@ -931,10 +1117,10 @@ TapRecognizer.prototype = {
     this.removePointerListener (document, core.POINTER_END, this.obj);
     this.removePointerListener (document, core.POINTER_MOVE, this.obj);
 
-    if (this.delegate && this.delegate.setPressed) {
+    if (this.delegate && this.delegate.didUntouch) {
       this.__unselect_time_out = setTimeout (function () {
         try {
-          self.delegate.setPressed (false, e);
+          self.delegate.didUntouch (e);
         } catch (e) {
           console.log (e);
         }
@@ -942,7 +1128,7 @@ TapRecognizer.prototype = {
       }, View.UNSELECT_DELAY);        
     }
     
-    if (this.delegate && this.delegate.setPressed) {
+    if (this.delegate && this.delegate.didTap) {
       this.__did_tap_time_out = setTimeout (function () {
         try {
           self.delegate.didTap (self.__tap_mode, e);
@@ -957,6 +1143,11 @@ TapRecognizer.prototype = {
     }
   },
 
+  /**
+   * @name vs.ui.TapRecognizer#pointerCancel
+   * @function
+   * @protected
+   */
   pointerCancel: function (e) {
     return this.pointerEnd (e);
   }
@@ -987,9 +1178,51 @@ ui.TapRecognizer = TapRecognizer;
 */
 
 
-function DragRecognizer (obj, delegate) {
+/**
+ *  The vs.ui.DragRecognizer class
+ *
+ *  @extends vs.ui.PointerRecognizer
+ *
+ *  @class
+ *  vs.ui.DragRecognizer is a concrete subclass of vs.ui.PointerRecognizer
+ *  that looks for drag gestures. When the user moves
+ *  the fingers, the underlying view should translate in a corresponding
+ *  direction and speed...<br />
+ *
+ *  The DragRecognizer delegate has to implement following methods:
+ *  <ul>
+ *    <li /> didDragStart (event). Call when the drag start.
+ *    <li /> didDragEnd (event). Call when the drag end.
+ *    <li /> didDrag (drag_info, event). Call when the element is dragged.
+ *      drag_info = {dx: dx, dy:dy}, the drag delta form the beginning.
+ *  </ul>
+ *  <p>
+ *
+ *  @example
+ *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
+ *  var recognizer = new DragRecognizer ({
+ *    didDrag (drag_info, event) {
+ *      my_view.translation = [drag_info.dx, drag_info.dy];
+ *    }
+ *    didDragEnd (sevent) {
+ *      // save drag translation
+ *      my_view.flushTransformStack ();
+ *    }
+ *  });
+ *  my_view.addPointerRecognizer (recognizer);
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *   Creates a new vs.ui.DragRecognizer.
+ *
+ * @name vs.ui.DragRecognizer
+ *
+ * @param {ReconizerDelegate} delegate the delegate [mandatory]
+ */
+function DragRecognizer (delegate) {
   this.parent = PointerRecognizer;
-  this.parent (obj, delegate);
+  this.parent (delegate);
   this.constructor = DragRecognizer;     
 }
 
@@ -997,15 +1230,32 @@ DragRecognizer.prototype = {
 
   __is_dragged: false,
   
-  init : function () {
+  /**
+   * @name vs.ui.DragRecognizer#init
+   * @function
+   * @protected
+   */
+  init : function (obj) {
+    PointerRecognizer.prototype.init.call (this, obj);
+    
     this.addPointerListener (this.obj.view, core.POINTER_START, this.obj);
     this.reset ();
   },
 
+  /**
+   * @name vs.ui.DragRecognizer#uninit
+   * @function
+   * @protected
+   */
   uninit : function () {
     this.removePointerListener (this.obj.view, core.POINTER_START, this.obj);
   },
 
+  /**
+   * @name vs.ui.DragRecognizer#pointerStart
+   * @function
+   * @protected
+   */
   pointerStart: function (e) {
     if (this.__is_dragged) { return; }
     // prevent multi touch events
@@ -1027,6 +1277,11 @@ DragRecognizer.prototype = {
     return false;
   },
 
+  /**
+   * @name vs.ui.DragRecognizer#pointerMove
+   * @function
+   * @protected
+   */
   pointerMove: function (e) {
     if (!this.__is_dragged) { return; }
 
@@ -1041,6 +1296,11 @@ DragRecognizer.prototype = {
     }
   },
 
+  /**
+   * @name vs.ui.DragRecognizer#pointerEnd
+   * @function
+   * @protected
+   */
   pointerEnd: function (e) {
     if (!this.__is_dragged) { return; }
     this.__is_dragged = false;
@@ -1056,6 +1316,11 @@ DragRecognizer.prototype = {
     }
   },
 
+  /**
+   * @name vs.ui.DragRecognizer#pointerCancel
+   * @function
+   * @protected
+   */
   pointerCancel: function (e) {
     return this.pointerEnd (e);
   }
@@ -1085,23 +1350,78 @@ ui.DragRecognizer = DragRecognizer;/*
 */
 
 
-function PinchRecognizer (obj, delegate) {
+/**
+ *  The vs.ui.PinchRecognizer class
+ *
+ *  @extends vs.ui.PointerRecognizer
+ *
+ *  @class
+ *  The vs.ui.PinchRecognizer is a concrete subclass of vs.ui.PointerRecognizer
+ *  that looks for pinching gestures involving two touches. When the user moves
+ *  the two fingers toward each other, the conventional meaning is zoom-out;<br />
+ *  when the user moves the two fingers away from each other, the conventional
+ *  meaning is zoom-in<br />
+ *
+ *  The PinchRecognizer delegate has to implement following methods:
+ *  <ul>
+ *    <li /> didPinchChange (scale, event). Call when the element is pinched.
+ *      scale is The scale factor relative to the points of the two touches
+ *      in screen coordinates.
+ *  </ul>
+ *  <p>
+ *
+ *  @example
+ *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
+ *  var recognizer = new PinchRecognizer ({
+ *    didPinchChange (scale, event) {
+ *      my_view.scaling = scale;
+ *    }
+ *  });
+ *  my_view.addPointerRecognizer (recognizer);
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *   Creates a new vs.ui.PinchRecognizer.
+ *
+ * @name vs.ui.PinchRecognizer
+ *
+ * @param {ReconizerDelegate} delegate the delegate [mandatory]
+ */
+function PinchRecognizer (delegate) {
   this.parent = PointerRecognizer;
-  this.parent (obj, delegate);
+  this.parent (delegate);
   this.constructor = PinchRecognizer;
 }
 
 PinchRecognizer.prototype = {
 
-  init : function () {
+  /**
+   * @name vs.ui.PinchRecognizer#init
+   * @function
+   * @protected
+   */
+  init : function (obj) {
+    PointerRecognizer.prototype.init.call (this, obj);
+    
     this.addPointerListener (this.obj.view, core.GESTURE_START, this.obj);
     this.reset ();
   },
 
+  /**
+   * @name vs.ui.PinchRecognizer#uninit
+   * @function
+   * @protected
+   */
   uninit : function () {
     this.removePointerListener (this.obj.view, core.GESTURE_START, this.obj);
   },
 
+  /**
+   * @name vs.ui.PinchRecognizer#gestureStart
+   * @function
+   * @protected
+   */
   gestureStart: function (e) {
     this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.addPointerListener (document, core.GESTURE_END, this.obj);
@@ -1109,6 +1429,11 @@ PinchRecognizer.prototype = {
     return false;
   },
 
+  /**
+   * @name vs.ui.PinchRecognizer#gestureChange
+   * @function
+   * @protected
+   */
   gestureChange: function (event) {
     try {
       if (this.delegate && this.delegate.didPinchChange)
@@ -1118,11 +1443,21 @@ PinchRecognizer.prototype = {
     }
   },
 
+  /**
+   * @name vs.ui.PinchRecognizer#gestureEnd
+   * @function
+   * @protected
+   */
   gestureEnd: function (e) {
     this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.removePointerListener (document, core.GESTURE_END, this.obj);
   },
 
+  /**
+   * @name vs.ui.PinchRecognizer#pointerCancel
+   * @function
+   * @protected
+   */
   pointerCancel: function (e) {
     return this.pointerEnd (e);
   }
@@ -1152,23 +1487,76 @@ ui.PinchRecognizer = PinchRecognizer;/*
 */
 
 
-function RotationRecognizer (obj, delegate) {
+/**
+ *  The vs.ui.RotationRecognizer class
+ *
+ *  @extends vs.ui.PointerRecognizer
+ *
+ *  @class
+ *  vs.ui.RotationRecognizer is a concrete subclass of vs.ui.PointerRecognizer
+ *  that looks for rotation gestures involving two touches. When the user moves
+ *  the fingers opposite each other in a circular motion, the underlying view
+ *  should rotate in a corresponding direction and speed...<br />
+ *
+ *  The RotationRecognizer delegate has to implement following methods:
+ *  <ul>
+ *    <li /> didRotationChange (rotation, event). Call when the element is rotated.
+ *      rotation The rotation of the gesture in degrees.
+ *  </ul>
+ *  <p>
+ *
+ *  @example
+ *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
+ *  var recognizer = new RotationRecognizer ({
+ *    didRotationChange (rotation, event) {
+ *      my_view.rotation = rotation;
+ *    }
+ *  });
+ *  my_view.addPointerRecognizer (recognizer);
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *   Creates a new vs.ui.RotationRecognizer.
+ *
+ * @name vs.ui.RotationRecognizer
+ *
+ * @param {ReconizerDelegate} delegate the delegate [mandatory]
+ */
+function RotationRecognizer (delegate) {
   this.parent = PointerRecognizer;
-  this.parent (obj, delegate);
+  this.parent (delegate);
   this.constructor = RotationRecognizer;
 }
 
 RotationRecognizer.prototype = {
 
-  init : function () {
+  /**
+   * @name vs.ui.RotationRecognizer#init
+   * @function
+   * @protected
+   */
+  init : function (obj) {
+    PointerRecognizer.prototype.init.call (this, obj);
+    
     this.addPointerListener (this.obj.view, core.GESTURE_START, this.obj);
     this.reset ();
   },
 
+  /**
+   * @name vs.ui.RotationRecognizer#uninit
+   * @function
+   * @protected
+   */
   uninit : function () {
     this.removePointerListener (this.obj.view, core.GESTURE_START, this.obj);
   },
 
+  /**
+   * @name vs.ui.RotationRecognizer#gestureStart
+   * @function
+   * @protected
+   */
   gestureStart: function (e) {
     this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.addPointerListener (document, core.GESTURE_END, this.obj);
@@ -1176,6 +1564,11 @@ RotationRecognizer.prototype = {
     return false;
   },
 
+  /**
+   * @name vs.ui.RotationRecognizer#gestureChange
+   * @function
+   * @protected
+   */
   gestureChange: function (event) {
     try {
       if (this.delegate && this.delegate.didRotationChange)
@@ -1185,11 +1578,21 @@ RotationRecognizer.prototype = {
     }
   },
 
+  /**
+   * @name vs.ui.RotationRecognizer#gestureEnd
+   * @function
+   * @protected
+   */
   gestureEnd: function (e) {
     this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.removePointerListener (document, core.GESTURE_END, this.obj);
   },
 
+  /**
+   * @name vs.ui.RotationRecognizer#pointerCancel
+   * @function
+   * @protected
+   */
   pointerCancel: function (e) {
     return this.pointerEnd (e);
   }
@@ -2953,6 +3356,8 @@ View.prototype = {
     if (!this.view) { return; }
     if (!this._visible) { return; }
 
+    this._visible = false;
+
     if (this._hide_animation)
     {
       this._hide_animation.process (this, this._hide_object, this);
@@ -2972,8 +3377,6 @@ View.prototype = {
   _hide_object: function ()
   {
     if (!this.view) { return; }
-
-    this._visible = false;
 
     if (this.view.style.display)
     {
@@ -3244,7 +3647,7 @@ View.prototype = {
     if (this.__pointer_recognizers.indexOf (recognizer) !== -1) return;
     
     this.__pointer_recognizers.push (recognizer);
-    recognizer.init ();
+    recognizer.init (this);
   },
 
   removePointerRecognizer: function (recognizer)
@@ -3434,6 +3837,18 @@ View.prototype = {
     if (!origin) { return; }
     if (!util.isNumber (origin.x) || !util.isNumber (origin.y)) { return; }
 
+    this.flushTransformStack ();
+    
+    this._transform_origin = [origin.x, origin.y];
+  },
+
+  /**
+   *  Flush all current transformation, into the transformation stack.
+   * @public
+   * @function
+   */
+  flushTransformStack : function ()
+  {
     // Save current transform into a matrix
     var matrix = new vs.CSSMatrix ();
     matrix = matrix.translate
@@ -3455,8 +3870,6 @@ View.prototype = {
     this.__view_t_y = 0;
     this._scaling = 1;
     this._rotation = 0;
-
-    this._transform_origin = [origin.x, origin.y];
   },
 
   /**
@@ -4203,6 +4616,54 @@ var Application = function (config)
 
 /**
  * @private
+ * @const
+ */
+Application.CSS_DEFAULT = 0;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_IOS = 5;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_ANDROID = 9;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_MEEGO = 10;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_WP7 = 6;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_SYMBIAN = 8;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_BLACKBERRY = 7;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_PURE = 100;
+
+/**
+ * @private
  */
 var Application_applications = {};
 
@@ -4501,8 +4962,57 @@ Application.exit = function ()
  */
 Application.configureDevice = function ()
 {
-  window.deviceConfiguration.setDeviceId (Application_default_device);
-  window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+  function setDefaultDeviceCSS () {
+  
+    function importCSS (path, node) {
+      var css_style = document.createElement ("link");
+      css_style.setAttribute ("rel", "stylesheet");
+      css_style.setAttribute ("type", "text/css");
+      css_style.setAttribute ("href", path);
+      css_style.setAttribute ("media", "screen");
+
+      if (node)
+        document.head.insertBefore (css_style, node);
+      else
+        document.head.appendChild (css_style);
+    }
+    
+    var links = document.head.querySelectorAll ('link'), node;
+    for (var i = 0; i < links.length; i++) {
+      node = links.item (i);
+      if (node.getAttribute ('href') == "lib/css/vs_ui.css") {
+        node = node.nextElementSibling;
+        break;
+      }
+      else node = null;
+    }
+  
+    switch (window.deviceConfiguration.os) {
+      case DeviceConfiguration.OS_IOS:
+        importCSS ("lib/css/vs_ui_ios.css", node);
+      break;
+ 
+      case DeviceConfiguration.OS_ANDROID:
+        importCSS ("lib/css/vs_ui_android.css", node);
+      break;
+    }
+  }
+  
+  setDefaultDeviceCSS ();
+  
+  var did = window.deviceConfiguration.generateDeviceId ();
+  for (var tid in window.target_device_ids) {
+    var dids = window.target_device_ids [tid];
+    if (dids.indexOf (did) !== -1) {
+      window.deviceConfiguration.deviceId = tid;
+      window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+      break;
+    }
+  }
+  
+//  window.target_device_ids = {"phone3_4_p":["iphone_3_3_2_p","iphone_3_16_9_p"]}
+//  window.deviceConfiguration.setDeviceId (Application_default_device);
+//  window.deviceConfiguration.setOrientation (window.orientation || 0, true);
 }
 
 /**
@@ -7617,9 +8127,9 @@ ScrollView.prototype = {
     }
     this._scroll = false;
     
-    if (this._sub_view)
+    if (this._sub_view && this._sub_view.parentElement)
     {
-      this.view.removeChild (this._sub_view);
+      this._sub_view.parentElement.removeChild (this._sub_view);
     }
     View.prototype.destructor.call (this);
     delete (this._sub_view);
@@ -8181,14 +8691,29 @@ util.defineClassProperties (ScrollView, {
 
     if (this._layout)
     {
-      util.removeClassName (this.view, this._layout);
+      util.removeClassName (this._sub_view, this._layout);
     }
     this._layout = v;
     if (this._layout)
     {
-      util.addClassName (this.view, this._layout);
+      util.addClassName (this._sub_view, this._layout);
     }
   }
+},
+
+'innerHTML': {
+
+  /**
+   * This property allows to define both the HTML code and the text
+   * @name vs.ui.ScrollView#innerHTML
+   * @type String
+   */
+  set : function (v)
+  {
+    if (!this._sub_view) return;
+
+    util.safeInnerHTML (this._sub_view, v);
+  },
 }
 });
 
@@ -8368,6 +8893,61 @@ ScrollImageView.prototype = {
    */
   refresh : function ()
   {
+    if (this._sub_view && this._image_loaded) {
+    
+      if (this._stretch === ScrollImageView.STRETCH_FILL)
+      {
+        this._sub_view.setAttribute ('width', "100%");
+        this._sub_view.setAttribute ('height', "100%");
+      }
+      else if (this._stretch === ScrollImageView.STRETCH_NONE)
+      {
+        this._sub_view.removeAttribute ('width');
+        this._sub_view.removeAttribute ('height');
+      }
+      else if (this._stretch === ScrollImageView.STRETCH_UNIFORM)
+      {
+        var r1 = this._size[0] / this._size[1],
+          r2 = this._image_width / this._image_height,
+          delta = 0, scale = 1;
+      
+        if (r1 < r2)
+        {
+          scale = this._image_width / this._size[0];
+          delta = (this._size[1] - this._image_height / scale) / 2;
+          this._sub_view.setAttribute ('width', "100%");
+          this._sub_view.removeAttribute ('height');
+          this._sub_view.style.left = "0px";
+          this._sub_view.style.top = delta + "px";
+        }
+        else
+        {
+          scale = this._image_height / this._size[1];
+          delta = (this._size[0] - this._image_width / scale) / 2;
+          this._sub_view.removeAttribute ('width');
+          this._sub_view.setAttribute ('height', "100%");
+          this._sub_view.style.top = "0px";
+          this._sub_view.style.left = delta + "px";
+        }
+      }
+      else if (this._stretch === ScrollImageView.STRETCH_UNIFORM_FILL)
+      {
+        var r1 = this._size[0] / this._size[1],
+          r2 = this._image_width / this._image_height;
+      
+        if (r1 > r2)
+        {
+          this._sub_view.setAttribute ('width', "100%");
+          this._sub_view.removeAttribute ('height');
+        }
+        else
+        {
+          this._sub_view.removeAttribute ('width');
+          this._sub_view.setAttribute ('height', "100%");
+        }
+      }
+    }
+
     if (this.__scroll_activated) { this._scroll_refresh (this._pinch); }
     View.prototype.refresh.call (this);
   },
@@ -8491,60 +9071,7 @@ util.defineClassProperties (ScrollImageView, {
     { return; }
     
     this._stretch = v;
-    
-    if (!this._sub_view || !this._image_loaded) { return; }
-    
-    if (this._stretch === ScrollImageView.STRETCH_FILL)
-    {
-      this._sub_view.setAttribute ('width', "100%");
-      this._sub_view.setAttribute ('height', "100%");
-    }
-    else if (this._stretch === ScrollImageView.STRETCH_NONE)
-    {
-      this._sub_view.removeAttribute ('width');
-      this._sub_view.removeAttribute ('height');
-    }
-    else if (this._stretch === ScrollImageView.STRETCH_UNIFORM)
-    {
-      var r1 = this._size[0] / this._size[1],
-        r2 = this._image_width / this._image_height,
-        delta = 0, scale = 1;
-      
-      if (r1 < r2)
-      {
-        scale = this._image_width / this._size[0];
-        delta = (this._size[1] - this._image_height / scale) / 2;
-        this._sub_view.setAttribute ('width', "100%");
-        this._sub_view.removeAttribute ('height');
-        this._sub_view.style.left = "0px";
-        this._sub_view.style.top = delta + "px";
-      }
-      else
-      {
-        scale = this._image_height / this._size[1];
-        delta = (this._size[0] - this._image_width / scale) / 2;
-        this._sub_view.removeAttribute ('width');
-        this._sub_view.setAttribute ('height', "100%");
-        this._sub_view.style.top = "0px";
-        this._sub_view.style.left = delta + "px";
-      }
-    }
-    else if (this._stretch === ScrollImageView.STRETCH_UNIFORM_FILL)
-    {
-      var r1 = this._size[0] / this._size[1],
-        r2 = this._image_width / this._image_height;
-      
-      if (r1 > r2)
-      {
-        this._sub_view.setAttribute ('width', "100%");
-        this._sub_view.removeAttribute ('height');
-      }
-      else
-      {
-        this._sub_view.removeAttribute ('width');
-        this._sub_view.setAttribute ('height', "100%");
-      }
-    }
+    this.refresh ();
   },
 
   /**
@@ -9040,18 +9567,20 @@ Button.prototype = {
    * @protected
    * @function
    */
-  setPressed : function (v)
+  didTouch : function ()
   {
-    if (v)
-    {
-      this.addClassName ('pressed');
-      this._selected = true;
-    }
-    else
-    {
-      this.removeClassName ('pressed');
-      this._selected = false;
-    }
+    this.addClassName ('pressed');
+    this._selected = true;
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  didUntouch : function ()
+  {
+    this.removeClassName ('pressed');
+    this._selected = false;
   },
   
   didTap : function ()
@@ -9085,7 +9614,7 @@ Button.prototype = {
 
     if (!this.__tap_recognizer)
     {
-      this.__tap_recognizer = new TapRecognizer (this, this);
+      this.__tap_recognizer = new TapRecognizer (this);
       this.addPointerRecognizer (this.__tap_recognizer);
     }
 
@@ -9354,7 +9883,7 @@ AbstractList.prototype = {
 
     if (!this.__tap_recognizer)
     {
-      this.__tap_recognizer = new TapRecognizer (this, this);
+      this.__tap_recognizer = new TapRecognizer (this);
       this.addPointerRecognizer (this.__tap_recognizer);
     }
 
@@ -9421,37 +9950,39 @@ AbstractList.prototype = {
    * @protected
    * @function
    */
-  setPressed : function (v, e)
+  didTouch : function (e)
   {
-    if (v)
-    {
-      if (!this._items_selectable) { return false; }
-      
-      this.__elem = e.currentTarget;
-      if (this.__elem === this.view) {
-        this.__elem = null;
-        return;
-      }
-      
-      if (this.__list_time_out) {
-        clearTimeout (this.__list_time_out);
-        this.__list_time_out = 0;
-      }
-      if (this.__elem_to_unselect)
-      {
-        this._untouchItemFeedback (this.__elem_to_unselect);
-        this.__elem_to_unselect = null;
-      }
-      this.__elem_to_unselect = this.__elem;
-      this._touchItemFeedback (this.__elem);
+    if (!this._items_selectable) { return false; }
+    
+    this.__elem = e.currentTarget;
+    if (this.__elem === this.view) {
+      this.__elem = null;
+      return;
     }
-    else
+    
+    if (this.__list_time_out) {
+      clearTimeout (this.__list_time_out);
+      this.__list_time_out = 0;
+    }
+    if (this.__elem_to_unselect)
     {
-      if (!this.__list_time_out && this.__elem_to_unselect)
-      {
-        this._untouchItemFeedback (this.__elem_to_unselect);
-        this.__elem_to_unselect = null;
-      }
+      this._untouchItemFeedback (this.__elem_to_unselect);
+      this.__elem_to_unselect = null;
+    }
+    this.__elem_to_unselect = this.__elem;
+    this._touchItemFeedback (this.__elem);
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  didUntouch : function (e)
+  {
+    if (!this.__list_time_out && this.__elem_to_unselect)
+    {
+      this._untouchItemFeedback (this.__elem_to_unselect);
+      this.__elem_to_unselect = null;
     }
   },
   
@@ -9468,39 +9999,33 @@ AbstractList.prototype = {
     }, View.UNSELECT_DELAY);
   },
 
-//   /**
-//    * @protected
-//    * @function
-//    */
-//   _scrollToElement: function (el, delta)
-//   {
-//     if (!el) { return; }
-//     var pos;
-//     
-//     var pos_el = util.getElementAbsolutePosition (el);
-//     var pos_list = util.getElementAbsolutePosition (this.view);
-//     this.__max_scroll = this.size [1] - this._list_items.offsetHeight;
-//     
-//     if (!delta) { delta = 0; }
-//     
-//     var scroll = this.__scroll_start + (pos_list.y - pos_el.y) + delta
-//     scroll = scroll > 0 ? 0 : scroll < this.__max_scroll ? this.__max_scroll : scroll;
-// 
-//     // animate the list
-//     this._list_items.style.webkitTransition = '0.3s ease-out';
-//     
-//     this.__scroll_start = scroll;
-//     
-//     if (SUPPORT_3D_TRANSFORM)
-//       setElementTransform
-//         (this._list_items, 'translate3d(0,' + scroll + 'px,0)');
-//     else
-//       setElementTransform
-//         (this._list_items, 'translate(0,' + scroll + 'px)');    
-//     
-//     // animate the scroll
-//     if (this._scrollbar) this._scrollbar.setPosition (scroll);
-//   }  
+  /**
+   * Scroll the list to the element at the set index
+   * <p>
+   * If to time is defined, the default time is set to 200ms.
+   *
+   * @name vs.ui.AbstractList#scrollToElementAt 
+   * @function
+   * @param {Number} index the element index
+   * @param {Number} time [Optional] the scroll duration
+   */
+  scrollToElementAt: function (index, time)
+  {
+    if (!this.__iscroll__) { return; }
+    if (!util.isNumber (time)) { time = 200; }
+    var elem = this.__item_obs [index];
+    if (!elem) { return; }
+
+		var pos = this.__iscroll__._offset (elem.view);
+		pos.top += this.__iscroll__.wrapperOffsetTop;
+
+		pos.top = pos.top > this.__iscroll__.minScrollY ?
+		  this.__iscroll__.minScrollY :
+		  pos.top < this.__iscroll__.maxScrollY ?
+		    this.__iscroll__.maxScrollY : pos.top;
+		    
+		this.__iscroll__.scrollTo (0, pos.top, 200);
+  }
 };
 util.extendClass (AbstractList, ScrollView);
 
@@ -11030,11 +11555,9 @@ ComboBox.prototype = {
     View.prototype.initComponent.call (this);
     
     // PG Native GUI
-    if (window.device && (
-          window.device.platform.indexOf ("iOS") !== -1 || 
-          window.device.platform.indexOf ("iPhone") !== -1 || 
-          window.device.platform.indexOf ("iPad") !== -1 || 
-          window.device.platform.indexOf ("Android") !== -1)
+    if (window.cordova && (
+          window.deviceConfiguration.os === DeviceConfiguration.OS_IOS ||
+          window.deviceConfiguration.os === DeviceConfiguration.OS_ANDROID)
         && window.plugins.combo_picker)
     {
       this._mode = ComboBox.NATIVE_MODE;
@@ -14769,7 +15292,7 @@ Slider.prototype = {
     vs.addPointerListener (this.__handle, core.POINTER_START, this, true);
     if (!this.__drag_recognizer)
     {
-      this.__drag_recognizer = new DragRecognizer (this, this);
+      this.__drag_recognizer = new DragRecognizer (this);
       this.addPointerRecognizer (this.__drag_recognizer);
     }
     
@@ -16232,18 +16755,20 @@ Switch.prototype = {
    * @protected
    * @function
    */
-  setPressed : function (v)
+  didTouch : function ()
   {
-    if (v)
-    {
-      this.addClassName ('selected');
-      this._selected = true;
-    }
-    else
-    {
-      this.removeClassName ('selected');
-      this._selected = false;
-    }
+    this.addClassName ('pressed');
+    this._selected = true;
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  didUntouch : function ()
+  {
+    this.removeClassName ('pressed');
+    this._selected = false;
   },
 
   /*****************************************************************
@@ -16317,7 +16842,7 @@ Switch.prototype = {
 
     if (!this.__tap_recognizer)
     {
-      this.__tap_recognizer = new TapRecognizer (this, this);
+      this.__tap_recognizer = new TapRecognizer (this);
       this.addPointerRecognizer (this.__tap_recognizer);
     }
 
@@ -17773,6 +18298,7 @@ function load_svg_doc (path, id, svg_obj)
     object.onload = function (e) {
 
       var doc = object.getSVGDocument ();
+      if (!doc) return;
       var svg_doc = doc.querySelector ('svg');
       if (!SVG_DIV_DOCUMENTS)
       {
@@ -18332,7 +18858,7 @@ util.defineClassProperties (SegmentedButton, {
     /** 
      * Getter|Setter to configure the buttons as toggle buttons or not.
      * By default SegmentedButton are toggle buttons
-     * @name vs.ui.SegmentedButton#isToggleButton 
+     * @name vs.ui.SegmentedButton#isToggleButtons 
      * @type {boolean}
      */ 
     set : function (v)
