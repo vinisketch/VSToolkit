@@ -16,7 +16,52 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-
+/**
+ *  The vs.ui.TapRecognizer class
+ *
+ *  @extends vs.ui.PointerRecognizer
+ *
+ *  @class
+ *  vs.ui.TapRecognizer is a concrete subclass of vs.ui.PointerRecognizer that
+ *  looks for single or multiple taps/clicks.<br />
+ *
+ *  The TapRecognizer delegate has to implement following methods:
+ *  <ul>
+ *    <li /> didTouch (event). Call when the element is touched; It useful to
+ *      implement this method to implement a feedback on the event (for instance
+ *      add a pressed class)
+ *    <li /> didUntouch (event). Call when the element is untouched; It useful to
+ *      implement this method to implement a feedback on the event (for instance
+ *      remove a pressed class)
+ *    <li /> didTap (nb_tap, event). Call when the element si tap/click. nb_tap
+ *      is the number of tap/click.
+ *  </ul>
+ *  <p>
+ *
+ *  @example
+ *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
+ *  var recognizer = new TapRecognizer ({
+ *    didTouch (event) {
+ *      my_view.addClassName ("pressed");
+ *    },
+ *    didUntouch (event) {
+ *      my_view.removeClassName ("pressed");
+ *    },
+ *    didTap (nb_tap, event) {
+ *      my_view.hide ();
+ *    }
+ *  });
+ *  my_view.addPointerRecognizer (recognizer);
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *   Creates a new vs.ui.TapRecognizer.
+ *
+ * @name vs.ui.TapRecognizer
+ *
+ * @param {ReconizerDelegate} delegate the delegate [mandatory]
+ */
 function TapRecognizer (delegate) {
   this.parent = PointerRecognizer;
   this.parent (delegate);
@@ -32,6 +77,11 @@ TapRecognizer.prototype = {
   __did_tap_time_out: 0,
   __tap_mode: 0,
 
+  /**
+   * @name vs.ui.TapRecognizer#init
+   * @function
+   * @protected
+   */
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
@@ -39,10 +89,20 @@ TapRecognizer.prototype = {
     this.reset ();
   },
 
+  /**
+   * @name vs.ui.TapRecognizer#uninit
+   * @function
+   * @protected
+   */
   uninit : function () {
     this.removePointerListener (this.obj.view, core.POINTER_START, this.obj);
   },
 
+  /**
+   * @name vs.ui.TapRecognizer#pointerStart
+   * @function
+   * @protected
+   */
   pointerStart: function (e) {
     if (this.__is_touched) { return; }
     // prevent multi touch events
@@ -58,8 +118,8 @@ TapRecognizer.prototype = {
     }
     else {
       try {
-        if (this.delegate && this.delegate.setPressed)
-          this.delegate.setPressed (true, e);
+        if (this.delegate && this.delegate.didTouch)
+          this.delegate.didTouch (e);
       } catch (e) {
         console.log (e);
       }
@@ -81,6 +141,11 @@ TapRecognizer.prototype = {
     return false;
   },
 
+  /**
+   * @name vs.ui.TapRecognizer#pointerMove
+   * @function
+   * @protected
+   */
   pointerMove: function (e) {
     if (!this.__is_touched) { return; }
 
@@ -98,13 +163,18 @@ TapRecognizer.prototype = {
     this.__is_touched = false;
 
     try {
-      if (this.delegate && this.delegate.setPressed)
-        this.delegate.setPressed (false, e);
+      if (this.delegate && this.delegate.didTouch)
+        this.delegate.didUntouch (e);
     } catch (e) {
       console.log (e);
     }
   },
 
+  /**
+   * @name vs.ui.TapRecognizer#init
+   * @function
+   * @protected
+   */
   pointerEnd: function (e) {
     if (!this.__is_touched) { return; }
     this.__is_touched = false;
@@ -113,10 +183,10 @@ TapRecognizer.prototype = {
     this.removePointerListener (document, core.POINTER_END, this.obj);
     this.removePointerListener (document, core.POINTER_MOVE, this.obj);
 
-    if (this.delegate && this.delegate.setPressed) {
+    if (this.delegate && this.delegate.didUntouch) {
       this.__unselect_time_out = setTimeout (function () {
         try {
-          self.delegate.setPressed (false, e);
+          self.delegate.didUntouch (e);
         } catch (e) {
           console.log (e);
         }
@@ -124,7 +194,7 @@ TapRecognizer.prototype = {
       }, View.UNSELECT_DELAY);        
     }
     
-    if (this.delegate && this.delegate.setPressed) {
+    if (this.delegate && this.delegate.didTap) {
       this.__did_tap_time_out = setTimeout (function () {
         try {
           self.delegate.didTap (self.__tap_mode, e);
@@ -139,6 +209,11 @@ TapRecognizer.prototype = {
     }
   },
 
+  /**
+   * @name vs.ui.TapRecognizer#pointerCancel
+   * @function
+   * @protected
+   */
   pointerCancel: function (e) {
     return this.pointerEnd (e);
   }
