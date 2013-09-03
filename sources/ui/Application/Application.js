@@ -51,6 +51,54 @@ var Application = function (config)
 
 /**
  * @private
+ * @const
+ */
+Application.CSS_DEFAULT = 0;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_IOS = 5;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_ANDROID = 9;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_MEEGO = 10;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_WP7 = 6;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_SYMBIAN = 8;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_BLACKBERRY = 7;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_PURE = 100;
+
+/**
+ * @private
  */
 var Application_applications = {};
 
@@ -349,8 +397,57 @@ Application.exit = function ()
  */
 Application.configureDevice = function ()
 {
-  window.deviceConfiguration.setDeviceId (Application_default_device);
-  window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+  function setDefaultDeviceCSS () {
+  
+    function importCSS (path, node) {
+      var css_style = document.createElement ("link");
+      css_style.setAttribute ("rel", "stylesheet");
+      css_style.setAttribute ("type", "text/css");
+      css_style.setAttribute ("href", path);
+      css_style.setAttribute ("media", "screen");
+
+      if (node)
+        document.head.insertBefore (css_style, node);
+      else
+        document.head.appendChild (css_style);
+    }
+    
+    var links = document.head.querySelectorAll ('link'), node;
+    for (var i = 0; i < links.length; i++) {
+      node = links.item (i);
+      if (node.getAttribute ('href') == "lib/css/vs_ui.css") {
+        node = node.nextElementSibling;
+        break;
+      }
+      else node = null;
+    }
+  
+    switch (window.deviceConfiguration.os) {
+      case DeviceConfiguration.OS_IOS:
+        importCSS ("lib/css/vs_ui_ios.css", node);
+      break;
+ 
+      case DeviceConfiguration.OS_ANDROID:
+        importCSS ("lib/css/vs_ui_android.css", node);
+      break;
+    }
+  }
+  
+  setDefaultDeviceCSS ();
+  
+  var did = window.deviceConfiguration.generateDeviceId ();
+  for (var tid in window.target_device_ids) {
+    var dids = window.target_device_ids [tid];
+    if (dids.indexOf (did) !== -1) {
+      window.deviceConfiguration.deviceId = tid;
+      window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+      break;
+    }
+  }
+  
+//  window.target_device_ids = {"phone3_4_p":["iphone_3_3_2_p","iphone_3_16_9_p"]}
+//  window.deviceConfiguration.setDeviceId (Application_default_device);
+//  window.deviceConfiguration.setOrientation (window.orientation || 0, true);
 }
 
 /**
