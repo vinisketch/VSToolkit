@@ -79,6 +79,7 @@ function load_svg_doc (path, id, svg_obj)
     object.onload = function (e) {
 
       var doc = object.getSVGDocument ();
+      if (!doc) return;
       var svg_doc = doc.querySelector ('svg');
       if (!SVG_DIV_DOCUMENTS)
       {
