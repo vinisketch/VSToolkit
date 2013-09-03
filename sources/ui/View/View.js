@@ -1751,6 +1751,8 @@ View.prototype = {
     if (!this.view) { return; }
     if (!this._visible) { return; }
 
+    this._visible = false;
+
     if (this._hide_animation)
     {
       this._hide_animation.process (this, this._hide_object, this);
@@ -1770,8 +1772,6 @@ View.prototype = {
   _hide_object: function ()
   {
     if (!this.view) { return; }
-
-    this._visible = false;
 
     if (this.view.style.display)
     {
@@ -2042,7 +2042,7 @@ View.prototype = {
     if (this.__pointer_recognizers.indexOf (recognizer) !== -1) return;
     
     this.__pointer_recognizers.push (recognizer);
-    recognizer.init ();
+    recognizer.init (this);
   },
 
   removePointerRecognizer: function (recognizer)
