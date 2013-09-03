@@ -147,7 +147,7 @@ AbstractList.prototype = {
 
     if (!this.__tap_recognizer)
     {
-      this.__tap_recognizer = new TapRecognizer (this, this);
+      this.__tap_recognizer = new TapRecognizer (this);
       this.addPointerRecognizer (this.__tap_recognizer);
     }
 
@@ -261,39 +261,33 @@ AbstractList.prototype = {
     }, View.UNSELECT_DELAY);
   },
 
-//   /**
-//    * @protected
-//    * @function
-//    */
-//   _scrollToElement: function (el, delta)
-//   {
-//     if (!el) { return; }
-//     var pos;
-//     
-//     var pos_el = util.getElementAbsolutePosition (el);
-//     var pos_list = util.getElementAbsolutePosition (this.view);
-//     this.__max_scroll = this.size [1] - this._list_items.offsetHeight;
-//     
-//     if (!delta) { delta = 0; }
-//     
-//     var scroll = this.__scroll_start + (pos_list.y - pos_el.y) + delta
-//     scroll = scroll > 0 ? 0 : scroll < this.__max_scroll ? this.__max_scroll : scroll;
-// 
-//     // animate the list
-//     this._list_items.style.webkitTransition = '0.3s ease-out';
-//     
-//     this.__scroll_start = scroll;
-//     
-//     if (SUPPORT_3D_TRANSFORM)
-//       setElementTransform
-//         (this._list_items, 'translate3d(0,' + scroll + 'px,0)');
-//     else
-//       setElementTransform
-//         (this._list_items, 'translate(0,' + scroll + 'px)');    
-//     
-//     // animate the scroll
-//     if (this._scrollbar) this._scrollbar.setPosition (scroll);
-//   }  
+  /**
+   * Scroll the list to the element at the set index
+   * <p>
+   * If to time is defined, the default time is set to 200ms.
+   *
+   * @name vs.ui.AbstractList#scrollToElementAt 
+   * @function
+   * @param {Number} index the element index
+   * @param {Number} time [Optional] the scroll duration
+   */
+  scrollToElementAt: function (index, time)
+  {
+    if (!this.__iscroll__) { return; }
+    if (!util.isNumber (time)) { time = 200; }
+    var elem = this.__item_obs [index];
+    if (!elem) { return; }
+
+		var pos = this.__iscroll__._offset (elem.view);
+		pos.top += this.__iscroll__.wrapperOffsetTop;
+
+		pos.top = pos.top > this.__iscroll__.minScrollY ?
+		  this.__iscroll__.minScrollY :
+		  pos.top < this.__iscroll__.maxScrollY ?
+		    this.__iscroll__.maxScrollY : pos.top;
+		    
+		this.__iscroll__.scrollTo (0, pos.top, 200);
+  }
 };
 util.extendClass (AbstractList, ScrollView);
 
