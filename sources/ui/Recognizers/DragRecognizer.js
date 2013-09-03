@@ -17,9 +17,51 @@
 */
 
 
-function DragRecognizer (obj, delegate) {
+/**
+ *  The vs.ui.DragRecognizer class
+ *
+ *  @extends vs.ui.PointerRecognizer
+ *
+ *  @class
+ *  vs.ui.DragRecognizer is a concrete subclass of vs.ui.PointerRecognizer
+ *  that looks for drag gestures. When the user moves
+ *  the fingers, the underlying view should translate in a corresponding
+ *  direction and speed...<br />
+ *
+ *  The DragRecognizer delegate has to implement following methods:
+ *  <ul>
+ *    <li /> didDragStart (event). Call when the drag start.
+ *    <li /> didDragEnd (event). Call when the drag end.
+ *    <li /> didDrag (drag_info, event). Call when the element is dragged.
+ *      drag_info = {dx: dx, dy:dy}, the drag delta form the beginning.
+ *  </ul>
+ *  <p>
+ *
+ *  @example
+ *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
+ *  var recognizer = new DragRecognizer ({
+ *    didDrag (drag_info, event) {
+ *      my_view.translation = [drag_info.dx, drag_info.dy];
+ *    }
+ *    didDragEnd (sevent) {
+ *      // save drag translation
+ *      my_view.flushTransformStack ();
+ *    }
+ *  });
+ *  my_view.addPointerRecognizer (recognizer);
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *   Creates a new vs.ui.DragRecognizer.
+ *
+ * @name vs.ui.DragRecognizer
+ *
+ * @param {ReconizerDelegate} delegate the delegate [mandatory]
+ */
+function DragRecognizer (delegate) {
   this.parent = PointerRecognizer;
-  this.parent (obj, delegate);
+  this.parent (delegate);
   this.constructor = DragRecognizer;     
 }
 
@@ -27,6 +69,11 @@ DragRecognizer.prototype = {
 
   __is_dragged: false,
   
+  /**
+   * @name vs.ui.DragRecognizer#init
+   * @function
+   * @protected
+   */
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
@@ -34,10 +81,20 @@ DragRecognizer.prototype = {
     this.reset ();
   },
 
+  /**
+   * @name vs.ui.DragRecognizer#uninit
+   * @function
+   * @protected
+   */
   uninit : function () {
     this.removePointerListener (this.obj.view, core.POINTER_START, this.obj);
   },
 
+  /**
+   * @name vs.ui.DragRecognizer#pointerStart
+   * @function
+   * @protected
+   */
   pointerStart: function (e) {
     if (this.__is_dragged) { return; }
     // prevent multi touch events
@@ -59,6 +116,11 @@ DragRecognizer.prototype = {
     return false;
   },
 
+  /**
+   * @name vs.ui.DragRecognizer#pointerMove
+   * @function
+   * @protected
+   */
   pointerMove: function (e) {
     if (!this.__is_dragged) { return; }
 
@@ -73,6 +135,11 @@ DragRecognizer.prototype = {
     }
   },
 
+  /**
+   * @name vs.ui.DragRecognizer#pointerEnd
+   * @function
+   * @protected
+   */
   pointerEnd: function (e) {
     if (!this.__is_dragged) { return; }
     this.__is_dragged = false;
@@ -88,6 +155,11 @@ DragRecognizer.prototype = {
     }
   },
 
+  /**
+   * @name vs.ui.DragRecognizer#pointerCancel
+   * @function
+   * @protected
+   */
   pointerCancel: function (e) {
     return this.pointerEnd (e);
   }

@@ -17,14 +17,55 @@
 */
 
 
-function RotationRecognizer (obj, delegate) {
+/**
+ *  The vs.ui.RotationRecognizer class
+ *
+ *  @extends vs.ui.PointerRecognizer
+ *
+ *  @class
+ *  vs.ui.RotationRecognizer is a concrete subclass of vs.ui.PointerRecognizer
+ *  that looks for rotation gestures involving two touches. When the user moves
+ *  the fingers opposite each other in a circular motion, the underlying view
+ *  should rotate in a corresponding direction and speed...<br />
+ *
+ *  The RotationRecognizer delegate has to implement following methods:
+ *  <ul>
+ *    <li /> didRotationChange (rotation, event). Call when the element is rotated.
+ *      rotation The rotation of the gesture in degrees.
+ *  </ul>
+ *  <p>
+ *
+ *  @example
+ *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
+ *  var recognizer = new RotationRecognizer ({
+ *    didRotationChange (rotation, event) {
+ *      my_view.rotation = rotation;
+ *    }
+ *  });
+ *  my_view.addPointerRecognizer (recognizer);
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *   Creates a new vs.ui.RotationRecognizer.
+ *
+ * @name vs.ui.RotationRecognizer
+ *
+ * @param {ReconizerDelegate} delegate the delegate [mandatory]
+ */
+function RotationRecognizer (delegate) {
   this.parent = PointerRecognizer;
-  this.parent (obj, delegate);
+  this.parent (delegate);
   this.constructor = RotationRecognizer;
 }
 
 RotationRecognizer.prototype = {
 
+  /**
+   * @name vs.ui.RotationRecognizer#init
+   * @function
+   * @protected
+   */
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
@@ -32,10 +73,20 @@ RotationRecognizer.prototype = {
     this.reset ();
   },
 
+  /**
+   * @name vs.ui.RotationRecognizer#uninit
+   * @function
+   * @protected
+   */
   uninit : function () {
     this.removePointerListener (this.obj.view, core.GESTURE_START, this.obj);
   },
 
+  /**
+   * @name vs.ui.RotationRecognizer#gestureStart
+   * @function
+   * @protected
+   */
   gestureStart: function (e) {
     this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.addPointerListener (document, core.GESTURE_END, this.obj);
@@ -43,6 +94,11 @@ RotationRecognizer.prototype = {
     return false;
   },
 
+  /**
+   * @name vs.ui.RotationRecognizer#gestureChange
+   * @function
+   * @protected
+   */
   gestureChange: function (event) {
     try {
       if (this.delegate && this.delegate.didRotationChange)
@@ -52,11 +108,21 @@ RotationRecognizer.prototype = {
     }
   },
 
+  /**
+   * @name vs.ui.RotationRecognizer#gestureEnd
+   * @function
+   * @protected
+   */
   gestureEnd: function (e) {
     this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.removePointerListener (document, core.GESTURE_END, this.obj);
   },
 
+  /**
+   * @name vs.ui.RotationRecognizer#pointerCancel
+   * @function
+   * @protected
+   */
   pointerCancel: function (e) {
     return this.pointerEnd (e);
   }

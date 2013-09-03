@@ -17,14 +17,57 @@
 */
 
 
-function PinchRecognizer (obj, delegate) {
+/**
+ *  The vs.ui.PinchRecognizer class
+ *
+ *  @extends vs.ui.PointerRecognizer
+ *
+ *  @class
+ *  The vs.ui.PinchRecognizer is a concrete subclass of vs.ui.PointerRecognizer
+ *  that looks for pinching gestures involving two touches. When the user moves
+ *  the two fingers toward each other, the conventional meaning is zoom-out;<br />
+ *  when the user moves the two fingers away from each other, the conventional
+ *  meaning is zoom-in<br />
+ *
+ *  The PinchRecognizer delegate has to implement following methods:
+ *  <ul>
+ *    <li /> didPinchChange (scale, event). Call when the element is pinched.
+ *      scale is The scale factor relative to the points of the two touches
+ *      in screen coordinates.
+ *  </ul>
+ *  <p>
+ *
+ *  @example
+ *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
+ *  var recognizer = new PinchRecognizer ({
+ *    didPinchChange (scale, event) {
+ *      my_view.scaling = scale;
+ *    }
+ *  });
+ *  my_view.addPointerRecognizer (recognizer);
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *   Creates a new vs.ui.PinchRecognizer.
+ *
+ * @name vs.ui.PinchRecognizer
+ *
+ * @param {ReconizerDelegate} delegate the delegate [mandatory]
+ */
+function PinchRecognizer (delegate) {
   this.parent = PointerRecognizer;
-  this.parent (obj, delegate);
+  this.parent (delegate);
   this.constructor = PinchRecognizer;
 }
 
 PinchRecognizer.prototype = {
 
+  /**
+   * @name vs.ui.PinchRecognizer#init
+   * @function
+   * @protected
+   */
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
@@ -32,10 +75,20 @@ PinchRecognizer.prototype = {
     this.reset ();
   },
 
+  /**
+   * @name vs.ui.PinchRecognizer#uninit
+   * @function
+   * @protected
+   */
   uninit : function () {
     this.removePointerListener (this.obj.view, core.GESTURE_START, this.obj);
   },
 
+  /**
+   * @name vs.ui.PinchRecognizer#gestureStart
+   * @function
+   * @protected
+   */
   gestureStart: function (e) {
     this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.addPointerListener (document, core.GESTURE_END, this.obj);
@@ -43,6 +96,11 @@ PinchRecognizer.prototype = {
     return false;
   },
 
+  /**
+   * @name vs.ui.PinchRecognizer#gestureChange
+   * @function
+   * @protected
+   */
   gestureChange: function (event) {
     try {
       if (this.delegate && this.delegate.didPinchChange)
@@ -52,11 +110,21 @@ PinchRecognizer.prototype = {
     }
   },
 
+  /**
+   * @name vs.ui.PinchRecognizer#gestureEnd
+   * @function
+   * @protected
+   */
   gestureEnd: function (e) {
     this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.removePointerListener (document, core.GESTURE_END, this.obj);
   },
 
+  /**
+   * @name vs.ui.PinchRecognizer#pointerCancel
+   * @function
+   * @protected
+   */
   pointerCancel: function (e) {
     return this.pointerEnd (e);
   }
