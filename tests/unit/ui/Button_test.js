@@ -21,11 +21,11 @@ function testButtonPressed ()
   
   assertEquals ('testButtonDelete 2', false, view._selected);
 
-  view.setPressed (true);
+  view.didTouch ();
   assertTrue ('testButtonDelete 3', view._selected);
   assertTrue ('testButtonDelete 4', view.hasClassName ("pressed"));
 
-  view.setPressed (false);
+  view.didUntouch (false);
   assertFalse ('testButtonDelete 5', view._selected);
   assertFalse ('testButtonDelete 6', view.hasClassName ("pressed"));
 }
