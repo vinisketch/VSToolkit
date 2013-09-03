@@ -155,11 +155,9 @@ ComboBox.prototype = {
     View.prototype.initComponent.call (this);
     
     // PG Native GUI
-    if (window.device && (
-          window.device.platform.indexOf ("iOS") !== -1 || 
-          window.device.platform.indexOf ("iPhone") !== -1 || 
-          window.device.platform.indexOf ("iPad") !== -1 || 
-          window.device.platform.indexOf ("Android") !== -1)
+    if (window.cordova && (
+          window.deviceConfiguration.os === DeviceConfiguration.OS_IOS ||
+          window.deviceConfiguration.os === DeviceConfiguration.OS_ANDROID)
         && window.plugins.combo_picker)
     {
       this._mode = ComboBox.NATIVE_MODE;
