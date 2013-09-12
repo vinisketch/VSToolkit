@@ -32,13 +32,15 @@
  *  <ul>
  *    <li /> didRotationChange (rotation, event). Call when the element is rotated.
  *      rotation The rotation of the gesture in degrees.
+ *    <li /> didRotationStart (event). Call when the rotation start
+ *    <li /> didRotationEnd (event). Call when the rotation end
  *  </ul>
  *  <p>
  *
  *  @example
  *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
  *  var recognizer = new RotationRecognizer ({
- *    didRotationChange (rotation, event) {
+ *    didRotationChange : function (rotation, event) {
  *      my_view.rotation = rotation;
  *    }
  *  });
@@ -91,6 +93,13 @@ RotationRecognizer.prototype = {
     this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.addPointerListener (document, core.GESTURE_END, this.obj);
 
+    try {
+      if (this.delegate && this.delegate.didRotationStart)
+        this.delegate.didRotationStart (event);
+    } catch (e) {
+      console.log (e);
+    }
+
     return false;
   },
 
@@ -116,6 +125,13 @@ RotationRecognizer.prototype = {
   gestureEnd: function (e) {
     this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.removePointerListener (document, core.GESTURE_END, this.obj);
+
+    try {
+      if (this.delegate && this.delegate.didRotationEnd)
+        this.delegate.didRotationEnd (event);
+    } catch (e) {
+      console.log (e);
+    }
   },
 
   /**

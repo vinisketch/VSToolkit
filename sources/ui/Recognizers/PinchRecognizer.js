@@ -33,15 +33,23 @@
  *  <ul>
  *    <li /> didPinchChange (scale, event). Call when the element is pinched.
  *      scale is The scale factor relative to the points of the two touches
- *      in screen coordinates.
+ *      in screen coordinates
+ *    <li /> didPinchStart (event). Call when the pinch start
+ *    <li /> didPinchEnd (event). Call when the pinch end
  *  </ul>
  *  <p>
  *
  *  @example
  *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
  *  var recognizer = new PinchRecognizer ({
- *    didPinchChange (scale, event) {
+ *    didPinchChange : function (scale, event) {
  *      my_view.scaling = scale;
+ *    },
+ *    didPinchStart : function (event) {
+ *      xxx
+ *    },
+ *    didPinchEnd : function (event) {
+ *      mss
  *    }
  *  });
  *  my_view.addPointerRecognizer (recognizer);
@@ -93,6 +101,12 @@ PinchRecognizer.prototype = {
     this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.addPointerListener (document, core.GESTURE_END, this.obj);
 
+    try {
+      if (this.delegate && this.delegate.didPinchStart)
+        this.delegate.didPinchStart (event);
+    } catch (e) {
+      console.log (e);
+    }
     return false;
   },
 
@@ -118,6 +132,13 @@ PinchRecognizer.prototype = {
   gestureEnd: function (e) {
     this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.removePointerListener (document, core.GESTURE_END, this.obj);
+    
+    try {
+      if (this.delegate && this.delegate.didPinchEnd)
+        this.delegate.didPinchEnd (event);
+    } catch (e) {
+      console.log (e);
+    }
   },
 
   /**
