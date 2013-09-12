@@ -41,13 +41,13 @@
  *  @example
  *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
  *  var recognizer = new TapRecognizer ({
- *    didTouch (event) {
+ *    didTouch : function (event) {
  *      my_view.addClassName ("pressed");
  *    },
- *    didUntouch (event) {
+ *    didUntouch : function (event) {
  *      my_view.removeClassName ("pressed");
  *    },
- *    didTap (nb_tap, event) {
+ *    didTap : function (nb_tap, event) {
  *      my_view.hide ();
  *    }
  *  });
