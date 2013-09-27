@@ -5,13 +5,20 @@ html, body {
 
 header > h1 {
   float: left;
-  font-size: 28px;
-  margin: 5px 0px 0px 15px;
+  font-size: 24px;
+  margin: 00px 0px 0px 60px;
 }
 
 header nav > ul > li > a {
   width: 70px;
-  height: 35px;
+  height: 31px;
+  line-height: 15px;
+  padding: 3px 5px;
+  color: white;
+}
+
+header nav > ul > li > a:hover {
+  color: black;
 }
 
 div.main_article {
