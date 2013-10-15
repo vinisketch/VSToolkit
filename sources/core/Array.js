@@ -242,17 +242,28 @@ VSArray.prototype = {
       for (i = 0; i < data.length; i++)
       {
         item = data [i];
+        
         // set model
-        if (self._model_class)
-        {
+        if (self._model_class) {
           _model = new self._model_class ().init ();
         }
+
+        else if (util.isArray (item)) {
+          _model = new VSArray ().init ();
+        }
         
+        else if (util.isUndefined (item) || util.isString (item) ||
+          util.isNumber (item) || typeof item == "boolean" ||
+          item == null || item instanceof Date) _model = null
+          
         // generic model
         else _model = new Model ().init ();
         
-        _model.parseData (item);
-        self.add (_model);
+        if (_model) {
+          _model.parseData (item);
+          self.add (_model);
+        }
+        else self.add (item);
       }
     };
 
