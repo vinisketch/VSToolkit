@@ -25,7 +25,7 @@
  *  SUPPORT only load for now.
  *
  *  @example
- *   var todoList = vs.core.Array ();
+ *   var todoList = new vs.core.Array ();
  *   todoList.init ();
  *
  *   var restSource = new vs.core.RestStorage ({
