@@ -60,11 +60,14 @@ VSArray.prototype = {
    initComponent : function ()
    {
      this._data = [];
+     this.forEach = Array.prototype.forEach.bind (this._data);
    },
 
   /*****************************************************************
    *
    ****************************************************************/
+   
+   forEach: function () {},
 
   /**
    * Returns the nth element
@@ -178,6 +181,7 @@ VSArray.prototype = {
   removeAll : function ()
   {
     this._data = [];
+    this.forEach = Array.prototype.forEach.bind (this._data);
     if (this.hasToPropagateChange ()) this.change ('removeall');
   },
 
@@ -234,6 +238,7 @@ VSArray.prototype = {
     function fillArray (data)
     {
       self._data = [];
+      self.forEach = Array.prototype.forEach.bind (self._data);
       for (i = 0; i < data.length; i++)
       {
         item = data [i];
@@ -258,6 +263,7 @@ VSArray.prototype = {
     else for (key in obj)
     {
       this._data = [];
+      this.forEach = Array.prototype.forEach.bind (this._data);
       if (key == 'data')
       {
         fillArray (obj.data);
@@ -284,10 +290,14 @@ util.defineClassProperties (VSArray, {
     {
       if (!this.__i__) throw ("Component not initialized");
 
-      if (util.isArray (v)) this._data = v.slice ();
+      if (util.isArray (v)) {
+        this._data = v.slice ();
+        this.forEach = Array.prototype.forEach.bind (this._data);
+      }
       else if (v instanceof VSArray)
       {
         this._data = v._data.slice ();
+        this.forEach = Array.prototype.forEach.bind (this._data);
       }
       else return;
 
