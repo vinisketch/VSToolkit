@@ -349,6 +349,7 @@ RestStorage.prototype = {
     if (!model) return;
 
     model.parseJSON (data);
+    model.change ();
     this.propagate ('load', model);
   },
 
