@@ -156,23 +156,13 @@ Application.prototype = {
     this.view.setAttribute ('x-hag-comp', this.id);
 
     var self = this;
-    document.addEventListener ('orientationChanged', function (e)
-    {
-      var pid = window.deviceConfiguration.setOrientation (e.orientation);
-      if (pid) { self.propagate ('deviceChanged', pid, null, true); }
-    });
-    
     window.addEventListener (ORIENTATION_CHANGE_EVT, function (e)
     {
-      var orientation = 0;
-      if (window.orientation) orientation = window.orientation;
-      else if (window.outerWidth > window.outerHeight) orientation = 90;
-      else orientation = 0;
-
-      if (orientation === window.deviceConfiguration.getOrientation ()) return;
-      
-      var pid = window.deviceConfiguration.setOrientation (orientation);
-      if (pid) { self.propagate ('deviceChanged', pid, null, true); }
+      var target_id =
+        window.deviceConfiguration.setOrientation (window.orientation);
+      if (target_id) {
+        self.propagate ('deviceChanged', target_id, null, true);
+      }
     });
   },
   
