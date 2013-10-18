@@ -387,7 +387,12 @@ Application.exit = function ()
  */
 Application.configureDevice = function ()
 {
-  function setDefaultDeviceCSS () {
+  function setDeviceCSS () {
+
+    var name = (window.target_css)?
+      window.target_css [window.deviceConfiguration.targetId]:'';
+
+    if (!name) name = "default";
   
     function importCSS (path, node) {
       var css_style = document.createElement ("link");
@@ -412,32 +417,140 @@ Application.configureDevice = function ()
       else node = null;
     }
   
-    switch (window.deviceConfiguration.os) {
-      case DeviceConfiguration.OS_IOS:
-        importCSS ("lib/css/vs_ui_ios.css", node);
-      break;
- 
-      case DeviceConfiguration.OS_ANDROID:
-        importCSS ("lib/css/vs_ui_android.css", node);
-      break;
+    if (name == 'default') {
+      switch (window.deviceConfiguration.os) {
+        case DeviceConfiguration.OS_IOS:
+          importCSS ("lib/css/vs_ui_ios.css", node);
+        break;
+   
+        case DeviceConfiguration.OS_ANDROID:
+          importCSS ("lib/css/vs_ui_android.css", node);
+        break;
+      }
     }
+    else importCSS ("lib/css/vs_ui_" + name + ".css", node);
   }
   
-  setDefaultDeviceCSS ();
+  var did = window.deviceConfiguration.generateDeviceId (true), tid, size;
+  window.deviceConfiguration.deviceId = did;
+  window.deviceConfiguration.virtualScreenSize = null;
   
-  var did = window.deviceConfiguration.generateDeviceId ();
-  for (var tid in window.target_device_ids) {
+  for (tid in window.target_device_ids) {
     var dids = window.target_device_ids [tid];
     if (dids.indexOf (did) !== -1) {
-      window.deviceConfiguration.deviceId = tid;
+      window.deviceConfiguration.targetId = tid;
       window.deviceConfiguration.setOrientation (window.orientation || 0, true);
-      break;
+
+      setDeviceCSS ();
+      return;
     }
   }
+
+  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_4_INCH)
+    tid = "phone3_4";
+  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_7_INCH)
+    tid = "tablet7";  
+  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_10_INCH)
+    tid = "phone10";
   
-//  window.target_device_ids = {"phone3_4_p":["iphone_3_3_2_p","iphone_3_16_9_p"]}
-//  window.deviceConfiguration.setDeviceId (Application_default_device);
-//  window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+  if (deviceConfiguration.orientation === 0 ||
+      deviceConfiguration.orientation === 90)
+    tid += "_p"; 
+
+  if (deviceConfiguration.orientation === 180 ||
+      deviceConfiguration.orientation === -180)
+    tid += "_l";
+
+  if (window.target_device_ids [tid]) {
+    window.deviceConfiguration.targetId = tid;
+   
+    window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+
+    setDeviceCSS ();
+    return;
+  }
+
+  size = getScreenSize (DeviceConfiguration.SS_7_INCH);
+
+  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_10_INCH) {
+    tid = "tablet7";
+  }
+
+  if (deviceConfiguration.orientation === 0 ||
+      deviceConfiguration.orientation === 90)
+    tid += "_p"; 
+
+  if (deviceConfiguration.orientation === 180 ||
+      deviceConfiguration.orientation === -180)
+    tid += "_l";
+
+  if (window.target_device_ids [tid]) {
+    window.deviceConfiguration.targetId = tid;
+    window.deviceConfiguration.virtualScreenSize = size;
+    window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+
+    setDeviceCSS ();
+    return;
+  }
+
+  tid = "phone3_4";
+  size = getScreenSize (DeviceConfiguration.SS_4_INCH)
+
+  if (deviceConfiguration.orientation === 0 ||
+      deviceConfiguration.orientation === 90)
+    tid += "_p"; 
+
+  if (deviceConfiguration.orientation === 180 ||
+      deviceConfiguration.orientation === -180)
+    tid += "_l";
+
+  if (window.target_device_ids [tid]) {
+    window.deviceConfiguration.targetId = tid;
+    window.deviceConfiguration.virtualScreenSize = size;
+    window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+
+    setDeviceCSS ();
+    return;
+  }
+}
+
+function getScreenSize (screenDef) {
+
+  function get7Inch () {
+    if (devicePixelRatio <= 1.2) { // 1 pixel ratio
+      return [600, 960];
+    }
+    else if (devicePixelRatio <= 1.4) { // 1.33 pixel ratio
+      return [800, 1280];
+    }
+    else if (devicePixelRatio <= 1.7) { // 1.5 pixel ratio
+      return [900, 1440];
+    }
+    return [1200, 1920]; // 2 pixel ratio
+  }
+
+  function get4Inch () {
+    if (devicePixelRatio <= 1.2) { // 1 pixel ratio
+      return [320, 540];
+    }
+    else if (devicePixelRatio <= 1.4) { // 1.33 pixel ratio
+      return [427, 720];
+    }
+    else if (devicePixelRatio <= 1.7) { // 1.5 pixel ratio
+      return [480, 800];
+    }
+    return [720, 1080]; // 2 pixel ratio
+  }
+
+  switch (screenDef) {
+    case DeviceConfiguration.SS_7_INCH:
+      return get7Inch ();
+    break
+
+    case DeviceConfiguration.SS_4_INCH:
+      return get4Inch ();
+    break
+  }
 }
 
 /**
