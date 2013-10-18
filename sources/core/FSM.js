@@ -913,6 +913,28 @@ Fsm.prototype =
   
   /**
    *  @public
+   *  Returns the state accessible on the given input from the current state.
+   *  Returns undefined in no state is accessible.
+   *
+   * @name vs.core.Fsm#getAccessibleStateOn 
+   * @function
+   *
+   * @param {String} on input
+   * @return {Object} the state  
+   */
+  getAccessibleStateOn: function (on) {
+    if (!this._list_of_state [this._current_state]) { return; }
+    
+    var transition =
+      this._list_of_state [this._current_state].transitionEvents [on];
+      
+    if (!transition) { return; }
+    
+    return this._list_of_state [transition.to];
+  },
+  
+  /**
+   *  @public
    *
    * @name vs.core.Fsm#fsmNotify 
    * @function
