@@ -48,7 +48,7 @@ function DeviceConfiguration ()
 {
   this.orientation = null;
   this.deviceId = null;
-  this.targets = {};
+//  this.targets = {};
   
   this.browserDetect ();
   this.orientationDetect ();
@@ -316,6 +316,8 @@ DeviceConfiguration.prototype = {
    * @type {number}
    */
   screenSize : DeviceConfiguration.SS_UNKNOWN,
+  
+  virtualScreenSize : null,
 
   /**
    * @protected
@@ -358,42 +360,52 @@ DeviceConfiguration.prototype = {
     else this.orientation = 0;
   },
   
+  _getScreenSize : function () {
+    if (window.device && window.device.width) {
+      return [window.device.width, window.device.height]
+    }
+    else if (this.os >= DeviceConfiguration.OS_IOS &&
+        this.os <= DeviceConfiguration.OS_MEEGO) {
+      // MOBILE DEVICES
+      return [window.screen.width, window.screen.height];
+    }
+    else {
+      // DESKTOP
+      return [window.outerWidth, window.outerHeight];
+    }
+  },
+  
   /**
    * @protected
    * @function
    */
   screenDetect : function ()
   {
-    var pixelRation = window.devicePixelRatio, width, height;
-    if (!pixelRation) pixelRation = 1;
+    var pixelRatio = window.devicePixelRatio, screenSize;
+    if (!pixelRatio) pixelRatio = 1;
     
-    if (this.os >= DeviceConfiguration.OS_IOS && 
-        this.os <= DeviceConfiguration.OS_MEEGO)
+    screenSize = this._getScreenSize ();
+
+    if (screenSize[0] > screenSize[1])
     {
-      // MOBILE DEVICES
-      width = window.screen.width;
-      height = window.screen.height;
-    }
-    else
-    {
-      // DESKTOP
-      width = window.outerWidth;
-      height = window.outerHeight;
-    }
-    if (width > height)
-    {
-      var temp = width
-      width = height;
-      height = temp;
+      var temp = screenSize[0]
+      screenSize[0] = screenSize[1];
+      screenSize[1] = temp;
     }
     
     this.screenResolution =
-        DeviceConfiguration._getScreenResolutionCode (width, height);
+        DeviceConfiguration._getScreenResolutionCode (
+          screenSize[0], screenSize[1]);
 
-    this.screenRatio = height / width;
+    this.screenRatio = screenSize[1] / screenSize[0];
     
-    var size = Math.sqrt (width * width + height * height) / (160 * pixelRation);
-       
+    var dpi = 160 * pixelRatio;
+    if (window.device && window.device.dpi) dpi = device.dpi;
+ 
+    var size = Math.sqrt (
+      screenSize[0] * screenSize[0] + screenSize[1] * screenSize[1]) / 
+      dpi;
+      
     if (size < 6) this.screenSize = DeviceConfiguration.SS_4_INCH;
     else if (size < 9) this.screenSize = DeviceConfiguration.SS_7_INCH;
     else if (size < 11) this.screenSize = DeviceConfiguration.SS_10_INCH;
@@ -424,15 +436,27 @@ DeviceConfiguration.prototype = {
    */
   setDeviceId : function (did)
   {
+    //var screenSize;
+    
     if (!util.isString (did)) return; 
     
+    this.screenResolution = DeviceConfiguration.SR_UNKNOWN;
+   
     this.deviceId = did;
+    // screenSize = this._getScreenSize ();  
+    // if (screenSize[0] > screenSize[1])
+    // {
+    //   var temp = screenSize[0]
+    //   screenSize[0] = screenSize[1];
+    //   screenSize[1] = temp;
+    // }
     
     if (did.indexOf ("wp7") != -1)
     {
       this.os = DeviceConfiguration.OS_WP7;
       this.screenResolution = DeviceConfiguration.SR_WVGA;
       this.screenRatio = 16/10;
+      this.screenSize = DeviceConfiguration.SS_4_INCH;
     }
     else if (did.indexOf ("iphone") != -1)
     {
@@ -440,52 +464,118 @@ DeviceConfiguration.prototype = {
       this.screenResolution = DeviceConfiguration.SR_HVGA;
       if (did.indexOf ("_3_2") != -1) { this.screenRatio = 3/2; }
       else if (did.indexOf ("_16_9") != -1) { this.screenRatio = 16/9; }
+      this.screenSize = DeviceConfiguration.SS_4_INCH;
     }
     else if (did.indexOf ("ipad") != -1)
     {
       this.os = DeviceConfiguration.OS_IOS;
       this.screenResolution = DeviceConfiguration.SR_XGA;
       this.screenRatio = 4/3;
+      this.screenSize = DeviceConfiguration.SS_10_INCH;
     }
-    else if (did.indexOf ("nokia_s3") != -1)
-    {
-      this.os = DeviceConfiguration.OS_SYMBIAN;
-      this.screenResolution = DeviceConfiguration.SR_N_HD;
-      this.screenRatio = 4/3;
-    }
+    // else if (did.indexOf ("nokia_s3") != -1)
+    // {
+    //   this.os = DeviceConfiguration.OS_SYMBIAN;
+    //   this.screenResolution = DeviceConfiguration.SR_N_HD;
+    //   this.screenRatio = 4/3;
+    //   this.screenSize = DeviceConfiguration.SS_4_INCH;
+    // }
     else if (did.indexOf ("android") != -1)
     {
       this.os = DeviceConfiguration.OS_ANDROID;
       if (did.indexOf ("_3_2") != -1) { this.screenRatio = 3/2; }
       else if (did.indexOf ("_16_10") != -1) { this.screenRatio = 16/10; }
       else if (did.indexOf ("_16_9") != -1) { this.screenRatio = 16/9; }
+      
+      if (did.indexOf ("android_4") != -1) { this.screenSize = DeviceConfiguration.SS_4_INCH; }
+      else if (did.indexOf ("android_7") != -1) { this.screenSize = DeviceConfiguration.SS_7_INCH; }
+      else if (did.indexOf ("android_10") != -1) { this.screenSize = DeviceConfiguration.SS_10_INCH; }
 
-      var width = window.screen.width;
-      var height = window.screen.height;
-      if (width > height)
-      {
-        width = window.screen.height;
-        height = window.screen.width;
-      }
-      
-      this.screenResolution =
-        DeviceConfiguration._getScreenResolutionCode (width, height);
+      // this.screenResolution =
+      //   DeviceConfiguration._getScreenResolutionCode (
+      //     screenSize[0], screenSize[1]);
     }
-    else if (did.indexOf ("blackberry") != -1)
-    {
-      this.os = DeviceConfiguration.OS_BLACK_BERRY;
-      if (did.indexOf("_4_3")) { this.screenRatio = 4/3; }
-      else if (did.indexOf("_3_2")) { this.screenRatio = 3/2; }
-      else if (did.indexOf("_16_10")) { this.screenRatio = 16/10; }
-      
-      var width = window.screen.width;
-      var height = window.screen.height;
-      
-      this.screenResolution =
-        DeviceConfiguration._getScreenResolutionCode (width, height);
-    }
+    // else if (did.indexOf ("blackberry") != -1)
+    // {
+    //   this.os = DeviceConfiguration.OS_BLACK_BERRY;
+    //   if (did.indexOf("_4_3")) { this.screenRatio = 4/3; }
+    //   else if (did.indexOf("_3_2")) { this.screenRatio = 3/2; }
+    //   else if (did.indexOf("_16_10")) { this.screenRatio = 16/10; }
+            
+    //   this.screenResolution =
+    //     DeviceConfiguration._getScreenResolutionCode (
+    //       screenSize[0], screenSize[1]);
+    // }
   },
   
+  generateDeviceId : function (force)
+  {
+    if (force && this.deviceId) return this.deviceId;
+    
+    this.orientationDetect ();
+    this.screenDetect ();
+    var did = "";
+
+    switch (this.os) {
+      case DeviceConfiguration.OS_IOS:
+        screenSize = this._getScreenSize ();
+        if (screenSize[0] === 320 || screenSize[0] === 480) did += "iphone";
+        if (screenSize[0] === 640 || screenSize[0] === 960) did += "iphone";
+        if (screenSize[0] === 768 || screenSize[0] === 1024) did += "ipad";
+        if (screenSize[0] === 1536 || screenSize[0] === 2048) did += "ipad";
+      break;
+ 
+      case DeviceConfiguration.OS_ANDROID:
+        did += "android"
+      break;
+ 
+      case DeviceConfiguration.OS_WP7:
+        did += "wp7"
+      break;
+ 
+      case DeviceConfiguration.OS_BLACK_BERRY:
+        did += "blackberry"
+      break;
+    }    
+
+    switch (this.screenSize) {
+      case DeviceConfiguration.SS_4_INCH:
+        did += "_3"
+      break;
+ 
+      case DeviceConfiguration.SS_7_INCH:
+        did += "_7"
+      break;
+ 
+      case DeviceConfiguration.SS_10_INCH:
+        did += "_10"
+      break;
+    }    
+
+    if (Math.abs (window.deviceConfiguration.screenRatio - 3/2) < 0.1) 
+      did += "_3_2";
+    else if (Math.abs (window.deviceConfiguration.screenRatio - 4/3) < 0.1) 
+      did += "_4_3";
+    else if (Math.abs (window.deviceConfiguration.screenRatio - 16/10) < 0.1) 
+      did += "_16_10";
+    else if (Math.abs (window.deviceConfiguration.screenRatio - 16/9) < 0.1) 
+      did += "_16_9";
+      
+    switch (this.orientation) {
+      case 90:
+      case -90:
+        did += "_l"
+      break;
+
+      case 0:
+      case 180:
+        did += "_p"
+      break;
+    }
+    
+    return did;
+  },
+
   /**
    * Set the GUI orientation
    *
@@ -496,12 +586,9 @@ DeviceConfiguration.prototype = {
    */
   setOrientation : function (orientation, force)
   {
-    var pid, device, i, len, id, comp, 
+    var tmp_device_id, target_id, device, i, len, id, comp, 
       width = window.innerWidth, height = window.innerHeight, t;
-    
-    if (this.orientation === orientation)
-    { return; }
-    
+        
     if (width > height)
     {
       t = height;
@@ -520,23 +607,26 @@ DeviceConfiguration.prototype = {
       { comp.orientationWillChange (orientation); }
     }
     
-    for (pid in this.targets)
-    {
-      device = this.targets [pid];
-      if (device.device !== this.deviceId) { continue; }
-          
-      // verify orientation matching with target id
-      if (((orientation !== 0 && orientation !== 180) || 
-            pid.indexOf ('_p') === -1) &&
-          ((orientation !== 90 && orientation !== -90) || 
-            pid.indexOf ('_l') === -1)) continue;
-  
-      this.setActiveStyleSheet (pid);
-      break;
-    }
+    if (this.targetId) {
+      target_id = this.targetId.replace ('_p', '');
+      target_id = target_id.replace ('_l', '');
       
+      if (orientation === 0 || orientation === 180) target_id += '_p';
+      else target_id += '_l';
+      
+      this.targetId = target_id;
+      this.setActiveStyleSheet (this.targetId);
+    }
     this.orientation = orientation;
-  
+
+    if (this.virtualScreenSize && cordova && cordova.exec) {
+      cordova.exec (
+        null, null,
+        "VSD_Application", "setAppSize",
+        [{width: this.virtualScreenSize[0], height: this.virtualScreenSize[1]}]
+      );
+    }
+
     /**
      * @private
      */
@@ -559,8 +649,6 @@ DeviceConfiguration.prototype = {
     {
       orientationDidChangeFct.call (this);
     }
-  
-    return pid;
   },
     
   /**
@@ -570,7 +658,6 @@ DeviceConfiguration.prototype = {
   setActiveStyleSheet : function (pid)
   {
     util.setActiveStyleSheet (pid);
-    vs._current_platform_id = pid;
   },
     
   /**
@@ -579,7 +666,7 @@ DeviceConfiguration.prototype = {
    */
   registerTargetId : function (tid, conf)
   {
-    this.targets [tid] = conf;
+//    this.targets [tid] = conf;
   }
 };
 
@@ -588,6 +675,8 @@ DeviceConfiguration.prototype = {
  */
 DeviceConfiguration._getScreenResolutionCode = function (width, height)
 {
+  width *= window.devicePixelRatio;
+  height *= window.devicePixelRatio;
   if (width === 240 && height === 320) return DeviceConfiguration.SR_QVGA;
   if (width === 240 && height === 400) return DeviceConfiguration.SR_WQVGA;
   if (width === 320 && height === 480) return DeviceConfiguration.SR_HVGA;
@@ -595,7 +684,7 @@ DeviceConfiguration._getScreenResolutionCode = function (width, height)
   if (width === 480 && height === 800) return DeviceConfiguration.SR_WVGA;
   if (width === 320 && height === 854) return DeviceConfiguration.SR_WFVGA;
   if (width === 600 && height === 800) return DeviceConfiguration.SR_SVGA;
-  if (width === 640 && height === 960) return DeviceConfiguration.SR_DVGA
+  if (width === 640 && height === 960) return DeviceConfiguration.SR_DVGA;
   if (width === 640 && height === 1136) return DeviceConfiguration.SR_WDVGA
   if (width === 768 && height === 1024) return DeviceConfiguration.SR_XGA;
   if (width === 360 && height === 640) return DeviceConfiguration.SR_N_HD;
