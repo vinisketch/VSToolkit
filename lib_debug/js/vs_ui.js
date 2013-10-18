@@ -950,6 +950,102 @@ ui.PointerRecognizer = PointerRecognizer;
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+var RecognizerManager = {
+  /**
+   * @protected
+   * @function
+   */
+  handleEvent: function (e)
+  {
+    if (this.__pointer_recognizers.length) {
+      
+      if (!this._enable) { return; }
+     
+      switch (e.type) {
+        case core.POINTER_START:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.pointerStart (e);
+          });
+        break;
+
+        case core.POINTER_MOVE:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.pointerMove (e);
+          });
+        break;
+
+        case core.POINTER_END:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.pointerEnd (e);
+          });
+        break;
+
+        case core.POINTER_CANCEL:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.pointerCancel (e);
+          });
+        break;
+
+        case core.GESTURE_START:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.gestureStart (e);
+          });
+          break;
+        
+        case core.GESTURE_CHANGE:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.gestureChange (e);
+          });
+          break;
+        
+        case core.GESTURE_END:
+          this.__pointer_recognizers.forEach (function (recognizer) {
+            recognizer.gestureEnd (e);
+          });
+          break;
+      }
+    }
+    else if (this._propagateToParent) this._propagateToParent (e);
+  },
+  
+  __pointer_recognizers: null,
+  
+  addPointerRecognizer: function (recognizer)
+  {
+    if (!recognizer instanceof PointerRecognizer) return;
+    
+    if (this.__pointer_recognizers.indexOf (recognizer) !== -1) return;
+    
+    this.__pointer_recognizers.push (recognizer);
+    recognizer.init (this);
+  },
+
+  removePointerRecognizer: function (recognizer)
+  {
+    if (!recognizer instanceof PointerRecognizer) return;
+    
+    this.__pointer_recognizers.remove (recognizer);
+    recognizer.uninit ();
+  }
+};
+ui.RecognizerManager = RecognizerManager;/*
+  Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), and
+  IGEL Co., Ltd. All rights reserved
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
 /**
  *  The vs.ui.TapRecognizer class
  *
@@ -975,13 +1071,13 @@ ui.PointerRecognizer = PointerRecognizer;
  *  @example
  *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
  *  var recognizer = new TapRecognizer ({
- *    didTouch (event) {
+ *    didTouch : function (event) {
  *      my_view.addClassName ("pressed");
  *    },
- *    didUntouch (event) {
+ *    didUntouch : function (event) {
  *      my_view.removeClassName ("pressed");
  *    },
- *    didTap (nb_tap, event) {
+ *    didTap : function (nb_tap, event) {
  *      my_view.hide ();
  *    }
  *  });
@@ -1201,10 +1297,10 @@ ui.TapRecognizer = TapRecognizer;
  *  @example
  *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
  *  var recognizer = new DragRecognizer ({
- *    didDrag (drag_info, event) {
+ *    didDrag : function (drag_info, event) {
  *      my_view.translation = [drag_info.dx, drag_info.dy];
  *    }
- *    didDragEnd (sevent) {
+ *    didDragEnd : function (sevent) {
  *      // save drag translation
  *      my_view.flushTransformStack ();
  *    }
@@ -1259,10 +1355,13 @@ DragRecognizer.prototype = {
   pointerStart: function (e) {
     if (this.__is_dragged) { return; }
     // prevent multi touch events
-    if (e.nbPointers > 1) { return; }
+    if (!e.targetPointerList || e.targetPointerList.length > 1) { return; }
 
-    this.__start_x = e.pointerList[0].pageX;
-    this.__start_y = e.pointerList[0].pageY;
+    var pointer = e.targetPointerList [0];
+
+    this.__start_x = pointer.pageX;
+    this.__start_y = pointer.pageY;
+    this.__pointer_id = pointer.identifier;
     this.__is_dragged = true;
 
     this.addPointerListener (document, core.POINTER_END, this.obj);
@@ -1271,8 +1370,8 @@ DragRecognizer.prototype = {
     try {
       if (this.delegate && this.delegate.didDragStart)
         this.delegate.didDragStart (e);
-    } catch (e) {
-      console.log (e);
+    } catch (exp) {
+      console.log (exp);
     }
     return false;
   },
@@ -1285,14 +1384,22 @@ DragRecognizer.prototype = {
   pointerMove: function (e) {
     if (!this.__is_dragged) { return; }
 
-    var dx = e.pointerList[0].pageX - this.__start_x;
-    var dy = e.pointerList[0].pageY - this.__start_y;
+    var i = 0, l = e.pointerList.length, pointer, dx, dy;
+    for (; i < l; i++) {
+      pointer = e.pointerList [i];
+      if (pointer.identifier === this.__pointer_id) { break; }
+      pointer = null;
+    }
+    if (!pointer) { return; }
+
+    dx = pointer.pageX - this.__start_x;
+    dy = pointer.pageY - this.__start_y;
     
     try {
       if (this.delegate && this.delegate.didDrag)
         this.delegate.didDrag ({dx: dx, dy:dy}, e);
-    } catch (e) {
-      console.log (e);
+    } catch (exp) {
+      console.log (exp);
     }
   },
 
@@ -1303,7 +1410,19 @@ DragRecognizer.prototype = {
    */
   pointerEnd: function (e) {
     if (!this.__is_dragged) { return; }
+
+    var i = 0, l = e.changedPointerList.length, pointer, dx, dy;
+    for (; i < l; i++) {
+      pointer = e.changedPointerList [i];
+      if (pointer.identifier === this.__pointer_id) { break; }
+      pointer = null;
+    }
+    if (!pointer) { return; }
+
     this.__is_dragged = false;
+    this.__start_x = undefined;
+    this.__start_y = undefined;
+    this.__pointer_id = undefined;
   
     this.removePointerListener (document, core.POINTER_END, this.obj);
     this.removePointerListener (document, core.POINTER_MOVE, this.obj);
@@ -1311,8 +1430,8 @@ DragRecognizer.prototype = {
     try {
       if (this.delegate && this.delegate.didDragEnd)
         this.delegate.didDragEnd (e);
-    } catch (e) {
-      console.log (e);
+    } catch (exp) {
+      console.log (exp);
     }
   },
 
@@ -1366,15 +1485,23 @@ ui.DragRecognizer = DragRecognizer;/*
  *  <ul>
  *    <li /> didPinchChange (scale, event). Call when the element is pinched.
  *      scale is The scale factor relative to the points of the two touches
- *      in screen coordinates.
+ *      in screen coordinates
+ *    <li /> didPinchStart (event). Call when the pinch start
+ *    <li /> didPinchEnd (event). Call when the pinch end
  *  </ul>
  *  <p>
  *
  *  @example
  *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
  *  var recognizer = new PinchRecognizer ({
- *    didPinchChange (scale, event) {
+ *    didPinchChange : function (scale, event) {
  *      my_view.scaling = scale;
+ *    },
+ *    didPinchStart : function (event) {
+ *      xxx
+ *    },
+ *    didPinchEnd : function (event) {
+ *      mss
  *    }
  *  });
  *  my_view.addPointerRecognizer (recognizer);
@@ -1426,6 +1553,12 @@ PinchRecognizer.prototype = {
     this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.addPointerListener (document, core.GESTURE_END, this.obj);
 
+    try {
+      if (this.delegate && this.delegate.didPinchStart)
+        this.delegate.didPinchStart (event);
+    } catch (e) {
+      console.log (e);
+    }
     return false;
   },
 
@@ -1451,6 +1584,13 @@ PinchRecognizer.prototype = {
   gestureEnd: function (e) {
     this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.removePointerListener (document, core.GESTURE_END, this.obj);
+    
+    try {
+      if (this.delegate && this.delegate.didPinchEnd)
+        this.delegate.didPinchEnd (event);
+    } catch (e) {
+      console.log (e);
+    }
   },
 
   /**
@@ -1502,13 +1642,15 @@ ui.PinchRecognizer = PinchRecognizer;/*
  *  <ul>
  *    <li /> didRotationChange (rotation, event). Call when the element is rotated.
  *      rotation The rotation of the gesture in degrees.
+ *    <li /> didRotationStart (event). Call when the rotation start
+ *    <li /> didRotationEnd (event). Call when the rotation end
  *  </ul>
  *  <p>
  *
  *  @example
  *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
  *  var recognizer = new RotationRecognizer ({
- *    didRotationChange (rotation, event) {
+ *    didRotationChange : function (rotation, event) {
  *      my_view.rotation = rotation;
  *    }
  *  });
@@ -1561,6 +1703,13 @@ RotationRecognizer.prototype = {
     this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.addPointerListener (document, core.GESTURE_END, this.obj);
 
+    try {
+      if (this.delegate && this.delegate.didRotationStart)
+        this.delegate.didRotationStart (event);
+    } catch (e) {
+      console.log (e);
+    }
+
     return false;
   },
 
@@ -1586,6 +1735,13 @@ RotationRecognizer.prototype = {
   gestureEnd: function (e) {
     this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
     this.removePointerListener (document, core.GESTURE_END, this.obj);
+
+    try {
+      if (this.delegate && this.delegate.didRotationEnd)
+        this.delegate.didRotationEnd (event);
+    } catch (e) {
+      console.log (e);
+    }
   },
 
   /**
@@ -1684,6 +1840,7 @@ function View (config)
   this.parent (config);
   this.constructor = View;
   
+  // init recognizer support
   this.__pointer_recognizers = [];
 }
 
@@ -3585,83 +3742,6 @@ View.prototype = {
    * @protected
    * @function
    */
-  handleEvent: function (e)
-  {
-    if (this.__pointer_recognizers.length) {
-      
-      if (!this._enable) { return; }
-     
-      switch (e.type) {
-        case core.POINTER_START:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.pointerStart (e);
-          });
-        break;
-
-        case core.POINTER_MOVE:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.pointerMove (e);
-          });
-        break;
-
-        case core.POINTER_END:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.pointerEnd (e);
-          });
-        break;
-
-        case core.POINTER_CANCEL:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.pointerCancel (e);
-          });
-        break;
-
-        case core.GESTURE_START:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.gestureStart (e);
-          });
-          break;
-        
-        case core.GESTURE_CHANGE:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.gestureChange (e);
-          });
-          break;
-        
-        case core.GESTURE_END:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.gestureEnd (e);
-          });
-          break;
-      }
-    }
-    else this._propagateToParent (e);
-  },
-  
-  __pointer_recognizers: null,
-  
-  addPointerRecognizer: function (recognizer)
-  {
-    if (!recognizer instanceof PointerRecognizer) return;
-    
-    if (this.__pointer_recognizers.indexOf (recognizer) !== -1) return;
-    
-    this.__pointer_recognizers.push (recognizer);
-    recognizer.init (this);
-  },
-
-  removePointerRecognizer: function (recognizer)
-  {
-    if (!recognizer instanceof PointerRecognizer) return;
-    
-    this.__pointer_recognizers.remove (recognizer);
-    recognizer.uninit ();
-  },
-
-  /**
-   * @protected
-   * @function
-   */
   _propagateToParent : function (e)
   {
     if (this._bubbling && this.__parent && this.__parent.handleEvent)
@@ -3968,6 +4048,7 @@ View.prototype = {
     delete (matrix);
   }
 };
+util.extend (View.prototype, RecognizerManager);
 util.extendClass (View, core.EventSource);
 
 /********************************************************************
@@ -4721,23 +4802,13 @@ Application.prototype = {
     this.view.setAttribute ('x-hag-comp', this.id);
 
     var self = this;
-    document.addEventListener ('orientationChanged', function (e)
-    {
-      var pid = window.deviceConfiguration.setOrientation (e.orientation);
-      if (pid) { self.propagate ('deviceChanged', pid, null, true); }
-    });
-    
     window.addEventListener (ORIENTATION_CHANGE_EVT, function (e)
     {
-      var orientation = 0;
-      if (window.orientation) orientation = window.orientation;
-      else if (window.outerWidth > window.outerHeight) orientation = 90;
-      else orientation = 0;
-
-      if (orientation === window.deviceConfiguration.getOrientation ()) return;
-      
-      var pid = window.deviceConfiguration.setOrientation (orientation);
-      if (pid) { self.propagate ('deviceChanged', pid, null, true); }
+      var target_id =
+        window.deviceConfiguration.setOrientation (window.orientation);
+      if (target_id) {
+        self.propagate ('deviceChanged', target_id, null, true);
+      }
     });
   },
   
@@ -4962,7 +5033,12 @@ Application.exit = function ()
  */
 Application.configureDevice = function ()
 {
-  function setDefaultDeviceCSS () {
+  function setDeviceCSS () {
+
+    var name = (window.target_css)?
+      window.target_css [window.deviceConfiguration.targetId]:'';
+
+    if (!name) name = "default";
   
     function importCSS (path, node) {
       var css_style = document.createElement ("link");
@@ -4987,32 +5063,140 @@ Application.configureDevice = function ()
       else node = null;
     }
   
-    switch (window.deviceConfiguration.os) {
-      case DeviceConfiguration.OS_IOS:
-        importCSS ("lib/css/vs_ui_ios.css", node);
-      break;
- 
-      case DeviceConfiguration.OS_ANDROID:
-        importCSS ("lib/css/vs_ui_android.css", node);
-      break;
+    if (name == 'default') {
+      switch (window.deviceConfiguration.os) {
+        case DeviceConfiguration.OS_IOS:
+          importCSS ("lib/css/vs_ui_ios.css", node);
+        break;
+   
+        case DeviceConfiguration.OS_ANDROID:
+          importCSS ("lib/css/vs_ui_android.css", node);
+        break;
+      }
     }
+    else importCSS ("lib/css/vs_ui_" + name + ".css", node);
   }
   
-  setDefaultDeviceCSS ();
+  var did = window.deviceConfiguration.generateDeviceId (true), tid, size;
+  window.deviceConfiguration.deviceId = did;
+  window.deviceConfiguration.virtualScreenSize = null;
   
-  var did = window.deviceConfiguration.generateDeviceId ();
-  for (var tid in window.target_device_ids) {
+  for (tid in window.target_device_ids) {
     var dids = window.target_device_ids [tid];
     if (dids.indexOf (did) !== -1) {
-      window.deviceConfiguration.deviceId = tid;
+      window.deviceConfiguration.targetId = tid;
       window.deviceConfiguration.setOrientation (window.orientation || 0, true);
-      break;
+
+      setDeviceCSS ();
+      return;
     }
   }
+
+  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_4_INCH)
+    tid = "phone3_4";
+  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_7_INCH)
+    tid = "tablet7";  
+  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_10_INCH)
+    tid = "phone10";
   
-//  window.target_device_ids = {"phone3_4_p":["iphone_3_3_2_p","iphone_3_16_9_p"]}
-//  window.deviceConfiguration.setDeviceId (Application_default_device);
-//  window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+  if (deviceConfiguration.orientation === 0 ||
+      deviceConfiguration.orientation === 90)
+    tid += "_p"; 
+
+  if (deviceConfiguration.orientation === 180 ||
+      deviceConfiguration.orientation === -180)
+    tid += "_l";
+
+  if (window.target_device_ids [tid]) {
+    window.deviceConfiguration.targetId = tid;
+   
+    window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+
+    setDeviceCSS ();
+    return;
+  }
+
+  size = getScreenSize (DeviceConfiguration.SS_7_INCH);
+
+  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_10_INCH) {
+    tid = "tablet7";
+  }
+
+  if (deviceConfiguration.orientation === 0 ||
+      deviceConfiguration.orientation === 90)
+    tid += "_p"; 
+
+  if (deviceConfiguration.orientation === 180 ||
+      deviceConfiguration.orientation === -180)
+    tid += "_l";
+
+  if (window.target_device_ids [tid]) {
+    window.deviceConfiguration.targetId = tid;
+    window.deviceConfiguration.virtualScreenSize = size;
+    window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+
+    setDeviceCSS ();
+    return;
+  }
+
+  tid = "phone3_4";
+  size = getScreenSize (DeviceConfiguration.SS_4_INCH)
+
+  if (deviceConfiguration.orientation === 0 ||
+      deviceConfiguration.orientation === 90)
+    tid += "_p"; 
+
+  if (deviceConfiguration.orientation === 180 ||
+      deviceConfiguration.orientation === -180)
+    tid += "_l";
+
+  if (window.target_device_ids [tid]) {
+    window.deviceConfiguration.targetId = tid;
+    window.deviceConfiguration.virtualScreenSize = size;
+    window.deviceConfiguration.setOrientation (window.orientation || 0, true);
+
+    setDeviceCSS ();
+    return;
+  }
+}
+
+function getScreenSize (screenDef) {
+
+  function get7Inch () {
+    if (devicePixelRatio <= 1.2) { // 1 pixel ratio
+      return [600, 960];
+    }
+    else if (devicePixelRatio <= 1.4) { // 1.33 pixel ratio
+      return [800, 1280];
+    }
+    else if (devicePixelRatio <= 1.7) { // 1.5 pixel ratio
+      return [900, 1440];
+    }
+    return [1200, 1920]; // 2 pixel ratio
+  }
+
+  function get4Inch () {
+    if (devicePixelRatio <= 1.2) { // 1 pixel ratio
+      return [320, 540];
+    }
+    else if (devicePixelRatio <= 1.4) { // 1.33 pixel ratio
+      return [427, 720];
+    }
+    else if (devicePixelRatio <= 1.7) { // 1.5 pixel ratio
+      return [480, 800];
+    }
+    return [720, 1080]; // 2 pixel ratio
+  }
+
+  switch (screenDef) {
+    case DeviceConfiguration.SS_7_INCH:
+      return get7Inch ();
+    break
+
+    case DeviceConfiguration.SS_4_INCH:
+      return get4Inch ();
+    break
+  }
 }
 
 /**

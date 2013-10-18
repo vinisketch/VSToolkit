@@ -3115,7 +3115,7 @@ function buildTouchList (evt, target_id)
     var touch = evt.touches[i];
     var pointer = new Pointer (
       touch, PointerTypes.TOUCH, touch.identifier,
-      evt.layerX, evt.layerY
+      touch.clientX, touch.clientY
     );
     pointers.push (pointer);
   }
@@ -3127,7 +3127,7 @@ function buildTouchList (evt, target_id)
     if (target_id && pointerEvents [touch.identifier] != target_id) continue;
     var pointer = new Pointer (
       touch, PointerTypes.TOUCH, touch.identifier,
-      evt.layerX, evt.layerY
+      touch.clientX, touch.clientY
     );
     pointers.push (pointer);
   }
@@ -3138,7 +3138,7 @@ function buildTouchList (evt, target_id)
     var touch = evt.changedTouches[i];
     var pointer = new Pointer (
       touch, PointerTypes.TOUCH, touch.identifier,
-      evt.layerX, evt.layerY
+      evt.clientX, evt.clientY
     );
     pointers.push (pointer);
   }
@@ -3673,7 +3673,7 @@ var gestureStartListener = function (event, listener)
     __init_pos = util.getElementAbsolutePosition (event.targetPointerList[0].target, true);
 //    init_pos = init_pos.matrixTransform (comp.getParentCTM ());
     
-     __init_centroid = getCentroid (event.targetPointerList);
+    __init_centroid = getCentroid (event.targetPointerList);
        
     document.addEventListener (vs.POINTER_MOVE, gestureChangeListener);
     document.addEventListener (vs.POINTER_END, gestureEndListener);

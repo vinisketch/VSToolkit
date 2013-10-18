@@ -512,8 +512,10 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
     }
     if (transform)
     {
-      var matrix = comp.getCTM ();
-      transform = matrix.toString () + ' ' + transform;
+      if (animation.additive) {
+        var matrix = comp.getCTM ();
+        transform = matrix.toString () + ' ' + transform;
+      }
       setElementTransform (comp.view, transform);
     }
 
@@ -667,8 +669,10 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
       }
       if (transform)
       {
-        var matrix = comp.getCTM ();
-        transform = matrix.toString () + ' ' + transform;
+        if (animation.additive) {
+          var matrix = comp.getCTM ();
+          transform = matrix.toString () + ' ' + transform;
+        }
         style += TRANSFORM + ': ' + transform + ';';
       }
 
@@ -860,6 +864,13 @@ Animation.prototype = {
    * @name vs.fx.Animation#keyFrames
    */
   keyFrames: null,
+  
+  /**
+   * @private
+   * @type Object
+   * @name vs.fx.Animation#additive
+   */
+  additive: true,
 
   /**
    *  Defines the properties to animate.
@@ -1667,7 +1678,7 @@ fx.OpacityAnimation = OpacityAnimation;
 /**
  *  The Generic vs.fx.Controller class
  *
- *  @see vs.fx.SlideController
+ *  @see vs.fx.SwipeController
  *  @see vs.fx.CardController
  *  @see vs.fx.NavigationController
  *  @extends vs.core.EventSource
@@ -1675,7 +1686,7 @@ fx.OpacityAnimation = OpacityAnimation;
  *  @class
  *  This class can be used to implement your custom GUI controller.
  *  <p/>
- *  Before developing your own controller you can try the SlideController
+ *  Before developing your own controller you can try the SwipeController
  *  or the NavigationController witch match most situations.
  *
  *  <p>
@@ -2538,7 +2549,7 @@ fx.Controller = Controller;
 /**
  *  The vs.fx.StackController class <br />
  * 
- *  @see vs.fx.SlideController
+ *  @see vs.fx.SwipeController
  *  @see vs.fx.CardController
  *
  *  @extends vs.fx.Controller
@@ -2599,6 +2610,13 @@ StackController.PRED = 'pred';
  * @const
  */
 StackController.FIRST = 'first';
+
+/**
+ * @private
+ * @name vs.fx.StackController.LAST
+ * @const
+ */
+StackController.LAST = 'last';
 
 StackController.prototype = {
 
@@ -2737,6 +2755,8 @@ StackController.prototype = {
     this.addTransition (state_id, this._last_comp_id, StackController.PRED);
     this.addTransition 
       (state_id, this._initial_component, StackController.FIRST);
+ 
+    this._last_state = state_id;
     
     // create the second view 
     if (this._last_comp_id === this._initial_state)
@@ -3001,13 +3021,41 @@ StackController.prototype = {
    * @param {boolean} instant Force a transition without animation
    * @return true if the transition is possible
    */
-  goToFirstView : function (clb, instant)
+  goToFirstView : function (clb, instant, order)
   {
     var state_from = this._fsm._list_of_state [this._fsm._current_state],
       r = this._fsm.fsmNotify (StackController.FIRST, null, true),
       state_to = this._fsm._list_of_state [this._fsm._current_state];
 
-    if (r) this._stackAnimateComponents (-1, state_from.comp, state_to.comp, clb, instant);
+    if (r) this._stackAnimateComponents (order?order:-1, state_from.comp, state_to.comp, clb, instant);
+    return r;
+  },
+
+
+  /**
+   * Go to the last first
+   *
+   * @name vs.fx.StackController#goToLastView
+   * @function
+   * 
+   * @param {Function} clb a function reference, will be called at the end
+   *                   of transition
+   * @param {boolean} instant Force a transition without animation
+   * @return true if the transition is possible
+   */
+  goToLastView : function (clb, instant, order)
+  {
+    var
+      state_from = this._fsm._list_of_state [this._fsm._current_state],
+      r = this._fsm.goTo (
+        this._last_state, null, {
+          on: StackController.LAST,
+          data: null
+        }, instant),
+      state_to = this._fsm._list_of_state [this._fsm._current_state];
+    
+
+    if (r) this._stackAnimateComponents (order?order:1, state_from.comp, state_to.comp, clb, instant);
     return r;
   },
 
