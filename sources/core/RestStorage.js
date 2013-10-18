@@ -219,7 +219,8 @@ RestStorage.prototype = {
         var model = self.__models__ [name];
         if (!model) return;
 
-        var url = self._url + name + '.json';
+//        var url = self._url + name + '.json';
+        var url = self._url + name;
 
         var ps = model.getModelProperties (), j = 0;
         if (ps && ps.length)
