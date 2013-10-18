@@ -48,7 +48,7 @@
  *  carousel.add (view3);
  *  carousel.add (view4);
  *  // change the orientation
- *  carousel.orientation = vs.fx.SlideController.VERTICAL
+ *  carousel.orientation = vs.fx.SwipeController.VERTICAL
  *  // set a delegate
  *  var delegate = {};
  *  delegate.carouselViewWillChange = function (view) { ... };
@@ -76,14 +76,14 @@ function Carousel (config)
  * @name vs.ext.ui.Carousel.HORIZONTAL
  * @const
  */
-Carousel.HORIZONTAL = vs.fx.SlideController.HORIZONTAL;
+Carousel.HORIZONTAL = vs.fx.SwipeController.HORIZONTAL;
 
 /**
  * Vertical carousel
  * @name vs.ext.ui.Carousel.VERTICAL
  * @const
  */
-Carousel.VERTICAL = vs.fx.SlideController.VERTICAL;
+Carousel.VERTICAL = vs.fx.SwipeController.VERTICAL;
 
 Carousel.prototype = {
 
@@ -111,11 +111,11 @@ Carousel.prototype = {
   _orientation : Carousel.HORIZONTAL,
 
   /**
-   * The vs.fx.SlideController that will manage the carousel slide
+   * The vs.fx.SwipeController that will manage the carousel slide
    * @private
-   * @type {vs.fx.SlideController}
+   * @type {vs.fx.SwipeController}
    */
-  _slideController : null,
+  _swipe_controller : null,
   
   /**
    * The indicators view
@@ -159,7 +159,7 @@ Carousel.prototype = {
    */
   destructor : function ()
   {
-    util.free (this._slideController);
+    util.free (this._swipe_controller);
 
     vs.ui.View.prototype.destructor.call (this);
   },
@@ -176,11 +176,11 @@ Carousel.prototype = {
       this.view.querySelector ('.vs_ext_ui_carousel >.indicators');
     vs.util.addClassName (this.__indicators, 'horizontal');
 
-    this._slideController = new vs.fx.SlideController (this);
-    this._slideController.delegate = this;
-    this._slideController.isTactile = true;
-    this._slideController.animationMode = vs.fx.SlideController.PIXEL;
-    this._slideController.init ();
+    this._swipe_controller = new vs.fx.SwipeController (this);
+    this._swipe_controller.delegate = this;
+    this._swipe_controller.isTactile = true;
+    this._swipe_controller.animationMode = vs.fx.SwipeController.PIXEL;
+    this._swipe_controller.init ();
   },
   
   /**
@@ -189,8 +189,8 @@ Carousel.prototype = {
    */
   refresh : function ()
   {
-    if (this._slideController && this._slideController.refresh)
-    { this._slideController.refresh (); }
+    if (this._swipe_controller && this._swipe_controller.refresh)
+    { this._swipe_controller.refresh (); }
 
     vs.ui.View.prototype.refresh.call (this);
   },
@@ -277,11 +277,11 @@ Carousel.prototype = {
     // Test if the component is already added
     if (this.isChild (child))
     {
-      if (this._slideController.isStateExit (child.id))
+      if (this._swipe_controller.isStateExit (child.id))
       { return; }
     }
     
-    var span, state_id = this._slideController.push (child, config);
+    var span, state_id = this._swipe_controller.push (child, config);
     
     span = document.createElement ('span');
     
@@ -337,7 +337,7 @@ Carousel.prototype = {
    */
   goToNextView : function ()
   {
-    this._slideController.goToNextView ();
+    this._swipe_controller.goToNextView ();
   },
  
   /**
@@ -347,7 +347,7 @@ Carousel.prototype = {
    */
   goToPreviousView : function ()
   {
-    this._slideController.goToPreviousView ();
+    this._swipe_controller.goToPreviousView ();
   },
 
   /**
@@ -359,7 +359,7 @@ Carousel.prototype = {
    */
   goToView : function (id)
   {
-    this._slideController.goToViewId (id);
+    this._swipe_controller.goToViewId (id);
   },
 
   /**
@@ -371,7 +371,7 @@ Carousel.prototype = {
    */
   goToViewAt : function (index)
   {
-    this._slideController.goToViewAt (index);
+    this._swipe_controller.goToViewAt (index);
   }
 };
 util.extendClass (Carousel, vs.ui.View);
@@ -401,8 +401,8 @@ util.defineClassProperties (Carousel, {
       if (!this.view) { return; }
       this._updateSizeAndPos ();
   
-      if (this._slideController && this._slideController.refresh)
-      { this._slideController.refresh (); }
+      if (this._swipe_controller && this._swipe_controller.refresh)
+      { this._swipe_controller.refresh (); }
     },
     
     /**
@@ -483,7 +483,7 @@ util.defineClassProperties (Carousel, {
         vs.util.addClassName (this.__indicators, 'vertical');
       }
       this._orientation = v;
-      this._slideController.orientation = v;
+      this._swipe_controller.orientation = v;
     },
   
     /** 
