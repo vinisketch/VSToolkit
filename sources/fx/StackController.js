@@ -19,7 +19,7 @@
 /**
  *  The vs.fx.StackController class <br />
  * 
- *  @see vs.fx.SlideController
+ *  @see vs.fx.SwipeController
  *  @see vs.fx.CardController
  *
  *  @extends vs.fx.Controller

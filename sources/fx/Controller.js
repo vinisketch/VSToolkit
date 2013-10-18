@@ -19,7 +19,7 @@
 /**
  *  The Generic vs.fx.Controller class
  *
- *  @see vs.fx.SlideController
+ *  @see vs.fx.SwipeController
  *  @see vs.fx.CardController
  *  @see vs.fx.NavigationController
  *  @extends vs.core.EventSource
@@ -27,7 +27,7 @@
  *  @class
  *  This class can be used to implement your custom GUI controller.
  *  <p/>
- *  Before developing your own controller you can try the SlideController
+ *  Before developing your own controller you can try the SwipeController
  *  or the NavigationController witch match most situations.
  *
  *  <p>
