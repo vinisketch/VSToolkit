@@ -289,8 +289,10 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
     }
     if (transform)
     {
-      var matrix = comp.getCTM ();
-      transform = matrix.toString () + ' ' + transform;
+      if (animation.additive) {
+        var matrix = comp.getCTM ();
+        transform = matrix.toString () + ' ' + transform;
+      }
       setElementTransform (comp.view, transform);
     }
 
@@ -444,8 +446,10 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
       }
       if (transform)
       {
-        var matrix = comp.getCTM ();
-        transform = matrix.toString () + ' ' + transform;
+        if (animation.additive) {
+          var matrix = comp.getCTM ();
+          transform = matrix.toString () + ' ' + transform;
+        }
         style += TRANSFORM + ': ' + transform + ';';
       }
 
@@ -637,6 +641,13 @@ Animation.prototype = {
    * @name vs.fx.Animation#keyFrames
    */
   keyFrames: null,
+  
+  /**
+   * @private
+   * @type Object
+   * @name vs.fx.Animation#additive
+   */
+  additive: true,
 
   /**
    *  Defines the properties to animate.
