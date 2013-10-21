@@ -5,7 +5,7 @@
   color: #424142;
   border: 1px solid #333;
 
-  box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 10px;
+/*  box-shadow: rgba(0, 0, 0, 0.6) 0px 0px 10px; */
 }
 
 .vs_ext_ui_gmap_info::before {

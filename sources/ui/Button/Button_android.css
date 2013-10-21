@@ -51,7 +51,6 @@
   -webkit-border-radius: 5px;
 
   font-weight: normal;
-  text-shadow: none;
 }
 
 .vs_ui_button.nav_back > div,
@@ -116,30 +115,22 @@
 {
   color: #424142;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
-  text-shadow: none;
-  -webkit-border-image: none;
 }
 
 .vs_ui_button.default.red
 {
   color: white;
-  text-shadow: none;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(red), to(#BE0000));
-  -webkit-border-image: none;
 }
 
 .vs_ui_button.default.green
 {
   color: white;
-  text-shadow: none;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#01BF00), to(#079600));
-  -webkit-border-image: none;
 }
 
 .vs_ui_button.default.grey
 {
   color: white;
-  text-shadow: none;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#797979), to(#444));
-  -webkit-border-image: none;
 }

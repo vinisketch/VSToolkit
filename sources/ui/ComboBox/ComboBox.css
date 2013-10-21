@@ -5,10 +5,10 @@
   font-weight: normal;
   color: black;
   
-  border: solid 1px black;
+/*  border: solid 1px black; */
   background: white;
   
-  border-radius: 5px;
+/*  border-radius: 5px; */
 }
 
 .vs_ui_combobox > select {

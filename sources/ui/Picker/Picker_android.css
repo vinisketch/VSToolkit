@@ -33,12 +33,10 @@
 .vs_ui_picker li {
   font-family: Helvetica, Arial, sans-serif;
   color: #333;
-  text-shadow: white 0px 1px 1px;
   padding-top: 7px;
   font-size: 28px;
   font-weight: bold;
   text-align:center;
-  -webkit-box-shadow: inset black 0px 0px 3px;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#DDD), to(#FFF));
 }
 
@@ -56,8 +54,6 @@
 
   color: #424142;
 
-  text-shadow: white 0px 1px 0px;
-
   font-family: Helvetica, Arial, sans-serif;
   font-size: 35px;
   text-align: center;
@@ -73,9 +69,7 @@
 
 .vs_ui_picker .slots div.readonly li{
   background: transparent;
-  -webkit-box-shadow: none;
   color: white;
-  text-shadow: none;
   padding-right: 0px;
 }
 
@@ -94,7 +88,6 @@
 .vs_ui_picker .button_incr.active, 
 .vs_ui_picker .button_decr.active {
   color: white;
-  -webkit-box-shadow: inset black 1px 1px 2px;
   background-image: -webkit-gradient(linear, left top, left bottom, 
       from(#ff6900),
       color-stop(0.1, #ff7500),

@@ -1,6 +1,5 @@
 .vs_ui_inputfield {
   border: #CCC solid 1px;
-  -webkit-box-shadow:inset 0 1px 4px rgba(0,0,0,0.3);
   height:35px;
   font-size: 20px;
 }

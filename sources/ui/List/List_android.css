@@ -58,7 +58,7 @@ li.pressed
   padding: 1px 10px;
 
   color: inherit;
-  text-shadow: rgba(0, 0, 0, 0.898438) 1px 1px 3px;
+/*  text-shadow: rgba(0, 0, 0, 0.898438) 1px 1px 3px; */
   height: 18px;
 	opacity:1;
 
@@ -125,7 +125,6 @@ ul.pressed li > div
 
 .vs_ui_list.BlockList > ul {
   text-overflow: ellipsis;
-  text-shadow: none;
   font-family: Helvetica;
   
   position: relative;
@@ -155,7 +154,6 @@ ul.pressed li > div
   padding: 12px 0 12px 50px;
   font-weight:  normal;
   color: inherit;
-  text-shadow: none;
   background: #424542 url(PanelTitle.png) no-repeat 10px center;
   -webkit-border-top-left-radius:   10px;
   -webkit-border-top-right-radius:  10px;

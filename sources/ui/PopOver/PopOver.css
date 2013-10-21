@@ -7,7 +7,7 @@
   background: transparent;
   
   -webkit-border-radius: 8px;
-//  -webkit-box-shadow: 10px 10px 12px rgba(0,0,0,0.30);
+/*  -webkit-box-shadow: 10px 10px 12px rgba(0,0,0,0.30); */
   
   min-height: 80px;
   min-width: 150px;
@@ -47,7 +47,7 @@
   background-image: -webkit-gradient(linear, 14% 99%, 9% 51%, color-stop(0, rgb(190,190,190)), color-stop(0.99, rgb(255,255,255))) !important;
   -webkit-border-radius: 1px;
 
-  -webkit-box-shadow: 1px 1px 3px black, inset 0px 0px 4px black;
+/*  -webkit-box-shadow: 1px 1px 3px black, inset 0px 0px 4px black; */
 }
 
 .vs_ui_popover >.footer {
