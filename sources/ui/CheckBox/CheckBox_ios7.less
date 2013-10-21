@@ -1,0 +1,71 @@
+.vs_ui_checkbox {
+  font-family: inherit;
+  color:black;
+}
+
+input[type="checkbox"]
+{
+  position: relative;
+  background: transparent;
+  
+  color: inherit;
+  height: 40px;
+
+  .appearance(none);
+}
+
+input[type="checkbox"].pressed + label,
+.vs_ui_checkbox label.pressed
+{
+  .base_background_selected;
+}
+
+input[type="checkbox"]:after
+{
+  .box-sizing(border-box);
+  .user-select(none);
+  color: white;
+  display: block;
+  width: 26px;
+  height: 26px;
+  border-radius: 26px;
+   
+  content: '';
+
+  .translateY(-45%);
+  border: 1px solid #CCCCCC;
+}
+
+input[type="checkbox"]:checked:after
+{
+  content:"✔︎";
+  font: 18px/26px @default_font;
+  padding-left: 5px;
+  color: #CCCCCC;
+  background-color: @baseColor;
+  border: 1px solid @baseColor;
+}
+
+input[type="checkbox"].pressed:after
+{
+  border: 1px solid @baseColor;
+}
+
+.vs_ui_checkbox label {
+  padding: 9px 35px 0px 16px;
+  height: 40px;
+  position: relative;
+}
+
+.vs_ui_checkbox label:before {
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: 16px;
+  right: 0;
+  border-top: 1px solid #CCCCCC;
+}
+
+.vs_ui_checkbox label:nth-of-type(1):before {
+  border: none;
+}

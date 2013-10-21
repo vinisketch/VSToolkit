@@ -1,0 +1,96 @@
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('fontawesome-webfont.eot');
+  src: url('fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
+    url('fontawesome-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+
+@white: #fff;
+@green: #53d76a;
+@grey: #d3d3d3;
+@baseColor: #157dfa;
+
+@default_font: "Helvetica Neue";
+
+
+
+.base_background {
+  .gradient(~"linear-gradient(0deg, #FFF 0%, rgb(245,245,245) 100%)");
+}
+
+.red_background {
+  .gradient(~"linear-gradient(0deg, #ff5f56 0%, #ff4036 100%)");
+}
+
+.green_background {
+  .gradient(~"linear-gradient(0deg, #01BF00 0%, #079600 100%)");
+}
+
+.grey_background {
+  .gradient(~"linear-gradient(0deg, #797979 0%, #444 100%)");
+}
+
+.base_background_selected {
+  background-color: #CCCCCC;
+}
+
+.base_radius {
+  .elliptic-rounded (4px, 4px);
+}
+
+.base_radius_left {
+  .elliptic-rounded-left (4px, 4px);
+}
+
+.base_radius_right {
+  .elliptic-rounded-right (4px, 4px);
+}
+
+.base_radius_top {
+  .elliptic-rounded-top (4px, 4px);
+}
+
+.base_radius_bottom {
+  .elliptic-rounded-bottom (4px, 4px);
+}
+
+.small_radius {
+  .elliptic-rounded (4px, 4px);
+}
+
+.small_radius_left {
+  .elliptic-rounded-left (4px, 4px);
+}
+
+.small_radius_right {
+  .elliptic-rounded-right (4px, 4px);
+}
+
+.small_radius_top {
+  .elliptic-rounded-top (4px, 4px);
+}
+
+.small_radius_bottom {
+  .elliptic-rounded-bottom (4px, 4px);
+}
+
+.base_shadow {
+  .box-shadow (0px 2px 0 #AAA);
+}
+
+.small_shadow {
+  .box-shadow (0px 1px 0 #AAA);
+}
+
+body {
+  font-family: @default_font;
+	background-color: #f6f5f1;
+}
+
+.device_test {
+  opacity: 0;
+  margin-top: 5px;
+}

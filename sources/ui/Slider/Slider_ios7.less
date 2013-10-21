@@ -1,0 +1,39 @@
+.vs_ui_slider {
+  .border-radius (2px);
+  background-color: #ddd;
+}
+
+.vs_ui_slider.horizontal {
+  .gradient(~"linear-gradient(180deg, #157dfa 0%,#157dfa 80%)");
+
+  height: 4px !important;
+}
+
+.vs_ui_slider.vertical {
+  .gradient(~"linear-gradient(90deg, #157dfa 0%, #157dfa 80%)");
+
+  width: 4px !important;
+}
+
+.vs_ui_slider .handle {
+  position:relative;
+  border-radius: 26px;
+  width: 26px;
+  height: 26px;
+  background-color: #FFFFFF;
+  box-shadow: 0px 2px 6px 0px rgba(0, 0, 0, 0.2),
+              0 0 2px rgba(0, 0, 0, 0.2);
+}
+
+.vs_ui_slider.horizontal .handle {
+  margin-top: -3px;
+}
+
+.vs_ui_slider.vertical .handle {
+  margin-left: -3px;
+}
+
+.vs_ui_slider .handle:active {
+  .gradient(~"linear-gradient(180deg, #E2E2E2 0%, #9E9E9E 2%, #9E9E9E 2%, #D6D6D6 100%)");
+}
+

@@ -1,0 +1,98 @@
+.vs_ui_segmentedbutton {
+  font-weight: normal;
+  color: @baseColor; 
+}
+
+.vs_ui_segmentedbutton > div {
+  .box-align(stretch);
+}
+
+.vs_ui_segmentedbutton > div > div {
+  .box-pack(center);
+  text-align: center;
+  .box-flex(1);
+}
+
+.vs_ui_segmentedbutton > div > div.selected {
+  background-color: @baseColor;
+  color: #FFFFFF;
+}
+
+.vs_ui_segmentedbutton.horizontal > div {
+  .box-orient(horizontal);
+}
+
+.vs_ui_segmentedbutton.vertical > div {
+  .box-orient(vertical);
+}
+
+.vs_ui_segmentedbutton.horizontal > div > div {
+  border-left: 1px solid @baseColor;  
+  border-right: 1px solid transparent;  
+}
+
+.vs_ui_segmentedbutton.horizontal > div > div:first-child {
+  border-radius: 4px 0 0 4px;
+  border-left: 0px;  
+}
+
+.vs_ui_segmentedbutton.vertical > div > div {
+  border-top: 1px solid @baseColor;  
+  border-bottom: 1px solid transparent;  
+}
+
+.vs_ui_segmentedbutton.vertical > div > div:first-child {
+  border-top: 0px;
+  border-radius: 4px 4px 0 0;
+}
+
+.vs_ui_segmentedbutton.horizontal > div > div:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.vs_ui_segmentedbutton.vertical > div > div:last-child {
+  border-radius: 0 0 4px 4px;
+}
+/***************************************************************************
+                          default button spec
+***************************************************************************/
+
+.vs_ui_segmentedbutton.default
+{
+  font-size: 20px;
+  
+  height: 43px;
+} 
+
+.vs_ui_segmentedbutton.default > div
+{
+  line-height:26px;
+	border-radius: 6px;
+  border: 1px solid @baseColor;
+}
+
+.vs_ui_segmentedbutton.default > div > div {
+  padding: 8px 8px 0 8px;
+}
+
+/***************************************************************************
+                          bar button spec
+***************************************************************************/
+
+.vs_ui_segmentedbutton.bar
+{
+  height: 27px;
+
+  font-size: 0.8em;
+}
+
+.vs_ui_segmentedbutton.bar > div
+{
+  line-height:18px;
+  border: 1px solid @baseColor;
+	border-radius: 6px;
+}
+
+.vs_ui_segmentedbutton.bar > div > div {
+  padding: 5px 5px 0 5px;
+}

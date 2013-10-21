@@ -1,0 +1,50 @@
+.vs_ui_picker
+{
+  height: 180px;
+  font:bold 18pt/30pt @default_font;
+  color: black;
+  overflow: hidden;
+  -webkit-mask-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0,0,0,0.1)), color-stop(0.38, rgba(0,0,0,0.5)), color-stop(0.38, black), color-stop(0.63, black), color-stop(0.63, rgba(0,0,0,0.5)), to(rgba(0,0,0,0.1)));
+}
+
+.vs_ui_picker .slots {
+  top: 50%;
+  height: 44px;
+  overflow: visible;
+  border-top: 1px solid #CCC;
+  border-bottom: 1px solid #CCC;
+  .box-orient(horizontal);
+  .translate(0, -22px);
+}
+
+.vs_ui_picker .slots > div {
+  .box-flex(1);
+  height:180px;
+  margin-top:-70px;
+  padding:0;
+}
+
+.vs_ui_picker .slots div:first-child {
+  border-left:none;
+}
+
+.vs_ui_picker ul {
+  padding: 70px 0 0 0;
+}
+
+.vs_ui_picker li {
+  font: normal 24px/44px @default_font;
+  background: none;
+}
+
+.vs_ui_picker .frame {
+  .translate(0, -44px);
+  left:0; right:0;
+  height:100%;
+  border-width:16px;
+}
+
+.vs_ui_picker .buttons_incr,
+.vs_ui_picker .buttons_decr {
+  display: none;
+}
