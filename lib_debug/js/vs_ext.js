@@ -1793,6 +1793,49 @@ util.defineClassProperties (Carousel, {
       }
     }
   },
+      
+  'isCircular': {
+    /** 
+     * Getter|Setter for circular swipe
+     * @name vs.ext.ui.Carousel#isCircular 
+     * @type {boolean}
+     */ 
+    set : function (v)
+    {
+      this._swipe_controller.isCircular = v;
+    },
+  
+    /** 
+     * @ignore
+     * @return {boolean}
+     */ 
+    get : function ()
+    {
+      return this._swipe_controller.isCircular;
+    }
+  },
+  
+  'isContinuousSwipe': {
+    /** 
+     * Getter|Setter Continuous Swipe
+     * @name vs.ext.ui.Carousel#isContinuousSwipe 
+     * @type {boolean}
+     */ 
+    set : function (v)
+    {
+      this._swipe_controller.isContinuousSwipe = v;
+    },
+  
+    /** 
+     * @ignore
+     * @return {boolean}
+     */ 
+    get : function ()
+    {
+      return this._swipe_controller.isContinuousSwipe;
+    }
+  },
+
   'orientation': {
 
     /** 

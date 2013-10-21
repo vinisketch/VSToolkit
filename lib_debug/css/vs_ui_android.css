@@ -65,7 +65,6 @@ body {
   -webkit-border-radius: 5px;
 
   font-weight: normal;
-  text-shadow: none;
 }
 
 .vs_ui_button.nav_back > div,
@@ -130,32 +129,24 @@ body {
 {
   color: #424142;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
-  text-shadow: none;
-  -webkit-border-image: none;
 }
 
 .vs_ui_button.default.red
 {
   color: white;
-  text-shadow: none;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(red), to(#BE0000));
-  -webkit-border-image: none;
 }
 
 .vs_ui_button.default.green
 {
   color: white;
-  text-shadow: none;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#01BF00), to(#079600));
-  -webkit-border-image: none;
 }
 
 .vs_ui_button.default.grey
 {
   color: white;
-  text-shadow: none;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#797979), to(#444));
-  -webkit-border-image: none;
 }.vs_ui_list {
   font-size: 20px;
   color: white;
@@ -216,7 +207,7 @@ li.pressed
   padding: 1px 10px;
 
   color: inherit;
-  text-shadow: rgba(0, 0, 0, 0.898438) 1px 1px 3px;
+/*  text-shadow: rgba(0, 0, 0, 0.898438) 1px 1px 3px; */
   height: 18px;
 	opacity:1;
 
@@ -283,7 +274,6 @@ ul.pressed li > div
 
 .vs_ui_list.BlockList > ul {
   text-overflow: ellipsis;
-  text-shadow: none;
   font-family: Helvetica;
   
   position: relative;
@@ -313,7 +303,6 @@ ul.pressed li > div
   padding: 12px 0 12px 50px;
   font-weight:  normal;
   color: inherit;
-  text-shadow: none;
   background: #424542 url(PanelTitle.png) no-repeat 10px center;
   -webkit-border-top-left-radius:   10px;
   -webkit-border-top-right-radius:  10px;
@@ -388,7 +377,6 @@ input[type="radio"]:checked:after
 
 .vs_ui_navbar >.vs_ui_textlabel  {
   font-family:  droid;
-  text-shadow:  none;
   color: rgb(255, 255, 255);
   font-size: 16px;
 }
@@ -506,7 +494,6 @@ input[type="checkbox"]:checked:after
   height:10px;
   background-color: rgb(90, 90, 90);
   -webkit-border-radius: 3px;
-  -webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,0.5);
   -webkit-border-image: none;
 }
 
@@ -544,7 +531,6 @@ input[type="checkbox"]:checked:after
   -webkit-animation-name: vs_ui_progressbar_anim;
 }.vs_ui_inputfield {
   border: #CCC solid 1px;
-  -webkit-box-shadow:inset 0 1px 4px rgba(0,0,0,0.3);
   height:35px;
   font-size: 20px;
 }
@@ -607,12 +593,10 @@ input[type="checkbox"]:checked:after
 .vs_ui_picker li {
   font-family: Helvetica, Arial, sans-serif;
   color: #333;
-  text-shadow: white 0px 1px 1px;
   padding-top: 7px;
   font-size: 28px;
   font-weight: bold;
   text-align:center;
-  -webkit-box-shadow: inset black 0px 0px 3px;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#DDD), to(#FFF));
 }
 
@@ -630,8 +614,6 @@ input[type="checkbox"]:checked:after
 
   color: #424142;
 
-  text-shadow: white 0px 1px 0px;
-
   font-family: Helvetica, Arial, sans-serif;
   font-size: 35px;
   text-align: center;
@@ -647,9 +629,7 @@ input[type="checkbox"]:checked:after
 
 .vs_ui_picker .slots div.readonly li{
   background: transparent;
-  -webkit-box-shadow: none;
   color: white;
-  text-shadow: none;
   padding-right: 0px;
 }
 
@@ -668,7 +648,6 @@ input[type="checkbox"]:checked:after
 .vs_ui_picker .button_incr.active, 
 .vs_ui_picker .button_decr.active {
   color: white;
-  -webkit-box-shadow: inset black 1px 1px 2px;
   background-image: -webkit-gradient(linear, left top, left bottom, 
       from(#ff6900),
       color-stop(0.1, #ff7500),
@@ -790,7 +769,6 @@ input[type="checkbox"]:checked:after
   font-size: 18px;
   line-height: 1.4;
   border: #CCC solid 1px;
-  -webkit-box-shadow:inset 0 1px 4px rgba(0,0,0,0.3);
   -webkit-border-radius: 5px;
 }
 
@@ -943,7 +921,6 @@ textarea:focus {
   color: #888;
   
   padding: 10px 10px 0 10px;
-  text-shadow: 0 1px white;
   
   border: none;
 }

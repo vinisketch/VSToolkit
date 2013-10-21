@@ -950,6 +950,9 @@ ui.PointerRecognizer = PointerRecognizer;
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+/**
+ * @protected
+ */
 var RecognizerManager = {
   /**
    * @protected
@@ -15488,10 +15491,12 @@ Slider.prototype = {
     this.__handle_width = this.__handle.offsetWidth;
     this.__handle_x = this.__handle.offsetLeft;
     this.__handle_y = this.__handle.offsetTop;
+    
+    this.__abs_pos = vs.util.getElementAbsolutePosition (this.view);
 
     // set the new handler position
-    var clientX = e.pointerList[0].clientX;
-    var clientY = e.pointerList[0].clientY;
+    var clientX = e.targetPointerList[0].pageX - this.__abs_pos.x;
+    var clientY = e.targetPointerList[0].pageY - this.__abs_pos.y;
     
     if (this._orientation === 0) {
       this.value = this._range [0] +
@@ -15509,18 +15514,19 @@ Slider.prototype = {
     this.propagate ('change', this._value);
   },
   
-  didDrag : function (info) {
+  didDrag : function (info, e) {
+    var clientX = e.targetPointerList[0].pageX - this.__abs_pos.x;
+    var clientY = e.targetPointerList[0].pageY - this.__abs_pos.y;
+    
     if (this._orientation === 0) {
-      dec = this.view.offsetWidth - this.__handle_width;
-      delta = info.dx;
+      this.value = this._range [0] +
+        (this._range [1] - this._range [0]) * clientX / this.view.offsetWidth;
     }
     else {
-      dec = this.view.offsetHeight - this.__handle_width;
-      delta = info.dy;
+      this.value = this._range [0] +
+        (this._range [1] - this._range [0]) * clientY / this.view.offsetHeight;
     }
     
-    this.value = this.__v + delta * (this._range [1] - this._range [0]) / dec;
-
     this.outPropertyChange ();
     this.propagate ('continuous_change', this._value);
   },

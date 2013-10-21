@@ -266,7 +266,7 @@ body.dark {
 }
 .device_test {
   opacity: 0;
-  margin-top: 0px;
+  margin-top: 100px;
 }
 /*
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
@@ -716,7 +716,7 @@ ul > li:first-child {
   font-family: nokiapuretext, helvetica;
   font-size: inherit;
   height: 35px;
-  width: 90px;
+  width: 45px;
   border: 1px solid #DDD;
   padding: 0px;
   -webkit-border-radius: 12px 12px;
