@@ -108,7 +108,6 @@ li {
   border-radius: 7px;
   overflow: hidden;
   color: rgba(125,125,125,1);
-  text-shadow: none;
   background-color: rgba(125,125,125,0.2);
   padding: 5px 0;
   -webkit-transform: translate3d(0, -50%, 0);
@@ -127,7 +126,7 @@ li {
 .vs_ui_list.TabList > .direct_access:active {
   background-color: rgba(125,125,125,0.5);
   color: white;
-//  text-shadow: rgba(0,0,0,0.398438) 0 1px 0;
+/*  text-shadow: rgba(0,0,0,0.398438) 0 1px 0; */
 }
 
 .vs_ui_list.TabList > .direct_access_value {
