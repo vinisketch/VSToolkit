@@ -33,7 +33,7 @@
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, #5A5A5A), color-stop(0.99, #BEBEBE)) !important;
 
   color: rgb(240,240,240);
-  text-shadow: 0 1px 0 rgba(0,0,0,0.7);
+/*  text-shadow: 0 1px 0 rgba(0,0,0,0.7); */
 }
 
 .vs_ext_ui_accordion > dt.collapsed {
