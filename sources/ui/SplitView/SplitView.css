@@ -28,7 +28,7 @@
 .vs_ui_splitview.tablet.horizontal.left > div:nth-child(1)
 {
   left: 0px;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+/*  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5); */
 }
 
 .vs_ui_splitview.tablet.horizontal.left > div:nth-child(2)
@@ -39,7 +39,7 @@
 .vs_ui_splitview.tablet.horizontal.right > div:nth-child(1)
 {
   left: 70%;
-  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+/*  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5); */
 }
 
 .vs_ui_splitview.tablet.horizontal.right > div:nth-child(2)
@@ -63,7 +63,7 @@
 
 .vs_ui_splitview.tablet.horizontal.top > div:nth-child(1)
 {
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+/*  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); */
   top: 0px;
 }
 
@@ -74,7 +74,7 @@
 
 .vs_ui_splitview.tablet.horizontal.bottom > div:nth-child(1)
 {
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+/*  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5); */
   bottom: 0px;
 }
 
