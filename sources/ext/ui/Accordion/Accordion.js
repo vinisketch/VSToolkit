@@ -448,8 +448,8 @@ Accordion.prototype = {
       vs.addPointerListener (document, core.POINTER_MOVE, this, false);
       vs.addPointerListener (document, core.POINTER_END, this, false);
       
-      this.__touch_start_x = e.pointerList[0].pageX;
-      this.__touch_start_y = e.pointerList[0].pageY;
+      this.__touch_start_x = e.targetPointerList[0].pageX;
+      this.__touch_start_y = e.targetPointerList[0].pageY;
 
       this.__elem = elem;
 
@@ -469,8 +469,8 @@ Accordion.prototype = {
       e.stopPropagation ();
       e.preventDefault ();
 
-      pageX = e.pointerList[0].pageX;
-      pageY = e.pointerList[0].pageY;
+      pageX = e.targetPointerList[0].pageX;
+      pageY = e.targetPointerList[0].pageY;
       delta = 
         Math.abs (pageY - this.__touch_start_y) + 
         Math.abs (pageX - this.__touch_start_x);  

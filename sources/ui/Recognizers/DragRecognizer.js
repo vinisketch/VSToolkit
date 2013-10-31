@@ -127,9 +127,9 @@ DragRecognizer.prototype = {
   pointerMove: function (e) {
     if (!this.__is_dragged) { return; }
 
-    var i = 0, l = e.pointerList.length, pointer, dx, dy;
+    var i = 0, l = e.targetPointerList.length, pointer, dx, dy;
     for (; i < l; i++) {
-      pointer = e.pointerList [i];
+      pointer = e.targetPointerList [i];
       if (pointer.identifier === this.__pointer_id) { break; }
       pointer = null;
     }

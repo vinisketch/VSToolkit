@@ -1105,8 +1105,8 @@ function createInfoWindowClass ()
         
         vs.addPointerListener (document, core.POINTER_END, this);
         vs.addPointerListener (document, core.POINTER_MOVE, this);
-        this.__start_x = e.pointerList[0].pageX;
-        this.__start_y = e.pointerList[0].pageY;
+        this.__start_x = e.targetPointerList[0].pageX;
+        this.__start_y = e.targetPointerList[0].pageY;
         
         if (this.marker) this.removeMapEvent ();
         util.addClassName (this.view, "selected");
@@ -1115,8 +1115,8 @@ function createInfoWindowClass ()
 
       case core.POINTER_MOVE:
 
-        var dx = e.pointerList[0].pageX - this.__start_x;
-        var dy = e.pointerList[0].pageY - this.__start_y;
+        var dx = e.targetPointerList[0].pageX - this.__start_x;
+        var dy = e.targetPointerList[0].pageY - this.__start_y;
           
         if (Math.abs (dx) + Math.abs (dy) < 10)
         {

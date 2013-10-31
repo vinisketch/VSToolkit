@@ -134,8 +134,8 @@ TapRecognizer.prototype = {
     this.addPointerListener (document, core.POINTER_END, this.obj);
     this.addPointerListener (document, core.POINTER_MOVE, this.obj);
   
-    this.__start_x = e.pointerList[0].pageX;
-    this.__start_y = e.pointerList[0].pageY;
+    this.__start_x = e.targetPointerList[0].pageX;
+    this.__start_y = e.targetPointerList[0].pageY;
     this.__is_touched = true;
   
     return false;
@@ -149,8 +149,8 @@ TapRecognizer.prototype = {
   pointerMove: function (e) {
     if (!this.__is_touched) { return; }
 
-    var dx = e.pointerList[0].pageX - this.__start_x;
-    var dy = e.pointerList[0].pageY - this.__start_y;
+    var dx = e.targetPointerList[0].pageX - this.__start_x;
+    var dy = e.targetPointerList[0].pageY - this.__start_y;
     
     if (Math.abs (dx) + Math.abs (dy) < View.MOVE_THRESHOLD) {
       // we still in selection mode
