@@ -172,8 +172,7 @@ RestStorage.prototype = {
 
       try
       {
-        if (model.toJSON) json = model.toJSON ();
-        else json = JSON.stringify (model);
+        json = JSON.stringify (model);
       }
       catch (e)
       {

@@ -257,11 +257,11 @@ VSObject.prototype =
    *
    * @name vs.core.Object#toJSON
    * @function
-   * @return {String} The JSON String
+   * @return {Object} the object value for stringify
    */
   toJSON : function ()
   {
-    return this._toJSON ("{") + "}";
+    return this._toJSON ();
   },
 
   /**
@@ -314,35 +314,24 @@ VSObject.prototype =
    */
   _toJSON : function (json)
   {
-    var prop_name, value, str,
+    var prop_name, value, data = {}, result,
       _properties_ = this.getModelProperties (), n = 0;
 
-    if (!_properties_) return json;
+    if (!_properties_) return data;
 
     for (var i = 0; i < _properties_.length; i++)
     {
       prop_name = _properties_ [i];
-      value = this ['_' + prop_name];
+      value = this ['_' + util.underscore (prop_name)];
       if (typeof value == "undefined") continue;
-      else if (value == null) str = 'null';
       else if (value instanceof Date)
-      { str = '"\/Date(' + value.getTime () + ')\/"'; }
-      else
-      {
-        if (value.toJSON) { str = value.toJSON (); }
-        else try {
-          str = JSON.stringify (value);
-        } catch (e)
-        {
-          console.warn (e);
-          continue;
-        }
-      }
-      if (n++) json += ',';
-      json += "\"" + prop_name + "\":" + str;
+      { result = '"\/Date(' + value.getTime () + ')\/"'; }
+      else if (value && value.toJSON) { result = value.toJSON (); }
+      else result = value;
+      data [prop_name] = result;
     }
 
-    return json;
+    return data;
   },
 
   /**

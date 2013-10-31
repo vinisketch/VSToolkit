@@ -208,24 +208,25 @@ VSArray.prototype = {
    *
    * @name vs.core.Array#toJSON
    * @function
-   * @return {String} The JSON String
+   * @return {Object} the object value for stringify
    */
   toJSON : function ()
   {
-    var json = this._toJSON ("{"), i = 0, obj;
-
-    json += ", \"data\": [";
-    for (;i < this._data.length; i++)
+    var result = this._toJSON (), i = 0, l = this._data.length, obj;
+    
+    result.data = [];
+    for (;i < l; i++)
     {
       obj = this._data [i];
-      if (!obj) continue;
-      if (obj.toJSON) json += obj.toJSON ();
-      else json += JSON.stringify (obj);
-      if (i < this._data.length - 1) json += ',';
+      if (typeof obj == "undefined") continue;
+      else if (obj instanceof Date)
+      { obj = '"\/Date(' + obj.getTime () + ')\/"'; }
+      else if (obj && obj.toJSON) obj = obj.toJSON ();
+      
+      result.data.push (obj);
     }
 
-    json += "]}";
-    return json;
+    return result;
   },
 
   /**
