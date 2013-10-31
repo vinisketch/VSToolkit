@@ -223,7 +223,7 @@ VSObject.prototype =
       }
     }
 
-    if (this.__df__) {
+    if (this.__df__ && this.__df__.length) {
       this.__df__.forEach (function (df) {
         df.restartPropagation ();
         if (should_propagate) {
