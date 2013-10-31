@@ -210,7 +210,7 @@ function doOneEvent (burst, isSynchron) {
     if (isSynchron) doOneHandler (handler_list [i])
   
     else (function (handler) {
-        setImmediate (function () { doOneHandler(handler) });
+        vs.setImmediate (function () { doOneHandler(handler) });
       }) (handler_list [i])
   }
 }
@@ -339,7 +339,7 @@ function serviceLoop () {
 
   if (_is_async_events_propagating || _is_sync_events_propagating) {
     // do the loop
-    setImmediate (loop);
+    vs.setImmediate (loop);
     return;
   }
 
@@ -415,7 +415,7 @@ function scheduleAction (func, delay) {
   else if (delay === ON_NEXT_FRAME) {
     vs.requestAnimationFrame (func);
   }
-  else setImmediate (func);
+  else vs.setImmediate (func);
 }
 
 /********************************************************************
