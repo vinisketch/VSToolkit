@@ -227,7 +227,7 @@ RestStorage.prototype = {
           url += '?';
           for (var i = 0; i < ps.length; i ++)
           {
-            var prop_name = ps[i], value = model ['_' + prop_name];
+            var prop_name = ps[i], value = model ['_' + util.underscore (prop_name)];
             if (prop_name === "id" || prop_name === 'modelClass') continue
             if (!util.isString (value) && !util.isNumber (value)) continue;
             if (j++) url += '&';
@@ -277,7 +277,7 @@ RestStorage.prototype = {
           url += '?';
           for (var i = 0; i < ps.length; i ++)
           {
-            var prop_name = ps[i], value = model ['_' + prop_name];
+            var prop_name = ps[i], value = model ['_' + util.underscore (prop_name)];
             if (prop_name === "id" || prop_name === 'modelClass') continue
             if (!util.isString (value) && !util.isNumber (value)) continue;
             if (j++) url += '&';
