@@ -360,6 +360,7 @@ fx_debug: ../lib_debug/js/vs_fx.js
 	$(CAT) fx/Animation.js >> $@
 	$(CAT) fx/Controller.js >> $@
 	$(CAT) fx/StackController.js >> $@
+	$(CAT) fx/SlideController.js >> $@
 	$(CAT) fx/SwipeController.js >> $@
 	$(CAT) fx/NavigationController.js >> $@
 	$(CAT) fx/CardController.js >> $@
