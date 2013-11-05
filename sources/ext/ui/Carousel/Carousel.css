@@ -13,6 +13,19 @@
   position: absolute;
 }
 
+.vs_ext_ui_carousel > .views
+{
+  top: 0px;
+  left:0px;
+}
+
+.vs_ext_ui_carousel > .views > *
+{
+  position: absolute;
+  top: 0px;
+  left:0px;
+}
+
 .vs_ext_ui_carousel > .indicators
 {
   padding: 0px;
