@@ -114,6 +114,7 @@ DragRecognizer.prototype = {
       if (this.delegate && this.delegate.didDragStart)
         this.delegate.didDragStart (e);
     } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
       console.log (exp);
     }
     return false;
@@ -142,6 +143,7 @@ DragRecognizer.prototype = {
       if (this.delegate && this.delegate.didDrag)
         this.delegate.didDrag ({dx: dx, dy:dy}, e);
     } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
       console.log (exp);
     }
   },
@@ -174,6 +176,7 @@ DragRecognizer.prototype = {
       if (this.delegate && this.delegate.didDragEnd)
         this.delegate.didDragEnd (e);
     } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
       console.log (exp);
     }
   },
