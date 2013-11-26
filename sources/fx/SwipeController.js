@@ -501,8 +501,8 @@ var SwipeController = vs.core.createClass ({
   {
     var
       size = this._owner.size,
-      carousel_div = this._owner._holes.children, 
-      pos =　this._states_array.indexOf (toComp.id);
+      carousel_div = this._owner._holes.children,
+      pos = this._states_array.indexOf (toComp.id);
 
     carousel_div.style.webkitTransitionDuration = "0ms";
 
