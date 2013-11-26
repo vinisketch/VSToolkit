@@ -48,7 +48,7 @@ function SVGView (config)
 
 var SVG_DOCUMENTS = {};
 var SVG_DOCUMENTS_TO_LOAD = {};
-var SVG_DIV_DOCUMENTS = null;
+var SVG_DEFS = null;
 
 function load_svg_doc (path, id, svg_obj)
 {
@@ -76,20 +76,22 @@ function load_svg_doc (path, id, svg_obj)
     object.height = "0";
     object.style.visibility = "hidden";
 
-    object.onload = function (e) {
+    object.onload = function () {
 
       var doc = object.getSVGDocument ();
       if (!doc) return;
       var svg_doc = doc.querySelector ('svg');
-      if (!SVG_DIV_DOCUMENTS)
+      if (!SVG_DEFS)
       {
-        SVG_DIV_DOCUMENTS = document.createElement ('div');
-        SVG_DIV_DOCUMENTS.style.width = "0";
-        SVG_DIV_DOCUMENTS.style.height = "0";
-        SVG_DIV_DOCUMENTS.style.visibility = "hidden";
-        document.body.appendChild (SVG_DIV_DOCUMENTS);
+        var svg = document.createElementNS ("http://www.w3.org/2000/svg", 'svg');
+        svg.setAttribute ("width", "0");
+        svg.setAttribute ("height", "0");
+        document.body.appendChild (svg);
+        
+        SVG_DEFS = document.createElementNS ("http://www.w3.org/2000/svg", 'defs');
+        svg.appendChild (SVG_DEFS);
       }
-      SVG_DIV_DOCUMENTS.appendChild (svg_doc);
+      SVG_DEFS.appendChild (svg_doc);
       document.body.removeChild (object);
 
       SVG_DOCUMENTS [path] = svg_doc;
@@ -139,9 +141,9 @@ SVGView.prototype = {
 
     function create_use (elem_id)
     {
-      use = document.createElementNS ("http://www.w3.org/2000/svg", 'use')
-      use.setAttributeNS ("http://www.w3.org/1999/xlink", "href", "#" + elem_id);
-      return use;
+      var use_elem = document.createElementNS ("http://www.w3.org/2000/svg", 'use');
+      use_elem.setAttributeNS ("http://www.w3.org/1999/xlink", "href", "#" + elem_id);
+      return use_elem;
     }
 
     if (elem_id)
@@ -150,7 +152,7 @@ SVGView.prototype = {
     }
     else
     {
-      var nodes = svg_doc.childNodes
+      var nodes = svg_doc.childNodes;
       for (var i = 0; i < nodes.length; i++)
       {
         var node = nodes [i];
