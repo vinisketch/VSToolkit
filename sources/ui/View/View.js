@@ -79,6 +79,7 @@ function View (config)
   this.parent (config);
   this.constructor = View;
   
+  // init recognizer support
   this.__pointer_recognizers = [];
 }
 
@@ -1980,83 +1981,6 @@ View.prototype = {
    * @protected
    * @function
    */
-  handleEvent: function (e)
-  {
-    if (this.__pointer_recognizers.length) {
-      
-      if (!this._enable) { return; }
-     
-      switch (e.type) {
-        case core.POINTER_START:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.pointerStart (e);
-          });
-        break;
-
-        case core.POINTER_MOVE:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.pointerMove (e);
-          });
-        break;
-
-        case core.POINTER_END:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.pointerEnd (e);
-          });
-        break;
-
-        case core.POINTER_CANCEL:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.pointerCancel (e);
-          });
-        break;
-
-        case core.GESTURE_START:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.gestureStart (e);
-          });
-          break;
-        
-        case core.GESTURE_CHANGE:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.gestureChange (e);
-          });
-          break;
-        
-        case core.GESTURE_END:
-          this.__pointer_recognizers.forEach (function (recognizer) {
-            recognizer.gestureEnd (e);
-          });
-          break;
-      }
-    }
-    else this._propagateToParent (e);
-  },
-  
-  __pointer_recognizers: null,
-  
-  addPointerRecognizer: function (recognizer)
-  {
-    if (!recognizer instanceof PointerRecognizer) return;
-    
-    if (this.__pointer_recognizers.indexOf (recognizer) !== -1) return;
-    
-    this.__pointer_recognizers.push (recognizer);
-    recognizer.init (this);
-  },
-
-  removePointerRecognizer: function (recognizer)
-  {
-    if (!recognizer instanceof PointerRecognizer) return;
-    
-    this.__pointer_recognizers.remove (recognizer);
-    recognizer.uninit ();
-  },
-
-  /**
-   * @protected
-   * @function
-   */
   _propagateToParent : function (e)
   {
     if (this._bubbling && this.__parent && this.__parent.handleEvent)
@@ -2363,6 +2287,7 @@ View.prototype = {
     delete (matrix);
   }
 };
+util.extend (View.prototype, RecognizerManager);
 util.extendClass (View, core.EventSource);
 
 /********************************************************************
