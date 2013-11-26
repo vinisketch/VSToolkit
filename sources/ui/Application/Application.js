@@ -435,7 +435,7 @@ Application.configureDevice = function ()
   window.deviceConfiguration.deviceId = did;
   window.deviceConfiguration.virtualScreenSize = null;
   
-  for (tid in window.target_device_ids) {
+  if (window.target_device_ids) for (tid in window.target_device_ids) {
     var dids = window.target_device_ids [tid];
     if (dids.indexOf (did) !== -1) {
       window.deviceConfiguration.targetId = tid;
@@ -461,7 +461,7 @@ Application.configureDevice = function ()
       deviceConfiguration.orientation === -180)
     tid += "_l";
 
-  if (window.target_device_ids [tid]) {
+  if (window.target_device_ids && window.target_device_ids [tid]) {
     window.deviceConfiguration.targetId = tid;
    
     window.deviceConfiguration.setOrientation (window.orientation || 0, true);
@@ -484,7 +484,7 @@ Application.configureDevice = function ()
       deviceConfiguration.orientation === -180)
     tid += "_l";
 
-  if (window.target_device_ids [tid]) {
+  if (window.target_device_ids && window.target_device_ids [tid]) {
     window.deviceConfiguration.targetId = tid;
     window.deviceConfiguration.virtualScreenSize = size;
     window.deviceConfiguration.setOrientation (window.orientation || 0, true);
@@ -504,7 +504,7 @@ Application.configureDevice = function ()
       deviceConfiguration.orientation === -180)
     tid += "_l";
 
-  if (window.target_device_ids [tid]) {
+  if (window.target_device_ids && window.target_device_ids [tid]) {
     window.deviceConfiguration.targetId = tid;
     window.deviceConfiguration.virtualScreenSize = size;
     window.deviceConfiguration.setOrientation (window.orientation || 0, true);
