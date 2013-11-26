@@ -521,7 +521,7 @@ var SwipeController = vs.core.createClass ({
           self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
         }
         if (clb) clb.call (self._owner);
-      } catch (e) { console.error (e); }
+      } catch (e) { if (e.stack) console.log (e.stack);console.error (e); }
     };
     
     function runAnimation ()
@@ -547,7 +547,7 @@ var SwipeController = vs.core.createClass ({
               "translate3D(0," + self.__current_pos + "px,0)");
         });
       }
-      catch (e) { console.error (e); }
+      catch (e) { if (e.stack) console.log (e.stack);console.error (e); }
     };
     runAnimation ();
   } 

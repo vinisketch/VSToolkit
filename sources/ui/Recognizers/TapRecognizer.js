@@ -121,6 +121,7 @@ TapRecognizer.prototype = {
         if (this.delegate && this.delegate.didTouch)
           this.delegate.didTouch (e);
       } catch (e) {
+        if (e.stack) console.log (e.stack);
         console.log (e);
       }
     }
@@ -166,6 +167,7 @@ TapRecognizer.prototype = {
       if (this.delegate && this.delegate.didTouch)
         this.delegate.didUntouch (e);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
   },
@@ -188,6 +190,7 @@ TapRecognizer.prototype = {
         try {
           self.delegate.didUntouch (e);
         } catch (e) {
+          if (e.stack) console.log (e.stack);
           console.log (e);
         }
         self.__unselect_time_out = 0;
@@ -199,6 +202,7 @@ TapRecognizer.prototype = {
         try {
           self.delegate.didTap (self.__tap_mode, e);
         } catch (e) {
+          if (e.stack) console.log (e.stack);
           console.log (e);
         }
         self.__tap_mode = 0;

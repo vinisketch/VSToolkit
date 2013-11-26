@@ -97,6 +97,7 @@ RotationRecognizer.prototype = {
       if (this.delegate && this.delegate.didRotationStart)
         this.delegate.didRotationStart (event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
 
@@ -113,6 +114,7 @@ RotationRecognizer.prototype = {
       if (this.delegate && this.delegate.didRotationChange)
         this.delegate.didRotationChange (event.rotation, event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
   },
@@ -130,6 +132,7 @@ RotationRecognizer.prototype = {
       if (this.delegate && this.delegate.didRotationEnd)
         this.delegate.didRotationEnd (event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
   },

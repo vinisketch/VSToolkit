@@ -122,6 +122,7 @@ LocalStorage.prototype = {
       }
       catch (e)
       {
+        if (e.stack) console.log (e.stack)
         console.error ("LocalStorate.load failed. " + e.toString ());
       }
     }

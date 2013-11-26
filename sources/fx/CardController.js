@@ -631,7 +631,11 @@ var CardController = vs.core.createClass ({
           self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
         }
         if (clb) clb.call (this.owner);
-      } catch (e) { console.error (e); }
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack);
+        console.error (e);
+      }
     },
     
     runAnimation = function ()
@@ -653,7 +657,10 @@ var CardController = vs.core.createClass ({
           animation.durations = inDurations;
         }
       }
-      catch (e) { console.error (e); }
+      catch (e) {
+        if (e.stack) console.log (e.stack);
+        console.error (e);
+      }
     };
     if (setInitialPosAnimation) setInitialPosAnimation.process (toComp, function () {
       vs.scheduleAction (function () {runAnimation ();});

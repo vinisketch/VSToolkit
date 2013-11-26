@@ -279,6 +279,7 @@ VSObject.prototype =
     }
     catch (e)
     {
+      if (e.stack) console.log (e.stack)
       console.error ("vs.core.Object.parseJSON failed. " + e.toString ());
     }
   },

@@ -578,7 +578,7 @@ var SlideController = vs.core.createClass ({
           self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
         }
         if (clb) clb.call (self._owner);
-      } catch (e) { console.error (e); }
+      } catch (e) { if (e.stack) console.log (e.stack);console.error (e); }
     },
     
     runAnimation = function ()
@@ -606,7 +606,7 @@ var SlideController = vs.core.createClass ({
           }
         });
       }
-      catch (e) { console.error (e); }
+      catch (e) { if (e.stack) console.log (e.stack);console.error (e); }
     };
     setPosition.process (toComp, function () {
       vs.scheduleAction (function () {runAnimation ();});

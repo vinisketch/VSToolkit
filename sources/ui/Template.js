@@ -653,6 +653,7 @@ Template.parseHTML = function (html) {
   }
   catch (e) {
     console.error ("vs.ui.Template.parseHTML failed:");
+    if (e.stack) console.log (e.stack);
     console.error (e);
     return undefined;
   }

@@ -252,7 +252,7 @@ ToolBar.prototype = {
     var item = this._items [id];
     if (!item) { return; }
     
-    try { this.remove (item); } catch (e) {}
+    try { this.remove (item); } catch (e) {if (e.stack) console.log (e.stack);}
     item.unbind ('select', this);
     
     delete (this._items [id]);

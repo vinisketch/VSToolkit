@@ -449,7 +449,11 @@ Controller.prototype = {
         {
           self._delegate.controllerAnimationDidEnd (fromComp, toComp, self);
         }
-      } catch (e) { console.error (e); }
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack);
+        console.error (e); 
+      }
     },
     runAnimation = function ()
     {
@@ -493,7 +497,10 @@ Controller.prototype = {
           if (animationOut) animationOut.durations = outDurations;
         }
       }
-      catch (e) { console.error (e); }
+      catch (e) {
+        if (e.stack) console.log (e.stack);
+        console.error (e);
+      }
     };
     vs.scheduleAction (function () {runAnimation ();});
   },

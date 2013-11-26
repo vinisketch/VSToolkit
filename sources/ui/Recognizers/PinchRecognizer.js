@@ -105,6 +105,7 @@ PinchRecognizer.prototype = {
       if (this.delegate && this.delegate.didPinchStart)
         this.delegate.didPinchStart (event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
     return false;
@@ -120,6 +121,7 @@ PinchRecognizer.prototype = {
       if (this.delegate && this.delegate.didPinchChange)
         this.delegate.didPinchChange (event.scale, event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
   },
@@ -137,6 +139,7 @@ PinchRecognizer.prototype = {
       if (this.delegate && this.delegate.didPinchEnd)
         this.delegate.didPinchEnd (event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
   },

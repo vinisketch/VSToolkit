@@ -176,6 +176,7 @@ RestStorage.prototype = {
       }
       catch (e)
       {
+        if (e.stack) console.log (e.stack)
         error.log (e);
         self.propagate ("error", e);
       }
@@ -246,6 +247,7 @@ RestStorage.prototype = {
       }
       catch (e)
       {
+        if (e.stack) console.log (e.stack)
         console.error ("LocalStorate.load failed. " + e.toString ());
       }
     }
@@ -293,6 +295,7 @@ RestStorage.prototype = {
       }
       catch (e)
       {
+        if (e.stack) console.log (e.stack)
         console.error ("LocalStorate.load failed. " + e.toString ());
       }
     }

@@ -68,6 +68,7 @@ function cancelAnimation (anim_id)
     }
     catch (e)
     {
+      if (e.stack) console.log (e.stack)
       console.error (e);
       return false;
     }
@@ -339,6 +340,7 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
       }
       catch (e)
       {
+        if (e.stack) console.log (e.stack)
         console.error (e);
         return false;
       }
