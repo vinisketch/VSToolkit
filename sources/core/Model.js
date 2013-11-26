@@ -336,9 +336,9 @@ Model.prototype = {
       _properties_ = this.getModelProperties (),
       desc, _prop_name = '_' + util.underscore (prop_name), model;
 
-    if (util.isArray (value))
+    if ((value && value.data) || util.isArray (value))
     {
-      model = new VSArray ({}).init ();
+      model = new VSArray ({id: value.id}).init ();
       model.parseData (value);
     }
     else model = value;
