@@ -274,8 +274,6 @@ VSArray.prototype = {
     }
     else for (key in obj)
     {
-      this._data = [];
-      this.forEach = Array.prototype.forEach.bind (this._data);
       if (key == 'data')
       {
         fillArray (obj.data);
