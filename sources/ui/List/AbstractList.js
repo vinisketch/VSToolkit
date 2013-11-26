@@ -28,8 +28,6 @@
  *   Creates a new vs.ui.AbstractList.
  * @name vs.ui.AbstractList
  *
- *  @example
- *
  * @param {Object} config the configuration structure [mandatory]
  */
 function AbstractList (config)
