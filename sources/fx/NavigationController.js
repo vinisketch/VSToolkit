@@ -453,8 +453,8 @@ NavigationController.prototype = {
   },
   
   /**
-   *  @protected
    *  do nothing, will be managed by _stackAnimateComponents
+   *  @protected
    */
   _animateComponents : fx.Controller.prototype._animateComponents
 };

@@ -153,7 +153,7 @@ ScrollImageView.prototype = {
   },
      
   /**
-   * @ignore vs.ui.View#show
+   * @ignore
    * @function
    */
   show: function ()
@@ -315,8 +315,8 @@ util.defineClassProperties (ScrollImageView, {
   },
 
   /**
-   * @ignore
    * Get the image url
+   * @ignore
    * @return {string}
    */
   get : function ()
@@ -351,9 +351,9 @@ util.defineClassProperties (ScrollImageView, {
   },
 
   /**
-   * @ignore
    * Get the image stretch mode (vs.ui.ScrollImageView.STRETCH_FILL or 
    * vs.ui.ScrollImageView.STRETCH_NONE)
+   * @ignore
    * @return {number}
    */
   get : function ()

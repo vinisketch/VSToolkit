@@ -343,15 +343,14 @@ Controller.prototype = {
   },
 
   /**
-   *  @private
-   *
-   *   set the component associated to a state
+   * Set the component associated to a state
    *
    * @name vs.fx.Controller#setStateComponentInformation
    * @function
    *
+   * @private
    * @param {String} state_id the state's name 
-   * @param {String | vs.ui.View} comp The GUI component name to instanciate or 
+   * @param {{String | vs.ui.View}} comp The GUI component name to instanciate or 
    *    the instance of the component  
    * @param {Object} init_data Optional data for the component 
    *                   constructor [optional]

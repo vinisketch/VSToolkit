@@ -120,7 +120,7 @@ Audio.prototype = {
    *    <li/>taskDidPause : function (vs.core.Task)
    *    <li/>taskDidEnd : function (vs.core.Task)
    *  </ul>
-   *	@property
+   *	@property {object}
    * @name vs.av.Audio#delegate
    */
   delegate : null,

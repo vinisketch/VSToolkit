@@ -27,8 +27,6 @@
  *  But it can contains any custom widgets.
  *  <p>
  *
- *  @example
- *
  *  @author David Thevenin
  *
  *  @constructor

@@ -43,8 +43,6 @@
  *  gesture additional information about the gesture may be available in the
  *  delegate method, for example, the scale factor of a pinch.<br />
  *
- *  @example
- *
  *  @author David Thevenin
  *  @see vs.ui.TapRecognizer
  *  @see vs.ui.DragRecognizer

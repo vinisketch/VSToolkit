@@ -33,7 +33,6 @@
  *  <ul> annotationselect : fire when a marker's information bubble is 
  *       selected.</ul>
  *  <p>
- *  @example
  *  
  *  @author David Thevenin
  *
@@ -182,7 +181,7 @@ GMap.prototype = {
   
   /**
    * @protected
-   * @type {Array<.number>}
+   * @type {Array.<number>}
    */
   _center: null,
   
@@ -760,7 +759,6 @@ var clear_view_style = function (map)
  *  <ul> mapload : fire when the map is loaded and ready to use.
  *  </ul>
  *  <p>
- *  @example
  *  
  * @author David Thevenin
  * @name vs.ext.ui.GMap.Annotation
@@ -955,7 +953,6 @@ function createInfoWindowClass ()
    *  <ul> mapload : fire when the map is loaded and ready to use.
    *  </ul>
    *  <p>
-   *  @example
    *  
    * @author David Thevenin
    * @name GMap.InfoWindow
@@ -1255,7 +1252,6 @@ function createInfoWindowClass ()
    *  <ul> mapload : fire when the map is loaded and ready to use.
    *  </ul>
    *  <p>
-   *  @example
    *  
    * @author David Thevenin
    * @name GMap.InfoWindow

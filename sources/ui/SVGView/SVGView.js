@@ -204,8 +204,8 @@ util.defineClassProperties (SVGView, {
     },
 
     /**
-     * @ignore
      * Get the image url
+     * @ignore
      * @return {string}
      */
     get : function ()

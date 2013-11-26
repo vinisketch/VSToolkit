@@ -124,8 +124,8 @@ Video.prototype = {
    *    <li/>taskDidEnd : function (vs.core.Task)
    *  </ul>
    * @name vs.av.Video#delegate 
-   *@property
-  */
+   * @property {object}
+   */
   delegate : null,
   
   /*****************************************************************

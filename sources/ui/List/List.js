@@ -155,7 +155,8 @@ DefaultListItem.prototype = {
     }
   },
 
-  /** 
+  /**
+   * @ignore
    */ 
   set label (v)
   {
@@ -546,8 +547,6 @@ function defaultListRenderData (itemsSelectable)
  *  @constructor
  *   Creates a new vs.ui.List.
  * @name vs.ui.List
- *
- *  @example
  *
  * @param {Object} config the configuration structure [mandatory]
  */

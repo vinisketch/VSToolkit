@@ -182,7 +182,8 @@ var SplitView = vs.core.createClass ({
       },
       
       /**
-      */
+       * @ignore
+       */
       get : function (v)
       {
         return this._orientation;

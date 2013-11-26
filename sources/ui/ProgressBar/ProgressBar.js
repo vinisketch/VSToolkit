@@ -23,10 +23,6 @@
  *  @class
  *  The vs.ui.ProgressBar class is used to convey the progress of a task.
  *
- *  @example
- *
- * <p>
- *
  *  @author David Thevenin
  *
  *  @constructor

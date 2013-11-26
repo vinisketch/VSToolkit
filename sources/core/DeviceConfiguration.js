@@ -785,6 +785,10 @@ else DeviceConfiguration._data_OS = [];
 
 if (typeof window != 'undefined' && !window.deviceConfiguration)
 {
+/**
+ * @name deviceConfiguration 
+ * @type vs.core.DeviceConfiguration
+ */
   window.deviceConfiguration = new DeviceConfiguration ();
 }
 

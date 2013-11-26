@@ -431,8 +431,8 @@ StackController.prototype = {
   {},
   
   /**
-   *  @protected
    *  do nothing, will be managed by _stackAnimateComponents
+   *  @protected
    */
   _animateComponents :
     function (fromComp, toComp, animationOut, animationIn, animation_clb, instant)

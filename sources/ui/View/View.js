@@ -62,7 +62,6 @@ function _findNodeRef (node, ref)
  *           the user release the mouse/ the pressur on screen.
  *  </ul>
  *  <p>
- *  @example
  *
  *  @author David Thevenin
  *
@@ -2414,8 +2413,8 @@ util.defineClassProperties (View, {
     },
 
     /**
-     * @ignore
      * Return true is the object is visible. False otherwise.
+     * @ignore
      * @type {boolean}
      */
     get : function ()
@@ -2475,8 +2474,9 @@ util.defineClassProperties (View, {
 
     /**
      * Change view opacity.
+     * value is include in this range [0, 1]
      * @name vs.ui.View#opacity
-     * @type {number} [0, 1]
+     * @type {number}
      */
     set : function (v)
     {

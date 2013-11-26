@@ -115,7 +115,7 @@ VSArray.prototype = {
    * @name vs.core.Array#add
    * @function
    *
-   * @param {element1, ..., elementN} datas
+   * @param {...vs.core.Object} datas
    */
   add : function ()
   {
@@ -137,7 +137,7 @@ VSArray.prototype = {
    * @function
    *
    * @param {number} index the position
-   * @param {element1, ..., elementN} datas
+   * @param {...vs.core.Object} datas
    */
   addAtIndex : function ()
   {

@@ -99,8 +99,8 @@ util.defineClassProperty (TextLabel, "text", {
   },
 
   /**
-   * @ignore
    * get the text value
+   * @ignore
    * @type {string}
    */
   get : function ()

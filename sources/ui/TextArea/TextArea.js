@@ -206,8 +206,8 @@ util.defineClassProperty (TextArea, "value", {
   },
 
   /**
-   * @ignore
    * get the text value
+   * @ignore
    * @type {string}
    */
   get : function ()

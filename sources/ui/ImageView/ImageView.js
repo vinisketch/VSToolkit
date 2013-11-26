@@ -106,8 +106,8 @@ util.defineClassProperties (ImageView, {
     },
   
     /**
-     * @ignore
      * Get the image url
+     * @ignore
      * @return {string}
      */
     get : function ()

@@ -84,6 +84,7 @@ Task.prototype = {
 /********************************************************************
 
 ********************************************************************/
+
   /**
    * TaskDelegate.
    * Methods are called when state changes (stop | pause)
@@ -100,7 +101,7 @@ Task.prototype = {
    *
    * @name vs.core.Task#delegate
    *
-   *	@property
+   * @property {object}
    */
   delegate : null,
 

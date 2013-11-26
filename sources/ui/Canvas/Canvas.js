@@ -200,7 +200,7 @@ Canvas.prototype = {
    *
    * @name vs.ui.Canvas#polygon
    * @function
-   * @param {number+} list of number
+   * @param {...number} list of number
    */
   polygon : function ()
   {
@@ -505,7 +505,7 @@ util.defineClassProperty (Canvas, "size", {
   },
 
   /**
-     * @ignore
+   * @ignore
    * @type {Array.<number>}
    */
   get : function ()

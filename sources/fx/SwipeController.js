@@ -503,7 +503,7 @@ var SwipeController = vs.core.createClass ({
       size = this._owner.size,
       carousel_div = this._owner._holes.children,
       pos = this._states_array.indexOf (toComp.id);
-
+  
     carousel_div.style.webkitTransitionDuration = "0ms";
 
     if (this._orientation === SwipeController.HORIZONTAL)

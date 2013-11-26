@@ -912,12 +912,12 @@ Fsm.prototype =
   },
   
   /**
-   *  @public
    *  Returns the state accessible on the given input from the current state.
    *  Returns undefined in no state is accessible.
    *
    * @name vs.core.Fsm#getAccessibleStateOn 
    * @function
+   * @public
    *
    * @param {String} on input
    * @return {Object} the state  

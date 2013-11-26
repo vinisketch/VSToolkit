@@ -615,7 +615,7 @@ Animation.prototype = {
    * Sets the origin for the transformations
    * By default it is set to 1.
    * For infinite interation, use 'infinite' value.
-   * @type number | 'infinite'
+   * @type {{number | string}}
    * @name vs.fx.Animation#iterationCount
    */
   iterationCount: 1,

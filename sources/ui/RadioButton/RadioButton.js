@@ -216,8 +216,8 @@ util.defineClassProperty (RadioButton, "selectedIndex", {
   },
 
   /** 
-   * @ignore
    * Get the vs.ui.RadioButton selectedIndex
+   * @ignore
    * @type {int}
    */ 
   get : function ()

@@ -30,14 +30,14 @@
  *  @constructor
  *   Creates a new HTTPRequest.
  *
- *  <p>
+ *  <br />
  *  Events:
  *  <ul>textload
  *    <li/> xmlload: data [xml doc]; propagate when data are loaded
  *    <li/> textload: data [text]: propagate when data are loaded
  *    <li/> loaderror: data [error information]: propagate when an error occured
  *  </ul>
- *  <p>
+ *  <br />
  * @example
  *  var xhr = new vs.core.HTTPRequest ({url: "http..."});
  *  xhr.init ();
