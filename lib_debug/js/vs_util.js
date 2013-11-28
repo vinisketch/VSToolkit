@@ -895,7 +895,7 @@ if (!vs.CSSMatrix.prototype.isAffine) {
   }
 }
 
-var precision = 1000000;
+var precision = 1000;
 
 /**
  *  vs.CSSMatrix#vs.getMatrixStr() -> String
@@ -2619,12 +2619,6 @@ function addCssRule (selector, rule)
 var SET_STYLE_OPTIMIZATION = true;
 
 /**
- * @private
- */
-var _current_platform_id = 0;
-vs._current_platform_id = _current_platform_id;
-
-/**
  *  Sets the active stylesheet for the HTML document according to the specified
  *  title.
  *
@@ -2637,7 +2631,6 @@ var setActiveStyleSheet = function (title)
   var i = 0, stylesheets = document.getElementsByTagName ("link"),
     stylesheet, info, id, app, size;
 
-  vs._current_platform_id = title;
   var apps = vs.Application_applications;
 
   if (SET_STYLE_OPTIMIZATION)
@@ -2674,38 +2667,6 @@ var setActiveStyleSheet = function (title)
       if (app.view) app.view.style.display = "block";
     }
   }
-
-//     // resize application
-//   if (window.deviceConfiguration.targets)
-//   {
-//     info = window.deviceConfiguration.targets [title];
-//     if (!info)
-//     { return; }
-//
-//     if (info.orientations [0] === 0 || info.orientations [0] === 180)
-//     {
-//       size = info.resolution.slice ();
-//     }
-//     else if (info.orientations [0] === 90 || info.orientations [0] === -90)
-//     {
-//       size = [];
-//       size [0] = info.resolution [1];
-//       size [1] = info.resolution [0];
-//     }
-//     else
-//     { return; }
-//
-//     if (info.statusBarHeight)
-//     {
-//       size [1] -= info.statusBarHeight;
-//     }
-//     if (apps) for (id in apps)
-//     {
-//       app = Application_applications [id];
-//       app.position = [0, 0];
-//       app.size = size;
-//     }
-//   }
 }
 
 /**

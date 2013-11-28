@@ -1531,7 +1531,6 @@ data.RSSRequester = RSSRequester;
  *       and usable.
  *  </ul>
  *  <p>
- *  @example
  *  
  *  @author David Thevenin
  *
@@ -2044,7 +2043,8 @@ util.defineClassProperties (GoogleSearch, {
       this.GPSCoordinateToAddress (v, function (result) {}, this);
     },
     
-    /** 
+    /**
+     * @ignore
      */ 
     get : function ()
     {

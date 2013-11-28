@@ -85,7 +85,6 @@ var vs = window.vs,
  *  <ul> annotationselect : fire when a marker's information bubble is 
  *       selected.</ul>
  *  <p>
- *  @example
  *  
  *  @author David Thevenin
  *
@@ -234,7 +233,7 @@ GMap.prototype = {
   
   /**
    * @protected
-   * @type {Array<.number>}
+   * @type {Array.<number>}
    */
   _center: null,
   
@@ -812,7 +811,6 @@ var clear_view_style = function (map)
  *  <ul> mapload : fire when the map is loaded and ready to use.
  *  </ul>
  *  <p>
- *  @example
  *  
  * @author David Thevenin
  * @name vs.ext.ui.GMap.Annotation
@@ -1007,7 +1005,6 @@ function createInfoWindowClass ()
    *  <ul> mapload : fire when the map is loaded and ready to use.
    *  </ul>
    *  <p>
-   *  @example
    *  
    * @author David Thevenin
    * @name GMap.InfoWindow
@@ -1157,8 +1154,8 @@ function createInfoWindowClass ()
         
         vs.addPointerListener (document, core.POINTER_END, this);
         vs.addPointerListener (document, core.POINTER_MOVE, this);
-        this.__start_x = e.pointerList[0].pageX;
-        this.__start_y = e.pointerList[0].pageY;
+        this.__start_x = e.targetPointerList[0].pageX;
+        this.__start_y = e.targetPointerList[0].pageY;
         
         if (this.marker) this.removeMapEvent ();
         util.addClassName (this.view, "selected");
@@ -1167,8 +1164,8 @@ function createInfoWindowClass ()
 
       case core.POINTER_MOVE:
 
-        var dx = e.pointerList[0].pageX - this.__start_x;
-        var dy = e.pointerList[0].pageY - this.__start_y;
+        var dx = e.targetPointerList[0].pageX - this.__start_x;
+        var dy = e.targetPointerList[0].pageY - this.__start_y;
           
         if (Math.abs (dx) + Math.abs (dy) < 10)
         {
@@ -1307,7 +1304,6 @@ function createInfoWindowClass ()
    *  <ul> mapload : fire when the map is loaded and ready to use.
    *  </ul>
    *  <p>
-   *  @example
    *  
    * @author David Thevenin
    * @name GMap.InfoWindow
@@ -2330,8 +2326,8 @@ Accordion.prototype = {
       vs.addPointerListener (document, core.POINTER_MOVE, this, false);
       vs.addPointerListener (document, core.POINTER_END, this, false);
       
-      this.__touch_start_x = e.pointerList[0].pageX;
-      this.__touch_start_y = e.pointerList[0].pageY;
+      this.__touch_start_x = e.targetPointerList[0].pageX;
+      this.__touch_start_y = e.targetPointerList[0].pageY;
 
       this.__elem = elem;
 
@@ -2351,8 +2347,8 @@ Accordion.prototype = {
       e.stopPropagation ();
       e.preventDefault ();
 
-      pageX = e.pointerList[0].pageX;
-      pageY = e.pointerList[0].pageY;
+      pageX = e.targetPointerList[0].pageX;
+      pageY = e.targetPointerList[0].pageY;
       delta = 
         Math.abs (pageY - this.__touch_start_y) + 
         Math.abs (pageX - this.__touch_start_x);  
@@ -2473,7 +2469,8 @@ GMap.prototype.html_template = "\
 ";
 
 Carousel.prototype.html_template = "\
-<div class='vs_ext_ui_carousel' x-hag-hole='children'>\
+<div class='vs_ext_ui_carousel'>\
+  <div class='views' x-hag-hole='children'></div>\
   <div class='indicators'></div>\
 </div>\
 ";

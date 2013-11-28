@@ -56,6 +56,18 @@
   -moz-box-align: start;
   box-align: start;
 }
+.vs_ui_splitview.tablet.horizontal.left > div:nth-child(1) {
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
+}
+.vs_ui_splitview.tablet.horizontal.right > div:nth-child(1) {
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.5);
+}
+.vs_ui_splitview.tablet.horizontal.top > div:nth-child(1) {
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+.vs_ui_splitview.tablet.horizontal.bottom > div:nth-child(1) {
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+}
 .vs_ui_splitview.mobile > div {
   -webkit-transform: translate(0px, 0px);
   -moz-transform: translate(0px, 0px);
@@ -716,7 +728,7 @@ ul > li:first-child {
   font-family: nokiapuretext, helvetica;
   font-size: inherit;
   height: 35px;
-  width: 45px;
+  width: 50px;
   border: 1px solid #DDD;
   padding: 0px;
   -webkit-border-radius: 12px 12px;

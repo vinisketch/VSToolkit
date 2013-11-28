@@ -174,8 +174,8 @@ Video.prototype = {
    *    <li/>taskDidEnd : function (vs.core.Task)
    *  </ul>
    * @name vs.av.Video#delegate 
-   *@property
-  */
+   * @property {object}
+   */
   delegate : null,
   
   /*****************************************************************
@@ -845,7 +845,7 @@ Audio.prototype = {
    *    <li/>taskDidPause : function (vs.core.Task)
    *    <li/>taskDidEnd : function (vs.core.Task)
    *  </ul>
-   *	@property
+   *	@property {object}
    * @name vs.av.Audio#delegate
    */
   delegate : null,

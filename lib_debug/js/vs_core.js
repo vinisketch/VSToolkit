@@ -395,7 +395,7 @@ VSObject.prototype =
       }
     }
 
-    if (this.__df__) {
+    if (this.__df__ && this.__df__.length) {
       this.__df__.forEach (function (df) {
         df.restartPropagation ();
         if (should_propagate) {
@@ -429,11 +429,11 @@ VSObject.prototype =
    *
    * @name vs.core.Object#toJSON
    * @function
-   * @return {String} The JSON String
+   * @return {Object} the object value for stringify
    */
   toJSON : function ()
   {
-    return this._toJSON ("{") + "}";
+    return this._toJSON ();
   },
 
   /**
@@ -451,6 +451,7 @@ VSObject.prototype =
     }
     catch (e)
     {
+      if (e.stack) console.log (e.stack)
       console.error ("vs.core.Object.parseJSON failed. " + e.toString ());
     }
   },
@@ -486,35 +487,24 @@ VSObject.prototype =
    */
   _toJSON : function (json)
   {
-    var prop_name, value, str,
+    var prop_name, value, data = {}, result,
       _properties_ = this.getModelProperties (), n = 0;
 
-    if (!_properties_) return json;
+    if (!_properties_) return data;
 
     for (var i = 0; i < _properties_.length; i++)
     {
       prop_name = _properties_ [i];
-      value = this ['_' + prop_name];
+      value = this ['_' + util.underscore (prop_name)];
       if (typeof value == "undefined") continue;
-      else if (value == null) str = 'null';
       else if (value instanceof Date)
-      { str = '"\/Date(' + value.getTime () + ')\/"'; }
-      else
-      {
-        if (value.toJSON) { str = value.toJSON (); }
-        else try {
-          str = JSON.stringify (value);
-        } catch (e)
-        {
-          console.warn (e);
-          continue;
-        }
-      }
-      if (n++) json += ',';
-      json += "\"" + prop_name + "\":" + str;
+      { result = '"\/Date(' + value.getTime () + ')\/"'; }
+      else if (value && value.toJSON) { result = value.toJSON (); }
+      else result = value;
+      data [prop_name] = result;
     }
 
-    return json;
+    return data;
   },
 
   /**
@@ -1455,7 +1445,7 @@ function doOneEvent (burst, isSynchron) {
     if (isSynchron) doOneHandler (handler_list [i])
   
     else (function (handler) {
-        setImmediate (function () { doOneHandler(handler) });
+        vs.setImmediate (function () { doOneHandler(handler) });
       }) (handler_list [i])
   }
 }
@@ -1584,7 +1574,7 @@ function serviceLoop () {
 
   if (_is_async_events_propagating || _is_sync_events_propagating) {
     // do the loop
-    setImmediate (loop);
+    vs.setImmediate (loop);
     return;
   }
 
@@ -1660,7 +1650,7 @@ function scheduleAction (func, delay) {
   else if (delay === ON_NEXT_FRAME) {
     vs.requestAnimationFrame (func);
   }
-  else setImmediate (func);
+  else vs.setImmediate (func);
 }
 
 /********************************************************************
@@ -2708,9 +2698,9 @@ Model.prototype = {
       _properties_ = this.getModelProperties (),
       desc, _prop_name = '_' + util.underscore (prop_name), model;
 
-    if (util.isArray (value))
+    if ((value && value.data) || util.isArray (value))
     {
-      model = new VSArray ({}).init ();
+      model = new VSArray ({id: value.id}).init ();
       model.parseData (value);
     }
     else model = value;
@@ -3873,12 +3863,12 @@ Fsm.prototype =
   },
   
   /**
-   *  @public
    *  Returns the state accessible on the given input from the current state.
    *  Returns undefined in no state is accessible.
    *
    * @name vs.core.Fsm#getAccessibleStateOn 
    * @function
+   * @public
    *
    * @param {String} on input
    * @return {Object} the state  
@@ -4551,6 +4541,7 @@ Task.prototype = {
 /********************************************************************
 
 ********************************************************************/
+
   /**
    * TaskDelegate.
    * Methods are called when state changes (stop | pause)
@@ -4567,7 +4558,7 @@ Task.prototype = {
    *
    * @name vs.core.Task#delegate
    *
-   *	@property
+   * @property {object}
    */
   delegate : null,
 
@@ -6177,6 +6168,10 @@ else DeviceConfiguration._data_OS = [];
 
 if (typeof window != 'undefined' && !window.deviceConfiguration)
 {
+/**
+ * @name deviceConfiguration 
+ * @type vs.core.DeviceConfiguration
+ */
   window.deviceConfiguration = new DeviceConfiguration ();
 }
 
@@ -6217,14 +6212,14 @@ core.DeviceConfiguration = DeviceConfiguration;
  *  @constructor
  *   Creates a new HTTPRequest.
  *
- *  <p>
+ *  <br />
  *  Events:
  *  <ul>textload
  *    <li/> xmlload: data [xml doc]; propagate when data are loaded
  *    <li/> textload: data [text]: propagate when data are loaded
  *    <li/> loaderror: data [error information]: propagate when an error occured
  *  </ul>
- *  <p>
+ *  <br />
  * @example
  *  var xhr = new vs.core.HTTPRequest ({url: "http..."});
  *  xhr.init ();
@@ -6816,7 +6811,7 @@ VSArray.prototype = {
    * @name vs.core.Array#add
    * @function
    *
-   * @param {element1, ..., elementN} datas
+   * @param {...vs.core.Object} datas
    */
   add : function ()
   {
@@ -6838,7 +6833,7 @@ VSArray.prototype = {
    * @function
    *
    * @param {number} index the position
-   * @param {element1, ..., elementN} datas
+   * @param {...vs.core.Object} datas
    */
   addAtIndex : function ()
   {
@@ -6909,24 +6904,25 @@ VSArray.prototype = {
    *
    * @name vs.core.Array#toJSON
    * @function
-   * @return {String} The JSON String
+   * @return {Object} the object value for stringify
    */
   toJSON : function ()
   {
-    var json = this._toJSON ("{"), i = 0, obj;
-
-    json += ", \"data\": [";
-    for (;i < this._data.length; i++)
+    var result = this._toJSON (), i = 0, l = this._data.length, obj;
+    
+    result.data = [];
+    for (;i < l; i++)
     {
       obj = this._data [i];
-      if (!obj) continue;
-      if (obj.toJSON) json += obj.toJSON ();
-      else json += JSON.stringify (obj);
-      if (i < this._data.length - 1) json += ',';
+      if (typeof obj == "undefined") continue;
+      else if (obj instanceof Date)
+      { obj = '"\/Date(' + obj.getTime () + ')\/"'; }
+      else if (obj && obj.toJSON) obj = obj.toJSON ();
+      
+      result.data.push (obj);
     }
 
-    json += "]}";
-    return json;
+    return result;
   },
 
   /**
@@ -6974,8 +6970,6 @@ VSArray.prototype = {
     }
     else for (key in obj)
     {
-      this._data = [];
-      this.forEach = Array.prototype.forEach.bind (this._data);
       if (key == 'data')
       {
         fillArray (obj.data);
@@ -7282,8 +7276,7 @@ LocalStorage.prototype = {
       
       try
       {
-        if (model.toJSON) json = model.toJSON ();
-        else json = JSON.stringify (model);
+        json = JSON.stringify (model);
       }
       catch (e)
       {
@@ -7322,6 +7315,7 @@ LocalStorage.prototype = {
       }
       catch (e)
       {
+        if (e.stack) console.log (e.stack)
         console.error ("LocalStorate.load failed. " + e.toString ());
       }
     }
@@ -7512,11 +7506,11 @@ RestStorage.prototype = {
 
       try
       {
-        if (model.toJSON) json = model.toJSON ();
-        else json = JSON.stringify (model);
+        json = JSON.stringify (model);
       }
       catch (e)
       {
+        if (e.stack) console.log (e.stack)
         error.log (e);
         self.propagate ("error", e);
       }
@@ -7568,7 +7562,7 @@ RestStorage.prototype = {
           url += '?';
           for (var i = 0; i < ps.length; i ++)
           {
-            var prop_name = ps[i], value = model ['_' + prop_name];
+            var prop_name = ps[i], value = model ['_' + util.underscore (prop_name)];
             if (prop_name === "id" || prop_name === 'modelClass') continue
             if (!util.isString (value) && !util.isNumber (value)) continue;
             if (j++) url += '&';
@@ -7587,6 +7581,7 @@ RestStorage.prototype = {
       }
       catch (e)
       {
+        if (e.stack) console.log (e.stack)
         console.error ("LocalStorate.load failed. " + e.toString ());
       }
     }
@@ -7618,7 +7613,7 @@ RestStorage.prototype = {
           url += '?';
           for (var i = 0; i < ps.length; i ++)
           {
-            var prop_name = ps[i], value = model ['_' + prop_name];
+            var prop_name = ps[i], value = model ['_' + util.underscore (prop_name)];
             if (prop_name === "id" || prop_name === 'modelClass') continue
             if (!util.isString (value) && !util.isNumber (value)) continue;
             if (j++) url += '&';
@@ -7634,6 +7629,7 @@ RestStorage.prototype = {
       }
       catch (e)
       {
+        if (e.stack) console.log (e.stack)
         console.error ("LocalStorate.load failed. " + e.toString ());
       }
     }

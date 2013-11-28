@@ -707,6 +707,7 @@ Template.parseHTML = function (html) {
   }
   catch (e) {
     console.error ("vs.ui.Template.parseHTML failed:");
+    if (e.stack) console.log (e.stack);
     console.error (e);
     return undefined;
   }
@@ -761,8 +762,6 @@ vs.ui.Template = Template;
  *  object that you specify within the constructor. Depending on the type of
  *  gesture additional information about the gesture may be available in the
  *  delegate method, for example, the scale factor of a pinch.<br />
- *
- *  @example
  *
  *  @author David Thevenin
  *  @see vs.ui.TapRecognizer
@@ -1154,6 +1153,7 @@ TapRecognizer.prototype = {
         if (this.delegate && this.delegate.didTouch)
           this.delegate.didTouch (e);
       } catch (e) {
+        if (e.stack) console.log (e.stack);
         console.log (e);
       }
     }
@@ -1167,8 +1167,8 @@ TapRecognizer.prototype = {
     this.addPointerListener (document, core.POINTER_END, this.obj);
     this.addPointerListener (document, core.POINTER_MOVE, this.obj);
   
-    this.__start_x = e.pointerList[0].pageX;
-    this.__start_y = e.pointerList[0].pageY;
+    this.__start_x = e.targetPointerList[0].pageX;
+    this.__start_y = e.targetPointerList[0].pageY;
     this.__is_touched = true;
   
     return false;
@@ -1182,8 +1182,8 @@ TapRecognizer.prototype = {
   pointerMove: function (e) {
     if (!this.__is_touched) { return; }
 
-    var dx = e.pointerList[0].pageX - this.__start_x;
-    var dy = e.pointerList[0].pageY - this.__start_y;
+    var dx = e.targetPointerList[0].pageX - this.__start_x;
+    var dy = e.targetPointerList[0].pageY - this.__start_y;
     
     if (Math.abs (dx) + Math.abs (dy) < View.MOVE_THRESHOLD) {
       // we still in selection mode
@@ -1199,6 +1199,7 @@ TapRecognizer.prototype = {
       if (this.delegate && this.delegate.didTouch)
         this.delegate.didUntouch (e);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
   },
@@ -1221,6 +1222,7 @@ TapRecognizer.prototype = {
         try {
           self.delegate.didUntouch (e);
         } catch (e) {
+          if (e.stack) console.log (e.stack);
           console.log (e);
         }
         self.__unselect_time_out = 0;
@@ -1232,6 +1234,7 @@ TapRecognizer.prototype = {
         try {
           self.delegate.didTap (self.__tap_mode, e);
         } catch (e) {
+          if (e.stack) console.log (e.stack);
           console.log (e);
         }
         self.__tap_mode = 0;
@@ -1374,6 +1377,7 @@ DragRecognizer.prototype = {
       if (this.delegate && this.delegate.didDragStart)
         this.delegate.didDragStart (e);
     } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
       console.log (exp);
     }
     return false;
@@ -1387,9 +1391,9 @@ DragRecognizer.prototype = {
   pointerMove: function (e) {
     if (!this.__is_dragged) { return; }
 
-    var i = 0, l = e.pointerList.length, pointer, dx, dy;
+    var i = 0, l = e.targetPointerList.length, pointer, dx, dy;
     for (; i < l; i++) {
-      pointer = e.pointerList [i];
+      pointer = e.targetPointerList [i];
       if (pointer.identifier === this.__pointer_id) { break; }
       pointer = null;
     }
@@ -1402,6 +1406,7 @@ DragRecognizer.prototype = {
       if (this.delegate && this.delegate.didDrag)
         this.delegate.didDrag ({dx: dx, dy:dy}, e);
     } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
       console.log (exp);
     }
   },
@@ -1434,6 +1439,7 @@ DragRecognizer.prototype = {
       if (this.delegate && this.delegate.didDragEnd)
         this.delegate.didDragEnd (e);
     } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
       console.log (exp);
     }
   },
@@ -1560,6 +1566,7 @@ PinchRecognizer.prototype = {
       if (this.delegate && this.delegate.didPinchStart)
         this.delegate.didPinchStart (event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
     return false;
@@ -1575,6 +1582,7 @@ PinchRecognizer.prototype = {
       if (this.delegate && this.delegate.didPinchChange)
         this.delegate.didPinchChange (event.scale, event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
   },
@@ -1592,6 +1600,7 @@ PinchRecognizer.prototype = {
       if (this.delegate && this.delegate.didPinchEnd)
         this.delegate.didPinchEnd (event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
   },
@@ -1710,6 +1719,7 @@ RotationRecognizer.prototype = {
       if (this.delegate && this.delegate.didRotationStart)
         this.delegate.didRotationStart (event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
 
@@ -1726,6 +1736,7 @@ RotationRecognizer.prototype = {
       if (this.delegate && this.delegate.didRotationChange)
         this.delegate.didRotationChange (event.rotation, event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
   },
@@ -1743,6 +1754,7 @@ RotationRecognizer.prototype = {
       if (this.delegate && this.delegate.didRotationEnd)
         this.delegate.didRotationEnd (event);
     } catch (e) {
+      if (e.stack) console.log (e.stack);
       console.log (e);
     }
   },
@@ -1826,7 +1838,6 @@ function _findNodeRef (node, ref)
  *           the user release the mouse/ the pressur on screen.
  *  </ul>
  *  <p>
- *  @example
  *
  *  @author David Thevenin
  *
@@ -4178,8 +4189,8 @@ util.defineClassProperties (View, {
     },
 
     /**
-     * @ignore
      * Return true is the object is visible. False otherwise.
+     * @ignore
      * @type {boolean}
      */
     get : function ()
@@ -4239,8 +4250,9 @@ util.defineClassProperties (View, {
 
     /**
      * Change view opacity.
+     * value is include in this range [0, 1]
      * @name vs.ui.View#opacity
-     * @type {number} [0, 1]
+     * @type {number}
      */
     set : function (v)
     {
@@ -5084,7 +5096,7 @@ Application.configureDevice = function ()
   window.deviceConfiguration.deviceId = did;
   window.deviceConfiguration.virtualScreenSize = null;
   
-  for (tid in window.target_device_ids) {
+  if (window.target_device_ids) for (tid in window.target_device_ids) {
     var dids = window.target_device_ids [tid];
     if (dids.indexOf (did) !== -1) {
       window.deviceConfiguration.targetId = tid;
@@ -5110,7 +5122,7 @@ Application.configureDevice = function ()
       deviceConfiguration.orientation === -180)
     tid += "_l";
 
-  if (window.target_device_ids [tid]) {
+  if (window.target_device_ids && window.target_device_ids [tid]) {
     window.deviceConfiguration.targetId = tid;
    
     window.deviceConfiguration.setOrientation (window.orientation || 0, true);
@@ -5133,7 +5145,7 @@ Application.configureDevice = function ()
       deviceConfiguration.orientation === -180)
     tid += "_l";
 
-  if (window.target_device_ids [tid]) {
+  if (window.target_device_ids && window.target_device_ids [tid]) {
     window.deviceConfiguration.targetId = tid;
     window.deviceConfiguration.virtualScreenSize = size;
     window.deviceConfiguration.setOrientation (window.orientation || 0, true);
@@ -5153,7 +5165,7 @@ Application.configureDevice = function ()
       deviceConfiguration.orientation === -180)
     tid += "_l";
 
-  if (window.target_device_ids [tid]) {
+  if (window.target_device_ids && window.target_device_ids [tid]) {
     window.deviceConfiguration.targetId = tid;
     window.deviceConfiguration.virtualScreenSize = size;
     window.deviceConfiguration.setOrientation (window.orientation || 0, true);
@@ -5560,7 +5572,8 @@ var SplitView = vs.core.createClass ({
       },
       
       /**
-      */
+       * @ignore
+       */
       get : function (v)
       {
         return this._orientation;
@@ -9064,7 +9077,7 @@ ScrollImageView.prototype = {
   },
      
   /**
-   * @ignore vs.ui.View#show
+   * @ignore
    * @function
    */
   show: function ()
@@ -9226,8 +9239,8 @@ util.defineClassProperties (ScrollImageView, {
   },
 
   /**
-   * @ignore
    * Get the image url
+   * @ignore
    * @return {string}
    */
   get : function ()
@@ -9262,9 +9275,9 @@ util.defineClassProperties (ScrollImageView, {
   },
 
   /**
-   * @ignore
    * Get the image stretch mode (vs.ui.ScrollImageView.STRETCH_FILL or 
    * vs.ui.ScrollImageView.STRETCH_NONE)
+   * @ignore
    * @return {number}
    */
   get : function ()
@@ -9523,8 +9536,8 @@ util.defineClassProperty (TextArea, "value", {
   },
 
   /**
-   * @ignore
    * get the text value
+   * @ignore
    * @type {string}
    */
   get : function ()
@@ -9950,8 +9963,6 @@ ui.Button = Button;
  *  @constructor
  *   Creates a new vs.ui.AbstractList.
  * @name vs.ui.AbstractList
- *
- *  @example
  *
  * @param {Object} config the configuration structure [mandatory]
  */
@@ -10496,7 +10507,8 @@ DefaultListItem.prototype = {
     }
   },
 
-  /** 
+  /**
+   * @ignore
    */ 
   set label (v)
   {
@@ -10887,8 +10899,6 @@ function defaultListRenderData (itemsSelectable)
  *  @constructor
  *   Creates a new vs.ui.List.
  * @name vs.ui.List
- *
- *  @example
  *
  * @param {Object} config the configuration structure [mandatory]
  */
@@ -11288,7 +11298,7 @@ List.prototype = {
       vs.addPointerListener (document, core.POINTER_MOVE, accessBarMove, false);
       vs.addPointerListener (document, core.POINTER_END, accessBarEnd, false);
       
-      var _acces_index = e.pointerList[0].target._index_;
+      var _acces_index = e.targetPointerList[0].target._index_;
       if (!util.isNumber (_acces_index)) return;
       var letter = self.__direct_access_letters [_acces_index];
      
@@ -12124,8 +12134,8 @@ util.defineClassProperty (RadioButton, "selectedIndex", {
   },
 
   /** 
-   * @ignore
    * Get the vs.ui.RadioButton selectedIndex
+   * @ignore
    * @type {int}
    */ 
   get : function ()
@@ -12458,8 +12468,6 @@ ui.CheckBox = CheckBox;
  *  Typically it includes navigation buttons, or a title.
  *  But it can contains any custom widgets.
  *  <p>
- *
- *  @example
  *
  *  @author David Thevenin
  *
@@ -13148,7 +13156,7 @@ ToolBar.prototype = {
     var item = this._items [id];
     if (!item) { return; }
     
-    try { this.remove (item); } catch (e) {}
+    try { this.remove (item); } catch (e) {if (e.stack) console.log (e.stack);}
     item.unbind ('select', this);
     
     delete (this._items [id]);
@@ -14080,8 +14088,8 @@ util.defineClassProperty (TextLabel, "text", {
   },
 
   /**
-   * @ignore
    * get the text value
+   * @ignore
    * @type {string}
    */
   get : function ()
@@ -14298,7 +14306,7 @@ Canvas.prototype = {
    *
    * @name vs.ui.Canvas#polygon
    * @function
-   * @param {number+} list of number
+   * @param {...number} list of number
    */
   polygon : function ()
   {
@@ -14603,7 +14611,7 @@ util.defineClassProperty (Canvas, "size", {
   },
 
   /**
-     * @ignore
+   * @ignore
    * @type {Array.<number>}
    */
   get : function ()
@@ -15001,10 +15009,6 @@ ui.Canvas = Canvas;
  *  @extends vs.ui.View
  *  @class
  *  The vs.ui.ProgressBar class is used to convey the progress of a task.
- *
- *  @example
- *
- * <p>
  *
  *  @author David Thevenin
  *
@@ -15841,8 +15845,8 @@ util.defineClassProperties (ImageView, {
     },
   
     /**
-     * @ignore
      * Get the image url
+     * @ignore
      * @return {string}
      */
     get : function ()
@@ -18006,7 +18010,7 @@ Picker.prototype = {
     e.preventDefault ();
     e.stopPropagation ();
     
-    var point = e.pointerList [0];
+    var point = e.targetPointerList [0];
     this._active_slot = undefined;
 
     var css = this._getComputedStyle (this._frame_view);
@@ -18115,7 +18119,7 @@ Picker.prototype = {
     e.preventDefault ();
     e.stopPropagation ();
 
-    var point = e.pointerList [0];
+    var point = e.targetPointerList [0];
     var topDelta = point.clientY - this.startY;
     var slot_elem = this._slots_elements[this._active_slot];
 
@@ -18457,7 +18461,7 @@ function SVGView (config)
 
 var SVG_DOCUMENTS = {};
 var SVG_DOCUMENTS_TO_LOAD = {};
-var SVG_DIV_DOCUMENTS = null;
+var SVG_DEFS = null;
 
 function load_svg_doc (path, id, svg_obj)
 {
@@ -18485,20 +18489,22 @@ function load_svg_doc (path, id, svg_obj)
     object.height = "0";
     object.style.visibility = "hidden";
 
-    object.onload = function (e) {
+    object.onload = function () {
 
       var doc = object.getSVGDocument ();
       if (!doc) return;
       var svg_doc = doc.querySelector ('svg');
-      if (!SVG_DIV_DOCUMENTS)
+      if (!SVG_DEFS)
       {
-        SVG_DIV_DOCUMENTS = document.createElement ('div');
-        SVG_DIV_DOCUMENTS.style.width = "0";
-        SVG_DIV_DOCUMENTS.style.height = "0";
-        SVG_DIV_DOCUMENTS.style.visibility = "hidden";
-        document.body.appendChild (SVG_DIV_DOCUMENTS);
+        var svg = document.createElementNS ("http://www.w3.org/2000/svg", 'svg');
+        svg.setAttribute ("width", "0");
+        svg.setAttribute ("height", "0");
+        document.body.appendChild (svg);
+        
+        SVG_DEFS = document.createElementNS ("http://www.w3.org/2000/svg", 'defs');
+        svg.appendChild (SVG_DEFS);
       }
-      SVG_DIV_DOCUMENTS.appendChild (svg_doc);
+      SVG_DEFS.appendChild (svg_doc);
       document.body.removeChild (object);
 
       SVG_DOCUMENTS [path] = svg_doc;
@@ -18548,9 +18554,9 @@ SVGView.prototype = {
 
     function create_use (elem_id)
     {
-      use = document.createElementNS ("http://www.w3.org/2000/svg", 'use')
-      use.setAttributeNS ("http://www.w3.org/1999/xlink", "href", "#" + elem_id);
-      return use;
+      var use_elem = document.createElementNS ("http://www.w3.org/2000/svg", 'use');
+      use_elem.setAttributeNS ("http://www.w3.org/1999/xlink", "href", "#" + elem_id);
+      return use_elem;
     }
 
     if (elem_id)
@@ -18559,7 +18565,7 @@ SVGView.prototype = {
     }
     else
     {
-      var nodes = svg_doc.childNodes
+      var nodes = svg_doc.childNodes;
       for (var i = 0; i < nodes.length; i++)
       {
         var node = nodes [i];
@@ -18613,8 +18619,8 @@ util.defineClassProperties (SVGView, {
     },
 
     /**
-     * @ignore
      * Get the image url
+     * @ignore
      * @return {string}
      */
     get : function ()
