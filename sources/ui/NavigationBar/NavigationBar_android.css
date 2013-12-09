@@ -1,29 +1,29 @@
-.vs_ui_navbar {
+.vs_ui_navigationbar {
   height: 45px;
 }
 
-.vs_ui_navbar >.vs_ui_textlabel  {
+.vs_ui_navigationbar >.vs_ui_textlabel  {
   font-family:  droid;
   color: rgb(255, 255, 255);
   font-size: 16px;
 }
 
-.vs_ui_navbar.black_ios_style, /** legacy comptability */
-.vs_ui_navbar.black_style
+.vs_ui_navigationbar.black_ios_style, /** legacy comptability */
+.vs_ui_navigationbar.black_style
 {
   background-image: -webkit-gradient(linear, left top, left bottom,
     from(#000), to(#181818));
 }
 
-.vs_ui_navbar.black_translucide_ios_style, /** legacy comptability */
-.vs_ui_navbar.black_translucide_style
+.vs_ui_navigationbar.black_translucide_ios_style, /** legacy comptability */
+.vs_ui_navigationbar.black_translucide_style
 {
   background-image: -webkit-gradient(linear, left top, left bottom,
     from(#000), to(#181818));
 }
 
-.vs_ui_navbar.blue_ios_style, /** legacy comptability */
-.vs_ui_navbar.blue_style
+.vs_ui_navigationbar.blue_ios_style, /** legacy comptability */
+.vs_ui_navigationbar.blue_style
 {
   background-image: -webkit-gradient(linear, left top, left bottom,
     from(#000), to(#181818));

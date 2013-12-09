@@ -1,4 +1,4 @@
-.vs_ui_navbar {
+.vs_ui_navigationbar {
   width: 100%;
   top:0px;
   overflow: hidden;
@@ -7,12 +7,12 @@
   z-index: 2000;
 }
 
-.vs_ui_navbar > *
+.vs_ui_navigationbar > *
 {
   position: absolute;
 }
 
-.vs_ui_navbar >.vs_ui_textlabel
+.vs_ui_navigationbar >.vs_ui_textlabel
 {
   font-weight: normal;
   text-align: center;
