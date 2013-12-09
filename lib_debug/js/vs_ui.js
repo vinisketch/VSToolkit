@@ -2343,7 +2343,7 @@ View.prototype = {
    */
   _clone : function (obj, cloned_map)
   {
-    var anim, a, key, child, l, hole;
+    var anim, a, key, child, l, hole, cloned_comp;
 
     core.EventSource.prototype._clone.call (this, obj, cloned_map);
 
@@ -2372,6 +2372,16 @@ View.prototype = {
     // remove parent link
     obj.__parent = undefined;
 
+    function getClonedComp (comp, cloned_map) {
+      if (!comp || !cloned_map) return null;
+      
+      if (cloned_map [comp._id]) return cloned_map [comp._id];
+      
+      var  view = cloned_map.__views__ [comp._id];
+        
+      return (view)?view._comp_:null;
+    }
+
     for (key in this.__children)
     {
       a = this.__children [key];
@@ -2384,13 +2394,26 @@ View.prototype = {
         while (l--)
         {
           child = a [l];
-          var cloned_comp = child.clone (null, cloned_map);
-          obj.add (cloned_comp, key);
+          cloned_comp = getClonedComp (child, cloned_map);
+          if (!cloned_comp) {
+            cloned_comp = child.clone (null, cloned_map);
+            obj.add (cloned_comp, key);
+          }
+          else {
+            cloned_map [child._id] = cloned_comp;
+          }
         }
       }
       else
       {
-        obj.add (a.clone (null, cloned_map), key);
+        cloned_comp = getClonedComp (a, cloned_map);
+        if (!cloned_comp) {
+          cloned_comp = a.clone (null, cloned_map);
+          obj.add (cloned_comp, key);
+        }
+        else {
+          cloned_map [a._id] = cloned_comp;
+        }
       }
     }
   },
@@ -2645,6 +2668,12 @@ View.prototype = {
    */
   createAndAddComponent : function (comp_name, config, extension)
   {
+    var comp_class = window [comp_name];
+    if (!comp_class) {
+      console.error ("Impossible to fund component '" + comp_name + "'.");
+      return;
+    }
+
     // verify the component view already exists
     if (!config) {config = {};}
 
@@ -2660,11 +2689,17 @@ View.prototype = {
     // Find template into the component prototype
     if (!view)
     {
-      if (window [comp_name] && window [comp_name].prototype &&
-          window [comp_name].prototype.node_template)
+      if (comp_class.prototype && comp_class.prototype.template)
       {
-        view = document.importNode
-          (window [comp_name].prototype.node_template, true);
+        view = Template.parseHTML (comp_class.prototype.template);
+      }
+    }
+
+    if (!view)
+    {
+      if (comp_class.prototype && comp_class.prototype.node_template)
+      {
+        view = document.importNode (comp_class.prototype.node_template, true);
       }
     }
 
@@ -2707,7 +2742,7 @@ View.prototype = {
     obj = null;
 
     // Build object
-    try { obj = new window [comp_name] (config); }
+    try { obj = new comp_class (config); }
     catch (exp)
     {
       msg = "Impossible to instanciate comp: " + comp_name;
@@ -19153,7 +19188,7 @@ List.prototype.html_template = "\
 ";
 
 NavigationBar.prototype.html_template = "\
-<div class='vs_ui_navbar' x-hag-hole='children'></div>\
+<div class='vs_ui_navigationbar' x-hag-hole='children'></div>\
 ";
 
 ToolBar.prototype.html_template = "\

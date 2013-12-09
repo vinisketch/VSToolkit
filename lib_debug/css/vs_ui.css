@@ -66,7 +66,7 @@ body {
 .vs_ui_popover >.center.absolute_layout,
 .application.absolute_layout,
 .vs_ui_splitview.absolute_layout,
-.vs_ui_navbar.absolute_layout,
+.vs_ui_navigationbar.absolute_layout,
 .vs_ui_view.absolute_layout
 {
   display: block;
@@ -76,7 +76,7 @@ body {
 .application.absolute_layout > *,
 .vs_ui_splitview.absolute_layout > *,
 .vs_ui_view.absolute_layout > *,
-.vs_ui_navbar.absolute_layout > *
+.vs_ui_navigationbar.absolute_layout > *
 {
   position: absolute;
 }
@@ -88,7 +88,7 @@ body {
 .vs_ui_popover >.center.vertical_layout,
 .vs_ui_splitview.vertical_layout,
 .application.vertical_layout,
-.vs_ui_navbar.vertical_layout,
+.vs_ui_navigationbar.vertical_layout,
 .vs_ui_view.vertical_layout
 {
   display: -webkit-box;
@@ -98,7 +98,7 @@ body {
 .vs_ui_popover >.center.vertical_layout > *,
 .application.vertical_layout > *,
 .vs_ui_splitview.vertical_layout > *,
-.vs_ui_navbar.vertical_layout > *,
+.vs_ui_navigationbar.vertical_layout > *,
 .vs_ui_view.vertical_layout > *
 {
   -webkit-box-flex: 0;
@@ -116,7 +116,7 @@ body {
 .vs_ui_popover >.center.horizontal_layout,
 .application.horizontal_layout,
 .vs_ui_splitview.horizontal_layout,
-.vs_ui_navbar.horizontal_layout,
+.vs_ui_navigationbar.horizontal_layout,
 .vs_ui_view.horizontal_layout
 {
   display: -webkit-box;
@@ -128,7 +128,7 @@ body {
 .vs_ui_popover >.center.horizontal_layout > *,
 .application.horizontal_layout > *,
 .vs_ui_splitview.horizontal_layout > *,
-.vs_ui_navbar.horizontal_layout > *,
+.vs_ui_navigationbar.horizontal_layout > *,
 .vs_ui_view.horizontal_layout > *
 {
   -webkit-box-flex: 0;
@@ -146,7 +146,7 @@ body {
 .vs_ui_popover >.center.flow_layout,
 .application.flow_layout,
 .vs_ui_splitview.flow_layout,
-.vs_ui_navbar.flow_layout,
+.vs_ui_navigationbar.flow_layout,
 .vs_ui_view.flow_layout
 {
   display: block;
@@ -155,7 +155,7 @@ body {
 .vs_ui_popover >.center.flow_layout > *,
 .application.flow_layout > *,
 .vs_ui_splitview.flow_layout > *,
-.vs_ui_navbar.flow_layout > *,
+.vs_ui_navigationbar.flow_layout > *,
 .vs_ui_view.flow_layout > *
 {
   display: inline-block;
@@ -851,7 +851,7 @@ input[type="checkbox"]:after
 {
   border: none;
 }
-.vs_ui_navbar {
+.vs_ui_navigationbar {
   width: 100%;
   top:0px;
   overflow: hidden;
@@ -860,12 +860,12 @@ input[type="checkbox"]:after
   z-index: 2000;
 }
 
-.vs_ui_navbar > *
+.vs_ui_navigationbar > *
 {
   position: absolute;
 }
 
-.vs_ui_navbar >.vs_ui_textlabel
+.vs_ui_navigationbar >.vs_ui_textlabel
 {
   font-weight: normal;
   text-align: center;
