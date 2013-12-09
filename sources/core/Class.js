@@ -42,6 +42,10 @@ var _constructor_ = Object.prototype.constructor;
  *  var d = new Dest ({size: [20, 20]}); // > 'MyView constructor'
  *  d.init ();
  *
+ * @memberOf vs.core
+ * @name createClass
+ * @function
+ *
  * @public
  */
 function createClass (config)
