@@ -35,7 +35,7 @@ function testViewLayoutSet ()
   assertEquals ('testViewLayout 7bis', "vs_ui_view", view.view.className);
 }
 
-var tr = "matrix3d(0.707106, 0.707106, 0, 0, -0.707106, 0.707106, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)";
+var tr = "matrix3d(0.707, 0.707, 0, 0, -0.707, 0.707, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1)";
 function testViewRotation ()
 {
   var view = new vs.ui.View ().init (), r = 45;
