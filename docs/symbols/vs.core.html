@@ -738,6 +738,33 @@ hr:last-child {
 
 <!-- ============================== methods summary ======================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.core.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.core.<b><a href="../symbols/vs.core.html#.createClass">createClass</a></b>()
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -995,6 +1022,55 @@ hr:last-child {
 			
 
 <!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name=".createClass"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.core.</span><b>createClass</b>()
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+					
+					<pre class="code"> var Class1 = vs.core.createClass ({
+   properties: {name: vs.core.Object.PROPERTY_IN_OUT},{});
+
+ var t = new Class1 ({name: 'Hello'});
+ t.init ();
+ console.log (t.name); // > 'Hello'
+ 
+ var MyView = vs.core.createClass (
+   parent: vs.ui.View,
+
+   constructor : function ()
+   {
+     console.log ('MyView constructor');
+   }  
+ });
+ var d = new Dest ({size: [20, 20]}); // > 'MyView constructor'
+ d.init ();</pre>
+					
+					
+					
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
 			
 			
 <!-- ============================== event details ========================= -->		
