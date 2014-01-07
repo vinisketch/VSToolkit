@@ -249,3 +249,207 @@ function testDataFlowFunction3 () {
   assertEquals ('testDataFlowFunction3 4', 4, item3._in_out1);
   assertEquals ('testDataFlowFunction3 5', 6, item3._in_out2);
 }
+
+function testDataFlowUnconnectAPI_ID_1 () {
+
+  var TestObject = vs.core.createClass ({
+
+    parent: vs.core.Object,
+
+    properties : {
+      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
+      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+    }
+  });
+
+  var item1 = new TestObject ().init ();
+  var item2 = new TestObject ().init ();
+  var item3 = new TestObject ().init ();
+  
+  var df = vs._default_df_;
+  
+  var t11_id = df.connect (item1, "inOut1", item2, "inOut1")
+  var t21_id = df.connect (item1, "inOut2", item2, "inOut2")
+
+  var t12_id = df.connect (item2, "inOut1", item3, "inOut1")
+  var t22_id = df.connect (item2, "inOut2", item3, "inOut2")
+
+  df.build ();
+
+  df.pausePropagation ();
+  item1['inOut1'] = 1;
+  item1['inOut2'] = 2;
+  df.restartPropagation ();
+  
+  df.propagate ();
+
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 1', 1, item1._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 2', 2, item1._in_out2);
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 3', 1, item2._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 4', 2, item2._in_out2);
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 5', 1, item3._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 6', 2, item3._in_out2);
+
+  df.unconnect (t12_id);
+  df.unconnect (t21_id);
+  
+  df.build ();
+
+  df.pausePropagation ();
+  item1['inOut1'] = 3;
+  item1['inOut2'] = 4;
+  df.restartPropagation ();
+  
+  df.propagate ();
+
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 7', 3, item1._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 8', 4, item1._in_out2);
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 9', 3, item2._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 10', 2, item2._in_out2);
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 11', 1, item3._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_ID_1 12', 2, item3._in_out2);
+}
+
+function testDataFlowUnconnectAPI_ID_2 () {
+
+  var TestObject = vs.core.createClass ({
+
+    parent: vs.core.Object,
+
+    properties : {
+      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
+      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+    }
+  });
+
+  var item1 = new TestObject ().init ();
+  var item2 = new TestObject ().init ();
+  var item3 = new TestObject ().init ();
+  
+  var df = vs._default_df_;
+  
+  var t11_id = df.connect (item1, "inOut1", item2, "inOut1")
+  var t21_id = df.connect (item1, "inOut2", item2, "inOut2")
+
+  var t12_id = df.connect (item2, "inOut1", item3, "inOut1")
+  var t22_id = df.connect (item2, "inOut2", item3, "inOut2")
+
+  df.build ();
+
+  df.pausePropagation ();
+  item1['inOut1'] = 1;
+  item1['inOut2'] = 2;
+  df.restartPropagation ();
+  
+  df.propagate ();
+
+  df.unconnect (t12_id);
+  df.unconnect (t21_id);
+  
+  df.build ();
+
+  df.pausePropagation ();
+  item1['inOut1'] = 3;
+  item1['inOut2'] = 4;
+  df.restartPropagation ();
+  
+  df.propagate ();
+
+  df.pausePropagation ();
+  item2['inOut2'] = 6;
+  df.restartPropagation ();
+
+  df.propagate ();
+
+  assertEquals ('testDataFlowUnconnectAPI_ID_2 1', 3, item1._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_ID_2 2', 4, item1._in_out2);
+  assertEquals ('testDataFlowUnconnectAPI_ID_2 3', 3, item2._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_ID_2 4', 6, item2._in_out2);
+  assertEquals ('testDataFlowUnconnectAPI_ID_2 5', 1, item3._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_ID_2 6', 6, item3._in_out2);
+}
+
+function testDataFlowReconnect () {
+
+  var TestObject = vs.core.createClass ({
+
+    parent: vs.core.Object,
+
+    properties : {
+      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
+      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+    }
+  });
+
+  var item1 = new TestObject ().init ();
+  var item2 = new TestObject ().init ();
+  var item3 = new TestObject ().init ();
+  
+  var df = vs._default_df_;
+  
+  var t11_id = df.connect (item1, "inOut1", item2, "inOut1")
+  var t21_id = df.connect (item1, "inOut2", item2, "inOut2")
+
+  var t12_id = df.connect (item2, "inOut1", item3, "inOut1")
+  var t22_id = df.connect (item2, "inOut2", item3, "inOut2")
+
+  df.build ();
+
+  df.pausePropagation ();
+  item1['inOut1'] = 1;
+  item1['inOut2'] = 2;
+  df.restartPropagation ();
+  
+  df.propagate ();
+
+  df.unconnect (t12_id);
+  df.unconnect (t21_id);
+  
+  df.build ();
+
+  df.pausePropagation ();
+  item1['inOut1'] = 3;
+  item1['inOut2'] = 4;
+  df.restartPropagation ();
+  
+  df.propagate ();
+
+  df.pausePropagation ();
+  item2['inOut2'] = 6;
+  df.restartPropagation ();
+
+  df.propagate ();
+
+  var t12_id = df.connect (item2, "inOut1", item3, "inOut1")
+  var t21_id = df.connect (item1, "inOut2", item2, "inOut2")
+
+  df.build ();
+
+  df.pausePropagation ();
+  item2['inOut1'] = 7;
+  item2['inOut2'] = 8;
+  df.restartPropagation ();
+
+  df.propagate ();
+
+  assertEquals ('testDataFlowReconnect 1', 3, item1._in_out1);
+  assertEquals ('testDataFlowReconnect 2', 4, item1._in_out2);
+  assertEquals ('testDataFlowReconnect 3', 7, item2._in_out1);
+  assertEquals ('testDataFlowReconnect 4', 8, item2._in_out2);
+  assertEquals ('testDataFlowReconnect 5', 7, item3._in_out1);
+  assertEquals ('testDataFlowReconnect 6', 8, item3._in_out2);
+
+  df.pausePropagation ();
+  item1['inOut1'] = 9;
+  item1['inOut2'] = 10;
+  df.restartPropagation ();
+
+  df.propagate ();
+
+  assertEquals ('testDataFlowReconnect 7', 9, item1._in_out1);
+  assertEquals ('testDataFlowReconnect 8', 10, item1._in_out2);
+  assertEquals ('testDataFlowReconnect 9', 9, item2._in_out1);
+  assertEquals ('testDataFlowReconnect 10', 10, item2._in_out2);
+  assertEquals ('testDataFlowReconnect 11', 9, item3._in_out1);
+  assertEquals ('testDataFlowReconnect 12', 10, item3._in_out2);
+}
