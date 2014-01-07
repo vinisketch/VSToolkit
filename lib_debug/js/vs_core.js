@@ -4221,12 +4221,125 @@ DataFlow.prototype = {
    * Build can (should) be call when all remove are done (to avoid
    * un-necessary calculation)
    *
+   *  @example
+   *  // there is two APIs:
+   *  df.unconnect (edge_id);
+   *  or
+   *  df.unconnect (obj_src, property_out, obj_trg, property_in);
+   *
    * @public
-   * @param {Number} edge_id the id of the edge to remove (this id is returned
-   *                 by connect method)
+   * @param {Number|String|Object} edge_id the id of the edge to remove (this id is returned
+   *                 by connect method) or obj_src the Component (or Id) source.
+   * @param {String|Array} property_out one or an array of output property name(s)
+   * @param {String|Object} obj_trg the Component (or Id) target.
+   * @param {String|Array} property_in one or an array of input property name(s)
    */
-  unconnect : function (edge_id) {
-    this._unconnect_by_id (edge_id);
+  unconnect : function () {
+    
+    if (arguments.length === 1) {
+      this._unconnect_by_id (arguments [0]);
+    }
+    else {
+      this._unconnect_by_params.apply (this, arguments);  
+    }
+  },
+
+  /**
+   * Remove a dataflow connection using a edge parameters
+   *
+   * @private
+   * @param {String|Object} obj_src the Component (or Id) source.
+   * @param {String|Array} property_out one or an array of output property name(s)
+   * @param {String|Object} obj_trg the Component (or Id) target.
+   * @param {String|Array} property_in one or an array of input property name(s)
+   */
+  _unconnect_by_params : function (obj_src, property_out, obj_trg, property_in) {
+  
+    var
+      cid_src, cid_trg, properties_out, properties_in,
+      data, index, data_l,
+      connections, edges,
+      edge_id = edge_id_counter++, edge;
+
+    if (util.isString (obj_src)){
+      cid_src = obj_src;
+    }
+    else {
+      cid_src = obj_src._id;
+    }
+
+    data = this._edges_from [cid_src];
+    if (!data) { return; }
+    
+    obj_src = VSObject._obs [cid_src]; if (!obj_src) { return; }
+    if (obj_src.__df__.indexOf (this) === -1) { return; }
+  
+    if (util.isString (obj_trg)) {
+      cid_trg = obj_trg;
+    }
+    else {
+      cid_trg = obj_trg._id;
+    }
+
+    // Properties out management
+    if (util.isString (property_out)) {
+      properties_out = [property_out];
+    }
+    else if (!util.isArray (property_out)) {
+      console.warn ("DataFlow.unconnect, error");
+      return;
+    }
+    else {
+      properties_out = property_out;
+    }
+  
+    // Properties in management
+    if (util.isString (property_in)) {
+      properties_in = [property_in];
+    }
+    else if (!util.isArray (property_in)) {
+      console.warn ("DataFlow.unconnect, error");
+      return;
+    }
+    else {
+      properties_in = property_in;
+    }
+    
+    function removeProperties (sources, list) {
+      list.forEach (function (data) {
+        var index = sources.indexOf (data);
+        if (index !== -1) sources.remove (index);
+      });
+    }
+      
+    // find a existing connection to the component
+    for (index = 0; index < data.length; index++) {
+      connections = data [index];
+      if (connections[0] === cid_trg) {
+        edges = connections [2];
+        
+        var i = 0, edge;
+        for (; i < edges.length;) {
+          edge = edges [i];
+      
+          properties_out_s = edge [1];
+          properties_in_s = edge [2];
+          
+          removeProperties (properties_out_s, properties_out);
+          removeProperties (properties_in_s, properties_in);
+          
+          if (properties_out_s.length === 0 || properties_in.length === 0) {
+            edges.remove (i);
+          }
+          else i++;
+        }
+        if (edges.length === 0) {
+          data.remove (index);
+        }
+        else index++;
+      }
+      else index++;
+    }
   },
 
   /**
