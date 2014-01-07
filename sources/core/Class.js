@@ -107,21 +107,6 @@ function createClass (config)
     
     // new implementation
     func._super_func_ = superFunc;
-
-//     Old implementation
-//     The new one, base on this._super.caller._super_func_ (VSObject)
-//     should be more efficient
-//     config [key] =  (function (func, superFunc)
-//     {
-//       return function ()
-//       {
-//         var result, _super = this._super;
-//         this._super = superFunc;
-//         result = func.apply (this, arguments);
-//         this._super = _super;
-//         return result;  
-//       };
-//     }(func, superFunc));  
   }
 
   // set class properties
