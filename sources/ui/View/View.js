@@ -1295,7 +1295,7 @@ View.prototype = {
 
       vs.addPointerListener (this.view, spec, handler);
     }
-    core.EventSource.prototype.bind.call (this, spec, obj, func, delay);
+    return core.EventSource.prototype.bind.call (this, spec, obj, func, delay);
   },
 
   /**

@@ -143,6 +143,8 @@ function KEYBOARD_bind (keyCode, obj, func, prevent)
       this._handler_set_down = true;
     }
   }
+  
+  return handler;
 };
 
 /**
