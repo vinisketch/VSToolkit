@@ -369,6 +369,63 @@ function testDataFlowUnconnectAPI_ID_2 () {
   assertEquals ('testDataFlowUnconnectAPI_ID_2 6', 6, item3._in_out2);
 }
 
+function testDataFlowUnconnectAPI_PM_1 () {
+
+  var TestObject = vs.core.createClass ({
+
+    parent: vs.core.Object,
+
+    properties : {
+      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
+      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+    }
+  });
+
+  var item1 = new TestObject ().init ();
+  var item2 = new TestObject ().init ();
+  var item3 = new TestObject ().init ();
+  
+  var df = vs._default_df_;
+  
+  df.connect (item1, ["inOut1", "inOut2"], item2, ["inOut1", "inOut2"])
+  df.connect (item2, ["inOut1", "inOut2"], item3, ["inOut1", "inOut2"])
+
+  df.build ();
+
+  df.pausePropagation ();
+  item1['inOut1'] = 1;
+  item1['inOut2'] = 2;
+  df.restartPropagation ();
+  
+  df.propagate ();
+
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 1', 1, item1._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 2', 2, item1._in_out2);
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 3', 1, item2._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 4', 2, item2._in_out2);
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 5', 1, item3._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 6', 2, item3._in_out2);
+
+  df.unconnect (item2, "inOut1", item3, "inOut1");
+  df.unconnect (item1, "inOut2", item2, "inOut2");
+  
+  df.build ();
+
+  df.pausePropagation ();
+  item1['inOut1'] = 3;
+  item1['inOut2'] = 4;
+  df.restartPropagation ();
+  
+  df.propagate ();
+
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 7', 3, item1._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 8', 4, item1._in_out2);
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 9', 3, item2._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 10', 2, item2._in_out2);
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 11', 1, item3._in_out1);
+  assertEquals ('testDataFlowUnconnectAPI_PM_1 12', 2, item3._in_out2);
+}
+
 function testDataFlowReconnect () {
 
   var TestObject = vs.core.createClass ({
