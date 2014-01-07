@@ -2009,6 +2009,11 @@ View._propagate_pointer_event = function (obj, func_ptr, event)
   func_ptr.call (obj, event);
 };
 
+/**
+ * @private
+ */
+var _template_nodes = null;
+
 View.prototype = {
 
   /*****************************************************************
@@ -2532,8 +2537,18 @@ View.prototype = {
    */
   _getTemplateNode : function (ref)
   {
-    var node =
-      document.querySelector (".application_templates ." + ref);
+    var node = null;
+    
+    if (!_template_nodes) {
+      _template_nodes = document.querySelector (".application_templates");
+      if (_template_nodes) {
+        _template_nodes.parentElement.removeChild (_template_nodes);
+      }
+    }
+    if (_template_nodes) {
+      var node = _template_nodes.querySelector ("." + ref);
+    }   
+      
     if (node) { return document.importNode (node, true); }
   },
 
@@ -3071,7 +3086,7 @@ View.prototype = {
 
       vs.addPointerListener (this.view, spec, handler);
     }
-    core.EventSource.prototype.bind.call (this, spec, obj, func, delay);
+    return core.EventSource.prototype.bind.call (this, spec, obj, func, delay);
   },
 
   /**

@@ -95,6 +95,14 @@ var ANIMATION_NAME = createProperty ("animation-name");
  */ 
 var ANIMATION_TIMING_FUNC = createProperty ("animation-timing-function");
 
+/** 
+ * CSS property specifies how a CSS animation should apply styles to its target
+ * before and after it is executing.
+ * @name vs.ANIMATION_FILL_MODE
+ * @type {String}
+ */ 
+var ANIMATION_FILL_MODE = createProperty ("animation-fill-mode");
+
 
 /** 
  * CSS property specifies the number of seconds or milliseconds a transition
@@ -207,6 +215,7 @@ util.extend (vs, {
   ANIMATION_DELAY:           ANIMATION_DELAY,
   ANIMATION_NAME:            ANIMATION_NAME,
   ANIMATION_TIMING_FUNC:     ANIMATION_TIMING_FUNC,
+  ANIMATION_FILL_MODE:       ANIMATION_FILL_MODE,
 
   TRANSITION_DURATION:       TRANSITION_DURATION,
   TRANSITION_PROPERTY:       TRANSITION_PROPERTY,
@@ -402,6 +411,8 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
       {
         comp.setStyle (ITERATION_COUNT, animation.iterationCount);
       }
+      
+      comp.setStyle (ANIMATION_FILL_MODE, "forwards");
     }
   };
 

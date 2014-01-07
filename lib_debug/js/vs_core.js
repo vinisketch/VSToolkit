@@ -1097,21 +1097,6 @@ function createClass (config)
     
     // new implementation
     func._super_func_ = superFunc;
-
-//     Old implementation
-//     The new one, base on this._super.caller._super_func_ (VSObject)
-//     should be more efficient
-//     config [key] =  (function (func, superFunc)
-//     {
-//       return function ()
-//       {
-//         var result, _super = this._super;
-//         this._super = superFunc;
-//         result = func.apply (this, arguments);
-//         this._super = _super;
-//         return result;  
-//       };
-//     }(func, superFunc));  
   }
 
   // set class properties
@@ -2900,6 +2885,8 @@ function KEYBOARD_bind (keyCode, obj, func, prevent)
       this._handler_set_down = true;
     }
   }
+  
+  return handler;
 };
 
 /**
@@ -4226,6 +4213,57 @@ DataFlow.prototype = {
     edges.push (edge);
     
     return edge_id;
+  },
+
+  /**
+   * Remove a dataflow connection
+   * After the remove, you have to call build method to compile the dataflow.
+   * Build can (should) be call when all remove are done (to avoid
+   * un-necessary calculation)
+   *
+   * @public
+   * @param {Number} edge_id the id of the edge to remove (this id is returned
+   *                 by connect method)
+   */
+  unconnect : function (edge_id) {
+    this._unconnect_by_id (edge_id);
+  },
+
+  /**
+   * Remove a dataflow connection using a edge ids
+   *
+   * @private
+   * @param {Number} edge_id the id of the edge to remove
+   */
+  _unconnect_by_id : function (edge_id) {
+    
+    for (var cid in this._edges_from) {
+      var data = this._edges_from [cid];
+      if (!data) continue;
+      
+      var data_l = data.length;
+      
+      // find a existing connection to the component
+      for (var index = 0; index < data_l; index++) {
+        var connections = data [index];
+        var edges = connections [2];
+
+        var i = 0, edges_l = edges.length, edge;
+        for (; i < edges_l; i++) {
+          edge = edges [i];
+      
+          if (edge && edge [0] === edge_id) {
+            edges.remove (i);
+            if (edges.length === 0) {
+              // remove connection
+              
+              
+            }
+            return;
+          }
+        }
+      }   
+    }
   },
 
   /**
