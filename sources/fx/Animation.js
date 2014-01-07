@@ -179,6 +179,8 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
       {
         comp.setStyle (ITERATION_COUNT, animation.iterationCount);
       }
+      
+      comp.setStyle (ANIMATION_FILL_MODE, "forwards");
     }
   };
 
