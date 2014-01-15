@@ -895,26 +895,6 @@ hr:last-child {
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/vs.ui.View.html#setHideAnimation">setHideAnimation</a></b>
-								</div>
-								<div class="description">Set the animation used when the view will be hidden.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/vs.ui.View.html#setShowAnimation">setShowAnimation</a></b>
-								</div>
-								<div class="description">Set the animation used when the view will be shown.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
 								<b><a href="../symbols/vs.ui.View.html#showAnimmation">showAnimmation</a></b>
 								</div>
 								<div class="description">Set the Animation when the view is shown</div>
@@ -1181,6 +1161,24 @@ hr:last-child {
 								</div>
 								<div class="description">Scale the view
  <p/>The scale is limited by a max and min scale value.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#setHideAnimation">setHideAnimation</a></b>(animations, options, clb)
+								</div>
+								<div class="description">Set the animation used when the view will be hidden.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#setShowAnimation">setShowAnimation</a></b>(animations, options, clb)
+								</div>
+								<div class="description">Set the animation used when the view will be shown.</div>
 							</td>
 						</tr>
 					
@@ -1875,86 +1873,6 @@ Object
 						Feed back remanence in ms before select a item
 						
 					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="setHideAnimation"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{String}</span>
-					<b>setHideAnimation</b>
-					
-					</div>
-					<div class="description">
-						Set the animation used when the view will be hidden.
-<br/>
-Options :
-<ul>
-  <li /> duration: animation duration for all properties
-  <li /> timing: animation timing for all properties
-  <li /> origin: Specifies the number of times an animation iterates.
-  <li /> iterationCount: Sets the origin for the transformations
-  <li /> delay: The time to begin executing an animation after it
-         is applied
-</ul>
-
- Ex:
-						
-					</div>
-					
-					
-					
-					<pre class="code"> myComp.setHideAnimation ([['translate', '100px'], ['opacity', '0']]);</pre>
-					
-					<pre class="code"> myAnim = new ABTranslateAnimation (50, 50);
- myComp.setHideAnimation (myAnim, t);</pre>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="setShowAnimation"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{String}</span>
-					<b>setShowAnimation</b>
-					
-					</div>
-					<div class="description">
-						Set the animation used when the view will be shown.
- <br/>
-Options :
-<ul>
-  <li /> duration: animation duration for all properties
-  <li /> timing: animation timing for all properties
-  <li /> origin: Specifies the number of times an animation iterates.
-  <li /> iterationCount: Sets the origin for the transformations
-  <li /> delay: The time to begin executing an animation after it
-         is applied
-</ul>
-
- Ex:
-						
-					</div>
-					
-					
-					
-					<pre class="code"> myComp.setShowAnimation ([['translate', '100px'], ['opacity', '0']]);</pre>
-					
-					<pre class="code"> myAnim = new ABTranslateAnimation (50, 50);
- myComp.setShowAnimation (myAnim);</pre>
 					
 					
 
@@ -2997,6 +2915,156 @@ Options :
 						
 						
 						
+						
+						
+						
+
+					<hr />
+				
+					<a name="setHideAnimation"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>setHideAnimation</b>(animations, options, clb)
+					
+					</div>
+					<div class="description">
+						Set the animation used when the view will be hidden.
+<br/>
+Options :
+<ul>
+  <li /> duration: animation duration for all properties
+  <li /> timing: animation timing for all properties
+  <li /> origin: Specifies the number of times an animation iterates.
+  <li /> iterationCount: Sets the origin for the transformations
+  <li /> delay: The time to begin executing an animation after it
+         is applied
+</ul>
+
+ Ex:
+						
+					</div>
+					
+					
+					
+					<pre class="code"> myComp.setHideAnimation ([['translate', '100px,0,0'], ['opacity', '0']], options);</pre>
+					
+					<pre class="code"> myAnim = new ABTranslateAnimation (50, 50);
+ myComp.setHideAnimation (myAnim, t);</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>animations</b>
+									
+								</dt>
+								<dd>{Array|vs.fx.Animation} array of animation <property,
+       value>, or an vs.fx.Animation object</dd>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd>{Object} list of animation options</dd>
+							
+								<dt>
+									<b>clb</b>
+									
+								</dt>
+								<dd>{Function} the method to call when the animation end</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> return the identifier of the animation process. You can
+      use it to stop the animation.</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name="setShowAnimation"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>setShowAnimation</b>(animations, options, clb)
+					
+					</div>
+					<div class="description">
+						Set the animation used when the view will be shown.
+ <br/>
+Options :
+<ul>
+  <li /> duration: animation duration for all properties
+  <li /> timing: animation timing for all properties
+  <li /> origin: Specifies the number of times an animation iterates.
+  <li /> iterationCount: Sets the origin for the transformations
+  <li /> delay: The time to begin executing an animation after it
+         is applied
+</ul>
+
+ Ex:
+						
+					</div>
+					
+					
+					
+					<pre class="code"> myComp.setShowAnimation ([['translate', '0,0,0'], ['opacity', '1']]);</pre>
+					
+					<pre class="code"> myAnim = new ABTranslateAnimation (50, 50);
+ myComp.setShowAnimation (myAnim);</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>animations</b>
+									
+								</dt>
+								<dd>{Array|vs.fx.Animation} array of animation <property,
+       value>, or an vs.fx.Animation object</dd>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd>{Object} list of animation options</dd>
+							
+								<dt>
+									<b>clb</b>
+									
+								</dt>
+								<dd>{Function} the method to call when the animation end</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{String}</span> return the identifier of the animation process. You can
+      use it to stop the animation.</dd>
+							
+							</dl>
 						
 						
 						
