@@ -1138,7 +1138,7 @@ TapRecognizer.prototype = {
   pointerStart: function (e) {
     if (this.__is_touched) { return; }
     // prevent multi touch events
-    if (e.nbPointers > 1) { return; }
+    if (e.targetPointerList.length === 0 || e.nbPointers > 1) { return; }
     
     if (this.__tap_mode === 0) {
       this.__tap_mode = 1;
@@ -1180,7 +1180,8 @@ TapRecognizer.prototype = {
    * @protected
    */
   pointerMove: function (e) {
-    if (!this.__is_touched) { return; }
+    // do not manage event for other targets
+    if (!this.__is_touched || e.targetPointerList.length === 0) { return; }
 
     var dx = e.targetPointerList[0].pageX - this.__start_x;
     var dy = e.targetPointerList[0].pageY - this.__start_y;
@@ -3461,6 +3462,9 @@ View.prototype = {
     }
     this.__view_display = undefined;
 
+    this.__is_hidding = false;
+    this.__is_showing = true;
+
     if (this._show_animation)
     {
       this._show_animation.process (this, this._show_object, this);
@@ -3480,6 +3484,10 @@ View.prototype = {
   _show_object : function ()
   {
     if (!this.view) { return; }
+    this.__visibility_anim = undefined;
+
+    if (!this.__is_showing) { return; }
+    this.__is_showing = false;
 
     this._visible = true;
     var self = this;
@@ -3511,13 +3519,14 @@ View.prototype = {
    *
    *  Ex:
    *  @example
-   *  myComp.setShowAnimation ([['translate', '100px'], ['opacity', '0']]);
+   *  myComp.setShowAnimation ([['translate', '0,0,0'], ['opacity', '1']]);
    *
    *  @example
    *  myAnim = new ABTranslateAnimation (50, 50);
    *  myComp.setShowAnimation (myAnim);
    *
    * @name vs.ui.View#setShowAnimation
+   * @function
    *
    * @param animations {Array|vs.fx.Animation} array of animation <property,
    *        value>, or an vs.fx.Animation object
@@ -3575,10 +3584,13 @@ View.prototype = {
   hide : function ()
   {
     if (!this.view) { return; }
-    if (!this._visible) { return; }
+    if (!this._visible && !this.__is_showing) { return; }
 
     this._visible = false;
-
+    
+    this.__is_showing = false;
+    this.__is_hidding = true;
+    
     if (this._hide_animation)
     {
       this._hide_animation.process (this, this._hide_object, this);
@@ -3597,8 +3609,12 @@ View.prototype = {
    */
   _hide_object: function ()
   {
-    if (!this.view) { return; }
+    if (!this.view || this._visible) { return; }
+    this.__visibility_anim = undefined;
 
+    if (!this.__is_hidding) { return; }
+    
+    this.__is_hidding = false;
     if (this.view.style.display)
     {
       this.__view_display = this.view.style.display;
@@ -3615,7 +3631,6 @@ View.prototype = {
       this.__hide_clb.call (this);
     }
     this.propertyChange ();
-//    util.setElementVisibility (this.view, false);
   },
 
   /**
@@ -3633,13 +3648,14 @@ View.prototype = {
    *
    *  Ex:
    *  @example
-   *  myComp.setHideAnimation ([['translate', '100px'], ['opacity', '0']]);
+   *  myComp.setHideAnimation ([['translate', '100px,0,0'], ['opacity', '0']], options);
    *
    *  @example
    *  myAnim = new ABTranslateAnimation (50, 50);
    *  myComp.setHideAnimation (myAnim, t);
    *
    * @name vs.ui.View#setHideAnimation
+   * @function
    *
    * @param animations {Array|vs.fx.Animation} array of animation <property,
    *        value>, or an vs.fx.Animation object
@@ -11339,6 +11355,9 @@ List.prototype = {
     
     function accessBarStart (e)
     {
+      // do not manage event for other targets
+      if (e.targetPointerList.length === 0) { return; }
+      
       e.stopPropagation ();
       e.preventDefault ();
       
@@ -15542,6 +15561,9 @@ Slider.prototype = {
   },
   
   didDragStart : function (e) {
+    // do not manage event for other targets
+    if (e.targetPointerList.length === 0) { return; }
+    
     this.__handle_width = this.__handle.offsetWidth;
     this.__handle_x = this.__handle.offsetLeft;
     this.__handle_y = this.__handle.offsetTop;
@@ -15569,6 +15591,9 @@ Slider.prototype = {
   },
   
   didDrag : function (info, e) {
+    // do not manage event for other targets
+    if (e.targetPointerList.length === 0) { return; }
+    
     var clientX = e.targetPointerList[0].pageX - this.__abs_pos.x;
     var clientY = e.targetPointerList[0].pageY - this.__abs_pos.y;
     

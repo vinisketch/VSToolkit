@@ -1815,7 +1815,7 @@ Event.prototype =
 /** @private */
 core.Event = Event;
 
-/* touch event messages */
+/** touch event messages */
 core.EVENT_SUPPORT_GESTURE = EVENT_SUPPORT_GESTURE;
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
@@ -4367,11 +4367,11 @@ DataFlow.prototype = {
       
           if (edge && edge [0] === edge_id) {
             edges.remove (i);
-            if (edges.length === 0) {
-              // remove connection
-              
-              
-            }
+//             if (edges.length === 0) {
+//               // remove connection
+//               
+//               
+//             }
             return;
           }
         }
