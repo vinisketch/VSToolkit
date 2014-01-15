@@ -160,7 +160,6 @@ var KEY_FRAMES = createProperty ("keyframes");
  * The vs.ANIMATION_END event is fired when a CSS animation has completed.
  * @name vs.ANIMATION_END
  * @type {String}
- * @const
  */ 
 var ANIMATION_END = "animationend";
 
@@ -168,7 +167,6 @@ var ANIMATION_END = "animationend";
  * The vs.TRANSITION_END event is fired when a CSS transition has completed
  * @name vs.TRANSITION_END
  * @type {String}
- * @const
  */ 
 var TRANSITION_END = "transitionend";
 
