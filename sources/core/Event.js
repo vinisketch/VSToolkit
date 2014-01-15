@@ -163,5 +163,5 @@ Event.prototype =
 /** @private */
 core.Event = Event;
 
-/* touch event messages */
+/** touch event messages */
 core.EVENT_SUPPORT_GESTURE = EVENT_SUPPORT_GESTURE;
