@@ -1098,7 +1098,7 @@ function createInfoWindowClass ()
     {
       case core.POINTER_START:
         // prevent multi touch events
-        if (e.nbPointers > 1) { return; }
+        if (e.targetPointerList.length === 0 || e.nbPointers > 1) { return; }
         
         vs.addPointerListener (document, core.POINTER_END, this);
         vs.addPointerListener (document, core.POINTER_MOVE, this);
@@ -1111,6 +1111,9 @@ function createInfoWindowClass ()
       break;
 
       case core.POINTER_MOVE:
+      
+        // do not manage event for other targets
+        if (e.targetPointerList.length === 0) { return; }
 
         var dx = e.targetPointerList[0].pageX - this.__start_x;
         var dy = e.targetPointerList[0].pageY - this.__start_y;

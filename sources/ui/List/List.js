@@ -937,6 +937,9 @@ List.prototype = {
     
     function accessBarStart (e)
     {
+      // do not manage event for other targets
+      if (e.targetPointerList.length === 0) { return; }
+      
       e.stopPropagation ();
       e.preventDefault ();
       

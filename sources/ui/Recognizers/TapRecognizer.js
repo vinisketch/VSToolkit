@@ -106,7 +106,7 @@ TapRecognizer.prototype = {
   pointerStart: function (e) {
     if (this.__is_touched) { return; }
     // prevent multi touch events
-    if (e.nbPointers > 1) { return; }
+    if (e.targetPointerList.length === 0 || e.nbPointers > 1) { return; }
     
     if (this.__tap_mode === 0) {
       this.__tap_mode = 1;
@@ -148,7 +148,8 @@ TapRecognizer.prototype = {
    * @protected
    */
   pointerMove: function (e) {
-    if (!this.__is_touched) { return; }
+    // do not manage event for other targets
+    if (!this.__is_touched || e.targetPointerList.length === 0) { return; }
 
     var dx = e.targetPointerList[0].pageX - this.__start_x;
     var dy = e.targetPointerList[0].pageY - this.__start_y;

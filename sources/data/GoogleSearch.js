@@ -129,12 +129,12 @@ GoogleSearch.__on_search_loaded = function ()
  * @type {Array}
  */
 GoogleSearch.ERROR_CODE_STR = [
- /*0  */ 'No error',
- /*1  */ 'Unknown error',
- /*2  */ 'Unvalid parameters data',
- /*3  */ 'Error with google server',
- /*4  */ 'Connexion error',
- /*5  */ 'Unvalid google response'
+ /** 0  */ 'No error',
+ /** 1  */ 'Unknown error',
+ /** 2  */ 'Unvalid parameters data',
+ /** 3  */ 'Error with google server',
+ /** 4  */ 'Connexion error',
+ /** 5  */ 'Unvalid google response'
 ];
 
 GoogleSearch.prototype = {
@@ -430,7 +430,7 @@ GoogleSearch.prototype = {
     this._googleLocalSearch (data, search_clb);
   },
   
-  /*
+  /**
    *
    * @name vs.data.GoogleSearch#searchAddress
    * @function

@@ -212,6 +212,9 @@ Slider.prototype = {
   },
   
   didDragStart : function (e) {
+    // do not manage event for other targets
+    if (e.targetPointerList.length === 0) { return; }
+    
     this.__handle_width = this.__handle.offsetWidth;
     this.__handle_x = this.__handle.offsetLeft;
     this.__handle_y = this.__handle.offsetTop;
@@ -239,6 +242,9 @@ Slider.prototype = {
   },
   
   didDrag : function (info, e) {
+    // do not manage event for other targets
+    if (e.targetPointerList.length === 0) { return; }
+    
     var clientX = e.targetPointerList[0].pageX - this.__abs_pos.x;
     var clientY = e.targetPointerList[0].pageY - this.__abs_pos.y;
     
