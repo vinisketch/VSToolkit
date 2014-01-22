@@ -18,6 +18,20 @@
 
 var edge_id_counter = 1;
 
+/**
+ *  The Dataflow class
+ *
+ *  @class
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *   Creates a new vs.core.DataFlow.
+ *
+ * @name vs.core.DataFlow
+ *
+ * @param {vs.core.Object} owner the Object using this Dataflow [mandatory]
+ */
 function DataFlow (comp) {
   
   // ordered node list Array<Object>
@@ -176,6 +190,8 @@ DataFlow.prototype = {
    * Build can (should) be call when all connection are done (to avoid
    * un-necessary calculation)
    *
+   * @name vs.core.DataFlow#connect 
+   * @function
    * @public
    * @param {String|Object} obj_src the Component (or Id) source.
    * @param {String|Array} property_out one or an array of output property name(s)
@@ -284,6 +300,8 @@ DataFlow.prototype = {
    *  or
    *  df.unconnect (obj_src, property_out, obj_trg, property_in);
    *
+   * @name vs.core.DataFlow#unconnect 
+   * @function
    * @public
    * @param {Number|String|Object} edge_id the id of the edge to remove (this id is returned
    *                 by connect method) or obj_src the Component (or Id) source.
@@ -424,11 +442,11 @@ DataFlow.prototype = {
       
           if (edge && edge [0] === edge_id) {
             edges.remove (i);
-            if (edges.length === 0) {
-              // remove connection
-              
-              
-            }
+//             if (edges.length === 0) {
+//               // remove connection
+//               
+//               
+//             }
             return;
           }
         }
@@ -549,6 +567,11 @@ DataFlow.prototype = {
     return min_index;
   },
 
+  /**
+   * @public
+   * @name vs.core.DataFlow#build 
+   * @function
+   */
   build : function () {
     this._sort ();
 
@@ -570,6 +593,9 @@ DataFlow.prototype = {
     if (this.__shouldnt_propagate__ < 0) this.__shouldnt_propagate__ = 0;
   },
 
+  /**
+   * @private
+   */
   _data_optimize : function (_ref_edges, _ref_node) {
     if (!_ref_node || !_ref_edges) { return; }
   
