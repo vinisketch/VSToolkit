@@ -97,95 +97,7 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
     return;
   }
 
-  function isComplexAnimation ()
-  {
-    if (animation.keyFrames ['0%']) { return true; }
-    return false;
-  }
-
-  var
-    cssAnimation, anim_id = core.createId (),
-    isComplex = isComplexAnimation (),
-    forceCallback = false, self = this;
-
-  function initWithParameters ()
-  {
-    var property;
-    if (isComplex)
-    { property = ANIMATION_DURATION; }
-    else { property = TRANSITION_DURATION; }
-
-    if (util.isArray (animation.origin) && animation.origin.length === 2)
-    {
-      var value = animation.origin [0] + '% ' + animation.origin [1] + '%';
-      comp.setStyle (TRANSFORM_ORIGIN, value);
-    }
-
-    if (now)
-    {
-      comp.setStyle (property, 0);
-    }
-    else if (util.isString (animation.durations))
-    {
-      comp.setStyle (property, animation.durations);
-    }
-    else if (util.isArray (animation.durations))
-    {
-      comp.setStyle (property, animation.durations.join (', '));
-    }
-    else
-    {
-      comp.setStyle (property, Animation.DEFAULT_DURATION);
-    }
-
-    if (isComplex) { property = ANIMATION_DELAY; }
-    else { property = TRANSITION_DELAY; }
-
-    if (!now && util.isNumber (animation.delay))
-    {
-      comp.setStyle (property, animation.delay + 'ms');
-    }
-    else
-    { comp.setStyle (property, '0'); }
-
-    if (isComplex) property = ANIMATION_TIMING_FUNC;
-    else property = TRANSITION_TIMING_FUNC;
-
-    if (util.isString (animation.timings))
-    {
-      comp.setStyle (property, animation.timings);
-    }
-    else if (util.isArray (animation.timings))
-    {
-      comp.setStyle (property, animation.timings.join (', '));
-    }
-    else
-    {
-      comp.setStyle (property, Animation.EASE);
-    }
-
-    if (isComplex)
-    {
-      if (animation.iterationCount === 'infinite')
-      {
-        comp.setStyle (ITERATION_COUNT, 'infinite');
-      }
-      else if (!animation.iterationCount ||
-               !util.isNumber (animation.iterationCount))
-      {
-        comp.setStyle (ITERATION_COUNT, '1');
-      }
-      else
-      {
-        comp.setStyle (ITERATION_COUNT, animation.iterationCount);
-      }
-      
-      comp.setStyle (ANIMATION_FILL_MODE, "forwards");
-    }
-  };
-
-  function parseValue (v, data)
-  {
+  function parseValue (v, data) {
     var matches, i, props = [], prop;
 
     if (util.isNumber (v)) { return v; }
@@ -220,6 +132,181 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
     return 0;
   };
 
+  function cloneParams (animation)
+  {
+    var params = {}, key, data;
+
+    if (animation.properties) {
+      params.properties = animation.properties.slice ();
+    }
+    else {
+      params.properties = [];
+    }
+    if (animation.values) {
+      params.values = animation.values.slice ();
+    }
+    else {
+      params.values = [];
+    }
+    if (animation.durations) {
+      params.durations = animation.durations;
+    }
+    if (animation.timings) {
+      params.timings = animation.timings.slice ();
+    }
+    else {
+      params.timings = [];
+    }
+    if (animation.origin) {
+      params.origin = animation.origin.slice ();
+    }
+
+    params.iterationCount = animation.iterationCount;
+    params.delay = animation.delay;
+    params.additive = animation.additive;
+
+    params.keyFrames = {};
+    if (!animation.keyFrames ['100%']) {
+      animation.keyFrames ['100%'] = animation;
+    }
+
+    var new_data;
+    for (key in animation.keyFrames)
+    {
+      data = animation.keyFrames [key];
+      if (util.isArray (data)) {
+        new_data = [];
+        for (var i = 0; i < data.length; i++)
+        {
+          value = data [i];
+          if (value == null || typeof value == 'undefined') continue;
+          new_data [i] = parseValue (value, animation);
+        }
+        params.keyFrames [key] = new_data;
+      }
+      else
+      {
+        for (i = 0; i < animation.properties.length; i++){
+          params.values [i] = parseValue (animation.values [i], data);
+        }
+        params.keyFrames [key] = {};
+      }
+    }
+
+    return params;
+  }
+
+  var anim_params = cloneParams (animation);
+  
+  return _procesAnimation (comp, animation, anim_params, clb, ctx, now);
+};
+
+/**
+ *  @private
+ *
+ * @param {vs.fx.View} comp the component the view will be animated
+ * @param {Object} anim_params the animation's parameters copy
+ * @param {vs.fx.Animation} animation the animation
+ * @param {Function} clb an optional callback to call at the end of animation
+ * @param {Object} ctx an optional execution context associated to the clb
+ * @return {String} return the identifier of the animation process. You can
+ *       use it to stop the animation for instance.
+ */
+var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
+{
+  if (!anim_params || !comp || !comp.view)
+  {
+    console.error ('procesAnimation: invalid component parameter!');
+    return;
+  }
+
+  function isComplexAnimation ()
+  {
+    if (anim_params.keyFrames ['0%']) { return true; }
+    return false;
+  }
+
+  var
+    cssAnimation, anim_id = core.createId (),
+    isComplex = isComplexAnimation (),
+    forceCallback = false, self = this;
+
+  function initWithParameters ()
+  {
+    var property;
+    if (isComplex)
+    { property = ANIMATION_DURATION; }
+    else { property = TRANSITION_DURATION; }
+
+    if (util.isArray (anim_params.origin) && anim_params.origin.length === 2)
+    {
+      var value = anim_params.origin [0] + '% ' + anim_params.origin [1] + '%';
+      comp.setStyle (TRANSFORM_ORIGIN, value);
+    }
+
+    if (now)
+    {
+      comp.setStyle (property, 0);
+    }
+    else if (util.isString (anim_params.durations))
+    {
+      comp.setStyle (property, anim_params.durations);
+    }
+    else if (util.isArray (anim_params.durations))
+    {
+      comp.setStyle (property, anim_params.durations.join (', '));
+    }
+    else
+    {
+      comp.setStyle (property, Animation.DEFAULT_DURATION);
+    }
+
+    if (isComplex) { property = ANIMATION_DELAY; }
+    else { property = TRANSITION_DELAY; }
+
+    if (!now && util.isNumber (anim_params.delay))
+    {
+      comp.setStyle (property, anim_params.delay + 'ms');
+    }
+    else
+    { comp.setStyle (property, '0'); }
+
+    if (isComplex) property = ANIMATION_TIMING_FUNC;
+    else property = TRANSITION_TIMING_FUNC;
+
+    if (util.isString (anim_params.timings))
+    {
+      comp.setStyle (property, anim_params.timings);
+    }
+    else if (util.isArray (anim_params.timings))
+    {
+      comp.setStyle (property, anim_params.timings.join (', '));
+    }
+    else
+    {
+      comp.setStyle (property, Animation.EASE);
+    }
+
+    if (isComplex)
+    {
+      if (anim_params.iterationCount === 'infinite')
+      {
+        comp.setStyle (ITERATION_COUNT, 'infinite');
+      }
+      else if (!anim_params.iterationCount ||
+               !util.isNumber (anim_params.iterationCount))
+      {
+        comp.setStyle (ITERATION_COUNT, '1');
+      }
+      else
+      {
+        comp.setStyle (ITERATION_COUNT, anim_params.iterationCount);
+      }
+      
+      comp.setStyle (ANIMATION_FILL_MODE, "forwards");
+    }
+  };
+
   function applySimpleAnimation ()
   {
     initWithParameters ();
@@ -238,7 +325,7 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
       comp.view.style.removeProperty (TRANSITION_DELAY);
 
       if (animation.delegate && animation.delegate.taskDidEnd)
-      { animation.delegate.taskDidEnd (animation); }
+      { animation.delegate.taskDidEnd (anim_params); }
 
       if (clb) { clb.call (ctx?ctx:self); }
     }
@@ -259,14 +346,14 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
 
   function applyStyleTo ()
   {
-    var data = (animation.keyFrames['100%'])?
-      animation.keyFrames['100%']:animation, transform = '',
+    var
+      transform = '',
       property, properties = [], value;
 
-    if (data) for (i = 0; i < animation.properties.length; i++)
+    for (i = 0; i < anim_params.properties.length; i++)
     {
-      property = animation.properties [i];
-      value = parseValue (animation.values [i], data);
+      property = anim_params.properties [i];
+      value = anim_params.values [i];
       if (property === 'rotate')
       { transform += 'rotate(' + value + ') '; property = TRANSFORM;}
       else if (property === 'skew')
@@ -292,7 +379,7 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
     }
     if (transform)
     {
-      if (animation.additive) {
+      if (anim_params.additive) {
         var matrix = comp.getCTM ();
         transform = matrix.toString () + ' ' + transform;
       }
@@ -379,10 +466,10 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
     cssAnimation.type = 'text/css';
 
     var rules_str = '';
-    for (key in animation.keyFrames)
+    for (key in anim_params.keyFrames)
     {
       transform = '';
-      data = animation.keyFrames [key];
+      data = anim_params.keyFrames [key];
       style = '';
       if (util.isArray (data))
       {
@@ -390,8 +477,7 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
         {
           value = data [i];
           if (value == null || typeof value == 'undefined') continue;
-          value = parseValue (value, animation);
-          property = animation.properties [i];
+          property = anim_params.properties [i];
           if (!property) { continue; }
           if (property === 'rotate')
           { transform += 'rotate(' + value + ') '; }
@@ -419,10 +505,10 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
       }
       else
       {
-        for (i = 0; i < animation.properties.length; i++)
+        for (i = 0; i < anim_params.properties.length; i++)
         {
-          value = parseValue (animation.values [i], data);
-          property = animation.properties [i];
+          value = anim_params.values [i];
+          property = anim_params.properties [i];
           if (!property) { continue; }
           if (property === 'rotate')
           { transform += 'rotate(' + value + ') '; }
@@ -450,7 +536,7 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
       }
       if (transform)
       {
-        if (animation.additive) {
+        if (anim_params.additive) {
           var matrix = comp.getCTM ();
           transform = matrix.toString () + ' ' + transform;
         }
