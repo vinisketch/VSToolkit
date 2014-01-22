@@ -410,7 +410,7 @@ Application.configureDevice = function ()
     var links = document.head.querySelectorAll ('link'), node;
     for (var i = 0; i < links.length; i++) {
       node = links.item (i);
-      if (node.getAttribute ('href') == "lib/css/vs_ui.css") {
+      if (node.getAttribute ('href').indexOf ("vs_ui.css") !== -1) {
         node = node.nextElementSibling;
         break;
       }
