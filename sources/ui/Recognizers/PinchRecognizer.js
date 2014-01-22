@@ -31,11 +31,11 @@
  *
  *  The PinchRecognizer delegate has to implement following methods:
  *  <ul>
- *    <li /> didPinchChange (scale, event). Call when the element is pinched.
+ *    <li /> didPinchChange (scale, event, comp). Call when the element is pinched.
  *      scale is The scale factor relative to the points of the two touches
  *      in screen coordinates
- *    <li /> didPinchStart (event). Call when the pinch start
- *    <li /> didPinchEnd (event). Call when the pinch end
+ *    <li /> didPinchStart (event, comp). Call when the pinch start
+ *    <li /> didPinchEnd (event, comp). Call when the pinch end
  *  </ul>
  *  <p>
  *
@@ -103,7 +103,9 @@ PinchRecognizer.prototype = {
 
     try {
       if (this.delegate && this.delegate.didPinchStart)
-        this.delegate.didPinchStart (event);
+        this.delegate.didPinchStart (
+          event, event.targetPointerList[0].target._comp_
+        );
     } catch (e) {
       if (e.stack) console.log (e.stack);
       console.log (e);
@@ -119,7 +121,9 @@ PinchRecognizer.prototype = {
   gestureChange: function (event) {
     try {
       if (this.delegate && this.delegate.didPinchChange)
-        this.delegate.didPinchChange (event.scale, event);
+        this.delegate.didPinchChange (
+          event.scale, event, event.targetPointerList[0].target._comp_
+        );
     } catch (e) {
       if (e.stack) console.log (e.stack);
       console.log (e);
@@ -137,7 +141,9 @@ PinchRecognizer.prototype = {
     
     try {
       if (this.delegate && this.delegate.didPinchEnd)
-        this.delegate.didPinchEnd (event);
+        this.delegate.didPinchEnd (
+          event, event.targetPointerList[0].target._comp_
+        );
     } catch (e) {
       if (e.stack) console.log (e.stack);
       console.log (e);

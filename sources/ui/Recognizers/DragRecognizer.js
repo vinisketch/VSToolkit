@@ -30,9 +30,9 @@
  *
  *  The DragRecognizer delegate has to implement following methods:
  *  <ul>
- *    <li /> didDragStart (event). Call when the drag start.
- *    <li /> didDragEnd (event). Call when the drag end.
- *    <li /> didDrag (drag_info, event). Call when the element is dragged.
+ *    <li /> didDragStart (event, comp). Call when the drag start.
+ *    <li /> didDragEnd (event, comp). Call when the drag end.
+ *    <li /> didDrag (drag_info, event, comp). Call when the element is dragged.
  *      drag_info = {dx: dx, dy:dy}, the drag delta form the beginning.
  *  </ul>
  *  <p>
@@ -112,7 +112,7 @@ DragRecognizer.prototype = {
   
     try {
       if (this.delegate && this.delegate.didDragStart)
-        this.delegate.didDragStart (e);
+        this.delegate.didDragStart (e, e.targetPointerList[0].target._comp_);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
@@ -141,7 +141,7 @@ DragRecognizer.prototype = {
     
     try {
       if (this.delegate && this.delegate.didDrag)
-        this.delegate.didDrag ({dx: dx, dy:dy}, e);
+        this.delegate.didDrag ({dx: dx, dy:dy}, e, e.targetPointerList[0].target._comp_);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
@@ -174,7 +174,7 @@ DragRecognizer.prototype = {
 
     try {
       if (this.delegate && this.delegate.didDragEnd)
-        this.delegate.didDragEnd (e);
+        this.delegate.didDragEnd (e, e.changedPointerList[0].target._comp_);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
