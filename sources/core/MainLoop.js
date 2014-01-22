@@ -318,7 +318,7 @@ var setImmediate = window.setImmediate || function (func) {
  * @name vs.setImmediate 
  * @param {Function} func The action to run
  */
-vs.setImmediate = setImmediate;
+vs.setImmediate = setImmediate.bind (window);
 
 /**
  * Mainloop core
