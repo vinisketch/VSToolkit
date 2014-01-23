@@ -40,10 +40,18 @@ function initFieldsPanel () {
   view.add (switch1);
 
   var switch2 = new vs.ui.Switch ({
-    textOn : 'I',
-    textOff : 'O'
+    textOn : 'ON',
+    textOff : 'OFF',
+    size: [80, 28]
   }).init ();
   view.add (switch2);
+
+  var switch3 = new vs.ui.Switch ({
+    textOn : 'I',
+    textOff : 'O',
+    size: [80, 28]
+  }).init ();
+  view.add (switch3);
 
   return view;
 }
