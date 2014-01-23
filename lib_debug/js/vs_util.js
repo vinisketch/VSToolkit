@@ -2196,7 +2196,8 @@ function safeInnerHTML (elem, html_text)
     });
   else
   {
-    if (window.toStaticHTML) html_text = window.toStaticHTML (html_text);
+    // deactivated because to restrictive
+    // if (window.toStaticHTML) html_text = window.toStaticHTML (html_text);
     elem.innerHTML = html_text;
   }
 };
@@ -2999,12 +3000,13 @@ util.extend (HTMLElement.prototype, {
 /* touch event messages */
 var EVENT_SUPPORT_TOUCH = false;
 var EVENT_SUPPORT_GESTURE = false;
+var hasPointer = window.navigator.pointerEnabled;
 var hasMSPointer = window.navigator.msPointerEnabled;
 
 if (typeof document != "undefined" && 'createTouch' in document)
   EVENT_SUPPORT_TOUCH = true;
 
-else if (hasMSPointer) { EVENT_SUPPORT_TOUCH = true; }
+else if (hasPointer || hasMSPointer) { EVENT_SUPPORT_TOUCH = true; }
 
 else if (typeof document != "undefined" &&
     window.navigator && window.navigator.userAgent)
@@ -3019,10 +3021,10 @@ var POINTER_START, POINTER_MOVE, POINTER_END, POINTER_CANCEL;
 
 if (EVENT_SUPPORT_TOUCH)
 {
-  POINTER_START = hasMSPointer ? 'MSPointerDown' : 'touchstart';
-  POINTER_MOVE = hasMSPointer ? 'MSPointerMove' : 'touchmove';
-  POINTER_END = hasMSPointer ? 'MSPointerUp' : 'touchend';
-  POINTER_CANCEL = hasMSPointer ? 'MSPointerCancel' : 'touchcancel';
+  POINTER_START = hasPointer ?  'pointerdown' : hasMSPointer ? 'MSPointerDown' : 'touchstart';
+  POINTER_MOVE = hasPointer ?  'pointermove' : hasMSPointer ? 'MSPointerMove' : 'touchmove';
+  POINTER_END = hasPointer ?  'pointerup' : hasMSPointer ? 'MSPointerUp' : 'touchend';
+  POINTER_CANCEL = hasPointer ?  'pointercancel' : hasMSPointer ? 'MSPointerCancel' : 'touchcancel';
 }
 else
 {
@@ -3257,8 +3259,8 @@ var msRemovePointer = function (evt) {
 
   if (nbPointerListener === 0)
   {
-    document.removeEventListener ('MSPointerUp', msRemovePointer);
-    document.removeEventListener ('MSPointerCancel', msRemovePointer);
+    document.removeEventListener (hasPointer ? 'pointerup' : 'MSPointerUp', msRemovePointer);
+    document.removeEventListener (hasPointer ? 'pointercancel' : 'MSPointerCancel', msRemovePointer);
   }
 }
 
@@ -3270,8 +3272,8 @@ function msPointerDownHandler (event, listener, target_id)
 
   if (nbPointerListener === 0)
   {
-    document.addEventListener ('MSPointerUp', msRemovePointer);
-    document.addEventListener ('MSPointerCancel', msRemovePointer);
+    document.addEventListener (hasPointer ? 'pointerup' : 'MSPointerUp', msRemovePointer);
+    document.addEventListener (hasPointer ? 'pointercancel' : 'MSPointerCancel', msRemovePointer);
   }
   nbPointerListener ++;
 }

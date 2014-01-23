@@ -534,7 +534,8 @@ function _pre_compile_shadow_view (self, className) {
           var value = node_temp.data, result, index = 0, i, text_node;
 
           self._regexp_index.lastIndex = 0;// reset the regex
-          node_temp.data = '';
+          // put white space to avoid IE nodeClone removes empty textNode
+          node_temp.data = ' ';
           result = self._regexp_index.exec (value);
           while (result) {
             if (result.index) {
@@ -555,7 +556,8 @@ function _pre_compile_shadow_view (self, className) {
 
             result = self._regexp_index.exec (value);
             if (result) {
-              text_node = document.createTextNode ('');
+              // put white space to avoid IE nodeClone removes empty textNode
+              text_node = document.createTextNode (' ');
               if (node_temp.nextSibling) {
                 node.insertBefore (text_node, node_temp.nextSibling);
               }
@@ -1059,13 +1061,13 @@ ui.RecognizerManager = RecognizerManager;/*
  *
  *  The TapRecognizer delegate has to implement following methods:
  *  <ul>
- *    <li /> didTouch (event). Call when the element is touched; It useful to
+ *    <li /> didTouch (event, comp). Call when the element is touched; It useful to
  *      implement this method to implement a feedback on the event (for instance
  *      add a pressed class)
- *    <li /> didUntouch (event). Call when the element is untouched; It useful to
+ *    <li /> didUntouch (event, comp). Call when the element is untouched; It useful to
  *      implement this method to implement a feedback on the event (for instance
  *      remove a pressed class)
- *    <li /> didTap (nb_tap, event). Call when the element si tap/click. nb_tap
+ *    <li /> didTap (nb_tap, event, comp). Call when the element si tap/click. nb_tap
  *      is the number of tap/click.
  *  </ul>
  *  <p>
@@ -1073,14 +1075,14 @@ ui.RecognizerManager = RecognizerManager;/*
  *  @example
  *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
  *  var recognizer = new TapRecognizer ({
- *    didTouch : function (event) {
- *      my_view.addClassName ("pressed");
+ *    didTouch : function (event, comp) {
+ *      comp.view.addClassName ("pressed");
  *    },
  *    didUntouch : function (event) {
- *      my_view.removeClassName ("pressed");
+ *      comp.view.removeClassName ("pressed");
  *    },
- *    didTap : function (nb_tap, event) {
- *      my_view.hide ();
+ *    didTap : function (nb_tap, event, view) {
+ *      comp.view.hide ();
  *    }
  *  });
  *  my_view.addPointerRecognizer (recognizer);
@@ -1151,7 +1153,7 @@ TapRecognizer.prototype = {
     else {
       try {
         if (this.delegate && this.delegate.didTouch)
-          this.delegate.didTouch (e);
+          this.delegate.didTouch (e, e.targetPointerList[0].target._comp_);
       } catch (e) {
         if (e.stack) console.log (e.stack);
         console.log (e);
@@ -1197,8 +1199,8 @@ TapRecognizer.prototype = {
     this.__is_touched = false;
 
     try {
-      if (this.delegate && this.delegate.didTouch)
-        this.delegate.didUntouch (e);
+      if (this.delegate && this.delegate.didUntouch)
+        this.delegate.didUntouch (e, e.targetPointerList[0].target._comp_);
     } catch (e) {
       if (e.stack) console.log (e.stack);
       console.log (e);
@@ -1221,7 +1223,7 @@ TapRecognizer.prototype = {
     if (this.delegate && this.delegate.didUntouch) {
       this.__unselect_time_out = setTimeout (function () {
         try {
-          self.delegate.didUntouch (e);
+          self.delegate.didUntouch (e, e.changedPointerList[0].target._comp_);
         } catch (e) {
           if (e.stack) console.log (e.stack);
           console.log (e);
@@ -1233,7 +1235,7 @@ TapRecognizer.prototype = {
     if (this.delegate && this.delegate.didTap) {
       this.__did_tap_time_out = setTimeout (function () {
         try {
-          self.delegate.didTap (self.__tap_mode, e);
+          self.delegate.didTap (self.__tap_mode, e, e.changedPointerList[0].target._comp_);
         } catch (e) {
           if (e.stack) console.log (e.stack);
           console.log (e);
@@ -1294,9 +1296,9 @@ ui.TapRecognizer = TapRecognizer;
  *
  *  The DragRecognizer delegate has to implement following methods:
  *  <ul>
- *    <li /> didDragStart (event). Call when the drag start.
- *    <li /> didDragEnd (event). Call when the drag end.
- *    <li /> didDrag (drag_info, event). Call when the element is dragged.
+ *    <li /> didDragStart (event, comp). Call when the drag start.
+ *    <li /> didDragEnd (event, comp). Call when the drag end.
+ *    <li /> didDrag (drag_info, event, comp). Call when the element is dragged.
  *      drag_info = {dx: dx, dy:dy}, the drag delta form the beginning.
  *  </ul>
  *  <p>
@@ -1376,7 +1378,7 @@ DragRecognizer.prototype = {
   
     try {
       if (this.delegate && this.delegate.didDragStart)
-        this.delegate.didDragStart (e);
+        this.delegate.didDragStart (e, e.targetPointerList[0].target._comp_);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
@@ -1405,7 +1407,7 @@ DragRecognizer.prototype = {
     
     try {
       if (this.delegate && this.delegate.didDrag)
-        this.delegate.didDrag ({dx: dx, dy:dy}, e);
+        this.delegate.didDrag ({dx: dx, dy:dy}, e, e.targetPointerList[0].target._comp_);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
@@ -1438,7 +1440,7 @@ DragRecognizer.prototype = {
 
     try {
       if (this.delegate && this.delegate.didDragEnd)
-        this.delegate.didDragEnd (e);
+        this.delegate.didDragEnd (e, e.changedPointerList[0].target._comp_);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
@@ -1493,11 +1495,11 @@ ui.DragRecognizer = DragRecognizer;/*
  *
  *  The PinchRecognizer delegate has to implement following methods:
  *  <ul>
- *    <li /> didPinchChange (scale, event). Call when the element is pinched.
+ *    <li /> didPinchChange (scale, event, comp). Call when the element is pinched.
  *      scale is The scale factor relative to the points of the two touches
  *      in screen coordinates
- *    <li /> didPinchStart (event). Call when the pinch start
- *    <li /> didPinchEnd (event). Call when the pinch end
+ *    <li /> didPinchStart (event, comp). Call when the pinch start
+ *    <li /> didPinchEnd (event, comp). Call when the pinch end
  *  </ul>
  *  <p>
  *
@@ -1565,7 +1567,9 @@ PinchRecognizer.prototype = {
 
     try {
       if (this.delegate && this.delegate.didPinchStart)
-        this.delegate.didPinchStart (event);
+        this.delegate.didPinchStart (
+          event, event.targetPointerList[0].target._comp_
+        );
     } catch (e) {
       if (e.stack) console.log (e.stack);
       console.log (e);
@@ -1581,7 +1585,9 @@ PinchRecognizer.prototype = {
   gestureChange: function (event) {
     try {
       if (this.delegate && this.delegate.didPinchChange)
-        this.delegate.didPinchChange (event.scale, event);
+        this.delegate.didPinchChange (
+          event.scale, event, event.targetPointerList[0].target._comp_
+        );
     } catch (e) {
       if (e.stack) console.log (e.stack);
       console.log (e);
@@ -1599,7 +1605,9 @@ PinchRecognizer.prototype = {
     
     try {
       if (this.delegate && this.delegate.didPinchEnd)
-        this.delegate.didPinchEnd (event);
+        this.delegate.didPinchEnd (
+          event, event.targetPointerList[0].target._comp_
+        );
     } catch (e) {
       if (e.stack) console.log (e.stack);
       console.log (e);
@@ -5137,7 +5145,7 @@ Application.configureDevice = function ()
     var links = document.head.querySelectorAll ('link'), node;
     for (var i = 0; i < links.length; i++) {
       node = links.item (i);
-      if (node.getAttribute ('href') == "lib/css/vs_ui.css") {
+      if (node.getAttribute ('href').indexOf ("vs_ui.css") !== -1) {
         node = node.nextElementSibling;
         break;
       }
