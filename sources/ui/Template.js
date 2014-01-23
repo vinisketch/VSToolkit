@@ -480,7 +480,8 @@ function _pre_compile_shadow_view (self, className) {
           var value = node_temp.data, result, index = 0, i, text_node;
 
           self._regexp_index.lastIndex = 0;// reset the regex
-          node_temp.data = '';
+          // put white space to avoid IE nodeClone removes empty textNode
+          node_temp.data = ' ';
           result = self._regexp_index.exec (value);
           while (result) {
             if (result.index) {
@@ -501,7 +502,8 @@ function _pre_compile_shadow_view (self, className) {
 
             result = self._regexp_index.exec (value);
             if (result) {
-              text_node = document.createTextNode ('');
+              // put white space to avoid IE nodeClone removes empty textNode
+              text_node = document.createTextNode (' ');
               if (node_temp.nextSibling) {
                 node.insertBefore (text_node, node_temp.nextSibling);
               }
