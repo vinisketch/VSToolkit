@@ -580,9 +580,9 @@ hr:last-child {
 
  The DragRecognizer delegate has to implement following methods:
  <ul>
-   <li /> didDragStart (event). Call when the drag start.
-   <li /> didDragEnd (event). Call when the drag end.
-   <li /> didDrag (drag_info, event). Call when the element is dragged.
+   <li /> didDragStart (event, comp). Call when the drag start.
+   <li /> didDragEnd (event, comp). Call when the drag end.
+   <li /> didDrag (drag_info, event, comp). Call when the element is dragged.
      drag_info = {dx: dx, dy:dy}, the drag delta form the beginning.
  </ul>
  <p>
