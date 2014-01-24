@@ -313,6 +313,10 @@ Switch.prototype = {
     this.toggled = this._toggled;
   },
   
+  /**
+   * @private
+   * @function
+   */
   _initWidthSwitch : function ()
   {
     var border = 
