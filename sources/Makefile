@@ -143,15 +143,17 @@ ui: ui_debug
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_android.css -o ../lib/css/vs_ui_android.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_pure.css -o ../lib/css/vs_ui_pure.css --type css --charset UTF8
 	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_bb.css -o ../lib/css/vs_ui_bb.css --type css --charset UTF8
-	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_pure.css -o ../lib/css/vs_ui_pure.css --type css --charset UTF8
-	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_ios7.css -o ../lib/css/vs_ui_ios7.css --type css --charset UTF8
+	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_flat.css -o ../lib/css/vs_ui_flat.css --type css --charset UTF8
+#	-$(COMPILE_YUI) ../lib_debug/css/vs_ui_ios7.css -o ../lib/css/vs_ui_ios7.css --type css --charset UTF8
 
-ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css ../lib_debug/css/vs_ui_pure.less ../lib_debug/css/vs_ui_bb.css ../lib_debug/css/vs_ui_ios7.less copy_ui_img copy_widgets_font
+ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js ../lib_debug/css/vs_ui.css ../lib_debug/css/vs_ui_ios.css ../lib_debug/css/vs_ui_android.css ../lib_debug/css/vs_ui_pure.less ../lib_debug/css/vs_ui_bb.css ../lib_debug/css/vs_ui_ios7.less ../lib_debug/css/vs_ui_flat.less copy_ui_img copy_widgets_font
 	-$(CP) ui/view/ie10.css ../lib_debug/css/ie10.css
 	-$(COMPILE_LESS) ../lib_debug/css/vs_ui_pure.less ../lib_debug/css/vs_ui_pure.css
 	-$(RM_F) ../lib_debug/css/vs_ui_pure.less
 	-$(COMPILE_LESS) ../lib_debug/css/vs_ui_ios7.less ../lib_debug/css/vs_ui_ios7.css
 	-$(RM_F) ../lib_debug/css/vs_ui_ios7.less
+	-$(COMPILE_LESS) ../lib_debug/css/vs_ui_flat.less ../lib_debug/css/vs_ui_flat.css
+	-$(RM_F) ../lib_debug/css/vs_ui_flat.less
 
 ../lib_debug/js/vs_ui.js: ui/View/View.js ui/Application/Application.js ui/SplitView/SplitView.js ui/TextArea/TextArea.js ui/Button/Button.js ui/List/AbstractList.js ui/List/List.js ui/NavigationBar/NavigationBar.js ui/ToolBar/ToolBar.js ui/Canvas/Canvas.js ui/ProgressBar/ProgressBar.js ui/RadioButton/RadioButton.js ui/ComboBox/ComboBox.js ui/CheckBox/CheckBox.js ui/Slider/Slider.js ui/InputField/InputField.js ui/ScrollView/ScrollView.js ui/TextLabel/TextLabel.js ui/ImageView/ImageView.js ui/PopOver/PopOver.js ui/Switch/Switch.js ui/Picker/Picker.js ui/SVGView/SVGView.js ui/SegmentedButton/SegmentedButton.js
 	$(CAT) Header.js >> $@
@@ -305,6 +307,28 @@ copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/S
 	$(CAT) ui/ComboBox/ComboBox_pure.less >> $@
 #	$(CAT) ui/PopOver/PopOver_android.css >> $@
 #	$(CAT) ui/ToolBar/ToolBar_android.css >> $@
+
+../lib_debug/css/vs_ui_flat.less: ui/View/lesshat.less ui/View/View.less ui/Application/Application_flat.less ui/Button/Button_flat.less ui/List/List_flat.less ui/InputField/InputField_flat.less ui/Switch/Switch_flat.less ui/TextArea/TextArea_flat.less ui/SegmentedButton/SegmentedButton_flat.less ui/Slider/Slider_flat.less ui/ProgressBar/ProgressBar_flat.less ui/NavigationBar/NavigationBar_flat.less ui/Picker/Picker_flat.less
+	$(CAT) ui/View/lesshat.less >> $@
+	$(CAT) ui/View/lesshat-ext.less >> $@
+	$(CAT) ui/View/View.less >> $@
+	$(CAT) ui/SplitView/SplitView.less >> $@
+	$(CAT) ui/Application/Application_flat.less >> $@
+	$(CAT) ui/Button/Button_flat.less >> $@
+	$(CAT) ui/List/List_flat.less >> $@
+	$(CAT) ui/InputField/InputField_flat.less >> $@
+	$(CAT) ui/Switch/Switch_flat.less >> $@
+	$(CAT) ui/TextArea/TextArea_flat.less >> $@
+	$(CAT) ui/SegmentedButton/SegmentedButton_flat.less >> $@
+	$(CAT) ui/Slider/Slider_flat.less >> $@
+	$(CAT) ui/ProgressBar/ProgressBar_flat.less >> $@
+	$(CAT) ui/RadioButton/RadioButton_flat.less>> $@
+	$(CAT) ui/NavigationBar/NavigationBar_flat.less >> $@
+	$(CAT) ui/CheckBox/CheckBox_flat.less >> $@
+	$(CAT) ui/Picker/Picker_flat.less >> $@
+	$(CAT) ui/ComboBox/ComboBox_flat.less >> $@
+#	$(CAT) ui/PopOver/PopOver_flat.less >> $@
+#	$(CAT) ui/ToolBar/ToolBar_flat.less >> $@
 
 ../lib_debug/css/vs_ui_bb.css: ui/Application/Application_bb.css ui/Button/Button_bb.css ui/List/List_bb.css  ui/RadioButton/RadioButton_bb.css ui/CheckBox/CheckBox_bb.css ui/Slider/Slider_bb.css ui/Switch/Switch_bb.css ui/ProgressBar/ProgressBar_bb.css ui/InputField/InputField_bb.css ui/ComboBox/ComboBox_bb.css ui/SegmentedButton/SegmentedButton_bb.css ui/TextArea/TextArea_bb.css ui/Picker/Picker_bb.css ext/ui/Accordion/Accordion_bb.css
 	$(CAT) ui/Application/Application_bb.css >> $@
@@ -496,6 +520,7 @@ extern_libs: ../lib_debug/js/vs_util.js ../lib_debug/js/vs_transform.js ../lib_d
 	git clone https://github.com/dthevenin/Gesture.git tmp
 	-$(CP) tmp/build/vs_gesture.js ../lib_debug/js/vs_gesture.js
 	-$(RM_RF) tmp
+
 
 
 
