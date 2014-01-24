@@ -1,0 +1,67 @@
+.vs_ui_radiobutton {
+  font-family: inherit;
+  color:black;
+}
+
+input[type="radio"]
+{
+  position: relative;
+  background: transparent;
+  
+  color: inherit;
+  height: 40px;
+
+  .appearance(none);
+  z-index: 1;
+}
+
+input[type="radio"]:after {
+  right: 5px;
+}
+
+input[type="radio"].pressed + label,
+.vs_ui_radiobutton label.pressed
+{
+  .base_background_selected;
+}
+
+input[type="radio"]:after
+{
+  content: "\f10c";
+  .box-sizing(border-box);
+  .user-select(none);
+  
+  color: @grey;
+  display: block;
+  width: 28px;
+  height: 28px;
+   
+  font: 28px/31px "FontAwesome";
+
+  .translateY(-45%);
+}
+
+input[type="radio"]:checked:after
+{
+  content: "\f192";
+  color: @blue;
+}
+
+.vs_ui_radiobutton label {
+  padding: 9px 35px 0px 16px;
+  height: 40px;
+  position: relative;
+}
+
+.vs_ui_radiobutton label:before {
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0;
+  border-top: 1px solid #CCCCCC;
+}
+
+.vs_ui_radiobutton label:nth-of-type(1):before {
+  border: none;
+}

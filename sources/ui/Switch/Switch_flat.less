@@ -1,0 +1,102 @@
+/*
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+.vs_ui_switch {
+  background-color: darken(@white, 2%);
+  border: 2px solid @grey;
+  border-radius: 26px;
+  cursor: pointer;
+  height: 30px;
+//  transition: border .25s .15s;
+              
+  min-width: 44px;
+  vertical-align: top;
+
+  font-size: 17px;
+  font-weight: normal;
+  overflow: visible;
+}
+
+.vs_ui_switch.on {
+  border-color: @blue;
+  background-color: @blue;
+/* 
+  transition: border .25s,
+              padding .25s .15s;
+ */
+}
+
+.vs_ui_switch .toggle_on {
+  color: @white;
+  right: 28px;
+  line-height: 28px;
+  padding-left: 5px;
+  -webkit-transition: opacity 400ms linear;
+  transition: opacity 400ms linear;
+}
+
+.vs_ui_switch .toggle_on {
+  opacity: 0;
+}
+
+.vs_ui_switch.on .toggle_on {
+  opacity: 1;
+}
+
+.vs_ui_switch .toggle_off {
+  color: @grey;
+  right: -28px; left: 0px;
+  line-height: 28px;
+  padding-right: 5px;
+  -webkit-transition: opacity 400ms linear;
+  transition: opacity 400ms linear;
+}
+
+.vs_ui_switch .toggle_off {
+  opacity: 1;
+}
+
+.vs_ui_switch.on .toggle_off {
+  opacity: 0;
+}
+
+.vs_ui_switch .switch {
+  top: 2px;
+  left: 2px;
+
+  border-radius: 11px;
+  width: 22px;
+  height: 22px;
+  background-color: @grey;
+
+  -webkit-transition-property: -webkit-transform;
+  transition-property: transform;
+  
+  -webkit-transition-duration: 150ms;
+  transition-duration: 150ms;
+  
+  -webkit-transition-timing-function: linear;
+  transition-timing-function: linear;
+
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+
+.vs_ui_switch.on .switch {
+  background-color: @white;
+}

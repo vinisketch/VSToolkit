@@ -1,0 +1,38 @@
+.vs_ui_slider {
+  .border-radius (2px);
+  background-color: @grey;
+}
+
+.vs_ui_slider.horizontal {
+  .gradient(~"linear-gradient(180deg, #3FB6F2 0%,#3FB6F2 80%)");
+
+  height: 8px !important;
+}
+
+.vs_ui_slider.vertical {
+  .gradient(~"linear-gradient(90deg, #3FB6F2 0%, #3FB6F2 80%)");
+
+  width: 8px !important;
+}
+
+.vs_ui_slider .handle {
+  position:relative;
+  border-radius: 30px;
+  width: 30px;
+  height: 30px;
+  background-color: @grey;
+  border: 2px solid @white;
+}
+
+.vs_ui_slider.horizontal .handle {
+  margin-top: -1px;
+}
+
+.vs_ui_slider.vertical .handle {
+  margin-left: -1px;
+}
+
+.vs_ui_slider .handle:active {
+  .base_background_selected;
+}
+

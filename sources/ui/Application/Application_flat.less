@@ -1,0 +1,95 @@
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('fontawesome-webfont.eot');
+  src: url('fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
+    url('fontawesome-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@white: #fff;
+@green: #53d76a;
+@blue: #3FB6F2;
+@grey: #d3d3d3;
+@baseColor: #282828;
+@selectedColor: #CDD1DC;
+
+@default_font: "Helvetica Neue";
+
+.base_background {
+  background-color: #E5E7ED;
+}
+
+.red_background {
+  background-color: #EE4F3D;
+}
+
+.green_background {
+  background-color: #4EBD4A;
+}
+
+.grey_background {
+  background-color: #3C3C3C;
+}
+
+.base_background_selected {
+  background-color: @selectedColor;
+}
+
+.base_radius {
+  .elliptic-rounded (4px, 4px);
+}
+
+.base_radius_left {
+  .elliptic-rounded-left (4px, 4px);
+}
+
+.base_radius_right {
+  .elliptic-rounded-right (4px, 4px);
+}
+
+.base_radius_top {
+  .elliptic-rounded-top (4px, 4px);
+}
+
+.base_radius_bottom {
+  .elliptic-rounded-bottom (4px, 4px);
+}
+
+.small_radius {
+  .elliptic-rounded (4px, 4px);
+}
+
+.small_radius_left {
+  .elliptic-rounded-left (4px, 4px);
+}
+
+.small_radius_right {
+  .elliptic-rounded-right (4px, 4px);
+}
+
+.small_radius_top {
+  .elliptic-rounded-top (4px, 4px);
+}
+
+.small_radius_bottom {
+  .elliptic-rounded-bottom (4px, 4px);
+}
+
+.base_shadow {
+  .box-shadow (0px 2px 0 #AAA);
+}
+
+.small_shadow {
+  .box-shadow (0px 1px 0 #AAA);
+}
+
+body {
+  font-family: @default_font;
+	background-color: #FFF;
+}
+
+.device_test {
+  opacity: 0;
+  margin-top: 5px;
+}

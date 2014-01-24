@@ -1,0 +1,62 @@
+.vs_ui_inputfield
+{
+  height:38px;
+  font-size: inherit;
+  border: 2px solid @grey;
+  min-width: 200px;
+  .base_radius;
+}
+
+.vs_ui_inputfield.focus
+{
+  border: @blue solid 2px;
+}
+
+.vs_ui_inputfield > input
+{
+  margin-left: 2px;
+  color: black;
+  font-family: @default_font;
+  left: 0px;
+  width:100%;
+  padding: 0 12px 0 10px;
+}
+
+.vs_ui_inputfield.focus > input
+{
+  background: transparent;
+  margin-top: 0px;
+  margin-left: 2px;
+  padding: 0 37px 0px 10px;
+}
+
+.vs_ui_inputfield .clear_button {
+  background: transparent;
+
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  line-height: normal;
+  vertical-align: baseline;
+  background-image: none;
+
+  font-size: 22px;
+  height: 22px;
+
+  .translate (0,-50%);
+  top: 50%;
+
+  color: #666;
+}
+
+.vs_ui_inputfield .clear_button::before
+{
+  content: "\f057";
+}
+
+.vs_ui_inputfield.search
+{
+  .elliptic-rounded (19px, 19px);
+}
+

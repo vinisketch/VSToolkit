@@ -1,0 +1,58 @@
+.vs_ui_progressbar
+{
+  height:8px !important;
+  background-color: @grey;
+}
+
+.vs_ui_progressbar >div
+{
+  padding: 0px; margin: 0px;
+  position: relative;
+  top: 0px; left: 0px;
+  padding-left: 1px;
+  height: 8px;
+  min-width: 4px;
+  .border-radius (2px);
+  
+  .gradient(~"linear-gradient(180deg, #3FB6F2 0%,#3FB6F2 80%)");
+}
+
+@-webkit-keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+@-moz-keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+@-ms-keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+@-o-keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+@keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+.vs_ui_progressbar.indeterminate {
+  .gradient(~"linear-gradient(117deg, rgba(255, 255, 255, 0) 23%, rgba(255, 255, 255, 0.8) 30%, #D7EBF8 30%,#D7EBF8 70%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0) 77%)");
+  background-color: #3FB6F2;
+  background-repeat: repeat-x;
+  
+  background-position-x: 0%;
+
+  .background-size (20px 10px);
+  .animation-duration (10s);
+  .animation-iteration-count (infinite);
+  .animation-timing-function (linear);
+  .animation-name (vs_ui_progressbar_anim);
+}
+
