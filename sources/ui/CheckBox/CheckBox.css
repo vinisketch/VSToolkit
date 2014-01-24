@@ -30,6 +30,12 @@ input[type="checkbox"]
   margin-top: 0px;
   float: right;
   border: none;
+  outline: none;
+}
+
+input[type="checkbox"]:checked
+{
+  outline: none;
 }
 
 input[type="checkbox"]:after

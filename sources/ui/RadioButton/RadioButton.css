@@ -29,7 +29,13 @@ input[type="radio"]
   width:30px;
   margin-top: 0px;
   float: right;
+  outline: none;
   border: none;
+}
+
+input[type="radio"]:checked
+{
+  outline: none;
 }
 
 input[type="radio"]:after
