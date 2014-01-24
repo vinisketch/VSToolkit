@@ -2,6 +2,6 @@
   display: block;
   word-wrap: break-word;
   height: 20px;
-  width: 60px;
+  min-width: 60px;
   text-decoration: inherit;
 }
