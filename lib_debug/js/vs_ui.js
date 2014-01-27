@@ -17058,30 +17058,54 @@ Switch.prototype = {
    */
   _setToggle: function (v)
   {
-  	this._initWidthSwitch ();
-  	
-    if (v)
-    {
-      this._toggled = true;
-      this.addClassName ('on');
-      if (this._mode === Switch.MODE_IOS)
-      {
-      	util.setElementTransform (this.__switch_view,
-      		"translate3d(" + this.__switch_translate + "px,0,0)");
+    var self = this;
+    
+    vs.scheduleAction (function () {
+      self._initWidthSwitch ();
+    
+      if (v) {
+        self._toggled = true;
+        self.addClassName ('on');
+        if (self._mode === Switch.MODE_IOS) {
+          util.setElementTransform (self.__switch_view,
+            "translate3d(" + self.__switch_translate + "px,0,0)");
+        }
       }
-    }
-    else
-    {
-      this._toggled = false;
-      this.removeClassName ('on');
-      if (this._mode === Switch.MODE_IOS)
-      {
-	      util.setElementTransform (this.__switch_view, "translate3d(0,0,0)");
-	    }
-    }
-    this.outPropertyChange ();
+      else {
+        self._toggled = false;
+        self.removeClassName ('on');
+        if (self._mode === Switch.MODE_IOS) {
+          util.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
+        }
+      }
+      self.outPropertyChange ();
+    });
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  viewDidAdd: function () {
+    View.prototype.viewDidAdd.call (this);
+    
+    this._setToggle (this._toggled);
   },
 
+  /**
+   * @protected
+   * @function
+   */
+  refresh: function () {
+    View.prototype.refresh.call (this);
+    
+    this._setToggle (this._toggled);
+  },
+
+  /**
+   * @protected
+   * @function
+   */
   didTap : function ()
   {
     this._setToggle (!this._toggled);
@@ -17152,7 +17176,14 @@ Switch.prototype = {
   
   _initWidthSwitch : function ()
   {
-		this.__switch_translate = this.view.offsetWidth - this.__switch_view.offsetWidth;
+    var border = 
+      parseInt (vs.util.getElementStyle (this.view, 'border-left-width'), 10) + 
+      parseInt (vs.util.getElementStyle (this.view, 'border-right-width'), 10);
+      
+		this.__switch_translate =
+		  this.view.offsetWidth - 
+		  (this.__switch_view.offsetWidth + 2 * this.__switch_view.offsetLeft) -
+		  border;
   },
   
   /**

@@ -387,7 +387,7 @@ body {
   display: block;
   word-wrap: break-word;
   height: 20px;
-  width: 60px;
+  min-width: 60px;
   text-decoration: inherit;
 }
 .vs_ui_textarea {
@@ -781,7 +781,13 @@ input[type="radio"]
   width:30px;
   margin-top: 0px;
   float: right;
+  outline: none;
   border: none;
+}
+
+input[type="radio"]:checked
+{
+  outline: none;
 }
 
 input[type="radio"]:after
@@ -832,6 +838,12 @@ input[type="checkbox"]
   margin-top: 0px;
   float: right;
   border: none;
+  outline: none;
+}
+
+input[type="checkbox"]:checked
+{
+  outline: none;
 }
 
 input[type="checkbox"]:after
