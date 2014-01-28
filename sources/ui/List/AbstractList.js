@@ -232,7 +232,7 @@ AbstractList.prototype = {
       this.__elem_to_unselect = null;
     }
     this.__elem_to_unselect = this.__elem;
-    this._touchItemFeedback (this.__elem);
+    if (this.__elem) this._touchItemFeedback (this.__elem);
   },
   
   /**
@@ -252,13 +252,17 @@ AbstractList.prototype = {
   {
     var self = this;
     this.__elem_to_unselect = this.__elem;
-    this._updateSelectItem (this.__elem);
+    if (this.__elem) {
+      this._updateSelectItem (this.__elem);
 
-    this.__list_time_out = setTimeout (function () {
-      self._untouchItemFeedback (self.__elem_to_unselect);
-      self.__elem_to_unselect = null;
-      self.__list_time_out = 0;
-    }, View.UNSELECT_DELAY);
+      this.__list_time_out = setTimeout (function () {
+        if (self.__elem_to_unselect) {
+          self._untouchItemFeedback (self.__elem_to_unselect);
+        }
+        self.__elem_to_unselect = null;
+        self.__list_time_out = 0;
+      }, View.UNSELECT_DELAY);
+    }
   },
 
   /**
