@@ -733,8 +733,13 @@ Animation.prototype = {
   keyFrames: null,
   
   /**
-   * @private
-   * @type Object
+   * An animation can manipulate the transform property. If you have applied
+   * your own transformation to the component, then the animation transform
+   * is added to the component's transformation.<br/>
+   * But if want the component to use only the animation transformation, then
+   * set up your animation with the property "additive" set to "false".<br/>
+   * By default it is set to true.
+   * @type boolean
    * @name vs.fx.Animation#additive
    */
   additive: true,
