@@ -31,6 +31,8 @@ input[type="radio"]
   float: right;
   outline: none;
   border: none;
+
+  z-index: 1;
 }
 
 input[type="radio"]:checked
