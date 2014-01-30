@@ -46,6 +46,8 @@ clean:
 	-$(RM_RF)  $(TARGET)/lib/css/*.ttf
 	-$(RM_RF)  $(TARGET)/lib_debug/css/*.eot
 	-$(RM_RF)  $(TARGET)/lib/css/*.eot
+	-$(RM_RF)  $(TARGET)/lib_debug/css/toolbar_icons
+	-$(RM_RF)  $(TARGET)/lib/css/toolbar_icons
 
 all_themes:
 	-$(CD) generic;make
