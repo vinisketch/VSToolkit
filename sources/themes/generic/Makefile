@@ -55,6 +55,8 @@ ifneq ($(DEBUG), 1)
 	-$(COMPILE_YUI) $(TARGET)/lib_debug/css/vs_av.css -o $(TARGET)/lib/css/vs_av.css --type css --charset UTF8
 	$(CP) $(TARGET)/lib_debug/css/*.ttf $(TARGET)/lib/css/
 	$(CP) $(TARGET)/lib_debug/css/*.eot $(TARGET)/lib/css/
+	$(CP) $(TARGET)/lib_debug/css/*.png $(TARGET)/lib/css/
+	$(CP) -r $(TARGET)/lib_debug/css/toolbar_icons $(TARGET)/lib/css/
 endif
 
 clean:
@@ -76,39 +78,45 @@ makedirs:
 ###                         GUI
 ##############################################################
 
-ui:$(TARGET)/lib_debug/css/vs_ui.css copy_widgets_font
+ui:$(TARGET)/lib_debug/css/vs_ui.less copy_widgets_font
+	-$(COMPILE_LESS) $(TARGET)/lib_debug/css/vs_ui.less $(TARGET)/lib_debug/css/vs_ui.css
+	-$(RM_F)  $(TARGET)/lib_debug/css/vs_ui.less
 	-$(CP) ui/ie10.css $(TARGET)/lib_debug/css/ie10.css
 
-$(TARGET)/lib_debug/css/vs_ui.css: 
-	$(CAT) ui/Application.css >> $@
-	$(CAT) ui/View.css >> $@
-	$(CAT) ui/SplitView.css >> $@
-	$(CAT) ui/ScrollView.css >> $@
-	$(CAT) ui/ScrollImageView.css >> $@
-	$(CAT) ui/TextLabel.css >> $@
-	$(CAT) ui/TextArea.css >> $@
-	$(CAT) ui/ScrollBar.css >> $@
-	$(CAT) ui/Button.css >> $@
-	$(CAT) ui/List.css >> $@
-	$(CAT) ui/ComboBox.css >> $@
-	$(CAT) ui/RadioButton.css >> $@
-	$(CAT) ui/CheckBox.css >> $@
-	$(CAT) ui/NavigationBar.css >> $@
-	$(CAT) ui/ToolBar.css >> $@
-	$(CAT) ui/Canvas.css >> $@
-	$(CAT) ui/ProgressBar.css >> $@
-	$(CAT) ui/Slider.css >> $@
-	$(CAT) ui/ImageView.css >> $@
-	$(CAT) ui/InputField.css >> $@
-	$(CAT) ui/PopOver.css >> $@
-	$(CAT) ui/Switch.css >> $@
-	$(CAT) ui/Picker.css >> $@
-	$(CAT) ui/SVGView.css >> $@
-	$(CAT) ui/SegmentedButton.css >> $@
+$(TARGET)/lib_debug/css/vs_ui.less: 
+	$(CAT) lesshat.less >> $@
+	$(CAT) lesshat-ext.less >> $@
+	$(CAT) ui/Application.less >> $@
+	$(CAT) ui/View.less >> $@
+	$(CAT) ui/SplitView.less >> $@
+	$(CAT) ui/ScrollView.less >> $@
+	$(CAT) ui/ScrollImageView.less >> $@
+	$(CAT) ui/TextLabel.less >> $@
+	$(CAT) ui/TextArea.less >> $@
+	$(CAT) ui/ScrollBar.less >> $@
+	$(CAT) ui/Button.less >> $@
+	$(CAT) ui/List.less >> $@
+	$(CAT) ui/ComboBox.less >> $@
+	$(CAT) ui/RadioButton.less >> $@
+	$(CAT) ui/CheckBox.less >> $@
+	$(CAT) ui/NavigationBar.less >> $@
+	$(CAT) ui/ToolBar.less >> $@
+	$(CAT) ui/Canvas.less >> $@
+	$(CAT) ui/ProgressBar.less >> $@
+	$(CAT) ui/Slider.less >> $@
+	$(CAT) ui/ImageView.less >> $@
+	$(CAT) ui/InputField.less >> $@
+	$(CAT) ui/PopOver.less >> $@
+	$(CAT) ui/Switch.less >> $@
+	$(CAT) ui/Picker.less >> $@
+	$(CAT) ui/SVGView.less >> $@
+	$(CAT) ui/SegmentedButton.less >> $@
 
 copy_widgets_font:
 	$(CP) ui/*.ttf $(TARGET)/lib_debug/css/
 	$(CP) ui/*.eot $(TARGET)/lib_debug/css/
+	$(CP) ui/*.png $(TARGET)/lib_debug/css/
+	$(CP) -r ui/toolbar_icons $(TARGET)/lib_debug/css/
 
 ###                     AV
 ##############################################################
