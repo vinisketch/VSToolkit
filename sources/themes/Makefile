@@ -27,7 +27,7 @@ all :: all_themes
 Debug :: debug
 debug ::
 	make all_themes DEBUG=1
-	
+
 Release :: release
 release ::
 	make all_themes 
@@ -57,4 +57,3 @@ all_themes:
 	-$(CD) blackberry;make
 	-$(CD) pure;make
 	-$(CD) flat;make
-

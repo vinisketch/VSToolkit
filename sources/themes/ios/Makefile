@@ -41,7 +41,7 @@ OPEN = open
 ECHO = echo
 ECHO_N = echo -n
 JAVA = java
-COMPILE_YUI = $(JAVA) -cp $(TARGET)/tools/ext/yuicompressor/jargs-1.0.jar:$(TARGET)/tools/ext/yuicompressor/rhino-1.6R7.jar -jar $(TARGET)/tools/ext/yuicompressor/yuicompressor-2.4.2.jar
+COMPILE_YUI = $(JAVA) -cp $(TOOLS_PATH)/yuicompressor/jargs-1.0.jar:$(TOOLS_PATH)/yuicompressor/rhino-1.6R7.jar -jar $(TOOLS_PATH)/yuicompressor/yuicompressor-2.4.2.jar
 COMPILE_LESS = lessc
 
 ###                         RELEASE
@@ -69,7 +69,7 @@ makedirs:
 ###                         GUI
 ##############################################################
 
-ui:$(TARGET)/lib_debug/css/vs_ui_ios.css $(TARGET)/lib_debug/css/vs_ext_ios.css copy_widgets_assets
+ui:$(TARGET)/lib_debug/css/vs_ui_ios.css copy_widgets_assets
 
 $(TARGET)/lib_debug/css/vs_ui_ios.css: 
 	$(CAT) ui/Application.css >> $@
