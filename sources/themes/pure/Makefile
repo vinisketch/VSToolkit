@@ -73,8 +73,6 @@ ui:$(TARGET)/lib_debug/css/vs_ui_pure.less copy_widgets_assets
 $(TARGET)/lib_debug/css/vs_ui_pure.less:
 	$(CAT) ../generic/lesshat.less >> $@
 	$(CAT) ../generic/lesshat-ext.less >> $@
-	$(CAT) ../generic/ui/View.less >> $@
-	$(CAT) ../generic/ui/SplitView.less >> $@
 	$(CAT) ui/Application.less >> $@
 	$(CAT) ui/Button.less >> $@
 	$(CAT) ui/List.less >> $@
