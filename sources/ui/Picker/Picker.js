@@ -189,7 +189,7 @@ Picker.prototype = {
    */
   destructor : function ()
   {
-    vs.removePointerListener (this._frame_view, core.POINTER_START, this, false);
+    vs.removePointerListener (this.view, core.POINTER_START, this, false);
 
     vs.removePointerListener (document, core.POINTER_START, this, false);
     vs.removePointerListener (document, core.POINTER_MOVE, this, false);
@@ -258,7 +258,7 @@ Picker.prototype = {
       case Picker.MODE_IOS:
       case Picker.MODE_SYMBIAN:
         // Add scrolling to the slots
-        vs.addPointerListener (this._frame_view, core.POINTER_START, this);
+        vs.addPointerListener (this.view, core.POINTER_START, this);
         this._frame_border_width = 0;
       break;
       
@@ -760,11 +760,54 @@ Picker.prototype = {
   },
 
   /**
+   * @private
+   * @function
+   */
+  __get_slot_index : function (point) {
+
+    var target = point.target, ul_slot;
+    if (target.nodeName === "UL") {
+      return target.index;
+    }
+    
+    if (target.nodeName === "LI") {
+      return target.parentElement.index;
+    }
+    // in case "pointer-events" property does not work
+    if (target === this._frame_view) {
+      var css = this._getComputedStyle (this._frame_view);
+      this._frame_border_width = css ? parseInt (css.getPropertyValue ('border-left-width')) : 0;
+
+      var delta = 0;
+      // Find the clicked slot
+      var rec = util.getBoundingClientRect (this._slots_view);
+      if (this._mode == Picker.MODE_BLACK_BERRY) { delta = 8; }
+    
+      // Clicked position
+      var xPos = point.clientX - rec.left - this._frame_border_width - delta; 
+    
+      // Find tapped slot
+      var slot = 0;
+      for (var i = 0; i < this._slots_elements.length; i++)
+      {
+        slot += this._slots_elements[i].offsetWidth;
+      
+        if (xPos < slot)
+        {
+          return i;
+        }
+      }
+    }
+    return undefined;
+  },
+
+  /**
    * @protected
    * @function
    */
   _scrollStart: function (e)
   {
+  
     if (e.nbPointers > 1) return false;
     
     e.preventDefault ();
@@ -773,35 +816,13 @@ Picker.prototype = {
     var point = e.targetPointerList [0];
     this._active_slot = undefined;
 
-    var css = this._getComputedStyle (this._frame_view);
-    this._frame_border_width = css ? parseInt (css.getPropertyValue ('border-left-width')) : 0;
-
     switch (this._mode)
     {
       case Picker.MODE_DEFAULT:
       case Picker.MODE_IOS:
       case Picker.MODE_SYMBIAN:
       case Picker.MODE_BLACK_BERRY:
-        var delta = 0;
-        // Find the clicked slot
-        var rec = util.getBoundingClientRect (this._slots_view);
-        if (this._mode == Picker.MODE_BLACK_BERRY) { delta = 8; }
-        
-        // Clicked position
-        var xPos = point.clientX - rec.left - this._frame_border_width - delta; 
-        
-        // Find tapped slot
-        var slot = 0;
-        for (var i = 0; i < this._slots_elements.length; i++)
-        {
-          slot += this._slots_elements[i].offsetWidth;
-          
-          if (xPos < slot)
-          {
-            this._active_slot = i;
-            break;
-          }
-        }
+        this._active_slot = this.__get_slot_index (point);
       break;
 
       case Picker.MODE_WP7:
@@ -841,7 +862,7 @@ Picker.prototype = {
       }
     }
     
-    this.startY = point.clientY;
+    this.startY = point.pageY;
     this.scrollStartY = slot_elem.slotYPosition;
     this.scrollStartTime = e.timeStamp;
 
@@ -880,7 +901,7 @@ Picker.prototype = {
     e.stopPropagation ();
 
     var point = e.targetPointerList [0];
-    var topDelta = point.clientY - this.startY;
+    var topDelta = point.pageY - this.startY;
     var slot_elem = this._slots_elements[this._active_slot];
 
     if (slot_elem.slotYPosition > 0 ||
@@ -890,7 +911,7 @@ Picker.prototype = {
     }
     
     this._setPosition (this._active_slot, slot_elem.slotYPosition + topDelta);
-    this.startY = point.clientY;
+    this.startY = point.pageY;
 
     // Prevent slingshot effect
     if (e.timeStamp - this.scrollStartTime > 80)
