@@ -142,18 +142,6 @@
   border-bottom-right-radius: 4px 4px;
   border-top-right-radius: 0px;
 }
-.base_shadow {
-  -webkit-box-shadow: 0px 2px 0 #aaaaaa;
-  -moz-box-shadow: 0px 2px 0 #aaaaaa;
-  box-shadow: 0px 2px 0 #aaaaaa;
-  color: 0px 2px 0 #aaaaaa;
-}
-.small_shadow {
-  -webkit-box-shadow: 0px 1px 0 #aaaaaa;
-  -moz-box-shadow: 0px 1px 0 #aaaaaa;
-  box-shadow: 0px 1px 0 #aaaaaa;
-  color: 0px 1px 0 #aaaaaa;
-}
 body {
   font-family: "Helvetica Neue";
   background-color: #FFF;

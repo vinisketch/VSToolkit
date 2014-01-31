@@ -1549,6 +1549,7 @@ input[type="text"] {
 .vs_ui_picker .frame {
   position: relative;
   z-index: 1000;
+  pointer-events: none;
 }
 .vs_ui_picker .slots > div {
   -webkit-box-flex: 1;
