@@ -853,8 +853,8 @@ Picker.prototype = {
     if (SUPPORT_3D_TRANSFORM)
     {
       var
-        transformMatrix = window.getComputedStyle(slot_elem).webkitTransform,
-        pos_y = new vs.CSSMatrix(transformMatrix).m42;
+        matrix = vs.util.getElementMatrixTransform (slot_elem),
+        pos_y = matrix.m42;
 
       if (pos_y != slot_elem.slotYPosition)
       {

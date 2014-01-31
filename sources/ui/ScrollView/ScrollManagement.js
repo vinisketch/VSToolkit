@@ -307,8 +307,7 @@ var iScroll_prototype =
 
       if (SUPPORT_3D_TRANSFORM)
       {
-        transformMatrix = window.getComputedStyle (that.scroller).webkitTransform;
-        matrix = new vs.CSSMatrix(transformMatrix);
+        matrix = vs.util.getElementMatrixTransform (that.scroller);
 
         if (matrix.m41 !== that._ab_view_t_x || matrix.m42 !== that._ab_view_t_y) {
           that._unbind ('webkitTransitionEnd');
