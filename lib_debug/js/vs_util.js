@@ -2247,7 +2247,7 @@ function setElementWebkitTransform (elem, transform)
 /**
  *@private
  */
-function getElementWebkitTransform (elem, transform)
+function getElementWebkitTransform (elem)
 {
   if (elem) return elem.style.webkitTransform;
 }
@@ -2264,7 +2264,7 @@ function setElementMSTransform (elem, transform)
 /**
  *@private
  */
-function getElementMSTransform (elem, transform)
+function getElementMSTransform (elem)
 {
   if (elem) return elem.style.msTransform;
 }
@@ -2281,9 +2281,26 @@ function setElementMozTransform (elem, transform)
 /**
  *@private
  */
-function getElementMozTransform (elem, transform)
+function getElementMozTransform (elem)
 {
   if (elem) return elem.style.MozTransform;
+}
+
+/**
+ *@private
+ */
+function _setElementTransform (elem, transform)
+{
+  if (elem && elem.style) elem.style.transform = transform;
+  else console.warn ("setElementTransform, elem null or without style");
+}
+
+/**
+ *@private
+ */
+function _getElementTransform (elem)
+{
+  if (elem) return elem.style.transform;
 }
 
 /**
@@ -2306,7 +2323,12 @@ var setElementTransform;
  **/
 var getElementTransform;
 
-if (vsTestStyle && vsTestStyle.webkitTransform !== undefined)
+if (vsTestStyle && vsTestStyle.transform !== undefined)
+{
+  setElementTransform = _setElementTransform;
+  getElementTransform = _getElementTransform;
+}
+else if (vsTestStyle && vsTestStyle.webkitTransform !== undefined)
 {
   setElementTransform = setElementWebkitTransform;
   getElementTransform = getElementWebkitTransform;
@@ -2320,6 +2342,29 @@ else if (vsTestStyle && vsTestStyle.MozTransform !== undefined)
 {
   setElementTransform = setElementMozTransform;
   getElementTransform = getElementMozTransform;
+}
+
+/**
+ *  get the Matrix transformation to a element
+ *
+ *  @memberOf vs.util
+ *
+ * @param {Element} elem The element
+ * @return {vs.CSSMatrix} matrix3d css transformation
+ **/
+function getElementMatrixTransform (elem) {
+  if (!elem) return;
+
+  var
+    css = document.defaultView.getComputedStyle (elem, null),
+    transformMatrix;
+
+  if (css.transform) transformMatrix = css.transform;
+  else if (css.webkitTransform) transformMatrix = css.webkitTransform;
+  else if (css.msTransform) transformMatrix = css.msTransform;
+  else if (css.MozTransform) transformMatrix = css.MozTransform;
+  
+  if (transformMatrix) return new vs.CSSMatrix (transformMatrix);
 }
 
 /**
@@ -2785,6 +2830,7 @@ util.extend (util, {
   setElementInnerText:        setElementInnerText,
   setElementTransform:        setElementTransform,
   getElementTransform:        getElementTransform,
+  getElementMatrixTransform:  getElementMatrixTransform,
   setElementTransformOrigin:  setElementTransformOrigin,
   getBoundingClientRect:
     (vsTestElem && vsTestElem.getBoundingClientRect)?

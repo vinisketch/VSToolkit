@@ -1061,13 +1061,13 @@ ui.RecognizerManager = RecognizerManager;/*
  *
  *  The TapRecognizer delegate has to implement following methods:
  *  <ul>
- *    <li /> didTouch (event, comp). Call when the element is touched; It useful to
+ *    <li /> didTouch (comp, target, event). Call when the element is touched; It useful to
  *      implement this method to implement a feedback on the event (for instance
  *      add a pressed class)
- *    <li /> didUntouch (event, comp). Call when the element is untouched; It useful to
+ *    <li /> didUntouch (comp, target, event). Call when the element is untouched; It useful to
  *      implement this method to implement a feedback on the event (for instance
  *      remove a pressed class)
- *    <li /> didTap (nb_tap, event, comp). Call when the element si tap/click. nb_tap
+ *    <li /> didTap (nb_tap, comp, target, event). Call when the element si tap/click. nb_tap
  *      is the number of tap/click.
  *  </ul>
  *  <p>
@@ -1075,13 +1075,13 @@ ui.RecognizerManager = RecognizerManager;/*
  *  @example
  *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
  *  var recognizer = new TapRecognizer ({
- *    didTouch : function (event, comp) {
- *      comp.view.addClassName ("pressed");
+ *    didTouch : function (comp) {
+ *      comp.addClassName ("pressed");
  *    },
- *    didUntouch : function (event) {
- *      comp.view.removeClassName ("pressed");
+ *    didUntouch : function (comp) {
+ *      comp.removeClassName ("pressed");
  *    },
- *    didTap : function (nb_tap, event, view) {
+ *    didTap : function (nb_tap, view) {
  *      comp.view.hide ();
  *    }
  *  });
@@ -1146,18 +1146,19 @@ TapRecognizer.prototype = {
       this.__tap_mode = 1;
     }
     
+    this.__tap_elem = e.targetPointerList[0].target;
+
     if (this.__unselect_time_out) {
       clearTimeout (this.__unselect_time_out);
       this.__unselect_time_out = 0;
     }
-    else {
-      try {
-        if (this.delegate && this.delegate.didTouch)
-          this.delegate.didTouch (e, e.targetPointerList[0].target._comp_);
-      } catch (e) {
-        if (e.stack) console.log (e.stack);
-        console.log (e);
-      }
+    
+    try {
+      if (this.delegate && this.delegate.didTouch)
+        this.delegate.didTouch (this.__tap_elem._comp_, this.__tap_elem, e);
+    } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
+      console.log (exp);
     }
 
     if (this.__did_tap_time_out) {
@@ -1200,10 +1201,10 @@ TapRecognizer.prototype = {
 
     try {
       if (this.delegate && this.delegate.didUntouch)
-        this.delegate.didUntouch (e, e.targetPointerList[0].target._comp_);
-    } catch (e) {
-      if (e.stack) console.log (e.stack);
-      console.log (e);
+        this.delegate.didUntouch (e.targetPointerList[0].target._comp_, e.targetPointerList[0].target, e);
+    } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
+      console.log (exp);
     }
   },
 
@@ -1215,7 +1216,12 @@ TapRecognizer.prototype = {
   pointerEnd: function (e) {
     if (!this.__is_touched) { return; }
     this.__is_touched = false;
-    var self = this;
+    var
+      self = this,
+      target = self.__tap_elem,
+      comp = (target)?target._comp_:null;
+    
+    self.__tap_elem = undefined;
   
     this.removePointerListener (document, core.POINTER_END, this.obj);
     this.removePointerListener (document, core.POINTER_MOVE, this.obj);
@@ -1223,10 +1229,10 @@ TapRecognizer.prototype = {
     if (this.delegate && this.delegate.didUntouch) {
       this.__unselect_time_out = setTimeout (function () {
         try {
-          self.delegate.didUntouch (e, e.changedPointerList[0].target._comp_);
-        } catch (e) {
-          if (e.stack) console.log (e.stack);
-          console.log (e);
+          self.delegate.didUntouch (comp, target, e);
+        } catch (exp) {
+          if (exp.stack) console.log (exp.stack);
+          console.log (exp);
         }
         self.__unselect_time_out = 0;
       }, View.UNSELECT_DELAY);        
@@ -1235,10 +1241,10 @@ TapRecognizer.prototype = {
     if (this.delegate && this.delegate.didTap) {
       this.__did_tap_time_out = setTimeout (function () {
         try {
-          self.delegate.didTap (self.__tap_mode, e, e.changedPointerList[0].target._comp_);
-        } catch (e) {
-          if (e.stack) console.log (e.stack);
-          console.log (e);
+          self.delegate.didTap (self.__tap_mode, comp, target, e);
+        } catch (exp) {
+          if (exp.stack) console.log (exp.stack);
+          console.log (exp);
         }
         self.__tap_mode = 0;
         self.__did_tap_time_out = 0;
@@ -6296,8 +6302,7 @@ var iScroll_prototype =
 
       if (SUPPORT_3D_TRANSFORM)
       {
-        transformMatrix = window.getComputedStyle (that.scroller).webkitTransform;
-        matrix = new vs.CSSMatrix(transformMatrix);
+        matrix = vs.util.getElementMatrixTransform (that.scroller);
 
         if (matrix.m41 !== that._ab_view_t_x || matrix.m42 !== that._ab_view_t_y) {
           that._unbind ('webkitTransitionEnd');
@@ -10222,11 +10227,11 @@ AbstractList.prototype = {
    * @protected
    * @function
    */
-  didTouch : function (e)
+  didTouch : function (comp, target, e)
   {
     if (!this._items_selectable) { return false; }
     
-    this.__elem = e.currentTarget;
+    this.__elem = target;
     if (this.__elem === this.view) {
       this.__elem = null;
       return;
@@ -10241,15 +10246,15 @@ AbstractList.prototype = {
       this._untouchItemFeedback (this.__elem_to_unselect);
       this.__elem_to_unselect = null;
     }
-    this.__elem_to_unselect = this.__elem;
-    if (this.__elem) this._touchItemFeedback (this.__elem);
+    this.__elem_to_unselect = target;
+    if (target) this._touchItemFeedback (target);
   },
   
   /**
    * @protected
    * @function
    */
-  didUntouch : function (e)
+  didUntouch : function (comp, e, target)
   {
     if (!this.__list_time_out && this.__elem_to_unselect)
     {
@@ -10258,12 +10263,12 @@ AbstractList.prototype = {
     }
   },
   
-  didTap : function ()
+  didTap : function (nb_tap, comp, target, e)
   {
     var self = this;
-    this.__elem_to_unselect = this.__elem;
-    if (this.__elem) {
-      this._updateSelectItem (this.__elem);
+    this.__elem_to_unselect = target;
+    if (target) {
+      this._updateSelectItem (target);
 
       this.__list_time_out = setTimeout (function () {
         if (self.__elem_to_unselect) {
@@ -17551,7 +17556,7 @@ Picker.prototype = {
    */
   destructor : function ()
   {
-    vs.removePointerListener (this._frame_view, core.POINTER_START, this, false);
+    vs.removePointerListener (this.view, core.POINTER_START, this, false);
 
     vs.removePointerListener (document, core.POINTER_START, this, false);
     vs.removePointerListener (document, core.POINTER_MOVE, this, false);
@@ -17620,7 +17625,7 @@ Picker.prototype = {
       case Picker.MODE_IOS:
       case Picker.MODE_SYMBIAN:
         // Add scrolling to the slots
-        vs.addPointerListener (this._frame_view, core.POINTER_START, this);
+        vs.addPointerListener (this.view, core.POINTER_START, this);
         this._frame_border_width = 0;
       break;
       
@@ -18122,11 +18127,54 @@ Picker.prototype = {
   },
 
   /**
+   * @private
+   * @function
+   */
+  __get_slot_index : function (point) {
+
+    var target = point.target, ul_slot;
+    if (target.nodeName === "UL") {
+      return target.index;
+    }
+    
+    if (target.nodeName === "LI") {
+      return target.parentElement.index;
+    }
+    // in case "pointer-events" property does not work
+    if (target === this._frame_view) {
+      var css = this._getComputedStyle (this._frame_view);
+      this._frame_border_width = css ? parseInt (css.getPropertyValue ('border-left-width')) : 0;
+
+      var delta = 0;
+      // Find the clicked slot
+      var rec = util.getBoundingClientRect (this._slots_view);
+      if (this._mode == Picker.MODE_BLACK_BERRY) { delta = 8; }
+    
+      // Clicked position
+      var xPos = point.clientX - rec.left - this._frame_border_width - delta; 
+    
+      // Find tapped slot
+      var slot = 0;
+      for (var i = 0; i < this._slots_elements.length; i++)
+      {
+        slot += this._slots_elements[i].offsetWidth;
+      
+        if (xPos < slot)
+        {
+          return i;
+        }
+      }
+    }
+    return undefined;
+  },
+
+  /**
    * @protected
    * @function
    */
   _scrollStart: function (e)
   {
+  
     if (e.nbPointers > 1) return false;
     
     e.preventDefault ();
@@ -18135,35 +18183,13 @@ Picker.prototype = {
     var point = e.targetPointerList [0];
     this._active_slot = undefined;
 
-    var css = this._getComputedStyle (this._frame_view);
-    this._frame_border_width = css ? parseInt (css.getPropertyValue ('border-left-width')) : 0;
-
     switch (this._mode)
     {
       case Picker.MODE_DEFAULT:
       case Picker.MODE_IOS:
       case Picker.MODE_SYMBIAN:
       case Picker.MODE_BLACK_BERRY:
-        var delta = 0;
-        // Find the clicked slot
-        var rec = util.getBoundingClientRect (this._slots_view);
-        if (this._mode == Picker.MODE_BLACK_BERRY) { delta = 8; }
-        
-        // Clicked position
-        var xPos = point.clientX - rec.left - this._frame_border_width - delta; 
-        
-        // Find tapped slot
-        var slot = 0;
-        for (var i = 0; i < this._slots_elements.length; i++)
-        {
-          slot += this._slots_elements[i].offsetWidth;
-          
-          if (xPos < slot)
-          {
-            this._active_slot = i;
-            break;
-          }
-        }
+        this._active_slot = this.__get_slot_index (point);
       break;
 
       case Picker.MODE_WP7:
@@ -18194,8 +18220,8 @@ Picker.prototype = {
     if (SUPPORT_3D_TRANSFORM)
     {
       var
-        transformMatrix = window.getComputedStyle(slot_elem).webkitTransform,
-        pos_y = new vs.CSSMatrix(transformMatrix).m42;
+        matrix = vs.util.getElementMatrixTransform (slot_elem),
+        pos_y = matrix.m42;
 
       if (pos_y != slot_elem.slotYPosition)
       {
@@ -18203,7 +18229,7 @@ Picker.prototype = {
       }
     }
     
-    this.startY = point.clientY;
+    this.startY = point.pageY;
     this.scrollStartY = slot_elem.slotYPosition;
     this.scrollStartTime = e.timeStamp;
 
@@ -18242,7 +18268,7 @@ Picker.prototype = {
     e.stopPropagation ();
 
     var point = e.targetPointerList [0];
-    var topDelta = point.clientY - this.startY;
+    var topDelta = point.pageY - this.startY;
     var slot_elem = this._slots_elements[this._active_slot];
 
     if (slot_elem.slotYPosition > 0 ||
@@ -18252,7 +18278,7 @@ Picker.prototype = {
     }
     
     this._setPosition (this._active_slot, slot_elem.slotYPosition + topDelta);
-    this.startY = point.clientY;
+    this.startY = point.pageY;
 
     // Prevent slingshot effect
     if (e.timeStamp - this.scrollStartTime > 80)
