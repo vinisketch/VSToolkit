@@ -212,11 +212,11 @@ AbstractList.prototype = {
    * @protected
    * @function
    */
-  didTouch : function (e)
+  didTouch : function (comp, target, e)
   {
     if (!this._items_selectable) { return false; }
     
-    this.__elem = e.currentTarget;
+    this.__elem = target;
     if (this.__elem === this.view) {
       this.__elem = null;
       return;
@@ -231,15 +231,15 @@ AbstractList.prototype = {
       this._untouchItemFeedback (this.__elem_to_unselect);
       this.__elem_to_unselect = null;
     }
-    this.__elem_to_unselect = this.__elem;
-    if (this.__elem) this._touchItemFeedback (this.__elem);
+    this.__elem_to_unselect = target;
+    if (target) this._touchItemFeedback (target);
   },
   
   /**
    * @protected
    * @function
    */
-  didUntouch : function (e)
+  didUntouch : function (comp, e, target)
   {
     if (!this.__list_time_out && this.__elem_to_unselect)
     {
@@ -248,12 +248,12 @@ AbstractList.prototype = {
     }
   },
   
-  didTap : function ()
+  didTap : function (nb_tap, comp, target, e)
   {
     var self = this;
-    this.__elem_to_unselect = this.__elem;
-    if (this.__elem) {
-      this._updateSelectItem (this.__elem);
+    this.__elem_to_unselect = target;
+    if (target) {
+      this._updateSelectItem (target);
 
       this.__list_time_out = setTimeout (function () {
         if (self.__elem_to_unselect) {
