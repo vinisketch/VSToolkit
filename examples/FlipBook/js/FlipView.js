@@ -120,9 +120,11 @@ var FlipView = vs.core.createClass ({
         if (dx <= -this._sheet_width) dx = -this._sheet_width + 0.001;
         if (dx > this._sheet_width) dx = this._sheet_width;
         this._current_sheet_angle = Math.acos (dx/this._sheet_width);
-          
-        this._current_sheet.view.style.WebkitTransform = 
-          "rotateY(-" + this._current_sheet_angle + "rad)";
+        
+        vs.util.setElementTransform (
+          this._current_sheet.view,
+          "perspective(1500px) rotateY(-" + this._current_sheet_angle + "rad)"
+        );
 
         return false;
       break;
@@ -138,8 +140,10 @@ var FlipView = vs.core.createClass ({
           if (this._current_sheet_angle > Math.PI / 2) {
             // finish to flip the page
             // cause a flicking bug, manage a small decalage
-            this._current_sheet.view.style.WebkitTransform = 
-              "rotateY(-179.9999deg)";
+            vs.util.setElementTransform (
+              this._current_sheet.view, 
+              "perspective(1500px) rotateY(-179.9999deg)"
+            );
 
            // change the z-index
            this._current_sheet.view.style.zIndex = this._sheet_index;
@@ -147,14 +151,20 @@ var FlipView = vs.core.createClass ({
           }
           else {
             // reset the current rotation
-            this._current_sheet.view.style.WebkitTransform = "rotateY(0deg)";
+            vs.util.setElementTransform (
+              this._current_sheet.view,
+              "perspective(1500px) rotateY(0deg)"
+            );
             this._current_sheet.view.style.zIndex = this._current_z_index;
           }
         }
         else {
           if (this._current_sheet_angle < Math.PI / 2) {
             // finish to flip the page
-            this._current_sheet.view.style.WebkitTransform = "rotateY(0deg)";
+            vs.util.setElementTransform (
+              this._current_sheet.view,
+              "perspective(1500px) rotateY(0deg)"
+            );
           
             // change the z-index
             this._current_sheet.view.style.zIndex = 
@@ -164,8 +174,10 @@ var FlipView = vs.core.createClass ({
           else {
             // reset the current rotation
             // cause a flicking bug, manage a small decalage
-            this._current_sheet.view.style.WebkitTransform = 
-              "rotateY(-179.9999deg)";
+            vs.util.setElementTransform (
+              this._current_sheet.view, 
+              "perspective(1500px) rotateY(-179.9999deg)"
+            );
             this._current_sheet.view.style.zIndex = this._current_z_index;
           }
         }
