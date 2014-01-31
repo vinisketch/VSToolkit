@@ -578,13 +578,13 @@ hr:last-child {
 
  The TapRecognizer delegate has to implement following methods:
  <ul>
-   <li /> didTouch (event, comp). Call when the element is touched; It useful to
+   <li /> didTouch (comp, target, event). Call when the element is touched; It useful to
      implement this method to implement a feedback on the event (for instance
      add a pressed class)
-   <li /> didUntouch (event, comp). Call when the element is untouched; It useful to
+   <li /> didUntouch (comp, target, event). Call when the element is untouched; It useful to
      implement this method to implement a feedback on the event (for instance
      remove a pressed class)
-   <li /> didTap (nb_tap, event, comp). Call when the element si tap/click. nb_tap
+   <li /> didTap (nb_tap, comp, target, event). Call when the element si tap/click. nb_tap
      is the number of tap/click.
  </ul>
  <p>
@@ -643,13 +643,13 @@ hr:last-child {
 				
 				<pre class="code"> var my_view = new vs.ui.View ({id: "my_view"}).init ();
  var recognizer = new TapRecognizer ({
-   didTouch : function (event, comp) {
-     comp.view.addClassName ("pressed");
+   didTouch : function (comp) {
+     comp.addClassName ("pressed");
    },
-   didUntouch : function (event) {
-     comp.view.removeClassName ("pressed");
+   didUntouch : function (comp) {
+     comp.removeClassName ("pressed");
    },
-   didTap : function (nb_tap, event, view) {
+   didTap : function (nb_tap, view) {
      comp.view.hide ();
    }
  });
