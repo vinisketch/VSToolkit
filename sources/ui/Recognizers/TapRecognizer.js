@@ -27,13 +27,13 @@
  *
  *  The TapRecognizer delegate has to implement following methods:
  *  <ul>
- *    <li /> didTouch (event, comp). Call when the element is touched; It useful to
+ *    <li /> didTouch (comp, target, event). Call when the element is touched; It useful to
  *      implement this method to implement a feedback on the event (for instance
  *      add a pressed class)
- *    <li /> didUntouch (event, comp). Call when the element is untouched; It useful to
+ *    <li /> didUntouch (comp, target, event). Call when the element is untouched; It useful to
  *      implement this method to implement a feedback on the event (for instance
  *      remove a pressed class)
- *    <li /> didTap (nb_tap, event, comp). Call when the element si tap/click. nb_tap
+ *    <li /> didTap (nb_tap, comp, target, event). Call when the element si tap/click. nb_tap
  *      is the number of tap/click.
  *  </ul>
  *  <p>
@@ -41,13 +41,13 @@
  *  @example
  *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
  *  var recognizer = new TapRecognizer ({
- *    didTouch : function (event, comp) {
- *      comp.view.addClassName ("pressed");
+ *    didTouch : function (comp) {
+ *      comp.addClassName ("pressed");
  *    },
- *    didUntouch : function (event) {
- *      comp.view.removeClassName ("pressed");
+ *    didUntouch : function (comp) {
+ *      comp.removeClassName ("pressed");
  *    },
- *    didTap : function (nb_tap, event, view) {
+ *    didTap : function (nb_tap, view) {
  *      comp.view.hide ();
  *    }
  *  });
@@ -112,18 +112,19 @@ TapRecognizer.prototype = {
       this.__tap_mode = 1;
     }
     
+    this.__tap_elem = e.targetPointerList[0].target;
+
     if (this.__unselect_time_out) {
       clearTimeout (this.__unselect_time_out);
       this.__unselect_time_out = 0;
     }
-    else {
-      try {
-        if (this.delegate && this.delegate.didTouch)
-          this.delegate.didTouch (e, e.targetPointerList[0].target._comp_);
-      } catch (e) {
-        if (e.stack) console.log (e.stack);
-        console.log (e);
-      }
+    
+    try {
+      if (this.delegate && this.delegate.didTouch)
+        this.delegate.didTouch (this.__tap_elem._comp_, this.__tap_elem, e);
+    } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
+      console.log (exp);
     }
 
     if (this.__did_tap_time_out) {
@@ -166,10 +167,10 @@ TapRecognizer.prototype = {
 
     try {
       if (this.delegate && this.delegate.didUntouch)
-        this.delegate.didUntouch (e, e.targetPointerList[0].target._comp_);
-    } catch (e) {
-      if (e.stack) console.log (e.stack);
-      console.log (e);
+        this.delegate.didUntouch (e.targetPointerList[0].target._comp_, e.targetPointerList[0].target, e);
+    } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
+      console.log (exp);
     }
   },
 
@@ -181,7 +182,12 @@ TapRecognizer.prototype = {
   pointerEnd: function (e) {
     if (!this.__is_touched) { return; }
     this.__is_touched = false;
-    var self = this;
+    var
+      self = this,
+      target = self.__tap_elem,
+      comp = (target)?target._comp_:null;
+    
+    self.__tap_elem = undefined;
   
     this.removePointerListener (document, core.POINTER_END, this.obj);
     this.removePointerListener (document, core.POINTER_MOVE, this.obj);
@@ -189,10 +195,10 @@ TapRecognizer.prototype = {
     if (this.delegate && this.delegate.didUntouch) {
       this.__unselect_time_out = setTimeout (function () {
         try {
-          self.delegate.didUntouch (e, e.changedPointerList[0].target._comp_);
-        } catch (e) {
-          if (e.stack) console.log (e.stack);
-          console.log (e);
+          self.delegate.didUntouch (comp, target, e);
+        } catch (exp) {
+          if (exp.stack) console.log (exp.stack);
+          console.log (exp);
         }
         self.__unselect_time_out = 0;
       }, View.UNSELECT_DELAY);        
@@ -201,10 +207,10 @@ TapRecognizer.prototype = {
     if (this.delegate && this.delegate.didTap) {
       this.__did_tap_time_out = setTimeout (function () {
         try {
-          self.delegate.didTap (self.__tap_mode, e, e.changedPointerList[0].target._comp_);
-        } catch (e) {
-          if (e.stack) console.log (e.stack);
-          console.log (e);
+          self.delegate.didTap (self.__tap_mode, comp, target, e);
+        } catch (exp) {
+          if (exp.stack) console.log (exp.stack);
+          console.log (exp);
         }
         self.__tap_mode = 0;
         self.__did_tap_time_out = 0;
