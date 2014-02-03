@@ -197,7 +197,13 @@ CheckBox.prototype = {
    */
   _touchItemFeedback : function (item)
   {
-    util.addClassName (item, 'pressed');
+    var
+      index = item.value,
+      label = this.__inputs [index],
+      input = this.__labels [index];
+    
+    util.addClassName (label, 'pressed');
+    util.addClassName (input, 'pressed');
   },
   
   /**
@@ -205,7 +211,13 @@ CheckBox.prototype = {
   */
   _untouchItemFeedback : function (item)
   {
-    util.removeClassName (item, 'pressed');
+    var
+      index = item.value,
+      label = this.__inputs [index],
+      input = this.__labels [index];
+    
+    util.removeClassName (label, 'pressed');
+    util.removeClassName (input, 'pressed');
   },
       
   /**
