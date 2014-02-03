@@ -50,6 +50,7 @@
 function RadioButton (config)
 {
   this.__inputs = [];
+  this.__labels = [];
 
   this.parent = AbstractList;
   this.parent (config);
@@ -69,6 +70,12 @@ RadioButton.prototype = {
    * @type {Array.<HTMLInputElement>}
    */
   __inputs: null,
+  
+  /**
+   * @private
+   * @type {Array.<HTMLabelElement>}
+   */
+  __labels: null,
   
   /*****************************************************************
    *
@@ -94,6 +101,7 @@ RadioButton.prototype = {
       vs.removePointerListener (input, core.POINTER_START, this);
       input.removeEventListener ('click', this);
       this.__inputs.remove (0);
+      this.__labels.remove (0);
     }
   },
 
@@ -138,6 +146,7 @@ RadioButton.prototype = {
       label.addEventListener ('click', this);
       util.setElementInnerText (label, item);
       this._list_items.appendChild (label);
+      this.__labels [i] = label;
     }
     this.refresh ();
   },
