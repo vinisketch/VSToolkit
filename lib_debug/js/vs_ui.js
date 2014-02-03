@@ -12053,7 +12053,8 @@ ui.ComboBox = ComboBox;
  */
 function RadioButton (config)
 {
-  this._items = new Array ();
+  this.__inputs = [];
+  this.__labels = [];
 
   this.parent = AbstractList;
   this.parent (config);
@@ -12072,7 +12073,13 @@ RadioButton.prototype = {
    * @private
    * @type {Array.<HTMLInputElement>}
    */
-  _items: null,
+  __inputs: null,
+  
+  /**
+   * @private
+   * @type {Array.<HTMLabelElement>}
+   */
+  __labels: null,
   
   /*****************************************************************
    *
@@ -12091,13 +12098,14 @@ RadioButton.prototype = {
     // removes all items;
     util.removeAllElementChild (this._list_items);
   
-    while (this._items.length)
+    while (this.__inputs.length)
     {
-      input = this._items [0];
+      input = this.__inputs [0];
       
       vs.removePointerListener (input, core.POINTER_START, this);
       input.removeEventListener ('click', this);
-      this._items.remove (0);
+      this.__inputs.remove (0);
+      this.__labels.remove (0);
     }
   },
 
@@ -12109,7 +12117,7 @@ RadioButton.prototype = {
   {
     if (!this._model) { return; }
     
-    var i, input, item, l;
+    var i, input, item, l, label;
     
     if (!this._list_items)
     {
@@ -12131,7 +12139,7 @@ RadioButton.prototype = {
       input.id = this._id + "_l" + i;
       
       this._list_items.appendChild (input);
-      this._items [i] = input;
+      this.__inputs [i] = input;
       vs.addPointerListener (input, core.POINTER_START, this);
       input.addEventListener ('click', this);
       
@@ -12142,6 +12150,7 @@ RadioButton.prototype = {
       label.addEventListener ('click', this);
       util.setElementInnerText (label, item);
       this._list_items.appendChild (label);
+      this.__labels [i] = label;
     }
     this.refresh ();
   },
@@ -12152,7 +12161,13 @@ RadioButton.prototype = {
    */
   _touchItemFeedback : function (item)
   {
-    util.addClassName (item, 'pressed');
+    var
+      index = item.value,
+      label = this.__inputs [index],
+      input = this.__labels [index];
+    
+    util.addClassName (label, 'pressed');
+    util.addClassName (input, 'pressed');
   },
   
   /**
@@ -12161,7 +12176,13 @@ RadioButton.prototype = {
    */
   _untouchItemFeedback : function (item)
   {
-    util.removeClassName (item, 'pressed');
+    var
+      index = item.value,
+      label = this.__inputs [index],
+      input = this.__labels [index];
+    
+    util.removeClassName (label, 'pressed');
+    util.removeClassName (input, 'pressed');
   },
       
   /**
@@ -12173,7 +12194,7 @@ RadioButton.prototype = {
     var index = parseInt (item.value);
     if (item._comp_ && item._comp_.didSelect) item._comp_.didSelect ();
     
-    if (index >= 0 || index < this._items.length) 
+    if (index >= 0 || index < this.__inputs.length) 
     {
       this.selectedIndex = index;
       this.outPropertyChange ();
@@ -12206,11 +12227,11 @@ util.defineClassProperty (RadioButton, "selectedIndex", {
     }
     
     if (isNaN (v)) { return; }
-    if (v < 0 || v > this._items.length - 1) { return; }
+    if (v < 0 || v > this.__inputs.length - 1) { return; }
 
-    if (this._items [v])
+    if (this.__inputs [v])
     {
-      var item = this._items [v];
+      var item = this.__inputs [v];
       if (item)
       {
         item.checked = true;
@@ -12288,7 +12309,8 @@ ui.RadioButton = RadioButton;
  */
 function CheckBox (config)
 {
-  this._items = new Array ();
+  this.__inputs = [];
+  this.__labels = [];
 
   this.parent = AbstractList;
   this.parent (config);
@@ -12309,7 +12331,13 @@ CheckBox.prototype = {
    * @private
    * @type {Array.<HTMLImputElement>}
    */
-  _items: null,
+  __inputs: null,
+
+  /**
+   * @private
+   * @type {Array.<HTMLLabelElement>}
+   */
+  __labels: null,
 
   /*****************************************************************
    *
@@ -12325,9 +12353,9 @@ CheckBox.prototype = {
   selectItem : function (index)
   {
     if (!util.isNumber (index)) { return; }
-    if (index < 0 || index >= this._items.length) { return; }
+    if (index < 0 || index >= this.__inputs.length) { return; }
     
-    var item = this._items [index];
+    var item = this.__inputs [index];
     if (!item) { return; }
     
     for (var i = 0; i < this._selected_indexes.length; i++)
@@ -12362,13 +12390,14 @@ CheckBox.prototype = {
     // removes all items;
     util.removeAllElementChild (this._list_items);
   
-    while (this._items.length)
+    while (this.__inputs.length)
     {
-      input = this._items [0];
+      input = this.__inputs [0];
       
       vs.removePointerListener (input, core.POINTER_START, this);
       input.removeEventListener ('click', this);
-      this._items.remove (0);
+      this.__inputs.remove (0);
+      this.__labels.remove (0);
     }
   },
   
@@ -12380,7 +12409,7 @@ CheckBox.prototype = {
   {
     if (!this._model) { return; }
     
-    var i, l, div, title, button, item;
+    var i, l, div, title, button, item, label, input;
     if (!this._list_items)
     {
       console.error ('vs.ui.RadioButton uncorrectly initialized.');
@@ -12401,7 +12430,7 @@ CheckBox.prototype = {
       input.value = i;
 
       this._list_items.appendChild (input);
-      this._items [i] = input;
+      this.__inputs [i] = input;
       
       vs.addPointerListener (input, core.POINTER_START, this);
       input.addEventListener ('click', this);
@@ -12413,6 +12442,7 @@ CheckBox.prototype = {
       label.addEventListener ('click', this);
       util.setElementInnerText (label, item);
       this._list_items.appendChild (label);
+      this.__labels [i] = label;
     }
     
     // select items
@@ -12425,7 +12455,13 @@ CheckBox.prototype = {
    */
   _touchItemFeedback : function (item)
   {
-    util.addClassName (item, 'pressed');
+    var
+      index = item.value,
+      label = this.__inputs [index],
+      input = this.__labels [index];
+    
+    util.addClassName (label, 'pressed');
+    util.addClassName (input, 'pressed');
   },
   
   /**
@@ -12433,7 +12469,13 @@ CheckBox.prototype = {
   */
   _untouchItemFeedback : function (item)
   {
-    util.removeClassName (item, 'pressed');
+    var
+      index = item.value,
+      label = this.__inputs [index],
+      input = this.__labels [index];
+    
+    util.removeClassName (label, 'pressed');
+    util.removeClassName (input, 'pressed');
   },
       
   /**
@@ -12445,7 +12487,7 @@ CheckBox.prototype = {
     var index = parseInt (item.value);
     if (item._comp_ && item._comp_.didSelect) item._comp_.didSelect ();
     
-    if (index >= 0 || index < this._items.length) 
+    if (index >= 0 || index < this.__inputs.length) 
     {
       this.selectItem (index);
       this.outPropertyChange ();
@@ -12492,9 +12534,9 @@ util.defineClassProperty (CheckBox, "selectedIndexes", {
       this._selected_indexes.push (index);
     }
     
-    for (i = 0; i < this._items.length; i ++)
+    for (i = 0; i < this.__inputs.length; i ++)
     {
-      var item = this._items [i];
+      var item = this.__inputs [i];
       if (item)
       {
         item.checked = false;
@@ -12504,7 +12546,7 @@ util.defineClassProperty (CheckBox, "selectedIndexes", {
     len = this._selected_indexes.length;
     for (i = 0; i < len; i++)
     {
-      var item = this._items [this._selected_indexes[i]];
+      var item = this.__inputs [this._selected_indexes[i]];
       if (item)
       {
         item.checked = true;
