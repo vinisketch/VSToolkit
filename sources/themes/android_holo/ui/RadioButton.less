@@ -1,0 +1,99 @@
+.vs_ui_radiobutton {
+  font-family: inherit;
+  color:black;
+}
+
+input[type="radio"]
+{
+  position: relative;
+  background: transparent;
+  
+  color: inherit;
+  height: 40px;
+
+  .appearance(none);
+  z-index: 1;
+}
+
+input[type="radio"].pressed + label,
+.vs_ui_radiobutton label.pressed
+{
+  .base_background_selected;
+}
+
+input[type="radio"]::before
+{
+  position: absolute;
+  top: 50%;
+  content: "";
+
+  .box-sizing(border-box);
+  .user-select(none);
+  
+  right: 5px;
+  color: @grey;
+  display: block;
+  width: 28px;
+  height: 28px;
+  .base_radius;
+  
+  padding-left: 4px;   
+  .translateY(-45%);
+}
+
+input[type="radio"]::after
+{
+  .box-sizing(border-box);
+  .user-select(none);
+  
+  right: 5px;
+  color: @grey;
+  display: block;
+  width: 18px;
+  height: 18px;
+  
+  margin: 1px 5px;
+
+  border: 1px solid @grey;
+  font: 9px/16px "FontAwesome";
+  .elliptic-rounded (9px, 9px);
+
+  .translateY(-45%);
+  content: "";
+}
+
+input[type="radio"]:checked::after
+{
+  content:"\f111";
+  color: @blue;
+  padding-left: 4px;
+//  border-color: @blue;
+}
+
+input[type="radio"].pressed::before {
+  background-color: #CECECE;
+}
+
+input[type="radio"].pressed:after {
+  color: @baseColor;
+  border-color: @baseColor;
+}
+
+.vs_ui_radiobutton label {
+  padding: 9px 35px 0px 16px;
+  height: 40px;
+  position: relative;
+}
+
+.vs_ui_radiobutton label:before {
+  content: "";
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  right: 0;
+  border-top: 1px solid #CCCCCC;
+}
+
+.vs_ui_radiobutton label:nth-of-type(1):before {
+  border: none;
+}

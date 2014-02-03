@@ -1,0 +1,102 @@
+.vs_ui_segmentedbutton {
+  font-weight: normal;
+  color: @baseColor; 
+}
+
+.vs_ui_segmentedbutton > div {
+  .box-align(stretch);
+}
+
+.vs_ui_segmentedbutton > div > div {
+  .box-pack(center);
+  text-align: center;
+  .box-flex(1);
+  .base_background;
+  position: relative;
+  border: none;
+}
+
+.vs_ui_segmentedbutton.horizontal > div > div {
+  border-bottom: 6px solid transparent;
+}
+
+.vs_ui_segmentedbutton.horizontal.bar > div > div {
+  padding: 5px 5px 0 5px;
+  border-bottom: 4px solid transparent;
+}
+
+.vs_ui_segmentedbutton.vertical > div > div {
+  border-left: 6px solid transparent;
+}
+
+.vs_ui_segmentedbutton.vertical.bar > div > div {
+  padding: 5px 5px 0 5px;
+  border-left: 4px solid transparent;
+}
+
+.vs_ui_segmentedbutton > div > div:active {
+  .base_background_selected;
+}
+
+.vs_ui_segmentedbutton > div > div:active,
+.vs_ui_segmentedbutton > div > div.selected {
+  border-color: @blue !important;
+}
+
+.vs_ui_segmentedbutton.horizontal > div > div::before {
+  border-left: 1px solid #BBB;
+  content: "";
+  position: absolute;
+  top: 10px;
+  bottom: 4px;
+  left: 0px;
+}
+
+.vs_ui_segmentedbutton.vertical > div > div::before {
+  border-top: 1px solid #BBB;
+  content: "";
+  position: absolute;
+  left: 4px;
+  right: 10px;
+  top: 0px;
+}
+
+.vs_ui_segmentedbutton > div > div:first-child:before {
+  border: none;
+}
+
+/***************************************************************************
+                          default button spec
+***************************************************************************/
+
+.vs_ui_segmentedbutton.default
+{
+  font-size: 20px;
+  
+  height: 43px;
+} 
+
+.vs_ui_segmentedbutton.default > div
+{
+  line-height:26px;
+}
+
+.vs_ui_segmentedbutton.default > div > div {
+  padding: 8px 8px 0 8px;
+}
+
+/***************************************************************************
+                          bar button spec
+***************************************************************************/
+
+.vs_ui_segmentedbutton.bar
+{
+  height: 27px;
+
+  font-size: 0.8em;
+}
+
+.vs_ui_segmentedbutton.bar > div
+{
+  line-height:18px;
+}

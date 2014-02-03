@@ -1,0 +1,78 @@
+.vs_ui_combobox
+{
+  height: 43px;
+  padding: 0px;
+  min-width: 120px;
+
+  font-weight: normal;
+  
+  font-family: @default_font;
+
+  background-color: transparent;
+  padding-right: 10px;
+  border: none;
+  position: relative;
+}
+
+.vs_ui_combobox::before
+{
+  content: "";
+  left: 5px; right: 19px;
+  bottom: 5px;
+  height: 0px;
+  border-left: 1px solid @baseColor;
+  display: block;
+  position: absolute;
+
+  background-color: transparent;
+  border: none;
+  border-bottom: 1px solid @baseColor;
+}
+
+.vs_ui_combobox:active
+{
+  .base_background_selected;
+}
+
+.vs_ui_combobox > select
+{
+  .appearance(none);
+  padding-top: 2px;
+}
+
+.vs_ui_combobox > select:focus {
+  outline: none;
+}
+
+.vs_ui_combobox::after
+{
+  width: 14px; height: 14px;
+  border-width: 7px;
+  border-style: solid;
+  border-color: transparent @baseColor @baseColor transparent;
+  content: "";
+  bottom: 5px;
+  right: -2px;
+  position: absolute;
+  top: auto;
+}
+
+.vs_ui_combobox.focus:before
+{
+  border-color: @blue;
+}
+
+.vs_ui_combobox.focus:after
+{
+  border-color: transparent @blue @blue transparent;
+}
+
+.vs_ui_combobox:active:before
+{
+  border-color: @baseColor;
+}
+
+.vs_ui_combobox:active:after
+{
+  border-color: transparent @baseColor @baseColor transparent;
+}

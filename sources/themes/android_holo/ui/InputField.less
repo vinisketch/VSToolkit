@@ -1,0 +1,89 @@
+.vs_ui_inputfield
+{
+  height:38px;
+  font-size: inherit;
+  border: none;
+  border-bottom: 1px solid @baseColor;
+  min-width: 200px;
+  background-color: transparent;
+  position: relative;
+}
+
+.vs_ui_inputfield::before {
+  content: "";
+  width: 0px; height: 3px;
+  border-left: 1px solid @baseColor;
+  display: block;
+  position: absolute;
+  top: auto;
+  bottom: 0px;
+  left: 0px;
+}
+
+.vs_ui_inputfield::after {
+  content: "";
+  width: 0px; height: 3px;
+  border-right: 1px solid @baseColor;
+  display: block;
+
+  right: 0px;
+  left: auto;
+  position: absolute;
+  top: auto;
+  bottom: 0px;
+}
+
+.vs_ui_inputfield.focus,
+.vs_ui_inputfield.focus::before,
+.vs_ui_inputfield.focus::after {
+  border-color: @blue;
+  border-width: 2px;
+}
+
+.vs_ui_inputfield.focus::after {
+  margin-left: -4px;
+}
+
+
+.vs_ui_inputfield > input
+{
+  margin-left: 2px;
+  color: black;
+  font-family: @default_font;
+  left: 0px;
+  width:100%;
+  padding: 0 12px 0 10px;
+}
+
+.vs_ui_inputfield.focus > input
+{
+  background: transparent;
+  margin-top: 0px;
+  margin-left: 2px;
+  padding: 0 37px 0px 10px;
+}
+
+.vs_ui_inputfield .clear_button {
+  background: transparent;
+
+  font-family: FontAwesome;
+  font-weight: normal;
+  font-style: normal;
+  -webkit-font-smoothing: antialiased;
+  line-height: normal;
+  vertical-align: baseline;
+  background-image: none;
+
+  font-size: 22px;
+  height: 22px;
+
+  .translate (0,-50%);
+  top: 50%;
+
+  color: #666;
+}
+
+.vs_ui_inputfield .clear_button::before
+{
+  content: "\f00d";
+}

@@ -1,0 +1,138 @@
+@font-face {
+  font-family: 'FontAwesome';
+  src: url('fontawesome-webfont.eot');
+  src: url('fontawesome-webfont.eot?#iefix') format('embedded-opentype'),
+    url('fontawesome-webfont.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 400;
+  src: local('Roboto Regular'), local('Roboto-Regular'), 
+  url("Roboto-Regular.ttf") format('truetype');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 300;
+  src: local('Roboto Light'), local('Roboto-Light'), 
+  url("Roboto-Light.ttf") format('truetype');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 500;
+  src: local('Roboto Medium'), local('Roboto-Medium'),
+  url("Roboto-Medium.ttf") format('truetype');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: normal;
+  font-weight: 700;
+  src: local('Roboto Bold'), local('Roboto-Bold'), 
+  url("Roboto-Bold.ttf") format('truetype');
+}
+@font-face {
+  font-family: 'Roboto';
+  font-style: italic;
+  font-weight: 400;
+  src: local('Roboto Italic'), local('Roboto-Italic'),
+  url("Roboto-Italic.ttf") format('truetype');
+}
+
+
+@white: #fff;
+
+@lightGrey: #F2F2F2;
+@grey: #CECECE;
+@baseColor: #5B5B5B;
+@darkGrey: #282828;
+
+@blue: #33B5E5;
+@mauve: #AA66CC;
+@green: #99CC00;
+@yellow: #FFBB33;
+@red: #FF4444;
+@selectedBlue: #0099CC;
+@selectedMauve: #9933CC;
+@selectedGreen: #669900;
+@selectedYellow: #FF8800;
+@selectedRed: #CC0000;
+
+@selectedColor: @blue;
+
+
+@default_font: "Roboto", sans-serif;
+
+.base_background {
+  background-color: @grey;
+}
+
+.red_background {
+  background-color: @red;
+}
+
+.green_background {
+  background-color: @green;
+}
+
+.grey_background {
+  background-color: @baseColor;
+}
+
+.base_background_selected {
+  background-color: rgba(51,181,229,0.5);
+}
+
+.base_radius {
+  .elliptic-rounded (2px, 2px);
+}
+
+.base_radius_left {
+  .elliptic-rounded-left (2px, 2px);
+}
+
+.base_radius_right {
+  .elliptic-rounded-right (2px, 2px);
+}
+
+.base_radius_top {
+  .elliptic-rounded-top (2px, 2px);
+}
+
+.base_radius_bottom {
+  .elliptic-rounded-bottom (2px, 2px);
+}
+
+.small_radius {
+  .elliptic-rounded (0px, 0px);
+}
+
+.small_radius_left {
+  .elliptic-rounded-left (0px, 0px);
+}
+
+.small_radius_right {
+  .elliptic-rounded-right (0px, 0px);
+}
+
+.small_radius_top {
+  .elliptic-rounded-top (0px, 0px);
+}
+
+.small_radius_bottom {
+  .elliptic-rounded-bottom (0px, 0px);
+}
+
+body {
+  font-family: @default_font;
+	background-color: @lightGrey;
+}
+
+.device_test {
+  opacity: 0;
+  margin-top: 5px;
+}

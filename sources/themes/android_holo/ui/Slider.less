@@ -1,0 +1,46 @@
+.vs_ui_slider {
+  .border-radius (2px);
+  background-color: @grey;
+}
+
+.vs_ui_slider.horizontal {
+  .gradient(~"linear-gradient(180deg, #33B5E5 0%,#33B5E5 80%)");
+
+  height: 3px !important;
+}
+
+.vs_ui_slider.vertical {
+  .gradient(~"linear-gradient(90deg, #33B5E5 0%, #33B5E5 80%)");
+
+  width: 3px !important;
+}
+
+.vs_ui_slider .handle {
+  position:relative;
+  border-radius: 30px;
+  width: 30px;
+  height: 30px;
+  .base_background_selected;
+}
+
+.vs_ui_slider .handle::after {
+  width: 10px; height: 10px;
+  border-radius: 5px;
+  content: "";
+  background-color: @blue;
+  .translate3d(10px, 10px, 0);
+  display: block;
+}
+
+.vs_ui_slider.horizontal .handle {
+  margin-top: -3px;
+}
+
+.vs_ui_slider.vertical .handle {
+  margin-left: -3px;
+}
+
+.vs_ui_slider .handle:active {
+  .grey_background;
+}
+
