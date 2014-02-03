@@ -51,7 +51,7 @@
  */
 function CheckBox (config)
 {
-  this.__inputs = new Array ();
+  this.__inputs = [];
   this.__labels = [];
 
   this.parent = AbstractList;
