@@ -52,6 +52,7 @@
 function CheckBox (config)
 {
   this.__inputs = new Array ();
+  this.__labels = [];
 
   this.parent = AbstractList;
   this.parent (config);
@@ -73,6 +74,12 @@ CheckBox.prototype = {
    * @type {Array.<HTMLImputElement>}
    */
   __inputs: null,
+
+  /**
+   * @private
+   * @type {Array.<HTMLLabelElement>}
+   */
+  __labels: null,
 
   /*****************************************************************
    *
@@ -132,6 +139,7 @@ CheckBox.prototype = {
       vs.removePointerListener (input, core.POINTER_START, this);
       input.removeEventListener ('click', this);
       this.__inputs.remove (0);
+      this.__labels.remove (0);
     }
   },
   
@@ -176,6 +184,7 @@ CheckBox.prototype = {
       label.addEventListener ('click', this);
       util.setElementInnerText (label, item);
       this._list_items.appendChild (label);
+      this.__labels [i] = label;
     }
     
     // select items
