@@ -49,7 +49,7 @@
  */
 function RadioButton (config)
 {
-  this.__inputs = new Array ();
+  this.__inputs = [];
 
   this.parent = AbstractList;
   this.parent (config);
