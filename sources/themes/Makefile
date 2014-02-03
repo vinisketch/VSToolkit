@@ -37,6 +37,7 @@ clean:
 	-$(CD) ios;make clean
 	-$(CD) ios7;make clean
 	-$(CD) android;make clean
+	-$(CD) android_holo;make clean
 	-$(CD) blackberry;make clean
 	-$(CD) pure;make clean
 	-$(CD) flat;make clean
@@ -54,6 +55,7 @@ all_themes:
 	-$(CD) ios;make
 	-$(CD) ios7;make
 	-$(CD) android;make
+	-$(CD) android_holo;make
 	-$(CD) blackberry;make
 	-$(CD) pure;make
 	-$(CD) flat;make
