@@ -113,7 +113,7 @@ RadioButton.prototype = {
   {
     if (!this._model) { return; }
     
-    var i, input, item, l;
+    var i, input, item, l, label;
     
     if (!this._list_items)
     {
