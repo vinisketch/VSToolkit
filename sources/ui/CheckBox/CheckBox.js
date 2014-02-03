@@ -143,7 +143,7 @@ CheckBox.prototype = {
   {
     if (!this._model) { return; }
     
-    var i, l, div, title, button, item;
+    var i, l, div, title, button, item, label, input;
     if (!this._list_items)
     {
       console.error ('vs.ui.RadioButton uncorrectly initialized.');
