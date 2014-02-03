@@ -49,7 +49,7 @@
  */
 function RadioButton (config)
 {
-  this._items = new Array ();
+  this.__inputs = new Array ();
 
   this.parent = AbstractList;
   this.parent (config);
@@ -68,7 +68,7 @@ RadioButton.prototype = {
    * @private
    * @type {Array.<HTMLInputElement>}
    */
-  _items: null,
+  __inputs: null,
   
   /*****************************************************************
    *
@@ -87,13 +87,13 @@ RadioButton.prototype = {
     // removes all items;
     util.removeAllElementChild (this._list_items);
   
-    while (this._items.length)
+    while (this.__inputs.length)
     {
-      input = this._items [0];
+      input = this.__inputs [0];
       
       vs.removePointerListener (input, core.POINTER_START, this);
       input.removeEventListener ('click', this);
-      this._items.remove (0);
+      this.__inputs.remove (0);
     }
   },
 
@@ -127,7 +127,7 @@ RadioButton.prototype = {
       input.id = this._id + "_l" + i;
       
       this._list_items.appendChild (input);
-      this._items [i] = input;
+      this.__inputs [i] = input;
       vs.addPointerListener (input, core.POINTER_START, this);
       input.addEventListener ('click', this);
       
@@ -169,7 +169,7 @@ RadioButton.prototype = {
     var index = parseInt (item.value);
     if (item._comp_ && item._comp_.didSelect) item._comp_.didSelect ();
     
-    if (index >= 0 || index < this._items.length) 
+    if (index >= 0 || index < this.__inputs.length) 
     {
       this.selectedIndex = index;
       this.outPropertyChange ();
@@ -202,11 +202,11 @@ util.defineClassProperty (RadioButton, "selectedIndex", {
     }
     
     if (isNaN (v)) { return; }
-    if (v < 0 || v > this._items.length - 1) { return; }
+    if (v < 0 || v > this.__inputs.length - 1) { return; }
 
-    if (this._items [v])
+    if (this.__inputs [v])
     {
-      var item = this._items [v];
+      var item = this.__inputs [v];
       if (item)
       {
         item.checked = true;
