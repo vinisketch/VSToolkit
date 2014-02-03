@@ -51,7 +51,7 @@
  */
 function CheckBox (config)
 {
-  this._items = new Array ();
+  this.__inputs = new Array ();
 
   this.parent = AbstractList;
   this.parent (config);
@@ -72,7 +72,7 @@ CheckBox.prototype = {
    * @private
    * @type {Array.<HTMLImputElement>}
    */
-  _items: null,
+  __inputs: null,
 
   /*****************************************************************
    *
@@ -88,9 +88,9 @@ CheckBox.prototype = {
   selectItem : function (index)
   {
     if (!util.isNumber (index)) { return; }
-    if (index < 0 || index >= this._items.length) { return; }
+    if (index < 0 || index >= this.__inputs.length) { return; }
     
-    var item = this._items [index];
+    var item = this.__inputs [index];
     if (!item) { return; }
     
     for (var i = 0; i < this._selected_indexes.length; i++)
@@ -125,13 +125,13 @@ CheckBox.prototype = {
     // removes all items;
     util.removeAllElementChild (this._list_items);
   
-    while (this._items.length)
+    while (this.__inputs.length)
     {
-      input = this._items [0];
+      input = this.__inputs [0];
       
       vs.removePointerListener (input, core.POINTER_START, this);
       input.removeEventListener ('click', this);
-      this._items.remove (0);
+      this.__inputs.remove (0);
     }
   },
   
@@ -164,7 +164,7 @@ CheckBox.prototype = {
       input.value = i;
 
       this._list_items.appendChild (input);
-      this._items [i] = input;
+      this.__inputs [i] = input;
       
       vs.addPointerListener (input, core.POINTER_START, this);
       input.addEventListener ('click', this);
@@ -208,7 +208,7 @@ CheckBox.prototype = {
     var index = parseInt (item.value);
     if (item._comp_ && item._comp_.didSelect) item._comp_.didSelect ();
     
-    if (index >= 0 || index < this._items.length) 
+    if (index >= 0 || index < this.__inputs.length) 
     {
       this.selectItem (index);
       this.outPropertyChange ();
@@ -255,9 +255,9 @@ util.defineClassProperty (CheckBox, "selectedIndexes", {
       this._selected_indexes.push (index);
     }
     
-    for (i = 0; i < this._items.length; i ++)
+    for (i = 0; i < this.__inputs.length; i ++)
     {
-      var item = this._items [i];
+      var item = this.__inputs [i];
       if (item)
       {
         item.checked = false;
@@ -267,7 +267,7 @@ util.defineClassProperty (CheckBox, "selectedIndexes", {
     len = this._selected_indexes.length;
     for (i = 0; i < len; i++)
     {
-      var item = this._items [this._selected_indexes[i]];
+      var item = this.__inputs [this._selected_indexes[i]];
       if (item)
       {
         item.checked = true;
