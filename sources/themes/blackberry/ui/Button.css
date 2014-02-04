@@ -20,6 +20,7 @@
   font-family: Myriad Pro;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
   color: black;
+  padding: 8px 8px 0 8px;
 }
 
 /***************************************************************************
@@ -37,13 +38,13 @@
 .vs_ui_button.nav_back
 {
   overflow: visible;
-  padding-left: 8px;
+  padding-left: 18px;
 }
 
 .vs_ui_button.nav_forward
 {
   overflow: visible;
-  padding-right: 8px;
+  padding-right: 18px;
 }
 
 .vs_ui_button.nav_back:before
@@ -111,13 +112,12 @@
   font-size: 18px;
   
   height: 38px;
-  padding: 0px;
   -webkit-border-radius: 5px;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
 
   font-weight: normal;
 
-  padding-top: 8px;
+  padding: 8px 8px 0 8px;
   border: 2px solid #999;
 }
 

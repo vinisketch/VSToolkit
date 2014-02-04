@@ -25,7 +25,7 @@
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#999), to(#666));
   content: '▼';
   color: #eee;
-  height: 39px;
+  height: 100%;
   width: 38px;
   top: 0px;
   left: auto;

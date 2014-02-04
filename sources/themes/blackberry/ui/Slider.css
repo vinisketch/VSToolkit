@@ -4,14 +4,14 @@
 }
 
 .vs_ui_slider.horizontal {
-  height: 4px;
+  height: 4px !important;
   background-image: -webkit-gradient(
     linear, left top,left bottom,
     color-stop(0, #5899EB), color-stop(1, #5899EB));
 }
 
 .vs_ui_slider.vertical {
-  width: 4px;
+  width: 4px !important;
   background-image: -webkit-gradient(
     linear, left top, right top,
     color-stop(0, #5899EB), color-stop(1, #5899EB));

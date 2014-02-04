@@ -1,12 +1,12 @@
 .vs_ui_progressbar {
-  height:8px;
+  height:8px !important;
   background-color: #F9F9F9;
   border: 1px solid #999;
 }
 
 .vs_ui_progressbar >div {
   padding: 0px;
-  height:6px;
+  height:6px !important;
   background-color: #00B400;
 }
 
