@@ -4,6 +4,7 @@
   height: 40px;
   color: black;
   font-size : 16px;
+  background: white;
 }
 
 .vs_ui_combobox.focus
