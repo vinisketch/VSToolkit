@@ -49,13 +49,16 @@ COMPILE_LESS = lessc
 
 all :: clean makedirs ui
 ifneq ($(DEBUG), 1)
-	-$(COMPILE_YUI) $(TARGET)/lib_debug/css/vs_ui_holo.css -o $(TARGET)/lib/css/vs_ui_holo.css --type css --charset UTF8
+	-$(COMPILE_YUI) $(TARGET)/lib_debug/css/vs_ui_holo_dark.css -o $(TARGET)/lib/css/vs_ui_holo_dark.css --type css --charset UTF8
+	-$(COMPILE_YUI) $(TARGET)/lib_debug/css/vs_ui_holo_light.css -o $(TARGET)/lib/css/vs_ui_holo_light.css --type css --charset UTF8
 	$(CP) $(TARGET)/lib_debug/css/*.png $(TARGET)/lib/css/
 endif
 
 clean:
-	-$(RM_RF)  $(TARGET)/lib_debug/css/vs_ui_holo.css
-	-$(RM_RF)  $(TARGET)/lib/css/vs_ui_holo.css
+	-$(RM_RF)  $(TARGET)/lib_debug/css/vs_ui_holo_dark.css
+	-$(RM_RF)  $(TARGET)/lib/css/vs_ui_holo_dark.css
+	-$(RM_RF)  $(TARGET)/lib_debug/css/vs_ui_holo_light.css
+	-$(RM_RF)  $(TARGET)/lib/css/vs_ui_holo_light.css
 	
 makedirs:
 	-$(MKPATH) $(TARGET)/lib_debug/
@@ -66,13 +69,37 @@ makedirs:
 ###                         GUI
 ##############################################################
 
-ui:$(TARGET)/lib_debug/css/vs_ui_holo.less copy_widgets_assets
-	-$(COMPILE_LESS) $(TARGET)/lib_debug/css/vs_ui_holo.less $(TARGET)/lib_debug/css/vs_ui_holo.css
-	-$(RM_F)  $(TARGET)/lib_debug/css/vs_ui_holo.less
+ui:$(TARGET)/lib_debug/css/vs_ui_holo_dark.less $(TARGET)/lib_debug/css/vs_ui_holo_light.less copy_widgets_assets
+	-$(COMPILE_LESS) $(TARGET)/lib_debug/css/vs_ui_holo_dark.less $(TARGET)/lib_debug/css/vs_ui_holo_dark.css
+	-$(RM_F)  $(TARGET)/lib_debug/css/vs_ui_holo_dark.less
+	-$(COMPILE_LESS) $(TARGET)/lib_debug/css/vs_ui_holo_light.less $(TARGET)/lib_debug/css/vs_ui_holo_light.css
+	-$(RM_F)  $(TARGET)/lib_debug/css/vs_ui_holo_light.less
 
-$(TARGET)/lib_debug/css/vs_ui_holo.less:
+$(TARGET)/lib_debug/css/vs_ui_holo_light.less:
 	$(CAT) ../generic/lesshat.less >> $@
 	$(CAT) ../generic/lesshat-ext.less >> $@
+	$(CAT) ui/Holo_light.less >> $@
+	$(CAT) ui/Application.less >> $@
+	$(CAT) ui/Button.less >> $@
+	$(CAT) ui/List.less >> $@
+	$(CAT) ui/InputField.less >> $@
+	$(CAT) ui/Switch.less >> $@
+	$(CAT) ui/TextArea.less >> $@
+	$(CAT) ui/SegmentedButton.less >> $@
+	$(CAT) ui/Slider.less >> $@
+	$(CAT) ui/ProgressBar.less >> $@
+	$(CAT) ui/RadioButton.less>> $@
+	$(CAT) ui/NavigationBar.less >> $@
+	$(CAT) ui/CheckBox.less >> $@
+	$(CAT) ui/Picker.less >> $@
+	$(CAT) ui/ComboBox.less >> $@
+#	$(CAT) ui/PopOver/PopOver_android.css >> $@
+#	$(CAT) ui/ToolBar/ToolBar_android.css >> $@
+
+$(TARGET)/lib_debug/css/vs_ui_holo_dark.less:
+	$(CAT) ../generic/lesshat.less >> $@
+	$(CAT) ../generic/lesshat-ext.less >> $@
+	$(CAT) ui/Holo_dark.less >> $@
 	$(CAT) ui/Application.less >> $@
 	$(CAT) ui/Button.less >> $@
 	$(CAT) ui/List.less >> $@
