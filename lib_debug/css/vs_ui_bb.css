@@ -29,6 +29,7 @@ body {
   font-family: Myriad Pro;
   box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.3);
   color: black;
+  padding: 8px 8px 0 8px;
 }
 
 /***************************************************************************
@@ -46,13 +47,13 @@ body {
 .vs_ui_button.nav_back
 {
   overflow: visible;
-  padding-left: 8px;
+  padding-left: 18px;
 }
 
 .vs_ui_button.nav_forward
 {
   overflow: visible;
-  padding-right: 8px;
+  padding-right: 18px;
 }
 
 .vs_ui_button.nav_back:before
@@ -120,13 +121,12 @@ body {
   font-size: 18px;
   
   height: 38px;
-  padding: 0px;
   -webkit-border-radius: 5px;
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
 
   font-weight: normal;
 
-  padding-top: 8px;
+  padding: 8px 8px 0 8px;
   border: 2px solid #999;
 }
 
@@ -378,14 +378,14 @@ input[type="checkbox"]:checked:after
 }
 
 .vs_ui_slider.horizontal {
-  height: 4px;
+  height: 4px !important;
   background-image: -webkit-gradient(
     linear, left top,left bottom,
     color-stop(0, #5899EB), color-stop(1, #5899EB));
 }
 
 .vs_ui_slider.vertical {
-  width: 4px;
+  width: 4px !important;
   background-image: -webkit-gradient(
     linear, left top, right top,
     color-stop(0, #5899EB), color-stop(1, #5899EB));
@@ -503,14 +503,14 @@ input[type="checkbox"]:checked:after
   border: #1559AF solid 1px;
 }
 .vs_ui_progressbar {
-  height:8px;
+  height:8px !important;
   background-color: #F9F9F9;
   border: 1px solid #999;
 }
 
 .vs_ui_progressbar >div {
   padding: 0px;
-  height:6px;
+  height:6px !important;
   background-color: #00B400;
 }
 
@@ -588,7 +588,7 @@ input[type="checkbox"]:checked:after
   background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#999), to(#666));
   content: '▼';
   color: #eee;
-  height: 39px;
+  height: 100%;
   width: 38px;
   top: 0px;
   left: auto;

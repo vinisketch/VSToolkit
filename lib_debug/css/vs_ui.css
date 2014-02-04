@@ -357,7 +357,7 @@ body {
   margin: 0px;
   padding: 5px;
   overflow: hidden;
-  background-color: white;
+  color: inherit;
 }
 textarea {
   -webkit-user-select: text;
@@ -612,9 +612,11 @@ li {
   color: black;
   /*  border: solid 1px black; */
 
-  background: white;
+  /*  background: white; */
+
   /*  border-radius: 5px; */
 
+  color: inherit;
 }
 .vs_ui_combobox > select {
   -webkit-appearance: none;
@@ -627,6 +629,8 @@ li {
   border: none;
   font-size: inherit;
   position: relative;
+  color: inherit;
+  display: block;
 }
 .vs_ui_combobox > div {
   text-align: left;
@@ -1367,6 +1371,7 @@ input[type="text"] {
   right: 10px;
   left: 10px;
   position: absolute;
+  color: inherit;
 }
 .vs_ui_inputfield > input::-webkit-search-cancel-button {
   display: none;
@@ -1536,6 +1541,7 @@ input[type="text"] {
   left: 0;
   font-family: helvetica, sans-serif;
   text-align: left;
+  color: inherit;
 }
 .vs_ui_picker .slots {
   position: relative;

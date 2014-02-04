@@ -397,19 +397,20 @@ input[type="checkbox"]:checked:after {
   border: #CCC solid 1px;
   height: 35px;
   font-size: 20px;
+  color: black;
 }
 .vs_ui_inputfield.search {
-  -webkit-border-radius: 5px;
+  border-radius: 5px;
 }
 .vs_ui_inputfield.text,
 .vs_ui_inputfield.password {
-  -webkit-border-radius: 5px;
+  border-radius: 5px;
 }
 .vs_ui_inputfield.focus {
   margin: 0px;
   border: orange solid 3px;
   background-position: 5px 8px;
-  -webkit-border-radius: 6px;
+  border-radius: 6px;
 }
 .vs_ui_inputfield.focus > input {
   margin-top: 0px;
@@ -500,12 +501,13 @@ input[type="checkbox"]:checked:after {
   font-family: droid;
   font-weight: normal;
   height: 40px;
-  color: black;
   font-size: 17px;
+  color: black;
 }
 .vs_ui_combobox > select {
   color: #424142;
   padding-top: 2px;
+  background: white;
 }
 .vs_ui_combobox > select:focus,
 .vs_ui_combobox > select:active {
@@ -540,6 +542,7 @@ input[type="checkbox"]:checked:after {
   text-overflow: ellipsis;
   white-space: nowrap;
   min-height: 35px;
+  min-width: 60px;
   height: 0px;
   -webkit-border-radius: 6px;
   border: 1px solid #555;
@@ -587,10 +590,11 @@ input[type="checkbox"]:checked:after {
   font-size: 18px;
   line-height: 1.4;
   border: #CCC solid 1px;
-  -webkit-border-radius: 5px;
+  border-radius: 5px;
+  color: black;
 }
 textarea:focus {
-  border: orange solid 3px;
+  outline: orange solid 3px;
 }
 .vs_ui_popover.withHeader > .header {
   height: 44px;
