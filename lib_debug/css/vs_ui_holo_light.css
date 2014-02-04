@@ -1,3 +1,23 @@
+.base_background {
+  background-color: #cecece;
+}
+.red_background {
+  background-color: #ff4444;
+}
+.green_background {
+  background-color: #99cc00;
+}
+.grey_background {
+  background-color: #5b5b5b;
+}
+.base_background_selected {
+  background-color: rgba(51, 181, 229, 0.5);
+}
+body {
+  font-family: "Roboto", sans-serif;
+  background-color: #f2f2f2;
+  color: #111111;
+}
 @font-face {
   font-family: 'FontAwesome';
   src: url('fontawesome-webfont.eot');
@@ -34,21 +54,6 @@
   font-style: italic;
   font-weight: 400;
   src: local('Roboto Italic'), local('Roboto-Italic'), url("Roboto-Italic.ttf") format('truetype');
-}
-.base_background {
-  background-color: #cecece;
-}
-.red_background {
-  background-color: #ff4444;
-}
-.green_background {
-  background-color: #99cc00;
-}
-.grey_background {
-  background-color: #5b5b5b;
-}
-.base_background_selected {
-  background-color: rgba(51, 181, 229, 0.5);
 }
 .base_radius {
   -webkit-border-radius: 2px 2px;
@@ -172,13 +177,10 @@
   border-bottom-right-radius: 0px 0px;
   border-top-right-radius: 0px;
 }
-body {
-  font-family: "Roboto", sans-serif;
-  background-color: #f2f2f2;
-}
+/** Theme ID */
 .device_test {
   opacity: 0;
-  margin-top: 5px;
+  margin-top: 0px;
 }
 /*
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
@@ -515,7 +517,6 @@ ul > li:first-child:before {
 }
 .vs_ui_inputfield > input {
   margin-left: 2px;
-  color: black;
   font-family: "Roboto", sans-serif;
   left: 0px;
   width: 100%;
@@ -850,7 +851,7 @@ ul > li:first-child:before {
 }
 .vs_ui_radiobutton {
   font-family: inherit;
-  color: black;
+  color: inherit;
 }
 input[type="radio"] {
   position: relative;
@@ -965,7 +966,7 @@ input[type="radio"].pressed:after {
 }
 .vs_ui_checkbox {
   font-family: inherit;
-  color: black;
+  color: inherit;
 }
 input[type="checkbox"] {
   position: relative;
@@ -1059,7 +1060,6 @@ input[type="checkbox"].pressed:after {
 .vs_ui_picker {
   height: 180px;
   font: bold 18pt/30pt "Roboto", sans-serif;
-  color: black;
   overflow: hidden;
   -webkit-mask-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.2)), color-stop(0.38, rgba(0, 0, 0, 0.2)), color-stop(0.38, #000000), color-stop(0.63, #000000), color-stop(0.63, rgba(0, 0, 0, 0.2)), to(rgba(0, 0, 0, 0.2)));
 }
