@@ -13,7 +13,8 @@ function initFieldsPanel () {
   view.add (label);
 
   var combo = new vs.ui.ComboBox ({
-    data: ['value 1', 'value 2', 'value 3', 'value 4']
+    data: ['value 1', 'value 2', 'value 3', 'value 4'],
+    size: [150, 43]
   }).init ();
   view.add (combo);
 
