@@ -2775,7 +2775,7 @@ util.defineClassProperties (View, {
       {
         this.removeClassName (this._layout);
       }
-      if (v.indexOf ("_layout") !== -1) this._layout = v;
+      if (!v || v.indexOf ("_layout") !== -1) this._layout = v;
       else this._layout = v + "_layout";
       if (this._layout)
       {
