@@ -189,6 +189,9 @@ Template.prototype = {
   }
 };
 
+/**
+ * @private
+ */
 function _resolveClass (name) {
   if (!name) { return null; }
 
@@ -230,6 +233,9 @@ var _template_view__clone = function (obj, cloned_map) {
   // rewrite properties to point cloned nodes
 };
 
+/**
+ * @private
+ */
 function _instrument_component (obj, shadow_view, node) {
 
   /**
@@ -352,6 +358,9 @@ function _instrument_component (obj, shadow_view, node) {
   _createPropertiesToObject (obj, shadow_view, node);
 };
 
+/**
+ * @private
+ */
 function _instanciate_shadow_view (shadow_view, data) {
   var new_node = shadow_view.__node.cloneNode (true);
   var obj = new shadow_view.__class ({node: new_node});
@@ -643,6 +652,9 @@ var _evalPath = function (root, path) {
   return null;
 };
 
+/**
+ * @protected
+ */
 Template.parseHTML = function (html) {
   var div = document.createElement ('div');
   try {
