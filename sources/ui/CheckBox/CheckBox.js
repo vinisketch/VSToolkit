@@ -154,7 +154,7 @@ CheckBox.prototype = {
     var i, l, div, title, button, item, label, input;
     if (!this._list_items)
     {
-      console.error ('vs.ui.RadioButton uncorrectly initialized.');
+      console.error ('vs.ui.CheckBox uncorrectly initialized.');
       return;
     }
    
