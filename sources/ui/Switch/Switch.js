@@ -198,12 +198,18 @@ Switch.prototype = {
   _setToggle: function (v)
   {
     var self = this;
-    
+
+    if (v) {
+      self._toggled = true;
+    }
+    else {
+      self._toggled = false;
+    }
+  
     vs.scheduleAction (function () {
       self._initWidthSwitch ();
     
-      if (v) {
-        self._toggled = true;
+      if (self._toggled) {
         self.addClassName ('on');
         if (self._mode === Switch.MODE_IOS) {
           util.setElementTransform (self.__switch_view,
@@ -211,7 +217,6 @@ Switch.prototype = {
         }
       }
       else {
-        self._toggled = false;
         self.removeClassName ('on');
         if (self._mode === Switch.MODE_IOS) {
           util.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
