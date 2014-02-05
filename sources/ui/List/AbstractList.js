@@ -216,12 +216,12 @@ AbstractList.prototype = {
   {
     if (!this._items_selectable) { return false; }
     
-    this.__elem = target;
-    if (this.__elem === this.view) {
+    if (target === this._sub_view || target === this.view) {
       this.__elem = null;
       return;
     }
     
+    this.__elem = target;
     if (this.__list_time_out) {
       clearTimeout (this.__list_time_out);
       this.__list_time_out = 0;
@@ -246,14 +246,15 @@ AbstractList.prototype = {
       this._untouchItemFeedback (this.__elem_to_unselect);
       this.__elem_to_unselect = null;
     }
+    this.__elem = null;
   },
   
   didTap : function (nb_tap, comp, target, e)
   {
     var self = this;
-    this.__elem_to_unselect = target;
-    if (target) {
-      this._updateSelectItem (target);
+    this.__elem_to_unselect = this.__elem;
+    if (this.__elem) {
+      this._updateSelectItem (this.__elem);
 
       this.__list_time_out = setTimeout (function () {
         if (self.__elem_to_unselect) {
