@@ -100,7 +100,9 @@ View.DEFAULT_LAYOUT = null;
  * @name vs.ui.View.HORIZONTAL_LAYOUT
  * @const
  */
-View.HORIZONTAL_LAYOUT = 'horizontal_layout';
+View.HORIZONTAL_LAYOUT = 'horizontal';
+/** @private */
+View.LEGACY_HORIZONTAL_LAYOUT = 'horizontal_layout';
 
 /**
  * Vertical layout
@@ -108,7 +110,9 @@ View.HORIZONTAL_LAYOUT = 'horizontal_layout';
  * @name vs.ui.View.VERTICAL_LAYOUT
  * @const
  */
-View.VERTICAL_LAYOUT = 'vertical_layout';
+View.VERTICAL_LAYOUT = 'vertical';
+/** @private */
+View.LEGACY_VERTICAL_LAYOUT = 'vertical_layout';
 
 /**
  * Absolute layout
@@ -116,7 +120,9 @@ View.VERTICAL_LAYOUT = 'vertical_layout';
  * @name vs.ui.View.ABSOLUTE_LAYOUT
  * @const
  */
-View.ABSOLUTE_LAYOUT = 'absolute_layout';
+View.ABSOLUTE_LAYOUT = 'absolute';
+/** @private */
+View.LEGACY_ABSOLUTE_LAYOUT = 'absolute_layout';
 
 /**
  * Html flow layout
@@ -124,7 +130,9 @@ View.ABSOLUTE_LAYOUT = 'absolute_layout';
  * @name vs.ui.View.FLOW_LAYOUT
  * @const
  */
-View.FLOW_LAYOUT = 'flow_layout';
+View.FLOW_LAYOUT = 'flow';
+/** @private */
+View.LEGACY_FLOW_LAYOUT = 'flow_layout';
 
 /********************************************************************
                     Delay constant
@@ -2753,17 +2761,22 @@ util.defineClassProperties (View, {
           v !== View.DEFAULT_LAYOUT &&
           v !== View.ABSOLUTE_LAYOUT &&
           v !== View.VERTICAL_LAYOUT &&
-          v !== View.FLOW_LAYOUT && v)
+          v !== View.FLOW_LAYOUT &&
+          v !== View.LEGACY_HORIZONTAL_LAYOUT &&
+          v !== View.LEGACY_ABSOLUTE_LAYOUT &&
+          v !== View.LEGACY_VERTICAL_LAYOUT &&
+          v !== View.LEGACY_FLOW_LAYOUT && v)
       {
         console.error ("Unsupported layout '" + v + "'!");
         return;
       }
-
+      
       if (this._layout)
       {
         this.removeClassName (this._layout);
       }
-      this._layout = v;
+      if (v.indexOf ("_layout") !== -1) this._layout = v;
+      else this._layout = v + "_layout";
       if (this._layout)
       {
         this.addClassName (this._layout);
