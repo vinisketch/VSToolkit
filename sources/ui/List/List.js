@@ -540,8 +540,12 @@ function defaultListRenderData (itemsSelectable)
  * Data can be filtered. The filter he array contains the member to filters
  * and filter:
  * @ex:
- *   list.filters = 
- *      [{property:'title', value:'o', matching:vs.ui.List.FILTER_CONTAINS, strict:true];
+ *   list.filters = [{
+ *      property:'title',
+ *      value:'o',
+ *      matching:vs.ui.List.FILTER_CONTAINS,
+ *      strict:true
+ *   }];
  *  @author David Thevenin
  *
  *  @constructor
