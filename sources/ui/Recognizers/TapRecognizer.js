@@ -112,7 +112,7 @@ TapRecognizer.prototype = {
       this.__tap_mode = 1;
     }
     
-    this.__tap_elem = e.targetPointerList[0].target;
+    this.__tap_elem = e.targetPointerList[0].currentTarget;
 
     if (this.__unselect_time_out) {
       clearTimeout (this.__unselect_time_out);
@@ -167,7 +167,7 @@ TapRecognizer.prototype = {
 
     try {
       if (this.delegate && this.delegate.didUntouch)
-        this.delegate.didUntouch (e.targetPointerList[0].target._comp_, e.targetPointerList[0].target, e);
+        this.delegate.didUntouch (e.targetPointerList[0].currentTarget._comp_, e.targetPointerList[0].currentTarget, e);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);

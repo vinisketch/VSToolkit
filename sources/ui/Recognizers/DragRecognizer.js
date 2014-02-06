@@ -112,7 +112,7 @@ DragRecognizer.prototype = {
   
     try {
       if (this.delegate && this.delegate.didDragStart)
-        this.delegate.didDragStart (e, e.targetPointerList[0].target._comp_);
+        this.delegate.didDragStart (e, e.targetPointerList[0].currentTarget._comp_);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
@@ -141,7 +141,7 @@ DragRecognizer.prototype = {
     
     try {
       if (this.delegate && this.delegate.didDrag)
-        this.delegate.didDrag ({dx: dx, dy:dy}, e, e.targetPointerList[0].target._comp_);
+        this.delegate.didDrag ({dx: dx, dy:dy}, e, e.targetPointerList[0].currentTarget._comp_);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);

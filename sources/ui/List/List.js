@@ -949,7 +949,7 @@ List.prototype = {
       vs.addPointerListener (document, core.POINTER_MOVE, accessBarMove, false);
       vs.addPointerListener (document, core.POINTER_END, accessBarEnd, false);
       
-      var _acces_index = e.targetPointerList[0].target._index_;
+      var _acces_index = e.targetPointerList[0].currentTarget._index_;
       if (!util.isNumber (_acces_index)) return;
       var letter = self.__direct_access_letters [_acces_index];
      
