@@ -9,7 +9,6 @@
   font-family: @default_font;
 
   .base_background;
-  padding-right: 27px;
   .base_radius;
 }
 
@@ -20,7 +19,6 @@
 
 .vs_ui_combobox > select
 {
-  .appearance(none);
   padding-top: 2px;
 }
 
@@ -45,14 +43,28 @@
   font-size: 22px;
 
   color: @baseColor;
-  top: 10px;
+  .base_background;
+  top: 0px;
   content: "\f0d7";
   border: none;
   margin: 0px;
-  right: 20px;
+  right: 0px;
+
+  height: 40px;
+  width: 20px;
+  text-align: center;
+  line-height: 40px;
+  
+  .base_radius_right;
 }
 
-.vs_ui_combobox:active:after
+.vs_ui_combobox:focus::after,
+.vs_ui_combobox:active::after
+{
+  .base_background_selected;
+}
+
+.vs_ui_combobox:active::after
 {
   color: #fff !important;
 }
