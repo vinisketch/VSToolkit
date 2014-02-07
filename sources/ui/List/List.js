@@ -462,7 +462,7 @@ function defaultListRenderData (itemsSelectable)
     s, width, titles, i, items, listItem;
   if (!_list_items) { return; }
    
-// remove all children
+  // remove all children
   this._freeListItems ();
   
   util.removeAllElementChild (_list_items);
