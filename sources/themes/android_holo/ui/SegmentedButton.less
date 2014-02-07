@@ -8,12 +8,18 @@
 }
 
 .vs_ui_segmentedbutton > div > div {
-  .box-pack(center);
-  text-align: center;
   .box-flex(1);
   .base_background;
   position: relative;
   border: none;
+}
+
+.vs_ui_segmentedbutton.horizontal > div {
+  .box-orient(horizontal);
+}
+
+.vs_ui_segmentedbutton.vertical > div {
+  .box-orient(vertical);
 }
 
 .vs_ui_segmentedbutton.horizontal > div > div {

@@ -38,6 +38,7 @@
 {
   .appearance(none);
   padding-top: 2px;
+  width: 120%;
 }
 
 .vs_ui_combobox > select:focus {
@@ -46,7 +47,7 @@
 
 .vs_ui_combobox::after
 {
-  width: 14px; height: 14px;
+  width: 0px; height: 0px;
   border-width: 7px;
   border-style: solid;
   border-color: transparent @baseColor @baseColor transparent;
@@ -57,22 +58,22 @@
   top: auto;
 }
 
-.vs_ui_combobox.focus:before
+.vs_ui_combobox.focus::before
 {
   border-color: @blue;
 }
 
-.vs_ui_combobox.focus:after
+.vs_ui_combobox.focus::after
 {
   border-color: transparent @blue @blue transparent;
 }
 
-.vs_ui_combobox:active:before
+.vs_ui_combobox:active::before
 {
   border-color: @baseColor;
 }
 
-.vs_ui_combobox:active:after
+.vs_ui_combobox:active::after
 {
   border-color: transparent @baseColor @baseColor transparent;
 }
