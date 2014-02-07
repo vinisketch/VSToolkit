@@ -41,10 +41,11 @@ OPEN = open
 ECHO = echo
 ECHO_N = echo -n
 JAVA = java
-COMPILE = $(JAVA) -jar ../tools/ext/closurecompiler/compiler.jar --language_in=ECMASCRIPT5
-COMPILE_ADV = $(JAVA) -jar ../tools/ext/closurecompiler/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS
-COMPILE_YUI = $(JAVA) -cp ../../../lib/yuicompressor/jargs-1.0.jar:../tools/ext/yuicompressor/rhino-1.6R7.jar -jar ../tools/ext/yuicompressor/yuicompressor-2.4.2.jar
-GENDOC = $(JAVA) -jar ../tools/ext/jsdoc-toolkit/jsrun.jar ../tools/ext/jsdoc-toolkit/app/run.js
+export TOOLS_PATH = $(PWD)/../tools/ext
+COMPILE = $(JAVA) -jar $(TOOLS_PATH)/closurecompiler/compiler.jar --language_in=ECMASCRIPT5
+COMPILE_ADV = $(JAVA) -jar $(TOOLS_PATH)/closurecompiler/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS
+COMPILE_YUI = $(JAVA) -cp $(TOOLS_PATH)/yuicompressor/jargs-1.0.jar:$(TOOLS_PATH)/yuicompressor/rhino-1.6R7.jar -jar $(TOOLS_PATH)/yuicompressor/yuicompressor-2.4.2.jar
+GENDOC = $(JAVA) -jar $(TOOLS_PATH)/jsdoc-toolkit/jsrun.jar $(TOOLS_PATH)/jsdoc-toolkit/app/run.js
 COMPILE_LESS = lessc
 
 ###                         RELEASE
@@ -55,11 +56,12 @@ all :: release
 Debug :: debug
 Release :: release
 
-release :: clean makedirs extern_libs core ui fx data ext av ext_fx doc
+release :: clean makedirs extern_libs core ui fx data ext av ext_fx doc ../lib_debug/js/vs_webcomponent.js
 	-$(COMPILE) --js=../lib_debug/js/vs_util.js --js_output_file=../lib/js/vs_util.js
+	-$(COMPILE) --js=../lib_debug/js/vs_webcomponent.js --js_output_file=../lib/js/vs_webcomponent.js
 	-$(CD) themes;make
 
-debug :: clean_debug makedirs extern_libs core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug
+debug :: clean_debug makedirs extern_libs core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug ../lib_debug/js/vs_webcomponent.js
 	-$(CD) themes;make DEBUG=1
 
 clean :: clean_debug_libs clean_libs clean_docs
@@ -323,3 +325,14 @@ extern_libs: ../lib_debug/js/vs_util.js ../lib_debug/js/vs_transform.js ../lib_d
 	git clone https://github.com/dthevenin/Gesture.git tmp
 	-$(CP) tmp/build/vs_gesture.js ../lib_debug/js/vs_gesture.js
 	-$(RM_RF) tmp
+
+###                    WebComponent
+##############################################################
+
+../lib_debug/js/vs_webcomponent.js:
+	$(CAT) web_comp/polymer/Scope.js >> $@
+	$(CAT) web_comp/polymer/Boot.js >> $@
+	$(CAT) web_comp/polymer/Observer.js >> $@
+	$(CAT) web_comp/polymer/Parser.js >> $@
+	$(CAT) web_comp/polymer/CustomElements.js >> $@
+	$(CAT) web_comp/CustonElements.js >> $@
