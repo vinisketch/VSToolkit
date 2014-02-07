@@ -613,13 +613,6 @@ ul > li:first-child:before {
   box-align: stretch;
 }
 .vs_ui_segmentedbutton > div > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-pack: center;
-  -moz-box-pack: center;
-  box-pack: center;
-  text-align: center;
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
   -ms-box-flex: 1;
@@ -852,9 +845,6 @@ input[type="radio"] {
   background: transparent;
   color: inherit;
   height: 40px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
   z-index: 1;
 }
 input[type="radio"]:after {
@@ -866,12 +856,6 @@ input[type="radio"].pressed + label,
 }
 input[type="radio"]:after {
   content: "\f10c";
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   color: #d3d3d3;
   display: block;
   width: 28px;
@@ -931,9 +915,6 @@ input[type="checkbox"] {
   background: transparent;
   color: inherit;
   height: 40px;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
   z-index: 1;
 }
 input[type="checkbox"]:after {
@@ -944,12 +925,6 @@ input[type="checkbox"].pressed + label,
   background-color: #cdd1dc;
 }
 input[type="checkbox"]:after {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
   color: #d3d3d3;
   display: block;
   width: 28px;
@@ -988,6 +963,8 @@ input[type="checkbox"]:checked:after {
   color: black;
   overflow: hidden;
   -webkit-mask-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.1)), color-stop(0.38, rgba(0, 0, 0, 0.5)), color-stop(0.38, #000000), color-stop(0.63, #000000), color-stop(0.63, rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.1)));
+  -ms-mask-image: -ms-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.1)), color-stop(0.38, rgba(0, 0, 0, 0.5)), color-stop(0.38, #000000), color-stop(0.63, #000000), color-stop(0.63, rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.1)));
+  mask-image: gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.1)), color-stop(0.38, rgba(0, 0, 0, 0.5)), color-stop(0.38, #000000), color-stop(0.63, #000000), color-stop(0.63, rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.1)));
 }
 .vs_ui_picker .slots {
   top: 50%;
@@ -1049,7 +1026,6 @@ input[type="checkbox"]:checked:after {
   font-weight: normal;
   font-family: "Helvetica Neue";
   background-color: #E5E7ED;
-  padding-right: 27px;
   -webkit-border-radius: 4px 4px;
   -moz-border-radius: 4px / 4px;
   border-radius: 4px / 4px;
@@ -1059,9 +1035,6 @@ input[type="checkbox"]:checked:after {
   background-color: #cdd1dc;
 }
 .vs_ui_combobox > select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
   padding-top: 2px;
 }
 .vs_ui_combobox > select:focus {
@@ -1084,12 +1057,33 @@ input[type="checkbox"]:checked:after {
   background-image: none;
   font-size: 22px;
   color: #282828;
-  top: 10px;
+  background-color: #E5E7ED;
+  top: 0px;
   content: "\f0d7";
   border: none;
   margin: 0px;
-  right: 20px;
+  right: 0px;
+  height: 40px;
+  width: 20px;
+  text-align: center;
+  line-height: 40px;
+  -webkit-border-top-left-radius: 0px;
+  -webkit-border-bottom-left-radius: 0px;
+  -webkit-border-bottom-right-radius: 4px 4px;
+  -webkit-border-top-right-radius: 4px 4px;
+  -moz-border-radius-topleft: 0px;
+  -moz-border-radius-bottomleft: 0px;
+  -moz-border-radius-bottomright: 4px 4px;
+  -moz-border-radius-topright: 4px 4px;
+  border-top-left-radius: 0px;
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 4px 4px;
+  border-top-right-radius: 4px 4px;
 }
-.vs_ui_combobox:active:after {
+.vs_ui_combobox:focus::after,
+.vs_ui_combobox:active::after {
+  background-color: #cdd1dc;
+}
+.vs_ui_combobox:active::after {
   color: #fff !important;
 }

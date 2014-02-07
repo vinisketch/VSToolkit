@@ -637,12 +637,6 @@ ul > li:first-child:before {
   box-align: stretch;
 }
 .vs_ui_segmentedbutton > div > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-pack: center;
-  -moz-box-pack: center;
-  box-pack: center;
   text-align: center;
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
@@ -1089,7 +1083,6 @@ input[type="checkbox"].pressed:after {
   background-image: -webkit-linear-gradient(90deg, #FFF 0%, rgb(245,245,245) 100%);
   background-image: -o-linear-gradient(90deg, #FFF 0%, rgb(245,245,245) 100%);
   background-image: linear-gradient(0deg, #FFF 0%, rgb(245,245,245) 100%);
-  padding-right: 27px;
 }
 .vs_ui_combobox:focus,
 .vs_ui_combobox:active {
@@ -1097,9 +1090,6 @@ input[type="checkbox"].pressed:after {
   background-color: #CCCCCC;
 }
 .vs_ui_combobox > select {
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
   padding-top: 2px;
   color: inherit;
 }
@@ -1123,12 +1113,24 @@ input[type="checkbox"].pressed:after {
   background-image: none;
   font-size: 22px;
   color: #157dfa;
-  top: 10px;
   content: "\f0dc";
-  border: none;
   margin: 0px;
-  right: 20px;
+  right: 0px;
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQtdWNnZy1nZW5lcmF0ZWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIxMDAlIiB4Mj0iMCUiIHkyPSIwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0ZGRiIgc3RvcC1vcGFjaXR5PSIxIi8+cmdiKDI0NTI0NTI0NSkgMTAwJTwvbGluZWFyR3JhZGllbnQ+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz48L3N2Zz4=);
+  background-image: -moz-linear-gradient(90deg, #FFF 0%, rgb(245,245,245) 100%);
+  background-image: -webkit-linear-gradient(90deg, #FFF 0%, rgb(245,245,245) 100%);
+  background-image: -o-linear-gradient(90deg, #FFF 0%, rgb(245,245,245) 100%);
+  background-image: linear-gradient(0deg, #FFF 0%, rgb(245,245,245) 100%);
+  top: 0px;
+  border: none;
+  height: 43px;
+  width: 20px;
+  text-align: center;
+  line-height: 43px;
 }
-.vs_ui_combobox:active:after {
+/* 
+.vs_ui_combobox:active::after
+{
   color: #fff !important;
 }
+ */

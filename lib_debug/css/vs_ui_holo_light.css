@@ -628,13 +628,6 @@ ul > li:first-child:before {
   box-align: stretch;
 }
 .vs_ui_segmentedbutton > div > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-pack: center;
-  -moz-box-pack: center;
-  box-pack: center;
-  text-align: center;
   -webkit-box-flex: 1;
   -moz-box-flex: 1;
   -ms-box-flex: 1;
@@ -643,6 +636,22 @@ ul > li:first-child:before {
   background-color: #cecece;
   position: relative;
   border: none;
+}
+.vs_ui_segmentedbutton.horizontal > div {
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+  -webkit-box-orient: horizontal;
+  -moz-box-orient: horizontal;
+  box-orient: horizontal;
+}
+.vs_ui_segmentedbutton.vertical > div {
+  display: -webkit-box;
+  display: -moz-box;
+  display: box;
+  -webkit-box-orient: vertical;
+  -moz-box-orient: vertical;
+  box-orient: vertical;
 }
 .vs_ui_segmentedbutton.horizontal > div > div {
   border-bottom: 6px solid transparent;
@@ -1139,13 +1148,14 @@ input[type="checkbox"].pressed:after {
   -moz-appearance: none;
   appearance: none;
   padding-top: 2px;
+  width: 120%;
 }
 .vs_ui_combobox > select:focus {
   outline: none;
 }
 .vs_ui_combobox::after {
-  width: 14px;
-  height: 14px;
+  width: 0px;
+  height: 0px;
   border-width: 7px;
   border-style: solid;
   border-color: transparent #5b5b5b #5b5b5b transparent;
@@ -1155,15 +1165,15 @@ input[type="checkbox"].pressed:after {
   position: absolute;
   top: auto;
 }
-.vs_ui_combobox.focus:before {
+.vs_ui_combobox.focus::before {
   border-color: #33b5e5;
 }
-.vs_ui_combobox.focus:after {
+.vs_ui_combobox.focus::after {
   border-color: transparent #33b5e5 #33b5e5 transparent;
 }
-.vs_ui_combobox:active:before {
+.vs_ui_combobox:active::before {
   border-color: #5b5b5b;
 }
-.vs_ui_combobox:active:after {
+.vs_ui_combobox:active::after {
   border-color: transparent #5b5b5b #5b5b5b transparent;
 }
