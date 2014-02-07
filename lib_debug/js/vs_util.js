@@ -1530,6 +1530,41 @@ function isNumber (object)
 };
 
 /**
+ *  Returns `true` if `object` is an "pure" Object; `false` otherwise.
+ *
+ *  @example
+ *
+ *  vs.util.isObject (123);
+ *  //-> false
+ *
+ *  vs.util.isObject ([]);
+ *  //-> false
+ *
+ *  vs.util.isObject ({});
+ *  //-> true
+ *
+ *  vs.util.isObject (document);
+ *  //-> false // YEP !
+ *
+ *  vs.util.isObject (vs.util);
+ *  //-> true
+ *
+ *  vs.util.isObject (new Date);
+ *  //-> false // YEP !
+ *
+ *  @memberOf vs.util
+ *
+ * @param {Object} object The object to test.
+ **/
+function isObject (object) {
+  try {
+    return (Object.getPrototypeOf (object) === Object.prototype);
+  } catch (e) {
+    return false;
+  }
+};
+
+/**
  *  Returns `true` if `object` is of type `undefined`; `false` otherwise.
  *
  *  @example
@@ -2794,6 +2829,7 @@ util.extend (util, {
   isFunction:              isFunction,
   isString:                isString,
   isNumber:                isNumber,
+  isObject:                isObject,
   isUndefined:             isUndefined,
 
   // element class

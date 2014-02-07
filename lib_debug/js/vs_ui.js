@@ -243,6 +243,9 @@ Template.prototype = {
   }
 };
 
+/**
+ * @private
+ */
 function _resolveClass (name) {
   if (!name) { return null; }
 
@@ -284,6 +287,9 @@ var _template_view__clone = function (obj, cloned_map) {
   // rewrite properties to point cloned nodes
 };
 
+/**
+ * @private
+ */
 function _instrument_component (obj, shadow_view, node) {
 
   /**
@@ -406,6 +412,9 @@ function _instrument_component (obj, shadow_view, node) {
   _createPropertiesToObject (obj, shadow_view, node);
 };
 
+/**
+ * @private
+ */
 function _instanciate_shadow_view (shadow_view, data) {
   var new_node = shadow_view.__node.cloneNode (true);
   var obj = new shadow_view.__class ({node: new_node});
@@ -697,6 +706,9 @@ var _evalPath = function (root, path) {
   return null;
 };
 
+/**
+ * @protected
+ */
 Template.parseHTML = function (html) {
   var div = document.createElement ('div');
   try {
@@ -1146,7 +1158,7 @@ TapRecognizer.prototype = {
       this.__tap_mode = 1;
     }
     
-    this.__tap_elem = e.targetPointerList[0].target;
+    this.__tap_elem = e.targetPointerList[0].currentTarget;
 
     if (this.__unselect_time_out) {
       clearTimeout (this.__unselect_time_out);
@@ -1201,7 +1213,7 @@ TapRecognizer.prototype = {
 
     try {
       if (this.delegate && this.delegate.didUntouch)
-        this.delegate.didUntouch (e.targetPointerList[0].target._comp_, e.targetPointerList[0].target, e);
+        this.delegate.didUntouch (e.targetPointerList[0].currentTarget._comp_, e.targetPointerList[0].currentTarget, e);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
@@ -1384,7 +1396,7 @@ DragRecognizer.prototype = {
   
     try {
       if (this.delegate && this.delegate.didDragStart)
-        this.delegate.didDragStart (e, e.targetPointerList[0].target._comp_);
+        this.delegate.didDragStart (e, e.targetPointerList[0].currentTarget._comp_);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
@@ -1413,7 +1425,7 @@ DragRecognizer.prototype = {
     
     try {
       if (this.delegate && this.delegate.didDrag)
-        this.delegate.didDrag ({dx: dx, dy:dy}, e, e.targetPointerList[0].target._comp_);
+        this.delegate.didDrag ({dx: dx, dy:dy}, e, e.targetPointerList[0].currentTarget._comp_);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
@@ -1891,7 +1903,9 @@ View.DEFAULT_LAYOUT = null;
  * @name vs.ui.View.HORIZONTAL_LAYOUT
  * @const
  */
-View.HORIZONTAL_LAYOUT = 'horizontal_layout';
+View.HORIZONTAL_LAYOUT = 'horizontal';
+/** @private */
+View.LEGACY_HORIZONTAL_LAYOUT = 'horizontal_layout';
 
 /**
  * Vertical layout
@@ -1899,7 +1913,9 @@ View.HORIZONTAL_LAYOUT = 'horizontal_layout';
  * @name vs.ui.View.VERTICAL_LAYOUT
  * @const
  */
-View.VERTICAL_LAYOUT = 'vertical_layout';
+View.VERTICAL_LAYOUT = 'vertical';
+/** @private */
+View.LEGACY_VERTICAL_LAYOUT = 'vertical_layout';
 
 /**
  * Absolute layout
@@ -1907,7 +1923,9 @@ View.VERTICAL_LAYOUT = 'vertical_layout';
  * @name vs.ui.View.ABSOLUTE_LAYOUT
  * @const
  */
-View.ABSOLUTE_LAYOUT = 'absolute_layout';
+View.ABSOLUTE_LAYOUT = 'absolute';
+/** @private */
+View.LEGACY_ABSOLUTE_LAYOUT = 'absolute_layout';
 
 /**
  * Html flow layout
@@ -1915,7 +1933,9 @@ View.ABSOLUTE_LAYOUT = 'absolute_layout';
  * @name vs.ui.View.FLOW_LAYOUT
  * @const
  */
-View.FLOW_LAYOUT = 'flow_layout';
+View.FLOW_LAYOUT = 'flow';
+/** @private */
+View.LEGACY_FLOW_LAYOUT = 'flow_layout';
 
 /********************************************************************
                     Delay constant
@@ -4544,17 +4564,22 @@ util.defineClassProperties (View, {
           v !== View.DEFAULT_LAYOUT &&
           v !== View.ABSOLUTE_LAYOUT &&
           v !== View.VERTICAL_LAYOUT &&
-          v !== View.FLOW_LAYOUT && v)
+          v !== View.FLOW_LAYOUT &&
+          v !== View.LEGACY_HORIZONTAL_LAYOUT &&
+          v !== View.LEGACY_ABSOLUTE_LAYOUT &&
+          v !== View.LEGACY_VERTICAL_LAYOUT &&
+          v !== View.LEGACY_FLOW_LAYOUT && v)
       {
         console.error ("Unsupported layout '" + v + "'!");
         return;
       }
-
+      
       if (this._layout)
       {
         this.removeClassName (this._layout);
       }
-      this._layout = v;
+      if (!v || v.indexOf ("_layout") !== -1) this._layout = v;
+      else this._layout = v + "_layout";
       if (this._layout)
       {
         this.addClassName (this._layout);
@@ -10231,12 +10256,12 @@ AbstractList.prototype = {
   {
     if (!this._items_selectable) { return false; }
     
-    this.__elem = target;
-    if (this.__elem === this.view) {
+    if (target === this._sub_view || target === this.view) {
       this.__elem = null;
       return;
     }
     
+    this.__elem = target;
     if (this.__list_time_out) {
       clearTimeout (this.__list_time_out);
       this.__list_time_out = 0;
@@ -10261,14 +10286,15 @@ AbstractList.prototype = {
       this._untouchItemFeedback (this.__elem_to_unselect);
       this.__elem_to_unselect = null;
     }
+    this.__elem = null;
   },
   
   didTap : function (nb_tap, comp, target, e)
   {
     var self = this;
-    this.__elem_to_unselect = target;
-    if (target) {
-      this._updateSelectItem (target);
+    this.__elem_to_unselect = this.__elem;
+    if (this.__elem) {
+      this._updateSelectItem (this.__elem);
 
       this.__list_time_out = setTimeout (function () {
         if (self.__elem_to_unselect) {
@@ -10897,7 +10923,7 @@ function defaultListRenderData (itemsSelectable)
     s, width, titles, i, items, listItem;
   if (!_list_items) { return; }
    
-// remove all children
+  // remove all children
   this._freeListItems ();
   
   util.removeAllElementChild (_list_items);
@@ -10975,8 +11001,12 @@ function defaultListRenderData (itemsSelectable)
  * Data can be filtered. The filter he array contains the member to filters
  * and filter:
  * @ex:
- *   list.filters = 
- *      [{property:'title', value:'o', matching:vs.ui.List.FILTER_CONTAINS, strict:true];
+ *   list.filters = [{
+ *      property:'title',
+ *      value:'o',
+ *      matching:vs.ui.List.FILTER_CONTAINS,
+ *      strict:true
+ *   }];
  *  @author David Thevenin
  *
  *  @constructor
@@ -11384,7 +11414,7 @@ List.prototype = {
       vs.addPointerListener (document, core.POINTER_MOVE, accessBarMove, false);
       vs.addPointerListener (document, core.POINTER_END, accessBarEnd, false);
       
-      var _acces_index = e.targetPointerList[0].target._index_;
+      var _acces_index = e.targetPointerList[0].currentTarget._index_;
       if (!util.isNumber (_acces_index)) return;
       var letter = self.__direct_access_letters [_acces_index];
      
@@ -12412,7 +12442,7 @@ CheckBox.prototype = {
     var i, l, div, title, button, item, label, input;
     if (!this._list_items)
     {
-      console.error ('vs.ui.RadioButton uncorrectly initialized.');
+      console.error ('vs.ui.CheckBox uncorrectly initialized.');
       return;
     }
    
@@ -17110,12 +17140,18 @@ Switch.prototype = {
   _setToggle: function (v)
   {
     var self = this;
-    
+
+    if (v) {
+      self._toggled = true;
+    }
+    else {
+      self._toggled = false;
+    }
+  
     vs.scheduleAction (function () {
       self._initWidthSwitch ();
     
-      if (v) {
-        self._toggled = true;
+      if (self._toggled) {
         self.addClassName ('on');
         if (self._mode === Switch.MODE_IOS) {
           util.setElementTransform (self.__switch_view,
@@ -17123,7 +17159,6 @@ Switch.prototype = {
         }
       }
       else {
-        self._toggled = false;
         self.removeClassName ('on');
         if (self._mode === Switch.MODE_IOS) {
           util.setElementTransform (self.__switch_view, "translate3d(0,0,0)");

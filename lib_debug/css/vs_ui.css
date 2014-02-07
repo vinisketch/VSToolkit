@@ -58,47 +58,32 @@ body {
                     Absolute Layout
 *********************************************************************/
 .vs_ui_popover > .center.absolute_layout,
-.application.absolute_layout,
-.vs_ui_splitview.absolute_layout,
-.vs_ui_navigationbar.absolute_layout,
-.vs_ui_view.absolute_layout {
+.absolute_layout {
   display: block;
 }
 .vs_ui_popover > .center.absolute_layout > *,
-.application.absolute_layout > *,
-.vs_ui_splitview.absolute_layout > *,
-.vs_ui_view.absolute_layout > *,
-.vs_ui_navigationbar.absolute_layout > * {
-  position: absolute;
+.absolute_layout > * {
+  position: absolute !important;
 }
 /********************************************************************
                     Flow Layout
 *********************************************************************/
 .vs_ui_popover > .center.flow_layout,
-.application.flow_layout,
-.vs_ui_splitview.flow_layout,
-.vs_ui_navigationbar.flow_layout,
-.vs_ui_view.flow_layout {
+.flow_layout {
   display: block;
 }
 .vs_ui_popover > .center.flow_layout > *,
-.application.flow_layout > *,
-.vs_ui_splitview.flow_layout > *,
-.vs_ui_navigationbar.flow_layout > *,
-.vs_ui_view.flow_layout > * {
+.flow_layout > * {
   display: inline-block;
   top: 0px!important;
   left: 0px!important;
-  position: relative;
+  position: relative !important;
 }
 /********************************************************************
                     Vertical Layout
 *********************************************************************/
 .vs_ui_popover > .center.vertical_layout,
-.vs_ui_splitview.vertical_layout,
-.application.vertical_layout,
-.vs_ui_navigationbar.vertical_layout,
-.vs_ui_view.vertical_layout {
+.vertical_layout {
   -webkit-box-orient: vertical;
   -moz-box-orient: vertical;
   box-orient: vertical;
@@ -110,10 +95,7 @@ body {
   box-align: start;
 }
 .vs_ui_popover > .center.vertical_layout > *,
-.application.vertical_layout > *,
-.vs_ui_splitview.vertical_layout > *,
-.vs_ui_navigationbar.vertical_layout > *,
-.vs_ui_view.vertical_layout > * {
+.vertical_layout > * {
   display: -webkit-box;
   display: -moz-box;
   display: box;
@@ -127,16 +109,13 @@ body {
   box-flex: 0;
   top: 0px!important;
   left: 0px!important;
-  position: relative;
+  position: relative !important;
 }
 /********************************************************************
                     Horizontal Layout
 *********************************************************************/
 .vs_ui_popover > .center.horizontal_layout,
-.application.horizontal_layout,
-.vs_ui_splitview.horizontal_layout,
-.vs_ui_navigationbar.horizontal_layout,
-.vs_ui_view.horizontal_layout {
+.horizontal_layout {
   -webkit-box-orient: horizontal;
   -moz-box-orient: horizontal;
   box-orient: horizontal;
@@ -148,10 +127,7 @@ body {
   box-align: start;
 }
 .vs_ui_popover > .center.horizontal_layout > *,
-.application.horizontal_layout > *,
-.vs_ui_splitview.horizontal_layout > *,
-.vs_ui_navigationbar.horizontal_layout > *,
-.vs_ui_view.horizontal_layout > * {
+.horizontal_layout > * {
   display: -webkit-box;
   display: -moz-box;
   display: box;
@@ -165,7 +141,7 @@ body {
   box-flex: 0;
   top: 0px!important;
   left: 0px!important;
-  position: relative;
+  position: relative !important;
 }
 .vs_ui_splitview {
   width: 100%;
@@ -610,12 +586,6 @@ li {
   margin: 0px;
   font-weight: normal;
   color: black;
-  /*  border: solid 1px black; */
-
-  /*  background: white; */
-
-  /*  border-radius: 5px; */
-
   color: inherit;
 }
 .vs_ui_combobox > select {

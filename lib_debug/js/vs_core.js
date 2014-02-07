@@ -262,6 +262,13 @@ VSObject.prototype =
     {
       this._id = createId ();
     }
+    
+    if (VSObject._obs [this._id]) {
+      console.warn ("Impossible to create an object with an already used id.");
+      var old_id = this._id;
+      this._id = createId ();
+      console.warn ("The id \"%s\" is replaced by \"%s\".", old_id, this._id);
+    }
 
     // save the current object
     VSObject._obs [this._id] = this;
