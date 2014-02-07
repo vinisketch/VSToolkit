@@ -7,9 +7,7 @@
 *********************************************************************/
 
 .vs_ui_popover >.center.vertical_layout,
-.application.vertical_layout,
-.vs_ui_navbar.vertical_layout,
-.vs_ui_view.vertical_layout,
+.vertical_layout,
 .vs_ui_segmentedbutton.vertical > div
 {
   display: -ms-flexbox;
@@ -18,9 +16,7 @@
 }
 
 .vs_ui_popover >.center.vertical_layout > *,
-.application.vertical_layout > *,
-.vs_ui_navbar.vertical_layout > *,
-.vs_ui_view.vertical_layout > *,
+.vertical_layout > *,
 .vs_ui_segmentedbutton.vertical > div > div
 {
   -ms-flex-pack: justify;
@@ -32,10 +28,8 @@
 *********************************************************************/
 
 .vs_ui_popover >.center.horizontal_layout,
-.application.horizontal_layout,
+.horizontal_layout,
 .vs_ui_splitview,
-.vs_ui_navbar.horizontal_layout,
-.vs_ui_view.horizontal_layout,
 .vs_ui_segmentedbutton.horizontal > div,
 .vs_ui_picker .slots
 {
@@ -45,10 +39,8 @@
 }
 
 .vs_ui_popover >.center.horizontal_layout > *,
-.application.horizontal_layout > *,
+.horizontal_layout > *,
 .vs_ui_splitview > *,
-.vs_ui_navbar.horizontal_layout > *,
-.vs_ui_view.horizontal_layout > *,
 .vs_ui_segmentedbutton.horizontal > div > div,
 .vs_ui_picker .slots > div
 {

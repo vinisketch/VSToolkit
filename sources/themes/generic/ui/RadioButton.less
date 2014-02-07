@@ -21,7 +21,7 @@ fieldset > input[type="radio"]:first-child
 input[type="radio"]
 {
   width: 100%;
-  -webkit-appearance: none;
+   .appearance(none);
   font-size: inherit;
 
   margin: 0px;
@@ -42,6 +42,9 @@ input[type="radio"]:checked
 
 input[type="radio"]:after
 {
+  .box-sizing(border-box);
+  .user-select(none);
+  
   position: absolute;
   right: 10px;
   top: 50%;

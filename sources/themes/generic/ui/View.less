@@ -15,14 +15,9 @@
   tap-highlight-color: none; 
   
   /* prevent copy paste, to allow, change 'none' to 'text' */
-  -webkit-user-select: none;
-  -moz-user-select: none;
-  -ms-user-select: none;
-  user-select: none;
+  .user-select(none);
   
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
+  .box-sizing(border-box);
 
   cursor: default;
 
@@ -47,21 +42,15 @@
 *********************************************************************/
 
 .vs_ui_popover >.center.absolute_layout,
-.application.absolute_layout,
-.vs_ui_splitview.absolute_layout,
-.vs_ui_navigationbar.absolute_layout,
-.vs_ui_view.absolute_layout
+.absolute_layout
 {
   display: block;
 }
 
 .vs_ui_popover >.center.absolute_layout > *,
-.application.absolute_layout > *,
-.vs_ui_splitview.absolute_layout > *,
-.vs_ui_view.absolute_layout > *,
-.vs_ui_navigationbar.absolute_layout > *
+.absolute_layout > *
 {
-  position: absolute;
+  position: absolute !important;
 }
 
 /********************************************************************
@@ -69,25 +58,19 @@
 *********************************************************************/
 
 .vs_ui_popover >.center.flow_layout,
-.application.flow_layout,
-.vs_ui_splitview.flow_layout,
-.vs_ui_navigationbar.flow_layout,
-.vs_ui_view.flow_layout
+.flow_layout
 {
   display: block;
 }
 
 .vs_ui_popover >.center.flow_layout > *,
-.application.flow_layout > *,
-.vs_ui_splitview.flow_layout > *,
-.vs_ui_navigationbar.flow_layout > *,
-.vs_ui_view.flow_layout > *
+.flow_layout > *
 {
   display: inline-block;
 
   top: 0px!important;
   left: 0px!important;
-  position: relative;
+  position: relative !important;
 }
 
 /********************************************************************
@@ -95,27 +78,20 @@
 *********************************************************************/
 
 .vs_ui_popover >.center.vertical_layout,
-.vs_ui_splitview.vertical_layout,
-.application.vertical_layout,
-.vs_ui_navigationbar.vertical_layout,
-.vs_ui_view.vertical_layout
+.vertical_layout
 {
   .box-orient(vertical);
   .box-align(start);
 }
 
 .vs_ui_popover >.center.vertical_layout > *,
-.application.vertical_layout > *,
-.vs_ui_splitview.vertical_layout > *,
-.vs_ui_navigationbar.vertical_layout > *,
-.vs_ui_view.vertical_layout > *
+.vertical_layout > *
 {
-  .box-pack(stretch);
   .box-flex(0);
 
   top: 0px!important;
   left: 0px!important;
-  position: relative;
+  position: relative !important;
 }
 
 /********************************************************************
@@ -123,25 +99,19 @@
 *********************************************************************/
 
 .vs_ui_popover >.center.horizontal_layout,
-.application.horizontal_layout,
-.vs_ui_splitview.horizontal_layout,
-.vs_ui_navigationbar.horizontal_layout,
-.vs_ui_view.horizontal_layout
+.horizontal_layout
 {
   .box-orient(horizontal);
   .box-align(start);
 }
 
 .vs_ui_popover >.center.horizontal_layout > *,
-.application.horizontal_layout > *,
-.vs_ui_splitview.horizontal_layout > *,
-.vs_ui_navigationbar.horizontal_layout > *,
-.vs_ui_view.horizontal_layout > *
+.horizontal_layout > *
 {
   .box-pack(stretch);
   .box-flex(0);
 
   top: 0px!important;
   left: 0px!important;
-  position: relative;
+  position: relative !important;
 }

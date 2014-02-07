@@ -4,40 +4,27 @@
 
   font-weight: normal;
   color: black;
-  
-/*  border: solid 1px black; */
-/*  background: white; */
-  
-/*  border-radius: 5px; */
   color: inherit;
+  overflow: hidden;
 }
 
 .vs_ui_combobox > select {
-  -webkit-appearance: none;
   text-align: left;
   padding: 0px;
-  padding-left: 10px;
   width: 100%;
-  height: 100%;
+  height: 25px;
   background: transparent;
   border: none;
   font-size: inherit;
   position:relative;
   color: inherit;
   display	: block;
-}
-
-.vs_ui_combobox > div {
-  text-align: left;
-  padding: 0px;
   padding-left: 10px;
-  padding-top: 10px;
-  width: 100%;
-  height: 100%;
-  background: transparent;
-  font-weight: normal;
+  .appearance(none);
+  margin-top: 5px;
 }
 
+.vs_ui_combobox > select:active,
 .vs_ui_combobox > select:focus {
   outline: none;
 }

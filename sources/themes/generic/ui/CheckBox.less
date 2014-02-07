@@ -21,7 +21,7 @@ fieldset > input[type="checkbox"]:first-child
 input[type="checkbox"]
 {
   width: 100%;
-  -webkit-appearance: none;
+  .appearance(none);
   font-size: inherit;
 
   margin: 0px;
@@ -42,7 +42,9 @@ input[type="checkbox"]:checked
 
 input[type="checkbox"]:after
 {
-  -webkit-box-sizing: border-box;
+  .box-sizing(border-box);
+  .user-select(none);
+  
   position: absolute;
   right: 10px;
   top: 50%;
