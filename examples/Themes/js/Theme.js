@@ -128,4 +128,4 @@ function setTheme (name) {
   }, "css");
 }
 
-setTheme (pure);
+setTheme ("flat");
