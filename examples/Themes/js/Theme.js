@@ -129,3 +129,15 @@ function setTheme (name) {
 }
 
 setTheme ("flat");
+
+window.addEventListener("message", receiveMessage, false);
+var message_reg = /hangetheme#(\w+)/;
+
+function receiveMessage (event)
+{
+  var message = event.data;
+  var result = message_reg.exec (message);
+  if (!result || result.length !== 2) return;
+  
+  setTheme (result[1]);
+}
