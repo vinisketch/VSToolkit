@@ -773,22 +773,6 @@ ul > li:first-child {
   color: white;
   text-shadow: black 0 1px 0;
 }
-.vs_ui_segmentedbutton.horizontal > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-orient: horizontal;
-  -moz-box-orient: horizontal;
-  box-orient: horizontal;
-}
-.vs_ui_segmentedbutton.vertical > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  box-orient: vertical;
-}
 .vs_ui_segmentedbutton.horizontal > div > div {
   border-left: 1px solid #DDD;
   border-right: 1px solid transparent;

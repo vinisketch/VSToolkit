@@ -619,39 +619,8 @@ ul > li:first-child:before {
   font-weight: normal;
   color: #5b5b5b;
 }
-.vs_ui_segmentedbutton > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-align: stretch;
-  -moz-box-align: stretch;
-  box-align: stretch;
-}
 .vs_ui_segmentedbutton > div > div {
-  -webkit-box-flex: 1;
-  -moz-box-flex: 1;
-  -ms-box-flex: 1;
-  -o-box-flex: 1;
-  box-flex: 1;
   background-color: #cecece;
-  position: relative;
-  border: none;
-}
-.vs_ui_segmentedbutton.horizontal > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-orient: horizontal;
-  -moz-box-orient: horizontal;
-  box-orient: horizontal;
-}
-.vs_ui_segmentedbutton.vertical > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  box-orient: vertical;
 }
 .vs_ui_segmentedbutton.horizontal > div > div {
   border-bottom: 6px solid transparent;
@@ -673,6 +642,7 @@ ul > li:first-child:before {
 .vs_ui_segmentedbutton > div > div:active,
 .vs_ui_segmentedbutton > div > div.selected {
   border-color: #33b5e5 !important;
+  z-index: 1;
 }
 .vs_ui_segmentedbutton.horizontal > div > div::before {
   border-left: 1px solid #BBB;

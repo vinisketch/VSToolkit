@@ -636,33 +636,9 @@ ul > li:first-child:before {
   -moz-box-align: stretch;
   box-align: stretch;
 }
-.vs_ui_segmentedbutton > div > div {
-  text-align: center;
-  -webkit-box-flex: 1;
-  -moz-box-flex: 1;
-  -ms-box-flex: 1;
-  -o-box-flex: 1;
-  box-flex: 1;
-}
 .vs_ui_segmentedbutton > div > div.selected {
   background-color: #157dfa;
   color: #FFFFFF;
-}
-.vs_ui_segmentedbutton.horizontal > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-orient: horizontal;
-  -moz-box-orient: horizontal;
-  box-orient: horizontal;
-}
-.vs_ui_segmentedbutton.vertical > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  box-orient: vertical;
 }
 .vs_ui_segmentedbutton.horizontal > div > div {
   border-left: 1px solid #157dfa;

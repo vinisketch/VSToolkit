@@ -2577,7 +2577,7 @@ function importFile (path, doc, clb, type, first)
        */
       (function()
       {
-        if (!css_style.sheet || !css_style.sheet.cssRules)
+        if (!css_style.sheet)
         {
           if (count++ < 100)
           {
@@ -2589,15 +2589,7 @@ function importFile (path, doc, clb, type, first)
           }
           return;
         };
-        if (css_style.sheet.cssRules &&
-            css_style.sheet.cssRules.length === 0)
-        {
-          console.error ('CSS load of ' + path + ' failed!');
-        }
-        else
-        {
-          clb.call (document, path);
-        }
+        clb.call (document, path);
       })();
     }
     if (!doc.head) { doc.head = doc.querySelector ('head'); }

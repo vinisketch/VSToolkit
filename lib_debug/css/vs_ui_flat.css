@@ -604,20 +604,7 @@ ul > li:first-child:before {
   font-weight: normal;
   color: #282828;
 }
-.vs_ui_segmentedbutton > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-align: stretch;
-  -moz-box-align: stretch;
-  box-align: stretch;
-}
 .vs_ui_segmentedbutton > div > div {
-  -webkit-box-flex: 1;
-  -moz-box-flex: 1;
-  -ms-box-flex: 1;
-  -o-box-flex: 1;
-  box-flex: 1;
   background-color: #E5E7ED;
 }
 .vs_ui_segmentedbutton > div > div.selected {
@@ -635,22 +622,6 @@ ul > li:first-child:before {
   -o-transform: scale(1);
   -ms-transform: scale(1);
   transform: scale(1);
-}
-.vs_ui_segmentedbutton.horizontal > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-orient: horizontal;
-  -moz-box-orient: horizontal;
-  box-orient: horizontal;
-}
-.vs_ui_segmentedbutton.vertical > div {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-orient: vertical;
-  -moz-box-orient: vertical;
-  box-orient: vertical;
 }
 .vs_ui_segmentedbutton.horizontal > div > div {
   border-left: 1px solid #fff;
