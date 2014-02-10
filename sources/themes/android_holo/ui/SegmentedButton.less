@@ -3,23 +3,8 @@
   color: @baseColor; 
 }
 
-.vs_ui_segmentedbutton > div {
-  .box-align(stretch);
-}
-
 .vs_ui_segmentedbutton > div > div {
-  .box-flex(1);
   .base_background;
-  position: relative;
-  border: none;
-}
-
-.vs_ui_segmentedbutton.horizontal > div {
-  .box-orient(horizontal);
-}
-
-.vs_ui_segmentedbutton.vertical > div {
-  .box-orient(vertical);
 }
 
 .vs_ui_segmentedbutton.horizontal > div > div {
@@ -47,6 +32,7 @@
 .vs_ui_segmentedbutton > div > div:active,
 .vs_ui_segmentedbutton > div > div.selected {
   border-color: @blue !important;
+  z-index: 1;
 }
 
 .vs_ui_segmentedbutton.horizontal > div > div::before {
