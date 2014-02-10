@@ -5,6 +5,8 @@
   color: black;
   font-size : 16px;
   background: white;
+  border: 1px solid #eee;
+  border-radius: 5px;
 }
 
 .vs_ui_combobox.focus
@@ -16,6 +18,9 @@
 .vs_ui_combobox > select {
   color: black;
   padding-top: 0px;
+  width: 100%;
+  height: 100%;
+  margin: 0px;
 }
 
 .vs_ui_combobox > select:focus {
