@@ -123,7 +123,7 @@ function setTheme (name) {
     previous.parentElement.removeChild (previous);
     previous = null;
   }
-  previous = vs.util.importFile ("../../lib_debug/css/vs_ui_" + name + ".css", document, function () {
+  previous = vs.util.importFile ("../../lib/css/vs_ui_" + name + ".css", document, function () {
     app.refresh ();
   }, "css");
 }
