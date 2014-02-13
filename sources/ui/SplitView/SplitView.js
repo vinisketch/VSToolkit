@@ -321,13 +321,15 @@ var SplitView = vs.core.createClass ({
    * Remove all children components from this component and free them.
    * 
    * @name vs.ui.SplitView#removeAllChildren 
+   * @param {Boolean} should_free free children
+   * @return {Array} list of removed child if not should_free
    * @function
    * @example
    * myObject.removeAllChildren ();
    */
-  removeAllChildren : function ()
+  removeAllChildren : function (should_free)
   {
-    var key, a, child;
+    var key, a, child, children = [];
   
     for (key in this.__children)
     {
@@ -340,17 +342,21 @@ var SplitView = vs.core.createClass ({
         {
           child = a [0];
           this.remove (child);
-          util.free (child);
+          if (should_free) util.free (child);
+          else children.push (child);
         }
       }
       else
       {
         this.remove (a);
-        util.free (a);
+        if (should_free) util.free (a);
+        else children.push (a);
       }
       delete (this.__children [key]);
     }
     this.__children = {};
+    
+    return (should_free)?undefined:children;
   },
 
   /**
