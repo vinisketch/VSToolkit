@@ -2978,12 +2978,14 @@ View.prototype = {
    *
    * @name vs.ui.View#removeAllChild
    * @function
+   * @param {Boolean} should_free free children
    * @param {String} extension [optional] The hole from witch all views will be
    *   removed
+   * @return {Array} list of removed child if not should_free
    */
-  removeAllChildren : function (extension)
+  removeAllChildren : function (should_free, extension)
   {
-    var key, self = this;
+    var key, self = this, children = [];
 
     /** @private */
     function removeChildrenInHole (ext)
@@ -2999,13 +3001,15 @@ View.prototype = {
         {
           child = a [0];
           self.remove (child);
-          util.free (child);
+          if (should_free) util.free (child);
+          else children.push (child);
         }
       }
       else
       {
         self.remove (a);
-        util.free (a);
+        if (should_free) util.free (a);
+        else children.push (a);
       }
       delete (self.__children [ext]);
     };
@@ -3022,6 +3026,8 @@ View.prototype = {
       }
       this.__children = {};
     }
+    
+    return (should_free)?undefined:children;
   },
 
   /**
@@ -5816,13 +5822,15 @@ var SplitView = vs.core.createClass ({
    * Remove all children components from this component and free them.
    * 
    * @name vs.ui.SplitView#removeAllChildren 
+   * @param {Boolean} should_free free children
+   * @return {Array} list of removed child if not should_free
    * @function
    * @example
    * myObject.removeAllChildren ();
    */
-  removeAllChildren : function ()
+  removeAllChildren : function (should_free)
   {
-    var key, a, child;
+    var key, a, child, children = [];
   
     for (key in this.__children)
     {
@@ -5835,17 +5843,21 @@ var SplitView = vs.core.createClass ({
         {
           child = a [0];
           this.remove (child);
-          util.free (child);
+          if (should_free) util.free (child);
+          else children.push (child);
         }
       }
       else
       {
         this.remove (a);
-        util.free (a);
+        if (should_free) util.free (a);
+        else children.push (a);
       }
       delete (this.__children [key]);
     }
     this.__children = {};
+    
+    return (should_free)?undefined:children;
   },
 
   /**

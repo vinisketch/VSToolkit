@@ -1648,15 +1648,23 @@ Carousel.prototype = {
   /**
    * Remove all panels
    * @name vs.ext.ui.Carousel#removeAllChildren
+   * @param {Boolean} should_free free children
+   * @return {Array} list of removed child if not should_free
    * @function
    */
-  removeAllChildren : function ()
+  removeAllChildren : function (should_free)
   {
+    var children = [];
+    
     for (var id in this.__indicators_list)
     {
       var comp = vs.core.Object._obs [id];
       this.remove (comp);
+      if (should_free) util.free (comp);
+      else children.push (comp);
     }
+    
+    return (should_free)?undefined:children;
   },
 
  /**********************************************************************
