@@ -866,7 +866,11 @@ util.defineClassProperties (ScrollView, {
         v !== View.DEFAULT_LAYOUT &&
         v !== View.ABSOLUTE_LAYOUT &&
         v !== View.VERTICAL_LAYOUT &&
-        v !== View.FLOW_LAYOUT && v)
+        v !== View.FLOW_LAYOUT &&
+        v !== View.LEGACY_HORIZONTAL_LAYOUT &&
+        v !== View.LEGACY_ABSOLUTE_LAYOUT &&
+        v !== View.LEGACY_VERTICAL_LAYOUT &&
+        v !== View.LEGACY_FLOW_LAYOUT && v)
     {
       console.error ("Unsupported layout '" + v + "'!");
       return;
