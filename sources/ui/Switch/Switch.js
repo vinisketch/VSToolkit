@@ -64,35 +64,12 @@ Switch.MODE_DEFAULT = 0;
  * @const
  */
 Switch.MODE_IOS = 1;
+
 /**
  * @private
  * @const
  */
 Switch.MODE_ANDROID = 2;
-
-/**
- * @private
- * @const
- */
-Switch.MODE_MEEGO = 3;
-
-/**
- * @private
- * @const
- */
-Switch.MODE_WP7 = 4;
-
-/**
- * @private
- * @const
- */
-Switch.MODE_SYMBIAN = 5;
-
-/**
- * @private
- * @const
- */
-Switch.MODE_BLACKBERRY = 6;
 
 Switch.prototype = {
   
@@ -211,14 +188,14 @@ Switch.prototype = {
     
       if (self._toggled) {
         self.addClassName ('on');
-        if (self._mode === Switch.MODE_IOS) {
+        if (self._mode !== Switch.MODE_ANDROID) {
           util.setElementTransform (self.__switch_view,
             "translate3d(" + self.__switch_translate + "px,0,0)");
         }
       }
       else {
         self.removeClassName ('on');
-        if (self._mode === Switch.MODE_IOS) {
+        if (self._mode !== Switch.MODE_ANDROID) {
           util.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
         }
       }
@@ -293,9 +270,9 @@ Switch.prototype = {
 
     var os_device =  vs.ui.View.getDeviceCSSCode (); //window.deviceConfiguration.os;
 
-    if (os_device == DeviceConfiguration.OS_IOS)
+    if (os_device == DeviceConfiguration.OS_ANDROID)
     {
-      this._mode = Switch.MODE_IOS;
+      this._mode = Switch.MODE_ANDROID;
     }
     
     if (this._text_on)
