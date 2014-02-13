@@ -150,10 +150,10 @@ TapRecognizer.prototype = {
    */
   pointerMove: function (e) {
     // do not manage event for other targets
-    if (!this.__is_touched || e.targetPointerList.length === 0) { return; }
+    if (!this.__is_touched || e.pointerList.length === 0) { return; }
 
-    var dx = e.targetPointerList[0].pageX - this.__start_x;
-    var dy = e.targetPointerList[0].pageY - this.__start_y;
+    var dx = e.pointerList[0].pageX - this.__start_x;
+    var dy = e.pointerList[0].pageY - this.__start_y;
     
     if (Math.abs (dx) + Math.abs (dy) < View.MOVE_THRESHOLD) {
       // we still in selection mode
@@ -167,7 +167,7 @@ TapRecognizer.prototype = {
 
     try {
       if (this.delegate && this.delegate.didUntouch)
-        this.delegate.didUntouch (e.targetPointerList[0].currentTarget._comp_, e.targetPointerList[0].currentTarget, e);
+        this.delegate.didUntouch (this.__tap_elem._comp_, this.__tap_elem, e);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
