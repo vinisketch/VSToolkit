@@ -348,6 +348,9 @@ VSObject.prototype =
    */
   destructor : function ()
   {
+    // remove the current object
+    delete (VSObject._obs [this._id]);
+    
     this.__i__ = false;
   },
 
