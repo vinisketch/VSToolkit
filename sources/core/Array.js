@@ -186,6 +186,23 @@ VSArray.prototype = {
   },
 
   /**
+   * Removes all elements of this Array.<br/>
+   * @name vs.core.Array#clear
+   * @param {Boolean} should_free free content items
+   * @function
+   */
+  clear : function (should_free)
+  {
+    var i = 0, l = this._data.length;
+    
+    if (should_free) for (;i < l; i++) {
+      vs.util.free (this._data [i]);
+    }
+    
+    this.removeAll ();
+  },
+
+  /**
    *  .
    *
    * @name vs.core.Array#indexOf
