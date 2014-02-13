@@ -1196,10 +1196,10 @@ TapRecognizer.prototype = {
    */
   pointerMove: function (e) {
     // do not manage event for other targets
-    if (!this.__is_touched || e.targetPointerList.length === 0) { return; }
+    if (!this.__is_touched || e.pointerList.length === 0) { return; }
 
-    var dx = e.targetPointerList[0].pageX - this.__start_x;
-    var dy = e.targetPointerList[0].pageY - this.__start_y;
+    var dx = e.pointerList[0].pageX - this.__start_x;
+    var dy = e.pointerList[0].pageY - this.__start_y;
     
     if (Math.abs (dx) + Math.abs (dy) < View.MOVE_THRESHOLD) {
       // we still in selection mode
@@ -1213,7 +1213,7 @@ TapRecognizer.prototype = {
 
     try {
       if (this.delegate && this.delegate.didUntouch)
-        this.delegate.didUntouch (e.targetPointerList[0].currentTarget._comp_, e.targetPointerList[0].currentTarget, e);
+        this.delegate.didUntouch (this.__tap_elem._comp_, this.__tap_elem, e);
     } catch (exp) {
       if (exp.stack) console.log (exp.stack);
       console.log (exp);
@@ -4573,7 +4573,7 @@ util.defineClassProperties (View, {
         console.error ("Unsupported layout '" + v + "'!");
         return;
       }
-      
+
       if (this._layout)
       {
         this.removeClassName (this._layout);
@@ -8981,7 +8981,11 @@ util.defineClassProperties (ScrollView, {
         v !== View.DEFAULT_LAYOUT &&
         v !== View.ABSOLUTE_LAYOUT &&
         v !== View.VERTICAL_LAYOUT &&
-        v !== View.FLOW_LAYOUT && v)
+        v !== View.FLOW_LAYOUT &&
+        v !== View.LEGACY_HORIZONTAL_LAYOUT &&
+        v !== View.LEGACY_ABSOLUTE_LAYOUT &&
+        v !== View.LEGACY_VERTICAL_LAYOUT &&
+        v !== View.LEGACY_FLOW_LAYOUT && v)
     {
       console.error ("Unsupported layout '" + v + "'!");
       return;

@@ -520,6 +520,9 @@ VSObject.prototype =
    */
   destructor : function ()
   {
+    // remove the current object
+    delete (VSObject._obs [this._id]);
+    
     this.__i__ = false;
   },
 
@@ -2590,6 +2593,38 @@ Model.prototype = {
       if (e.stack) console.error (e.stack);
       console.error (e);
     }
+  },
+
+  /**
+   * Removes all elements of this Model.<br/>
+   * This is an abstract method, and should be implemented with your own
+   * object.
+   * @name vs.core.Model#clear
+   * @param {Boolean} should_free free content items
+   * @function
+   */
+  clear : function (should_free)
+  {
+    var
+      _properties_ = this.getModelProperties (),
+      _prop_name,
+      self = this;
+    
+    _properties_.forEach (function (prop_name) {
+      _prop_name = '_' + util.underscore (prop_name);
+      
+      // free the property
+      if (should_free) vs.util.free (self [_prop_name]);
+      
+      // set the property to null
+      self [_prop_name] = undefined;
+      
+      // remove property if its dynamic
+      if (self.__properties__ && 
+          self.__properties__.indexOf (prop_name) !== -1) {
+        delete (self [prop_name]);
+      }
+    });
   },
 
   /**
@@ -7067,6 +7102,23 @@ VSArray.prototype = {
     this._data = [];
     this.forEach = Array.prototype.forEach.bind (this._data);
     if (this.hasToPropagateChange ()) this.change ('removeall');
+  },
+
+  /**
+   * Removes all elements of this Array.<br/>
+   * @name vs.core.Array#clear
+   * @param {Boolean} should_free free content items
+   * @function
+   */
+  clear : function (should_free)
+  {
+    var i = 0, l = this._data.length;
+    
+    if (should_free) for (;i < l; i++) {
+      vs.util.free (this._data [i]);
+    }
+    
+    this.removeAll ();
   },
 
   /**
