@@ -2770,7 +2770,7 @@ util.defineClassProperties (View, {
         console.error ("Unsupported layout '" + v + "'!");
         return;
       }
-      
+
       if (this._layout)
       {
         this.removeClassName (this._layout);
