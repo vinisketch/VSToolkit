@@ -306,12 +306,14 @@ InputField.prototype = {
       else { this._activateDelete (false); }
       
       vs.addPointerListener (document, core.POINTER_START, manageBlur, true);
+      this.propagate ('focus');
     }
     else if (event.type === 'blur')
     {
       this.removeClassName ('focus');
       this._activateDelete (false);
       window.scrollTo (0, 0);
+      this.propagate ('blur');
     }
   }
 }
