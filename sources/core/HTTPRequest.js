@@ -53,6 +53,7 @@ HTTPRequest = function (config)
   this.constructor = HTTPRequest;
 
   this._headers = {};
+  this.__xhrs = [];
 };
 
 HTTPRequest.prototype = {
@@ -102,6 +103,29 @@ HTTPRequest.prototype = {
    * @type {Object}
    */
   _headers: null,
+
+  /**
+   *
+   * @private
+   * @type {Object}
+   */
+  __xhrs: null,
+
+  /**
+   * @protected
+   * @function
+   */
+  destructor : function ()
+  {
+    this.__xhrs.forEach (function (xhr) {
+      if (xhr && xhr.onload) xhr.onabort ();
+    });
+    this.__xhrs = null;
+    
+    this._headers = null;
+  
+    EventSource.prototype.destructor.call (this);
+  },
 
  /*********************************************************
  *                   management
@@ -208,6 +232,7 @@ HTTPRequest.prototype = {
 
       //send the request
       xhr.send (data);
+      this.__xhrs.push (xhr);
     }
     catch (e)
     {
