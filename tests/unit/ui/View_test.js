@@ -14,21 +14,21 @@ function testViewLayoutSet ()
   assertEquals ('testViewLayout 2', vs.ui.View.DEFAULT_LAYOUT, view._layout);
 
   view.layout = vs.ui.View.HORIZONTAL_LAYOUT;
-  assertEquals ('testViewLayout 3', vs.ui.View.HORIZONTAL_LAYOUT, view._layout);
+  assertEquals ('testViewLayout 3', vs.ui.View.HORIZONTAL_LAYOUT + "_layout", view._layout);
   
-  assertEquals ('testViewLayout 3bis', true, view.hasClassName (vs.ui.View.HORIZONTAL_LAYOUT));
+  assertEquals ('testViewLayout 3bis', true, view.hasClassName (vs.ui.View.HORIZONTAL_LAYOUT + "_layout"));
 
   view.layout = vs.ui.View.VERTICAL_LAYOUT;
-  assertEquals ('testViewLayout 4', vs.ui.View.VERTICAL_LAYOUT, view._layout);
-  assertEquals ('testViewLayout 4bis', true, view.hasClassName (vs.ui.View.VERTICAL_LAYOUT));
+  assertEquals ('testViewLayout 4', vs.ui.View.VERTICAL_LAYOUT + "_layout", view._layout);
+  assertEquals ('testViewLayout 4bis', true, view.hasClassName (vs.ui.View.VERTICAL_LAYOUT + "_layout"));
 
   view.layout = vs.ui.View.ABSOLUTE_LAYOUT;
-  assertEquals ('testViewLayout 5', vs.ui.View.ABSOLUTE_LAYOUT, view._layout);
-  assertEquals ('testViewLayout 5bis', true, view.hasClassName (vs.ui.View.ABSOLUTE_LAYOUT));
+  assertEquals ('testViewLayout 5', vs.ui.View.ABSOLUTE_LAYOUT + "_layout", view._layout);
+  assertEquals ('testViewLayout 5bis', true, view.hasClassName (vs.ui.View.ABSOLUTE_LAYOUT + "_layout"));
 
   view.layout = vs.ui.View.FLOW_LAYOUT;
-  assertEquals ('testViewLayout 6', vs.ui.View.FLOW_LAYOUT, view._layout);
-  assertEquals ('testViewLayout 6bis', true, view.hasClassName (vs.ui.View.FLOW_LAYOUT));
+  assertEquals ('testViewLayout 6', vs.ui.View.FLOW_LAYOUT + "_layout", view._layout);
+  assertEquals ('testViewLayout 6bis', true, view.hasClassName (vs.ui.View.FLOW_LAYOUT + "_layout"));
 
   view.layout = vs.ui.View.DEFAULT_LAYOUT;
   assertEquals ('testViewLayout 7', vs.ui.View.DEFAULT_LAYOUT, view._layout);
