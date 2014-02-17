@@ -10,6 +10,7 @@ function launchTest (test_view)
   item1.setStyle ('background-color', 'red');
   item1.setStyle ('color', 'white');
   item1.setStyle ('text-align', 'center');
+  item1.setStyle ('-webkit-transform-origin', '50% 50%');
 
   var item2 = new vs.ui.TextLabel ({
     id: 'item2',
@@ -21,6 +22,8 @@ function launchTest (test_view)
   item2.setStyle ('background-color', 'blue');
   item2.setStyle ('color', 'white');
   item2.setStyle ('text-align', 'center');
+  item2.setStyle ('min-width', '40px');
+  item2.setStyle ('-webkit-transform-origin', '50% 50%');
 
   var rotate1 = new vs.fx.RotateXYZAnimation (30, 50, 100);
   var rotate2 = new vs.fx.RotateXYZAnimation (0,0,-100);
@@ -28,6 +31,8 @@ function launchTest (test_view)
   var scale = new vs.fx.ScaleAnimation (2, 0.5, 1);
   scale.durations = rotate1.durations =
     rotate2.durations = rotate3.durations = '2s';
+  scale.additive = rotate1.additive =
+    rotate2.additive = rotate3.additive = true;
 
   var group1 = vs.par ([rotate1, item1]);
   var group2 = vs.seq (group1, [rotate2, item2]);
