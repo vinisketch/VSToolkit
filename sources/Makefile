@@ -56,13 +56,24 @@ all :: release
 Debug :: debug
 Release :: release
 
-release :: clean makedirs extern_libs core ui fx data ext av ext_fx doc ../lib_debug/js/vs_webcomponent.js
+release :: clean makedirs extern_libs core ui fx data ext av ext_fx doc ../lib_debug/js/vs_webcomponent.js ../lib_debug/js/vs.js
 	-$(COMPILE) --js=../lib_debug/js/vs_util.js --js_output_file=../lib/js/vs_util.js
 	-$(COMPILE) --js=../lib_debug/js/vs_webcomponent.js --js_output_file=../lib/js/vs_webcomponent.js
 	-$(CD) themes;make
+	-$(COMPILE) --js=../lib_debug/js/vs.js --js_output_file=../lib/js/vs.js
 
-debug :: clean_debug makedirs extern_libs core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug ../lib_debug/js/vs_webcomponent.js
+debug :: clean_debug makedirs extern_libs core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug ../lib_debug/js/vs_webcomponent.js ../lib_debug/js/vs.js
 	-$(CD) themes;make DEBUG=1
+
+../lib_debug/js/vs.js :
+	$(CAT) ../lib_debug/js/vs_util.js >> ../lib_debug/js/vs.js
+	$(CAT) ../lib_debug/js/vs_core.js >> ../lib_debug/js/vs.js
+	$(CAT) ../lib_debug/js/vs_data.js >> ../lib_debug/js/vs.js
+	$(CAT) ../lib_debug/js/vs_ui.js >> ../lib_debug/js/vs.js
+	$(CAT) ../lib_debug/js/vs_fx.js >> ../lib_debug/js/vs.js
+	$(CAT) ../lib_debug/js/vs_av.js >> ../lib_debug/js/vs.js
+	$(CAT) ../lib_debug/js/vs_ext.js >> ../lib_debug/js/vs.js
+	$(CAT) ../lib_debug/js/vs_ext_fx.js >> ../lib_debug/js/vs.js
 
 clean :: clean_debug_libs clean_libs clean_docs
 clean_debug :: clean_debug_libs clean_docs
@@ -112,6 +123,7 @@ core_debug: ../lib_debug/js/vs_core.js
 	$(CAT) core/Keyboard.js >> $@
 	$(CAT) core/FSM.js >> $@
 	$(CAT) core/Dataflow.js >> $@
+	$(CAT) core/Connector.js >> $@
 	$(CAT) core/Scheduler.js >> $@
 	$(CAT) core/DeviceConfiguration.js >> $@
 	$(CAT) core/HTTPRequest.js >> $@
