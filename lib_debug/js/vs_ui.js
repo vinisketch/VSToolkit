@@ -5391,6 +5391,18 @@ Application.sendStart = function ()
 };
 
 /**
+ * @potected
+ */
+Application.propagate = function (spec, data)
+{
+  var key, obj;
+  for (key in Application_applications) {
+    obj = Application_applications [key];
+    if (obj) obj.propagate (spec, data);
+  }
+};
+
+/**
  *  Preload an array of GUI HTML templates.
  *  <p>
  *  When the developer uses createAndAddComponent method, the system will

@@ -4586,6 +4586,7 @@ VSObject.prototype =
         df.propagate (self, false, true);
       });
   },
+  
   /**
    * Manually force properties change propagation.
    * <br/>
@@ -4598,6 +4599,44 @@ VSObject.prototype =
   propagateChange : function (property)
   {
     this.propertyChange (property);
+  },
+
+  /**
+   * Connect two components within the datalfow.
+   * This method return a Connector that will allow you to declare your
+   * dataflow with a simple chaining API.
+   *
+   * @example
+   * /// First example: the slide will rotate the view1 and view2
+   * var slider = new vs.ui.Slider ({}).init ();
+   * var view1 = new vs.ui.View ({}).init ();
+   * var view2 = new vs.ui.View ({}).init ();
+   * 
+   * slider
+   *   .connect ("value") // out property
+   *   .to (view1, "rotation"); // in property
+   *   .to (view2, "rotation"); // in property
+   *
+   * /// Seconde example: the slide will rotate the view1 and view2
+   * var slider = new vs.ui.Slider ({range: [1, 10]}).init ();
+   * var list = new vs.core.Array({data: ["item1", ..., "item10"]}).init ();
+   * var label = new vs.ui.TextLabel ({}).init ();
+   * 
+   * slider
+   *   .connect ("value") // out property
+   *   .to (list, "index") // in property
+   *     .connect ("value") // in property
+   *     .to (label, "text"); // in property
+   *
+   *
+   * @name vs.core.Object#connect 
+   * @function
+   * @public
+   * @param {String} property_name the Component out property name to connect
+   *                 from
+   */
+  connect : function (property_out) {
+    return new Connector (this, property_name);
   },
 
   /**
@@ -6631,10 +6670,11 @@ Model.prototype = {
       self [_prop_name] = undefined;
       
       // remove property if its dynamic
-      if (self.__properties__ && 
-          self.__properties__.indexOf (prop_name) !== -1) {
-        delete (self [prop_name]);
-      }
+      // deactivate
+//       if (self.__properties__ && 
+//           self.__properties__.indexOf (prop_name) !== -1) {
+//         delete (self [prop_name]);
+//       }
     });
   },
 
@@ -8690,6 +8730,72 @@ core.DataFlow = DataFlow;
 vs._default_df_ = new DataFlow ();
 
 /**
+  Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), ICEL Co. Ltd, and
+  contributors. All rights reserved
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ *  @class
+ *  vs.core.Connector is Dataflow Connector. Show not be instanced. 
+ *  An Connector Object is returned by the connect method call.
+ *
+ * @author David Thevenin
+ *
+ * @constructor
+ * @name vs.core.Connector
+ * @public
+ * @param {vs.core.Object} object the Component the connector will connected
+ *        from
+ * @param {String} property_name the Component out property name to connect
+ *        from
+ */
+var Connector = function (object, property_name) {
+  this._base_object = object;
+  this._previous_object = undefined;
+  this.property_out = property_name;
+}
+
+/**
+ * @name vs.core.Connector#connect 
+ * @function
+ * @public
+ * @param {vs.core.Object} object the Component the connector will connected
+ *        to
+ * @param {String} property_name the Component in property name to connect
+ *        to
+ */
+Connector.prototype.to = function (object, property_name) {
+  vs._default_df_.connect (this._base_object, this.property_out, object, property_name);
+  this._previous_object = object;
+  
+  return this;
+}
+
+/**
+ * @name vs.core.Connector#connect 
+ * @function
+ * @public
+ * @param {String} property_name the Component out property name to connect
+ *        from
+ */
+Connector.prototype.connect = function (property_name) {
+  var object = this._previous_object || this._base_object;
+  
+  return new Connector (object, property_name);
+}/**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
   contributors. All rights reserved
 
@@ -10469,6 +10575,7 @@ HTTPRequest = function (config)
   this.constructor = HTTPRequest;
 
   this._headers = {};
+  this.__xhrs = [];
 };
 
 HTTPRequest.prototype = {
@@ -10518,6 +10625,29 @@ HTTPRequest.prototype = {
    * @type {Object}
    */
   _headers: null,
+
+  /**
+   *
+   * @private
+   * @type {Object}
+   */
+  __xhrs: null,
+
+  /**
+   * @protected
+   * @function
+   */
+  destructor : function ()
+  {
+    this.__xhrs.forEach (function (xhr) {
+      if (xhr && xhr.onload) xhr.onabort ();
+    });
+    this.__xhrs = null;
+    
+    this._headers = null;
+  
+    EventSource.prototype.destructor.call (this);
+  },
 
  /*********************************************************
  *                   management
@@ -10624,6 +10754,7 @@ HTTPRequest.prototype = {
 
       //send the request
       xhr.send (data);
+      this.__xhrs.push (xhr);
     }
     catch (e)
     {
@@ -10977,6 +11108,8 @@ VSArray.prototype = {
 
    _data: null,
    _model_class: null,
+   _index: null,
+   _value: null,
 
   /*****************************************************************
    *
@@ -11009,6 +11142,13 @@ VSArray.prototype = {
    */
   item : function (index)
   {
+    if (!(util.isNumber (index))) return;
+    if (index < 0 || index > this._data.length) return;
+    
+    this._index = index;
+    this._value = this._data [index];
+    
+    this.propertyChange ("value");
     return this._data [index];
   },
 
@@ -11111,6 +11251,9 @@ VSArray.prototype = {
   removeAll : function ()
   {
     this._data = [];
+    this._index = -1;
+    this._value = undefined;
+    
     this.forEach = Array.prototype.forEach.bind (this._data);
     if (this.hasToPropagateChange ()) this.change ('removeall');
   },
@@ -11300,6 +11443,54 @@ util.defineClassProperties (VSArray, {
       if (!(util.isFunction (v))) return;
 
       this._model_class = v;
+    }
+  },
+  
+  "index" : {
+    /**
+     * Select the nth element. The output property value, will be changed
+     *
+     * @name vs.core.Array#index
+     * @type {number}
+     */
+    set : function (v)
+    {
+      if (util.isString (v)) v = parseInt (v, 10);
+      
+      if (!(util.isNumber (v))) return;
+      if (v < 0 || v > this._data.length) return;
+      
+      v = Math.floor (v);
+      
+      this._index = v;
+      this._value = this._data [v];
+      
+      this.propertyChange ("value");
+    },
+    
+    /**
+     *  Return the current index value
+     *
+     * @name vs.core.Array#value
+     * @type {number}
+     */
+    get : function ()
+    {
+      return this._index;
+    }
+  },
+
+  "value" : {
+    /**
+     *  Return the current selected element. This property change when
+     *  array#index property change or if the method item is called.
+     *
+     * @name vs.core.Array#value
+     * @type {number}
+     */
+    get : function ()
+    {
+      return this._value;
     }
   }
 });
@@ -19481,6 +19672,18 @@ Application.sendStart = function ()
 {
   console.log ("Application.sendStart is deprecated. Please use Application.start");
   Application.start ();
+};
+
+/**
+ * @potected
+ */
+Application.propagate = function (spec, data)
+{
+  var key, obj;
+  for (key in Application_applications) {
+    obj = Application_applications [key];
+    if (obj) obj.propagate (spec, data);
+  }
 };
 
 /**
