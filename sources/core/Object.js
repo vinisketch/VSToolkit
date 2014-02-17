@@ -449,13 +449,11 @@ VSObject.prototype =
    * @name vs.core.Object#connect 
    * @function
    * @public
-   * @param {String|Object} obj_src the Component (or Id) source.
-   * @param {String|Array} property_out one or an array of output property name(s)
-   * @param {String|Object} obj_trg the Component (or Id) target.
-   * @param {String|Array} property_in one or an array of input property name(s)
+   * @param {String} property_name the Component out property name to connect
+   *                 from
    */
   connect : function (property_out) {
-    return new Connector (this, property_out);
+    return new Connector (this, property_name);
   },
 
   /**
