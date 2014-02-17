@@ -3,6 +3,11 @@ html {
   height: 100%;
 }
 
+.vs_ui_textlabel {
+  min-width: 30px;
+  -webkit-transform-origin: 50% 50%;
+}
+
 #animations {
   background-color: white;
   width: 100%;
