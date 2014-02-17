@@ -16,21 +16,52 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-var Connector = function (object, property_out) {
+/**
+ *  @class
+ *  vs.core.Connector is Dataflow Connector. Show not be instanced. 
+ *  An Connector Object is returned by the connect method call.
+ *
+ * @author David Thevenin
+ *
+ * @constructor
+ * @name vs.core.Connector
+ * @public
+ * @param {vs.core.Object} object the Component the connector will connected
+ *        from
+ * @param {String} property_name the Component out property name to connect
+ *        from
+ */
+var Connector = function (object, property_name) {
   this._base_object = object;
   this._previous_object = undefined;
-  this.property_out = property_out;
+  this.property_out = property_name;
 }
 
-Connector.prototype.to = function (object, property_in) {
-  vs._default_df_.connect (this._base_object, this.property_out, object, property_in);
+/**
+ * @name vs.core.Connector#connect 
+ * @function
+ * @public
+ * @param {vs.core.Object} object the Component the connector will connected
+ *        to
+ * @param {String} property_name the Component in property name to connect
+ *        to
+ */
+Connector.prototype.to = function (object, property_name) {
+  vs._default_df_.connect (this._base_object, this.property_out, object, property_name);
   this._previous_object = object;
   
   return this;
 }
 
-Connector.prototype.connect = function (property_out) {
+/**
+ * @name vs.core.Connector#connect 
+ * @function
+ * @public
+ * @param {String} property_name the Component out property name to connect
+ *        from
+ */
+Connector.prototype.connect = function (property_name) {
   var object = this._previous_object || this._base_object;
   
-  return new Connector (object, property_out);
+  return new Connector (object, property_name);
 }
