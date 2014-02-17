@@ -403,6 +403,7 @@ VSObject.prototype =
         df.propagate (self, false, true);
       });
   },
+  
   /**
    * Manually force properties change propagation.
    * <br/>
@@ -415,6 +416,46 @@ VSObject.prototype =
   propagateChange : function (property)
   {
     this.propertyChange (property);
+  },
+
+  /**
+   * Connect two components within the datalfow.
+   * This method return a Connector that will allow you to declare your
+   * dataflow with a simple chaining API.
+   *
+   * @example
+   * /// First example: the slide will rotate the view1 and view2
+   * var slider = new vs.ui.Slider ({}).init ();
+   * var view1 = new vs.ui.View ({}).init ();
+   * var view2 = new vs.ui.View ({}).init ();
+   * 
+   * slider
+   *   .connect ("value") // out property
+   *   .to (view1, "rotation"); // in property
+   *   .to (view2, "rotation"); // in property
+   *
+   * /// Seconde example: the slide will rotate the view1 and view2
+   * var slider = new vs.ui.Slider ({range: [1, 10]}).init ();
+   * var list = new vs.core.Array({data: ["item1", ..., "item10"]}).init ();
+   * var label = new vs.ui.TextLabel ({}).init ();
+   * 
+   * slider
+   *   .connect ("value") // out property
+   *   .to (list, "index") // in property
+   *     .connect ("value") // in property
+   *     .to (label, "text"); // in property
+   *
+   *
+   * @name vs.core.Object#connect 
+   * @function
+   * @public
+   * @param {String|Object} obj_src the Component (or Id) source.
+   * @param {String|Array} property_out one or an array of output property name(s)
+   * @param {String|Object} obj_trg the Component (or Id) target.
+   * @param {String|Array} property_in one or an array of input property name(s)
+   */
+  connect : function (property_out) {
+    return new Connector (this, property_out);
   },
 
   /**
