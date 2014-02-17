@@ -47,6 +47,8 @@ VSArray.prototype = {
 
    _data: null,
    _model_class: null,
+   _index: null,
+   _value: null,
 
   /*****************************************************************
    *
@@ -79,6 +81,13 @@ VSArray.prototype = {
    */
   item : function (index)
   {
+    if (!(util.isNumber (index))) return;
+    if (index < 0 || index > this._data.length) return;
+    
+    this._index = index;
+    this._value = this._data [index];
+    
+    this.propertyChange ("value");
     return this._data [index];
   },
 
@@ -181,6 +190,9 @@ VSArray.prototype = {
   removeAll : function ()
   {
     this._data = [];
+    this._index = -1;
+    this._value = undefined;
+    
     this.forEach = Array.prototype.forEach.bind (this._data);
     if (this.hasToPropagateChange ()) this.change ('removeall');
   },
@@ -370,6 +382,54 @@ util.defineClassProperties (VSArray, {
       if (!(util.isFunction (v))) return;
 
       this._model_class = v;
+    }
+  },
+  
+  "index" : {
+    /**
+     * Select the nth element. The output property value, will be changed
+     *
+     * @name vs.core.Array#index
+     * @type {number}
+     */
+    set : function (v)
+    {
+      if (util.isString (v)) v = parseInt (v, 10);
+      
+      if (!(util.isNumber (v))) return;
+      if (v < 0 || v > this._data.length) return;
+      
+      v = Math.floor (v);
+      
+      this._index = v;
+      this._value = this._data [v];
+      
+      this.propertyChange ("value");
+    },
+    
+    /**
+     *  Return the current index value
+     *
+     * @name vs.core.Array#value
+     * @type {number}
+     */
+    get : function ()
+    {
+      return this._index;
+    }
+  },
+
+  "value" : {
+    /**
+     *  Return the current selected element. This property change when
+     *  array#index property change or if the method item is called.
+     *
+     * @name vs.core.Array#value
+     * @type {number}
+     */
+    get : function ()
+    {
+      return this._value;
     }
   }
 });
