@@ -41,6 +41,11 @@ body {
   cursor: default;
   padding: 0px;
   margin: 0px;
+  -webkit-transform-origin: 0 0;
+  -moz-transform-origin: 0 0;
+  -o-transform-origin: 0 0;
+  -ms-transform-origin: 0 0;
+  transform-origin: 0 0;
 }
 ::selection {
   background: transparent;
