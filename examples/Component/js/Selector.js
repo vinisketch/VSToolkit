@@ -24,5 +24,7 @@ var Selector = vs.core.createClass ({
     this.textlabel1 = new vs.ui.TextLabel (config);
     this.textlabel1.init ();    
     this.add (this.textlabel1);
+    
+    this.layout = "absolute";
   }
 });
