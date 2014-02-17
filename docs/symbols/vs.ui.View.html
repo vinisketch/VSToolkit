@@ -400,6 +400,10 @@ hr:last-child {
 	
 	<li><a href="../symbols/vs.core.Array.html">vs.core.Array</a></li>
 	
+	<li><a href="../symbols/vs.core.Connector.html">vs.core.Connector</a></li>
+	
+	<li><a href="../symbols/vs.core.DataFlow.html">vs.core.DataFlow</a></li>
+	
 	<li><a href="../symbols/vs.core.DataStorage.html">vs.core.DataStorage</a></li>
 	
 	<li><a href="../symbols/vs.core.DeviceConfiguration.html">vs.core.DeviceConfiguration</a></li>
@@ -1128,7 +1132,7 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#removeAllChild">removeAllChild</a></b>(extension)
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#removeAllChild">removeAllChild</a></b>(should_free, extension)
 								</div>
 								<div class="description">Remove all children components from this component and free them.</div>
 							</td>
@@ -1266,7 +1270,7 @@ hr:last-child {
 				
 				
 				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#isProperty">isProperty</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#outPropertyChange">outPropertyChange</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertiesDidChange">propertiesDidChange</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
+				<dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#connect">connect</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#isProperty">isProperty</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#outPropertyChange">outPropertyChange</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertiesDidChange">propertiesDidChange</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
 				</dl>
 				
 			
@@ -2770,8 +2774,8 @@ Options :
 					<a name="removeAllChild"> </a>
 					<div class="fixedFont">
 					
-					
-					<b>removeAllChild</b>(extension)
+					<span class="light">{Array}</span>
+					<b>removeAllChild</b>(should_free, extension)
 					
 					</div>
 					<div class="description">
@@ -2790,6 +2794,12 @@ Options :
 							<dt class="heading">Parameters:</dt>
 							
 								<dt>
+									<span class="light fixedFont">{Boolean}</span> <b>should_free</b>
+									
+								</dt>
+								<dd>free children</dd>
+							
+								<dt>
 									<span class="light fixedFont">{String}</span> <b>extension</b>
 									
 								</dt>
@@ -2801,6 +2811,13 @@ Options :
 						
 						
 						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Array}</span> list of removed child if not should_free</dd>
+							
+							</dl>
 						
 						
 						

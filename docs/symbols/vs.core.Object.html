@@ -400,6 +400,10 @@ hr:last-child {
 	
 	<li><a href="../symbols/vs.core.Array.html">vs.core.Array</a></li>
 	
+	<li><a href="../symbols/vs.core.Connector.html">vs.core.Connector</a></li>
+	
+	<li><a href="../symbols/vs.core.DataFlow.html">vs.core.DataFlow</a></li>
+	
 	<li><a href="../symbols/vs.core.DataStorage.html">vs.core.DataStorage</a></li>
 	
 	<li><a href="../symbols/vs.core.DeviceConfiguration.html">vs.core.DeviceConfiguration</a></li>
@@ -735,6 +739,15 @@ prototype chain) of a given object.</div>
 								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#configure">configure</a></b>(config)
 								</div>
 								<div class="description">Object configuation method.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/vs.core.Object.html#connect">connect</a></b>(property_name)
+								</div>
+								<div class="description">Connect two components within the datalfow.</div>
 							</td>
 						</tr>
 					
@@ -1155,6 +1168,67 @@ prototype chain) of a given object.
 								</dt>
 								<dd>the associated array used for configuring the
        object.</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="connect"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>connect</b>(property_name)
+					
+					</div>
+					<div class="description">
+						Connect two components within the datalfow.
+This method return a Connector that will allow you to declare your
+dataflow with a simple chaining API.
+						
+					</div>
+					
+					
+					
+					<pre class="code">/// First example: the slide will rotate the view1 and view2
+var slider = new vs.ui.Slider ({}).init ();
+var view1 = new vs.ui.View ({}).init ();
+var view2 = new vs.ui.View ({}).init ();
+
+slider
+  .connect ("value") // out property
+  .to (view1, "rotation"); // in property
+  .to (view2, "rotation"); // in property
+
+/// Seconde example: the slide will rotate the view1 and view2
+var slider = new vs.ui.Slider ({range: [1, 10]}).init ();
+var list = new vs.core.Array({data: ["item1", ..., "item10"]}).init ();
+var label = new vs.ui.TextLabel ({}).init ();
+
+slider
+  .connect ("value") // out property
+  .to (list, "index") // in property
+    .connect ("value") // in property
+    .to (label, "text"); // in property</pre>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{String}</span> <b>property_name</b>
+									
+								</dt>
+								<dd>the Component out property name to connect
+                from</dd>
 							
 							</dl>
 						
