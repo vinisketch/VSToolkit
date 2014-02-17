@@ -1395,7 +1395,12 @@ function clone (object)
       return destination;
 
     case ARRAY_CLASS: // should not occur because of Array.clone
-    break;
+      destination = [];
+      for (var i = 0; i < object.length; i++)
+      {
+        destination [i] = clone (object [i]);
+      }
+      return destination;
 
     case BOOLEAN_TYPE:
     case NUMBER_TYPE:
@@ -2522,9 +2527,9 @@ Array.prototype.removeAll = function ()
 Array.prototype.clone = function ()
 {
   var destination = [];
-  for (var i = 0; i < object.length; i++)
+  for (var i = 0; i < this.length; i++)
   {
-    destination [i] = clone (object [i]);
+    destination [i] = clone (this [i]);
   }
   return destination;
 };
