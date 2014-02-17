@@ -453,7 +453,7 @@ VSObject.prototype =
    *                 from
    * @return {Connector} returns the connector object that allow the chainning
    */
-  connect : function (property_out) {
+  connect : function (property_name) {
     return new Connector (this, property_name);
   },
 
