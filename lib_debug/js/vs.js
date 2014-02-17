@@ -4634,6 +4634,7 @@ VSObject.prototype =
    * @public
    * @param {String} property_name the Component out property name to connect
    *                 from
+   * @return {Connector} returns the connector object that allow the chainning
    */
   connect : function (property_out) {
     return new Connector (this, property_name);
