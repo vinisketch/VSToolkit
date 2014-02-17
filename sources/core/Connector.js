@@ -17,20 +17,20 @@
 */
 
 var Connector = function (object, property_out) {
-  this.object = object;
+  this._base_object = object;
+  this._previous_object = undefined;
   this.property_out = property_out;
 }
 
 Connector.prototype.to = function (object, property_in) {
-  vs._default_df_.connect (this.object, this.property_out, object, property_in);
+  vs._default_df_.connect (this._base_object, this.property_out, object, property_in);
+  this._previous_object = object;
   
   return this;
 }
 
 Connector.prototype.connect = function (property_out) {
-  return new Connector (this.object, property_out);
-}
-
-vs.core.Object.prototype.connect = function (property_out) {
-  return new Connector (this, property_out);
+  var object = this._previous_object || this._base_object;
+  
+  return new Connector (object, property_out);
 }
