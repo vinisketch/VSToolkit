@@ -259,10 +259,11 @@ Model.prototype = {
       self [_prop_name] = undefined;
       
       // remove property if its dynamic
-      if (self.__properties__ && 
-          self.__properties__.indexOf (prop_name) !== -1) {
-        delete (self [prop_name]);
-      }
+      // deactivate
+//       if (self.__properties__ && 
+//           self.__properties__.indexOf (prop_name) !== -1) {
+//         delete (self [prop_name]);
+//       }
     });
   },
 
