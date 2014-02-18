@@ -16,7 +16,7 @@ function initTransformations () {
   view.add (slider);
   slider.setStyle ('margin-bottom', '50px');
 
-  slider.bind ('continuous_change', this, function (e) {viewToAnimate.rotation = e.data;});
+  slider.connect ("value").to (viewToAnimate, "rotation");
 
   view.add (new vs.ui.TextLabel ({text:'Scale:'}).init ());
 
@@ -27,7 +27,7 @@ function initTransformations () {
   }).init ();
   view.add (slider);
 
-  slider.bind ('continuous_change', this, function (e) {viewToAnimate.scaling = e.data;});
+  slider.connect ("value").to (viewToAnimate, "scaling");
   return view;
 }
 
