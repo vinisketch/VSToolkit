@@ -6,6 +6,7 @@ function initTransformations () {
   var viewToAnimate = new vs.ui.View ({id: 'view_to_transform'}).init ();
   view.add (viewToAnimate);
   viewToAnimate.translate (-50, 0);
+  viewToAnimate.transformOrigin = [50, 50];
   
   view.add (new vs.ui.TextLabel ({text:'Rotation:'}).init ());
 
