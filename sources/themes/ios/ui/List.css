@@ -15,7 +15,7 @@ li.pressed
 {
   -webkit-box-sizing: border-box;
   content:url(SimpleListNext.png);
-  margin-top: -8px;
+  .translateY(-50%);
 }
 
 .vs_ui_list.DefaultList.arrow > ul > li.pressed:after,
