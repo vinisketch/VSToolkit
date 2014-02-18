@@ -83,11 +83,7 @@ VSArray.prototype = {
   {
     if (!(util.isNumber (index))) return;
     if (index < 0 || index > this._data.length) return;
-    
-    this._index = index;
-    this._value = this._data [index];
-    
-    this.propertyChange ("value");
+
     return this._data [index];
   },
 
