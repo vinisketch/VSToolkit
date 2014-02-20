@@ -1,0 +1,38 @@
+.ball {
+  top: 240px;
+
+  height: 50px;
+  width: 50px;
+  border-radius: 25px;
+  background:
+    url(assets/wood.png),
+    radial-gradient(rgb(80, 64, 49), rgb(15, 15, 15));
+    
+  box-shadow: 6px 2px 15px rgba(0,0,0,0.5);
+}
+
+.ball::before {
+  position: absolute;
+  width: 1px;
+  height: 200px;
+  content: " ";
+  border-right: 1px solid #333;
+  top: -200px;
+  left: 25px;
+}
+
+#ball1 {
+  left: 180px;
+}
+
+#ball2 {
+  left: 230px;
+}
+
+#ball3 {
+  left: 280px;
+}
+
+#ball4 {
+  left: 330px;
+}
