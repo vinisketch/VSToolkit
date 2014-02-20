@@ -118,6 +118,6 @@ function receiveMessage (event)
   var message = event.data;
   if (message == "start") window.app.anim.start ();
   else if (message == "pause") window.app.anim.pause ();
-  else if (message == "seq_aniem") window.app.createSeqAnimation ();
-  else if (message == "par_aniem") window.app.createParAnimation ();
+  else if (message == "seq_anim") window.app.createSeqAnimation ();
+  else if (message == "par_anim") window.app.createParAnimation ();
 }
