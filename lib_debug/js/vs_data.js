@@ -503,7 +503,7 @@ function RSSGuid (guidElement)
   else
   {
     this.isPermaLink = guidElement.getAttribute ("isPermaLink");
-    this.value = guidElement.childNodes[0].nodeValue;
+    this.value = guidElement.textContent;
   }
 }
 
@@ -520,7 +520,7 @@ function RSSSource (souElement)
   else
   {
     this.url = souElement.getAttribute ("url");
-    this.value = souElement.childNodes[0].nodeValue;
+    this.value = souElement.textContent;
   }
 }
 
@@ -549,7 +549,7 @@ function RSSItem (itemxml)
     tmpElement = itemxml.getElementsByTagName (properties[i])[0];
     if (tmpElement)
     {
-      this [_properties [i]] = tmpElement.childNodes[0].nodeValue;
+      this [_properties [i]] = tmpElement.textContent;
     }
   }
 
@@ -833,7 +833,7 @@ function RSSCategory (catElement)
   else
   {
     this.domain = catElement.getAttribute ("domain");
-    this.value = catElement.childNodes[0].nodeValue;
+    this.value = catElement.textContent;
   }
 }
 
@@ -907,7 +907,7 @@ function RSSChannel (rssFeed, rssxml)
 
     if (tmpElement)
     {
-      rssFeed [_properties [i]] = tmpElement.childNodes[0].nodeValue;
+      rssFeed [_properties [i]] = tmpElement.textContent;
     }
   }
 
