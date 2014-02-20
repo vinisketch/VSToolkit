@@ -131,7 +131,7 @@ function setTheme (name) {
 setTheme ("flat");
 
 window.addEventListener("message", receiveMessage, false);
-var message_reg = /hangetheme#(\w+)/;
+var message_reg = /changetheme#(\w+)/;
 
 function receiveMessage (event)
 {
