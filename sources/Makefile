@@ -56,13 +56,17 @@ all :: release
 Debug :: debug
 Release :: release
 
-release :: clean makedirs extern_libs core ui fx data ext av ext_fx doc ../lib_debug/js/vs_webcomponent.js ../lib_debug/js/vs.js
+release :: clean makedirs extern_libs core ui fx data ext av ext_fx doc ../lib_debug/js/vs_webcomponent.js ../lib_debug/js/vs.js themes_release
 	-$(COMPILE) --js=../lib_debug/js/vs_util.js --js_output_file=../lib/js/vs_util.js
 	-$(COMPILE) --js=../lib_debug/js/vs_webcomponent.js --js_output_file=../lib/js/vs_webcomponent.js
-	-$(CD) themes;make
 	-$(COMPILE) --js=../lib_debug/js/vs.js --js_output_file=../lib/js/vs.js
 
-debug :: clean_debug makedirs extern_libs core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug ../lib_debug/js/vs_webcomponent.js ../lib_debug/js/vs.js
+debug :: clean_debug makedirs extern_libs core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug ../lib_debug/js/vs_webcomponent.js ../lib_debug/js/vs.js themes_debug
+	
+themes_release:
+	-$(CD) themes;make
+
+themes_debug:
 	-$(CD) themes;make DEBUG=1
 
 ../lib_debug/js/vs.js :
@@ -277,7 +281,7 @@ ext: ext_debug
 
 ext_debug: copy_ext_ui_html ../lib_debug/js/vs_ext.js
 
-../lib_debug/js/vs_ext.js: ext/Ext.js ext/ui/GMap/GMap.js ext/ui/Carousel/Carousel.js
+../lib_debug/js/vs_ext.js:
 	$(CAT) Header.js >> $@
 	$(CAT) ext/Ext.js >> $@
 	$(CAT) ext/ui/GMap/GMap.js >> $@
@@ -298,10 +302,17 @@ ext_fx: ext_fx_debug
 
 ext_fx_debug: ../lib_debug/js/vs_ext_fx.js
 
-../lib_debug/js/vs_ext_fx.js: ext/Ext.js ext/fx/Animation.js
+../lib_debug/js/vs_ext_fx.js:
 	$(CAT) Header.js >> $@
 	$(CAT) ext/Ext.js >> $@
+	$(ECHO) "\nvar exports = vs.ext.fx;\n\n" >> $@
 	$(CAT) ext/fx/Animation.js >> $@
+	$(CAT) ext/fx/CubicBezier.js >> $@
+	$(CAT) ext/fx/Chronometer.js >> $@
+	$(CAT) ext/fx/Pace.js >> $@
+	$(CAT) ext/fx/Trajectory.js >> $@
+	$(CAT) ext/fx/AnimatedTransition.js >> $@
+	$(CAT) ext/fx/Exports.js >> $@
 	$(CAT) Footer.js >> $@
 
 ###                    libs
