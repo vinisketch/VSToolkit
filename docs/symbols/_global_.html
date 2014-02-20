@@ -450,6 +450,18 @@ hr:last-child {
 	
 	<li><a href="../symbols/vs.ext.fx.Animation.html">vs.ext.fx.Animation</a></li>
 	
+	<li><a href="../symbols/vs.ext.fx.Chronometer.html">vs.ext.fx.Chronometer</a></li>
+	
+	<li><a href="../symbols/vs.ext.fx.Circular2D.html">vs.ext.fx.Circular2D</a></li>
+	
+	<li><a href="../symbols/vs.ext.fx.Pace.html">vs.ext.fx.Pace</a></li>
+	
+	<li><a href="../symbols/vs.ext.fx.Trajectory.html">vs.ext.fx.Trajectory</a></li>
+	
+	<li><a href="../symbols/vs.ext.fx.Vector1D.html">vs.ext.fx.Vector1D</a></li>
+	
+	<li><a href="../symbols/vs.ext.fx.Vector2D.html">vs.ext.fx.Vector2D</a></li>
+	
 	<li><a href="../symbols/vs.ext.ui.html">vs.ext.ui</a></li>
 	
 	<li><a href="../symbols/vs.ext.ui.Accordion.html">vs.ext.ui.Accordion</a></li>
@@ -611,6 +623,17 @@ hr:last-child {
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
+								<b><a href="../symbols/_global_.html#AnimationDefaultOption">AnimationDefaultOption</a></b>
+								</div>
+								<div class="description">***************************************************************************
+****************************************************************************</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
 								<b><a href="../symbols/_global_.html#deviceConfiguration">deviceConfiguration</a></b>
 								</div>
 								<div class="description"></div>
@@ -624,6 +647,18 @@ hr:last-child {
 								<b><a href="../symbols/_global_.html#edge_id_counter">edge_id_counter</a></b>
 								</div>
 								<div class="description">Copyright (C) 2009-2012.</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
+								<b><a href="../symbols/_global_.html#properties">properties</a></b>
+								</div>
+								<div class="description">*****************************************************************
+                    Define class properties
+******************************************************************</div>
 							</td>
 						</tr>
 					
@@ -651,9 +686,34 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/_global_.html#animateTransition">animateTransition</a></b>(obj, property, options)
+								</div>
+								<div class="description">animateTransition (obj, property, options)
+
+ Instruments a object property with an animation
+ When the property is change, instead of XXX</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
 								<div class="fixedFont"><b>callback</b>(event)
 								</div>
 								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont"><b><a href="../symbols/_global_.html#generateCubicBezierFunction">generateCubicBezierFunction</a></b>(x1, y1, x2, y2)
+								</div>
+								<div class="description">generateCubicBezierFunction(x1, y1, x2, y2) -> Function
+
+ Generates a transition easing function that is compatible
+ with WebKit's CSS transitions `-webkit-transition-timing-function`
+ CSS property.</div>
 							</td>
 						</tr>
 					
@@ -703,6 +763,28 @@ hr:last-child {
 					<div class="description">
 						*****************************************************************
 *******************************************************************
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="AnimationDefaultOption"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>AnimationDefaultOption</b>
+					
+					</div>
+					<div class="description">
+						***************************************************************************
+****************************************************************************
 						
 					</div>
 					
@@ -769,6 +851,29 @@ hr:last-child {
 						
 						
 
+					<hr />
+				
+					<a name="properties"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>properties</b>
+					
+					</div>
+					<div class="description">
+						*****************************************************************
+                    Define class properties
+******************************************************************
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
 					
 				
 			
@@ -778,6 +883,56 @@ hr:last-child {
 				<div class="sectionTitle">
 					Method Detail
 				</div>
+				
+					<a name="animateTransition"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>animateTransition</b>(obj, property, options)
+					
+					</div>
+					<div class="description">
+						animateTransition (obj, property, options)
+
+ Instruments a object property with an animation
+ When the property is change, instead of XXX
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>obj</b>
+									
+								</dt>
+								<dd>{Object}</dd>
+							
+								<dt>
+									<b>property</b>
+									
+								</dt>
+								<dd>{String} the property name to instrument</dd>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd>{Object} Animation options [optional]</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
 				
 					<a name="callback"> </a>
 					<div class="fixedFont">
@@ -799,6 +954,67 @@ hr:last-child {
 							
 								<dt>
 									<b>event</b>
+									
+								</dt>
+								<dd></dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name="generateCubicBezierFunction"> </a>
+					<div class="fixedFont">
+					
+					
+					<b>generateCubicBezierFunction</b>(x1, y1, x2, y2)
+					
+					</div>
+					<div class="description">
+						generateCubicBezierFunction(x1, y1, x2, y2) -> Function
+
+ Generates a transition easing function that is compatible
+ with WebKit's CSS transitions `-webkit-transition-timing-function`
+ CSS property.
+
+ The W3C has more information about 
+ <a href="http://www.w3.org/TR/css3-transitions/#transition-timing-function_tag">
+ CSS3 transition timing functions</a>.
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>x1</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>y1</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>x2</b>
+									
+								</dt>
+								<dd></dd>
+							
+								<dt>
+									<b>y2</b>
 									
 								</dt>
 								<dd></dd>

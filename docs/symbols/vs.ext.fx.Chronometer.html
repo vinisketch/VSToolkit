@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - vs.fx.SlideController</title>
+		<title>JsDoc Reference - vs.ext.fx.Chronometer</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -576,7 +576,7 @@ hr:last-child {
 <!-- ============================== class title ============================ -->
     <div class="classTitle">
       
-      Class vs.fx.SlideController
+      Class vs.ext.fx.Chronometer
     </div>
 
 		<div id="scrollable">
@@ -586,16 +586,35 @@ hr:last-child {
 			<p class="description">
 				
 				<b>Extends</b>
-					<a href="../symbols/vs.fx.StackController.html">vs.fx.StackController</a>.<br /><br />
+					<a href="../symbols/vs.core.Task.html">vs.core.Task</a>.<br /><br />
 				
 			
-				
+				vs.ext.fx.Chronometer is a periodical signal (tick) generator, that produces
+ values from 0 to 1 when is started;<br />
+ That element is a vs.core.Task then it can be started, stopped, paused and
+it is compatible with de PAR / SEQ scheduling.
+ <br />
+ <hr />
+ Input properties:
+ <ul>
+ <li>duration: the chronometer duration in ms [default value = 300] [value >= 0]
+ <li>begin: delay for generating the first tick. If begin > duration * repeat
+  the chronometer will never generate a tick! [default value = 0] [value >= 0]
+ <li>steps: number of tick generated. If step = 0, the chronometer generates
+    a tick at each frame [default value = 0] [steps = 0 || steps >= 2]
+ <li>repeat: number of chronometer repeat [default value = 1] [repeat >= 1]
+ </ul>
+ <hr />
+ Output property
+ <ul>
+ <li>tick: tick out from [0,1]
+ </ul>
 	
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.fx.SlideController.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.ext.fx.Chronometer.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -608,10 +627,9 @@ hr:last-child {
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/vs.fx.SlideController.html#constructor">vs.fx.SlideController</a></b>(owner)
+								<b><a href="../symbols/vs.ext.fx.Chronometer.html#constructor">vs.ext.fx.Chronometer</a></b>(config)
 							</div>
-							<div class="description">The vs.fx.SlideController class <br />
- This layer manage a list of children using a horizontal layout.</div>
+							<div class="description">The vs.ext.fx.Chronometer class</div>
 						</td>
 					</tr>
 				</tbody>
@@ -622,7 +640,7 @@ hr:last-child {
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.fx.SlideController.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.ext.fx.Chronometer.">
 					<caption>Field Summary</caption>
 					<thead>
 						<tr>
@@ -633,12 +651,12 @@ hr:last-child {
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								vs.fx.SlideController.<b><a href="../symbols/vs.fx.SlideController.html#.ANIMATION_DURATION">ANIMATION_DURATION</a></b>
+								<b><a href="../symbols/vs.ext.fx.Chronometer.html#begin">begin</a></b>
 								</div>
-								<div class="description">The duration of the animation between two views</div>
+								<div class="description">set chronometer begin</div>
 							</td>
 						</tr>
 					
@@ -646,9 +664,9 @@ hr:last-child {
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/vs.fx.SlideController.html#animationDuration">animationDuration</a></b>
+								<b><a href="../symbols/vs.ext.fx.Chronometer.html#duration">duration</a></b>
 								</div>
-								<div class="description">Set the animation/transition temporisation (in millisecond)</div>
+								<div class="description">set chronometer duration</div>
 							</td>
 						</tr>
 					
@@ -656,19 +674,9 @@ hr:last-child {
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/vs.fx.SlideController.html#animationMode">animationMode</a></b>
+								<b><a href="../symbols/vs.ext.fx.Chronometer.html#pace">pace</a></b>
 								</div>
-								<div class="description">Set XXX</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.fx.SlideController.<b><a href="../symbols/vs.fx.SlideController.html#.HORIZONTAL">HORIZONTAL</a></b>
-								</div>
-								<div class="description">Horizontal slide (defaut)</div>
+								<div class="description">set chronometer pace</div>
 							</td>
 						</tr>
 					
@@ -676,39 +684,29 @@ hr:last-child {
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/vs.fx.SlideController.html#orientation">orientation</a></b>
+								<b><a href="../symbols/vs.ext.fx.Chronometer.html#repeat">repeat</a></b>
 								</div>
-								<div class="description">Getter|Setter for page slide orientation.</div>
+								<div class="description">set chronometer repeat</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								vs.fx.SlideController.<b><a href="../symbols/vs.fx.SlideController.html#.PIXEL">PIXEL</a></b>
+								<b><a href="../symbols/vs.ext.fx.Chronometer.html#steps">steps</a></b>
 								</div>
-								<div class="description">Vertical slide</div>
+								<div class="description">set chronometer steps</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								vs.fx.SlideController.<b><a href="../symbols/vs.fx.SlideController.html#.POURCENTAGE">POURCENTAGE</a></b>
+								<b><a href="../symbols/vs.ext.fx.Chronometer.html#tickIn">tickIn</a></b>
 								</div>
-								<div class="description">Horizontal slide (defaut)</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.fx.SlideController.<b><a href="../symbols/vs.fx.SlideController.html#.VERTICAL">VERTICAL</a></b>
-								</div>
-								<div class="description">Vertical slide</div>
+								<div class="description">set input tick</div>
 							</td>
 						</tr>
 					
@@ -718,7 +716,7 @@ hr:last-child {
 				
 				
 				<dl class="inheritsList">
-				<dt>Fields borrowed from class <a href="../symbols/vs.fx.StackController.html">vs.fx.StackController</a>: </dt><dd><a href="../symbols/vs.fx.StackController.html#isTactile">isTactile</a>, <a href="../symbols/vs.fx.StackController.html#viewSize">viewSize</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.fx.Controller.html">vs.fx.Controller</a>: </dt><dd><a href="../symbols/vs.fx.Controller.html#delegate">delegate</a>, <a href="../symbols/vs.fx.Controller.html#initialComponent">initialComponent</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#defineProperty">defineProperty</a>, <a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
+				<dt>Fields borrowed from class <a href="../symbols/vs.core.Task.html">vs.core.Task</a>: </dt><dd><a href="../symbols/vs.core.Task.html#delegate">delegate</a>, <a href="../symbols/vs.core.Task.html#state">state</a></dd>
 				</dl>
 				
 			
@@ -727,34 +725,10 @@ hr:last-child {
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.fx.SlideController.">
-					<caption>Method Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.fx.SlideController.html#push">push</a></b>(comp, config, bindings)
-								</div>
-								<div class="description">Add a child component to the Slider Manager
- <p>
- The component must be a graphic component (vs.ui.View).</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
 				
 				
 				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/vs.fx.StackController.html">vs.fx.StackController</a>: </dt><dd><a href="../symbols/vs.fx.StackController.html#goToFirstView">goToFirstView</a>, <a href="../symbols/vs.fx.StackController.html#goToLastView">goToLastView</a>, <a href="../symbols/vs.fx.StackController.html#goToNextView">goToNextView</a>, <a href="../symbols/vs.fx.StackController.html#goToPreviousView">goToPreviousView</a>, <a href="../symbols/vs.fx.StackController.html#goToViewAt">goToViewAt</a>, <a href="../symbols/vs.fx.StackController.html#goToViewId">goToViewId</a>, <a href="../symbols/vs.fx.StackController.html#remove">remove</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.fx.Controller.html">vs.fx.Controller</a>: </dt><dd><a href="../symbols/vs.fx.Controller.html#addTransition">addTransition</a>, <a href="../symbols/vs.fx.Controller.html#clear">clear</a>, <a href="../symbols/vs.fx.Controller.html#componentBind">componentBind</a>, <a href="../symbols/vs.fx.Controller.html#getCurrentState">getCurrentState</a>, <a href="../symbols/vs.fx.Controller.html#isStateExit">isStateExit</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#bind">bind</a>, <a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a>, <a href="../symbols/vs.core.EventSource.html#unbind">unbind</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#connect">connect</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#isProperty">isProperty</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#outPropertyChange">outPropertyChange</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertiesDidChange">propertiesDidChange</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
+				<dt>Methods borrowed from class <a href="../symbols/vs.core.Task.html">vs.core.Task</a>: </dt><dd><a href="../symbols/vs.core.Task.html#destructor">destructor</a>, <a href="../symbols/vs.core.Task.html#pause">pause</a>, <a href="../symbols/vs.core.Task.html#start">start</a>, <a href="../symbols/vs.core.Task.html#stop">stop</a></dd>
 				</dl>
 				
 			
@@ -769,59 +743,27 @@ hr:last-child {
 				</div>
 				
 				<div class="fixedFont">
-						<b>vs.fx.SlideController</b>(owner)
+						<b>vs.ext.fx.Chronometer</b>(config)
 				</div>
 				
 				<div class="description">
-					The vs.fx.SlideController class <br />
- This layer manage a list of children using a horizontal layout.
-
- Children can be slided horizontally (right <-> left) or vertically 
- (top <-> bottom) using a pointing device (mouse, touch screen, ...),
- or using methods goToNextView and goToPreviousView.
- <p />
- By default the slider is horizontal, but you can change it using the 
- property "orientation".
- <p />
- The following example shows a typical example with panels
- (components 1 to 4) that are shows sequentially according user touch slide.
-
- <pre>
-                  (*)
-               ⎡ˉˉˉˉˉˉˉˉˉˉˉˉ⎤
-  ⎡ˉˉˉˉˉˉ⎤    ⎢ ⎡ˉˉˉˉˉˉ⎤ ⎢   ⎡ˉˉˉˉˉˉ⎤   ⎡ˉˉˉˉˉˉ⎤
-  ⎟      ⎢    ⎢ ⎢      ⎢ ⎢   ⎟      ⎢   ⎟      ⎢
-  ⎟  (1) ⎢    ⎢ ⎢  (2) ⎢ ⎢   ⎟  (3) ⎢   ⎟  (4) ⎢
-  ⎟      ⎢    ⎢ ⎢      ⎢ ⎢   ⎟      ⎢   ⎟      ⎢
-  ⎣______⎦    ⎢ ⎣______⎦ ⎢   ⎣______⎦   ⎣______⎦
-               ⎣____________⎦
-
-
- (*) : device screen
- (1, ... ,4) : components managed by the SliderLayer
-
-  </pre>
-
- <p>
- Delegate:
- <ul>
-   <li/>controllerViewWillChange : function (from vs.ui.View, to vs.ui.View,
-        controller), Called when the view changed
-   <li/>controllerAnimationDidEnd : function (from vs.ui.View, to vs.ui.View, 
-        controller), Called just after the animation ended
- </ul>
- <p>
+					The vs.ext.fx.Chronometer class
 					<br /><i>Author: </i>David Thevenin.
 				</div>
 				
 				
 				
-				<pre class="code"> var layer = new vs.fx.SlideController (myComp);
+				<pre class="code"> // A "normal" chronometer during 1s
+ var c1 = new Chronometer ({
+   duration: 1000
+ }).init ();
 
- layer.push ('APanel', {id: '1', data: {...}});
- layer.push ('APanel', {id: '2', data: {...}});
- layer.push ('APanel', {id: '3', data: {...}});
- layer.push ('APanel', {id: '4', data: {...}});</pre>
+ // A discret chronometer generating 10 ticks during 300 ms, that means one tick
+ // every 30ms.
+ var c2 = new Chronometer ({
+   duration: 300,
+   steps : 10
+ }).init ();</pre>
 				
 				
 				
@@ -831,10 +773,10 @@ hr:last-child {
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{<a href="../symbols/vs.ui.View.html">vs.ui.View</a>}</span>  <b>owner</b>
+								<span class="light fixedFont">{Object}</span>  <b>config</b>
 								
 							</dt>
-								<dd>the View using this Layer [mandatory]</dd>
+								<dd>the configuration structure [optional]</dd>
 						
 						</dl>
 					
@@ -854,36 +796,15 @@ hr:last-child {
 					Field Detail
 				</div>
 				
-					<a name=".ANIMATION_DURATION"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.fx.SlideController.</span><b>ANIMATION_DURATION</b>
-					
-					</div>
-					<div class="description">
-						The duration of the animation between two views
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="animationDuration"> </a>
+					<a name="begin"> </a>
 					<div class="fixedFont">
 					
-					
-					<b>animationDuration</b>
+					<span class="light">{number}</span>
+					<b>begin</b>
 					
 					</div>
 					<div class="description">
-						Set the animation/transition temporisation (in millisecond)
+						set chronometer begin
 						
 					</div>
 					
@@ -896,15 +817,15 @@ hr:last-child {
 
 					<hr />
 				
-					<a name="animationMode"> </a>
+					<a name="duration"> </a>
 					<div class="fixedFont">
 					
-					
-					<b>animationMode</b>
+					<span class="light">{number}</span>
+					<b>duration</b>
 					
 					</div>
 					<div class="description">
-						Set XXX
+						set chronometer duration
 						
 					</div>
 					
@@ -917,38 +838,15 @@ hr:last-child {
 
 					<hr />
 				
-					<a name=".HORIZONTAL"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.fx.SlideController.</span><b>HORIZONTAL</b>
-					
-					</div>
-					<div class="description">
-						Horizontal slide (defaut)
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="orientation"> </a>
+					<a name="pace"> </a>
 					<div class="fixedFont">
 					
-					<span class="light">{String}</span>
-					<b>orientation</b>
+					<span class="light">{<a href="../symbols/vs.ext.fx.Pace.html">vs.ext.fx.Pace</a>}</span>
+					<b>pace</b>
 					
 					</div>
 					<div class="description">
-						Getter|Setter for page slide orientation. It can take the value
-vs.fx.SlideController.HORIZONTAL or vs.fx.SlideController.VERTICAL.
-By default the slider is horizontal.
+						set chronometer pace
 						
 					</div>
 					
@@ -961,15 +859,15 @@ By default the slider is horizontal.
 
 					<hr />
 				
-					<a name=".PIXEL"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="repeat"> </a>
+					<div class="fixedFont">
 					
-					
-					<span class="light">vs.fx.SlideController.</span><b>PIXEL</b>
+					<span class="light">{number}</span>
+					<b>repeat</b>
 					
 					</div>
 					<div class="description">
-						Vertical slide
+						set chronometer repeat
 						
 					</div>
 					
@@ -982,15 +880,15 @@ By default the slider is horizontal.
 
 					<hr />
 				
-					<a name=".POURCENTAGE"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="steps"> </a>
+					<div class="fixedFont">
 					
-					
-					<span class="light">vs.fx.SlideController.</span><b>POURCENTAGE</b>
+					<span class="light">{number}</span>
+					<b>steps</b>
 					
 					</div>
 					<div class="description">
-						Horizontal slide (defaut)
+						set chronometer steps
 						
 					</div>
 					
@@ -1003,15 +901,15 @@ By default the slider is horizontal.
 
 					<hr />
 				
-					<a name=".VERTICAL"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="tickIn"> </a>
+					<div class="fixedFont">
 					
-					
-					<span class="light">vs.fx.SlideController.</span><b>VERTICAL</b>
+					<span class="light">{number}</span>
+					<b>tickIn</b>
 					
 					</div>
 					<div class="description">
-						Vertical slide
+						set input tick
 						
 					</div>
 					
@@ -1027,75 +925,6 @@ By default the slider is horizontal.
 			
 
 <!-- ============================== method details ========================= -->		
-			
-				<div class="sectionTitle">
-					Method Detail
-				</div>
-				
-					<a name="push"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>push</b>(comp, config, bindings)
-					
-					</div>
-					<div class="description">
-						Add a child component to the Slider Manager
- <p>
- The component must be a graphic component (vs.ui.View).
- It will be instantiated, init and added automaticaly
- <p>
- The component instantiation is a lazy algorithm. The component will
- be instantiated and add into the DOM tree only when it has to be show
- to the user.
- <p>
-						
-					</div>
-					
-					
-					
-					<pre class="code"> var myController = new vs.fx.SlideController (this | myView);
- myController.init ();
- myController.push ('AComponent1', data1);
- myController.push ('AComponent1', data2);
- myController.push ('AComponent2', data3);</pre>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/vs.ui.View.html">vs.ui.View</a> | String}</span> <b>comp</b>
-									
-								</dt>
-								<dd>The GUI component or the component
-    name to instanciate</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>config</b>
-									
-								</dt>
-								<dd>Configuration structure need to build the component.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Array}</span> <b>bindings</b>
-									
-								</dt>
-								<dd>Bindings configuration [[spec, observer, method], ...]</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					
-				
 			
 			
 <!-- ============================== event details ========================= -->		

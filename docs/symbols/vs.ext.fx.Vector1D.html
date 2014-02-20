@@ -5,7 +5,7 @@
 		<meta http-equiv="content-type" content="text/html; charset=utf-8" />
 		<meta name="generator" content="JsDoc Toolkit" />
 		
-		<title>JsDoc Reference - vs.fx.SlideController</title>
+		<title>JsDoc Reference - vs.ext.fx.Vector1D</title>
 
 		<style type="text/css">
 			/* default.css */
@@ -576,7 +576,7 @@ hr:last-child {
 <!-- ============================== class title ============================ -->
     <div class="classTitle">
       
-      Class vs.fx.SlideController
+      Class vs.ext.fx.Vector1D
     </div>
 
 		<div id="scrollable">
@@ -586,16 +586,18 @@ hr:last-child {
 			<p class="description">
 				
 				<b>Extends</b>
-					<a href="../symbols/vs.fx.StackController.html">vs.fx.StackController</a>.<br /><br />
+					<a href="../symbols/vs.ext.fx.Trajectory.html">vs.ext.fx.Trajectory</a>.<br /><br />
 				
 			
-				
+				vs.ext.fx.Vector1D integer or float piecewise linear function interpolator.<br />
+ The values property is an 1D array that specifies how the output property out
+ will change
 	
 			</p>
 
 <!-- ============================== constructor summary ==================== -->			
 			
-			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.fx.SlideController.">
+			<table class="summaryTable" cellspacing="0" summary="A summary of the constructor documented in the class vs.ext.fx.Vector1D.">
 				<caption>Class Summary</caption>
 				<thead>
 					<tr>
@@ -608,10 +610,9 @@ hr:last-child {
 						<td class="attributes">&nbsp;</td>
 						<td class="nameDescription" >
 							<div class="fixedFont">
-								<b><a href="../symbols/vs.fx.SlideController.html#constructor">vs.fx.SlideController</a></b>(owner)
+								<b><a href="../symbols/vs.ext.fx.Vector1D.html#constructor">vs.ext.fx.Vector1D</a></b>(config)
 							</div>
-							<div class="description">The vs.fx.SlideController class <br />
- This layer manage a list of children using a horizontal layout.</div>
+							<div class="description">The vs.ext.fx.Vector1D class</div>
 						</td>
 					</tr>
 				</tbody>
@@ -622,7 +623,7 @@ hr:last-child {
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.fx.SlideController.">
+				<table class="summaryTable" cellspacing="0" summary="A summary of the fields documented in the class vs.ext.fx.Vector1D.">
 					<caption>Field Summary</caption>
 					<thead>
 						<tr>
@@ -633,12 +634,12 @@ hr:last-child {
 					<tbody>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								vs.fx.SlideController.<b><a href="../symbols/vs.fx.SlideController.html#.ANIMATION_DURATION">ANIMATION_DURATION</a></b>
+								<b><a href="../symbols/vs.ext.fx.Vector1D.html#out">out</a></b>
 								</div>
-								<div class="description">The duration of the animation between two views</div>
+								<div class="description">get trajectory output</div>
 							</td>
 						</tr>
 					
@@ -646,69 +647,9 @@ hr:last-child {
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								<b><a href="../symbols/vs.fx.SlideController.html#animationDuration">animationDuration</a></b>
+								<b><a href="../symbols/vs.ext.fx.Vector1D.html#values">values</a></b>
 								</div>
-								<div class="description">Set the animation/transition temporisation (in millisecond)</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/vs.fx.SlideController.html#animationMode">animationMode</a></b>
-								</div>
-								<div class="description">Set XXX</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.fx.SlideController.<b><a href="../symbols/vs.fx.SlideController.html#.HORIZONTAL">HORIZONTAL</a></b>
-								</div>
-								<div class="description">Horizontal slide (defaut)</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								<b><a href="../symbols/vs.fx.SlideController.html#orientation">orientation</a></b>
-								</div>
-								<div class="description">Getter|Setter for page slide orientation.</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.fx.SlideController.<b><a href="../symbols/vs.fx.SlideController.html#.PIXEL">PIXEL</a></b>
-								</div>
-								<div class="description">Vertical slide</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.fx.SlideController.<b><a href="../symbols/vs.fx.SlideController.html#.POURCENTAGE">POURCENTAGE</a></b>
-								</div>
-								<div class="description">Horizontal slide (defaut)</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.fx.SlideController.<b><a href="../symbols/vs.fx.SlideController.html#.VERTICAL">VERTICAL</a></b>
-								</div>
-								<div class="description">Vertical slide</div>
+								<div class="description">set domain values</div>
 							</td>
 						</tr>
 					
@@ -718,7 +659,7 @@ hr:last-child {
 				
 				
 				<dl class="inheritsList">
-				<dt>Fields borrowed from class <a href="../symbols/vs.fx.StackController.html">vs.fx.StackController</a>: </dt><dd><a href="../symbols/vs.fx.StackController.html#isTactile">isTactile</a>, <a href="../symbols/vs.fx.StackController.html#viewSize">viewSize</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.fx.Controller.html">vs.fx.Controller</a>: </dt><dd><a href="../symbols/vs.fx.Controller.html#delegate">delegate</a>, <a href="../symbols/vs.fx.Controller.html#initialComponent">initialComponent</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#defineProperty">defineProperty</a>, <a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
+				<dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#defineProperty">defineProperty</a>, <a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
 				</dl>
 				
 			
@@ -727,34 +668,10 @@ hr:last-child {
 			
 				
 				
-				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.fx.SlideController.">
-					<caption>Method Summary</caption>
-					<thead>
-						<tr>
-							<th scope="col">Method Attributes</th>
-							<th scope="col">Method Name and Description</th>
-						</tr>
-					</thead>
-					<tbody>
-					
-						<tr>
-							<td class="attributes">&nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.fx.SlideController.html#push">push</a></b>(comp, config, bindings)
-								</div>
-								<div class="description">Add a child component to the Slider Manager
- <p>
- The component must be a graphic component (vs.ui.View).</div>
-							</td>
-						</tr>
-					
-					</tbody>
-				</table>
-				
 				
 				
 				<dl class="inheritsList">
-				<dt>Methods borrowed from class <a href="../symbols/vs.fx.StackController.html">vs.fx.StackController</a>: </dt><dd><a href="../symbols/vs.fx.StackController.html#goToFirstView">goToFirstView</a>, <a href="../symbols/vs.fx.StackController.html#goToLastView">goToLastView</a>, <a href="../symbols/vs.fx.StackController.html#goToNextView">goToNextView</a>, <a href="../symbols/vs.fx.StackController.html#goToPreviousView">goToPreviousView</a>, <a href="../symbols/vs.fx.StackController.html#goToViewAt">goToViewAt</a>, <a href="../symbols/vs.fx.StackController.html#goToViewId">goToViewId</a>, <a href="../symbols/vs.fx.StackController.html#remove">remove</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.fx.Controller.html">vs.fx.Controller</a>: </dt><dd><a href="../symbols/vs.fx.Controller.html#addTransition">addTransition</a>, <a href="../symbols/vs.fx.Controller.html#clear">clear</a>, <a href="../symbols/vs.fx.Controller.html#componentBind">componentBind</a>, <a href="../symbols/vs.fx.Controller.html#getCurrentState">getCurrentState</a>, <a href="../symbols/vs.fx.Controller.html#isStateExit">isStateExit</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.EventSource.html">vs.core.EventSource</a>: </dt><dd><a href="../symbols/vs.core.EventSource.html#bind">bind</a>, <a href="../symbols/vs.core.EventSource.html#nodeBind">nodeBind</a>, <a href="../symbols/vs.core.EventSource.html#nodeUnbind">nodeUnbind</a>, <a href="../symbols/vs.core.EventSource.html#propagate">propagate</a>, <a href="../symbols/vs.core.EventSource.html#unbind">unbind</a></dd><dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#connect">connect</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#isProperty">isProperty</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#outPropertyChange">outPropertyChange</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertiesDidChange">propertiesDidChange</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
+				<dt>Methods borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#clone">clone</a>, <a href="../symbols/vs.core.Object.html#configure">configure</a>, <a href="../symbols/vs.core.Object.html#connect">connect</a>, <a href="../symbols/vs.core.Object.html#getModelProperties">getModelProperties</a>, <a href="../symbols/vs.core.Object.html#init">init</a>, <a href="../symbols/vs.core.Object.html#isProperty">isProperty</a>, <a href="../symbols/vs.core.Object.html#link">link</a>, <a href="../symbols/vs.core.Object.html#outPropertyChange">outPropertyChange</a>, <a href="../symbols/vs.core.Object.html#parseJSON">parseJSON</a>, <a href="../symbols/vs.core.Object.html#propertiesDidChange">propertiesDidChange</a>, <a href="../symbols/vs.core.Object.html#propertyChange">propertyChange</a>, <a href="../symbols/vs.core.Object.html#toJSON">toJSON</a>, <a href="../symbols/vs.core.Object.html#unlink">unlink</a></dd>
 				</dl>
 				
 			
@@ -769,59 +686,22 @@ hr:last-child {
 				</div>
 				
 				<div class="fixedFont">
-						<b>vs.fx.SlideController</b>(owner)
+						<b>vs.ext.fx.Vector1D</b>(config)
 				</div>
 				
 				<div class="description">
-					The vs.fx.SlideController class <br />
- This layer manage a list of children using a horizontal layout.
-
- Children can be slided horizontally (right <-> left) or vertically 
- (top <-> bottom) using a pointing device (mouse, touch screen, ...),
- or using methods goToNextView and goToPreviousView.
- <p />
- By default the slider is horizontal, but you can change it using the 
- property "orientation".
- <p />
- The following example shows a typical example with panels
- (components 1 to 4) that are shows sequentially according user touch slide.
-
- <pre>
-                  (*)
-               ⎡ˉˉˉˉˉˉˉˉˉˉˉˉ⎤
-  ⎡ˉˉˉˉˉˉ⎤    ⎢ ⎡ˉˉˉˉˉˉ⎤ ⎢   ⎡ˉˉˉˉˉˉ⎤   ⎡ˉˉˉˉˉˉ⎤
-  ⎟      ⎢    ⎢ ⎢      ⎢ ⎢   ⎟      ⎢   ⎟      ⎢
-  ⎟  (1) ⎢    ⎢ ⎢  (2) ⎢ ⎢   ⎟  (3) ⎢   ⎟  (4) ⎢
-  ⎟      ⎢    ⎢ ⎢      ⎢ ⎢   ⎟      ⎢   ⎟      ⎢
-  ⎣______⎦    ⎢ ⎣______⎦ ⎢   ⎣______⎦   ⎣______⎦
-               ⎣____________⎦
-
-
- (*) : device screen
- (1, ... ,4) : components managed by the SliderLayer
-
-  </pre>
-
- <p>
- Delegate:
- <ul>
-   <li/>controllerViewWillChange : function (from vs.ui.View, to vs.ui.View,
-        controller), Called when the view changed
-   <li/>controllerAnimationDidEnd : function (from vs.ui.View, to vs.ui.View, 
-        controller), Called just after the animation ended
- </ul>
- <p>
+					The vs.ext.fx.Vector1D class
 					<br /><i>Author: </i>David Thevenin.
 				</div>
 				
 				
 				
-				<pre class="code"> var layer = new vs.fx.SlideController (myComp);
+				<pre class="code"> // the out property will change uniformly from 0 to 200.
+ var traj1 = new Vector1D ({values: [0, 200]}).init ();
 
- layer.push ('APanel', {id: '1', data: {...}});
- layer.push ('APanel', {id: '2', data: {...}});
- layer.push ('APanel', {id: '3', data: {...}});
- layer.push ('APanel', {id: '4', data: {...}});</pre>
+ // the out property will change from 0 to 700, but through
+ // 200, then go back to 90 value to finish at 700.
+ var traj2 = new Vector1D ({values: [0, 200, 90, 700]}).init ();</pre>
 				
 				
 				
@@ -831,10 +711,10 @@ hr:last-child {
 						<dt class="heading">Parameters:</dt>
 						
 							<dt>
-								<span class="light fixedFont">{<a href="../symbols/vs.ui.View.html">vs.ui.View</a>}</span>  <b>owner</b>
+								<span class="light fixedFont">{Object}</span>  <b>config</b>
 								
 							</dt>
-								<dd>the View using this Layer [mandatory]</dd>
+								<dd>the configuration structure [optional]</dd>
 						
 						</dl>
 					
@@ -854,36 +734,15 @@ hr:last-child {
 					Field Detail
 				</div>
 				
-					<a name=".ANIMATION_DURATION"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.fx.SlideController.</span><b>ANIMATION_DURATION</b>
-					
-					</div>
-					<div class="description">
-						The duration of the animation between two views
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="animationDuration"> </a>
+					<a name="out"> </a>
 					<div class="fixedFont">
 					
-					
-					<b>animationDuration</b>
+					<span class="light">{number}</span>
+					<b>out</b>
 					
 					</div>
 					<div class="description">
-						Set the animation/transition temporisation (in millisecond)
+						get trajectory output
 						
 					</div>
 					
@@ -896,122 +755,15 @@ hr:last-child {
 
 					<hr />
 				
-					<a name="animationMode"> </a>
+					<a name="values"> </a>
 					<div class="fixedFont">
 					
-					
-					<b>animationMode</b>
-					
-					</div>
-					<div class="description">
-						Set XXX
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".HORIZONTAL"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.fx.SlideController.</span><b>HORIZONTAL</b>
+					<span class="light">{Array<number>}</span>
+					<b>values</b>
 					
 					</div>
 					<div class="description">
-						Horizontal slide (defaut)
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name="orientation"> </a>
-					<div class="fixedFont">
-					
-					<span class="light">{String}</span>
-					<b>orientation</b>
-					
-					</div>
-					<div class="description">
-						Getter|Setter for page slide orientation. It can take the value
-vs.fx.SlideController.HORIZONTAL or vs.fx.SlideController.VERTICAL.
-By default the slider is horizontal.
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".PIXEL"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.fx.SlideController.</span><b>PIXEL</b>
-					
-					</div>
-					<div class="description">
-						Vertical slide
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".POURCENTAGE"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.fx.SlideController.</span><b>POURCENTAGE</b>
-					
-					</div>
-					<div class="description">
-						Horizontal slide (defaut)
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".VERTICAL"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.fx.SlideController.</span><b>VERTICAL</b>
-					
-					</div>
-					<div class="description">
-						Vertical slide
+						set domain values
 						
 					</div>
 					
@@ -1027,75 +779,6 @@ By default the slider is horizontal.
 			
 
 <!-- ============================== method details ========================= -->		
-			
-				<div class="sectionTitle">
-					Method Detail
-				</div>
-				
-					<a name="push"> </a>
-					<div class="fixedFont">
-					
-					
-					<b>push</b>(comp, config, bindings)
-					
-					</div>
-					<div class="description">
-						Add a child component to the Slider Manager
- <p>
- The component must be a graphic component (vs.ui.View).
- It will be instantiated, init and added automaticaly
- <p>
- The component instantiation is a lazy algorithm. The component will
- be instantiated and add into the DOM tree only when it has to be show
- to the user.
- <p>
-						
-					</div>
-					
-					
-					
-					<pre class="code"> var myController = new vs.fx.SlideController (this | myView);
- myController.init ();
- myController.push ('AComponent1', data1);
- myController.push ('AComponent1', data2);
- myController.push ('AComponent2', data3);</pre>
-					
-					
-					
-						
-							<dl class="detailList">
-							<dt class="heading">Parameters:</dt>
-							
-								<dt>
-									<span class="light fixedFont">{<a href="../symbols/vs.ui.View.html">vs.ui.View</a> | String}</span> <b>comp</b>
-									
-								</dt>
-								<dd>The GUI component or the component
-    name to instanciate</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Object}</span> <b>config</b>
-									
-								</dt>
-								<dd>Configuration structure need to build the component.</dd>
-							
-								<dt>
-									<span class="light fixedFont">{Array}</span> <b>bindings</b>
-									
-								</dt>
-								<dd>Bindings configuration [[spec, observer, method], ...]</dd>
-							
-							</dl>
-						
-						
-						
-						
-						
-						
-						
-
-					
-				
 			
 			
 <!-- ============================== event details ========================= -->		
