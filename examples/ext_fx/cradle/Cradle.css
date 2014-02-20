@@ -13,12 +13,12 @@
 
 .ball::before {
   position: absolute;
-  width: 1px;
+  width: 0px;
   height: 200px;
   content: " ";
   border-right: 1px solid #333;
   top: -200px;
-  left: 25px;
+  left: 24px;
 }
 
 #ball1 {
