@@ -26,8 +26,9 @@
 /**
  *  Animation namespace
  *  @namespace
+ *  @name vs.ext.fx.Animation
  */
-vs.ext.fx.Animation = {};
+var Animation = {};
 
 /**
  *  Slide a object to right.
@@ -186,7 +187,7 @@ FadeOutLeft.duration = '1s';
                       Export
 *********************************************************************/
 /** private */
-util.extend (vs.ext.fx.Animation, {
+util.extend (Animation, {
   Bounce:     Bounce,
   Shake:      Shake,
   Swing:      Swing,
