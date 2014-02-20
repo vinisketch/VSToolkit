@@ -1,0 +1,133 @@
+.application {
+  font-family: arial;
+}
+
+.vs_ui_navigationbar.black {
+  background-color: #444;
+  border-radius: 8px 8px 0px 0;
+}
+
+.vs_ui_navigationbar .settings {
+  color: white;
+  font-size: 25px;
+  width: 30px;
+  height: 30px;
+  margin: 8px;
+  padding: 3px;
+}
+
+.vs_ui_navigationbar .settings::before {
+  font-family: 'FontAwesome';
+  content: "\f0c9";
+}
+
+.vs_ui_navigationbar .title{
+  text-align: center;
+  color: white;
+  font-size: 22px;
+  width: 100%;
+  padding-top: 10px;
+  text-transform:uppercase;
+}
+
+.thethinglist {
+  top: 44px; bottom: 0px;
+  width: 100%;
+  background-color: white;
+}
+
+.thethinglist li {
+  font-size: 20px;
+  font-weight: bold;
+  color: black;
+}
+
+.config_panel {
+  top: 44px; bottom: 0px;
+  width: 100%;
+  background-color: rgb(22, 15, 58);
+  text-transform:uppercase;
+  color: rgb(196, 189, 233);
+}
+
+.config_panel .title {
+  text-align: center;
+  padding: 10px;
+  font-size: 20px;
+}
+
+.config_panel > div {
+  position: absolute;
+  width: 320px;
+  left:50%;
+  -webkit-transform: translate(-50%,0);
+  -moz-transform: translate(-50%,0);
+  transform: translate(-50%,0);
+}
+
+.config_panel > div > .icon {
+  width: 80px;
+  height: 100px;
+  margin: 20px;
+  position: absolute;
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+}
+
+.config_panel > div > .icon > * {
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+}
+
+.config_panel > div > .icon > div {
+  width: 80px;
+  height: 80px;
+  border-radius: 40px;
+  z-index: 10;
+}
+
+.config_panel > div > .icon > .title {
+  text-align: center;
+  padding: 8px 0 0 0;
+  font-size: 18px;
+}
+
+.config_panel > div > .icon > div.film {
+  background-color: #1abc9c;
+}
+
+.config_panel > div > .icon > div.book {
+  background-color: #F1C40F;
+}
+
+.config_panel > div > .icon > div.music {
+  background-color: #E67E22;
+}
+
+.config_panel > div > .icon > div.idea {
+  background-color: #E74C3C;
+}
+
+.config_panel > div > .icon > div.place {
+  background-color: #9B59B6;
+}
+
+.config_panel > div > .icon > div.product {
+  background-color: #3498DB;
+}
+
+.config_panel > div > .icon > div.bar {
+  background-color: #95A5A6;
+}
+
+.config_panel > div > .icon > div.person {
+  background-color: #34495E;
+}
+
+.config_panel > div > .icon > div.food {
+  background-color: #2ECC71;
+}

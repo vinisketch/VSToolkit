@@ -1,0 +1,40 @@
+.application {
+  font-family: arial;
+}
+
+.thelist {
+  top: 0px; bottom: 0px;
+  width: 100%;
+  background-color: white;
+}
+
+.thelist li {
+  font-size: 20px;
+  height: 40px;
+  color: black;
+  overflow: hidden;
+}
+
+.thelist li > p:nth-child(1) {
+  font-size: 20px;
+}
+
+.thelist li > p:nth-child(2) {
+  font-size: 17px;
+  padding: 15px;
+}
+
+.thelist li.pressed {
+  background-image: none !important;
+  color: rgb(52, 73, 94) !important;
+  text-shadow: none !important;
+}
+
+.thelist li.selected {
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0d…EiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz48L3N2Zz4=);
+  background-image: -moz-linear-gradient(90deg, #1080dd 0%, #268ce0 100%) !important;
+  background-image: -webkit-linear-gradient(90deg, #1080dd 0%, #268ce0 100%) !important;
+  background-image: -o-linear-gradient(90deg, #1080dd 0%, #268ce0 100%) !important;
+  background-image: linear-gradient(0deg, #1080dd 0%, #268ce0 100%) !important;
+  color: white !important;
+}
