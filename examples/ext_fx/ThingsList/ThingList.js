@@ -67,7 +67,7 @@ var ThingList = vs.core.createClass ({
   },
   
   buildList : function () {
-    var list_view = new vs.ui.List ({id: "thelist"}).init ();
+    var list_view = new vs.ui.List ({id: "thelist", scroll: true}).init ();
     this.add (list_view);
     
     list_view.setItemTemplate (ListItem);

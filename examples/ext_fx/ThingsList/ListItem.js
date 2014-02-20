@@ -34,6 +34,8 @@ var ListItem = vs.core.createClass ({
       pace: vs.ext.fx.Pace.getEaseInPace (),
       trajectory: new vs.ext.fx.Vector2D ().init ()
     });
+    
+    this.open_animation.delegate = this;
 
     this.close_animation = vs.ext.fx.animateTransition (this, 'size', {
       duration: 300,
@@ -64,11 +66,23 @@ var ListItem = vs.core.createClass ({
       ListItem.previousSelected.removeClassName ('selected');
     }
     
+    if (ListItem.previousSelected == this) {
+      ListItem.previousSelected = null;
+      var list = this.__parent;
+      vs.scheduleAction (function () { list.refresh (); }, 400);
+      return;
+    }
+    
     // open the item
     this._updateAnimHeight ();
     this.open_animation.start ();
     ListItem.previousSelected = this;
     this.addClassName ('selected');
+  },
+  
+  taskDidEnd : function () {
+    console.log ("taskDidEnd");
+    this.__parent.refresh ();
   }
 });
 
