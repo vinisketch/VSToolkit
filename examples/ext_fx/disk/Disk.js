@@ -14,9 +14,12 @@
  * 
  * You should have received a copy of the GNU Lesser General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *
+ * This demo is based ond the Zanimo demo Circles: http://zanimo.us/
+ * Credits @peutetre https://github.com/peutetre/Zanimo
  */
 
-var Animations = vs.core.createClass ({
+var DisksAnimation = vs.core.createClass ({
 
   /** parent class */
   parent: vs.ui.Application,
@@ -41,7 +44,6 @@ var Animations = vs.core.createClass ({
         case vs.core.Task.STOPPED:
           anim.start ();
         break;
-        
       }
     });
   },
@@ -107,7 +109,7 @@ var Animations = vs.core.createClass ({
 });
 
 function loadApplication () {
-  new Animations ({id:"disks", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
+  new DisksAnimation ({id:"disks", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
   vs.ui.Application.start ();
 }
 
