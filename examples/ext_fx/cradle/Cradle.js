@@ -50,7 +50,7 @@ var Boulier = vs.core.createClass ({
       trajectory: new vs.ext.fx.Vector1D ({ values: [0, -40, 0] }).init ()
     });
     
-    var seq = vs.seq (this.anim1, this.anim2);
+    var seq = window.anim = vs.seq (this.anim1, this.anim2);
     seq.delegate = { taskDidEnd: function () {seq.start ();} }
     seq.start ();
   },
@@ -59,4 +59,13 @@ var Boulier = vs.core.createClass ({
 function loadApplication () {
   new Boulier ({id:"cradle", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
   vs.ui.Application.start ();
+}
+
+window.addEventListener ("message", receiveMessage, false);
+
+function receiveMessage (event)
+{
+  var message = event.data;
+  if (message == "start") window.anim.start ();
+  else if (message == "pause") window.anim.pause ();
 }
