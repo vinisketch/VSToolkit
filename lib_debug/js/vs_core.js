@@ -5447,14 +5447,25 @@ Task_SEQ.prototype = {
   start: function (param)
   {
     if (this._state === Task.STARTED) { return false; }
+    
+    var taskAndparam
+    if (this._state === Task.PAUSED) {
+      taskAndparam = this._tasksAndParams [this._nextTaskToStart - 1];
+    }
+    else {
+      taskAndparam = this._tasksAndParams [this._nextTaskToStart];
+      this._nextTaskToStart++;
+    }
+    
+    if (!taskAndparam) {
+      this._nextTaskToStart = 0;
+      this._state = Task.STOPED;
+      return false;
+    }
+
     this._state = Task.STARTED;
-
     this._startParam = param;
-
-    var taskAndparam = this._tasksAndParams [this._nextTaskToStart];
-    if (!taskAndparam) { return false; }
-
-    this._nextTaskToStart++;
+    
     taskAndparam [0].delegate = this;
     taskAndparam [0].start ((taskAndparam [1])?taskAndparam [1]:param);
 
@@ -5473,9 +5484,10 @@ Task_SEQ.prototype = {
     this._state = Task.STOPPED;
 
     var taskAndparam = this._tasksAndParams [this._nextTaskToStart - 1];
+    this._nextTaskToStart = 0;
+
     if (!taskAndparam) { return false; }
 
-    this._nextTaskToStart = 0;
     taskAndparam [0].stop ();
 
     return true;
