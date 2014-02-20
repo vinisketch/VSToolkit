@@ -22,41 +22,13 @@ var Animations = vs.core.createClass ({
   parent: vs.ui.Application,
 
   applicationStarted : function (event) {
-  
-    // generate random trajectory
-    function generateTrajectory () {
-      //[0, 190, 70, -45, -125, -60, 0, 45, 0]
-      var values = [], i = 0;
-      values.push (0);
-      for (; i < 5; i++) {
-        values.push (Math.floor (Math.random () * 360 - 180));
-      }
-      values.push (0);
-      return new vs.ext.fx.Vector1D ({values: values}).init ();
-    }
+    window.app = this;
+ 
+    this.disk0 = new vs.ui.View ({id: "disk0"}).init ();
+    this.disk1 = new vs.ui.View ({id: "disk1"}).init ();
+    this.disk2 = new vs.ui.View ({id: "disk2"}).init ();
 
-    function createAnime (id) {
-    
-      var item = new vs.ui.View ({id: id}).init ();
-      var dur = 3000 + Math.ceil (Math.random () * 3000);
-      
-      var anim = vs.ext.fx.animateTransition (item, 'rotation', {
-        duration: dur,
-        pace: vs.ext.fx.Pace.getEaseInOutPace (),
-        repeat: 5,
-        trajectory: generateTrajectory ()
-      });
-
-      return anim;
-    }
-    
-//    var anim = vs.seq (
-    var anim = vs.par (
-      createAnime ("disk0"),
-      createAnime ("disk1"),
-      createAnime ("disk2")
-    );
-    anim.start ();
+    this.createSeqAnimation ();
     
     // click or tap to pause/restart the animation
     this.bind (vs.core.POINTER_START, this, function () {
@@ -73,9 +45,79 @@ var Animations = vs.core.createClass ({
       }
     });
   },
+
+   createAnime : function (item, duration) {
+  
+    // generate random trajectory
+    function generateTrajectory () {
+      var values = [], i = 0;
+
+      values = [0, 190, 70, -45, -125, -60, 0, 45, 0]
+//       values.push (0);
+//       for (; i < 5; i++) {
+//         values.push (Math.floor (Math.random () * 360 - 180));
+//       }
+//       values.push (0);
+      return new vs.ext.fx.Vector1D ({values: values}).init ();
+    }
+
+    var dur = duration + Math.ceil (Math.random () * duration);
+    
+    var anim = vs.ext.fx.animateTransition (item, 'rotation', {
+      duration: dur,
+      pace: vs.ext.fx.Pace.getEaseInOutPace (),
+      repeat: 1,
+      trajectory: generateTrajectory ()
+    });
+
+    return anim;
+  },
+  
+  deletePreviousAnim : function () {
+    if (this.anim) {
+      this.anim.stop ();
+      vs.util.free (this.anim);
+      this.anim = undefined;
+    }
+  },
+  
+  createParAnimation : function () {
+    this.deletePreviousAnim ();
+    
+    this.anim = vs.par (
+      this.createAnime (this.disk0, 6000),
+      this.createAnime (this.disk1, 6000),
+      this.createAnime (this.disk2, 6000)
+    );
+    
+    this.anim.start ();
+  },
+  
+  createSeqAnimation : function () {
+    this.deletePreviousAnim ();
+    
+    this.anim = vs.seq (
+      this.createAnime (this.disk0, 2000),
+      this.createAnime (this.disk1, 2000),
+      this.createAnime (this.disk2, 2000)
+    );  
+    
+    this.anim.start ();
+  }
 });
 
 function loadApplication () {
   new Animations ({id:"disks", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
   vs.ui.Application.start ();
+}
+
+window.addEventListener ("message", receiveMessage, false);
+
+function receiveMessage (event)
+{
+  var message = event.data;
+  if (message == "start") window.app.anim.start ();
+  else if (message == "pause") window.app.anim.pause ();
+  else if (message == "seq_aniem") window.app.createSeqAnimation ();
+  else if (message == "par_aniem") window.app.createParAnimation ();
 }
