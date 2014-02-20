@@ -35,14 +35,14 @@ var DisksAnimation = vs.core.createClass ({
     
     // click or tap to pause/restart the animation
     this.bind (vs.core.POINTER_START, this, function () {
-      switch (anim.state) {
+      switch (this.anim.state) {
         case vs.core.Task.STARTED:
-          anim.pause ();
+          this.anim.pause ();
         break;
         
         case vs.core.Task.PAUSED:
         case vs.core.Task.STOPPED:
-          anim.start ();
+          this.anim.start ();
         break;
       }
     });
