@@ -2308,14 +2308,19 @@ View.prototype = {
    */
   getCTM: function ()
   {
-    var matrix = new vs.CSSMatrix (), transform, matrix_tmp;
+    var matrix, identity = new vs.CSSMatrix ();
 
     // apply current transformation
-    matrix = matrix.translate (this._transform_origin [0], this._transform_origin [1], 0);
-    matrix = matrix.translate (this.__view_t_x, this.__view_t_y, 0);
-    matrix = matrix.rotate (0, 0, this._rotation);
+    matrix = identity.translate (
+      this._transform_origin [0] + this.__view_t_x,
+      this._transform_origin [1] + this.__view_t_y, 0
+    );
+    matrix = matrix.multiply (identity.rotate (0, 0, this._rotation));
     matrix = matrix.scale (this._scaling, this._scaling, 1);
-    matrix = matrix.translate (-this._transform_origin [0], -this._transform_origin [1], 0);
+    matrix = matrix.translate (
+      -this._transform_origin [0],
+      -this._transform_origin [1],
+    0);
 
     // apply previous transformations and return the matrix
     if (this._transforms_stack) return matrix.multiply (this._transforms_stack);
