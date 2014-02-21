@@ -189,6 +189,9 @@ var Chronometer = vs.core.createClass ({
     }
     
     _start.call (this);
+
+    if (this.delegate && this.delegate.taskDidStart)
+    { this.delegate.taskDidStart (this); }
   },
   
   __setTick : function (v) {
@@ -341,6 +344,9 @@ var Chronometer = vs.core.createClass ({
   {
     this._state = vs.core.Task.STOPPED;
     this.__pause_time = 0;
+
+    if (this.delegate && this.delegate.taskDidStop)
+    { this.delegate.taskDidStop (this); }
   },
 
   /**
@@ -356,5 +362,8 @@ var Chronometer = vs.core.createClass ({
     if (!this._state === vs.core.Task.STARTED) return;
     this._state = vs.core.Task.PAUSED;
     this.__pause_time = Date.now ();
+
+    if (this.delegate && this.delegate.taskDidPause)
+    { this.delegate.taskDidPause (this); }
   }
 });
