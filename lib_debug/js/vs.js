@@ -19300,6 +19300,20 @@ Application.prototype = {
   { },
     
   /**
+   *  @public
+   *  Build the default dataflow associated to the application.
+   *  If you have created your own dataflow (with new vs.core.Dataflow), you
+   *  have to build it explicitly.
+   *
+   * @name vs.ui.Application#buildDataflow 
+   * @function
+   */
+  buildDataflow: function ()
+  {
+    vs._default_df_.build ();
+  },
+    
+  /**
    *  Dynamically load a script into your application.
    *  <p/>
    *  When the download is completed, the event 'scriptloaded' is fired. <br/>
@@ -44646,6 +44660,9 @@ var Chronometer = vs.core.createClass ({
     }
     
     _start.call (this);
+
+    if (this.delegate && this.delegate.taskDidStart)
+    { this.delegate.taskDidStart (this); }
   },
   
   __setTick : function (v) {
@@ -44798,6 +44815,9 @@ var Chronometer = vs.core.createClass ({
   {
     this._state = vs.core.Task.STOPPED;
     this.__pause_time = 0;
+
+    if (this.delegate && this.delegate.taskDidStop)
+    { this.delegate.taskDidStop (this); }
   },
 
   /**
@@ -44813,6 +44833,9 @@ var Chronometer = vs.core.createClass ({
     if (!this._state === vs.core.Task.STARTED) return;
     this._state = vs.core.Task.PAUSED;
     this.__pause_time = Date.now ();
+
+    if (this.delegate && this.delegate.taskDidPause)
+    { this.delegate.taskDidPause (this); }
   }
 });
 /**
