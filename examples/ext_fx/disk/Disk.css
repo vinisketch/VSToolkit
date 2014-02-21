@@ -8,6 +8,9 @@ body {
   top: 50%;
   left: 50%;
   -webkit-transform: translate(-50%, -50%);
+  -ms-transform: translate(-50%, -50%);
+  -moz-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
 }
 
 .disks > div {
@@ -17,16 +20,16 @@ body {
   -o-transform-origin: 50% 50%;
   -ms-transform-origin: 50% 50%;
   transform-origin: 50% 50%;
+  background-clip:content-box;
+  background-color:transparent;
+  background:none;
 }
 
 #disk3 {
   border-radius:300px;
   height:100px;
   width:100px;
-  border: 50px dashed #F33E6F;
-  background-clip:content-box;
-  background-color:transparent;
-  background:none;
+  background-color:#F33E6F;
   top:150px;
   left:150px;
   z-index:4;
@@ -37,9 +40,6 @@ body {
   height:200px;
   width:200px;
   border: 50px dashed #FDB45C;
-  background-clip:content-box;
-  background-color:transparent;
-  background:none;
   top:100px;
   left:100px;
   z-index:3;
@@ -50,9 +50,6 @@ body {
   height:300px;
   width:300px;
   border: 50px dashed #DF8686;
-  background-clip:content-box;
-  background-color:transparent;
-  background:none;
   top:50px;
   left:50px;
   z-index:2;
@@ -63,9 +60,6 @@ body {
   height:400px;
   width:400px;
   border: 50px dashed rgb(135, 214, 234);
-  background-clip:content-box;
-  background-color:transparent;
-  background:none;
   top:0px;
   left:0px;
   z-index:1;
