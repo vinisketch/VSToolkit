@@ -23,11 +23,12 @@ var Simple = vs.core.createClass ({
 
   applicationStarted : function (event) {
   
-    var chrono = new vs.ext.fx.Chronometer ().init ();
-    var traj = new vs.ext.fx.Vector2D ({values: [[100, 100], [215, 50]]}).init ();
+    // elements for your animation
+    var chrono = new vs.ext.fx.Chronometer ({repeat: 10, duration: 3000}).init ();
+    var traj = new vs.ext.fx.Vector2D ({values: [[50, 220], [220, 50], [50, 220]]}).init ();
     var view = new vs.ui.View ({id: "my_view"}).init ();   
     
-    // connect your component within the default dataflow
+    // connect your components within the default dataflow
     chrono.connect ("tick").to (traj, "tick")
       .connect ("out").to (view, "size");
 
