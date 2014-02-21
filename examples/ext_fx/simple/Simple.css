@@ -1,0 +1,39 @@
+body {
+  background-color: transparent;
+}
+
+#my_view {
+  background-color: red;
+  margin-top: 200px;
+  margin-left: 200px;
+  overflow: hidden;
+}
+
+#my_view > div {
+  margin: 5px;
+  display: inline-block;
+}
+
+#sub_view1 {
+  background-color: blue;
+  width: 40px;
+  height: 40px;
+}
+
+#sub_view2 {
+  background-color: yellow;
+  width: 40px;
+  height: 40px;
+}
+
+#sub_view3 {
+  background-color: green;
+  width: 40px;
+  height: 40px;
+}
+
+#sub_view4 {
+  background-color: pink;
+  width: 40px;
+  height: 40px;
+}
