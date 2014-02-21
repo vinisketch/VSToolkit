@@ -661,7 +661,7 @@ Task_SEQ.prototype = {
   {
     if (this._state === Task.STARTED) { return false; }
     
-    var taskAndparam
+    var taskAndparam;
     if (this._state === Task.PAUSED) {
       taskAndparam = this._tasksAndParams [this._nextTaskToStart - 1];
     }
