@@ -228,6 +228,20 @@ Application.prototype = {
   { },
     
   /**
+   *  @public
+   *  Build the default dataflow associated to the application.
+   *  If you have created your own dataflow (with new vs.core.Dataflow), you
+   *  have to build it explicitly.
+   *
+   * @name vs.ui.Application#buildDataflow 
+   * @function
+   */
+  buildDataflow: function ()
+  {
+    vs._default_df_.build ();
+  },
+    
+  /**
    *  Dynamically load a script into your application.
    *  <p/>
    *  When the download is completed, the event 'scriptloaded' is fired. <br/>
