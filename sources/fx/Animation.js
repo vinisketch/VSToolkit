@@ -877,46 +877,47 @@ Animation.prototype = {
 ********************************************************************/
 
   /**
-   *  Clone the current animation.
-   *
-   * @name vs.fx.Animation#clone
+   * @name vs.core.Animation#_clone
    * @function
-   * @return {vs.fx.Animation} the clone animation
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
    */
-  clone: function ()
+  _clone : function (obj, cloned_map)
   {
-    var anim = new Animation (), key, data;
-    anim.keyFrames = {};
-    anim.keyFrames ['100%'] = anim;
+    core.Object.prototype._clone.call (this, obj, cloned_map);
+    
+    var key, data;
+    obj.keyFrames = {};
+    obj.keyFrames ['100%'] = obj;
 
     if (this.properties)
-    { anim.properties = this.properties.slice (); }
-    else { anim.properties = []; }
+    { obj.properties = this.properties.slice (); }
+    else { obj.properties = []; }
     if (this.values)
-    { anim.values = this.values.slice (); }
-    else { anim.values = []; }
+    { obj.values = this.values.slice (); }
+    else { obj.values = []; }
     if (this.durations)
-    { anim.durations = this.durations; }
+    { obj.durations = this.durations; }
     if (this.timings)
-    { anim.timings = this.timings.slice (); }
-    else { anim.timings = []; }
+    { obj.timings = this.timings.slice (); }
+    else { obj.timings = []; }
     if (this.origin)
-    { anim.origin = this.origin.slice (); }
+    { obj.origin = this.origin.slice (); }
     if (this.keyFrames)
     {
       for (key in this.keyFrames)
       {
         if (key === '100%') { continue; }
         data = this.keyFrames [key];
-        if (util.isArray (data)) { anim.keyFrames [key] = data.slice (); }
-        else { anim.keyFrames [key] = vs.util.clone (data); }
+        if (util.isArray (data)) { obj.keyFrames [key] = data.slice (); }
+        else { obj.keyFrames [key] = vs.util.clone (data); }
       }
     }
 
-    anim.iterationCount = this.iterationCount;
-    anim.delay = this.delay;
-
-    return anim;
+    obj.iterationCount = this.iterationCount;
+    obj.delay = this.delay;
   },
 
 /********************************************************************
@@ -1115,7 +1116,24 @@ TranslateAnimation.prototype = {
    * @type {number}
    * @name vs.fx.TranslateAnimation#z
    */
-  z: 0
+  z: 0,
+  
+  /**
+   * @name vs.core.TranslateAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.x = this.x;
+    obj.y = this.y;
+    obj.z = this.z;    
+  }
 };
 util.extendClass (TranslateAnimation, Animation);
 
@@ -1166,7 +1184,23 @@ RotateAnimation.prototype = {
    * @type {number}
    * @name vs.fx.RotateAnimation#deg
    */
-  deg: 0
+  deg: 0,
+  
+  /**
+   * @name vs.core.RotateAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.deg = this.deg;    
+  }
+
 };
 util.extendClass (RotateAnimation, Animation);
 
@@ -1234,7 +1268,25 @@ RotateXYZAnimation.prototype = {
    * @type {number}
    * @name vs.fx.RotateXYZAnimation#degZ
    */
-  degZ: 0
+  degZ: 0,
+  
+  /**
+   * @name vs.core.RotateXYZAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.degX = this.degX;
+    obj.degY = this.degY;
+    obj.degZ = this.degZ;    
+  }
+
 };
 util.extendClass (RotateXYZAnimation, Animation);
 
@@ -1315,7 +1367,25 @@ ScaleAnimation.prototype = {
    * @type {number}
    * @name vs.fx.ScaleAnimation#sz
    */
-  sz: 1
+  sz: 1,
+  
+  /**
+   * @name vs.core.ScaleAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.sx = this.sx;
+    obj.sy = this.sy;
+    obj.sz = this.sz;    
+  }
+
 };
 util.extendClass (ScaleAnimation, Animation);
 
@@ -1375,7 +1445,23 @@ SkewAnimation.prototype = {
    * @type {number}
    * @name vs.fx.SkewAnimation#ay
    */
-  ay: 0
+  ay: 0,
+  
+  /**
+   * @name vs.core.SkewAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.ax = this.ax;
+    obj.ay = this.ay;
+  }
 };
 util.extendClass (SkewAnimation, Animation);
 
@@ -1430,7 +1516,23 @@ OpacityAnimation.prototype = {
    * @name vs.fx.OpacityAnimation#value
    * @type {number}
    */
-  value: 1
+  value: 1,
+  
+  /**
+   * @name vs.core.OpacityAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.value = this.value;    
+  }
+
 };
 util.extendClass (OpacityAnimation, Animation);
 
