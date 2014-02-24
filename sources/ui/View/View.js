@@ -1782,7 +1782,7 @@ View.prototype = {
     }
     else
     {
-      if (animations.constructor === vs.fx.Animation)
+      if (animations instanceof vs.fx.Animation)
       {
         this._show_animation = animations.clone ();
       }
@@ -1911,7 +1911,7 @@ View.prototype = {
      }
     else
     {
-      if (animations.constructor === vs.fx.Animation)
+      if (animations instanceof vs.fx.Animation)
       {
         this._hide_animation = animations.clone ();
       }
