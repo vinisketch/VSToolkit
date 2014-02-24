@@ -130,6 +130,21 @@ Task.prototype = {
   },
   
   /**
+   * @name vs.core.Task#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    core.Object.prototype.destructor._clone.call (this, obj, cloned_map);
+    
+    obj._state = this._state;
+  },
+  
+  /**
    *  Starts the task
    *
    * @name vs.core.Task#start
