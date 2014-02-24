@@ -1684,12 +1684,14 @@ View.prototype = {
    *  Displays the GUI Object
    *
    * @name vs.ui.View#show
+   * @param {Function} clb a function to call a the end of show process
    * @function
    */
-  show : function ()
+  show : function (clb)
   {
     if (!this.view) { return; }
     if (this._visible) { return; }
+    if (!util.isFunction (clb)) clb = undefined; 
 
     if (this.__view_display)
     {
@@ -1706,11 +1708,13 @@ View.prototype = {
 
     if (this._show_animation)
     {
-      this._show_animation.process (this, this._show_object, this);
+      this._show_animation.process (this, function () {
+        this._show_object (clb);
+      }, this);
     }
     else
     {
-      this._show_object ();
+      this._show_object (clb);
     }
   },
 
@@ -1718,9 +1722,10 @@ View.prototype = {
    *  Show the GUI Object
    *
    * @private
+   * @param {Function} clb a function to call a the end of show process
    * @function
    */
-  _show_object : function ()
+  _show_object : function (clb)
   {
     if (!this.view) { return; }
     this.__visibility_anim = undefined;
@@ -1732,13 +1737,21 @@ View.prototype = {
     var self = this;
 
     this.propertyChange ();
-    if (this.__show_clb)
+    if (this.__show_clb || clb)
     {
       if (this._show_animation)
-      { this.__show_clb.call (this); }
+      {
+        if (this.__show_clb) this.__show_clb.call (this);
+        if (clb) clb.call (this);
+      }
       else
       {
-        vs.scheduleAction (function () {self.__show_clb.call (self);});
+        if (this.__show_clb) {
+          vs.scheduleAction (function () {self.__show_clb.call (self);});
+        }
+        if (clb) {
+          vs.scheduleAction (function () {clb.call (self);});
+        }
       }
     }
   },
@@ -1818,12 +1831,14 @@ View.prototype = {
    *  Hides the GUI Object
    *
    * @name vs.ui.View#hide
+   * @param {Function} clb a function to call a the end of show process
    * @function
    */
-  hide : function ()
+  hide : function (clb)
   {
     if (!this.view) { return; }
     if (!this._visible && !this.__is_showing) { return; }
+    if (!util.isFunction (clb)) clb = undefined; 
 
     this._visible = false;
     
@@ -1832,11 +1847,13 @@ View.prototype = {
     
     if (this._hide_animation)
     {
-      this._hide_animation.process (this, this._hide_object, this);
+      this._hide_animation.process (this, function () {
+        this._hide_object (clb);
+      }, this);
     }
     else
     {
-      this._hide_object ();
+      this._hide_object (clb);
     }
   },
 
@@ -1845,8 +1862,9 @@ View.prototype = {
    *
    * @private
    * @function
+   * @param {Function} clb a function to call a the end of show process
    */
-  _hide_object: function ()
+  _hide_object: function (clb)
   {
     if (!this.view || this._visible) { return; }
     this.__visibility_anim = undefined;
@@ -1865,9 +1883,22 @@ View.prototype = {
       this.__view_display = undefined;
     }
     this.view.style.display = 'none'
-    if (this.__hide_clb)
+    if (this.__hide_clb || clb)
     {
-      this.__hide_clb.call (this);
+      if (this._show_animation)
+      {
+        if (this.__hide_clb) this.__hide_clb.call (this);
+        if (clb) clb.call (this);
+      }
+      else
+      {
+        if (this.__hide_clb) {
+          vs.scheduleAction (function () {self.__hide_clb.call (self);});
+        }
+        if (clb) {
+          vs.scheduleAction (function () {clb.call (self);});
+        }
+      }
     }
     this.propertyChange ();
   },
