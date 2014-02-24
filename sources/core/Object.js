@@ -95,7 +95,8 @@ VSObject.prototype =
       console.warn ("Impossible to create an object with an already used id.");
       var old_id = this._id;
       this._id = createUniqueId ();
-      console.warn ("The id \"%s\" is replaced by \"%s\".", old_id, this._id);
+      console.warn
+        ("The id \"" + old_id + "\" is replaced by \"" + this._id + "\".");
     }
 
     // save the current object
