@@ -995,6 +995,7 @@ View.prototype = {
       msg = "Impossible to instanciate comp: " + comp_name;
       msg += " => " + exp.message;
       console.error (msg);
+      if (exp.stack) console.error (exp.stack);
       return;
     }
 
@@ -1004,16 +1005,17 @@ View.prototype = {
       obj.init ();
       obj.configure (config);
     }
-    catch (expBis)
+    catch (exp)
     {
-      if (expBis.line && expBis.sourceURL)
+      if (exp.line && exp.sourceURL)
       {
         msg = "Error when initiate comp: " + comp_name;
-        msg += " => " + expBis.message;
-        msg += "\n" + expBis.sourceURL + ":" + expBis.line;
+        msg += " => " + exp.message;
+        msg += "\n" + exp.sourceURL + ":" + exp.line;
       }
-      else { msg = expBis; }
+      else { msg = exp; }
       console.error (msg);
+      if (exp.stack) console.error (exp.stack);
     }
 
     // Add object to its parent
