@@ -126,7 +126,7 @@ Task.prototype = {
   destructor: function ()
   {
     this.stop ();
-    this._super ();
+    core.Object.prototype.destructor.call (this);
   },
   
   /**
