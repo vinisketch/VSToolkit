@@ -701,18 +701,11 @@ ul > li:first-child:before {
   width: 8px !important;
 }
 .vs_ui_slider .handle {
-  position: relative;
   border-radius: 30px;
   width: 30px;
   height: 30px;
   background-color: #d3d3d3;
   border: 2px solid #ffffff;
-}
-.vs_ui_slider.horizontal .handle {
-  margin-top: -1px;
-}
-.vs_ui_slider.vertical .handle {
-  margin-left: -1px;
 }
 .vs_ui_slider .handle:active {
   background-color: #cdd1dc;

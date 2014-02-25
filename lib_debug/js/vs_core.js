@@ -266,8 +266,9 @@ VSObject.prototype =
     if (VSObject._obs [this._id]) {
       console.warn ("Impossible to create an object with an already used id.");
       var old_id = this._id;
-      this._id = createId ();
-      console.warn ("The id \"%s\" is replaced by \"%s\".", old_id, this._id);
+      this._id = createUniqueId ();
+      console.warn
+        ("The id \"" + old_id + "\" is replaced by \"" + this._id + "\".");
     }
 
     // save the current object
@@ -4913,7 +4914,22 @@ Task.prototype = {
   destructor: function ()
   {
     this.stop ();
-    this._super ();
+    core.Object.prototype.destructor.call (this);
+  },
+  
+  /**
+   * @name vs.core.Task#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    core.Object.prototype.destructor._clone.call (this, obj, cloned_map);
+    
+    obj._state = this._state;
   },
   
   /**
@@ -5448,7 +5464,7 @@ Task_SEQ.prototype = {
   {
     if (this._state === Task.STARTED) { return false; }
     
-    var taskAndparam
+    var taskAndparam;
     if (this._state === Task.PAUSED) {
       taskAndparam = this._tasksAndParams [this._nextTaskToStart - 1];
     }

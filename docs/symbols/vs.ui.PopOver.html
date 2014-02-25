@@ -751,7 +751,7 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.PopOver.html#show">show</a></b>(coordinate, position)
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.PopOver.html#show">show</a></b>(coordinate, position, clb)
 								</div>
 								<div class="description">Shows and positions the popover according a given coordinate.</div>
 							</td>
@@ -1015,7 +1015,7 @@ add child to this view.
 					<div class="fixedFont">
 					
 					
-					<b>show</b>(coordinate, position)
+					<b>show</b>(coordinate, position, clb)
 					
 					</div>
 					<div class="description">
@@ -1045,6 +1045,12 @@ add child to this view.
 								</dt>
 								<dd>[number] the position of the popover related to the
     coordinate.</dd>
+							
+								<dt>
+									<span class="light fixedFont">{Function}</span> <b>clb</b>
+									
+								</dt>
+								<dd>a function to call a the end of show process</dd>
 							
 							</dl>
 						

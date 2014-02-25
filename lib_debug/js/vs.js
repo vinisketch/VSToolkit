@@ -4284,8 +4284,9 @@ VSObject.prototype =
     if (VSObject._obs [this._id]) {
       console.warn ("Impossible to create an object with an already used id.");
       var old_id = this._id;
-      this._id = createId ();
-      console.warn ("The id \"%s\" is replaced by \"%s\".", old_id, this._id);
+      this._id = createUniqueId ();
+      console.warn
+        ("The id \"" + old_id + "\" is replaced by \"" + this._id + "\".");
     }
 
     // save the current object
@@ -8931,7 +8932,22 @@ Task.prototype = {
   destructor: function ()
   {
     this.stop ();
-    this._super ();
+    core.Object.prototype.destructor.call (this);
+  },
+  
+  /**
+   * @name vs.core.Task#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    core.Object.prototype.destructor._clone.call (this, obj, cloned_map);
+    
+    obj._state = this._state;
   },
   
   /**
@@ -9466,7 +9482,7 @@ Task_SEQ.prototype = {
   {
     if (this._state === Task.STARTED) { return false; }
     
-    var taskAndparam
+    var taskAndparam;
     if (this._state === Task.PAUSED) {
       taskAndparam = this._tasksAndParams [this._nextTaskToStart - 1];
     }
@@ -17098,6 +17114,7 @@ View.prototype = {
       msg = "Impossible to instanciate comp: " + comp_name;
       msg += " => " + exp.message;
       console.error (msg);
+      if (exp.stack) console.error (exp.stack);
       return;
     }
 
@@ -17107,16 +17124,17 @@ View.prototype = {
       obj.init ();
       obj.configure (config);
     }
-    catch (expBis)
+    catch (exp)
     {
-      if (expBis.line && expBis.sourceURL)
+      if (exp.line && exp.sourceURL)
       {
         msg = "Error when initiate comp: " + comp_name;
-        msg += " => " + expBis.message;
-        msg += "\n" + expBis.sourceURL + ":" + expBis.line;
+        msg += " => " + exp.message;
+        msg += "\n" + exp.sourceURL + ":" + exp.line;
       }
-      else { msg = expBis; }
+      else { msg = exp; }
       console.error (msg);
+      if (exp.stack) console.error (exp.stack);
     }
 
     // Add object to its parent
@@ -17785,12 +17803,14 @@ View.prototype = {
    *  Displays the GUI Object
    *
    * @name vs.ui.View#show
+   * @param {Function} clb a function to call a the end of show process
    * @function
    */
-  show : function ()
+  show : function (clb)
   {
     if (!this.view) { return; }
     if (this._visible) { return; }
+    if (!util.isFunction (clb)) clb = undefined; 
 
     if (this.__view_display)
     {
@@ -17807,11 +17827,13 @@ View.prototype = {
 
     if (this._show_animation)
     {
-      this._show_animation.process (this, this._show_object, this);
+      this._show_animation.process (this, function () {
+        this._show_object (clb);
+      }, this);
     }
     else
     {
-      this._show_object ();
+      this._show_object (clb);
     }
   },
 
@@ -17819,9 +17841,10 @@ View.prototype = {
    *  Show the GUI Object
    *
    * @private
+   * @param {Function} clb a function to call a the end of show process
    * @function
    */
-  _show_object : function ()
+  _show_object : function (clb)
   {
     if (!this.view) { return; }
     this.__visibility_anim = undefined;
@@ -17833,13 +17856,21 @@ View.prototype = {
     var self = this;
 
     this.propertyChange ();
-    if (this.__show_clb)
+    if (this.__show_clb || clb)
     {
       if (this._show_animation)
-      { this.__show_clb.call (this); }
+      {
+        if (this.__show_clb) this.__show_clb.call (this);
+        if (clb) clb.call (this);
+      }
       else
       {
-        vs.scheduleAction (function () {self.__show_clb.call (self);});
+        if (this.__show_clb) {
+          vs.scheduleAction (function () {self.__show_clb.call (self);});
+        }
+        if (clb) {
+          vs.scheduleAction (function () {clb.call (self);});
+        }
       }
     }
   },
@@ -17883,7 +17914,7 @@ View.prototype = {
     }
     else
     {
-      if (animations.constructor === vs.fx.Animation)
+      if (animations instanceof vs.fx.Animation)
       {
         this._show_animation = animations.clone ();
       }
@@ -17919,12 +17950,14 @@ View.prototype = {
    *  Hides the GUI Object
    *
    * @name vs.ui.View#hide
+   * @param {Function} clb a function to call a the end of show process
    * @function
    */
-  hide : function ()
+  hide : function (clb)
   {
     if (!this.view) { return; }
     if (!this._visible && !this.__is_showing) { return; }
+    if (!util.isFunction (clb)) clb = undefined; 
 
     this._visible = false;
     
@@ -17933,11 +17966,13 @@ View.prototype = {
     
     if (this._hide_animation)
     {
-      this._hide_animation.process (this, this._hide_object, this);
+      this._hide_animation.process (this, function () {
+        this._hide_object (clb);
+      }, this);
     }
     else
     {
-      this._hide_object ();
+      this._hide_object (clb);
     }
   },
 
@@ -17946,8 +17981,9 @@ View.prototype = {
    *
    * @private
    * @function
+   * @param {Function} clb a function to call a the end of show process
    */
-  _hide_object: function ()
+  _hide_object: function (clb)
   {
     if (!this.view || this._visible) { return; }
     this.__visibility_anim = undefined;
@@ -17966,9 +18002,22 @@ View.prototype = {
       this.__view_display = undefined;
     }
     this.view.style.display = 'none'
-    if (this.__hide_clb)
+    if (this.__hide_clb || clb)
     {
-      this.__hide_clb.call (this);
+      if (this._show_animation)
+      {
+        if (this.__hide_clb) this.__hide_clb.call (this);
+        if (clb) clb.call (this);
+      }
+      else
+      {
+        if (this.__hide_clb) {
+          vs.scheduleAction (function () {self.__hide_clb.call (self);});
+        }
+        if (clb) {
+          vs.scheduleAction (function () {clb.call (self);});
+        }
+      }
     }
     this.propertyChange ();
   },
@@ -18012,7 +18061,7 @@ View.prototype = {
      }
     else
     {
-      if (animations.constructor === vs.fx.Animation)
+      if (animations instanceof vs.fx.Animation)
       {
         this._hide_animation = animations.clone ();
       }
@@ -22806,9 +22855,9 @@ ScrollView.prototype = {
   {
     // manage Navigation bar and vs.ui.ToolBar specific positioning
     if (!child) { return; }
-    if (child.constructor === NavigationBar)
+    if (child instanceof NavigationBar)
     { extension = 'top_bar'; }
-    if (child.constructor === ToolBar)
+    if (child instanceof ToolBar)
     { extension = 'bottom_bar'; }
     
     View.prototype.add.call (this, child, extension);
@@ -30062,6 +30111,12 @@ Slider.prototype = {
   {
     // reconfigure handle size
     this.__handle_width = this.__handle.offsetWidth;
+    
+    if (this._orientation === 0)
+      this.__handle_delta = this.view.offsetHeight;
+    else
+      this.__handle_delta = this.view.offsetWidth;
+      
     // force GUI update
     this.value = this._value;
 
@@ -31126,8 +31181,9 @@ PopOver.prototype = {
    * @param coordinate [Array] the coordinate of screen for the popover position
    * @param position [number] the position of the popover related to the
    *     coordinate. 
+   * @param {Function} clb a function to call a the end of show process
    */ 
-  show : function (pos, direction)
+  show : function (pos, direction, clb)
   {
     if (!this.view || this._visible) { return; }
     
@@ -31146,13 +31202,18 @@ PopOver.prototype = {
     this.view.style.setProperty ("display", 'block', null);
     this.__view_display = undefined;
 
+    this.__is_hidding = false;
+    this.__is_showing = true;
+
     if (this._show_animation)
     {
-      this._show_animation.process (this, this._show_object, this);
+      this._show_animation.process (this, function () {
+        this._show_object (clb);
+      }, this);
     }
     else
     {
-      this._show_object ();
+      this._show_object (clb);
     }
     
     vs.addPointerListener (document, core.POINTER_START, this, true); 
@@ -34920,46 +34981,47 @@ Animation.prototype = {
 ********************************************************************/
 
   /**
-   *  Clone the current animation.
-   *
-   * @name vs.fx.Animation#clone
+   * @name vs.core.Animation#_clone
    * @function
-   * @return {vs.fx.Animation} the clone animation
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
    */
-  clone: function ()
+  _clone : function (obj, cloned_map)
   {
-    var anim = new Animation (), key, data;
-    anim.keyFrames = {};
-    anim.keyFrames ['100%'] = anim;
+    core.Object.prototype._clone.call (this, obj, cloned_map);
+    
+    var key, data;
+    obj.keyFrames = {};
+    obj.keyFrames ['100%'] = obj;
 
     if (this.properties)
-    { anim.properties = this.properties.slice (); }
-    else { anim.properties = []; }
+    { obj.properties = this.properties.slice (); }
+    else { obj.properties = []; }
     if (this.values)
-    { anim.values = this.values.slice (); }
-    else { anim.values = []; }
+    { obj.values = this.values.slice (); }
+    else { obj.values = []; }
     if (this.durations)
-    { anim.durations = this.durations; }
+    { obj.durations = this.durations; }
     if (this.timings)
-    { anim.timings = this.timings.slice (); }
-    else { anim.timings = []; }
+    { obj.timings = this.timings.slice (); }
+    else { obj.timings = []; }
     if (this.origin)
-    { anim.origin = this.origin.slice (); }
+    { obj.origin = this.origin.slice (); }
     if (this.keyFrames)
     {
       for (key in this.keyFrames)
       {
         if (key === '100%') { continue; }
         data = this.keyFrames [key];
-        if (util.isArray (data)) { anim.keyFrames [key] = data.slice (); }
-        else { anim.keyFrames [key] = vs.util.clone (data); }
+        if (util.isArray (data)) { obj.keyFrames [key] = data.slice (); }
+        else { obj.keyFrames [key] = vs.util.clone (data); }
       }
     }
 
-    anim.iterationCount = this.iterationCount;
-    anim.delay = this.delay;
-
-    return anim;
+    obj.iterationCount = this.iterationCount;
+    obj.delay = this.delay;
   },
 
 /********************************************************************
@@ -35158,7 +35220,24 @@ TranslateAnimation.prototype = {
    * @type {number}
    * @name vs.fx.TranslateAnimation#z
    */
-  z: 0
+  z: 0,
+  
+  /**
+   * @name vs.core.TranslateAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.x = this.x;
+    obj.y = this.y;
+    obj.z = this.z;    
+  }
 };
 util.extendClass (TranslateAnimation, Animation);
 
@@ -35209,7 +35288,22 @@ RotateAnimation.prototype = {
    * @type {number}
    * @name vs.fx.RotateAnimation#deg
    */
-  deg: 0
+  deg: 0,
+  
+  /**
+   * @name vs.core.RotateAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.deg = this.deg;    
+  }
 };
 util.extendClass (RotateAnimation, Animation);
 
@@ -35277,7 +35371,24 @@ RotateXYZAnimation.prototype = {
    * @type {number}
    * @name vs.fx.RotateXYZAnimation#degZ
    */
-  degZ: 0
+  degZ: 0,
+  
+  /**
+   * @name vs.core.RotateXYZAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.degX = this.degX;
+    obj.degY = this.degY;
+    obj.degZ = this.degZ;    
+  }
 };
 util.extendClass (RotateXYZAnimation, Animation);
 
@@ -35358,7 +35469,24 @@ ScaleAnimation.prototype = {
    * @type {number}
    * @name vs.fx.ScaleAnimation#sz
    */
-  sz: 1
+  sz: 1,
+  
+  /**
+   * @name vs.core.ScaleAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.sx = this.sx;
+    obj.sy = this.sy;
+    obj.sz = this.sz;    
+  }
 };
 util.extendClass (ScaleAnimation, Animation);
 
@@ -35418,7 +35546,23 @@ SkewAnimation.prototype = {
    * @type {number}
    * @name vs.fx.SkewAnimation#ay
    */
-  ay: 0
+  ay: 0,
+  
+  /**
+   * @name vs.core.SkewAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.ax = this.ax;
+    obj.ay = this.ay;
+  }
 };
 util.extendClass (SkewAnimation, Animation);
 
@@ -35473,7 +35617,22 @@ OpacityAnimation.prototype = {
    * @name vs.fx.OpacityAnimation#value
    * @type {number}
    */
-  value: 1
+  value: 1,
+  
+  /**
+   * @name vs.core.OpacityAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.value = this.value;    
+  }
 };
 util.extendClass (OpacityAnimation, Animation);
 

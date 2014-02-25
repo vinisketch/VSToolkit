@@ -964,7 +964,6 @@ ul > li:first-child {
   width: 9px;
 }
 .vs_ui_slider .handle {
-  position: relative;
   width: 28px;
   height: 28px;
   -webkit-border-radius: 8px 8px;
