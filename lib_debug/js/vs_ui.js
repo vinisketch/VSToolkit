@@ -17262,6 +17262,7 @@ Switch.prototype = {
   refresh: function () {
     View.prototype.refresh.call (this);
     
+    this._mode =  vs.ui.View.getDeviceCSSCode ();
     this._setToggle (this._toggled);
   },
 
