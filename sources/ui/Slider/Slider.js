@@ -277,7 +277,12 @@ Slider.prototype = {
   {
     // reconfigure handle size
     this.__handle_width = this.__handle.offsetWidth;
-    this.__handle_delta = this.view.offsetHeight;
+    
+    if (this._orientation === 0)
+      this.__handle_delta = this.view.offsetHeight;
+    else
+      this.__handle_delta = this.view.offsetWidth;
+      
     // force GUI update
     this.value = this._value;
 
