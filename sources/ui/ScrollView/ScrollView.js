@@ -876,6 +876,8 @@ util.defineClassProperties (ScrollView, {
       return;
     }
 
+    if (v && v.indexOf ("_layout") === -1) v = v + "_layout";
+
     if (!this._sub_view)
     { 
       this._layout = v;
