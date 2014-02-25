@@ -3,26 +3,13 @@
   color:black;
 }
 
-input[type="radio"]
-{
-  position: relative;
-  background: transparent;
-  
-  color: inherit;
+.vs_ui_radiobutton label {
+  padding: 9px 35px 0px 10px;
   height: 40px;
-
-  .appearance(none);
+  border-top: 1px solid #E0E0E0;
 }
 
-input[type="radio"].pressed + label,
-.vs_ui_radiobutton label.pressed
-{
-  .base_background_selected;
-  color: white !important;
-  text-shadow: black 0 1px 0 !important;
-}
-
-input[type="radio"]:after
+.vs_ui_radiobutton label::after
 {
   .box-sizing(border-box);
   .user-select(none);
@@ -44,20 +31,25 @@ input[type="radio"]:after
   .box-shadow(~"inset 0 2px 6px rgba(0, 0, 0, 0.3)");
 }
 
-input[type="radio"]:checked:after
+input[type="radio"].pressed + label,
+.vs_ui_radiobutton label.pressed
 {
-  content:"•";
-  font: 42px/25px nokiapuretext;
-  padding-left: 5px;
+  .base_background_selected;
+  color: white !important;
+  text-shadow: black 0 1px 0 !important;
 }
 
-input[type="radio"].pressed:after
+input[type="radio"]:checked + label::after
+{
+  content: "•";
+  padding-top: 1px;
+  padding-left: 6px;
+  font-size: 40px;
+  line-height: 25px;
+  font-family: nokiapuretext
+}
+
+input[type="radio"].pressed + label::after
 {
   color: #CCC;
-}
-
-.vs_ui_radiobutton label {
-  padding: 9px 35px 0px 10px;
-  height: 40px;
-  border-top: 1px solid #E0E0E0;
 }

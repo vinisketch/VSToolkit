@@ -3,15 +3,14 @@
   color:black;
 }
 
-input[type="radio"]
-{
-  position: relative;
-  background: transparent;
-  
-  color: inherit;
+.vs_ui_radiobutton label {
+  padding: 9px 35px 0px 16px;
   height: 40px;
+  border-top: 1px solid #CCCCCC;
+}
 
-  .appearance(none);
+.vs_ui_radiobutton label:nth-of-type(1) {
+  border: none;
 }
 
 input[type="radio"].pressed + label,
@@ -20,7 +19,7 @@ input[type="radio"].pressed + label,
   .base_background_selected;
 }
 
-input[type="radio"]:after
+.vs_ui_radiobutton label::after
 {
   .box-sizing(border-box);
   .user-select(none);
@@ -36,36 +35,18 @@ input[type="radio"]:after
   border: 1px solid #CCCCCC;
 }
 
-input[type="radio"]:checked:after
+input[type="radio"]:checked + label::after
 {
   content:"✔︎";
-  font: 18px/26px @default_font;
+  font: 17px/26px @default_font;
   padding-left: 5px;
   color: #CCCCCC;
   background-color: @baseColor;
   border: 1px solid @baseColor;
 }
 
-input[type="radio"].pressed:after
+input[type="radio"].pressed + label::after
 {
   border: 1px solid @baseColor;
 }
 
-.vs_ui_radiobutton label {
-  padding: 9px 35px 0px 16px;
-  height: 40px;
-  position: relative;
-}
-
-.vs_ui_radiobutton label:before {
-  content: "";
-  position: absolute;
-  top: 0px;
-  left: 16px;
-  right: 0;
-  border-top: 1px solid #CCCCCC;
-}
-
-.vs_ui_radiobutton label:nth-of-type(1):before {
-  border: none;
-}

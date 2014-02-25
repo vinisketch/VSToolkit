@@ -13,35 +13,18 @@
   font-size: inherit;
 }
 
-fieldset > input[type="checkbox"]:first-child
-{
-  border: none;
-}
-
-input[type="checkbox"]
-{
-  width: 100%;
-  .appearance(none);
-  font-size: inherit;
-
-  margin: 0px;
-  min-height: 30px;
-  width:30px;
-  margin-top: 0px;
-  float: right;
-  border: none;
-  outline: none;
-
-  z-index: 1;
-}
-
 input[type="checkbox"]:checked
 {
   outline: none;
 }
 
-input[type="checkbox"]:after
-{
+.vs_ui_checkbox label {
+  width: 100%;
+  display: block;
+  position: relative;
+}
+
+.vs_ui_checkbox label::after {
   .box-sizing(border-box);
   .user-select(none);
   
@@ -50,12 +33,32 @@ input[type="checkbox"]:after
   top: 50%;
 }
 
-.vs_ui_checkbox label {
-  width: 100%;
-  display: block;
-}
-
 .vs_ui_checkbox label:nth-child(2)
 {
   border: none;
 }
+
+fieldset > input[type="checkbox"]:first-child
+{
+  border: none;
+}
+
+input[type="checkbox"]
+{
+  width: 100%;
+   .appearance(none);
+  font-size: inherit;
+
+  margin: 0px;
+  min-height: 30px;
+  width:30px;
+  margin-top: 0px;
+  float: right;
+  outline: none;
+  border: none;
+
+  background: transparent;
+  visibility: hidden;
+}
+
+

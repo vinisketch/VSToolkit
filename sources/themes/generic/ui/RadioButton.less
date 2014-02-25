@@ -32,7 +32,8 @@ input[type="radio"]
   outline: none;
   border: none;
 
-  z-index: 1;
+  background: transparent;
+  visibility: hidden;
 }
 
 input[type="radio"]:checked
@@ -40,7 +41,13 @@ input[type="radio"]:checked
   outline: none;
 }
 
-input[type="radio"]:after
+.vs_ui_radiobutton label {
+  width: 100%;
+  display: block;
+  position: relative;
+}
+
+.vs_ui_radiobutton label::after
 {
   .box-sizing(border-box);
   .user-select(none);
@@ -50,12 +57,3 @@ input[type="radio"]:after
   top: 50%;
 }
 
-.vs_ui_radiobutton label {
-  width: 100%;
-  display: block;
-}
-
-.vs_ui_radiobutton label:nth-child(2)
-{
-  border: none;
-}
