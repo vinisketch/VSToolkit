@@ -284,8 +284,9 @@ PopOver.prototype = {
    * @param coordinate [Array] the coordinate of screen for the popover position
    * @param position [number] the position of the popover related to the
    *     coordinate. 
+   * @param {Function} clb a function to call a the end of show process
    */ 
-  show : function (pos, direction)
+  show : function (pos, direction, clb)
   {
     if (!this.view || this._visible) { return; }
     
@@ -304,13 +305,18 @@ PopOver.prototype = {
     this.view.style.setProperty ("display", 'block', null);
     this.__view_display = undefined;
 
+    this.__is_hidding = false;
+    this.__is_showing = true;
+
     if (this._show_animation)
     {
-      this._show_animation.process (this, this._show_object, this);
+      this._show_animation.process (this, function () {
+        this._show_object (clb);
+      }, this);
     }
     else
     {
-      this._show_object ();
+      this._show_object (clb);
     }
     
     vs.addPointerListener (document, core.POINTER_START, this, true); 
