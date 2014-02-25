@@ -348,9 +348,9 @@ ScrollView.prototype = {
   {
     // manage Navigation bar and vs.ui.ToolBar specific positioning
     if (!child) { return; }
-    if (child.constructor === NavigationBar)
+    if (child instanceof NavigationBar)
     { extension = 'top_bar'; }
-    if (child.constructor === ToolBar)
+    if (child instanceof ToolBar)
     { extension = 'bottom_bar'; }
     
     View.prototype.add.call (this, child, extension);
