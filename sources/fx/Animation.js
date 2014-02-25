@@ -1200,7 +1200,6 @@ RotateAnimation.prototype = {
     
     obj.deg = this.deg;    
   }
-
 };
 util.extendClass (RotateAnimation, Animation);
 
@@ -1286,7 +1285,6 @@ RotateXYZAnimation.prototype = {
     obj.degY = this.degY;
     obj.degZ = this.degZ;    
   }
-
 };
 util.extendClass (RotateXYZAnimation, Animation);
 
@@ -1385,7 +1383,6 @@ ScaleAnimation.prototype = {
     obj.sy = this.sy;
     obj.sz = this.sz;    
   }
-
 };
 util.extendClass (ScaleAnimation, Animation);
 
@@ -1532,7 +1529,6 @@ OpacityAnimation.prototype = {
     
     obj.value = this.value;    
   }
-
 };
 util.extendClass (OpacityAnimation, Animation);
 
