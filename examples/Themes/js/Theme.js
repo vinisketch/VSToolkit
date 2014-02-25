@@ -123,12 +123,17 @@ function setTheme (name) {
     previous.parentElement.removeChild (previous);
     previous = null;
   }
-  previous = vs.util.importFile ("../../lib/css/vs_ui_" + name + ".css", document, function () {
-    app.refresh ();
-  }, "css");
+  previous = vs.util.importFile (
+    "../../lib/css/vs_ui_" + name + ".css",
+    document,
+    function () {
+      app.refresh ();
+    },
+    "css"
+  );
 }
 
-setTheme ("flat");
+setTheme ("holo_light");
 
 window.addEventListener("message", receiveMessage, false);
 var message_reg = /changetheme#(\w+)/;
