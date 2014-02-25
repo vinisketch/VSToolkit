@@ -99,6 +99,24 @@ Application.CSS_PURE = 100;
 
 /**
  * @private
+ * @const
+ */
+Application.CSS_FLAT = 101;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_HOLO = 102;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_IOS7 = 103;
+
+/**
+ * @private
  */
 var Application_applications = {};
 
