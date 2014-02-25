@@ -19225,6 +19225,24 @@ Application.CSS_PURE = 100;
 
 /**
  * @private
+ * @const
+ */
+Application.CSS_FLAT = 101;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_HOLO = 102;
+
+/**
+ * @private
+ * @const
+ */
+Application.CSS_IOS7 = 103;
+
+/**
+ * @private
  */
 var Application_applications = {};
 
@@ -23382,6 +23400,8 @@ util.defineClassProperties (ScrollView, {
       console.error ("Unsupported layout '" + v + "'!");
       return;
     }
+
+    if (v && v.indexOf ("_layout") === -1) v = v + "_layout";
 
     if (!this._sub_view)
     { 
@@ -30010,19 +30030,19 @@ Slider.prototype = {
 
     var os_device =  vs.ui.View.getDeviceCSSCode (); //window.deviceConfiguration.os;
 
-    if (os_device == DeviceConfiguration.OS_IOS)
+    if (os_device == Application.CSS_IOS)
     {
       this.__handle_width = 28;
     }
-    else if (os_device == DeviceConfiguration.OS_WP7)
+    else if (os_device == Application.CSS_WP7)
     {
       this.__handle_width = 30;
     }
-    else if (os_device == DeviceConfiguration.OS_ANDROID)
+    else if (os_device == Application.CSS_ANDROID)
     {
       this.__handle_width = 34;
     }
-    else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
+    else if (os_device == Application.CSS_BLACKBERRY)
     {
       this.__handle_width = 35;
       this.__handle_height = 12;
@@ -31405,24 +31425,6 @@ function Switch (config)
   this.constructor = Switch;
 }
 
-/**
- * @private
- * @const
- */
-Switch.MODE_DEFAULT = 0;
-
-/**
- * @private
- * @const
- */
-Switch.MODE_IOS = 1;
-
-/**
- * @private
- * @const
- */
-Switch.MODE_ANDROID = 2;
-
 Switch.prototype = {
   
   /*****************************************************************
@@ -31455,7 +31457,7 @@ Switch.prototype = {
    * @private
    * @type {Number}
    */
-  _mode: Switch.MODE_DEFAULT,
+  _mode: Application.CSS_DEFAULT,
 
   /**
    *
@@ -31540,14 +31542,18 @@ Switch.prototype = {
     
       if (self._toggled) {
         self.addClassName ('on');
-        if (self._mode !== Switch.MODE_ANDROID) {
+        if (self._mode === Application.CSS_PURE) {
+          util.setElementTransform (self.__switch_view,
+            "translate3d(-15px,0,0)");
+        }
+        else if (self._mode !== Application.CSS_ANDROID) {
           util.setElementTransform (self.__switch_view,
             "translate3d(" + self.__switch_translate + "px,0,0)");
         }
       }
       else {
         self.removeClassName ('on');
-        if (self._mode !== Switch.MODE_ANDROID) {
+        if (self._mode !== Application.CSS_ANDROID) {
           util.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
         }
       }
@@ -31620,12 +31626,7 @@ Switch.prototype = {
       this.addPointerRecognizer (this.__tap_recognizer);
     }
 
-    var os_device =  vs.ui.View.getDeviceCSSCode (); //window.deviceConfiguration.os;
-
-    if (os_device == DeviceConfiguration.OS_ANDROID)
-    {
-      this._mode = Switch.MODE_ANDROID;
-    }
+    this._mode =  vs.ui.View.getDeviceCSSCode ();
     
     if (this._text_on)
     {
