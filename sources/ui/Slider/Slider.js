@@ -176,19 +176,19 @@ Slider.prototype = {
 
     var os_device =  vs.ui.View.getDeviceCSSCode (); //window.deviceConfiguration.os;
 
-    if (os_device == DeviceConfiguration.OS_IOS)
+    if (os_device == Application.CSS_IOS)
     {
       this.__handle_width = 28;
     }
-    else if (os_device == DeviceConfiguration.OS_WP7)
+    else if (os_device == Application.CSS_WP7)
     {
       this.__handle_width = 30;
     }
-    else if (os_device == DeviceConfiguration.OS_ANDROID)
+    else if (os_device == Application.CSS_ANDROID)
     {
       this.__handle_width = 34;
     }
-    else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
+    else if (os_device == Application.CSS_BLACKBERRY)
     {
       this.__handle_width = 35;
       this.__handle_height = 12;
