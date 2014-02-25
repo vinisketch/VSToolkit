@@ -15,7 +15,7 @@ body {
 
 #first_view > *,
 #second_view > * {
-  margin: 10px 10px 0 10px;
+  margin: 10px 10px 2px 10px;
 }
 
 #first_view .vs_ui_textarea {
