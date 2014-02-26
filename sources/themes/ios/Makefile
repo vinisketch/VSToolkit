@@ -69,25 +69,29 @@ makedirs:
 ###                         GUI
 ##############################################################
 
-ui:$(TARGET)/lib_debug/css/vs_ui_ios.css copy_widgets_assets
+ui:$(TARGET)/lib_debug/css/vs_ui_ios.less copy_widgets_assets
+	-$(COMPILE_LESS) $(TARGET)/lib_debug/css/vs_ui_ios.less $(TARGET)/lib_debug/css/vs_ui_ios.css
+	-$(RM_F)  $(TARGET)/lib_debug/css/vs_ui_ios.less
 
-$(TARGET)/lib_debug/css/vs_ui_ios.css: 
-	$(CAT) ui/Application.css >> $@
-	$(CAT) ui/Button.css >> $@
-	$(CAT) ui/List.css >> $@
-	$(CAT) ui/RadioButton.css >> $@
-	$(CAT) ui/NavigationBar.css >> $@
-	$(CAT) ui/CheckBox.css >> $@
-	$(CAT) ui/Slider.css >> $@
-	$(CAT) ui/ProgressBar.css >> $@
-	$(CAT) ui/InputField.css >> $@
-	$(CAT) ui/Picker.css >> $@
-	$(CAT) ui/Switch.css >> $@
-	$(CAT) ui/TextArea.css >> $@
-	$(CAT) ui/ComboBox.css >> $@
-	$(CAT) ui/PopOver.css >> $@
-	$(CAT) ui/ToolBar.css >> $@
-	$(CAT) ui/SegmentedButton.css >> $@
+$(TARGET)/lib_debug/css/vs_ui_ios.less: 
+	$(CAT) ../generic/lesshat.less >> $@
+	$(CAT) ../generic/lesshat-ext.less >> $@
+	$(CAT) ui/Application.less >> $@
+	$(CAT) ui/Button.less >> $@
+	$(CAT) ui/List.less >> $@
+	$(CAT) ui/RadioButton.less >> $@
+	$(CAT) ui/NavigationBar.less >> $@
+	$(CAT) ui/CheckBox.less >> $@
+	$(CAT) ui/Slider.less >> $@
+	$(CAT) ui/ProgressBar.less >> $@
+	$(CAT) ui/InputField.less >> $@
+	$(CAT) ui/Picker.less >> $@
+	$(CAT) ui/Switch.less >> $@
+	$(CAT) ui/TextArea.less >> $@
+	$(CAT) ui/ComboBox.less >> $@
+	$(CAT) ui/PopOver.less >> $@
+	$(CAT) ui/ToolBar.less >> $@
+	$(CAT) ui/SegmentedButton.less >> $@
 
 copy_widgets_assets:
 	$(CP) ui/*.png $(TARGET)/lib_debug/css/
@@ -96,8 +100,12 @@ copy_widgets_assets:
 ###                     Extension
 ##############################################################
 
-ext: $(TARGET)/lib_debug/css/vs_ext_ios.css
+ext: $(TARGET)/lib_debug/css/vs_ext_ios.less
+	-$(COMPILE_LESS) $(TARGET)/lib_debug/css/vs_ext_ios.less $(TARGET)/lib_debug/css/vs_ext_ios.css
+	-$(RM_F)  $(TARGET)/lib_debug/css/vs_ext_ios.less
 
-$(TARGET)/lib_debug/css/vs_ext_ios.css:
-	$(CAT) ext/ui/GMap.css >> $@
-	$(CAT) ext/ui/Accordion.css >> $@
+$(TARGET)/lib_debug/css/vs_ext_ios.less:
+	$(CAT) ../generic/lesshat.less >> $@
+	$(CAT) ../generic/lesshat-ext.less >> $@
+	$(CAT) ext/ui/GMap.less >> $@
+	$(CAT) ext/ui/Accordion.less >> $@

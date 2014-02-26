@@ -18,7 +18,7 @@
   position:relative;
   padding: 8px 8px 0px 8px;
   margin: 0px;
-  -webkit-border-radius: 5px;
+  border-radius: 5px;
   border: solid 1px #54617D;
 }
 
@@ -37,7 +37,7 @@
 .vs_ui_button.nav_forward.blue_style > div,
 .vs_ui_button.nav_forward.default_style > div 
 {
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#92A1BF), color-stop(0.25, #798AAD), color-stop(0.5, #6276A0), color-stop(0.5, #556A97), color-stop(0.75, #566C98), to(#546993));
+  .background-image(linear-gradient(180deg, #92A1BF 0%, #798AAD 25%, #6276A0 50%, #556A97 50%, #566C98 75%, #546993 100%));
   border-color: #484E59 #54617D #4C5C7A #54617D;
 }
 
@@ -51,9 +51,7 @@
 .vs_ui_button.nav_forward.blue_style.pressed > div,
 .vs_ui_button.nav_forward.default_style.pressed > div 
 {
-  background-image: -webkit-gradient(linear, left top, left bottom, 
-    from(#7d88a5), color-stop(0.25, #58698c),color-stop(0.5, #3a4e78), 
-    color-stop(0.5, #253c6a), color-stop(0.75, #273f6d), to(#273f6d));
+  .background-image(linear-gradient(180deg, #7d88a5 0%, #58698c 25%, #3a4e78 50%, #253c6a 50%, rgba(67, 70, 74, 1) 75%, #42474e 100%));
 }
 
 
@@ -64,7 +62,7 @@
 .vs_ui_button.nav_forward.black_ios_style > div, /** legacy comptability */
 .vs_ui_button.nav_forward.black_style > div
 {
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#838383), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+  .background-image(linear-gradient(180deg, #838383 0%, #444 50%, #303030 50%, #333 100%));
   border-color: #404040 #262626 #404040 #262626;
 }
 
@@ -76,7 +74,7 @@
 .vs_ui_button.nav_forward.black_ios_style.pressed > div, /** legacy comptability */
 .vs_ui_button.nav_forward.black_style.pressed > div
 {
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#444), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+  .background-image(linear-gradient(180deg, #444 0%, #444 50%, #303030 50%, #333 100%));
 }
 
 .vs_ui_button.nav.silver_ios_style > div, /** legacy comptability */
@@ -86,7 +84,7 @@
 .vs_ui_button.nav_forward.silver_ios_style > div, /** legacy comptability */
 .vs_ui_button.nav_forward.silver_style > div
 {
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#b1b5bb), color-stop(57%,#7e848d), color-stop(100%,#6a727d));
+  .background-image(linear-gradient(180deg, #b1b5bb 0%, #7e848d 57%, #6a727d 100%));
 }
 
 
@@ -97,7 +95,7 @@
 .vs_ui_button.nav_forward.silver_ios_style.pressed > div, /** legacy comptability */
 .vs_ui_button.nav_forward.silver_style.pressed > div
 {
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#9c9fa2), color-stop(48%,#676b70), color-stop(62%,#5b5f65), color-stop(77%,#4c5157), color-stop(100%,#42474e));
+  .background-image(linear-gradient(180deg, #9c9fa2 0%, #676b70 48%, #5b5f65 62%, rgba(67, 70, 74, 1) 75%, #42474e 100%));
 }
 
 .vs_ui_button.nav_back.blue_ios_style, /** legacy comptability */
@@ -126,124 +124,114 @@
 .vs_ui_button.nav_back.blue_style > div,
 .vs_ui_button.nav_back.default_style > div
 {
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#92A1BF), color-stop(0.25, #798AAD), color-stop(0.5, #6276A0), color-stop(0.5, #556A97), color-stop(0.75, #566C98), to(#546993));
+  .background-image(linear-gradient(180deg, #92A1BF 0%, #798AAD 25%, #6276A0 50%, #556A97 50%, #566C98 75%, #546993 100%));
   border: solid 1px #54617D;
   border-color: #484E59 #54617D #4C5C7A #54617D;
+  border-left: none;
+}
+
+.vs_ui_button.nav_back > div::before,
+.vs_ui_button.nav_forward > div::after {
+  .box-sizing(border-box);
+  content: '';
+  z-index: -1;
+  border-left: solid 1px #484E59;
+  border-bottom: solid 1px #484E59;
+  height: 22px;
+  width: 22px;
+  display: inline-block;
+  .transform(~"rotate(45deg)");
+  .box-sizing(border-box);
+  position: absolute;
+  top: 3px;
+  border-top-left-radius: 4px;
+  border-bottom-right-radius: 3px;
+  border-bottom-left-radius: 4px;
+}
+
+.vs_ui_button.nav_back > div {
+  border-left: none;
+}
+
+.vs_ui_button.nav_forward > div {
+  border-right: none;
 }
 
 .vs_ui_button.nav_back > div::before {
-  -webkit-box-sizing: border-box;
-  content: '';
-  z-index: 0;
-  border-left: solid 1px #484E59;
-  border-bottom: solid 1px #484E59;
-  height: 22.5px;
-  width: 22.5px;
-  display: inline-block;
-  -webkit-transform: rotate(45deg);
-  -webkit-mask-image: -webkit-gradient(linear, left bottom, right top, from(black), color-stop(0.5,black), color-stop(0.5, transparent), to(transparent));
-  position: absolute;
-  left: -9.5px;
-  top: 3.5px;
-  -webkit-background-clip: content;
-  border-top-left-radius: 4px;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 4px;
+  .transform(~"rotate(45deg)");
+  left: -8px;
 }
 
 .vs_ui_button.nav_forward > div::after {
-  -webkit-box-sizing: border-box;
-  content: '';
-  z-index: 0;
-  border-left: solid 1px #484E59;
-  border-bottom: solid 1px #484E59;
-  height: 22.5px;
-  width: 22.5px;
-  display: inline-block;
-  -webkit-transform: rotate(-135deg);
-  -webkit-mask-image: -webkit-gradient(linear, left bottom, right top, from(black), color-stop(0.5,black), color-stop(0.5, transparent), to(transparent));
-  position: absolute;
-  right: -9.5px;
-  top: 3.5px;
-  -webkit-background-clip: content;
-  border-top-left-radius: 4px;
-  border-bottom-right-radius: 3px;
-  border-bottom-left-radius: 4px;
+  .transform(~"rotate(-135deg)");
+  right: -8px;
 }
 
 .vs_ui_button.nav_back.default_style > div::before,
 .vs_ui_button.nav_back.blue_style > div::before,
 .vs_ui_button.nav_back.default_style > div::before {
-  background-image: -webkit-gradient(linear, left top, right bottom, from(#92A1BF), color-stop(0.3, #798AAD), color-stop(0.51, #6276A0), color-stop(0.51, #556A97), color-stop(0.75, #566C98), to(#546993));
+  .background-image(linear-gradient(135deg, #92A1BF 0%, #798AAD 25%, #6276A0 50%, #556A97 50%, #566C98 75%, #546993 100%));
 }
 
 .vs_ui_button.nav_back.blue_ios_style.pressed > div::before, /** legacy comptability */
 .vs_ui_button.nav_back.blue_style.pressed > div::before,
 .vs_ui_button.nav_back.default_style.pressed > div::before
 {
-  background-image: -webkit-gradient(linear, left top, right bottom, 
-    from(#7d88a5), color-stop(0.25, #58698c), color-stop(0.5, #3a4e78), 
-    color-stop(0.5, #253c6a), color-stop(0.75, #273f6d), to(#273f6d));
+  .background-image(linear-gradient(135deg, #7d88a5 0%, #58698c 25%, #3a4e78 50%, #253c6a 50%, rgba(67, 70, 74, 1) 75%, #42474e 100%));
 }
 
 .vs_ui_button.nav_forward.default_style > div::after,
 .vs_ui_button.nav_forward.blue_style > div::after,
 .vs_ui_button.nav_forward.default_style > div::after {
-  background-image: -webkit-gradient(linear, right bottom, left top, from(#92A1BF), color-stop(0.3, #798AAD), color-stop(0.51, #6276A0), color-stop(0.51, #556A97), color-stop(0.75, #566C98), to(#546993));
+  .background-image(linear-gradient(-45deg, #92A1BF 0%, #798AAD 25%, #6276A0 50%, #556A97 50%, #566C98 75%, #546993 100%));
 }
 
 .vs_ui_button.nav_forward.default_style.pressed > div::after,
 .vs_ui_button.nav_forward.blue_style.pressed > div::after,
 .vs_ui_button.nav_forward.default_style.pressed > div::after {
-  background-image: -webkit-gradient(linear, right bottom, left top, 
-    from(#7d88a5), color-stop(0.25, #58698c), color-stop(0.5, #3a4e78), 
-    color-stop(0.5, #253c6a), color-stop(0.75, #273f6d), to(#273f6d));
+  .background-image(linear-gradient(-45deg, #7d88a5 0%, #58698c 25%, #3a4e78 50%, #253c6a 50%, rgba(67, 70, 74, 1) 75%, #42474e 100%));
 }
 
 .vs_ui_button.nav_back.black_style > div::before,
 .vs_ui_button.nav_back.black_ios_style > div::before {
-  background-image: -webkit-gradient(linear, left top, right bottom, from(#838383), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+  .background-image(linear-gradient(135deg, #838383 0%, #444 50%, #303030 50%, #333 100%));
 }
 
 .vs_ui_button.nav_back.black_style.pressed > div::before,
 .vs_ui_button.nav_back.black_ios_style.pressed > div::before
 {
-  background-image: -webkit-gradient(linear, left top, right bottom, 
-    from(#444), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+  .background-image(linear-gradient(135deg, #444 0%, #444 50%, #303030 50%, #333 100%));
 }
 
 .vs_ui_button.nav_forward.black_style > div::after,
 .vs_ui_button.nav_forward.black_ios_style > div::after {
-  background-image: -webkit-gradient(linear, right bottom, left top, from(#838383), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+  .background-image(linear-gradient(-45deg, #838383 0%, #444 50%, #303030 50%, #333 100%));
 }
 
 .vs_ui_button.nav_forward.black_style.pressed > div::after,
 .vs_ui_button.nav_forward.black_ios_style.pressed > div::after {
-  background-image: -webkit-gradient(linear, right bottom, left top, 
-    from(#444), color-stop(0.5, #444), color-stop(0.5, #303030), to(#333));
+ .background-image(linear-gradient(-45deg, #444 0%, #444 50%, #303030 50%, #333 100%));
 }
 
 .vs_ui_button.nav_back.silver_style > div::before,
 .vs_ui_button.nav_back.silver_ios_style > div::before {
-  background-image: -webkit-gradient(linear, left top, right bottom, color-stop(0%,#b1b5bb), color-stop(57%,#7e848d), color-stop(100%,#6a727d));
+  .background-image(linear-gradient(135deg, #b1b5bb 0%, #7e848d 57%, #6a727d 100%));
 }
 
 .vs_ui_button.nav_back.silver_style.pressed > div::before,
 .vs_ui_button.nav_back.silver_ios_style.pressed > div::before
 {
-  background-image: -webkit-gradient(linear, left top, right bottom, 
-  color-stop(0%,#9c9fa2), color-stop(48%,#676b70), color-stop(62%,#5b5f65), color-stop(77%,#4c5157), color-stop(100%,#42474e));
+  .background-image(linear-gradient(135deg, #9c9fa2 0%, #676b70 48%, #5b5f65 62%, #4c5157 77%, #42474e 100%));
 }
 
 .vs_ui_button.nav_forward.silver_style > div::after,
 .vs_ui_button.nav_forward.silver_ios_style > div::after {
-  background-image: -webkit-gradient(linear, right bottom, left top, color-stop(0%,#b1b5bb), color-stop(57%,#7e848d), color-stop(100%,#6a727d));
+  .background-image(linear-gradient(-45deg, #b1b5bb 0%, #7e848d 57%, #6a727d 100%));
 }
 
 .vs_ui_button.nav_forward.silver_style.pressed > div::after,
 .vs_ui_button.nav_forward.silver_ios_style.pressed > div::after {
-  background-image: -webkit-gradient(linear, right bottom, left top, 
-  color-stop(0%,#9c9fa2), color-stop(48%,#676b70), color-stop(62%,#5b5f65), color-stop(77%,#4c5157), color-stop(100%,#42474e));
+  .background-image(linear-gradient(-45deg, #9c9fa2 0%, #676b70 48%, #5b5f65 62%, #4c5157 77%, #42474e 100%));
 }
 
 /***************************************************************************
@@ -253,7 +241,7 @@
 .vs_ui_button.default
 {
   border: 0px none;
-  -webkit-border-radius: 12px;
+  border-radius: 12px;
   
   height: 43px;
   border-bottom-width: 0px;
@@ -273,7 +261,7 @@
 { 
   color: black;
   text-shadow: rgba(255, 255, 255, 0.7) 0px 1px 0px;
-  background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(234, 234, 234)), color-stop(0.5, rgb(224, 224, 224)), color-stop(0.5, rgb(198,198,198)), to(rgb(198,198,198)));
+  .background-image(linear-gradient(180deg, rgb(234, 234, 234) 0%, rgb(224, 224, 224) 50%, rgb(198,198,198) 50%, rgb(198,198,198) 100%));
 }
 
 .vs_ui_button.default.white.pressed, /** legacy comptability */
@@ -287,7 +275,7 @@
 {
   color: white;
   text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
-  background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(249,99,98)), color-stop(0.5, rgb(231,91,90)), color-stop(0.5, rgb(196,50,50)), to(rgb(248,31,28)));
+  .background-image(linear-gradient(180deg, rgb(249,99,98) 0%, rgb(231,91,90) 50%, rgb(196,50,50) 50%, rgb(248,31,28) 100%));
 }
 
 .vs_ui_button.default.red.pressed,
@@ -302,14 +290,14 @@
 {
   color: white;
   text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
-  background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(132,185,122)), color-stop(0.5, rgb(116,166,96)), color-stop(0.5, rgb(81,158,69)), to(rgb(83,182,65)));
+  .background-image(linear-gradient(180deg, rgb(132,185,122) 0%, rgb(116,166,96) 50%, rgb(81,158,69) 50%, rgb(83,182,65) 100%));
 }
 
 .vs_ui_button.default.grey 
 {
   color: white;
   text-shadow: rgba(0,0,0, 0.7) 0px -1px 0px;
-  background-image:-webkit-gradient(linear, left top, left bottom, from(rgb(82,82,82)), color-stop(0.5, rgb(56,56,56)), color-stop(0.5, rgb(40,40,40)), to(rgb(50,50,50)));
+  .background-image(linear-gradient(180deg, rgb(82,82,82) 0%, rgb(56,56,56) 50%, rgb(40,40,40) 50%, rgb(50,50,50) 100%));
 }
 
 .vs_ui_button.default.grey.pressed

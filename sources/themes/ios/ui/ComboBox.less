@@ -1,0 +1,37 @@
+.vs_ui_combobox {
+  font-family: Helvetica;
+  font-weight: bold;
+  height: 40px;
+  color: black;
+  font-size : 16px;
+  background: white;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+.vs_ui_combobox:focus,
+.vs_ui_combobox:active,
+.vs_ui_combobox.focus
+{
+  .base_background_selected;
+  color: white;
+}
+
+.vs_ui_combobox > select:focus,
+.vs_ui_combobox > select:active {
+  outline: none;
+}
+
+.vs_ui_combobox > select {
+  padding-top: 0px;
+  width: 130%;
+  height: 20px;
+  margin: 10px 0 0 0;
+  color: black;
+}
+
+.vs_ui_combobox:after
+{
+  .box-sizing(border-box);
+  margin-top: 17px;
+}

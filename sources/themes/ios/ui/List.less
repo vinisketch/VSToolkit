@@ -5,7 +5,7 @@
 
 li.pressed
 {
-  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, from(#9DC3F3), color-stop(0.02, #5899EB), color-stop(0.3, #3985E7), color-stop(0.65, #1A70DD), to(#1559AF)) !important;
+  .base_background_selected;
   color: white !important;
 }
 
@@ -13,7 +13,7 @@ li.pressed
 .vs_ui_list.BlockList.arrow > ul > li > ul > li::after,
 .vs_ui_list.TabList.arrow > ul > li > ul > li::after
 {
-  -webkit-box-sizing: border-box;
+  .box-sizing(border-box);
   content:url(SimpleListNext.png);
   .translateY(-50%);
 }
@@ -49,12 +49,6 @@ ul > li:first-child {
                 Tab List Item CSS
 *********************************************************************/
 
-.vs_ui_list.DefaultList,
-.vs_ui_list.TabList {
-  background-color: white;
-  border: none;
-}
-
 .vs_ui_list.TabList > ul > li > div  {
   font-weight: bold;
  
@@ -80,7 +74,7 @@ ul > li:first-child {
 .vs_ui_list.BlockList {
   background-color: #d0d0d0;
   border: none;
-  -webkit-border-radius: 0px;
+  border-radius: 0px;
 }
 
 .vs_ui_list.BlockList > ul > li > div  {
@@ -104,7 +98,7 @@ ul > li:first-child {
 }
 
 .vs_ui_list.BlockList > ul > li > ul {
-  -webkit-border-radius: 10px;
+  border-radius: 10px;
   border: solid 1px blue;
   background-color: white;
   margin: 0px;

@@ -8,18 +8,26 @@
   top: 0px;
   height: 180px;
   background:#fcfcfc;
+  .box-orient(horizontal);
 }
 
-.vs_ui_picker .slots div {
+.vs_ui_picker .slots > div {
+  .box-flex(1);
   height:163px;
   margin-top: 10px;
   padding-top:60px;
   border-left:2px solid #0d0e0f;
   background-color:#fcfcfc;
-  background-position: 0 0, 100% 0;
-  background-repeat: repeat-y;
-  background-image: url('iOSPicker_border.png');
   overflow: hidden;
+}
+
+.vs_ui_picker .slots > div::before {
+  content: '';
+  width: 3px;
+  height: 163px;
+  background-color: #ddd;
+  float: left;
+  margin-top: -60px;
 }
 
 .vs_ui_picker ul {

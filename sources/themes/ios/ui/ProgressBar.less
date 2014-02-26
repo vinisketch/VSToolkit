@@ -1,0 +1,63 @@
+.vs_ui_progressbar {
+  height:9px;
+  border-radius: 5px;
+  .background-image(linear-gradient(0deg, white 0%, #eee 50%, #ddd 50%, #999 100%));
+  box-shadow: inset -1px 0 1px rgba(0, 0, 0, 0.5);
+}
+
+.vs_ui_progressbar > div {
+  padding-left: 1px;
+  .background-image(linear-gradient(180deg, #6DB3F2 0%, #54A3EE 50%, #3690F0 50%, #1E69DE 100%));
+  border-radius: 5px;
+  border: 1px solid rgba(0, 0, 125, 0.2);
+  height:9px;
+  min-width:9px;
+}
+
+@-webkit-keyframes webkit_vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+@-moz-keyframes moz_vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+@-ms-keyframes ms_vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+@keyframes vs_ui_progressbar_anim {
+	0% { background-position-x:  0%; }
+	100% { background-position-x: 100%; }
+}
+
+.vs_ui_progressbar.indeterminate {
+  .background-image(linear-gradient(65deg, rgba(255, 255, 255, 0) 23%, rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 1) 30%, rgba(255, 255, 255, 1) 70%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0) 77%));
+  background-color: #388AD5;
+  background-repeat: repeat-x;
+  background-size: 20px 10px;
+  background-position-x: 0%;
+  
+  -webkit-animation-duration: 10s;
+  -webkit-animation-iteration-count: infinite;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-name: webkit_vs_ui_progressbar_anim;
+  
+  -moz-animation-duration: 10s;
+  -moz-animation-iteration-count: infinite;
+  -moz-animation-timing-function: linear;
+  -moz-animation-name: moz_vs_ui_progressbar_anim;
+  
+  -ms-animation-duration: 10s;
+  -ms-animation-iteration-count: infinite;
+  -ms-animation-timing-function: linear;
+  -ms-animation-name: ms_vs_ui_progressbar_anim;
+  
+  animation-duration: 10s;
+  animation-iteration-count: infinite;
+  animation-timing-function: linear;
+  animation-name: vs_ui_progressbar_anim;
+}
