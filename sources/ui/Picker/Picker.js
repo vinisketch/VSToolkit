@@ -88,49 +88,13 @@ function Picker (config)
 Picker.NUMBERS =
   { 0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9};
 
-/**
- * @private
- * @const
- */
-Picker.MODE_DEFAULT = 0;
-
-/**
- * @private
- * @const
- */
-Picker.MODE_IOS = 1;
-
-/**
- * @private
- * @const
- */
-Picker.MODE_ANDROID = 2;
-
-/**
- * @private
- * @const
- */
-Picker.MODE_WP7 = 3;
-
-/**
- * @private
- * @const
- */
-Picker.MODE_SYMBIAN = 4;
-
-/**
- * @private
- * @const
- */
-Picker.MODE_BLACK_BERRY = 5;
-
 Picker.prototype = {
 
   /**
    * @private
    * @type {Number}
    */
-  _mode: Picker.MODE_DEFAULT,
+  _mode: Application.CSS_DEFAULT,
 
   /**
    * @private
@@ -217,31 +181,7 @@ Picker.prototype = {
     this._data = [];
     this._slots_elements = [];
     
-    var os_device = window.deviceConfiguration.os;
-    if (os_device == DeviceConfiguration.OS_IOS)
-    {
-      this._mode = Picker.MODE_IOS;
-    }
-    else if (os_device == DeviceConfiguration.OS_ANDROID)
-    {
-      this._mode = Picker.MODE_ANDROID;
-    }
-    else if (os_device == DeviceConfiguration.OS_WP7)
-    {
-      this._mode = Picker.MODE_WP7;
-    }
-    else if (os_device == DeviceConfiguration.OS_SYMBIAN)
-    {
-      this._mode = Picker.MODE_SYMBIAN;
-    }
-    else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
-    {
-      this._mode = Picker.MODE_BLACK_BERRY;
-    }
-    else
-    {
-      this._mode = Picker.MODE_DEFAULT;
-    }
+    this._mode =  vs.ui.View.getDeviceCSSCode ();
     
     // Pseudo table element (inner wrapper)
     this._slots_view = this.view.querySelector ('.slots');
@@ -251,21 +191,20 @@ Picker.prototype = {
     
     switch (this._mode)
     {
-      case Picker.MODE_BLACK_BERRY:
+      case Application.CSS_BLACKBERRY:
          this._cell_height = 50;
 
-      case Picker.MODE_DEFAULT:
-      case Picker.MODE_IOS:
-      case Picker.MODE_SYMBIAN:
+      case Application.CSS_DEFAULT:
+      default:
         // Add scrolling to the slots
         vs.addPointerListener (this.view, core.POINTER_START, this);
         this._frame_border_width = 0;
       break;
       
-      case Picker.MODE_WP7:
+      case Application.CSS_WP7:
         this._cell_height = 83;
       
-      case Picker.MODE_ANDROID:
+      case Application.CSS_ANDROID:
         this._frame_view.parentElement.removeChild (this._frame_view);
       break;
     }    
@@ -351,7 +290,7 @@ Picker.prototype = {
     }
     util.safeInnerHTML (ul, out);
     
-    if (this._mode === Picker.MODE_ANDROID)
+    if (this._mode === Application.CSS_ANDROID)
     {
       // Create slot container
       div = document.createElement ('div');
@@ -386,7 +325,7 @@ Picker.prototype = {
     ul.slotYPosition = 0;
     switch (this._mode)
     {
-      case Picker.MODE_WP7:
+      case Application.CSS_WP7:
         ul.slotMaxScroll = this.view.clientHeight - ul.clientHeight;
         vs.addPointerListener (ul, core.POINTER_START, this, true);
       break;
@@ -735,7 +674,7 @@ Picker.prototype = {
    */
   handleEvent: function (e)
   {
-    if (this._mode === Picker.MODE_ANDROID)
+    if (this._mode === Application.CSS_ANDROID)
     {
       this._buttonSelected (e);
     }
@@ -781,7 +720,7 @@ Picker.prototype = {
       var delta = 0;
       // Find the clicked slot
       var rec = util.getBoundingClientRect (this._slots_view);
-      if (this._mode == Picker.MODE_BLACK_BERRY) { delta = 8; }
+      if (this._mode == Application.CSS_BLACKBERRY) { delta = 8; }
     
       // Clicked position
       var xPos = point.clientX - rec.left - this._frame_border_width - delta; 
@@ -818,14 +757,11 @@ Picker.prototype = {
 
     switch (this._mode)
     {
-      case Picker.MODE_DEFAULT:
-      case Picker.MODE_IOS:
-      case Picker.MODE_SYMBIAN:
-      case Picker.MODE_BLACK_BERRY:
+      default:
         this._active_slot = this.__get_slot_index (point);
       break;
 
-      case Picker.MODE_WP7:
+      case Application.CSS_WP7:
         this._active_slot = e.currentTarget.index;
         util.addClassName ("dragging");
       break;
@@ -871,8 +807,8 @@ Picker.prototype = {
     
     switch (this._mode)
     {
-      case Picker.MODE_WP7:
-      case Picker.MODE_BLACK_BERRY:
+      case Application.CSS_WP7:
+      case Application.CSS_BLACKBERRY:
         if (this.__timer)
         {
           clearTimeout (this.__timer);
@@ -936,12 +872,12 @@ Picker.prototype = {
 
     switch (this._mode)
     {
-//      case Picker.MODE_BLACK_BERRY:
+//      case Application.CSS_BLACKBERRY:
 //        this.__elem_to_hide = elem;
 //      break;
   
-      case Picker.MODE_BLACK_BERRY:
-      case Picker.MODE_WP7:
+      case Application.CSS_BLACKBERRY:
+      case Application.CSS_WP7:
         if (elem.parentElement)
         {
           this.__elem_to_hide = elem;
@@ -974,7 +910,8 @@ Picker.prototype = {
       {
         this._scrollTo 
           (this._active_slot,
-          Math.round(elem.slotYPosition / this._cell_height) * this._cell_height, 100);
+          Math.round(elem.slotYPosition / this._cell_height) *
+            this._cell_height, 100);
       }
 
       return false;
@@ -1034,27 +971,28 @@ Picker.prototype = {
   {
     switch (this._mode)
     {
-      case Picker.MODE_DEFAULT:
+      case Application.CSS_DEFAULT:
+      default:
         return this.view.clientHeight - ul.clientHeight - 66;
       break;
       
-      case Picker.MODE_IOS:
+      case Application.CSS_IOS:
         return this.view.clientHeight - ul.clientHeight - 86;
       break;
       
-      case Picker.MODE_SYMBIAN:
+      case Application.CSS_SYMBIAN:
         return this.view.clientHeight - ul.clientHeight - 80;
       break;
       
-      case Picker.MODE_BLACK_BERRY:
+      case Application.CSS_BLACKBERRY:
         return this.view.clientHeight - ul.clientHeight - 93;
       break;
       
-      case Picker.MODE_WP7:
+      case Application.CSS_WP7:
         return this.view.clientHeight - ul.clientHeight - 103;
       break;
       
-      case Picker.MODE_ANDROID:
+      case Application.CSS_ANDROID:
         return this.view.clientHeight - ul.clientHeight - 121;
       break;
     }
@@ -1073,7 +1011,8 @@ Picker.prototype = {
     
     slotMaxScroll = this.getSlotMaxScroll (elem);
 
-    this._scrollTo (elem.slotPosition, elem.slotYPosition > 0 ? 0 : slotMaxScroll, 150);
+    this._scrollTo
+      (elem.slotPosition, elem.slotYPosition > 0 ? 0 : slotMaxScroll, 150);
     
     return false;
   }
