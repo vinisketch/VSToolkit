@@ -1,30 +1,37 @@
 .vs_ui_combobox {
-  font-family: droid;
+  font-family: @default_font;
   font-weight: normal;
   height: 40px;
   color: black;
   font-size : 17px;
   color: black;
+  background-color: white;
+  border-radius: 6px;
 }
 
 .vs_ui_combobox > select {
+  padding-top: 0px;
+  width: 130%;
+  height: 20px;
+  margin: 10px 0 0 0;
   color: #424142;
-  padding-top: 2px;
-  background: white;
-  margin: 0px;
-  width: 100%;
-  height: 100%;
-}
-
-.vs_ui_combobox > select:focus,
-.vs_ui_combobox > select:active {
-  color: #fff  !important;
-  background-image: -webkit-gradient(linear, left top, left bottom, 
-    from(#fea94b), to(#ef7217)) !important;
 }
 
 .vs_ui_combobox:after
 {
   .box-sizing(border-box);
   margin-top: 17px;
+}
+
+.vs_ui_combobox:focus,
+.vs_ui_combobox:active,
+.vs_ui_combobox.focus
+{
+  .base_background_selected;
+  color: white;
+}
+
+.vs_ui_combobox > select:focus,
+.vs_ui_combobox > select:active {
+  outline: none;
 }

@@ -5,9 +5,7 @@
 
 li.pressed
 {
-  background-image: -webkit-gradient(linear, left top, left bottom, 
-    from(#fea94b), to(#ef7217)) !important;
-  
+ .base_background_selected !important;
   color: black !important;
 }
 
@@ -63,8 +61,18 @@ li.pressed
 	opacity:1;
 
   font-size: 0.7em;
-  background: url(DefaultListAndroid.png) no-repeat bottom center,
-    -webkit-gradient(linear, left top, left bottom, from(#9c9a9c), to(#848284));
+  .background-image(linear-gradient(180deg, #9c9a9c 0%, #848284 100%));
+  position: relative;
+  overflow: visible;
+  z-index: 1;
+}
+
+.vs_ui_list.TabList > ul > li > div::after {
+  content: url(DefaultListAndroid.png);
+  width: 100%;
+  height: 0px;
+  top: 5px;
+  position: absolute;
 }
 
 .vs_ui_list.DefaultList > ul > li > div
@@ -120,7 +128,7 @@ ul.pressed li > div
   background: #FFF;
   border: 4px solid #181818;
   border-position: inside;
-  -webkit-border-radius: 15px;
+  border-radius: 15px;
 }
 
 .vs_ui_list.BlockList > ul {
@@ -143,7 +151,7 @@ ul.pressed li > div
 .vs_ui_list.BlockList > ul > li > ul {
   background-color: white;
   border: 1px solid #999;
-  -webkit-border-radius: 10px;
+  border-radius: 10px;
   margin: 0px 0px 10px 0;
   padding: 0px;
   position: relative;
@@ -155,8 +163,8 @@ ul.pressed li > div
   font-weight:  normal;
   color: inherit;
   background: #424542 url(PanelTitle.png) no-repeat 10px center;
-  -webkit-border-top-left-radius:   10px;
-  -webkit-border-top-right-radius:  10px;
+  border-top-left-radius:   10px;
+  border-top-right-radius:  10px;
 }
 
 .vs_ui_list.BlockList > ul > li > ul > li {

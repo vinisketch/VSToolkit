@@ -20,20 +20,18 @@ input[type="radio"]
 input[type="radio"].pressed + label,
 .vs_ui_radiobutton label.pressed 
 {
-  background-image: -webkit-gradient(linear, left top, left bottom, 
-    from(#fea94b), to(#ef7217)) !important;
-    
-  color: black !important;
+  .base_background_selected;
+  color: black;
 }
 
-input[type="radio"]:after
+input[type="radio"] + label::after
 {
   .box-sizing(border-box);
   content:url(androidRadioButton.png);
   margin-top: -16px;
 }
 
-input[type="radio"]:checked:after
+input[type="radio"]:checked + label::after
 {
   .box-sizing(border-box);
   content:url(androidRadioButton_sel.png);

@@ -27,11 +27,11 @@
   min-width: 60px;
   height: 0px;
 
-  -webkit-border-radius: 6px;
+  border-radius: 6px;
   border: 1px solid #555;
 
   color: #424142;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4)) !important;
+  .background-image(linear-gradient(180deg, #F4F4F4 0%, #C4C4C4 100%));
 }
 
 .vs_ui_switch .toggle_on {
@@ -76,12 +76,10 @@
 }
 
 .vs_ui_switch.on .switch {
-  background-image: -webkit-gradient(linear, left top, left bottom, 
-    from(#ff6900), color-stop(0.1, #ff7500), color-stop(0.5, #ff9200),
-    color-stop(0.8, #ff9200), to(#ff6900)) !important;
+  .background-image(linear-gradient(180deg, #ff6900 0%, #ff7500 10%, #ff9200 50%, #ff9200 80%, #ff6900 100%));
 }
 
 .vs_ui_switch.selected
 {
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#E2E2E2), color-stop(2%,#E2E2E2), color-stop(2%,#9E9E9E), color-stop(100%,#D6D6D6)) !important;
+  .background-image(linear-gradient(180deg, #E2E2E2 0%, #E2E2E2 2%, #9E9E9E 2%, #D6D6D6 100%));
 }

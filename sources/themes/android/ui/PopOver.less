@@ -13,3 +13,59 @@
 .vs_ui_popover.withFooter >.footer {
   height: 44px;
 }
+
+.vs_ui_popover {
+  border-radius: 8px;
+  .background-image(linear-gradient(90deg, rgba(38,44,49,1) 0%, rgba(40,47,52,1) 90%, rgba(33,39,44,1) 100%));
+}
+
+.vs_ui_popover >.header {
+  .background-image(linear-gradient(90deg, rgba(33,39,44,1) 0%, rgba(11,13,15,0.95) 100%));
+
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+.vs_ui_popover >.center {
+  .background-image(linear-gradient(45deg, rgb(190,190,190) 0%, rgb(255,255,255) 99%));
+  border-radius: 1px;
+}
+
+.vs_ui_popover >.footer {
+  .background-image(linear-gradient(90deg, rgba(33,39,44,1) 0%, rgba(11,13,15,0.95) 100%));
+
+  border-bottom-left-radius: 8px;
+  border-bottom-right-radius: 8px;
+}
+
+.vs_ui_popover >.arrow.top {
+  -webkit-mask-image: url("iOSPopOverArrowMaskH.png");
+  -webkit-mask-repeat: no-repeat;
+  .background-image(linear-gradient(-45deg, rgba(38,44,49,0.95) 0%, rgba(100,116,130,0.95) 30%, rgba(100,116,130,0.95) 100%));
+}
+
+.vs_ui_popover >.arrow.bottom {
+  -webkit-mask-image: url("iOSPopOverArrowMaskH.png");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-transform: rotate(180deg);
+  .background-image(linear-gradient(90deg, rgba(38,44,49,0.95) 0%, rgba(33,39,44,0.95) 10%, rgba(11,13,15,0.95) 100%));
+}
+
+.vs_ui_popover >.arrow.left {
+  -webkit-mask-image: url("iOSPopOverArrowMaskV.png");
+  -webkit-mask-repeat: no-repeat;
+  
+  -webkit-mask-position-y: 50px;
+
+  .background-image(linear-gradient(90deg, rgba(38,44,49,1) 0%, rgba(40,47,52,1) 90%, rgba(33,39,44,1) 100%));
+}
+
+.vs_ui_popover >.arrow.right {
+  -webkit-mask-image: url("iOSPopOverArrowMaskV.png");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-transform: rotate(180deg);
+  
+  -webkit-mask-position-y: 50px;
+
+  .background-image(linear-gradient(-90deg, rgba(38,44,49,1) 0%, rgba(40,47,52,1) 90%, rgba(33,39,44,1) 100%));
+}

@@ -19,19 +19,18 @@ input[type="checkbox"]
 input[type="checkbox"].pressed + label,
 .vs_ui_checkbox label.pressed 
 {
-  background-image: -webkit-gradient(linear, left top, left bottom, 
-    from(#fea94b), to(#ef7217)) !important;
-  color: black !important;
+  .base_background_selected;
+  color: black;
 }
 
-input[type="checkbox"]:after
+input[type="checkbox"] + label::after
 {
   .box-sizing(border-box);
   content:url(androidCheckButton.png);
   margin-top: -16px;
 }
 
-input[type="checkbox"]:checked:after
+input[type="checkbox"]:checked + label::after
 {
   content:url(androidCheckButton_sel.png);
 }

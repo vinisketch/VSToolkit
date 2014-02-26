@@ -1,6 +1,47 @@
-.vs_ui_segmentedbutton
-{
-  font-family: droid;
+.vs_ui_segmentedbutton {
+  font-weight: normal;
+  color: @baseColor; 
+}
+
+.vs_ui_segmentedbutton > div > div {
+  .background-image(linear-gradient(180deg, #FFF 0%, #DDD 70%, #EEE 100%));
+  position: relative;
+}
+
+.vs_ui_segmentedbutton.horizontal.bar > div > div {
+  padding: 5px 5px 0 5px;
+}
+
+.vs_ui_segmentedbutton.vertical.bar > div > div {
+  padding: 5px 5px 0 5px;
+}
+
+.vs_ui_segmentedbutton.default > div > div::before {
+  border-left: 1px solid #BBB;
+  content: "";
+  position: absolute;
+  top: 14px;
+  left: 4px;
+  
+  width: 12px;
+  height: 12px;
+  
+  border-radius: 6px;
+  .background-image(linear-gradient(180deg, #AAA 0%, #DDD 40%, #EEE 100%));
+}
+
+.vs_ui_segmentedbutton.default > div > div.selected::before {
+  .background-image(linear-gradient(180deg, #fea94b 0%, #ef7217 100%));
+}
+
+.vs_ui_segmentedbutton.horizontal > div > div {
+  border-left: 1px solid #CCC;  
+  border-right: 1px solid transparent;  
+}
+
+.vs_ui_segmentedbutton.vertical > div > div {
+  border-top: 1px solid #CCC;  
+  border-bottom: 1px solid transparent;  
 }
 
 /***************************************************************************
@@ -9,66 +50,18 @@
 
 .vs_ui_segmentedbutton.default
 {
-  border: 0px none;
-  
-  height: 45px;
-
   font-size: 20px;
   
-  border: 1px solid #DDD;
-}
+  height: 43px;
+} 
 
+.vs_ui_segmentedbutton.default > div
+{
+  line-height:26px;
+}
 
 .vs_ui_segmentedbutton.default > div > div {
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#FFF), color-stop(70%,#DDD), color-stop(100%,#EEE));
-  color: #888;
-  
-  padding: 10px 10px 0 10px;
-  
-  border: none;
-}
-
-.vs_ui_segmentedbutton.default.horizontal > div > div {
-  border-left: 1px solid #CCC;  
-  border-right: 1px solid transparent;  
-}
-
-.vs_ui_segmentedbutton.default.vertical > div > div {
-  border-top: 1px solid #CCC;  
-  border-bottom: 1px solid transparent;  
-}
-
-.vs_ui_segmentedbutton.default > div > div:before {
-  .box-sizing(border-box);
-  display: block;
-  position: relative;
-  content: '';
-  
-  width: 12px;
-  height: 12px;
-  
-  border-radius: 6px;
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#AAA), color-stop(50%,#DDD), color-stop(100%,#EEE));
-}
-
-.vs_ui_segmentedbutton.default.horizontal > div > div:before {
-  top: 50%;
-  margin-top: -10px;
-  left: -8px;
-}
-
-.vs_ui_segmentedbutton.default.vertical > div > div:before {
-  margin-top: 5px;
-  left: -8px;
-}
-
-.vs_ui_segmentedbutton.default > div > div.selected:before {
-  background-image: -webkit-gradient(linear, left bottom, left top, 
-    from(#fea94b), to(#ef7217)) !important;
-}
-
-.vs_ui_segmentedbutton.default > div > div:first-child {
-  border: none;
+  padding: 8px 0px 0 12px;
 }
 
 /***************************************************************************
@@ -77,22 +70,14 @@
 
 .vs_ui_segmentedbutton.bar
 {
-  border: 0px none;
-  
-  height: 30px;
+  height: 27px;
 
-  font-size: 15px;
-  
-  border: none;
+  font-size: 0.8em;
 }
 
-.vs_ui_segmentedbutton.bar > div > div {
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#666), color-stop(8%,#CCC),  color-stop(40%,#888), color-stop(100%,#888));
-  color: #555;
-  
-  padding: 6px 5px 0 5px;
-  
-  border: none;
+.vs_ui_segmentedbutton.bar > div
+{
+  line-height:18px;
 }
 
 .vs_ui_segmentedbutton.bar.horizontal > div > div {
@@ -101,28 +86,34 @@
   border-right: 1px solid #999; 
 }
 
+.vs_ui_segmentedbutton.bar > div > div {
+  .background-image(linear-gradient(180deg, #666 0%, #CCC 8%, #888 40%, #888 100%));
+  
+  padding: 6px 5px 0 5px;
+}
+
 .vs_ui_segmentedbutton.bar > div > div.selected {
-  background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#666), color-stop(8%,#FFF),  color-stop(40%,#DDD), color-stop(70%,#CCC), color-stop(100%,#DDD)) !important;
+  .background-image(linear-gradient(180deg, #666 0%, #FFF 8%, #DDD 40%, #CCC 70%, #DDD 100%));
 }
 
 .vs_ui_segmentedbutton.bar.horizontal > div > div:first-child {
-  -webkit-border-top-left-radius: 5px;
-  -webkit-border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
 }
 
 .vs_ui_segmentedbutton.bar.horizontal > div > div:last-child {
-  -webkit-border-top-right-radius: 5px;
-  -webkit-border-bottom-right-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
   
   border-right: 1px solid #999;  
 }
 
 .vs_ui_segmentedbutton.bar.vertical > div > div:first-child {
-  -webkit-border-top-left-radius: 5px;
-  -webkit-border-top-right-radius: 5px;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
 }
 
 .vs_ui_segmentedbutton.bar.vertical > div > div:last-child {
-  -webkit-border-bottom-left-radius: 5px;
-  -webkit-border-bottom-right-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }

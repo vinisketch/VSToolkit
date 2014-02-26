@@ -24,25 +24,24 @@
   color: rgb(255, 255, 255);
   
   overflow: hidden;
-  -webkit-transform: translate3d(0,0,0);
 }
 
 .vs_ui_toolbar.black_ios_style, /** legacy comptability */
 .vs_ui_toolbar.black_style {
   border-top: 1px solid black;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, #AEBCBF), color-stop(0.02, #6E7774), color-stop(0.69, #0A0E0A), color-stop(1, #0A0809));
+  .background-image(linear-gradient(180deg, #AEBCBF 0%, #6E7774 2%, #0A0E0A 69%, #0A0809 100%));
 }
 
 .vs_ui_toolbar.black_translucide_ios_style, /** legacy comptability */
 .vs_ui_toolbar.black_translucide_style {
   border-top: 1px solid black;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, #AEBCBF), color-stop(0.02, rgba(110, 119, 115, 0.6)), color-stop(0.67, rgba(10, 14, 10, 0.8)), color-stop(1, rgba(10, 8, 9, 0.8)));
+  .background-image(linear-gradient(180deg, #AEBCBF 0%, rgba(110, 119, 115, 0.6) 2%, rgba(10, 14, 10, 0.8) 67%, rgba(10, 8, 9, 0.8) 100%));
 }
 
 .vs_ui_toolbar.blue_ios_style, /** legacy comptability */
 .vs_ui_toolbar.blue_style {
   border-top: 1px solid black;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, #B5BDC8), color-stop(0.36, #828C95), color-stop(1, #28343B));
+  .background-image(linear-gradient(180deg, #B5BDC8 0%, #828C95 36%, #28343B 100%));
 }
 
 .vs_ui_toolbar_text {

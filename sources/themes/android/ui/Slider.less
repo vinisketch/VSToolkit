@@ -1,31 +1,19 @@
 .vs_ui_slider.horizontal {
-  background-image: -webkit-gradient(linear, left top, left bottom, 
-    from(#ad4500),
-    color-stop(0, rgb(181,95,4)),
-    color-stop(0.5, #ff7500),
-    color-stop(0.8, #ff9200),
-    to(#ff6900)
-  );
+  .background-image(linear-gradient(180deg, rgb(181,95,4) 0%, #ff7500 50%, #ff9200 80%, #ff9200 100%));
 
   height: 10px;
-  -webkit-border-radius: 3px;
-/*   -webkit-box-shadow:inset 0 1px 3px rgba(0,0,0,0.5); to slow on Android */
+  border-radius: 3px;
+/*   box-shadow:inset 0 1px 3px rgba(0,0,0,0.5); to slow on Android */
   background-color: #5A5A5A;
   border: 1px solid #363636;
 }
 
 .vs_ui_slider.vertical {
-  background-image: -webkit-gradient(linear, left top, right top, 
-    from(#ad4500),
-    color-stop(0, rgb(181,95,4)),
-    color-stop(0.5, #ff7500),
-    color-stop(0.8, #ff9200),
-    to(#ff6900)
-  );
+  .background-image(linear-gradient(180deg, rgb(181,95,4) 0%, #ff7500 50%, #ff9200 80%, #ff9200 100%));
 
   width: 10px;
-  -webkit-border-radius: 3px;
-/*  -webkit-box-shadow:inset 1px 0 3px rgba(0,0,0,0.5); to slow on Android */
+  border-radius: 3px;
+/*  box-shadow:inset 1px 0 3px rgba(0,0,0,0.5); to slow on Android */
   background-color: #5A5A5A;
   border: 1px solid #363636;
 }
@@ -36,10 +24,9 @@
   height: 34px;
   border-radius: 17px;
   border: 1px solid #222;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
+  .background-image(linear-gradient(180deg, #F4F4F4 0%, #C4C4C4 100%));
 }
 
 .vs_ui_slider .handle:active {
-  background-image: -webkit-gradient(linear, left top, left bottom, 
-    from(#fea94b), to(#ef7217));
+  .background-image(linear-gradient(180deg, #fea94b 0%, #ef7217 100%));
 }

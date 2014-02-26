@@ -7,9 +7,12 @@
 .vs_ui_picker .slots {
   top: 20px;
   height: 124px;
+  .box-orient(horizontal);
+  .translate(0, -22px);
 }
 
 .vs_ui_picker .slots > div {
+  .box-flex(1);
   height: 124px;
   padding-top:0px;
   border-left:10px solid transparent;
@@ -37,7 +40,7 @@
   font-size: 28px;
   font-weight: bold;
   text-align:center;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#DDD), to(#FFF));
+  .background-image(linear-gradient(180deg, #DDD 0%, #FFF 100%));
 }
 
 .vs_ui_picker .frame {
@@ -74,25 +77,19 @@
 }
 
 .vs_ui_picker .button_incr {
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, from(#F4F4F4), to(#C4C4C4));
-  -webkit-border-top-left-radius : 8px;
-  -webkit-border-top-right-radius : 8px;
+  .background-image(linear-gradient(180deg, #F4F4F4 0%, #C4C4C4 100%));
+  border-top-left-radius : 8px;
+  border-top-right-radius : 8px;
 }
 
 .vs_ui_picker .button_decr {
-  background-image: -webkit-gradient(linear, 100% 100%, 100% 0%, from(#F4F4F4), to(#C4C4C4));
-  -webkit-border-bottom-left-radius : 8px;
-  -webkit-border-bottom-right-radius : 8px;
+  .background-image(linear-gradient(180deg, #F4F4F4 0%, #C4C4C4 100%));
+  border-bottom-left-radius : 8px;
+  border-bottom-right-radius : 8px;
 }
 
 .vs_ui_picker .button_incr.active, 
 .vs_ui_picker .button_decr.active {
   color: white;
-  background-image: -webkit-gradient(linear, left top, left bottom, 
-      from(#ff6900),
-      color-stop(0.1, #ff7500),
-      color-stop(0.5, #ff9200),
-      color-stop(0.8, #ff9200),
-      to(#ff6900)
-    );
+  .base_background_selected;
 }
