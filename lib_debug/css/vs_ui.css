@@ -663,7 +663,7 @@ input[type="radio"] {
   outline: none;
   border: none;
   background: transparent;
-  visibility: hidden;
+  display: none;
 }
 input[type="radio"]:checked {
   outline: none;
@@ -738,7 +738,7 @@ input[type="checkbox"] {
   outline: none;
   border: none;
   background: transparent;
-  visibility: hidden;
+  display: none;
 }
 .vs_ui_navigationbar {
   width: 100%;

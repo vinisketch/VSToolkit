@@ -855,7 +855,6 @@ ul > li:first-child:before {
   -webkit-border-radius: 2px 2px;
   -moz-border-radius: 2px / 2px;
   border-radius: 2px / 2px;
-  padding-left: 4px;
   -webkit-transform: translateY(-45%);
   -moz-transform: translateY(-45%);
   -o-transform: translateY(-45%);
@@ -934,6 +933,7 @@ input[type="checkbox"].pressed + label,
   background-color: rgba(51, 181, 229, 0.5);
 }
 .vs_ui_checkbox label::before {
+  position: absolute;
   top: 50%;
   content: "";
   right: 5px;
@@ -944,7 +944,6 @@ input[type="checkbox"].pressed + label,
   -webkit-border-radius: 2px 2px;
   -moz-border-radius: 2px / 2px;
   border-radius: 2px / 2px;
-  padding-left: 4px;
   -webkit-transform: translateY(-45%);
   -moz-transform: translateY(-45%);
   -o-transform: translateY(-45%);
