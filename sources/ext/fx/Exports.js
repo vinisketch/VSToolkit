@@ -11,8 +11,8 @@ vs.util.extend (exports, {
   Pace:                          Pace,
   Chronometer:                   Chronometer,
   generateCubicBezierFunction:   generateCubicBezierFunction,
-  animateTransition:             animateTransition,
-  animateTransitionBis:          animateTransitionBis,
+  createTransition:              createTransition,
+  freeTransition:                freeTransition,
   animateTransitionBis:          animateTransitionBis,
   attachTransitionAnimation:     attachTransitionAnimation,
   removeTransitionAnimation:     removeTransitionAnimation

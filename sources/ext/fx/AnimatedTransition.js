@@ -17,7 +17,7 @@ var AnimationDefaultOption = {
 ******************************************************************************/
 
 /**
- *  animateTransition (obj, property, options)
+ *  createTransition (obj, property, options)
  *
  *  Instruments a object property with an animation
  *  When the property is change, instead of XXX
@@ -25,8 +25,10 @@ var AnimationDefaultOption = {
  *  @param obj {Object} 
  *  @param property {String} the property name to instrument
  *  @param options {Object} Animation options [optional]
-**/
-var animateTransition = function (obj, property, options)
+ *  @retruns {Chronometer} the animation object. Call freeTransition to delete
+ *            the object
+ **/
+var createTransition = function (obj, property, options)
 {
   var animOptions = vs.util.clone (AnimationDefaultOption);
   if (options) {
@@ -54,7 +56,29 @@ var animateTransition = function (obj, property, options)
     }
   }
   
+  chrono.__data_to_delete = [chrono, pace, traj];
+  
   return chrono;
+}
+
+/**
+ *  freeTransition (anim)
+ *
+ *  Free the transition animation
+ *
+ *  @param {Chronometer} chrono the animation to free
+ **/
+var freeTransition = function (chrono)
+{
+  if (!chrono) return;
+  
+  if (chrono.__data_to_delete) {
+    chrono.__data_to_delete.forEach (function (obj) {
+      vs.util.free (obj);
+    });
+  }
+  
+  vs.util.free (chrono);
 }
 
 var animateTransitionBis = function (obj, srcs, targets, options)
