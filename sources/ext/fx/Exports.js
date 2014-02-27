@@ -14,6 +14,6 @@ vs.util.extend (exports, {
   createTransition:              createTransition,
   freeTransition:                freeTransition,
   animateTransitionBis:          animateTransitionBis,
-  attachTransitionAnimation:     attachTransitionAnimation,
-  removeTransitionAnimation:     removeTransitionAnimation
+  attachTransition:              attachTransition,
+  removeTransition:              removeTransition
 });
