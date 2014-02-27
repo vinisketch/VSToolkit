@@ -16,25 +16,22 @@ body {
 }
 * {
   /* prevent callout to copy image, etc when tap to hold */
-
   -webkit-touch-callout: none;
   -moz-touch-callout: none;
   touch-callout: none;
   /* prevent webkit from resizing text to fit */
-
   -webkit-text-size-adjust: none;
   -moz-text-size-adjust: none;
   text-size-adjust: none;
   /* make transparent link selection, adjust last value opacity 0 to 1.0 */
-
   -webkit-tap-highlight-color: none;
   -mozt-text-size-adjust: none;
   tap-highlight-color: none;
   /* prevent copy paste, to allow, change 'none' to 'text' */
-
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  user-select: none;
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
@@ -217,8 +214,7 @@ body {
   -webkit-transition: -webkit-transform ease 300ms;
   -moz-transition: -moz-transform ease 300ms;
   -o-transition: -o-transform ease 300ms;
-  -ms-transition: -ms-transform ease 300ms;
-  transition: transform ease 300ms;
+  transition: -webkit-transform ease 300ms,-moz-transform ease 300ms,-o-transform ease 300ms,transform ease 300ms;
 }
 .vs_ui_splitview.mobile.main_view_visible > div {
   -webkit-transform: translate(-100%, 0px);
@@ -337,10 +333,16 @@ body {
 }
 textarea {
   -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   cursor: text;
   resize: none;
   font-size: inherit;
+  font-family: inherit;
 }
 textarea:focus {
   outline: none;
@@ -467,6 +469,8 @@ li {
 }
 .vs_ui_list.arrow ul li:after {
   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   position: absolute;
   right: 10px;
   top: 50%;
@@ -551,7 +555,6 @@ li {
   background-color: rgba(125, 125, 125, 0.5);
   color: white;
   /*  text-shadow: rgba(0,0,0,0.398438) 0 1px 0; */
-
 }
 .vs_ui_list.TabList > .direct_access_value {
   opacity: 0;
@@ -613,6 +616,8 @@ li {
 }
 .vs_ui_combobox::after {
   -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
   border-color: #DDD transparent transparent;
   border-style: solid;
   border-width: 8px;
@@ -675,6 +680,7 @@ input[type="radio"]:checked {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  user-select: none;
   position: absolute;
   right: 10px;
   top: 50%;
@@ -707,6 +713,7 @@ input[type="checkbox"]:checked {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  user-select: none;
   position: absolute;
   right: 10px;
   top: 50%;
@@ -1340,7 +1347,12 @@ input[type="search"],
 input[type="password"],
 input[type="text"] {
   -webkit-user-select: text;
+  -moz-user-select: text;
+  -ms-user-select: text;
+  user-select: text;
   -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
   background: transparent;
   cursor: text;
 }
@@ -1381,13 +1393,9 @@ input[type="text"] {
   z-index: 3000;
   position: absolute;
   background: transparent;
-  -webkit-border-radius: 8px;
-  /*  -webkit-box-shadow: 10px 10px 12px rgba(0,0,0,0.30); */
-
   min-height: 80px;
   min-width: 150px;
   width: 0px;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, #262c31), color-stop(0.9, #282f34), color-stop(1, #21272c));
   overflow: visible;
 }
 .vs_ui_popover > .header {
@@ -1396,9 +1404,6 @@ input[type="text"] {
   width: 100%;
   height: 10px;
   display: block;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, rgba(100, 116, 130, 0.95)), color-stop(1, #262c31));
-  -webkit-border-top-left-radius: 8px;
-  -webkit-border-top-right-radius: 8px;
   overflow: hidden;
 }
 .vs_ui_popover > .center {
@@ -1408,10 +1413,6 @@ input[type="text"] {
   right: 8px;
   bottom: 8px;
   overflow: hidden;
-  background-image: -webkit-gradient(linear, 14% 99%, 9% 51%, color-stop(0, #bebebe), color-stop(0.99, #ffffff)) !important;
-  -webkit-border-radius: 1px;
-  /*  -webkit-box-shadow: 1px 1px 3px black, inset 0px 0px 4px black; */
-
 }
 .vs_ui_popover > .footer {
   position: absolute;
@@ -1420,9 +1421,6 @@ input[type="text"] {
   right: 0px;
   bottom: 0px;
   display: block;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, #21272c), color-stop(1, rgba(11, 13, 15, 0.95)));
-  -webkit-border-bottom-left-radius: 8px;
-  -webkit-border-bottom-right-radius: 8px;
   overflow: hidden;
 }
 .vs_ui_popover.withHeader > .header > * {
@@ -1434,7 +1432,6 @@ input[type="text"] {
 .vs_ui_popover > .arrow {
   position: absolute;
   display: block;
-  float: right;
   z-index: -1;
 }
 .vs_ui_popover > .arrow.top {
@@ -1443,20 +1440,13 @@ input[type="text"] {
   top: -13px;
   right: 5px;
   left: 5px;
-  -webkit-mask-image: url("iOSPopOverArrowMaskH.png");
-  -webkit-mask-repeat: no-repeat;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, rgba(38, 44, 49, 0.95)), color-stop(0.3, rgba(100, 116, 130, 0.95)), color-stop(1, rgba(100, 116, 130, 0.95)));
 }
 .vs_ui_popover > .arrow.bottom {
   width: auto;
   height: 15px;
-  right: 5px;
-  left: 5px;
-  bottom: -13px;
-  -webkit-mask-image: url("iOSPopOverArrowMaskH.png");
-  -webkit-mask-repeat: no-repeat;
-  -webkit-transform: rotate(180deg);
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, rgba(38, 44, 49, 0.95)), color-stop(0.1, rgba(33, 39, 44, 0.95)), color-stop(1, rgba(11, 13, 15, 0.95)));
+  right: 0px;
+  left: 60px;
+  bottom: -30px;
 }
 .vs_ui_popover > .arrow.left {
   top: 0px;
@@ -1464,22 +1454,13 @@ input[type="text"] {
   width: 15px;
   height: auto;
   left: -13px;
-  -webkit-mask-image: url("iOSPopOverArrowMaskV.png");
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position-y: 50px;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(0, #262c31), color-stop(0.9, #282f34), color-stop(1, #21272c));
 }
 .vs_ui_popover > .arrow.right {
-  top: 0px;
+  top: 130px;
   bottom: 0px;
   width: 15px;
   height: auto;
-  right: -15px;
-  -webkit-mask-image: url("iOSPopOverArrowMaskV.png");
-  -webkit-mask-repeat: no-repeat;
-  -webkit-transform: rotate(180deg);
-  -webkit-mask-position-y: 50px;
-  background-image: -webkit-gradient(linear, 0% 0%, 0% 100%, color-stop(1, #262c31), color-stop(0.1, #282f34), color-stop(0, #21272c));
+  right: -30px;
 }
 /*
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
