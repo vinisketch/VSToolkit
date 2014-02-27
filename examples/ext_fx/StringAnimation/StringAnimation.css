@@ -3,6 +3,10 @@ html {
   height: 100%;
 }
 
+body {
+  background-color: transparent;
+}
+
 body > div {
   margin: 10px !important;
 }
