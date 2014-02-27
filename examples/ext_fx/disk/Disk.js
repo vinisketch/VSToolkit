@@ -65,7 +65,7 @@ var DisksAnimation = vs.core.createClass ({
 
     var dur = duration + Math.ceil (Math.random () * duration);
     
-    var anim = vs.ext.fx.animateTransition (item, 'rotation', {
+    var anim = vs.ext.fx.createTransition (item, 'rotation', {
       duration: dur,
       pace: vs.ext.fx.Pace.getEaseInOutPace (),
       repeat: 1,

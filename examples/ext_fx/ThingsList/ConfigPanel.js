@@ -92,7 +92,7 @@ var ConfigPanel = vs.core.createClass ({
 
       var start = Math.floor (i/3) * 250;
       // show icon image animation
-      anims.push (vs.ext.fx.animateTransition (icon.img, 'scaling', {
+      anims.push (vs.ext.fx.createTransition (icon.img, 'scaling', {
         begin: start,
         duration: 300,
         pace: vs.ext.fx.Pace.getEaseInPace (),
@@ -102,7 +102,7 @@ var ConfigPanel = vs.core.createClass ({
       }));
       
       // hide icon image animation
-      anims_invert.push (vs.ext.fx.animateTransition (icon.img, 'scaling', {
+      anims_invert.push (vs.ext.fx.createTransition (icon.img, 'scaling', {
         begin: start,
         duration: 300,
         pace: vs.ext.fx.Pace.getEaseInPace (),

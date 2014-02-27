@@ -29,7 +29,7 @@ var ListItem = vs.core.createClass ({
     
     var size = this.size;
 
-    this.open_animation = vs.ext.fx.animateTransition (this, 'size', {
+    this.open_animation = vs.ext.fx.createTransition (this, 'size', {
       duration: 300,
       pace: vs.ext.fx.Pace.getEaseInPace (),
       trajectory: new vs.ext.fx.Vector2D ().init ()
@@ -37,7 +37,7 @@ var ListItem = vs.core.createClass ({
     
     this.open_animation.delegate = this;
 
-    this.close_animation = vs.ext.fx.animateTransition (this, 'size', {
+    this.close_animation = vs.ext.fx.createTransition (this, 'size', {
       duration: 300,
       pace: vs.ext.fx.Pace.getEaseInPace (),
       trajectory: new vs.ext.fx.Vector2D ().init ()

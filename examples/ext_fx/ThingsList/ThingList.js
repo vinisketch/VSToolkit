@@ -90,14 +90,14 @@ var ThingList = vs.core.createClass ({
     var size = this.size;
 
     // Hide list animation
-    this.hide_list_anim = vs.ext.fx.animateTransition (list_view, 'translation', {
+    this.hide_list_anim = vs.ext.fx.createTransition (list_view, 'translation', {
       duration: 300,
       pace: vs.ext.fx.Pace.getEaseInPace (),
       trajectory: new vs.ext.fx.Vector2D ({ values: [[0,0], [0, size[1]]] }).init ()
     });
 
     // Show list animation
-    this.show_list_anim = vs.ext.fx.animateTransition (list_view, 'translation', {
+    this.show_list_anim = vs.ext.fx.createTransition (list_view, 'translation', {
       duration: 300,
       pace: vs.ext.fx.Pace.getEaseInPace (),
       trajectory: new vs.ext.fx.Vector2D ({ values: [[0, size[1]], [0,0]] }).init ()

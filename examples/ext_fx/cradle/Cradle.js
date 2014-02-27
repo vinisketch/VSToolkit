@@ -38,13 +38,13 @@ var Boulier = vs.core.createClass ({
       }).init ();
     };
 
-    this.anim1 = vs.ext.fx.animateTransition (this.ball1, 'rotation', {
+    this.anim1 = vs.ext.fx.createTransition (this.ball1, 'rotation', {
       duration: 600,
       pace: getPace (),
       trajectory: new vs.ext.fx.Vector1D ({ values: [0, 40, 0] }).init ()
     });
     
-    this.anim2 = vs.ext.fx.animateTransition (this.ball2, 'rotation', {
+    this.anim2 = vs.ext.fx.createTransition (this.ball2, 'rotation', {
       duration: 600,
       pace: getPace (),
       trajectory: new vs.ext.fx.Vector1D ({ values: [0, -40, 0] }).init ()
