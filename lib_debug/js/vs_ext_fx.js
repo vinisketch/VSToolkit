@@ -1328,6 +1328,11 @@ var Circular2D = vs.core.createClass ({
           
 ******************************************************************************/
 
+/**
+ *  Default parameters for createTransition
+ *
+ *  @private
+ **/
 var AnimationDefaultOption = {
   duration: 300,
   begin: 0,
@@ -1343,16 +1348,22 @@ var AnimationDefaultOption = {
 ******************************************************************************/
 
 /**
- *  animateTransition (obj, property, options)
+ *  createTransition (obj, property, options)
  *
  *  Instruments a object property with an animation
  *  When the property is change, instead of XXX
  *
+ *  @public
+ *  @function
+ *  @name vs.ext.fx.createTransition
+ *
  *  @param obj {Object} 
  *  @param property {String} the property name to instrument
  *  @param options {Object} Animation options [optional]
-**/
-var animateTransition = function (obj, property, options)
+ *  @return {Chronometer} the animation object. Call freeTransition to delete
+ *            the object
+ **/
+var createTransition = function (obj, property, options)
 {
   var animOptions = vs.util.clone (AnimationDefaultOption);
   if (options) {
@@ -1380,7 +1391,33 @@ var animateTransition = function (obj, property, options)
     }
   }
   
+  chrono.__data_to_delete = [chrono, pace, traj];
+  
   return chrono;
+}
+
+/**
+ *  freeTransition (anim)
+ *
+ *  Free the transition animation
+ *
+ *  @public
+ *  @function
+ *  @name vs.ext.fx.freeTransition
+ *
+ *  @param {Chronometer} chrono the animation to free
+ **/
+var freeTransition = function (chrono)
+{
+  if (!chrono) return;
+  
+  if (chrono.__data_to_delete) {
+    chrono.__data_to_delete.forEach (function (obj) {
+      vs.util.free (obj);
+    });
+  }
+  
+  vs.util.free (chrono);
 }
 
 var animateTransitionBis = function (obj, srcs, targets, options)
@@ -1411,7 +1448,21 @@ var animateTransitionBis = function (obj, srcs, targets, options)
   return chrono;
 }
 
-function attachTransitionAnimation (comp, property, options)
+/**
+ *  Attach a transition animation to a property
+ *
+ *  When the property is changed, then the property value is animated along the
+ *  trajectory defined as parameter
+ *
+ *  @public
+ *  @function
+ *  @name vs.ext.fx.attachTransition
+ *
+ *  @param comp {Object} the component
+ *  @param property {String} the property name to instrument
+ *  @param options {Object} Animation options [optional]
+ **/
+function attachTransition (comp, property, options)
 {
   var animOptions = vs.util.clone (AnimationDefaultOption);
   if (options) {
@@ -1466,11 +1517,11 @@ function attachTransitionAnimation (comp, property, options)
     Object.defineProperty (comp, property, instrumentedDesc);
   }
   
-  removeTransitionAnimation (comp, property);
+  removeTransition (comp, property);
   descriptorInstrument ();
 }
 
-function removeTransitionAnimation (comp, property)
+function removeTransition (comp, property)
 {
   var desc = comp.getPropertyDescriptor ("__trans_anim_" + property);
   if (desc) {
@@ -1492,11 +1543,11 @@ vs.util.extend (exports, {
   Pace:                          Pace,
   Chronometer:                   Chronometer,
   generateCubicBezierFunction:   generateCubicBezierFunction,
-  animateTransition:             animateTransition,
+  createTransition:              createTransition,
+  freeTransition:                freeTransition,
   animateTransitionBis:          animateTransitionBis,
-  animateTransitionBis:          animateTransitionBis,
-  attachTransitionAnimation:     attachTransitionAnimation,
-  removeTransitionAnimation:     removeTransitionAnimation
+  attachTransition:              attachTransition,
+  removeTransition:              removeTransition
 });
 
 })(window);
