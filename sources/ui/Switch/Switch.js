@@ -178,12 +178,13 @@ Switch.prototype = {
           util.setElementTransform (self.__switch_view,
             "translate3d(" + self.__switch_translate + "px,0,0)");
         }
+        else if (self._mode === Application.CSS_ANDROID) {
+          util.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
+        }
       }
       else {
         self.removeClassName ('on');
-        if (self._mode !== Application.CSS_ANDROID) {
-          util.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
-        }
+        util.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
       }
       self.outPropertyChange ();
     });
