@@ -625,6 +625,59 @@ hr:last-child {
 
 <!-- ============================== methods summary ======================== -->
 			
+				
+				
+				<table class="summaryTable" cellspacing="0" summary="A summary of the methods documented in the class vs.ext.fx.">
+					<caption>Method Summary</caption>
+					<thead>
+						<tr>
+							<th scope="col">Method Attributes</th>
+							<th scope="col">Method Name and Description</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.ext.fx.<b><a href="../symbols/vs.ext.fx.html#.attachTransition">attachTransition</a></b>(comp, property, options)
+								</div>
+								<div class="description">Attach a transition animation to a property
+
+ When the property is changed, then the property value is animated along the
+ trajectory defined as parameter</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.ext.fx.<b><a href="../symbols/vs.ext.fx.html#.createTransition">createTransition</a></b>(obj, property, options)
+								</div>
+								<div class="description">createTransition (obj, property, options)
+
+ Instruments a object property with an animation
+ When the property is change, instead of XXX</div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">vs.ext.fx.<b><a href="../symbols/vs.ext.fx.html#.freeTransition">freeTransition</a></b>(chrono)
+								</div>
+								<div class="description">freeTransition (anim)
+
+ Free the transition animation</div>
+							</td>
+						</tr>
+					
+					</tbody>
+				</table>
+				
+				
+				
+			
 <!-- ============================== events summary ======================== -->
 			
 
@@ -662,6 +715,156 @@ hr:last-child {
 			
 
 <!-- ============================== method details ========================= -->		
+			
+				<div class="sectionTitle">
+					Method Detail
+				</div>
+				
+					<a name=".attachTransition"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ext.fx.</span><b>attachTransition</b>(comp, property, options)
+					
+					</div>
+					<div class="description">
+						Attach a transition animation to a property
+
+ When the property is changed, then the property value is animated along the
+ trajectory defined as parameter
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>comp</b>
+									
+								</dt>
+								<dd>{Object} the component</dd>
+							
+								<dt>
+									<b>property</b>
+									
+								</dt>
+								<dd>{String} the property name to instrument</dd>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd>{Object} Animation options [optional]</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					<hr />
+				
+					<a name=".createTransition"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					<span class="light">{Chronometer}</span>
+					<span class="light">vs.ext.fx.</span><b>createTransition</b>(obj, property, options)
+					
+					</div>
+					<div class="description">
+						createTransition (obj, property, options)
+
+ Instruments a object property with an animation
+ When the property is change, instead of XXX
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<b>obj</b>
+									
+								</dt>
+								<dd>{Object}</dd>
+							
+								<dt>
+									<b>property</b>
+									
+								</dt>
+								<dd>{String} the property name to instrument</dd>
+							
+								<dt>
+									<b>options</b>
+									
+								</dt>
+								<dd>{Object} Animation options [optional]</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+							<dl class="detailList">
+							<dt class="heading">Returns:</dt>
+							
+								<dd><span class="light fixedFont">{Chronometer}</span> the animation object. Call freeTransition to delete
+           the object</dd>
+							
+							</dl>
+						
+						
+						
+
+					<hr />
+				
+					<a name=".freeTransition"> </a>
+					<div class="fixedFont">&lt;static&gt; 
+					
+					
+					<span class="light">vs.ext.fx.</span><b>freeTransition</b>(chrono)
+					
+					</div>
+					<div class="description">
+						freeTransition (anim)
+
+ Free the transition animation
+						
+					</div>
+					
+					
+					
+						
+							<dl class="detailList">
+							<dt class="heading">Parameters:</dt>
+							
+								<dt>
+									<span class="light fixedFont">{Chronometer}</span> <b>chrono</b>
+									
+								</dt>
+								<dd>the animation to free</dd>
+							
+							</dl>
+						
+						
+						
+						
+						
+						
+						
+
+					
+				
 			
 			
 <!-- ============================== event details ========================= -->		
