@@ -21,12 +21,21 @@ var Simple = vs.core.createClass ({
   /** parent class */
   parent: vs.ui.Application,
 
-  applicationStarted : function (event) {
+  applicationStarted : function () {
+
+    var view = new vs.ui.View ({id: "my_view"}).init ();   
+  
+    var anim = this.createWithHelper (view);
+    
+    // start the animation
+    anim.start ();
+  },
+
+  createWithFullAPI : function (view) {
   
     // elements for your animation
     var chrono = new vs.ext.fx.Chronometer ({repeat: 10, duration: 3000}).init ();
     var traj = new vs.ext.fx.Vector2D ({values: [[50, 220], [220, 50], [50, 220]]}).init ();
-    var view = new vs.ui.View ({id: "my_view"}).init ();   
     
     // connect your components within the default dataflow
     chrono.connect ("tick").to (traj, "tick")
@@ -35,8 +44,18 @@ var Simple = vs.core.createClass ({
     // build the default dataflow
     this.buildDataflow ();
     
-    // start the animation
-    chrono.start ();
+    return chrono;
+  },
+
+  createWithHelper : function (view) {
+  
+    return vs.ext.fx.createTransition (view, "size",
+      {
+        repeat: 10,
+        duration: 3000,
+        trajectory : new vs.ext.fx.Vector2D ({values: [[50, 220], [220, 50], [50, 220]]}).init ()
+      }
+    );
   }
 });
 
