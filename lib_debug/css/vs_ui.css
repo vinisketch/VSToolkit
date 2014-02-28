@@ -86,23 +86,23 @@ body {
 *********************************************************************/
 .vs_ui_popover > .center.vertical_layout,
 .vertical_layout {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: flex;
+  -webkit-box-direction: normal;
+  -moz-box-direction: normal;
   -webkit-box-orient: vertical;
   -moz-box-orient: vertical;
-  box-orient: vertical;
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-align: start;
-  -moz-box-align: start;
-  box-align: start;
+  -webkit-flex-direction: column;
+  -ms-flex-direction: column;
+  flex-direction: column;
 }
 .vs_ui_popover > .center.vertical_layout > *,
 .vertical_layout > * {
-  -webkit-box-flex: 0;
-  -moz-box-flex: 0;
-  -ms-box-flex: 0;
-  -o-box-flex: 0;
-  box-flex: 0;
+  -webkit-flex-grow: 0;
+  flex-grow: 0;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
   top: 0px!important;
   left: 0px!important;
   position: relative !important;
@@ -112,29 +112,26 @@ body {
 *********************************************************************/
 .vs_ui_popover > .center.horizontal_layout,
 .horizontal_layout {
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: flex;
+  -webkit-box-direction: normal;
+  -moz-box-direction: normal;
   -webkit-box-orient: horizontal;
   -moz-box-orient: horizontal;
-  box-orient: horizontal;
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-align: start;
-  -moz-box-align: start;
-  box-align: start;
+  -webkit-flex-direction: row;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-flex-wrap: nowrap;
+  -ms-flex-wrap: nowrap;
+  flex-wrap: nowrap;
 }
 .vs_ui_popover > .center.horizontal_layout > *,
 .horizontal_layout > * {
-  display: -webkit-box;
-  display: -moz-box;
-  display: box;
-  -webkit-box-pack: stretch;
-  -moz-box-pack: stretch;
-  box-pack: stretch;
-  -webkit-box-flex: 0;
-  -moz-box-flex: 0;
-  -ms-box-flex: 0;
-  -o-box-flex: 0;
-  box-flex: 0;
+  -webkit-flex-grow: 0;
+  flex-grow: 0;
+  -webkit-flex-shrink: 0;
+  flex-shrink: 0;
   top: 0px!important;
   left: 0px!important;
   position: relative !important;
