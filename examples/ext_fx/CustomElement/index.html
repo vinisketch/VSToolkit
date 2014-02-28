@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html id="test" x-hag-ref="test">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, target-densityDpi=160, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Animation</title>
+    <style>
+      ::selection {background: transparent;}
+    </style>
+
+    <link rel="stylesheet" type="text/css" href="../../../lib_debug/css/vs_ui.css">
+    <link rel="stylesheet" type="text/css" href="../../../lib_debug/css/vs_ui_flat.css">
+    <link rel="stylesheet" type="text/css" href="css/test.css">
+
+    <script type="text/javascript" src="../../../lib_debug/js/vs.js"></script>
+    <script type="text/javascript" src="../../../lib_debug/js/vs_webcomponent.js"></script>
+
+    <script type="text/javascript" src="js/app.js"></script>
+  </head>
+  
+  <body is="vs-application" layout="vertical" onload="loadApplication ()">
+    
+    <vs-navigation-bar>
+      <vs-button type="nav_back" style="margin:8px;">Back</vs-button>
+      <vs-label magnet="5" style="width:100px;">Main Page</vs-label>
+    </vs-navigation-bar>
+    
+    <vs-input type="text" style="margin:10px;width:300px"></vs-input>
+    
+    <vs-input type="search" style="margin:10px;width:300px"></vs-input>
+
+    <vs-button text="Salut" onselect="testEventButton (event)"></vs-button>
+    
+    <vs-switch onchange="testEventSwitch (event)"></vs-switch>
+    
+    <vs-view style="height:auto; padding:10px" layout="horizontal">
+      <vs-slider value="50" range="[0, 200]" id="slider1"></vs-slider>
+      <vs-label id="label_slider1" style="padding-left:30px"></vs-label>
+    </vs-view>
+    
+    <vs-radiobutton id="radiobutton" onchange="testEventRadio (event)">
+      <vs-item>vs-item 1</vs-item>
+      <vs-item>vs-item 2</vs-item>
+      <vs-item>vs-item 3</vs-item>
+    </vs-radiobutton>
+    
+    <vs-checkbox id="checkbox">
+      <vs-item>vs-item 1</vs-item>
+      <vs-item>vs-item 2</vs-item>
+    </vs-checkbox>
+    
+    <vs-list id="list" style="height:auto" has-arrow=true json:model='[{"title":"Salut1"}, {"title":"Salut2"}]'></vs-list>
+    
+    <vs-list id="list" style="height:auto" has-arrow=true json:model='[{"title":"Salut1"}, {"title":"Salut2"}]'>
+      <vs-template-item style="padding:5px">
+        <img height="30px" src="http://clinked.com/wp-content/uploads/2012/11/seo-for-small-business.jpg"></img><span style="padding:8px">${title}</span>
+      </vs-template-item>
+    </vs-list>
+    
+    <vs-list id="list" style="height:100px" has-arrow=true json:model='[{"title":"Salut1"}, {"title":"Salut2"}]'>
+      <vs-template-item layout="horizontal" properties="title:label#text">
+        <vs-label name="label">Main Page</vs-label>
+        <vs-button text="del" type="nav"></vs-button>
+      </vs-template-item>
+    </vs-list>
+    
+    <vs-import href="comp.html"></vs-import>
+
+    <vs-list id="list" style="height:100px" has-arrow=true json:model='[{"title":"Salut1"}, {"title":"Salut2"}]'>
+      <vs-template-item href="list_item.html"></vs-template-item>
+    </vs-list>
+    
+  </body>
+</html>
