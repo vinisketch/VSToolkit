@@ -83,15 +83,17 @@
 .vs_ui_popover >.center.vertical_layout,
 .vertical_layout
 {
-  .box-orient(vertical);
-  .box-align(start);
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: flex;
+  .flex-direction(column);
 }
 
 .vs_ui_popover >.center.vertical_layout > *,
 .vertical_layout > *
 {
-  .box-flex(0);
-
+  .flex-grow(0);
+  .flex-shrink(0);
   top: 0px!important;
   left: 0px!important;
   position: relative !important;
@@ -104,16 +106,18 @@
 .vs_ui_popover >.center.horizontal_layout,
 .horizontal_layout
 {
-  .box-orient(horizontal);
-  .box-align(start);
+  display: -webkit-flex;
+  display: -moz-flex;
+  display: flex;
+  .flex-direction(row);
+  .flex-wrap(nowrap);
 }
 
 .vs_ui_popover >.center.horizontal_layout > *,
 .horizontal_layout > *
 {
-  .box-pack(stretch);
-  .box-flex(0);
-
+  .flex-grow(0);
+  .flex-shrink(0);
   top: 0px!important;
   left: 0px!important;
   position: relative !important;
