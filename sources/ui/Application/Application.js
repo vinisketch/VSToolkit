@@ -176,8 +176,18 @@ Application.prototype = {
     var self = this;
     window.addEventListener (ORIENTATION_CHANGE_EVT, function (e)
     {
+      var orientation = window.orientation;
+      if (!util.isNumber (orientation)) {
+        if (window.outerWidth >= window.outerHeight) {
+          orientation = 90; // LANDSCAPE
+        }
+        else {
+          orientation = 0; // PORTRAIT
+        }
+      }
+      
       var target_id =
-        window.deviceConfiguration.setOrientation (window.orientation);
+        window.deviceConfiguration.setOrientation (orientation);
       if (target_id) {
         self.propagate ('deviceChanged', target_id, null, true);
       }
