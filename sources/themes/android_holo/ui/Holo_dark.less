@@ -22,6 +22,11 @@
 
 @default_font: "Roboto", sans-serif;
 
+.default_colors {
+	background-color: @dark;
+	color: @white;
+}
+
 .base_background {
   background-color: @grey;
 }
@@ -44,6 +49,5 @@
 
 body {
   font-family: @default_font;
-	background-color: @dark;
-	color: @white;
+  .default_colors;
 }
