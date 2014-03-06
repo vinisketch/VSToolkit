@@ -1,0 +1,64 @@
+.vs_ui_popover.withHeader >.header {
+  height: 38px;
+}
+
+.vs_ui_popover.withHeader >.center {
+  top: 38px;
+}
+
+.vs_ui_popover.withFooter >.center {
+  bottom: 38px;
+}
+
+.vs_ui_popover.withFooter >.footer {
+  height: 38px;
+}
+
+.vs_ui_popover {
+  background-color: #cdd1dc;
+}
+
+.vs_ui_popover >.header {
+  background-color: #DDD;
+}
+
+.vs_ui_popover >.center {
+  .default_colors;
+}
+
+.vs_ui_popover >.footer {
+  background-color: #DDD;
+}
+
+.vs_ui_popover >.arrow {
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent;
+}
+
+.vs_ui_popover >.arrow.top {
+  width: 20px;
+  top: -20px;
+  border-color: transparent transparent @grey transparent;
+}
+
+.vs_ui_popover >.arrow.bottom {
+  width: 20px;
+  bottom: -20px;
+  border-color: @grey transparent transparent transparent;
+  left: 5px;
+}
+
+.vs_ui_popover >.arrow.left {
+  height: 20px;
+  left: -20px;
+  border-color: transparent @grey transparent transparent;
+  top: 5px;
+}
+
+.vs_ui_popover >.arrow.right {
+  height: 20px;
+  right: -20px;
+  border-color: transparent transparent transparent @grey;
+  top: 5px;
+}
