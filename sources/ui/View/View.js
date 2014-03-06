@@ -1587,7 +1587,10 @@ View.prototype = {
    *  modify CSS rules.
    *
    *  @example
-   *  myObject.setStyle ('color', 'red');
+   *  myObject.setStyles ({
+   *    left: '0px', top: '0px', bottom: 'auto', 
+   *    width: '100%', height: '50px'
+   *  });
    *
    * @name vs.ui.View#setStyles
    * @function
