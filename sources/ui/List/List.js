@@ -967,38 +967,36 @@ List.prototype = {
       
       var _acces_index = e.targetPointerList[0].target._index_;
       if (!util.isNumber (_acces_index)) return;
-      var letter = self.__direct_access_letters [_acces_index];
      
       if (self._acces_index === _acces_index) return;
       self._acces_index = _acces_index;
-      var newPos = -self.getTitlePosition (_acces_index);
       
-      if (newPos < self.__max_scroll) newPos = self.__max_scroll;
-
-      self.__scroll_start = newPos;
-
-      if (SUPPORT_3D_TRANSFORM) {
-        util.setElementTransform
-          (self._list_items, 'translate3d(0,' + newPos + 'px,0)');
+      if (self.__iscroll__) {
+        var item = self.getTitleItem (_acces_index);
+        self.__iscroll__.scrollToElement (item, 0);
       }
       else {
-        util.setElementTransform
-          (self._list_items, 'translate(0,' + newPos + 'px)');
+        var newPos = -self.getTitlePosition (_acces_index);     
+        if (newPos < self.__max_scroll) newPos = self.__max_scroll;
+
+        self.__scroll_start = newPos;
+
+        if (SUPPORT_3D_TRANSFORM) {
+          util.setElementTransform
+            (self._list_items, 'translate3d(0,' + newPos + 'px,0)');
+        }
+        else {
+          util.setElementTransform
+            (self._list_items, 'translate(0,' + newPos + 'px)');
+        }
       }
 
-      // animate the scroll
-      if (self._scrollbar) {
-        self._scrollbar.setPosition (newPos);
-      }
-      
       bar_dim = util.getElementDimensions (self._direct_access);
       bar_dim.height -= 10;
       bar_pos = util.getElementAbsolutePosition (self._direct_access);
       bar_pos.y += 5;
 
-      var dy = _acces_index * bar_dim.height / 
-        self._direct_access.childElementCount + 10;
-
+      var letter = self.__direct_access_letters [_acces_index];
       self._direct_access_value.style.opacity = 1;
       self._direct_access_value.innerHTML = letter;
 
@@ -1016,33 +1014,28 @@ List.prototype = {
       
       if (self._acces_index === _acces_index) return;
       self._acces_index = _acces_index;
-      var newPos = -self.getTitlePosition (_acces_index);
+
+      
+      if (self.__iscroll__) {
+        var item = self.getTitleItem (_acces_index);
+        self.__iscroll__.scrollToElement (item, 0);
+      }
+      else {
+        var newPos = -self.getTitlePosition (_acces_index);
+        if (newPos < self.__max_scroll) newPos = self.__max_scroll;
+
+        self.__scroll_start = newPos;
+
+        if (SUPPORT_3D_TRANSFORM)
+          util.setElementTransform
+            (self._list_items, 'translate3d(0,' + newPos + 'px,0)');
+        else
+          util.setElementTransform
+            (self._list_items, 'translate(0,' + newPos + 'px)');
+      }
+      
       var letter = self.__direct_access_letters [_acces_index];
-
-      if (newPos < self.__max_scroll) newPos = self.__max_scroll;
-
-      self.__scroll_start = newPos;
-
-      if (SUPPORT_3D_TRANSFORM)
-        util.setElementTransform
-          (self._list_items, 'translate3d(0,' + newPos + 'px,0)');
-      else
-        util.setElementTransform
-          (self._list_items, 'translate(0,' + newPos + 'px)');
-
-      var dy = _acces_index * bar_dim.height / 
-        self._direct_access.childElementCount + 10;
-      
       self._direct_access_value.innerHTML = letter;
-      
-      // animate the scroll
-      if (self._scrollbar) {
-        self._scrollbar.setPosition (newPos);
-      }
-
-      if (self._isScrolling) {
-        self._isScrolling ();
-      }
     };
     
     var accessBarEnd = function (e) {
@@ -1050,10 +1043,6 @@ List.prototype = {
       vs.removePointerListener (document, core.POINTER_END, accessBarEnd);
 
       self._direct_access_value.style.opacity = 0;
-
-      if (self._endScrolling) {
-        self._endScrolling ();
-      }
     };
 
     vs.addPointerListener
@@ -1078,6 +1067,14 @@ List.prototype = {
     var item = titleItems.item (index);
     if (!item) return;
     return item.parentElement.offsetTop;
+  },
+  
+  getTitleItem : function (index)
+  {
+    var titleItems = this.view.querySelectorAll ('ul > li > div');
+    var item = titleItems.item (index);
+    if (!item) return;
+    return item.parentElement;
   }
 };
 util.extendClass (List, AbstractList);
