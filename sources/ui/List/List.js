@@ -290,7 +290,11 @@ function buildSection (list, title, index, itemsSelectable)
     if (util.isString (item)) { break; }
     
     item = data.item (index);
-    if (list.__template_obj)
+    if (list.__template_class)
+    {
+      listItem = new list.__template_class () .init ();
+    }
+    else if (list.__template_obj)
     {
       listItem = list.__template_obj.clone ();
     }
@@ -481,7 +485,11 @@ function defaultListRenderData (itemsSelectable)
   while (index < this._model.length)
   {
     item = this._model.item (index);
-    if (this.__template_obj)
+    if (this.__template_class)
+    {
+      listItem = new this.__template_class () .init ();
+    }
+    else if (this.__template_obj)
     {
       listItem = this.__template_obj.clone ();
     }
@@ -650,6 +658,7 @@ List.prototype = {
    * @type {vs.core.Object}
    */
   __template_obj: null,
+  __template_class: null,
 
  /**********************************************************************
 
@@ -682,10 +691,14 @@ List.prototype = {
   {
     if (!obj) return;
     
-    if (util.isFunction (obj))
-      this.__template_obj = new obj () .init ();
-    else if (obj.constructor) 
+    if (util.isFunction (obj)) {
+      this.__template_obj = null
+      this.__template_class = obj;
+    }
+    else if (obj.constructor) {
       this.__template_obj = obj;
+      this.__template_class = null
+    }
   },
 
   /**
@@ -939,8 +952,7 @@ List.prototype = {
       return Math.floor (dy * nb_elem / bar_dim.height);
     };
     
-    function accessBarStart (e)
-    {
+    function accessBarStart (e) {
       // do not manage event for other targets
       if (e.targetPointerList.length === 0) { return; }
       
@@ -953,7 +965,7 @@ List.prototype = {
       vs.addPointerListener (document, core.POINTER_MOVE, accessBarMove, false);
       vs.addPointerListener (document, core.POINTER_END, accessBarEnd, false);
       
-      var _acces_index = e.targetPointerList[0].currentTarget._index_;
+      var _acces_index = e.targetPointerList[0].target._index_;
       if (!util.isNumber (_acces_index)) return;
       var letter = self.__direct_access_letters [_acces_index];
      
@@ -965,15 +977,19 @@ List.prototype = {
 
       self.__scroll_start = newPos;
 
-      if (SUPPORT_3D_TRANSFORM)
+      if (SUPPORT_3D_TRANSFORM) {
         util.setElementTransform
           (self._list_items, 'translate3d(0,' + newPos + 'px,0)');
-      else
+      }
+      else {
         util.setElementTransform
           (self._list_items, 'translate(0,' + newPos + 'px)');
+      }
 
       // animate the scroll
-      if (self._scrollbar) self._scrollbar.setPosition (newPos);
+      if (self._scrollbar) {
+        self._scrollbar.setPosition (newPos);
+      }
       
       bar_dim = util.getElementDimensions (self._direct_access);
       bar_dim.height -= 10;
@@ -991,8 +1007,7 @@ List.prototype = {
     
     this.__access_bar_start = accessBarStart;
     
-    var accessBarMove = function (e)
-    {
+    var accessBarMove = function (e) {
       e.stopPropagation ();
       e.preventDefault ();
       
@@ -1021,19 +1036,24 @@ List.prototype = {
       self._direct_access_value.innerHTML = letter;
       
       // animate the scroll
-      if (self._scrollbar) self._scrollbar.setPosition (newPos);
+      if (self._scrollbar) {
+        self._scrollbar.setPosition (newPos);
+      }
 
-      if (self._isScrolling) self._isScrolling ();
+      if (self._isScrolling) {
+        self._isScrolling ();
+      }
     };
     
-    var accessBarEnd = function (e)
-    {
+    var accessBarEnd = function (e) {
       vs.removePointerListener (document, core.POINTER_MOVE, accessBarMove);
       vs.removePointerListener (document, core.POINTER_END, accessBarEnd);
 
       self._direct_access_value.style.opacity = 0;
 
-      if (self._endScrolling) self._endScrolling ();
+      if (self._endScrolling) {
+        self._endScrolling ();
+      }
     };
 
     vs.addPointerListener
