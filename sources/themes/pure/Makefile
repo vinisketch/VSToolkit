@@ -87,7 +87,7 @@ $(TARGET)/lib_debug/css/vs_ui_pure.less:
 	$(CAT) ui/CheckBox.less >> $@
 	$(CAT) ui/Picker.less >> $@
 	$(CAT) ui/ComboBox.less >> $@
-#	$(CAT) ui/PopOver/PopOver_android.css >> $@
+	$(CAT) ui/PopOver.less >> $@
 #	$(CAT) ui/ToolBar/ToolBar_android.css >> $@
 
 copy_widgets_assets:
