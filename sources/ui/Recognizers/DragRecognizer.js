@@ -42,8 +42,8 @@
  *  var recognizer = new DragRecognizer ({
  *    didDrag : function (drag_info, event) {
  *      my_view.translation = [drag_info.dx, drag_info.dy];
- *    }
- *    didDragEnd : function (sevent) {
+ *    },
+ *    didDragEnd : function (event) {
  *      // save drag translation
  *      my_view.flushTransformStack ();
  *    }
