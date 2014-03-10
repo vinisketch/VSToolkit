@@ -1015,7 +1015,6 @@ List.prototype = {
       if (self._acces_index === _acces_index) return;
       self._acces_index = _acces_index;
 
-      
       if (self.__iscroll__) {
         var item = self.getTitleItem (_acces_index);
         self.__iscroll__.scrollToElement (item, 0);
@@ -1063,10 +1062,8 @@ List.prototype = {
   
   getTitlePosition : function (index)
   {
-    var titleItems = this.view.querySelectorAll ('ul > li > div');
-    var item = titleItems.item (index);
-    if (!item) return;
-    return item.parentElement.offsetTop;
+    var item = this.getTitleItem (index);
+    return (item)?item.offsetTop:0;
   },
   
   getTitleItem : function (index)
