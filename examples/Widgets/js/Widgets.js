@@ -91,6 +91,13 @@ var Widgets = vs.core.createClass ({
     var controller = new vs.fx.SlideController (this.rightView);
     this.mainController = controller;
     controller.init ();
+    
+    controller.delegate = {
+      // for the refresh
+      controllerViewWillChange: function (from, to) {
+        vs.scheduleAction (function () {to.refresh ();}, 100);
+      }
+    };
      
     var stateId = controller.push (initButtonsPanel ());
     this.panelsIndexes.push ('Button');
