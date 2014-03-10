@@ -747,8 +747,7 @@ Task_SEQ.prototype = {
   {
     this._state = Task.STOPPED;
 
-    if (this._nextTaskToStart === 0)
-    { this._nextTaskToStart = this._nextTaskToStart - 1; }
+    this._nextTaskToStart = 0;
 
     if (this.delegate && this.delegate.taskDidStop)
     { this.delegate.taskDidStop (this); }
