@@ -1,0 +1,27 @@
+html {
+  width: 100%;
+  height: 100%;
+}
+
+.application > .vs_ui_textlabel {
+  height: auto;
+  padding: 10px;
+  background-color: #EEE;
+  border-bottom: 1px solid #999;
+}
+
+.vs_ui_list {
+  height:auto;
+}
+
+#list2 li .titleView {
+ width: auto;
+}
+
+#list2 li .deleteButton,
+#list3 li .deleteButton {
+  width: 50px;
+  left: 100px;
+  top: 3px;
+  position: absolute;
+}

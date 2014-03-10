@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html id="test" x-hag-ref="test">
+  <head>
+    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, target-densityDpi=160, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>Custom Element List</title>
+
+    <link rel="stylesheet" type="text/css" href="../../../lib_debug/css/vs_ui.css">
+    <link rel="stylesheet" type="text/css" href="../../../lib_debug/css/vs_ext.css">
+    <link rel="stylesheet" type="text/css" href="../../../lib_debug/css/vs_ui_flat.css">
+    <link rel="stylesheet" type="text/css" href="css/test.css">
+
+    <script type="text/javascript" src="../../../lib_debug/js/vs.js"></script>
+    <script type="text/javascript" src="../../../lib_debug/js/vs_webcomponent.js"></script>
+  </head>
+  
+  <body is="vs-application" layout="vertical">
+    
+    <vs-navigation-bar>
+      <vs-label magnet="5" style="width:100px;">Example of lists</vs-label>
+    </vs-navigation-bar>
+    
+    <vs-label>List with default list item:</vs-label>
+    <vs-list json:model='[{"title":"Salut1", "label":"label1"}, {"title":"Salut2","label":"label2"}]'></vs-list>
+    
+    <vs-label>List with user defined list item composed of HTML elements:</vs-label>
+    <vs-list json:model='[{"title":"Salut1"}, {"title":"Salut2"}]'>
+      <vs-template style="padding:5px">
+        <img height="30px" src="http://clinked.com/wp-content/uploads/2012/11/seo-for-small-business.jpg"></img><span style="padding:8px">${title}</span>
+      </vs-template>
+    </vs-list>
+    
+    <vs-label>List with user defined list item composed of Custom Elements:</vs-label>
+    <vs-list id="list2" json:model='[{"title":"Salut1", "label":"label1"}, {"title":"Salut2","label":"label2"}]'>
+      <vs-template properties="title:titleView#text">
+        <vs-label name="titleView"></vs-label>
+        <vs-button name="deleteButton" text="del" type="nav"></vs-button>
+        <span>${label}</span>
+      </vs-template>
+    </vs-list>
+    
+    <vs-label>List with user defined external list item:</vs-label>
+    <vs-list id="list3" json:model='[{"title":"Salut1", "label":"label1"}, {"title":"Salut2","label":"label2"}]'>
+      <vs-template href="list_item.html"></vs-template>
+    </vs-list>
+    
+  </body>
+</html>
