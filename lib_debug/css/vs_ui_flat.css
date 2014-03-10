@@ -619,19 +619,19 @@ ul > li:first-child:before {
 }
 .vs_ui_segmentedbutton > div > div.selected {
   background-color: #cdd1dc;
-  -webkit-transform: scale(1.1);
-  -moz-transform: scale(1.1);
-  -o-transform: scale(1.1);
-  -ms-transform: scale(1.1);
-  transform: scale(1.1);
+  -webkit-transform: translate3d(-5%,-5%,0) scale(1.1);
+  -moz-transform: translate3d(-5%,-5%,0) scale(1.1);
+  -o-transform: translate3d(-5%,-5%,0) scale(1.1);
+  -ms-transform: translate3d(-5%,-5%,0) scale(1.1);
+  transform: translate3d(-5%,-5%,0) scale(1.1);
   border-radius: 4px !important;
 }
 .vs_ui_segmentedbutton.bar > div > div.selected {
-  -webkit-transform: scale(1);
-  -moz-transform: scale(1);
-  -o-transform: scale(1);
-  -ms-transform: scale(1);
-  transform: scale(1);
+  -webkit-transform: translate3d(0,0,0) scale(1);
+  -moz-transform: translate3d(0,0,0) scale(1);
+  -o-transform: translate3d(0,0,0) scale(1);
+  -ms-transform: translate3d(0,0,0) scale(1);
+  transform: translate3d(0,0,0) scale(1);
 }
 .vs_ui_segmentedbutton.horizontal > div > div {
   border-left: 1px solid #fff;
@@ -1030,4 +1030,56 @@ input[type="checkbox"]:checked + label:after {
 }
 .vs_ui_combobox:active::after {
   color: #fff !important;
+}
+.vs_ui_popover.withHeader > .header {
+  height: 38px;
+}
+.vs_ui_popover.withHeader > .center {
+  top: 38px;
+}
+.vs_ui_popover.withFooter > .center {
+  bottom: 38px;
+}
+.vs_ui_popover.withFooter > .footer {
+  height: 38px;
+}
+.vs_ui_popover {
+  background-color: #E5E7ED;
+}
+.vs_ui_popover > .header {
+  background-color: #DDD;
+}
+.vs_ui_popover > .center {
+  background-color: white;
+}
+.vs_ui_popover > .footer {
+  background-color: #DDD;
+}
+.vs_ui_popover > .arrow {
+  border-width: 10px;
+  border-style: solid;
+  border-color: transparent;
+}
+.vs_ui_popover > .arrow.top {
+  width: 20px;
+  top: -20px;
+  border-color: transparent transparent #DDD transparent;
+}
+.vs_ui_popover > .arrow.bottom {
+  width: 20px;
+  bottom: -20px;
+  border-color: #DDD transparent transparent transparent;
+  left: 5px;
+}
+.vs_ui_popover > .arrow.left {
+  height: 20px;
+  left: -20px;
+  border-color: transparent #cdd1dc transparent transparent;
+  top: 5px;
+}
+.vs_ui_popover > .arrow.right {
+  height: 20px;
+  right: -20px;
+  border-color: transparent transparent transparent #DDD;
+  top: 5px;
 }

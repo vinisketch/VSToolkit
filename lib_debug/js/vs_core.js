@@ -5464,14 +5464,8 @@ Task_SEQ.prototype = {
   {
     if (this._state === Task.STARTED) { return false; }
     
-    var taskAndparam;
-    if (this._state === Task.PAUSED) {
-      taskAndparam = this._tasksAndParams [this._nextTaskToStart - 1];
-    }
-    else {
-      taskAndparam = this._tasksAndParams [this._nextTaskToStart];
-      this._nextTaskToStart++;
-    }
+    var taskAndparam = this._tasksAndParams [this._nextTaskToStart];
+    this._nextTaskToStart++;
     
     if (!taskAndparam) {
       this._nextTaskToStart = 0;
@@ -5541,8 +5535,7 @@ Task_SEQ.prototype = {
   {
     this._state = Task.STOPPED;
 
-    if (this._nextTaskToStart === 0)
-    { this._nextTaskToStart = this._nextTaskToStart - 1; }
+    this._nextTaskToStart = 0;
 
     if (this.delegate && this.delegate.taskDidStop)
     { this.delegate.taskDidStop (this); }
