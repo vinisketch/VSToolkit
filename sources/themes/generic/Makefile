@@ -111,6 +111,7 @@ $(TARGET)/lib_debug/css/vs_ui.less:
 	$(CAT) ui/Picker.less >> $@
 	$(CAT) ui/SVGView.less >> $@
 	$(CAT) ui/SegmentedButton.less >> $@
+	$(CAT) ui/Layout.less >> $@
 
 copy_widgets_font:
 	$(CP) ui/*.ttf $(TARGET)/lib_debug/css/
@@ -135,3 +136,4 @@ $(TARGET)/lib_debug/css/vs_ext.css:
 	$(CAT) ext/ui/GMap.css >> $@
 	$(CAT) ext/ui/Carousel.css >> $@
 	$(CAT) ext/ui/Accordion.css >> $@
+	$(CAT) ext/ui/CustomElement.css >> $@
