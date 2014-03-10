@@ -345,6 +345,10 @@ var Chronometer = vs.core.createClass ({
     this._state = vs.core.Task.STOPPED;
     this.__pause_time = 0;
 
+    this.__setTick (0);
+    this.propagateChange ('tick');
+    if (this.__clb) this.__clb (this._tick);
+
     if (this.delegate && this.delegate.taskDidStop)
     { this.delegate.taskDidStop (this); }
   },
