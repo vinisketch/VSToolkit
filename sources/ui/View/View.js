@@ -2356,7 +2356,8 @@ View.prototype = {
     matrix = matrix.translate (
       -this._transform_origin [0],
       -this._transform_origin [1],
-    0);
+      0
+    );
 
     // apply previous transformations and return the matrix
     if (this._transforms_stack) return matrix.multiply (this._transforms_stack);
