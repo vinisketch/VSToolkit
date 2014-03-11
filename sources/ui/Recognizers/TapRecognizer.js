@@ -74,6 +74,7 @@ TapRecognizer.prototype = {
 
   __is_touched: false,
   __unselect_time_out: 0,
+  __unselect_clb: null,
   __did_tap_time_out: 0,
   __tap_mode: 0,
 
@@ -111,14 +112,15 @@ TapRecognizer.prototype = {
     if (this.__tap_mode === 0) {
       this.__tap_mode = 1;
     }
-    
-    this.__tap_elem = e.targetPointerList[0].currentTarget;
 
     if (this.__unselect_time_out) {
       clearTimeout (this.__unselect_time_out);
       this.__unselect_time_out = 0;
+      if (this.__unselect_clb) this.__unselect_clb ();
     }
-    
+
+    this.__tap_elem = e.targetPointerList[0].currentTarget;
+
     try {
       if (this.delegate && this.delegate.didTouch)
         this.delegate.didTouch (this.__tap_elem._comp_, this.__tap_elem, e);
@@ -193,7 +195,7 @@ TapRecognizer.prototype = {
     this.removePointerListener (document, core.POINTER_MOVE, this.obj);
 
     if (this.delegate && this.delegate.didUntouch) {
-      this.__unselect_time_out = setTimeout (function () {
+      this.__unselect_clb = function () {
         try {
           self.delegate.didUntouch (comp, target, e);
         } catch (exp) {
@@ -201,7 +203,9 @@ TapRecognizer.prototype = {
           console.log (exp);
         }
         self.__unselect_time_out = 0;
-      }, View.UNSELECT_DELAY);        
+        delete (self.__unselect_clb);
+      }
+      this.__unselect_time_out = setTimeout (this.__unselect_clb, View.UNSELECT_DELAY);        
     }
     
     if (this.delegate && this.delegate.didTap) {
