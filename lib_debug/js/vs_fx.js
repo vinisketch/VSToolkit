@@ -2592,19 +2592,6 @@ Controller.prototype = {
     {
       state_to.comp.viewWillAppear ();
     }
-    if (this.owner._delegate && this.owner._delegate.controllerViewWillChange)
-    {
-      if (state_from)
-      {
-        this.owner._delegate.controllerViewWillChange
-          (state_from.comp, state_to.comp, this.owner);
-      }
-      else
-      {
-        this.owner._delegate.controllerViewWillChange
-          (null, state_to.comp, this.owner);
-      }
-    }
     
     if (transition)
     {
@@ -2618,6 +2605,20 @@ Controller.prototype = {
       state_to.comp.show ();
     }
     
+    if (this.owner._delegate && this.owner._delegate.controllerViewWillChange)
+    {
+      if (state_from)
+      {
+        this.owner._delegate.controllerViewWillChange
+          (state_from.comp, state_to.comp, this.owner);
+      }
+      else
+      {
+        this.owner._delegate.controllerViewWillChange
+          (null, state_to.comp, this.owner);
+      }
+    }
+
     if (output && this._output_action [output])
     {
       var clb = this._output_action [output];

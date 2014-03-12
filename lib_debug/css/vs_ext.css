@@ -181,4 +181,14 @@
   position: static;
   width: 100%;
   height: 100%;
+}vs-button, vs-switch, vs-slider, vs-application, vs-canvas, vs-checkbox,
+vs-combobox, vs-image, vs-input, vs-list, vs-navigation-bar, vs-picker,
+vs-popover, vs-progress-bar, vs-radiobutton, vs-scroll-image, vs-scroll-view,
+vs-segmented-button, vs-split-view, vs-svg, vs-textarea,
+vs-toolbar, vs-view {
+  display: block;
+}
+
+vs-label {
+  display: inline;
 }

@@ -15429,6 +15429,7 @@ TapRecognizer.prototype = {
 
   __is_touched: false,
   __unselect_time_out: 0,
+  __unselect_clb: null,
   __did_tap_time_out: 0,
   __tap_mode: 0,
 
@@ -15466,14 +15467,15 @@ TapRecognizer.prototype = {
     if (this.__tap_mode === 0) {
       this.__tap_mode = 1;
     }
-    
-    this.__tap_elem = e.targetPointerList[0].currentTarget;
 
     if (this.__unselect_time_out) {
       clearTimeout (this.__unselect_time_out);
       this.__unselect_time_out = 0;
+      if (this.__unselect_clb) this.__unselect_clb ();
     }
-    
+
+    this.__tap_elem = e.targetPointerList[0].currentTarget;
+
     try {
       if (this.delegate && this.delegate.didTouch)
         this.delegate.didTouch (this.__tap_elem._comp_, this.__tap_elem, e);
@@ -15548,7 +15550,7 @@ TapRecognizer.prototype = {
     this.removePointerListener (document, core.POINTER_MOVE, this.obj);
 
     if (this.delegate && this.delegate.didUntouch) {
-      this.__unselect_time_out = setTimeout (function () {
+      this.__unselect_clb = function () {
         try {
           self.delegate.didUntouch (comp, target, e);
         } catch (exp) {
@@ -15556,7 +15558,9 @@ TapRecognizer.prototype = {
           console.log (exp);
         }
         self.__unselect_time_out = 0;
-      }, View.UNSELECT_DELAY);        
+        delete (self.__unselect_clb);
+      }
+      this.__unselect_time_out = setTimeout (this.__unselect_clb, View.UNSELECT_DELAY);        
     }
     
     if (this.delegate && this.delegate.didTap) {
@@ -26737,22 +26741,21 @@ ui.NavigationBar = NavigationBar;
  *
  *  @example
  *  // Simple example: (the button will have the platform skin)
- *  var config = {}
- *  var config.id = 'bar';
+ *  var bar = vs.ui.ToolBar ({id: "bar"}).init ();
  *
- *  var bar = vs.ui.ToolBar (config);
- *  bar.init ();
- *  bar.addButton ('attach', vs.ui.ToolBar.BUTTON_ATTACH);
- *
- *  bar.addButton ('right', 
+ *  bar.addButton (
+ *    "right", 
  *    vs.ui.ToolBar.BUTTON_ARROW_RIGHT,
- *    vs.ui.ToolBar.RIGHT_POSITION);
+ *    "Right panel");
  *
- *  bar.addButton ('left',
+ *  bar.addButton ("attach", vs.ui.ToolBar.BUTTON_ATTACH);
+ *
+ *  bar.addButton (
+ *    "left",
  *    vs.ui.ToolBar.BUTTON_ARROW_LEFT,
- *    vs.ui.ToolBar.LEFT_POSITION);
+ *    "Left panel");
  *
- *  bar.bind ('itemselect', this);
+ *  bar.bind ("itemselect", this);
  *
  *  @author David Thevenin
  *
@@ -26793,19 +26796,6 @@ ToolBar.BLACK_TRANSLUCIDE_STYLE = 'black_translucide_style';
  */
 ToolBar.BLUE_STYLE = 'blue_style';
 
-/**
- * Left Position for a button
- * @name vs.ui.ToolBar.LEFT_POSITION
- */
-ToolBar.LEFT_POSITION = 'left';
-
-/**
- * Right Position for a button
- * @name vs.ui.ToolBar.RIGHT_POSITION
- */
-ToolBar.RIGHT_POSITION = 'right';
-
-
 ToolBar.prototype = {
   
 /********************************************************************
@@ -26834,7 +26824,7 @@ ToolBar.prototype = {
   _style: ToolBar.DEFAULT_STYLE,
 
   /**
-   * The configuration of the tab bar (list of button, type and position)
+   * The configuration of the tab bar (list of button, type)
    * @private
    * @type {Array.<Array>}
    */
@@ -26847,6 +26837,21 @@ ToolBar.prototype = {
    */
   _items: null,
   
+  /**
+   *
+   * @protected
+   * @type {number}
+   */
+  _is_toggle_buttons: true,
+
+  /**
+   *
+   * @private
+   * @type {View}
+   */
+  __select_item: null,
+  __active_item: null,
+
 /********************************************************************
                 general initialisation declarations
 ********************************************************************/
@@ -26857,10 +26862,16 @@ ToolBar.prototype = {
    */
   destructor: function ()
   {
+    util.free (this._show_animation);
+    util.free (this._hide_animation);
+
+    this.removePointerRecognizer (this.recognizer);
+    util.free (this.recognizer);
+
     View.prototype.destructor.call (this);
   },
 
-  /**
+    /**
    * @protected
    * @function
    */
@@ -26871,25 +26882,44 @@ ToolBar.prototype = {
     this._hide_animation = new vs.fx.Animation (['translateY', '44px']);
     this._show_animation = new vs.fx.Animation (['translateY', '0px']);
 
-    util.setElementStyle (this.view, {
-      left: '0px', top: 'auto', bottom: '0px', 
-      width: '100%', height: '44px'
-    });
-    
+//     util.setElementStyle (this.view, {
+//       left: '0px', top: 'auto', bottom: '0px', 
+//       width: '100%', height: '44px'
+//     });
+//     
     this.style = this._style;
+
+    this.recognizer = new TapRecognizer (this);
+    this.addPointerRecognizer (this.recognizer);
   },
   
 /********************************************************************
                   events management
 ********************************************************************/
 
-  /**
-   * @protected
-   * @function
-   */
-  notify : function (event)
-  {
-    this.propagate ('itemselect', event.data);
+  didTouch : function (comp, elem, e) {
+    var item = e.target._comp_;
+    if (!item) return;
+    
+    if (item === this.__select_item) return;
+    
+    this.__active_item = item;
+    this.__active_item.addClassName ("active");
+  },
+  
+  didUntouch : function (comp, elem, e) {
+    if (!this.__active_item) return;
+    
+    this.__active_item.removeClassName ("active");
+    this.__active_item = null;
+  },
+  
+  didTap : function (nb_tap, comp, elem, e) {
+    var item = e.target._comp_;
+    if (!item) return;
+    
+    this.selectedId = item.id;
+    this.outPropertyChange ();
   },
   
 /********************************************************************
@@ -26905,22 +26935,19 @@ ToolBar.prototype = {
    * @param {string} id An unique identifier for the button. This id will be
    *                 send as event data if the button is pressed.
    * @param {string} name The identifier of the button to add.
-   * @param {string} position The position of the button. (should be
-   *    vs.ui.ToolBar.LEFT_POSITION or vs.ui.ToolBar.RIGHT_POSITION)
+   * @param {string} label An optional text to put under the button
    * @return {vs.ui.ToolBar.Button}
    */
-  addButton : function (id, name, position)
+  addButton : function (id, name, label)
   {
     if (this._items [id]) { return; }
     
-    var config = {id: id};
-    var button = new ToolBar.Button (config);
+    var button = new ToolBar.Button ({id: id});
     button.init ();
-    if (position) { button.position = position; }
+    if (label) { button.label = label; }
     button.name = name;
     
     this.add (button, 'children')
-    button.bind ('select', this);
     
     this._items [id] = button;
     return button;
@@ -26939,7 +26966,6 @@ ToolBar.prototype = {
     if (!item || this._items [item.id]) { return; }
     
     this.add (item, 'children')
-    item.bind ('select', this);
     
     this._items [item.id] = item;
   },
@@ -26958,7 +26984,6 @@ ToolBar.prototype = {
     if (!item) { return; }
     
     try { this.remove (item); } catch (e) {if (e.stack) console.log (e.stack);}
-    item.unbind ('select', this);
     
     delete (this._items [id]);
   }
@@ -27006,9 +27031,7 @@ util.defineClassProperties (ToolBar, {
      *   <li>The button id (a String)
      *   <li>The button type (a String).
      *       <br/>Ex: vs.ui.ToolBar.BUTTON_BLOG, vs.ui.ToolBar.BUTTON_ARROW_RIGHT
-     *   <li> A optional position.
-     *       <br/>Ex: vs.ui.ToolBar.LEFT_POSITION or vs.ui.ToolBar.RIGHT_POSITION
-     *     <br/> The default value is vs.ui.ToolBar.LEFT_POSITION.
+     *   <li> A optional label.
      * </ol>   
      * @name vs.ui.ToolBar#configuration 
      *
@@ -27036,176 +27059,67 @@ util.defineClassProperties (ToolBar, {
       }    
     }
   },
-  'position': {
-    /**
-     * @ignore
-     * @private
-     */
-    set : function (v) {},
-    
-    /**
-     * @ignore
-     * @private
-     */
-    get : function () 
+  'isToggleButtons': {
+    /** 
+     * Getter|Setter to configure the buttons as toggle buttons or not.
+     * By default ToolBar are toggle buttons
+     * @name vs.ui.ToolBar#isToggleButtons 
+     * @type {boolean}
+     */ 
+    set : function (v)
     {
-      return [this.view.offsetLeft, this.view.offsetTop];
-    }
-  },
-  'size': {
-    /**
-     * @ignore
-     * @private
-     */
-    set : function (v) {},
-    /**
-     * @ignore
-     * @private
-     */
-    get : function () 
-    {
-      return [this.view.offsetWidth, this.view.offsetHeight];
-    }
-  }
-});
-
-/**
- *  The vs.ui.ToolBar.Item  abstract class
- *
- *  @extends vs.ui.View
- *  @class
- *  The vs.ui.ToolBar.Item class is an abstract class for implementing controls
- *  for the vs.ui.ToolBar.
- *  <p>
- *  @see vs.ui.ToolBar.Button
- *  @see vs.ui.ToolBar.Text
- *
- *  @author David Thevenin
- *
- * @name vs.ui.ToolBar.Item 
- *
- *  @constructor
- *   Creates a new vs.ui.ToolBar.
- *
- * @name vs.ui.ToolBar.Item
- *
- * @param {Object} config the configuration structure [mandatory]
- */
-ToolBar.Item = function (config)
-{
-  this.parent = View;
-  this.parent (config);
-  this.constructor = ToolBar.Item;
-}
-
-ToolBar.Item.prototype = {
+      if (v) this._is_toggle_buttons = true;
+      else this._is_toggle_buttons = false;
+    },
   
-  /*****************************************************************
-   *               private/protected members
-   ****************************************************************/
-   
-  /**
-   *
-   * @private
-   * @type {String}
-   */
-  _position: ToolBar.LEFT_POSITION,
-  
-  /*****************************************************************
-   *               init methods
-   ****************************************************************/
-   
-  /**
-   * @protected
-   * @function
-   */
-  initComponent : function ()
-  {
-    View.prototype.initComponent.call (this);
-
-    var glow = document.createElement ('div');
-    this.view.appendChild (glow);
-
-    this.addClassName (this._position);
-    this.view.addEventListener (core.POINTER_START, this, true);
-  },
-
-  /*****************************************************************
-   *               events methods
-   ****************************************************************/
-   
-  /**
-   * @protected
-   * @function
-   */
-  handleEvent : function (event)
-  {
-    var self = event.currentTarget;
-    
-    switch (event.type)
+    /** 
+     * @ignore
+     * @return {string}
+     */ 
+    get : function ()
     {
-      case core.POINTER_START:
-        util.addClassName (self, 'active');
-        vs.addPointerListener (event.currentTarget, core.POINTER_END, this, true);
-        vs.addPointerListener (event.currentTarget, core.POINTER_MOVE, this, true);
-      break;
-
-      case core.POINTER_END:
-        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
-        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);
-                
-        window.setTimeout (function () { util.removeClassName (self, 'active'); }, 200);
-        this.propagate ('select', this.id);
-      break;
-
-      case core.POINTER_MOVE:
-        event.preventDefault ();
-        window.setTimeout (function () { util.removeClassName (self, 'active'); }, 200);
-        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
-        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);
-      break;
+      return this._is_toggle_buttons;
     }
-  }
-};
-util.extendClass (ToolBar.Item, View);
-
-/********************************************************************
-                  Define class properties
-********************************************************************/
-
-util.defineClassProperty (ToolBar.Item, "position", {
-  /** 
-   * Set the position of the button (LEFT or RIGHT)
-   *
-   * @name vs.ui.ToolBar.Item#position
-   *
-   * @type String
-   */ 
-  set : function (v)
-  {
-    if (v !== ToolBar.LEFT_POSITION && v !== ToolBar.RIGHT_POSITION)
-    { return; }
-    
-    if (this._position) { this.removeClassName (this._position); }
-
-    this._position = v;
-    this.addClassName (this._position);
   },
+  'selectedId': {
+    /** 
+     * Getter|Setter for select one of button
+     * @name vs.ui.ToolBar#selectedId 
+     * @type number
+     */ 
+    set : function (v)
+    {
+      var item = this._items [v];
+      if (!item) return;
+      
+      if (this.__select_item === item) return;
 
-  /** 
-   * @ignore
-   * @return {string}
-   */ 
-  get : function ()
-  {
-    return this._position;
+      if (this.__select_item) {
+        this.__select_item.removeClassName ("select");
+      }
+      this.__select_item = item;
+      item.addClassName ("select");
+     
+      this.propagate ("itemselect", v);
+      
+      this._selected_id = v;
+    },
+  
+    /** 
+     * @ignore
+     * @return {number}
+     */ 
+    get : function ()
+    {
+      return this._selected_id;
+    }
   }
 });
 
 /**
  *  The vs.ui.ToolBar.Text class
  *
- *  @extends vs.ui.ToolBar.Item
+ *  @extends vs.ui.View
  *  @class
  *  The vs.ui.ToolBar.Text class implements a text control for the vs.ui.ToolBar.
  *  It provides the ability for the user to customize the tab bar with the
@@ -27222,7 +27136,6 @@ util.defineClassProperty (ToolBar.Item, "position", {
  *  var label = vs.ui.ToolBar.Text ({id:"info"});
  *  label.init ();
  *  label.text = "Information";
- *  label.position = vs.ui.ToolBar.LEFT_POSITION;
  *  bar.addItem (label);
  *
  *
@@ -27239,7 +27152,7 @@ util.defineClassProperty (ToolBar.Item, "position", {
 */
 ToolBar.Text = function (config)
 {
-  this.parent = ToolBar.Item;
+  this.parent = View;
   this.parent (config);
   this.constructor = ToolBar.Text;
 }
@@ -27277,23 +27190,14 @@ ToolBar.Text.prototype = {
       this.__config__.node.className = 'vs_ui_toolbar_text';
     }
 
-    ToolBar.Item.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
 
-    var glow, div, text_view;
-    
     this._text_view = document.createElement ('div');
     this._text_view.className = "text_view";
     this.view.appendChild (this._text_view);
-
-    glow = document.createElement ('div');
-    glow.className = "glow_view";
-    this.view.appendChild (glow);
-    
-    div = document.createElement ('div');
-    glow.appendChild (div);
   }
 };
-util.extendClass (ToolBar.Text, ToolBar.Item);
+util.extendClass (ToolBar.Text, View);
 
 /********************************************************************
                   Define class properties
@@ -27336,7 +27240,7 @@ util.defineClassProperty (ToolBar.Text, "text", {
 /**
  *  The vs.ui.ToolBar.Button class
  *
- *  @extends vs.ui.ToolBar.Item
+ *  @extends vs.ui.View
  *  @class
  *  The vs.ui.ToolBar.Button class implements a button control for the vs.ui.ToolBar.
  *  It provides the ability for the user to customize the tab bar with the
@@ -27353,7 +27257,6 @@ util.defineClassProperty (ToolBar.Text, "text", {
  *  var button = vs.ui.ToolBar.Button ({id:"back"});
  *  button.init ();
  *  button.setImage ("resources/images/back_icon.png);
- *  button.position = vs.ui.ToolBar.LEFT_POSITION;
  *  bar.addItem (button);
  *
  *
@@ -27370,7 +27273,7 @@ util.defineClassProperty (ToolBar.Text, "text", {
 */
 ToolBar.Button = function (config)
 {
-  this.parent = ToolBar.Item;
+  this.parent = View;
   this.parent (config);
   this.constructor = ToolBar.Button;
 }
@@ -27383,10 +27286,17 @@ ToolBar.Button.prototype = {
 
   /**
    *
-   * @private
+   * @protected
    * @type {String}
    */
   _name: "",
+  
+  /**
+   *
+   * @protected
+   * @type {String}
+   */
+  _label: "",
   
   /*****************************************************************
    *               General methods
@@ -27409,9 +27319,7 @@ ToolBar.Button.prototype = {
       this.__config__.node.className = 'vs_ui_toolbar_button';
     }
 
-    ToolBar.Item.prototype.initComponent.call (this);
-  
-    this.size = [30, 30];
+    View.prototype.initComponent.call (this);
   },
   
   /**
@@ -27427,37 +27335,70 @@ ToolBar.Button.prototype = {
     this.view.style.backgroundImage = 'url(' + path + ')';
   }
 };
-util.extendClass (ToolBar.Button, ToolBar.Item);
+util.extendClass (ToolBar.Button, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperty (ToolBar.Button, "name", {
-  /** 
-   * The name of the button from the list (vs.ui.ToolBar.BUTTON_ADD,...)
-   * If you want use you own button with your own image, you can set it
-   * using "setImage" method.
-   *
-   * @name vs.ui.ToolBar.Button#name 
-   *
-   * @type String
-   */ 
-  set : function (v)
-  {
-    if (!util.isString (v)) { return; }
+util.defineClassProperties (ToolBar.Button, {
+  "name": {
+    /** 
+     * The name of the button from the list (vs.ui.ToolBar.BUTTON_ADD,...)
+     * If you want use you own button with your own image, you can set it
+     * using "setImage" method.
+     *
+     * @name vs.ui.ToolBar.Button#name 
+     *
+     * @type String
+     */ 
+    set : function (v)
+    {
+      if (!util.isString (v)) { return; }
 
-    this._name = v;
-    this.addClassName (this._name);
+      this._name = v;
+      this.addClassName (this._name);
+    },
+
+    /** 
+     * @ignore
+     * @return {string}
+     */ 
+    get : function ()
+    {
+      return this._name;
+    }
   },
 
-  /** 
-   * @ignore
-   * @return {string}
-   */ 
-  get : function ()
-  {
-    return this._name;
+  "label": {
+    /** 
+     * @name vs.ui.ToolBar.Button#label 
+     *
+     * @type String
+     */ 
+    set : function (v)
+    {
+      if (!util.isString (v)) { return; }
+
+      this._label = v;
+      
+      util.setElementInnerText (this.view, v);
+      if (v) {
+        this.setStyle ("background-position", "center 0px");
+      }
+      else {
+        this.setStyle ("background-position", "center");
+      }
+    },
+
+    /** 
+     * @ignore
+     * @return {string}
+     */ 
+    get : function ()
+    {
+      return this._label;
+    }
   }
 });
 
@@ -32938,7 +32879,9 @@ NavigationBar.prototype.html_template = "\
 ";
 
 ToolBar.prototype.html_template = "\
-<div class='vs_ui_toolbar black_ios_style' x-hag-hole='children'></div>\
+<div class='vs_ui_toolbar'>\
+  <div x-hag-hole='children'></div>\
+</div>\
 ";
 
 Canvas.prototype.html_template = "\
@@ -35635,19 +35578,6 @@ Controller.prototype = {
     {
       state_to.comp.viewWillAppear ();
     }
-    if (this.owner._delegate && this.owner._delegate.controllerViewWillChange)
-    {
-      if (state_from)
-      {
-        this.owner._delegate.controllerViewWillChange
-          (state_from.comp, state_to.comp, this.owner);
-      }
-      else
-      {
-        this.owner._delegate.controllerViewWillChange
-          (null, state_to.comp, this.owner);
-      }
-    }
     
     if (transition)
     {
@@ -35661,6 +35591,20 @@ Controller.prototype = {
       state_to.comp.show ();
     }
     
+    if (this.owner._delegate && this.owner._delegate.controllerViewWillChange)
+    {
+      if (state_from)
+      {
+        this.owner._delegate.controllerViewWillChange
+          (state_from.comp, state_to.comp, this.owner);
+      }
+      else
+      {
+        this.owner._delegate.controllerViewWillChange
+          (null, state_to.comp, this.owner);
+      }
+    }
+
     if (output && this._output_action [output])
     {
       var clb = this._output_action [output];

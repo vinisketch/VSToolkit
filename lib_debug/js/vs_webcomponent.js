@@ -1000,13 +1000,24 @@ function declare_extern_component () {
   
   comp_proto.attachedCallback = function () {
   
-    var self = this, href = this.getAttribute ('href');
+    var
+      self = this,
+      href = this.getAttribute ('href'),
+      id = this.getAttribute ('id');
     
     get_extern_component (href, function (data) {
       if (!data) return;
       
-      var parentNode = self.parentNode;
-      parentNode.insertBefore (document.importNode (data, true), self);
+      var
+        parentNode = self.parentNode,
+        importNode = document.importNode (data, true);
+        
+      if (id) {
+        importNode.setAttribute ('id', id);
+      }
+      console.log (importNode);
+      
+      parentNode.insertBefore (importNode, self);
       parentNode.removeChild (self);
     });
   };
@@ -1133,7 +1144,7 @@ function LIST_TEMPLATE_CONTENT (node, config) {
   
   while (item) {
   
-    if (item.nodeName == "VS-TEMPLATE-ITEM") {
+    if (item.nodeName == "VS-TEMPLATE") {
     
       var href = item.getAttribute ("href");
       if (href) {
@@ -1194,7 +1205,10 @@ function LIST_ATTACHED_CALLBACK () {
           this.nodeName, name);
         console.log (this);
       }
-      else parentComp [name] = this._comp_;
+      else {
+        parentComp [name] = this._comp_;
+        this.classList.add (name);
+      }
     }
   }
   
@@ -1448,7 +1462,15 @@ function declareComponent (className, comp_name, manage_content,
     for (var i = 0; i < children.length; i++) {
       this.appendChild (children.item (i));
     }
-    _comp_ = new _class (config).init ();
+    _comp_ = new _class (config);
+
+    var properties_str = this.getAttribute ("properties");
+    if (properties_str) {
+      var comp_properties = parsePropertiesDeclaration (properties_str);
+      _setCompProperties (_comp_, comp_properties);
+    }
+    
+    _comp_.init ();
     
     buildBinding (this, _comp_);
   };
@@ -1460,9 +1482,9 @@ function declareComponent (className, comp_name, manage_content,
   
     if (!this._comp_) return;
     
- //   console.log ("attachedCallback");
-    
-    var parentComp = getParentComp (this), name = this.getAttribute ("name");
+    var
+      parentComp = getParentComp (this),
+      name = this.getAttribute ("name");
     
     if (parentComp) {
       parentComp.add (this._comp_, this.getAttribute ("peg"));
@@ -1474,7 +1496,10 @@ function declareComponent (className, comp_name, manage_content,
             this.nodeName, name);
           console.log (this);
         }
-        else parentComp [name] = this._comp_;
+        else {
+          parentComp [name] = this._comp_;
+          this.classList.add (name);
+        }
       }
     }
     
