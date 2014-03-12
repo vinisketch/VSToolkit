@@ -560,8 +560,6 @@ hr:last-child {
 	
 	<li><a href="../symbols/vs.ui.ToolBar.Button.html">vs.ui.ToolBar.Button</a></li>
 	
-	<li><a href="../symbols/vs.ui.ToolBar.Item.html">vs.ui.ToolBar.Item</a></li>
-	
 	<li><a href="../symbols/vs.ui.ToolBar.Text.html">vs.ui.ToolBar.Text</a></li>
 	
 	<li><a href="../symbols/vs.ui.View.html">vs.ui.View</a></li>
@@ -586,7 +584,7 @@ hr:last-child {
 			<p class="description">
 				
 				<b>Extends</b>
-					<a href="../symbols/vs.ui.ToolBar.Item.html">vs.ui.ToolBar.Item</a>.<br /><br />
+					<a href="../symbols/vs.ui.View.html">vs.ui.View</a>.<br /><br />
 				
 			
 				The vs.ui.ToolBar.Button class implements a button control for the vs.ui.ToolBar.
@@ -637,6 +635,16 @@ hr:last-child {
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
+								<b><a href="../symbols/vs.ui.ToolBar.Button.html#label">label</a></b>
+								</div>
+								<div class="description"></div>
+							</td>
+						</tr>
+					
+						<tr>
+							<td class="attributes">&nbsp;</td>
+							<td class="nameDescription">
+								<div class="fixedFont">
 								<b><a href="../symbols/vs.ui.ToolBar.Button.html#name">name</a></b>
 								</div>
 								<div class="description">The name of the button from the list (vs.ui.ToolBar.BUTTON_ADD,.</div>
@@ -649,7 +657,7 @@ hr:last-child {
 				
 				
 				<dl class="inheritsList">
-				<dt>Fields borrowed from class <a href="../symbols/vs.ui.ToolBar.Item.html">vs.ui.ToolBar.Item</a>: </dt><dd><a href="../symbols/vs.ui.ToolBar.Item.html#position">position</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#autosizing">autosizing</a>, <a href="../symbols/vs.ui.View.html#bubbling">bubbling</a>, <a href="../symbols/vs.ui.View.html#enable">enable</a>, <a href="../symbols/vs.ui.View.html#hideAnimation">hideAnimation</a>, <a href="../symbols/vs.ui.View.html#innerHTML">innerHTML</a>, <a href="../symbols/vs.ui.View.html#layout">layout</a>, <a href="../symbols/vs.ui.View.html#magnet">magnet</a>, <a href="../symbols/vs.ui.View.html#maxScale">maxScale</a>, <a href="../symbols/vs.ui.View.html#minScale">minScale</a>, <a href="../symbols/vs.ui.View.html#opacity">opacity</a>, <a href="../symbols/vs.ui.View.html#rotation">rotation</a>, <a href="../symbols/vs.ui.View.html#scaling">scaling</a>, <a href="../symbols/vs.ui.View.html#showAnimmation">showAnimmation</a>, <a href="../symbols/vs.ui.View.html#size">size</a>, <a href="../symbols/vs.ui.View.html#transformOrigin">transformOrigin</a>, <a href="../symbols/vs.ui.View.html#translation">translation</a>, <a href="../symbols/vs.ui.View.html#visible">visible</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#defineProperty">defineProperty</a>, <a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
+				<dt>Fields borrowed from class <a href="../symbols/vs.ui.View.html">vs.ui.View</a>: </dt><dd><a href="../symbols/vs.ui.View.html#autosizing">autosizing</a>, <a href="../symbols/vs.ui.View.html#bubbling">bubbling</a>, <a href="../symbols/vs.ui.View.html#enable">enable</a>, <a href="../symbols/vs.ui.View.html#hideAnimation">hideAnimation</a>, <a href="../symbols/vs.ui.View.html#innerHTML">innerHTML</a>, <a href="../symbols/vs.ui.View.html#layout">layout</a>, <a href="../symbols/vs.ui.View.html#magnet">magnet</a>, <a href="../symbols/vs.ui.View.html#maxScale">maxScale</a>, <a href="../symbols/vs.ui.View.html#minScale">minScale</a>, <a href="../symbols/vs.ui.View.html#opacity">opacity</a>, <a href="../symbols/vs.ui.View.html#position">position</a>, <a href="../symbols/vs.ui.View.html#rotation">rotation</a>, <a href="../symbols/vs.ui.View.html#scaling">scaling</a>, <a href="../symbols/vs.ui.View.html#showAnimmation">showAnimmation</a>, <a href="../symbols/vs.ui.View.html#size">size</a>, <a href="../symbols/vs.ui.View.html#transformOrigin">transformOrigin</a>, <a href="../symbols/vs.ui.View.html#translation">translation</a>, <a href="../symbols/vs.ui.View.html#visible">visible</a></dd><dt>Fields borrowed from class <a href="../symbols/vs.core.Object.html">vs.core.Object</a>: </dt><dd><a href="../symbols/vs.core.Object.html#defineProperty">defineProperty</a>, <a href="../symbols/vs.core.Object.html#getOwnPropertyDescriptor">getOwnPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#getPropertyDescriptor">getPropertyDescriptor</a>, <a href="../symbols/vs.core.Object.html#id">id</a>, <a href="../symbols/vs.core.Object.html#propagateChange">propagateChange</a></dd>
 				</dl>
 				
 			
@@ -718,7 +726,6 @@ hr:last-child {
  var button = vs.ui.ToolBar.Button ({id:"back"});
  button.init ();
  button.setImage ("resources/images/back_icon.png);
- button.position = vs.ui.ToolBar.LEFT_POSITION;
  bar.addItem (button);
 
 
@@ -754,6 +761,27 @@ hr:last-child {
 				<div class="sectionTitle">
 					Field Detail
 				</div>
+				
+					<a name="label"> </a>
+					<div class="fixedFont">
+					
+					<span class="light">{String}</span>
+					<b>label</b>
+					
+					</div>
+					<div class="description">
+						
+						
+					</div>
+					
+					
+
+						
+						
+						
+						
+
+					<hr />
 				
 					<a name="name"> </a>
 					<div class="fixedFont">

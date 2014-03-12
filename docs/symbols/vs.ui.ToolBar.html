@@ -560,8 +560,6 @@ hr:last-child {
 	
 	<li><a href="../symbols/vs.ui.ToolBar.Button.html">vs.ui.ToolBar.Button</a></li>
 	
-	<li><a href="../symbols/vs.ui.ToolBar.Item.html">vs.ui.ToolBar.Item</a></li>
-	
 	<li><a href="../symbols/vs.ui.ToolBar.Text.html">vs.ui.ToolBar.Text</a></li>
 	
 	<li><a href="../symbols/vs.ui.View.html">vs.ui.View</a></li>
@@ -1900,22 +1898,22 @@ A configuration is an array of button specification.</div>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.LEFT_POSITION">LEFT_POSITION</a></b>
+								<b><a href="../symbols/vs.ui.ToolBar.html#isToggleButtons">isToggleButtons</a></b>
 								</div>
-								<div class="description">Left Position for a button</div>
+								<div class="description">Getter|Setter to configure the buttons as toggle buttons or not.</div>
 							</td>
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
+							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
-								vs.ui.ToolBar.<b><a href="../symbols/vs.ui.ToolBar.html#.RIGHT_POSITION">RIGHT_POSITION</a></b>
+								<b><a href="../symbols/vs.ui.ToolBar.html#selectedId">selectedId</a></b>
 								</div>
-								<div class="description">Right Position for a button</div>
+								<div class="description">Getter|Setter for select one of button</div>
 							</td>
 						</tr>
 					
@@ -2337,7 +2335,7 @@ A configuration is an array of button specification.</div>
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.ToolBar.html#addButton">addButton</a></b>(id, name, position)
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.ToolBar.html#addButton">addButton</a></b>(id, name, label)
 								</div>
 								<div class="description">Add a button to the ToolBar</div>
 							</td>
@@ -2393,22 +2391,21 @@ A configuration is an array of button specification.</div>
 				
 				
 				<pre class="code"> // Simple example: (the button will have the platform skin)
- var config = {}
- var config.id = 'bar';
+ var bar = vs.ui.ToolBar ({id: "bar"}).init ();
 
- var bar = vs.ui.ToolBar (config);
- bar.init ();
- bar.addButton ('attach', vs.ui.ToolBar.BUTTON_ATTACH);
-
- bar.addButton ('right', 
+ bar.addButton (
+   "right", 
    vs.ui.ToolBar.BUTTON_ARROW_RIGHT,
-   vs.ui.ToolBar.RIGHT_POSITION);
+   "Right panel");
 
- bar.addButton ('left',
+ bar.addButton ("attach", vs.ui.ToolBar.BUTTON_ATTACH);
+
+ bar.addButton (
+   "left",
    vs.ui.ToolBar.BUTTON_ARROW_LEFT,
-   vs.ui.ToolBar.LEFT_POSITION);
+   "Left panel");
 
- bar.bind ('itemselect', this);</pre>
+ bar.bind ("itemselect", this);</pre>
 				
 				
 				
@@ -5061,9 +5058,7 @@ Q button specification is a array of 2 or 3 values:
   <li>The button id (a String)
   <li>The button type (a String).
       <br/>Ex: vs.ui.ToolBar.BUTTON_BLOG, vs.ui.ToolBar.BUTTON_ARROW_RIGHT
-  <li> A optional position.
-      <br/>Ex: vs.ui.ToolBar.LEFT_POSITION or vs.ui.ToolBar.RIGHT_POSITION
-    <br/> The default value is vs.ui.ToolBar.LEFT_POSITION.
+  <li> A optional label.
 </ol>
 						
 					</div>
@@ -5098,15 +5093,16 @@ Q button specification is a array of 2 or 3 values:
 
 					<hr />
 				
-					<a name=".LEFT_POSITION"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="isToggleButtons"> </a>
+					<div class="fixedFont">
 					
 					
-					<span class="light">vs.ui.ToolBar.</span><b>LEFT_POSITION</b>
+					<b>isToggleButtons</b>
 					
 					</div>
 					<div class="description">
-						Left Position for a button
+						Getter|Setter to configure the buttons as toggle buttons or not.
+By default ToolBar are toggle buttons
 						
 					</div>
 					
@@ -5119,15 +5115,15 @@ Q button specification is a array of 2 or 3 values:
 
 					<hr />
 				
-					<a name=".RIGHT_POSITION"> </a>
-					<div class="fixedFont">&lt;static&gt; 
+					<a name="selectedId"> </a>
+					<div class="fixedFont">
 					
-					
-					<span class="light">vs.ui.ToolBar.</span><b>RIGHT_POSITION</b>
+					<span class="light">{number}</span>
+					<b>selectedId</b>
 					
 					</div>
 					<div class="description">
-						Right Position for a button
+						Getter|Setter for select one of button
 						
 					</div>
 					
@@ -5971,7 +5967,7 @@ Q button specification is a array of 2 or 3 values:
 					<div class="fixedFont">
 					
 					<span class="light">{<a href="../symbols/vs.ui.ToolBar.Button.html">vs.ui.ToolBar.Button</a>}</span>
-					<b>addButton</b>(id, name, position)
+					<b>addButton</b>(id, name, label)
 					
 					</div>
 					<div class="description">
@@ -5999,11 +5995,10 @@ Q button specification is a array of 2 or 3 values:
 								<dd>The identifier of the button to add.</dd>
 							
 								<dt>
-									<span class="light fixedFont">{string}</span> <b>position</b>
+									<span class="light fixedFont">{string}</span> <b>label</b>
 									
 								</dt>
-								<dd>The position of the button. (should be
-   vs.ui.ToolBar.LEFT_POSITION or vs.ui.ToolBar.RIGHT_POSITION)</dd>
+								<dd>An optional text to put under the button</dd>
 							
 							</dl>
 						
