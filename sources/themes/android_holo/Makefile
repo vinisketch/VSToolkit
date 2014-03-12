@@ -94,7 +94,7 @@ $(TARGET)/lib_debug/css/vs_ui_holo_light.less:
 	$(CAT) ui/Picker.less >> $@
 	$(CAT) ui/ComboBox.less >> $@
 	$(CAT) ui/PopOver.less >> $@
-#	$(CAT) ui/ToolBar/ToolBar_android.css >> $@
+	$(CAT) ui/ToolBar.less >> $@
 
 $(TARGET)/lib_debug/css/vs_ui_holo_dark.less:
 	$(CAT) ../generic/lesshat.less >> $@
@@ -115,7 +115,7 @@ $(TARGET)/lib_debug/css/vs_ui_holo_dark.less:
 	$(CAT) ui/Picker.less >> $@
 	$(CAT) ui/ComboBox.less >> $@
 	$(CAT) ui/PopOver.less >> $@
-#	$(CAT) ui/ToolBar/ToolBar_android.css >> $@
+	$(CAT) ui/ToolBar.less >> $@
 
 copy_widgets_assets:
 	$(CP) ui/*.ttf $(TARGET)/lib_debug/css/

@@ -88,5 +88,5 @@ $(TARGET)/lib_debug/css/vs_ui_ios7.less:
 	$(CAT) ui/Picker.less >> $@
 	$(CAT) ui/ComboBox.less >> $@
 	$(CAT) ui/PopOver.less >> $@
-#	$(CAT) ui/ToolBar/ToolBar_android.css >> $@
+	$(CAT) ui/ToolBar.less >> $@
 
