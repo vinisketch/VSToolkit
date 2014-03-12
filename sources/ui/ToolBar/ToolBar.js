@@ -375,16 +375,33 @@ util.defineClassProperties (ToolBar, {
      */ 
     set : function (v)
     {
-      var item = this._items [v];
+      var
+        item = this._items [v],
+        self = this;
+        
       if (!item) return;
       
       if (this.__select_item === item) return;
 
+      if (this.__remove_time_out) {
+        clearTimeout (this.__remove_time_out);
+        this.__remove_time_out = 0;
+      }
       if (this.__select_item) {
         this.__select_item.removeClassName ("select");
       }
       this.__select_item = item;
       item.addClassName ("select");
+      
+      if (!this._is_toggle_buttons)
+      {
+        this.__remove_time_out = setTimeout (function () {
+            self.__select_item.removeClassName ("select");
+            self.__select_item = null;
+            self.__remove_time_out = 0;
+          },View.UNSELECT_DELAY
+        );
+      }
      
       this.propagate ("itemselect", v);
       
