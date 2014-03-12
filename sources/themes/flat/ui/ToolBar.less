@@ -17,74 +17,82 @@
 */
 
 .vs_ui_toolbar {
-  height: 50px;
+  height: 44px;
   color: rgb(255, 255, 255);
+  overflow: visible;
 }
 
 .vs_ui_toolbar.black_ios_style, /** legacy comptability */
 .vs_ui_toolbar.black_style {
-  border-top: 3px solid #666;
-  background-color: black;
+  background-color: #7d7e7d;
 }
 
 .vs_ui_toolbar.black_translucide_ios_style, /** legacy comptability */
 .vs_ui_toolbar.black_translucide_style {
-  border-top: 3px solid #fea94b;
-  background-color: #666;
+  background-color: #C0C0C0;
+  color: #333;
 }
 
 .vs_ui_toolbar.blue_ios_style, /** legacy comptability */
 .vs_ui_toolbar.blue_style {
-  border-top: 3px solid #6d83a1;
-  .background-image(linear-gradient(0deg, rgb(216,222,230) 1%, rgb(176,188,204) 5%, rgb(153,169,190) 33%, rgb(136,155,179) 49%, rgb(129,149,175) 51%, rgb(115,137,166) 79%, rgb(109,131,161) 100%));
+  background-color: #D7EBF8;
+  color: #333;
 }
 
-.vs_ui_toolbar > div > div::before {
-  position: absolute;
-  width: 100%;
-  height: 44px;
-  border-radius: 0 0 5px 5px;
-  top:0px;
-  left:0px;
-  z-index: -1;
-}
-
-.vs_ui_toolbar.black_style > div > div.active::before {
-  background-color: #949393;
-  content: ' ';
-}
-
-.vs_ui_toolbar.black_style > div > div.select::before {
-  .background-image(linear-gradient(180deg, #666 2%, #888 100%));
-  content: ' ';
-}
-
-.vs_ui_toolbar.black_translucide_style > div > div.active::before  {
-  background-color: #949393;
-  content: ' ';
-}
-
-.vs_ui_toolbar.black_translucide_style > div > div.select::before {
-  .base_background_selected;
-  content: ' ';
-}
-
-.vs_ui_toolbar.blue_style > div > div.active::before {
-  background-color: #949393;
-  content: ' ';
-}
-
-.vs_ui_toolbar.blue_style > div > div.select::before {
-  background-color: #6d83a1;
-  content: ' ';
-}
-
-.vs_ui_toolbar_button
-{
+.vs_ui_toolbar_button {
   background-repeat: no-repeat;
   background-position: center;
   font-size: 10px;
-  padding-top: 30px;
+  padding-top: 29px;
+}
+
+.vs_ui_toolbar > div > div {
+  border-left: 1px solid #fff;  
+  border-right: 1px solid #fff; 
+}
+
+.vs_ui_toolbar > div > div:first-child {
+  border-left: 0px;  
+}
+
+.vs_ui_toolbar > div > div:last-child {
+  border-right: 0px;  
+}
+
+.vs_ui_toolbar > div > div.select {
+  z-index: 1;
+  border-radius: 5px 5px 0 0;
+  color: black;
+  height: 50px;
+  margin-top: -6px;
+  font-size: 12px;
+  padding-top: 31px;
+  border-color: #cdd1dc;
+  border-top: 3px solid #cdd1dc;
+}
+
+.vs_ui_toolbar.black_style > div > div.active {
+  background-color: #aaa;
+}
+
+.vs_ui_toolbar.black_style > div > div.select {
+  .base_background_selected;
+}
+
+.vs_ui_toolbar.black_translucide_style > div > div.active {
+  background-color: #aaa;
+}
+
+.vs_ui_toolbar.black_translucide_style > div > div.select {
+  .base_background_selected;
+}
+
+.vs_ui_toolbar.blue_style > div > div.active {
+  background-color: #aaa;
+}
+
+.vs_ui_toolbar.blue_style > div > div.select {
+  .base_background_selected;
 }
 
 .vs_ui_toolbar_button.add { background-image: url(toolbar_icons/icon_add.png); }

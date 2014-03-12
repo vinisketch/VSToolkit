@@ -17,14 +17,8 @@
 */
 
 .vs_ui_toolbar {
-  width: 100%;
   height: 44px;
-  bottom:0px;
-  z-index: 2000;
   color: rgb(255, 255, 255);
-  
-  overflow: hidden;
-  -webkit-transform: translate3d(0,0,0);
 }
 
 .vs_ui_toolbar.black_ios_style, /** legacy comptability */
@@ -45,63 +39,203 @@
   .background-image(linear-gradient(180deg, rgb(216,222,230) 1%, rgb(176,188,204) 5%, rgb(153,169,190) 33%, rgb(136,155,179) 49%, rgb(129,149,175) 51%, rgb(115,137,166) 79%, rgb(109,131,161) 100%));
 }
 
-.vs_ui_toolbar_text {
-  margin: 7px;
-  margin-top: 10px;
-  width: auto;
-  height: 30px;
-  display: inline-block;
-}
-
-.vs_ui_toolbar_text .text_view {
-  width: auto;
-  height: 30px;
-  font-size: 18px;
-  overflow:hidden;
-  white-space:nowrap;
-  text-overflow:ellipsis;
-}
-
-
-.vs_ui_toolbar_button {
-  margin: 7px;
-  width: 30px;
-  height: 30px;
-  display: inline-block;
-  overflow: visible;
-}
-
-.vs_ui_toolbar_button.left {
-  float: left;
-}
-
-.vs_ui_toolbar_button.right {
-  float: right;
-}
-
-.vs_ui_toolbar_button.active > div {
-  margin-top: -35px;
-  margin-left: -35px;
-  width: 100px;
-  height: 100px;
-  background-image:url('ToolBarGlow.png');
-  overflow: visible;
-}
-
-.vs_ui_toolbar_text.active .glow_view {
-  position:relative;
+.vs_ui_toolbar > div > div::before {
+  position: absolute;
   width: 100%;
-  height: 100%;
-  margin-top: -35px;
+  height: 40px;
+  border-radius: 5px;
+  top:2px;
+  left:0px;
+  z-index: -1;
 }
 
-.vs_ui_toolbar_text.active .glow_view > div {
-  position:absolute;
-  top: -35px;
-  left: -50px;
-  margin-left: 50%;
-  width: 100px;
-  height: 100px;
-  background-image:url('ToolBarGlow.png');
-  overflow: visible;
+.vs_ui_toolbar.black_style > div > div.active::before {
+  background-color: rgba(255,255,255,0.2);
+  content: ' ';
 }
+
+.vs_ui_toolbar.black_style > div > div.select::before {
+  background-color: rgba(255,255,255,0.3);
+  content: ' ';
+}
+
+.vs_ui_toolbar.black_translucide_style > div > div.active::before,
+.vs_ui_toolbar.blue_style > div > div.active::before {
+  background-color: rgba(0,0,0,0.2);
+  content: ' ';
+}
+
+.vs_ui_toolbar.black_translucide_style > div > div.select::before,
+.vs_ui_toolbar.blue_style > div > div.select::before {
+  background-color: rgba(0, 0, 0, 0.5);
+  content: ' ';
+}
+
+.vs_ui_toolbar_button
+{
+  background-repeat: no-repeat;
+  background-position: center;
+  font-size: 10px;
+  padding-top: 28px;
+}
+
+.vs_ui_toolbar_button.add { background-image: url(toolbar_icons/icon_add.png); }
+.vs_ui_toolbar_button.arrow_down { background-image: url(toolbar_icons/icon_arrow_down.png); }
+.vs_ui_toolbar_button.arrow_left { background-image: url(toolbar_icons/icon_arrow_left.png); }
+.vs_ui_toolbar_button.arrow_right { background-image: url(toolbar_icons/icon_arrow_right.png); }
+.vs_ui_toolbar_button.arrow_up { background-image: url(toolbar_icons/icon_arrow_up.png); }
+.vs_ui_toolbar_button.attach { background-image: url(toolbar_icons/icon_attach.png); }
+.vs_ui_toolbar_button.auction { background-image: url(toolbar_icons/icon_auction.png); }
+.vs_ui_toolbar_button.bell_off { background-image: url(toolbar_icons/icon_bell_off.png); }
+.vs_ui_toolbar_button.bell { background-image: url(toolbar_icons/icon_bell.png); }
+.vs_ui_toolbar_button.blog { background-image: url(toolbar_icons/icon_blog.png); }
+.vs_ui_toolbar_button.book_marked { background-image: url(toolbar_icons/icon_book_marked.png); }
+.vs_ui_toolbar_button.book { background-image: url(toolbar_icons/icon_book.png); }
+.vs_ui_toolbar_button.bookmark_add { background-image: url(toolbar_icons/icon_bookmark_add.png); }
+.vs_ui_toolbar_button.bookmark { background-image: url(toolbar_icons/icon_bookmark.png); }
+.vs_ui_toolbar_button.box_full { background-image: url(toolbar_icons/icon_box_full.png); }
+.vs_ui_toolbar_button.box_mail { background-image: url(toolbar_icons/icon_box_mail.png); }
+.vs_ui_toolbar_button.box { background-image: url(toolbar_icons/icon_box.png); }
+.vs_ui_toolbar_button.brightness { background-image: url(toolbar_icons/icon_brightness.png); }
+.vs_ui_toolbar_button.brush { background-image: url(toolbar_icons/icon_brush.png); }
+.vs_ui_toolbar_button.bulb_off { background-image: url(toolbar_icons/icon_bulb_off.png); }
+.vs_ui_toolbar_button.bulb_on { background-image: url(toolbar_icons/icon_bulb_on.png); }
+.vs_ui_toolbar_button.buzzer { background-image: url(toolbar_icons/icon_buzzer.png); }
+.vs_ui_toolbar_button.calculator { background-image: url(toolbar_icons/icon_calculator.png); }
+.vs_ui_toolbar_button.calendar { background-image: url(toolbar_icons/icon_calendar.png); }
+.vs_ui_toolbar_button.call { background-image: url(toolbar_icons/icon_call.png); }
+.vs_ui_toolbar_button.cancel { background-image: url(toolbar_icons/icon_cancel.png); }
+.vs_ui_toolbar_button.case { background-image: url(toolbar_icons/icon_case.png); }
+.vs_ui_toolbar_button.checkmark { background-image: url(toolbar_icons/icon_checkmark.png); }
+.vs_ui_toolbar_button.circle_arrow_left { background-image: url(toolbar_icons/icon_circle_arrow_left.png); }
+.vs_ui_toolbar_button.circle_arrow_right { background-image: url(toolbar_icons/icon_circle_arrow_right.png); }
+.vs_ui_toolbar_button.command_line { background-image: url(toolbar_icons/icon_command_line.png); }
+.vs_ui_toolbar_button.comment_add { background-image: url(toolbar_icons/icon_comment_add.png); }
+.vs_ui_toolbar_button.comment_delete { background-image: url(toolbar_icons/icon_comment_delete.png); }
+.vs_ui_toolbar_button.comment_ok { background-image: url(toolbar_icons/icon_comment_ok.png); }
+.vs_ui_toolbar_button.computer_off { background-image: url(toolbar_icons/icon_computer_off.png); }
+.vs_ui_toolbar_button.computer_on { background-image: url(toolbar_icons/icon_computer_on.png); }
+.vs_ui_toolbar_button.contrast { background-image: url(toolbar_icons/icon_contrast.png); }
+.vs_ui_toolbar_button.controls_1 { background-image: url(toolbar_icons/icon_controls_1.png); }
+.vs_ui_toolbar_button.controls_2 { background-image: url(toolbar_icons/icon_controls_2.png); }
+.vs_ui_toolbar_button.controls_3 { background-image: url(toolbar_icons/icon_controls_3.png); }
+.vs_ui_toolbar_button.controls_4 { background-image: url(toolbar_icons/icon_controls_4.png); }
+.vs_ui_toolbar_button.controls_5 { background-image: url(toolbar_icons/icon_controls_5.png); }
+.vs_ui_toolbar_button.controls_6 { background-image: url(toolbar_icons/icon_controls_6.png); }
+.vs_ui_toolbar_button.controls_7 { background-image: url(toolbar_icons/icon_controls_7.png); }
+.vs_ui_toolbar_button.controls_8 { background-image: url(toolbar_icons/icon_controls_8.png); }
+.vs_ui_toolbar_button.copy { background-image: url(toolbar_icons/icon_copy.png); }
+.vs_ui_toolbar_button.court { background-image: url(toolbar_icons/icon_court.png); }
+.vs_ui_toolbar_button.credit_card { background-image: url(toolbar_icons/icon_credit_card.png); }
+.vs_ui_toolbar_button.cut { background-image: url(toolbar_icons/icon_cut.png); }
+.vs_ui_toolbar_button.danger { background-image: url(toolbar_icons/icon_danger.png); }
+.vs_ui_toolbar_button.delete { background-image: url(toolbar_icons/icon_delete.png); }
+.vs_ui_toolbar_button.disk { background-image: url(toolbar_icons/icon_disk.png); }
+.vs_ui_toolbar_button.document_blank { background-image: url(toolbar_icons/icon_document_blank.png); }
+.vs_ui_toolbar_button.document { background-image: url(toolbar_icons/icon_document.png); }
+.vs_ui_toolbar_button.dollar { background-image: url(toolbar_icons/icon_dollar.png); }
+.vs_ui_toolbar_button.download { background-image: url(toolbar_icons/icon_download.png); }
+.vs_ui_toolbar_button.error { background-image: url(toolbar_icons/icon_error.png); }
+.vs_ui_toolbar_button.favorities_add { background-image: url(toolbar_icons/icon_favorities_add.png); }
+.vs_ui_toolbar_button.favorities_remove { background-image: url(toolbar_icons/icon_favorities_remove.png); }
+.vs_ui_toolbar_button.favorities { background-image: url(toolbar_icons/icon_favorities.png); }
+.vs_ui_toolbar_button.film { background-image: url(toolbar_icons/icon_film.png); }
+.vs_ui_toolbar_button.filming { background-image: url(toolbar_icons/icon_filming.png); }
+.vs_ui_toolbar_button.first_aid { background-image: url(toolbar_icons/icon_first_aid.png); }
+.vs_ui_toolbar_button.flag_1 { background-image: url(toolbar_icons/icon_flag_1.png); }
+.vs_ui_toolbar_button.flag { background-image: url(toolbar_icons/icon_flag.png); }
+.vs_ui_toolbar_button.flash_arrow { background-image: url(toolbar_icons/icon_flash_arrow.png); }
+.vs_ui_toolbar_button.flash { background-image: url(toolbar_icons/icon_flash.png); }
+.vs_ui_toolbar_button.folder_bookmark { background-image: url(toolbar_icons/icon_folder_bookmark.png); }
+.vs_ui_toolbar_button.folder_goto { background-image: url(toolbar_icons/icon_folder_goto.png); }
+.vs_ui_toolbar_button.folder { background-image: url(toolbar_icons/icon_folder.png); }
+.vs_ui_toolbar_button.font_capital { background-image: url(toolbar_icons/icon_font_capital.png); }
+.vs_ui_toolbar_button.font_italic { background-image: url(toolbar_icons/icon_font_italic.png); }
+.vs_ui_toolbar_button.font_regular { background-image: url(toolbar_icons/icon_font_regular.png); }
+.vs_ui_toolbar_button.font_underline { background-image: url(toolbar_icons/icon_font_underline.png); }
+.vs_ui_toolbar_button.font { background-image: url(toolbar_icons/icon_font.png); }
+.vs_ui_toolbar_button.fonts { background-image: url(toolbar_icons/icon_fonts.png); }
+.vs_ui_toolbar_button.forum { background-image: url(toolbar_icons/icon_forum.png); }
+.vs_ui_toolbar_button.frame { background-image: url(toolbar_icons/icon_frame.png); }
+.vs_ui_toolbar_button.graph_areas { background-image: url(toolbar_icons/icon_graph_areas.png); }
+.vs_ui_toolbar_button.graph_bars_down { background-image: url(toolbar_icons/icon_graph_bars_down.png); }
+.vs_ui_toolbar_button.graph_bars_up { background-image: url(toolbar_icons/icon_graph_bars_up.png); }
+.vs_ui_toolbar_button.graph_bars { background-image: url(toolbar_icons/icon_graph_bars.png); }
+.vs_ui_toolbar_button.graph_down { background-image: url(toolbar_icons/icon_graph_down.png); }
+.vs_ui_toolbar_button.graph_lines { background-image: url(toolbar_icons/icon_graph_lines.png); }
+.vs_ui_toolbar_button.graph_up { background-image: url(toolbar_icons/icon_graph_up.png); }
+.vs_ui_toolbar_button.hat { background-image: url(toolbar_icons/icon_hat.png); }
+.vs_ui_toolbar_button.help { background-image: url(toolbar_icons/icon_help.png); }
+.vs_ui_toolbar_button.home { background-image: url(toolbar_icons/icon_home.png); }
+.vs_ui_toolbar_button.information { background-image: url(toolbar_icons/icon_information.png); }
+.vs_ui_toolbar_button.key { background-image: url(toolbar_icons/icon_key.png); }
+.vs_ui_toolbar_button.keyboard { background-image: url(toolbar_icons/icon_keyboard.png); }
+.vs_ui_toolbar_button.laptop { background-image: url(toolbar_icons/icon_laptop.png); }
+.vs_ui_toolbar_button.link { background-image: url(toolbar_icons/icon_link.png); }
+.vs_ui_toolbar_button.list_bullets { background-image: url(toolbar_icons/icon_list_bullets.png); }
+.vs_ui_toolbar_button.list_numbers { background-image: url(toolbar_icons/icon_list_numbers.png); }
+.vs_ui_toolbar_button.lock { background-image: url(toolbar_icons/icon_lock.png); }
+.vs_ui_toolbar_button.magnify_glass { background-image: url(toolbar_icons/icon_magnify_glass.png); }
+.vs_ui_toolbar_button.mail { background-image: url(toolbar_icons/icon_mail.png); }
+.vs_ui_toolbar_button.manage { background-image: url(toolbar_icons/icon_manage.png); }
+.vs_ui_toolbar_button.measure { background-image: url(toolbar_icons/icon_measure.png); }
+.vs_ui_toolbar_button.measures { background-image: url(toolbar_icons/icon_measures.png); }
+.vs_ui_toolbar_button.mic_1 { background-image: url(toolbar_icons/icon_mic_1.png); }
+.vs_ui_toolbar_button.mic { background-image: url(toolbar_icons/icon_mic.png); }
+.vs_ui_toolbar_button.minus { background-image: url(toolbar_icons/icon_minus.png); }
+.vs_ui_toolbar_button.mute { background-image: url(toolbar_icons/icon_mute.png); }
+.vs_ui_toolbar_button.paint { background-image: url(toolbar_icons/icon_paint.png); }
+.vs_ui_toolbar_button.paper_plane { background-image: url(toolbar_icons/icon_paper_plane.png); }
+.vs_ui_toolbar_button.paper_trash { background-image: url(toolbar_icons/icon_paper_trash.png); }
+.vs_ui_toolbar_button.paperclip { background-image: url(toolbar_icons/icon_paperclip.png); }
+.vs_ui_toolbar_button.paragraph { background-image: url(toolbar_icons/icon_paragraph.png); }
+.vs_ui_toolbar_button.pencil { background-image: url(toolbar_icons/icon_pencil.png); }
+.vs_ui_toolbar_button.photo { background-image: url(toolbar_icons/icon_photo.png); }
+.vs_ui_toolbar_button.piechart { background-image: url(toolbar_icons/icon_piechart.png); }
+.vs_ui_toolbar_button.post { background-image: url(toolbar_icons/icon_post.png); }
+.vs_ui_toolbar_button.profile { background-image: url(toolbar_icons/icon_profile.png); }
+.vs_ui_toolbar_button.refresh { background-image: url(toolbar_icons/icon_refresh.png); }
+.vs_ui_toolbar_button.resize { background-image: url(toolbar_icons/icon_resize.png); }
+.vs_ui_toolbar_button.rss { background-image: url(toolbar_icons/icon_rss.png); }
+.vs_ui_toolbar_button.sad_face { background-image: url(toolbar_icons/icon_sad_face.png); }
+.vs_ui_toolbar_button.safe { background-image: url(toolbar_icons/icon_safe.png); }
+.vs_ui_toolbar_button.save { background-image: url(toolbar_icons/icon_save.png); }
+.vs_ui_toolbar_button.settings { background-image: url(toolbar_icons/icon_settings.png); }
+.vs_ui_toolbar_button.shopping_bag { background-image: url(toolbar_icons/icon_shopping_bag.png); }
+.vs_ui_toolbar_button.shopping_cart { background-image: url(toolbar_icons/icon_shopping_cart.png); }
+.vs_ui_toolbar_button.shopping_heavy { background-image: url(toolbar_icons/icon_shopping_heavy.png); }
+.vs_ui_toolbar_button.sim { background-image: url(toolbar_icons/icon_sim.png); }
+.vs_ui_toolbar_button.smile_face { background-image: url(toolbar_icons/icon_smile_face.png); }
+.vs_ui_toolbar_button.sort_az { background-image: url(toolbar_icons/icon_sort_az.png); }
+.vs_ui_toolbar_button.sort_za { background-image: url(toolbar_icons/icon_sort_za.png); }
+.vs_ui_toolbar_button.star { background-image: url(toolbar_icons/icon_star.png); }
+.vs_ui_toolbar_button.storage { background-image: url(toolbar_icons/icon_storage.png); }
+.vs_ui_toolbar_button.switch { background-image: url(toolbar_icons/icon_switch.png); }
+.vs_ui_toolbar_button.tag_add { background-image: url(toolbar_icons/icon_tag_add.png); }
+.vs_ui_toolbar_button.tag_cancel { background-image: url(toolbar_icons/icon_tag_cancel.png); }
+.vs_ui_toolbar_button.tag_delete { background-image: url(toolbar_icons/icon_tag_delete.png); }
+.vs_ui_toolbar_button.tag { background-image: url(toolbar_icons/icon_tag.png); }
+.vs_ui_toolbar_button.text_align_center { background-image: url(toolbar_icons/icon_text_align_center.png); }
+.vs_ui_toolbar_button.text_align_justify { background-image: url(toolbar_icons/icon_text_align_justify.png); }
+.vs_ui_toolbar_button.text_align_left { background-image: url(toolbar_icons/icon_text_align_left.png); }
+.vs_ui_toolbar_button.text_align_right { background-image: url(toolbar_icons/icon_text_align_right.png); }
+.vs_ui_toolbar_button.time { background-image: url(toolbar_icons/icon_time.png); }
+.vs_ui_toolbar_button.timer { background-image: url(toolbar_icons/icon_timer.png); }
+.vs_ui_toolbar_button.trash { background-image: url(toolbar_icons/icon_trash.png); }
+.vs_ui_toolbar_button.twg { background-image: url(toolbar_icons/icon_twg.png); }
+.vs_ui_toolbar_button.unlock { background-image: url(toolbar_icons/icon_unlock.png); }
+.vs_ui_toolbar_button.upload { background-image: url(toolbar_icons/icon_upload.png); }
+.vs_ui_toolbar_button.user { background-image: url(toolbar_icons/icon_user.png); }
+.vs_ui_toolbar_button.users { background-image: url(toolbar_icons/icon_users.png); }
+.vs_ui_toolbar_button.volume_down { background-image: url(toolbar_icons/icon_volume_down.png); }
+.vs_ui_toolbar_button.volume_up { background-image: url(toolbar_icons/icon_volume_up.png); }
+.vs_ui_toolbar_button.volume { background-image: url(toolbar_icons/icon_volume.png); }
+.vs_ui_toolbar_button.wallet { background-image: url(toolbar_icons/icon_wallet.png); }
+.vs_ui_toolbar_button.warning { background-image: url(toolbar_icons/icon_warning.png); }
+.vs_ui_toolbar_button.wifi { background-image: url(toolbar_icons/icon_wifi.png); }
+.vs_ui_toolbar_button.window_error { background-image: url(toolbar_icons/icon_window_error.png); }
+.vs_ui_toolbar_button.window_globe { background-image: url(toolbar_icons/icon_window_globe.png); }
+.vs_ui_toolbar_button.window_lock { background-image: url(toolbar_icons/icon_window_lock.png); }
+.vs_ui_toolbar_button.window { background-image: url(toolbar_icons/icon_window.png); }
+.vs_ui_toolbar_button.zoom_in { background-image: url(toolbar_icons/icon_zoom_in.png); }
+.vs_ui_toolbar_button.zoom_out { background-image: url(toolbar_icons/icon_zoom_out.png); }
