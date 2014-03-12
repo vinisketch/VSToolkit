@@ -173,11 +173,6 @@ ToolBar.prototype = {
     this._hide_animation = new vs.fx.Animation (['translateY', '44px']);
     this._show_animation = new vs.fx.Animation (['translateY', '0px']);
 
-//     util.setElementStyle (this.view, {
-//       left: '0px', top: 'auto', bottom: '0px', 
-//       width: '100%', height: '44px'
-//     });
-//     
     this.style = this._style;
 
     this.recognizer = new TapRecognizer (this);
