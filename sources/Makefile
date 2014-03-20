@@ -46,7 +46,7 @@ COMPILE = $(JAVA) -jar $(TOOLS_PATH)/closurecompiler/compiler.jar --language_in=
 COMPILE_ADV = $(JAVA) -jar $(TOOLS_PATH)/closurecompiler/compiler.jar --compilation_level ADVANCED_OPTIMIZATIONS
 COMPILE_YUI = $(JAVA) -cp $(TOOLS_PATH)/yuicompressor/jargs-1.0.jar:$(TOOLS_PATH)/yuicompressor/rhino-1.6R7.jar -jar $(TOOLS_PATH)/yuicompressor/yuicompressor-2.4.8.jar
 GENDOC = $(JAVA) -jar $(TOOLS_PATH)/jsdoc-toolkit/jsrun.jar $(TOOLS_PATH)/jsdoc-toolkit/app/run.js
-COMPILE_LESS = lessc
+COMPILE_LESS = /usr/local/bin/lessc
 
 ###                         RELEASE
 ##############################################################
@@ -62,7 +62,7 @@ release :: clean makedirs extern_libs core ui fx data ext av ext_fx doc ../lib_d
 	-$(COMPILE) --js=../lib_debug/js/vs.js --js_output_file=../lib/js/vs.js
 
 debug :: clean_debug makedirs extern_libs core_debug ui_debug fx_debug data_debug ext_debug ext_fx_debug av_debug ../lib_debug/js/vs_webcomponent.js ../lib_debug/js/vs.js themes_debug
-	
+
 themes_release:
 	-$(CD) themes;make
 
@@ -77,7 +77,6 @@ themes_debug:
 	$(CAT) ../lib_debug/js/vs_fx.js >> ../lib_debug/js/vs.js
 	$(CAT) ../lib_debug/js/vs_av.js >> ../lib_debug/js/vs.js
 	$(CAT) ../lib_debug/js/vs_ext.js >> ../lib_debug/js/vs.js
-	$(CAT) ../lib_debug/js/vs_ext_fx.js >> ../lib_debug/js/vs.js
 
 clean :: clean_debug_libs clean_libs clean_docs
 clean_debug :: clean_debug_libs clean_docs
@@ -146,12 +145,12 @@ ui: ui_debug
 
 ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js
 
-../lib_debug/js/vs_ui.js: ui/View/View.js ui/Application/Application.js ui/SplitView/SplitView.js ui/TextArea/TextArea.js ui/Button/Button.js ui/List/AbstractList.js ui/List/List.js ui/NavigationBar/NavigationBar.js ui/ToolBar/ToolBar.js ui/Canvas/Canvas.js ui/ProgressBar/ProgressBar.js ui/RadioButton/RadioButton.js ui/ComboBox/ComboBox.js ui/CheckBox/CheckBox.js ui/Slider/Slider.js ui/InputField/InputField.js ui/ScrollView/ScrollView.js ui/TextLabel/TextLabel.js ui/ImageView/ImageView.js ui/PopOver/PopOver.js ui/Switch/Switch.js ui/Picker/Picker.js ui/SVGView/SVGView.js ui/SegmentedButton/SegmentedButton.js
+../lib_debug/js/vs_ui.js: 
 	$(CAT) Header.js >> $@
 	$(CAT) ui/UI.js >> $@
 	$(CAT) ui/Template.js >> $@
-	$(CAT) ui/Recognizers/PointerRecognizer.js >> $@
 	$(CAT) ui/Recognizers/RecognizerManager.js >> $@
+	$(CAT) ui/Recognizers/PointerRecognizer.js >> $@
 	$(CAT) ui/Recognizers/TapRecognizer.js >> $@
 	$(CAT) ui/Recognizers/DragRecognizer.js >> $@
 	$(CAT) ui/Recognizers/PinchRecognizer.js >> $@
@@ -160,14 +159,17 @@ ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js
 	$(CAT) ui/View/ScrollBar.js >> $@
 	$(CAT) ui/Application/Application.js >> $@
 	$(CAT) ui/SplitView/SplitView.js >> $@
-	$(CAT) ui/ScrollView/ScrollManagement.js >> $@
+	$(CAT) ui/ScrollView/myScroll.js >> $@
 	$(CAT) ui/ScrollView/iscroll4.js >> $@
 	$(CAT) ui/ScrollView/ScrollView.js >> $@
+#	$(CAT) ui/ScrollView/ScrollViewBis.js >> $@
 	$(CAT) ui/ScrollImageView/ScrollImageView.js >> $@
 	$(CAT) ui/TextArea/TextArea.js >> $@
 	$(CAT) ui/Button/Button.js >> $@
 	$(CAT) ui/List/AbstractList.js >> $@
+#	$(CAT) ui/List/AbstractListBis.js >> $@
 	$(CAT) ui/List/List.js >> $@
+#	$(CAT) ui/List/ListBis.js >> $@
 	$(CAT) ui/ComboBox/ComboBox.js >> $@
 	$(CAT) ui/RadioButton/RadioButton.js >> $@
 	$(CAT) ui/CheckBox/CheckBox.js >> $@
@@ -188,7 +190,7 @@ ui_debug: copy_ui_html ../lib_debug/js/vs_ui.js
 	$(RM_F) template.js
 	$(CAT) ui/UI_footer.js >> $@
 
-copy_ui_html: ui/View/View.html ui/SplitView/SplitView.html ui/ScrollImageView/ScrollImageView.html ui/Button/Button.html ui/List/List.html ui/ToolBar/ToolBar.html ui/Canvas/Canvas.html ui/ProgressBar/ProgressBar.html ui/ComboBox/ComboBox.html ui/RadioButton/RadioButton.html ui/CheckBox/CheckBox.html ui/Slider/Slider.html ui/InputField/InputField.html ui/ScrollView/ScrollView.html ui/ImageView/ImageView.html ui/PopOver/PopOver.html ui/Switch/Switch.html ui/Picker/Picker.html ui/SVGView/SVGView.html ui/TextLabel/TextLabel.html ui/SegmentedButton/SegmentedButton.html
+copy_ui_html:
 	$(RM_F) template.js
 	$(XTEMP) View ui/View/View.html
 	$(XTEMP) SplitView ui/SplitView/SplitView.html
@@ -244,7 +246,7 @@ data: data_debug
 
 data_debug: ../lib_debug/js/vs_data.js
 
-../lib_debug/js/vs_data.js: data/Data.js data/URL.js data/GoogleSearch.js data/GoogleSearch.js
+../lib_debug/js/vs_data.js:
 	$(CAT) Header.js >> $@
 	$(CAT) data/Data.js >> $@
 	$(CAT) data/URL.js >> $@
@@ -353,9 +355,9 @@ extern_libs: ../lib_debug/js/vs_util.js ../lib_debug/js/vs_transform.js ../lib_d
 ##############################################################
 
 ../lib_debug/js/vs_webcomponent.js:
-	$(CAT) web_comp/polymer/Scope.js >> $@
-	$(CAT) web_comp/polymer/Boot.js >> $@
-	$(CAT) web_comp/polymer/Observer.js >> $@
-	$(CAT) web_comp/polymer/Parser.js >> $@
-	$(CAT) web_comp/polymer/CustomElements.js >> $@
-	$(CAT) web_comp/CustonElements.js >> $@
+	$(CAT) ext/customElement/polymer/Scope.js >> $@
+	$(CAT) ext/customElement/polymer/Boot.js >> $@
+	$(CAT) ext/customElement/polymer/Observer.js >> $@
+	$(CAT) ext/customElement/polymer/Parser.js >> $@
+	$(CAT) ext/customElement/polymer/CustomElements.js >> $@
+	$(CAT) ext/customElement/CustomElement.js >> $@
