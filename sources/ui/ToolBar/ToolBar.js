@@ -162,7 +162,7 @@ ToolBar.prototype = {
     View.prototype.destructor.call (this);
   },
 
-    /**
+  /**
    * @protected
    * @function
    */
