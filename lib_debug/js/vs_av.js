@@ -299,8 +299,15 @@ Video.prototype = {
     this.__video_node.pause ();
     this._state = core.Task.PAUSED;
 
-    if (this.delegate && this.delegate.taskDidPause)
-    { this.delegate.taskDidPause (this); }
+    if (this.delegate && this.delegate.taskDidPause) {
+      try {
+        this.delegate.taskDidPause (this); 
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
 
   /**
@@ -323,8 +330,15 @@ Video.prototype = {
     
     this._state = core.Task.STOPPED;
 
-    if (this.delegate && this.delegate.taskDidStop)
-    { this.delegate.taskDidStop (this); }
+    if (this.delegate && this.delegate.taskDidStop) {
+      try {
+        this.delegate.taskDidStop (this); 
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
  },
 
   /*****************************************************************
@@ -398,15 +412,29 @@ Video.prototype = {
 
       case 'ended':
         this._state = core.Task.STOPED;
-        if (this.delegate && this.delegate.taskDidEnd)
-        { this.delegate.taskDidEnd (this); }
+        if (this.delegate && this.delegate.taskDidEnd) {
+          try {
+            this.delegate.taskDidEnd (this); 
+          }
+          catch (e) {
+            if (e.stack) console.log (e.stack)
+            console.error (e);
+          }
+        }
         this.propagate (event.type);
       break;
 
       case 'pause':
-        if (this.delegate && this.delegate.taskDidPause)
-        { this.delegate.taskDidPause (this); }
         this._state = core.Task.PAUSED;
+        if (this.delegate && this.delegate.taskDidPause) {
+          try {
+            this.delegate.taskDidPause (this); 
+          }
+          catch (e) {
+            if (e.stack) console.log (e.stack)
+            console.error (e);
+          }
+        }
         this.propagate (event.type);
       break;
 
@@ -951,8 +979,15 @@ Audio.prototype = {
     this.__audio.pause ();
     this._state = core.Task.PAUSED;
 
-    if (this.delegate && this.delegate.taskDidPause)
-    { this.delegate.taskDidPause (this); }
+    if (this.delegate && this.delegate.taskDidPause) {
+      try {
+        this.delegate.taskDidPause (this);
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
 
   /**
@@ -971,8 +1006,15 @@ Audio.prototype = {
     { this.__audio.pause (); }
     this._state = core.Task.STOPPED;
 
-    if (this.delegate && this.delegate.taskDidStop)
-    { this.delegate.taskDidStop (this); }
+    if (this.delegate && this.delegate.taskDidStop) {
+      try {
+        this.delegate.taskDidStop (this);
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
 
   /*****************************************************************
@@ -1048,15 +1090,29 @@ Audio.prototype = {
 
       case 'ended':
         this._state = core.Task.STOPED;
-        if (this.delegate && this.delegate.taskDidEnd)
-        { this.delegate.taskDidEnd (this); }
+        if (this.delegate && this.delegate.taskDidEnd) {        
+          try {
+            this.delegate.taskDidEnd (this);
+          }
+          catch (e) {
+            if (e.stack) console.log (e.stack)
+            console.error (e);
+          }
+        }
         this.propagate (event.type);
       break;
 
       case 'pause':
-        if (this.delegate && this.delegate.taskDidPause)
-        { this.delegate.taskDidPause (this); }
         this._state = core.Task.PAUSED;
+        if (this.delegate && this.delegate.taskDidPause) {
+          try {
+            this.delegate.taskDidPause (this);
+          }
+          catch (e) {
+            if (e.stack) console.log (e.stack)
+            console.error (e);
+          }
+        }
         this.propagate (event.type);
       break;
 
@@ -1107,8 +1163,15 @@ util.defineClassProperties (Audio, {
         function onSuccess ()
         {
           self._state = core.Task.STOPED;
-          if (self.delegate && self.delegate.taskDidEnd)
-          { self.delegate.taskDidEnd (self); }
+          if (self.delegate && self.delegate.taskDidEnd) {
+            try {
+              self.delegate.taskDidEnd (self);
+            }
+            catch (e) {
+              if (e.stack) console.log (e.stack)
+              console.error (e);
+            }
+          }
           self.propagate (event.type);
         }
         this.__audio = new window.Media (this._src, onSuccess);

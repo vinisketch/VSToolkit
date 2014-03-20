@@ -12079,21 +12079,6 @@ NavigationBar.prototype = {
     }
     this._show_animation = new vs.fx.Animation (['translateY', '0px']);
 
-    var os_device = window.deviceConfiguration.os;
-    if (os_device == DeviceConfiguration.OS_SYMBIAN)
-    {
-      util.setElementStyle (this.view, {
-        left: '0px', top: '0px', bottom: 'auto', 
-        width: '100%', height: '50px'
-      });
-    }
-    else
-    {
-      util.setElementStyle (this.view, {
-        left: '0px', top: '0px', bottom: 'auto', 
-        width: '100%', height: '44px'
-      });
-    }
     this.style = this._style;
   },
   
@@ -12357,10 +12342,7 @@ util.defineClassProperties (NavigationBar, {
      * @ignore
      * @private
      */
-    set : function (v)
-    {
-  //    util.setElementStyle (this.view, {left: '0px', top: '0px', bottom: 'auto'});
-    },
+    set : function (v) {},
     
     /**
      * @ignore
@@ -12377,10 +12359,7 @@ util.defineClassProperties (NavigationBar, {
      * @ignore
      * @private
      */
-    set : function (v)
-    {
-  //    util.setElementStyle (this.view, {width: '100%', height: '44px'});
-    },
+    set : function (v) {},
   
     /**
      * @ignore
@@ -12562,7 +12541,7 @@ ToolBar.prototype = {
     View.prototype.destructor.call (this);
   },
 
-    /**
+  /**
    * @protected
    * @function
    */

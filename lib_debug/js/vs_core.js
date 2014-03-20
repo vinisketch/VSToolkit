@@ -5239,8 +5239,15 @@ Task_PAR.prototype = {
     this._tasksWillEnded --;
     if (this._tasksWillEnded === 0)
     {
-      if (this.delegate && this.delegate.taskDidEnd)
-      { this.delegate.taskDidEnd (this); }
+      if (this.delegate && this.delegate.taskDidStop) {
+        try {
+          this.delegate.taskDidStop (this); 
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
     }
   },
 
@@ -5255,8 +5262,15 @@ Task_PAR.prototype = {
     this._tasksWillEnded --;
     if (this._tasksWillEnded === 0)
     {
-      if (this.delegate && this.delegate.taskDidEnd)
-      { this.delegate.taskDidEnd (this); }
+      if (this.delegate && this.delegate.taskDidPause) {
+        try {
+          this.delegate.taskDidPause (this);
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
     }
   },
 
@@ -5271,8 +5285,15 @@ Task_PAR.prototype = {
     this._tasksWillEnded --;
     if (this._tasksWillEnded === 0)
     {
-      if (this.delegate && this.delegate.taskDidEnd)
-      { this.delegate.taskDidEnd (this); }
+      if (this.delegate && this.delegate.taskDidEnd) {
+        try {
+          this.delegate.taskDidEnd (this); 
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
     }
   }
 };
@@ -5537,8 +5558,15 @@ Task_SEQ.prototype = {
 
     this._nextTaskToStart = 0;
 
-    if (this.delegate && this.delegate.taskDidStop)
-    { this.delegate.taskDidStop (this); }
+    if (this.delegate && this.delegate.taskDidStop) {
+      try {
+        this.delegate.taskDidStop (this); 
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
 
   /**
@@ -5551,8 +5579,15 @@ Task_SEQ.prototype = {
 
     this._nextTaskToStart = this._nextTaskToStart - 1;
 
-    if (this.delegate && this.delegate.taskDidPause)
-    { this.delegate.taskDidPause (this); }
+    if (this.delegate && this.delegate.taskDidPause) {
+      try {
+        this.delegate.taskDidPause (this);
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
 
   /**
@@ -5571,8 +5606,15 @@ Task_SEQ.prototype = {
     else
     {
       this._nextTaskToStart = 0;
-      if (this.delegate && this.delegate.taskDidEnd)
-      { this.delegate.taskDidEnd (this); }
+      if (this.delegate && this.delegate.taskDidEnd) {
+        try {
+          this.delegate.taskDidEnd (this); 
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
     }
   }
 };
@@ -5656,8 +5698,15 @@ TaskWait.prototype = {
     this._timer = setTimeout (function ()
     {
       self._state = Task.STOPPED;
-      if (self.delegate && self.delegate.taskDidEnd)
-      { self.delegate.taskDidEnd (self); }
+      if (self.delegate && self.delegate.taskDidEnd) {
+        try {
+          self.delegate.taskDidEnd (self); 
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
     }, time);
 
     return true;
@@ -5679,8 +5728,15 @@ TaskWait.prototype = {
 
     this._left_time = this._time;
 
-    if (this.delegate && this.delegate.taskDidStop)
-    { this.delegate.taskDidStop (this); }
+    if (this.delegate && this.delegate.taskDidStop) {
+      try {
+        this.delegate.taskDidStop (this); 
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
 
     return true;
   },
@@ -5700,9 +5756,15 @@ TaskWait.prototype = {
     this._left_time =
       this._left_time - new Date ().getTime () + this._start_time;
 
-    if (this.delegate && this.delegate.taskDidPause)
-    { this.delegate.taskDidPause (this); }
-
+    if (this.delegate && this.delegate.taskDidPause) {
+      try {
+        this.delegate.taskDidPause (this);
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
     return true;
   }
 };
@@ -7178,7 +7240,7 @@ VSArray.prototype = {
       catch (e)
       {
         if (e.stack) console.log (e.stack)
-        console.error (e.toString ());
+        console.error (e);
       }
     }
 

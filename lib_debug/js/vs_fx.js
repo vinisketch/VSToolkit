@@ -554,8 +554,15 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
       comp.view.style.removeProperty (TRANSITION_DURATION);
       comp.view.style.removeProperty (TRANSITION_DELAY);
 
-      if (animation.delegate && animation.delegate.taskDidEnd)
-      { animation.delegate.taskDidEnd (anim_params); }
+      if (animation.delegate && animation.delegate.taskDidEnd) {
+        try {
+          animation.delegate.taskDidEnd (anim_params)
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
 
       if (clb) { clb.call (ctx?ctx:self); }
     }
@@ -664,8 +671,15 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
         return false;
       }
 
-      if (animation.delegate && animation.delegate.taskDidStop)
-      { animation.delegate.taskDidEnd (animation); }
+      if (animation.delegate && animation.delegate.taskDidEnd) {
+        try {
+          animation.delegate.taskDidEnd (anim_params)
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
 
       if (clb) { clb.call (ctx?ctx:self); }
     }

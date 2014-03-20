@@ -520,8 +520,15 @@ var Chronometer = vs.core.createClass ({
         this.propagateChange ('tick');
         if (this.__clb) this.__clb (this._tick);
 
-        if (this.delegate && this.delegate.taskDidEnd)
-        { this.delegate.taskDidEnd (this); }
+        if (this.delegate && this.delegate.taskDidEnd) {
+          try {
+            this.delegate.taskDidEnd (this);
+          }
+          catch (e) {
+            if (e.stack) console.log (e.stack)
+            console.error (e);
+          }
+        }
       
         return;
       }
@@ -535,8 +542,15 @@ var Chronometer = vs.core.createClass ({
     
     _start.call (this);
 
-    if (this.delegate && this.delegate.taskDidStart)
-    { this.delegate.taskDidStart (this); }
+    if (this.delegate && this.delegate.taskDidStart) {
+      try {
+        this.delegate.taskDidStart (this);
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
   
   __setTick : function (v) {
@@ -570,8 +584,15 @@ var Chronometer = vs.core.createClass ({
       else
       {
         this._state = vs.core.Task.STOPPED;
-        if (this.delegate && this.delegate.taskDidEnd)
-        { this.delegate.taskDidEnd (this); }
+        if (this.delegate && this.delegate.taskDidEnd) {
+          try {
+            this.delegate.taskDidEnd (this);
+          }
+          catch (e) {
+            if (e.stack) console.log (e.stack)
+            console.error (e);
+          }
+        }
       }
     }
     else {
@@ -636,8 +657,15 @@ var Chronometer = vs.core.createClass ({
       else
       {
         this._state = vs.core.Task.STOPPED;
-        if (this.delegate && this.delegate.taskDidEnd)
-        { this.delegate.taskDidEnd (this); }
+        if (this.delegate && this.delegate.taskDidEnd) {
+          try {
+            this.delegate.taskDidEnd (this);
+          }
+          catch (e) {
+            if (e.stack) console.log (e.stack)
+            console.error (e);
+          }
+        }
       }
     }
     else {
@@ -694,8 +722,15 @@ var Chronometer = vs.core.createClass ({
     this.propagateChange ('tick');
     if (this.__clb) this.__clb (this._tick);
 
-    if (this.delegate && this.delegate.taskDidStop)
-    { this.delegate.taskDidStop (this); }
+    if (this.delegate && this.delegate.taskDidStop) {
+      try {
+        this.delegate.taskDidStop (this);
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
 
   /**
@@ -712,8 +747,15 @@ var Chronometer = vs.core.createClass ({
     this._state = vs.core.Task.PAUSED;
     this.__pause_time = Date.now ();
 
-    if (this.delegate && this.delegate.taskDidPause)
-    { this.delegate.taskDidPause (this); }
+    if (this.delegate && this.delegate.taskDidPause) {
+      try {
+        this.delegate.taskDidPause (this);
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   }
 });
 /**

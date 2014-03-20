@@ -9257,8 +9257,15 @@ Task_PAR.prototype = {
     this._tasksWillEnded --;
     if (this._tasksWillEnded === 0)
     {
-      if (this.delegate && this.delegate.taskDidEnd)
-      { this.delegate.taskDidEnd (this); }
+      if (this.delegate && this.delegate.taskDidStop) {
+        try {
+          this.delegate.taskDidStop (this); 
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
     }
   },
 
@@ -9273,8 +9280,15 @@ Task_PAR.prototype = {
     this._tasksWillEnded --;
     if (this._tasksWillEnded === 0)
     {
-      if (this.delegate && this.delegate.taskDidEnd)
-      { this.delegate.taskDidEnd (this); }
+      if (this.delegate && this.delegate.taskDidPause) {
+        try {
+          this.delegate.taskDidPause (this);
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
     }
   },
 
@@ -9289,8 +9303,15 @@ Task_PAR.prototype = {
     this._tasksWillEnded --;
     if (this._tasksWillEnded === 0)
     {
-      if (this.delegate && this.delegate.taskDidEnd)
-      { this.delegate.taskDidEnd (this); }
+      if (this.delegate && this.delegate.taskDidEnd) {
+        try {
+          this.delegate.taskDidEnd (this); 
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
     }
   }
 };
@@ -9555,8 +9576,15 @@ Task_SEQ.prototype = {
 
     this._nextTaskToStart = 0;
 
-    if (this.delegate && this.delegate.taskDidStop)
-    { this.delegate.taskDidStop (this); }
+    if (this.delegate && this.delegate.taskDidStop) {
+      try {
+        this.delegate.taskDidStop (this); 
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
 
   /**
@@ -9569,8 +9597,15 @@ Task_SEQ.prototype = {
 
     this._nextTaskToStart = this._nextTaskToStart - 1;
 
-    if (this.delegate && this.delegate.taskDidPause)
-    { this.delegate.taskDidPause (this); }
+    if (this.delegate && this.delegate.taskDidPause) {
+      try {
+        this.delegate.taskDidPause (this);
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
 
   /**
@@ -9589,8 +9624,15 @@ Task_SEQ.prototype = {
     else
     {
       this._nextTaskToStart = 0;
-      if (this.delegate && this.delegate.taskDidEnd)
-      { this.delegate.taskDidEnd (this); }
+      if (this.delegate && this.delegate.taskDidEnd) {
+        try {
+          this.delegate.taskDidEnd (this); 
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
     }
   }
 };
@@ -9674,8 +9716,15 @@ TaskWait.prototype = {
     this._timer = setTimeout (function ()
     {
       self._state = Task.STOPPED;
-      if (self.delegate && self.delegate.taskDidEnd)
-      { self.delegate.taskDidEnd (self); }
+      if (self.delegate && self.delegate.taskDidEnd) {
+        try {
+          self.delegate.taskDidEnd (self); 
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
     }, time);
 
     return true;
@@ -9697,8 +9746,15 @@ TaskWait.prototype = {
 
     this._left_time = this._time;
 
-    if (this.delegate && this.delegate.taskDidStop)
-    { this.delegate.taskDidStop (this); }
+    if (this.delegate && this.delegate.taskDidStop) {
+      try {
+        this.delegate.taskDidStop (this); 
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
 
     return true;
   },
@@ -9718,9 +9774,15 @@ TaskWait.prototype = {
     this._left_time =
       this._left_time - new Date ().getTime () + this._start_time;
 
-    if (this.delegate && this.delegate.taskDidPause)
-    { this.delegate.taskDidPause (this); }
-
+    if (this.delegate && this.delegate.taskDidPause) {
+      try {
+        this.delegate.taskDidPause (this);
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
     return true;
   }
 };
@@ -11196,7 +11258,7 @@ VSArray.prototype = {
       catch (e)
       {
         if (e.stack) console.log (e.stack)
-        console.error (e.toString ());
+        console.error (e);
       }
     }
 
@@ -26388,21 +26450,6 @@ NavigationBar.prototype = {
     }
     this._show_animation = new vs.fx.Animation (['translateY', '0px']);
 
-    var os_device = window.deviceConfiguration.os;
-    if (os_device == DeviceConfiguration.OS_SYMBIAN)
-    {
-      util.setElementStyle (this.view, {
-        left: '0px', top: '0px', bottom: 'auto', 
-        width: '100%', height: '50px'
-      });
-    }
-    else
-    {
-      util.setElementStyle (this.view, {
-        left: '0px', top: '0px', bottom: 'auto', 
-        width: '100%', height: '44px'
-      });
-    }
     this.style = this._style;
   },
   
@@ -26666,10 +26713,7 @@ util.defineClassProperties (NavigationBar, {
      * @ignore
      * @private
      */
-    set : function (v)
-    {
-  //    util.setElementStyle (this.view, {left: '0px', top: '0px', bottom: 'auto'});
-    },
+    set : function (v) {},
     
     /**
      * @ignore
@@ -26686,10 +26730,7 @@ util.defineClassProperties (NavigationBar, {
      * @ignore
      * @private
      */
-    set : function (v)
-    {
-  //    util.setElementStyle (this.view, {width: '100%', height: '44px'});
-    },
+    set : function (v) {},
   
     /**
      * @ignore
@@ -26871,7 +26912,7 @@ ToolBar.prototype = {
     View.prototype.destructor.call (this);
   },
 
-    /**
+  /**
    * @protected
    * @function
    */
@@ -33552,8 +33593,15 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
       comp.view.style.removeProperty (TRANSITION_DURATION);
       comp.view.style.removeProperty (TRANSITION_DELAY);
 
-      if (animation.delegate && animation.delegate.taskDidEnd)
-      { animation.delegate.taskDidEnd (anim_params); }
+      if (animation.delegate && animation.delegate.taskDidEnd) {
+        try {
+          animation.delegate.taskDidEnd (anim_params)
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
 
       if (clb) { clb.call (ctx?ctx:self); }
     }
@@ -33662,8 +33710,15 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
         return false;
       }
 
-      if (animation.delegate && animation.delegate.taskDidStop)
-      { animation.delegate.taskDidEnd (animation); }
+      if (animation.delegate && animation.delegate.taskDidEnd) {
+        try {
+          animation.delegate.taskDidEnd (anim_params)
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack)
+          console.error (e);
+        }
+      }
 
       if (clb) { clb.call (ctx?ctx:self); }
     }
@@ -39925,8 +39980,15 @@ Video.prototype = {
     this.__video_node.pause ();
     this._state = core.Task.PAUSED;
 
-    if (this.delegate && this.delegate.taskDidPause)
-    { this.delegate.taskDidPause (this); }
+    if (this.delegate && this.delegate.taskDidPause) {
+      try {
+        this.delegate.taskDidPause (this); 
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
 
   /**
@@ -39949,8 +40011,15 @@ Video.prototype = {
     
     this._state = core.Task.STOPPED;
 
-    if (this.delegate && this.delegate.taskDidStop)
-    { this.delegate.taskDidStop (this); }
+    if (this.delegate && this.delegate.taskDidStop) {
+      try {
+        this.delegate.taskDidStop (this); 
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
  },
 
   /*****************************************************************
@@ -40024,15 +40093,29 @@ Video.prototype = {
 
       case 'ended':
         this._state = core.Task.STOPED;
-        if (this.delegate && this.delegate.taskDidEnd)
-        { this.delegate.taskDidEnd (this); }
+        if (this.delegate && this.delegate.taskDidEnd) {
+          try {
+            this.delegate.taskDidEnd (this); 
+          }
+          catch (e) {
+            if (e.stack) console.log (e.stack)
+            console.error (e);
+          }
+        }
         this.propagate (event.type);
       break;
 
       case 'pause':
-        if (this.delegate && this.delegate.taskDidPause)
-        { this.delegate.taskDidPause (this); }
         this._state = core.Task.PAUSED;
+        if (this.delegate && this.delegate.taskDidPause) {
+          try {
+            this.delegate.taskDidPause (this); 
+          }
+          catch (e) {
+            if (e.stack) console.log (e.stack)
+            console.error (e);
+          }
+        }
         this.propagate (event.type);
       break;
 
@@ -40577,8 +40660,15 @@ Audio.prototype = {
     this.__audio.pause ();
     this._state = core.Task.PAUSED;
 
-    if (this.delegate && this.delegate.taskDidPause)
-    { this.delegate.taskDidPause (this); }
+    if (this.delegate && this.delegate.taskDidPause) {
+      try {
+        this.delegate.taskDidPause (this);
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
 
   /**
@@ -40597,8 +40687,15 @@ Audio.prototype = {
     { this.__audio.pause (); }
     this._state = core.Task.STOPPED;
 
-    if (this.delegate && this.delegate.taskDidStop)
-    { this.delegate.taskDidStop (this); }
+    if (this.delegate && this.delegate.taskDidStop) {
+      try {
+        this.delegate.taskDidStop (this);
+      }
+      catch (e) {
+        if (e.stack) console.log (e.stack)
+        console.error (e);
+      }
+    }
   },
 
   /*****************************************************************
@@ -40674,15 +40771,29 @@ Audio.prototype = {
 
       case 'ended':
         this._state = core.Task.STOPED;
-        if (this.delegate && this.delegate.taskDidEnd)
-        { this.delegate.taskDidEnd (this); }
+        if (this.delegate && this.delegate.taskDidEnd) {        
+          try {
+            this.delegate.taskDidEnd (this);
+          }
+          catch (e) {
+            if (e.stack) console.log (e.stack)
+            console.error (e);
+          }
+        }
         this.propagate (event.type);
       break;
 
       case 'pause':
-        if (this.delegate && this.delegate.taskDidPause)
-        { this.delegate.taskDidPause (this); }
         this._state = core.Task.PAUSED;
+        if (this.delegate && this.delegate.taskDidPause) {
+          try {
+            this.delegate.taskDidPause (this);
+          }
+          catch (e) {
+            if (e.stack) console.log (e.stack)
+            console.error (e);
+          }
+        }
         this.propagate (event.type);
       break;
 
@@ -40733,8 +40844,15 @@ util.defineClassProperties (Audio, {
         function onSuccess ()
         {
           self._state = core.Task.STOPED;
-          if (self.delegate && self.delegate.taskDidEnd)
-          { self.delegate.taskDidEnd (self); }
+          if (self.delegate && self.delegate.taskDidEnd) {
+            try {
+              self.delegate.taskDidEnd (self);
+            }
+            catch (e) {
+              if (e.stack) console.log (e.stack)
+              console.error (e);
+            }
+          }
           self.propagate (event.type);
         }
         this.__audio = new window.Media (this._src, onSuccess);
