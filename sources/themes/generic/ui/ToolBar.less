@@ -29,11 +29,7 @@
 {
   width: 100%;
   height: 100%;
-  display: -webkit-flex;
-  display: -moz-flex;
-  display: flex;
-  .flex-direction(row);
-  .flex-wrap(nowrap);
+  .box-orient(horizontal);
 }
 
 .vs_ui_toolbar > div > div
@@ -45,7 +41,7 @@
   text-align: center;
   height: 100%;
   position:relative;
-  flex: 1;
+  .box-flex(1);
 }
 
 .vs_ui_toolbar.black_style {
