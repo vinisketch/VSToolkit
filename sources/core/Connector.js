@@ -46,8 +46,8 @@ var Connector = function (object, property_name) {
  * @param {String} property_name the Component in property name to connect
  *        to
  */
-Connector.prototype.to = function (object, property_name) {
-  vs._default_df_.connect (this._base_object, this.property_out, object, property_name);
+Connector.prototype.to = function (object, property_name, func) {
+  vs._default_df_.connect (this._base_object, this.property_out, object, property_name, func);
   this._previous_object = object;
   
   return this;
