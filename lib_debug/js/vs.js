@@ -8786,8 +8786,8 @@ var Connector = function (object, property_name) {
  * @param {String} property_name the Component in property name to connect
  *        to
  */
-Connector.prototype.to = function (object, property_name) {
-  vs._default_df_.connect (this._base_object, this.property_out, object, property_name);
+Connector.prototype.to = function (object, property_name, func) {
+  vs._default_df_.connect (this._base_object, this.property_out, object, property_name, func);
   this._previous_object = object;
   
   return this;
@@ -27942,13 +27942,13 @@ ui.TextLabel = TextLabel;
  *  myCanvas.draw = function (x, y, width, height)
  *  {
  *    this.canvas_ctx.clearRect (x, y, width, height)
- *    // <=> this.clearRect (x, y, width, height)
+ *    // <=> this.c_clearRect (x, y, width, height)
  *      
  *    this.canvas_ctx.fillStyle = "rgb(200,0,0)";
- *    // <=> this.fillRect (10, 10, 55, 50);
+ *    // <=> this.c_fillRect (10, 10, 55, 50);
  *   
  *    this.canvas_ctx.fillStyle = "rgba(0, 0, 200, 0.5)";
- *    // <=> this.fillRect (30, 30, 55, 50);
+ *    // <=> this.c_fillRect (30, 30, 55, 50);
  *
  *    ...
  *    
@@ -28032,7 +28032,7 @@ Canvas.prototype = {
    * 5th argument specifies a radius for rounded corners. An optional
    * 6th argument specifies a clockwise rotation about (x,y).
    *
-   * @name vs.ui.Canvas#drawRect
+   * @name vs.ui.Canvas#c_drawRect
    * @function
    *
    * @param {number} x The x position
@@ -28042,19 +28042,19 @@ Canvas.prototype = {
    * @param {number} radius The rectangle radius
    * @param {number} rotation The rectangle rotation
    */
-  drawRect : function (x, y, w, h, radius, rotation)
+  c_drawRect : function (x, y, w, h, radius, rotation)
   {
     if (arguments.length === 4)
     {
       // square corners, no rotation
-      this.rect (x, y, w, h).stroke ();
+      this.c_rect (x, y, w, h).stroke ();
     }
     else
     {
       if (!rotation)
       {
         // Rounded corners, no rotation
-        this.polygon (x, y, x + w, y, x + w, y + h, x, y + h, radius);
+        this.c_polygon (x, y, x + w, y, x + w, y + h, x, y + h, radius);
       }
       else
       {
@@ -28069,7 +28069,7 @@ Canvas.prototype = {
         points.push (x + p [0], y + p [1]);
         if (radius) { points.push (radius); }
         
-        this.polygon.apply (this, points);
+        this.c_polygon.apply (this, points);
       }
     }
     // The polygon() method handles setting the current point
@@ -28097,28 +28097,28 @@ Canvas.prototype = {
    *  myCanvas.init ();
    *
    *  // draw a triangle
-   *  myCanvas.polygon (100, 100, 50, 150, 300, 300);
+   *  myCanvas.c_polygon (100, 100, 50, 150, 300, 300);
    *
-   * @name vs.ui.Canvas#polygon
+   * @name vs.ui.Canvas#c_polygon
    * @function
    * @param {...number} list of number
    */
-  polygon : function ()
+  c_polygon : function ()
   {
     // Need at least 3 points for a polygon
     if (arguments.length < 6) { throw new Error("not enough arguments"); }
 
     var i, radius, n, x0, y0;
     
-    this.beginPath ();
+    this.c_beginPath ();
 
     if (arguments.length % 2 === 0)
     {
-      this.moveTo (arguments [0], arguments [1]);
+      this.c_moveTo (arguments [0], arguments [1]);
      
       for (i = 2; i < arguments.length; i += 2)
       {
-        this.lineTo (arguments [i], arguments [i + 1]);
+        this.c_lineTo (arguments [i], arguments [i + 1]);
       }
     }
     else
@@ -28130,37 +28130,37 @@ Canvas.prototype = {
       // Begin at the midpoint of the first and last points
       x0 = (arguments [n * 2 - 2] + arguments [0]) /2;
       y0 = (arguments [n * 2 - 1] + arguments [1]) /2;
-      this.moveTo (x0, y0);
+      this.c_moveTo (x0, y0);
       
       // Now arcTo each of the remaining points
       for (i = 0; i < n - 1; i++)
       {
-        this.arcTo
+        this.c_arcTo
           (arguments [i * 2], arguments [i * 2 + 1],
            arguments [i * 2 + 2], arguments [i * 2 + 3], radius);
       }
       // Final arcTo back to the start
-      this.arcTo
+      this.c_arcTo
         (arguments [n * 2 - 2], arguments [n * 2 - 1],
          arguments [0], arguments [1], radius);
     }
 
-    this.closePath ();
-    this.moveTo (arguments [0], arguments [1]);
-    this.stroke ();
+    this.c_closePath ();
+    this.c_moveTo (arguments [0], arguments [1]);
+    this.c_stroke ();
     return this;
   },
 
   /**
    * This method draws elliptical arcs as well as circular arcs.
    *
-   * @name vs.ui.Canvas#ellipse
+   * @name vs.ui.Canvas#c_ellipse
    * @function
    * @example
    *  var myCanvas = new Canvas (config);
    *  myCanvas.init ();
    *
-   *  myCanvas.ellipse (100, 100, 50, 150, Math.PI/5, 0, Math.PI);
+   *  myCanvas.c_ellipse (100, 100, 50, 150, Math.PI/5, 0, Math.PI);
    *
    * @param {number} cx The X coordinate of the center of the ellipse
    * @param {number} cy The Y coordinate of the center of the ellipse
@@ -28173,7 +28173,7 @@ Canvas.prototype = {
    * @param {boolean} anticlockwise The arc direction. The default
    *        is false, which means clockwise
    */
-  ellipse : function (cx, cy, rx, ry, rotation, sa, ea, anticlockwise)
+  c_ellipse : function (cx, cy, rx, ry, rotation, sa, ea, anticlockwise)
   {
     if (rotation === undefined) { rotation = 0;}
     if (sa === undefined) { sa = 0; }
@@ -28188,17 +28188,17 @@ Canvas.prototype = {
       ep = this.rotatePoint (rx * Math.cos (ea), ry * Math.sin (ea), rotation),
       ex = cx + ep[0], ey = cy + ep[1];
     
-    this.moveTo (sx, sy);
+    this.c_moveTo (sx, sy);
 
-    this.translate (cx, cy);
-    this.rotate (rotation);
-    this.scale (rx / ry, 1);
-    this.arc (0, 0, ry, sa, ea, anticlockwise);
-    this.scale (ry / rx, 1);
-    this.rotate (-rotation);
-    this.translate (-cx, -cy);
+    this.c_translate (cx, cy);
+    this.c_rotate (rotation);
+    this.c_scale (rx / ry, 1);
+    this.c_arc (0, 0, ry, sa, ea, anticlockwise);
+    this.c_scale (ry / rx, 1);
+    this.c_rotate (-rotation);
+    this.c_translate (-cx, -cy);
     
-    this.stroke ();
+    this.c_stroke ();
     
     return this;
   },
@@ -28242,12 +28242,12 @@ Canvas.prototype = {
       windowHeight = window.innerHeight;  
 
     //Draw canvas  
-    this.clearRect (0, 0, this._size [0], this._size [1]);  
-    this.save ();  
-    this.scale (this._size [0] / windowWidth, this._size [1] / windowHeight);  
+    this.c_clearRect (0, 0, this._size [0], this._size [1]);  
+    this.c_save ();  
+    this.c_scale (this._size [0] / windowWidth, this._size [1] / windowHeight);  
     this.canvas_ctx.drawWindow
       (remoteWindow, 0, 0, windowWidth, windowHeight, "rgb(255,255,255)");  
-    this.restore();  
+    this.c_restore();  
   },
   
   /**
@@ -28269,17 +28269,17 @@ Canvas.prototype = {
     if (!width) { width = this._size [0]; }
     if (!height) { height = this._size [1]; }
     
-    this.clearRect (x, y, width, height);
+    this.c_clearRect (x, y, width, height);
       
-    this.lineWidth = 3;
-    this.shadowColor = 'white';
-    this.shadowBlur = 1;
+    this.c_lineWidth = 3;
+    this.c_shadowColor = 'white';
+    this.c_shadowBlur = 1;
     
     var i, x1, y1, x2, y2;
     
     for (i = 0; i < 10; i++)
     {
-      this.strokeStyle = 'rgb(' + 
+      this.c_strokeStyle = 'rgb(' + 
         Math.floor (Math.random () * 255) + ',' + 
         Math.floor (Math.random () * 255) + ',' + 
         Math.floor (Math.random () * 255) +')';
@@ -28290,11 +28290,11 @@ Canvas.prototype = {
       x2 = Math.floor (Math.random() * width);
       y2 = Math.floor (Math.random() * height);
   
-      this.beginPath ();
-      this.moveTo (x1,y1);
-      this.lineTo (x2,y2);
-      this.closePath ();
-      this.stroke ();
+      this.c_beginPath ();
+      this.c_moveTo (x1,y1);
+      this.c_lineTo (x2,y2);
+      this.c_closePath ();
+      this.c_stroke ();
     }
   }
 };
@@ -28328,11 +28328,11 @@ Canvas.setup = function ()
   for (i = 0; i < Canvas.methods.length; i++)
   {
     m = Canvas.methods [i];  
-    Canvas.prototype [m] = (function (m)
+    Canvas.prototype ["c_" + m] = (function (m)
     {
-      return function (a, b, c, d, e, f, g, h, i)
+      return function ()
       { // 9 args is most in API  
-        this.canvas_ctx [m] (a, b, c, d, e, f, g, h, i);  
+        this.canvas_ctx [m].apply (this.canvas_ctx, arguments);  
         return this;  
       };
     }(m));  
@@ -28361,7 +28361,7 @@ Canvas.setup = function ()
       };
     }(p));
 
-    util.defineProperty (Canvas.prototype, p, d);
+    util.defineProperty (Canvas.prototype, "c_" + p, d);
   }  
 };
 
@@ -28436,46 +28436,46 @@ ui.Canvas = Canvas;
  * and ending at the given end angle, going in the given direction (defaulting * 
  * to clockwise), is added to the path, connected to the previous point by a 
  * straight line.
- * @name vs.ui.Canvas#arc
+ * @name vs.ui.Canvas#c_arc
  * @function
  */
 
 /**
  * Adds an arc with the given control points and radius to the current subpath, 
  * connected to the previous point by a straight line.
- * @name vs.ui.Canvas#arcTo
+ * @name vs.ui.Canvas#c_arcTo
  * @function
  */
 
 /**
  * Resets the current path.
- * @name vs.ui.Canvas#beginPath
+ * @name vs.ui.Canvas#c_beginPath
  * @function
  */
 
 /**
  * Adds the given point to the current subpath, connected to the previous one by 
  * a cubic Bézier curve with the given control points.
- * @name vs.ui.Canvas#bezierCurveTo
+ * @name vs.ui.Canvas#c_bezierCurveTo
  * @function
  */
 
 /**
  * Clears all pixels on the canvas in the given rectangle to transparent black.
- * @name vs.ui.Canvas#clearRect
+ * @name vs.ui.Canvas#c_clearRect
  * @function
  */
 
 /**
  * Further constrains the clipping region to the given path.
- * @name vs.ui.Canvas#clip
+ * @name vs.ui.Canvas#c_clip
  * @function
  */
 
 /**
  * Marks the current subpath as closed, and starts a new subpath with a point 
  * the same as the start and end of the newly closed subpath.
- * @name vs.ui.Canvas#closePath
+ * @name vs.ui.Canvas#c_closePath
  * @function
  */
 
@@ -28483,7 +28483,7 @@ ui.Canvas = Canvas;
  * Returns an ImageData object with the given dimensions in CSS pixels (which 
  * might map to a different number of actual device pixels exposed by the object 
  * itself). All the pixels in the returned object are transparent black.
- * @name vs.ui.Canvas#createImageData
+ * @name vs.ui.Canvas#c_createImageData
  * @function
  */
 
@@ -28492,7 +28492,7 @@ ui.Canvas = Canvas;
  * along the line given by the coordinates represented by the arguments.
  * If any of the arguments are not finite numbers, throws a NotSupportedError 
  * exception.
- * @name vs.ui.Canvas#createLinearGradient
+ * @name vs.ui.Canvas#c_createLinearGradient
  * @function
  */
 
@@ -28502,176 +28502,176 @@ ui.Canvas = Canvas;
  * If any of the arguments are not finite numbers, throws a NotSupportedError 
  * exception. If either of the radii are negative, throws an IndexSizeError 
  * exception.
- * @name vs.ui.Canvas#createRadialGradient
+ * @name vs.ui.Canvas#c_createRadialGradient
  * @function
  */
 
 /**
  * Returns a CanvasPattern object that uses the given image and repeats in the 
  * direction(s) given by the repetition argument.
- * @name vs.ui.Canvas#createPattern
+ * @name vs.ui.Canvas#c_createPattern
  * @function
  */
 
 /**
- * @name vs.ui.Canvas#drawFocusRing
+ * @name vs.ui.Canvas#c_drawFocusRing
  * @function
  */
 
 /**
  * Draws the given image onto the canvas.
- * @name vs.ui.Canvas#drawImage
+ * @name vs.ui.Canvas#c_drawImage
  * @function
  */
 
 /**
- * @name vs.ui.Canvas#fill
+ * @name vs.ui.Canvas#c_fill
  * @function
  */
 
 /**
  * Paints the given rectangle onto the canvas, using the current fill style.
- * @name vs.ui.Canvas#fillRect
+ * @name vs.ui.Canvas#c_fillRect
  * @function
  */
 
 /**
  * Fills the given text at the given position. If a maximum width is provided, 
  * the text will be scaled to fit that width if necessary.
- * @name vs.ui.Canvas#fillText
+ * @name vs.ui.Canvas#c_fillText
  * @function
  */
 
 /**
  * Returns an ImageData object containing the image data for the given rectangle 
  * of the canvas.
- * @name vs.ui.Canvas#getImageData
+ * @name vs.ui.Canvas#c_getImageData
  * @function
  */
 
 /**
  * Returns true if the given point is in the current path.
- * @name vs.ui.Canvas#isPointInPath
+ * @name vs.ui.Canvas#c_isPointInPath
  * @function
  */
 
 /**
  * Adds the given point to the current subpath, connected to the previous one by 
  * a straight line.
- * @name vs.ui.Canvas#lineTo
+ * @name vs.ui.Canvas#c_lineTo
  * @function
  */
 
 /**
  * Returns a TextMetrics object with the metrics of the given text in the 
  * current font.
- * @name vs.ui.Canvas#measureText
+ * @name vs.ui.Canvas#c_measureText
  * @function
  */
 
 /**
  * Creates a new subpath with the given point.
- * @name vs.ui.Canvas#moveTo
+ * @name vs.ui.Canvas#c_moveTo
  * @function
  */
 
 /**
  * Paints the data from the given ImageData object onto the canvas. If a dirty 
  * rectangle is provided, only the pixels from that rectangle are painted.
- * @name vs.ui.Canvas#putImageData
+ * @name vs.ui.Canvas#c_putImageData
  * @function
  */
 
 /**
  * Adds the given point to the current subpath, connected to the previous one by 
  * a quadratic Bézier curve with the given control point.
- * @name vs.ui.Canvas#quadraticCurveTo
+ * @name vs.ui.Canvas#c_quadraticCurveTo
  * @function
  */
 
 /**
  * Adds a new closed subpath to the path, representing the given rectangle.
- * @name vs.ui.Canvas#rect
+ * @name vs.ui.Canvas#c_rect
  * @function
  */
 
 /**
  * Pops the top state on the stack, restoring the context to that state.
- * @name vs.ui.Canvas#restore
+ * @name vs.ui.Canvas#c_restore
  * @function
  */
 
 /**
  * Changes the transformation matrix to apply a rotation transformation with the 
  * given characteristics. The angle is in radians.
- * @name vs.ui.Canvas#rotate
+ * @name vs.ui.Canvas#c_rotate
  * @function
  */
 
 /**
  * Pushes the current state onto the stack.
- * @name vs.ui.Canvas#save
+ * @name vs.ui.Canvas#c_save
  * @function
  */
 
 /**
  * Changes the transformation matrix to apply a scaling transformation with the 
  * given characteristics.
- * @name vs.ui.Canvas#scale
+ * @name vs.ui.Canvas#c_scale
  * @function
  */
 
 /**
  * Changes the transformation matrix to the matrix given by the arguments as 
  * described below.
- * @name vs.ui.Canvas#setTransform
+ * @name vs.ui.Canvas#c_setTransform
  * @function
  */
 
 /**
  * Strokes the subpaths with the current stroke style.
- * @name vs.ui.Canvas#stroke
+ * @name vs.ui.Canvas#c_stroke
  * @function
  */
 
 /**
  * Paints the box that outlines the given rectangle onto the canvas, using the 
  * current stroke style.
- * @name vs.ui.Canvas#strokeRect
+ * @name vs.ui.Canvas#c_strokeRect
  * @function
  */
 
 /**
  * Strokes the given text at the given position. If a maximum width is provided, 
  * the text will be scaled to fit that width if necessary.
- * @name vs.ui.Canvas#strokeText
+ * @name vs.ui.Canvas#c_strokeText
  * @function
  */
 
 /**
  * Changes the transformation matrix to apply the matrix given by the arguments 
  * as described below.
- * @name vs.ui.Canvas#transform
+ * @name vs.ui.Canvas#c_transform
  * @function
  */
 
 /**
  * Changes the transformation matrix to apply a translation transformation with 
  * the given characteristics.
- * @name vs.ui.Canvas#translate
+ * @name vs.ui.Canvas#c_translate
  * @function
  */
 
 /**
  * Returns the canvas element.
- * @name vs.ui.Canvas#canvas
+ * @name vs.ui.Canvas#c_canvas
  */
 
 /**
  * Can be set, to change the fill style.
  * <br />
  * Returns the current style used for filling shapes.
- * @name vs.ui.Canvas#fillStyle
+ * @name vs.ui.Canvas#c_fillStyle
  */
 
 /**
@@ -28679,7 +28679,7 @@ ui.Canvas = Canvas;
  * property; values that cannot be parsed as CSS font values are ignored.
  * <br />
  * Returns the current font settings
- * @name vs.ui.Canvas#font
+ * @name vs.ui.Canvas#c_font
  */
 
 /**
@@ -28687,28 +28687,28 @@ ui.Canvas = Canvas;
  * are ignored.
  * <br />
  * Returns the current alpha value applied to rendering operations.
- * @name vs.ui.Canvas#globalAlpha
+ * @name vs.ui.Canvas#c_globalAlpha
  */
 
 /**
  * Can be set, to change the composition operation. Unknown values are ignored.
  * <br />
  * Returns the current composition operation, from the list below.
- * @name vs.ui.Canvas#globalCompositeOperation
+ * @name vs.ui.Canvas#c_globalCompositeOperation
  */
 
 /**
  * Can be set, to change the line cap style.
  * <br />
  * Returns the current line cap style.
- * @name vs.ui.Canvas#lineCap
+ * @name vs.ui.Canvas#c_lineCap
  */
 
 /**
  * Can be set, to change the line join style.
  * <br />
  * Returns the current line join style.
- * @name vs.ui.Canvas#lineJoin
+ * @name vs.ui.Canvas#c_lineJoin
  */
 
 /**
@@ -28716,14 +28716,14 @@ ui.Canvas = Canvas;
  * values greater than zero are ignored.
  * <br />
  * Returns the current miter limit ratio.
- * @name vs.ui.Canvas#miterLimit
+ * @name vs.ui.Canvas#c_miterLimit
  */
 
 /**
  * Can be set, to change the line width. Values that are not finite values 
  * greater than zero are ignored.
  * Returns the current line width.
- * @name vs.ui.Canvas#lineWidth
+ * @name vs.ui.Canvas#c_lineWidth
  */
 
 /**
@@ -28731,7 +28731,7 @@ ui.Canvas = Canvas;
  * are ignored.
  * <br />
  * Returns the current shadow offset.
- * @name vs.ui.Canvas#shadowOffsetX
+ * @name vs.ui.Canvas#c_shadowOffsetX
  */
 
 /**
@@ -28739,7 +28739,7 @@ ui.Canvas = Canvas;
  * are ignored.
  * <br />
  * Returns the current shadow offset.
- * @name vs.ui.Canvas#shadowOffsetY
+ * @name vs.ui.Canvas#c_shadowOffsetY
  */
 
 /**
@@ -28747,7 +28747,7 @@ ui.Canvas = Canvas;
  * greater than or equal to zero are ignored.
  * <br />
  * Returns the current level of blur applied to shadows.
- * @name vs.ui.Canvas#shadowBlur
+ * @name vs.ui.Canvas#c_shadowBlur
  */
 
 /**
@@ -28755,21 +28755,21 @@ ui.Canvas = Canvas;
  * colors are ignored.
  * <br />
  * Returns the current shadow color.
- * @name vs.ui.Canvas#shadowColor
+ * @name vs.ui.Canvas#c_shadowColor
  */
 
 /**
  * Can be set, to change the stroke style.
  * <br />
  * Returns the current style used for stroking shapes.
- * @name vs.ui.Canvas#strokeStyle
+ * @name vs.ui.Canvas#c_strokeStyle
  */
 
 /**
  * Can be set, to change the alignment. The possible values are start, end, 
  * left, right, and center. Other values are ignored. The default is start.
  * Returns the current text alignment settings.
- * @name vs.ui.Canvas#textAlign
+ * @name vs.ui.Canvas#c_textAlign
  */
 
 /**
@@ -28778,7 +28778,7 @@ ui.Canvas = Canvas;
  * alphabetic.
  * <br />
  * Returns the current baseline alignment settings.
- * @name vs.ui.Canvas#textBaseline
+ * @name vs.ui.Canvas#c_textBaseline
  */
  /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
