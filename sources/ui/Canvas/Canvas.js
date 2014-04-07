@@ -389,7 +389,7 @@ Canvas.prototype = {
       x2 = Math.floor (Math.random() * width);
       y2 = Math.floor (Math.random() * height);
   
-      this.c_c_beginPath ();
+      this.c_beginPath ();
       this.c_moveTo (x1,y1);
       this.c_lineTo (x2,y2);
       this.c_closePath ();
