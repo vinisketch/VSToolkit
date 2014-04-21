@@ -2755,11 +2755,13 @@ Model.prototype = {
   parseData : function (obj)
   {
     var prop_name;
-      
+    
+    this.stopPropagation ();
     for (prop_name in obj)
     {
       this._parse_property (prop_name, obj [prop_name]);
     }
+    this.change ();
   },
 
   /**
@@ -7394,6 +7396,8 @@ VSArray.prototype = {
   parseData : function (obj)
   {
     var i, key, _model, item, self = this;
+    
+    this.stopPropagation ();
 
     function fillArray (data)
     {
@@ -7439,6 +7443,8 @@ VSArray.prototype = {
       }
       else this._parse_property (key, obj [key]);
     }
+    
+    this.change ();
   }
 };
 util.extendClass (VSArray, core.Model);
