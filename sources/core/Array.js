@@ -260,6 +260,8 @@ VSArray.prototype = {
   parseData : function (obj)
   {
     var i, key, _model, item, self = this;
+    
+    this.stopPropagation ();
 
     function fillArray (data)
     {
@@ -305,6 +307,8 @@ VSArray.prototype = {
       }
       else this._parse_property (key, obj [key]);
     }
+    
+    this.change ();
   }
 };
 util.extendClass (VSArray, core.Model);

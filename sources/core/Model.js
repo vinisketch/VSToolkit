@@ -353,11 +353,13 @@ Model.prototype = {
   parseData : function (obj)
   {
     var prop_name;
-      
+    
+    this.stopPropagation ();
     for (prop_name in obj)
     {
       this._parse_property (prop_name, obj [prop_name]);
     }
+    this.change ();
   },
 
   /**
