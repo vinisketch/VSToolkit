@@ -314,7 +314,7 @@ function LIST_ATTACHED_CALLBACK () {
       }
     
       self._comp_.setItemTemplate (comp);
-      self._comp_._modelChanged ();
+      self._comp_.inPropertyDidChange ();
     });
   }
    

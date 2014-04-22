@@ -195,6 +195,8 @@ VSObject.prototype =
       this.__df__.forEach (function (df) {
         df.pausePropagation ();
       });
+      
+    this.__configuration_process = true;
 
     // Manage model
     if (config instanceof Model)
@@ -231,6 +233,8 @@ VSObject.prototype =
       }
     }
 
+    this.__configuration_process = false;
+    
     if (this.__df__ && this.__df__.length) {
       this.__df__.forEach (function (df) {
         df.restartPropagation ();
@@ -312,6 +316,8 @@ VSObject.prototype =
 //         }
       this ['_' + util.underscore (key)] = value;
     }
+    
+    this.inPropertyDidChange ();
   },
 
   /**
@@ -385,6 +391,26 @@ VSObject.prototype =
   },
 
 
+  /**
+   * Manually tel an input property change.
+   * <br/>
+   * It will generate a call to propertiesDidChange.
+   * @name vs.core.Object#inPropertyDidChange
+   * @function
+   *
+   */
+  inPropertyDidChange : function ()
+  {
+    this.__input_property__did__change__ = true;
+    
+    // Dataflow propagation, do nothing
+    if (DataFlow.__nb_propagation > 0) return;
+    
+    // Configuration process, do nothing
+    if (this.__configuration_process) return;
+    
+  },
+  
   /**
    * Manually force out properties change propagation.
    * <br/>

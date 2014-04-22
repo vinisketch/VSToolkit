@@ -51,6 +51,8 @@ function DataFlow (comp) {
   }
 }
 
+DataFlow.__nb_propagation = 0;
+
 DataFlow.prototype = {
  
   propagate_values : function (obj) {
@@ -134,6 +136,7 @@ DataFlow.prototype = {
     if (this.is_propagating || this.__shouldnt_propagate__) { return; }
 
     this.is_propagating = true;
+    DataFlow.__nb_propagation ++;
     
     var i = 0, dataflow_node = this.dataflow_node, l = dataflow_node.length;
     
@@ -150,6 +153,7 @@ DataFlow.prototype = {
             // => stop propagation
 
             // end of propagation
+            DataFlow.__nb_propagation --;
             this.is_propagating = false;
             return;
           }
@@ -181,6 +185,7 @@ DataFlow.prototype = {
     }
 
     // 4) end of propagation
+    DataFlow.__nb_propagation --;
     this.is_propagating = false;
   },
 
