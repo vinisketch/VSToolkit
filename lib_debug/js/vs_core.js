@@ -367,6 +367,8 @@ VSObject.prototype =
       this.__df__.forEach (function (df) {
         df.pausePropagation ();
       });
+      
+    this.__configuration_process = true;
 
     // Manage model
     if (config instanceof Model)
@@ -403,6 +405,8 @@ VSObject.prototype =
       }
     }
 
+    this.__configuration_process = false;
+    
     if (this.__df__ && this.__df__.length) {
       this.__df__.forEach (function (df) {
         df.restartPropagation ();
@@ -484,6 +488,8 @@ VSObject.prototype =
 //         }
       this ['_' + util.underscore (key)] = value;
     }
+    
+    this.inPropertyDidChange ();
   },
 
   /**
@@ -557,6 +563,26 @@ VSObject.prototype =
   },
 
 
+  /**
+   * Manually tel an input property change.
+   * <br/>
+   * It will generate a call to propertiesDidChange.
+   * @name vs.core.Object#inPropertyDidChange
+   * @function
+   *
+   */
+  inPropertyDidChange : function ()
+  {
+    this.__input_property__did__change__ = true;
+    
+    // Dataflow propagation, do nothing
+    if (DataFlow.__nb_propagation > 0) return;
+    
+    // Configuration process, do nothing
+    if (this.__configuration_process) return;
+    
+  },
+  
   /**
    * Manually force out properties change propagation.
    * <br/>
@@ -4080,6 +4106,8 @@ function DataFlow (comp) {
   }
 }
 
+DataFlow.__nb_propagation = 0;
+
 DataFlow.prototype = {
  
   propagate_values : function (obj) {
@@ -4163,6 +4191,7 @@ DataFlow.prototype = {
     if (this.is_propagating || this.__shouldnt_propagate__) { return; }
 
     this.is_propagating = true;
+    DataFlow.__nb_propagation ++;
     
     var i = 0, dataflow_node = this.dataflow_node, l = dataflow_node.length;
     
@@ -4179,6 +4208,7 @@ DataFlow.prototype = {
             // => stop propagation
 
             // end of propagation
+            DataFlow.__nb_propagation --;
             this.is_propagating = false;
             return;
           }
@@ -4210,6 +4240,7 @@ DataFlow.prototype = {
     }
 
     // 4) end of propagation
+    DataFlow.__nb_propagation --;
     this.is_propagating = false;
   },
 

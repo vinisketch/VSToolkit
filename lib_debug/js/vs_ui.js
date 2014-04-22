@@ -9728,6 +9728,8 @@ util.defineClassProperties (AbstractList, {
         this._model = v;
         this._model.bindChange (null, this, this._modelChanged);
       }
+      
+      this.inPropertyDidChange ();
     },
   
     /**
@@ -9765,7 +9767,7 @@ util.defineClassProperties (AbstractList, {
       }
       this._model.add.apply (this._model, v);
 
-      this._modelChanged ();
+      this.inPropertyDidChange ();
     },
   
     /**
