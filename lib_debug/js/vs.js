@@ -4599,6 +4599,8 @@ VSObject.prototype =
     // Configuration process, do nothing
     if (this.__configuration_process) return;
     
+    // call the change propagation
+    if (this.propertiesDidChange) this.propertiesDidChange ();
   },
   
   /**
