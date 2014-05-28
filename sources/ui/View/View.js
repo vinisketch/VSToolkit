@@ -289,18 +289,11 @@ View.prototype = {
   _pos : null,
 
   /**
-   * Translate value on x
+   * View translate
    * @private
-   * @type {number}
+   * @type {Array}
    */
-  __view_t_x : 0,
-
-  /**
-   * Translate value on y
-   * @private
-   * @type {number}
-   */
-  __view_t_y : 0,
+  _translation : null,
 
   /**
    * @protected
@@ -325,9 +318,9 @@ View.prototype = {
    /**
    * Rotation value
    * @protected
-   * @type {number}
+   * @type {Array}
    */
-  _rotation : 0,
+  _rotation : null,
 
   /**
    * @protected
@@ -796,6 +789,10 @@ View.prototype = {
     // automaticaly if the parent container is resized
     this._pos = [-1, -1];
     this._size = [-1, -1];
+    
+    // init transformation
+    this._translation = [0, 0, 0];
+    this._rotation = [0, 0, 0];
     this._transform_origin = [0, 0];
 
     // rules for positionning a object
@@ -2203,15 +2200,16 @@ View.prototype = {
    *
    * @param x {int} translation over the x axis
    * @param y {int} translation over the y axis
+   * @param z {int} translation over the x axis
    */
-  translate: function (x, y)
+  translate: function (x, y, z)
   {
     if (!util.isNumber (x) || !util.isNumber (y)) { return };
-    if (this.__view_t_x === x && this.__view_t_y === y) { return; }
+    if (!util.isNumber (z)) z = 0;
 
-    this.__view_t_x = x;
-    this.__view_t_y = y;
-
+    this._translation[0] = x;
+    this._translation[1] = y;
+    this._translation[2] = z;
     this._applyTransformation ();
   },
 
@@ -2222,15 +2220,24 @@ View.prototype = {
    * @name vs.ui.View#rotate
    * @function
    *
-   * @param r {float} rotion angle
+   * @param r {{float|array}} rotion angle
    */
   rotate: function (r)
   {
-    if (!util.isNumber (r)) { return };
-
-    if (this._rotation === r) { return; }
-
-    this._rotation = r;
+    if (util.isNumber (r)) {
+      this._rotation[0] = 0;
+      this._rotation[1] = 0;
+      this._rotation[2] = r;
+    }
+    else if (util.isArray (r))
+    {
+      if (util.isNumber (r[0])) this._rotation[0] = r[0];
+      else this._rotation[0] = 0;
+      if (util.isNumber (r[1])) this._rotation[1] = r[1];
+      else this._rotation[1] = 0;
+      if (util.isNumber (r[2])) this._rotation[2] = r[2];
+      else this._rotation[2] = 0;
+    }
 
     this._applyTransformation ();
   },
@@ -2287,8 +2294,10 @@ View.prototype = {
     var matrix = new vs.CSSMatrix ();
     matrix = matrix.translate
       (this._transform_origin [0], this._transform_origin [1], 0);
-    matrix = matrix.translate (this.__view_t_x, this.__view_t_y, 0);
-    matrix = matrix.rotate (0, 0, this._rotation);
+    matrix = matrix.translate
+      (this._translation[0], this._translation[1], this._translation[2]);
+    matrix = matrix.rotate
+      (this._rotation[0], this._rotation[1], this._rotation[2]);
     matrix = matrix.scale (this._scaling, this._scaling, 1);
     matrix = matrix.translate
       (-this._transform_origin [0], -this._transform_origin [1], 0);
@@ -2300,10 +2309,13 @@ View.prototype = {
     }
 
     // Init a new transform space
-    this.__view_t_x = 0;
-    this.__view_t_y = 0;
+    this._translation[0] = 0;
+    this._translation[1] = 0;
+    this._translation[2] = 0;
     this._scaling = 1;
-    this._rotation = 0;
+    this._rotation[0] = 0;
+    this._rotation[1] = 0;
+    this._rotation[2] = 0;
 
     this._transform_origin[0] = 0;
     this._transform_origin[1] = 0;
@@ -2352,10 +2364,13 @@ View.prototype = {
 
     // apply current transformation
     matrix = identity.translate (
-      this._transform_origin [0] + this.__view_t_x,
-      this._transform_origin [1] + this.__view_t_y, 0
+      this._transform_origin [0] + this._translation[0],
+      this._transform_origin [1] + this._translation[1],
+      this._translation[2]
     );
-    matrix = matrix.multiply (identity.rotate (0, 0, this._rotation));
+    matrix = matrix.multiply (
+      identity.rotate (this._rotation[0], this._rotation[1], this._rotation[2])
+    );
     matrix = matrix.scale (this._scaling, this._scaling, 1);
     matrix = matrix.translate (
       -this._transform_origin [0],
@@ -2623,9 +2638,9 @@ util.defineClassProperties (View, {
      */
     set : function (v)
     {
-      if (!util.isArray (v) || v.length !== 2) { return };
+      if (!util.isArray (v)) { return };
 
-      this.translate (v[0], v[1]);
+      this.translate (v[0], v[1], v[2]);
     },
 
     /**
@@ -2634,7 +2649,7 @@ util.defineClassProperties (View, {
      */
     get : function ()
     {
-      return [this.__view_t_x, this.__view_t_y];
+      return this._translation.slice ();
     }
   },
 
@@ -2643,7 +2658,7 @@ util.defineClassProperties (View, {
     /**
      * Rotation angle in degre
      * @name vs.ui.View#rotation
-     * @type {float}
+     * @type {{float|array}}
      */
     set : function (v)
     {
@@ -2652,11 +2667,11 @@ util.defineClassProperties (View, {
 
     /**
      * @ignore
-     * @type {float}
+     * @type {Array}
      */
     get : function ()
     {
-      return this._rotation;
+      return this._rotation.slice;
     }
   },
 
