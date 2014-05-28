@@ -84,4 +84,3 @@ window.vs.ext.ui = {};
 window.vs.ext.fx = {};
 
 window.vs.SUPPORT_3D_TRANSFORM = false;
-
