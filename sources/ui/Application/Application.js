@@ -750,6 +750,7 @@ function preventBehavior (e)
  */
 Application.prototype.mainViewVisibility = function (v)
 {
+  Application.mainViewVisibility (v);
 };
 
 /**
@@ -758,6 +759,7 @@ Application.prototype.mainViewVisibility = function (v)
  */
 Application.prototype.setImageBackground = function (path, name, type)
 {
+  Application.setImageBackground (path, name, type);
 }
 
 /**
@@ -766,13 +768,49 @@ Application.prototype.setImageBackground = function (path, name, type)
  */
 Application.prototype.loadingStart = function (text)
 {
+  Application.loadingStart (text);
 };
 
 /**
  *
- * @name vs.ui.Application#loadingStop 
+ * @name vs.ui.Application.loadingStop 
  */
-Application.prototype.loadingStop = function (v)
+Application.prototype.loadingStop = function ()
+{
+  Application.loadingStop ();
+};
+
+
+/**
+ *
+ *
+ * @name vs.ui.Application.mainViewVisibility 
+ */
+Application.mainViewVisibility = function (v)
+{
+};
+
+/**
+ *
+ * @name vs.ui.Application.setImageBackground 
+ */
+Application.setImageBackground = function (path, name, type)
+{
+}
+
+/**
+ *
+ * @name vs.ui.Application.loadingStart 
+ */
+Application.loadingStart = function (text)
+{
+};
+
+/**
+ *
+ * @name vs.ui.Application.loadingStop 
+ */
+Application.loadingStop = function ()
 {
 };
 
