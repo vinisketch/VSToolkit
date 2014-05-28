@@ -2272,7 +2272,8 @@ View.prototype = {
 
     this.flushTransformStack ();
     
-    this._transform_origin = [origin.x, origin.y];
+    this._transform_origin[0] = origin.x;
+    this._transform_origin[1] = origin.y;
   },
 
   /**
@@ -2303,6 +2304,9 @@ View.prototype = {
     this.__view_t_y = 0;
     this._scaling = 1;
     this._rotation = 0;
+
+    this._transform_origin[0] = 0;
+    this._transform_origin[1] = 0;
   },
 
   /**
