@@ -5947,6 +5947,12 @@ DeviceConfiguration.OS_ANDROID = 9;
 DeviceConfiguration.OS_MEEGO = 10;
 
 /**
+ * @name vs.core.DeviceConfiguration.OS_FIREFOX 
+ * @const
+ */
+DeviceConfiguration.OS_FIREFOX = 11;
+
+/**
  * @name vs.core.DeviceConfiguration.SR_UNKNOWN 
  * @const
  */
@@ -6304,6 +6310,10 @@ DeviceConfiguration.prototype = {
       this.screenRatio = 4/3;
       this.screenSize = DeviceConfiguration.SS_10_INCH;
     }
+    else if (did.indexOf ("ffos") != -1)
+    {
+      this.os = DeviceConfiguration.OS_FIREFOX;
+    }
     // else if (did.indexOf ("nokia_s3") != -1)
     // {
     //   this.os = DeviceConfiguration.OS_SYMBIAN;
@@ -6358,6 +6368,10 @@ DeviceConfiguration.prototype = {
  
       case DeviceConfiguration.OS_ANDROID:
         did += "android"
+      break;
+ 
+      case DeviceConfiguration.OS_FIREFOX:
+        did += "ffos"
       break;
  
       case DeviceConfiguration.OS_WP7:
@@ -6609,6 +6623,11 @@ DeviceConfiguration._data_OS = [
      string: navigator.userAgent,
      subString: "Android",
      identity: DeviceConfiguration.OS_ANDROID
+  },
+  {
+     string: navigator.userAgent,
+     subString: "Firefox",
+     identity: DeviceConfiguration.OS_FIREFOX
   }
 ];
 }

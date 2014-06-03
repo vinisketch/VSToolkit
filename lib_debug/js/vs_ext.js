@@ -2317,7 +2317,7 @@ Accordion.prototype = {
    */
   handleEvent : function (e)
   {
-    var elem = e.target, self = this, pageY, pageX, delta;
+    var elem = e.target, pageY, pageX, delta;
 
     if (elem.nodeType !== 1)
     {
@@ -2347,11 +2347,7 @@ Accordion.prototype = {
         util.removeClassName (this.__elem_to_unselect, 'selected');
         this.__elem_to_unselect = null;
       }
-      this.__list_time_out = setTimeout (function ()
-      {
-        util.addClassName (self.__elem, 'selected');
-        self.__list_time_out = 0;
-      }, 0); //ui.View.SELECT_DELAY);
+      util.addClassName (this.__elem, 'selected');
     }
     else if (e.type === core.POINTER_MOVE)
     {
@@ -2371,15 +2367,7 @@ Accordion.prototype = {
       // if needs
       if (this.__elem && (delta > ui.View.MOVE_THRESHOLD * 2))
       {
-        if (this.__list_time_out)
-        {
-          clearTimeout (this.__list_time_out);
-          this.__list_time_out = 0;
-        }
-        else
-        {
-          util.removeClassName (this.__elem, 'selected');
-        }
+        util.removeClassName (this.__elem, 'selected');
         this.__elem = null;
       }            
     }
@@ -2395,20 +2383,11 @@ Accordion.prototype = {
       // a item is selected. propagate the change
       if (this.__elem)
       {
-        if (this.__list_time_out)
-        {
-          clearTimeout (this.__list_time_out);
-
-          util.addClassName (self.__elem, 'selected');
-        }
+        util.addClassName (this.__elem, 'selected');
 
         this.__elem_to_unselect = this.__elem;
-        this.__list_time_out = setTimeout (function ()
-        {
-          util.removeClassName (self.__elem_to_unselect, 'selected');
-          self.__elem_to_unselect = null;
-          self.__list_time_out = 0;
-        }, ui.View.UNSELECT_DELAY);
+        util.removeClassName (this.__elem_to_unselect, 'selected');
+        this.__elem_to_unselect = null;
         
         if (util.isNumber (elem.__index))
         {

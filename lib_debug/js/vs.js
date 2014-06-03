@@ -84,7 +84,6 @@ window.vs.ext.ui = {};
 window.vs.ext.fx = {};
 
 window.vs.SUPPORT_3D_TRANSFORM = false;
-
 (function () {
 
 /**
@@ -9965,6 +9964,12 @@ DeviceConfiguration.OS_ANDROID = 9;
 DeviceConfiguration.OS_MEEGO = 10;
 
 /**
+ * @name vs.core.DeviceConfiguration.OS_FIREFOX 
+ * @const
+ */
+DeviceConfiguration.OS_FIREFOX = 11;
+
+/**
  * @name vs.core.DeviceConfiguration.SR_UNKNOWN 
  * @const
  */
@@ -10322,6 +10327,10 @@ DeviceConfiguration.prototype = {
       this.screenRatio = 4/3;
       this.screenSize = DeviceConfiguration.SS_10_INCH;
     }
+    else if (did.indexOf ("ffos") != -1)
+    {
+      this.os = DeviceConfiguration.OS_FIREFOX;
+    }
     // else if (did.indexOf ("nokia_s3") != -1)
     // {
     //   this.os = DeviceConfiguration.OS_SYMBIAN;
@@ -10376,6 +10385,10 @@ DeviceConfiguration.prototype = {
  
       case DeviceConfiguration.OS_ANDROID:
         did += "android"
+      break;
+ 
+      case DeviceConfiguration.OS_FIREFOX:
+        did += "ffos"
       break;
  
       case DeviceConfiguration.OS_WP7:
@@ -10627,6 +10640,11 @@ DeviceConfiguration._data_OS = [
      string: navigator.userAgent,
      subString: "Android",
      identity: DeviceConfiguration.OS_ANDROID
+  },
+  {
+     string: navigator.userAgent,
+     subString: "Firefox",
+     identity: DeviceConfiguration.OS_FIREFOX
   }
 ];
 }
@@ -15529,8 +15547,6 @@ var MULTI_TAP_DELAY = 100;
 TapRecognizer.prototype = {
 
   __is_touched: false,
-  __unselect_time_out: 0,
-  __unselect_clb: null,
   __did_tap_time_out: 0,
   __tap_mode: 0,
 
@@ -15567,12 +15583,6 @@ TapRecognizer.prototype = {
     
     if (this.__tap_mode === 0) {
       this.__tap_mode = 1;
-    }
-
-    if (this.__unselect_time_out) {
-      clearTimeout (this.__unselect_time_out);
-      this.__unselect_time_out = 0;
-      if (this.__unselect_clb) this.__unselect_clb ();
     }
 
     this.__tap_elem = e.targetPointerList[0].currentTarget;
@@ -15642,26 +15652,21 @@ TapRecognizer.prototype = {
     this.__is_touched = false;
     var
       self = this,
-      target = self.__tap_elem,
+      target = this.__tap_elem,
       comp = (target)?target._comp_:null;
     
-    self.__tap_elem = undefined;
+    this.__tap_elem = undefined;
   
     this.removePointerListener (document, core.POINTER_END, this.obj);
     this.removePointerListener (document, core.POINTER_MOVE, this.obj);
 
     if (this.delegate && this.delegate.didUntouch) {
-      this.__unselect_clb = function () {
-        try {
-          self.delegate.didUntouch (comp, target, e);
-        } catch (exp) {
-          if (exp.stack) console.log (exp.stack);
-          console.log (exp);
-        }
-        self.__unselect_time_out = 0;
-        delete (self.__unselect_clb);
+      try {
+        this.delegate.didUntouch (comp, target, e);
+      } catch (exp) {
+        if (exp.stack) console.log (exp.stack);
+        console.log (exp);
       }
-      this.__unselect_time_out = setTimeout (this.__unselect_clb, View.UNSELECT_DELAY);        
     }
     
     if (this.delegate && this.delegate.didTap) {
@@ -16297,6 +16302,19 @@ function View (config)
   
   // init recognizer support
   this.__pointer_recognizers = [];
+
+  // position and size : according autosizing rules, can change
+  // automaticaly if the parent container is resized
+  this._pos = [-1, -1];
+  this._size = [-1, -1];
+  
+  // init transformation
+  this._translation = [0, 0, 0];
+  this._rotation = [0, 0, 0];
+  this._transform_origin = [0, 0];
+
+  // rules for positionning a object
+  this._autosizing = [4,4];
 }
 
 /********************************************************************
@@ -16354,20 +16372,6 @@ View.LEGACY_FLOW_LAYOUT = 'flow_layout';
 /********************************************************************
                     Delay constant
 *********************************************************************/
-
-/**
- * Feed back remanence in ms before select a item
- * @name vs.ui.View.SELECT_DELAY
- * @const
- */
-View.SELECT_DELAY = 150;
-
-/**
- * Feed back remanence in ms  before unselect a item
- * @name vs.ui.View.UNSELECT_DELAY
- * @const
- */
-View.UNSELECT_DELAY = 300;
 
 /**
  * Threshold in px  use to unselect a item when pointer move
@@ -16506,18 +16510,11 @@ View.prototype = {
   _pos : null,
 
   /**
-   * Translate value on x
+   * View translate
    * @private
-   * @type {number}
+   * @type {Array}
    */
-  __view_t_x : 0,
-
-  /**
-   * Translate value on y
-   * @private
-   * @type {number}
-   */
-  __view_t_y : 0,
+  _translation : null,
 
   /**
    * @protected
@@ -16542,9 +16539,9 @@ View.prototype = {
    /**
    * Rotation value
    * @protected
-   * @type {number}
+   * @type {Array}
    */
-  _rotation : 0,
+  _rotation : null,
 
   /**
    * @protected
@@ -17008,15 +17005,6 @@ View.prototype = {
   initComponent : function ()
   {
     core.EventSource.prototype.initComponent.call (this);
-
-    // position and size : according autosizing rules, can change
-    // automaticaly if the parent container is resized
-    this._pos = [-1, -1];
-    this._size = [-1, -1];
-    this._transform_origin = [0, 0];
-
-    // rules for positionning a object
-    this._autosizing = [4,4];
 
     this._holes = {};
     this.__children = {};
@@ -18420,15 +18408,16 @@ View.prototype = {
    *
    * @param x {int} translation over the x axis
    * @param y {int} translation over the y axis
+   * @param z {int} translation over the x axis
    */
-  translate: function (x, y)
+  translate: function (x, y, z)
   {
     if (!util.isNumber (x) || !util.isNumber (y)) { return };
-    if (this.__view_t_x === x && this.__view_t_y === y) { return; }
+    if (!util.isNumber (z)) z = 0;
 
-    this.__view_t_x = x;
-    this.__view_t_y = y;
-
+    this._translation[0] = x;
+    this._translation[1] = y;
+    this._translation[2] = z;
     this._applyTransformation ();
   },
 
@@ -18439,15 +18428,24 @@ View.prototype = {
    * @name vs.ui.View#rotate
    * @function
    *
-   * @param r {float} rotion angle
+   * @param r {{float|array}} rotion angle
    */
   rotate: function (r)
   {
-    if (!util.isNumber (r)) { return };
-
-    if (this._rotation === r) { return; }
-
-    this._rotation = r;
+    if (util.isNumber (r)) {
+      this._rotation[0] = 0;
+      this._rotation[1] = 0;
+      this._rotation[2] = r;
+    }
+    else if (util.isArray (r))
+    {
+      if (util.isNumber (r[0])) this._rotation[0] = r[0];
+      else this._rotation[0] = 0;
+      if (util.isNumber (r[1])) this._rotation[1] = r[1];
+      else this._rotation[1] = 0;
+      if (util.isNumber (r[2])) this._rotation[2] = r[2];
+      else this._rotation[2] = 0;
+    }
 
     this._applyTransformation ();
   },
@@ -18489,7 +18487,8 @@ View.prototype = {
 
     this.flushTransformStack ();
     
-    this._transform_origin = [origin.x, origin.y];
+    this._transform_origin[0] = origin.x;
+    this._transform_origin[1] = origin.y;
   },
 
   /**
@@ -18503,8 +18502,10 @@ View.prototype = {
     var matrix = new vs.CSSMatrix ();
     matrix = matrix.translate
       (this._transform_origin [0], this._transform_origin [1], 0);
-    matrix = matrix.translate (this.__view_t_x, this.__view_t_y, 0);
-    matrix = matrix.rotate (0, 0, this._rotation);
+    matrix = matrix.translate
+      (this._translation[0], this._translation[1], this._translation[2]);
+    matrix = matrix.rotate
+      (this._rotation[0], this._rotation[1], this._rotation[2]);
     matrix = matrix.scale (this._scaling, this._scaling, 1);
     matrix = matrix.translate
       (-this._transform_origin [0], -this._transform_origin [1], 0);
@@ -18516,10 +18517,16 @@ View.prototype = {
     }
 
     // Init a new transform space
-    this.__view_t_x = 0;
-    this.__view_t_y = 0;
+    this._translation[0] = 0;
+    this._translation[1] = 0;
+    this._translation[2] = 0;
     this._scaling = 1;
-    this._rotation = 0;
+    this._rotation[0] = 0;
+    this._rotation[1] = 0;
+    this._rotation[2] = 0;
+
+    this._transform_origin[0] = 0;
+    this._transform_origin[1] = 0;
   },
 
   /**
@@ -18565,10 +18572,13 @@ View.prototype = {
 
     // apply current transformation
     matrix = identity.translate (
-      this._transform_origin [0] + this.__view_t_x,
-      this._transform_origin [1] + this.__view_t_y, 0
+      this._transform_origin [0] + this._translation[0],
+      this._transform_origin [1] + this._translation[1],
+      this._translation[2]
     );
-    matrix = matrix.multiply (identity.rotate (0, 0, this._rotation));
+    matrix = matrix.multiply (
+      identity.rotate (this._rotation[0], this._rotation[1], this._rotation[2])
+    );
     matrix = matrix.scale (this._scaling, this._scaling, 1);
     matrix = matrix.translate (
       -this._transform_origin [0],
@@ -18829,16 +18839,16 @@ util.defineClassProperties (View, {
   'translation': {
 
     /**
-     * Translation vector [tx, ty]
-     * <=> obj.translate (tx, ty)
+     * Translation vector [tx, ty, tz]
+     * <=> obj.translate (tx, ty, tz)
      * @name vs.ui.View#translation
      * @type {Array}
      */
     set : function (v)
     {
-      if (!util.isArray (v) || v.length !== 2) { return };
+      if (!util.isArray (v)) { return };
 
-      this.translate (v[0], v[1]);
+      this.translate (v[0], v[1], v[2]);
     },
 
     /**
@@ -18847,7 +18857,7 @@ util.defineClassProperties (View, {
      */
     get : function ()
     {
-      return [this.__view_t_x, this.__view_t_y];
+      return this._translation.slice ();
     }
   },
 
@@ -18856,7 +18866,7 @@ util.defineClassProperties (View, {
     /**
      * Rotation angle in degre
      * @name vs.ui.View#rotation
-     * @type {float}
+     * @type {{float|array}}
      */
     set : function (v)
     {
@@ -18865,11 +18875,11 @@ util.defineClassProperties (View, {
 
     /**
      * @ignore
-     * @type {float}
+     * @type {Array}
      */
     get : function ()
     {
-      return this._rotation;
+      return this._rotation.slice;
     }
   },
 
@@ -19978,6 +19988,7 @@ function preventBehavior (e)
  */
 Application.prototype.mainViewVisibility = function (v)
 {
+  Application.mainViewVisibility (v);
 };
 
 /**
@@ -19986,6 +19997,7 @@ Application.prototype.mainViewVisibility = function (v)
  */
 Application.prototype.setImageBackground = function (path, name, type)
 {
+  Application.setImageBackground (path, name, type);
 }
 
 /**
@@ -19994,13 +20006,49 @@ Application.prototype.setImageBackground = function (path, name, type)
  */
 Application.prototype.loadingStart = function (text)
 {
+  Application.loadingStart (text);
 };
 
 /**
  *
- * @name vs.ui.Application#loadingStop 
+ * @name vs.ui.Application.loadingStop 
  */
-Application.prototype.loadingStop = function (v)
+Application.prototype.loadingStop = function ()
+{
+  Application.loadingStop ();
+};
+
+
+/**
+ *
+ *
+ * @name vs.ui.Application.mainViewVisibility 
+ */
+Application.mainViewVisibility = function (v)
+{
+};
+
+/**
+ *
+ * @name vs.ui.Application.setImageBackground 
+ */
+Application.setImageBackground = function (path, name, type)
+{
+}
+
+/**
+ *
+ * @name vs.ui.Application.loadingStart 
+ */
+Application.loadingStart = function (text)
+{
+};
+
+/**
+ *
+ * @name vs.ui.Application.loadingStop 
+ */
+Application.loadingStop = function ()
 {
 };
 
@@ -20482,19 +20530,15 @@ var SplitView = vs.core.createClass ({
    */
   showMainView : function (instant)
   {
-    var self = this;
     if (this._mode !== SplitView.MOBILE_MODE) return;
 
     if (this._hide_main_panel_button) this._hide_main_panel_button.show ();
     
     if (instant) {
-      self.addClassName ('main_view_visible');
+      this.addClassName ('main_view_visible');
       return;
     }
-    setTimeout (
-      function () { self.addClassName ('main_view_visible'); },
-      View.UNSELECT_DELAY
-    );
+    this.addClassName ('main_view_visible');
   },
   
   /**
@@ -23823,7 +23867,6 @@ AbstractList.prototype = {
    * @type {PointerRecognizer}
    */
   __tap_recognizer: null,
-  __list_time_out: 0,
 
    /**
    * @protected
@@ -23996,47 +24039,48 @@ AbstractList.prototype = {
     }
     
     this.__elem = target;
-    if (this.__list_time_out) {
-      clearTimeout (this.__list_time_out);
-      this.__list_time_out = 0;
+    this._unselect_item ();
+//     if (this.__elem_to_unselect)
+//     {
+//       this._untouchItemFeedback (this.__elem_to_unselect);
+//       this.__elem_to_unselect = null;
+//     }
+//     this.__elem_to_unselect = target;
+    if (target) {
+      this.__elem_to_unselect = target;
+      this._touchItemFeedback (target);
     }
-    if (this.__elem_to_unselect)
-    {
-      this._untouchItemFeedback (this.__elem_to_unselect);
-      this.__elem_to_unselect = null;
-    }
-    this.__elem_to_unselect = target;
-    if (target) this._touchItemFeedback (target);
   },
   
   /**
    * @protected
    * @function
    */
-  didUntouch : function (comp, e, target)
+  didUntouch : function (comp, target, e)
   {
-    if (!this.__list_time_out && this.__elem_to_unselect)
-    {
-      this._untouchItemFeedback (this.__elem_to_unselect);
-      this.__elem_to_unselect = null;
-    }
+    this._unselect_item ()
     this.__elem = null;
   },
   
   didTap : function (nb_tap, comp, target, e)
   {
-    var self = this;
-    this.__elem_to_unselect = this.__elem;
-    if (this.__elem) {
-      this._updateSelectItem (this.__elem);
-
-      this.__list_time_out = setTimeout (function () {
-        if (self.__elem_to_unselect) {
-          self._untouchItemFeedback (self.__elem_to_unselect);
-        }
-        self.__elem_to_unselect = null;
-        self.__list_time_out = 0;
-      }, View.UNSELECT_DELAY);
+    this._unselect_item ();
+//    this.__elem_to_unselect = this.__elem;
+    if (target) {
+      this._updateSelectItem (target);
+// 
+//       if (this.__elem_to_unselect) {
+//         this._untouchItemFeedback (this.__elem_to_unselect);
+//       }
+//       this.__elem_to_unselect = null;
+    }
+  },
+  
+  _unselect_item : function () {
+    if (this.__elem_to_unselect)
+    {
+      this._untouchItemFeedback (this.__elem_to_unselect);
+      this.__elem_to_unselect = null;
     }
   },
 
@@ -26669,15 +26713,13 @@ NavigationBar.prototype = {
         vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
         vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);        
         
-        setTimeout (function () 
-          { util.removeClassName (self, 'active'); }, 200);
+        util.removeClassName (self, 'active');
         this.propagate ('buttonselect', event.currentTarget.spec);
       break;
 
       case core.POINTER_MOVE:
         event.preventDefault ();
-        setTimeout (function () 
-          { util.removeClassName (self, 'active'); }, 200);
+        util.removeClassName (self, 'active');
         vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
         vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);
       break;
@@ -27174,10 +27216,6 @@ util.defineClassProperties (ToolBar, {
       
       if (this.__select_item === item) return;
 
-      if (this.__remove_time_out) {
-        clearTimeout (this.__remove_time_out);
-        this.__remove_time_out = 0;
-      }
       if (this.__select_item) {
         this.__select_item.removeClassName ("select");
       }
@@ -27186,12 +27224,8 @@ util.defineClassProperties (ToolBar, {
       
       if (!this._is_toggle_buttons)
       {
-        this.__remove_time_out = setTimeout (function () {
-            self.__select_item.removeClassName ("select");
-            self.__select_item = null;
-            self.__remove_time_out = 0;
-          },View.UNSELECT_DELAY
-        );
+        self.__select_item.removeClassName ("select");
+        self.__select_item = null;
       }
      
       this.propagate ("itemselect", v);
@@ -32821,13 +32855,8 @@ util.defineClassProperties (SegmentedButton, {
       }
       if (!this._is_toggle_buttons)
       {
-        var self = this;
-        this.__button_time_out = setTimeout (function ()
-        {
-          util.removeClassName (div, 'selected');
-          self.__button_time_out = 0;
-          self._selected_index = -1;
-        }, View.UNSELECT_DELAY);
+        util.removeClassName (div, 'selected');
+        this._selected_index = -1;
       }
     },
   
@@ -43396,7 +43425,7 @@ Accordion.prototype = {
    */
   handleEvent : function (e)
   {
-    var elem = e.target, self = this, pageY, pageX, delta;
+    var elem = e.target, pageY, pageX, delta;
 
     if (elem.nodeType !== 1)
     {
@@ -43426,11 +43455,7 @@ Accordion.prototype = {
         util.removeClassName (this.__elem_to_unselect, 'selected');
         this.__elem_to_unselect = null;
       }
-      this.__list_time_out = setTimeout (function ()
-      {
-        util.addClassName (self.__elem, 'selected');
-        self.__list_time_out = 0;
-      }, 0); //ui.View.SELECT_DELAY);
+      util.addClassName (this.__elem, 'selected');
     }
     else if (e.type === core.POINTER_MOVE)
     {
@@ -43450,15 +43475,7 @@ Accordion.prototype = {
       // if needs
       if (this.__elem && (delta > ui.View.MOVE_THRESHOLD * 2))
       {
-        if (this.__list_time_out)
-        {
-          clearTimeout (this.__list_time_out);
-          this.__list_time_out = 0;
-        }
-        else
-        {
-          util.removeClassName (this.__elem, 'selected');
-        }
+        util.removeClassName (this.__elem, 'selected');
         this.__elem = null;
       }            
     }
@@ -43474,20 +43491,11 @@ Accordion.prototype = {
       // a item is selected. propagate the change
       if (this.__elem)
       {
-        if (this.__list_time_out)
-        {
-          clearTimeout (this.__list_time_out);
-
-          util.addClassName (self.__elem, 'selected');
-        }
+        util.addClassName (this.__elem, 'selected');
 
         this.__elem_to_unselect = this.__elem;
-        this.__list_time_out = setTimeout (function ()
-        {
-          util.removeClassName (self.__elem_to_unselect, 'selected');
-          self.__elem_to_unselect = null;
-          self.__list_time_out = 0;
-        }, ui.View.UNSELECT_DELAY);
+        util.removeClassName (this.__elem_to_unselect, 'selected');
+        this.__elem_to_unselect = null;
         
         if (util.isNumber (elem.__index))
         {
