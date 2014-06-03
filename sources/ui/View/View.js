@@ -80,6 +80,19 @@ function View (config)
   
   // init recognizer support
   this.__pointer_recognizers = [];
+
+  // position and size : according autosizing rules, can change
+  // automaticaly if the parent container is resized
+  this._pos = [-1, -1];
+  this._size = [-1, -1];
+  
+  // init transformation
+  this._translation = [0, 0, 0];
+  this._rotation = [0, 0, 0];
+  this._transform_origin = [0, 0];
+
+  // rules for positionning a object
+  this._autosizing = [4,4];
 }
 
 /********************************************************************
@@ -784,19 +797,6 @@ View.prototype = {
   initComponent : function ()
   {
     core.EventSource.prototype.initComponent.call (this);
-
-    // position and size : according autosizing rules, can change
-    // automaticaly if the parent container is resized
-    this._pos = [-1, -1];
-    this._size = [-1, -1];
-    
-    // init transformation
-    this._translation = [0, 0, 0];
-    this._rotation = [0, 0, 0];
-    this._transform_origin = [0, 0];
-
-    // rules for positionning a object
-    this._autosizing = [4,4];
 
     this._holes = {};
     this.__children = {};
@@ -2631,8 +2631,8 @@ util.defineClassProperties (View, {
   'translation': {
 
     /**
-     * Translation vector [tx, ty]
-     * <=> obj.translate (tx, ty)
+     * Translation vector [tx, ty, tz]
+     * <=> obj.translate (tx, ty, tz)
      * @name vs.ui.View#translation
      * @type {Array}
      */
