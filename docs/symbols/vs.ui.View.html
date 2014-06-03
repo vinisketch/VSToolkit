@@ -896,16 +896,6 @@ hr:last-child {
 						</tr>
 					
 						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.ui.View.<b><a href="../symbols/vs.ui.View.html#.SELECT_DELAY">SELECT_DELAY</a></b>
-								</div>
-								<div class="description">Feed back remanence in ms before select a item</div>
-							</td>
-						</tr>
-					
-						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
 								<div class="fixedFont">
@@ -941,18 +931,8 @@ hr:last-child {
 								<div class="fixedFont">
 								<b><a href="../symbols/vs.ui.View.html#translation">translation</a></b>
 								</div>
-								<div class="description">Translation vector [tx, ty]
-<=> obj.translate (tx, ty)</div>
-							</td>
-						</tr>
-					
-						<tr>
-							<td class="attributes">&lt;static&gt; &nbsp;</td>
-							<td class="nameDescription">
-								<div class="fixedFont">
-								vs.ui.View.<b><a href="../symbols/vs.ui.View.html#.UNSELECT_DELAY">UNSELECT_DELAY</a></b>
-								</div>
-								<div class="description">Feed back remanence in ms  before unselect a item</div>
+								<div class="description">Translation vector [tx, ty, tz]
+<=> obj.translate (tx, ty, tz)</div>
 							</td>
 						</tr>
 					
@@ -1248,7 +1228,7 @@ hr:last-child {
 						<tr>
 							<td class="attributes">&nbsp;</td>
 							<td class="nameDescription">
-								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#translate">translate</a></b>(x, y)
+								<div class="fixedFont"><b><a href="../symbols/vs.ui.View.html#translate">translate</a></b>(x, y, z)
 								</div>
 								<div class="description">Move the view in x, y.</div>
 							</td>
@@ -1876,27 +1856,6 @@ Object
 
 					<hr />
 				
-					<a name=".SELECT_DELAY"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.ui.View.</span><b>SELECT_DELAY</b>
-					
-					</div>
-					<div class="description">
-						Feed back remanence in ms before select a item
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
 					<a name="showAnimmation"> </a>
 					<div class="fixedFont">
 					
@@ -1972,29 +1931,8 @@ the view.
 					
 					</div>
 					<div class="description">
-						Translation vector [tx, ty]
-<=> obj.translate (tx, ty)
-						
-					</div>
-					
-					
-
-						
-						
-						
-						
-
-					<hr />
-				
-					<a name=".UNSELECT_DELAY"> </a>
-					<div class="fixedFont">&lt;static&gt; 
-					
-					
-					<span class="light">vs.ui.View.</span><b>UNSELECT_DELAY</b>
-					
-					</div>
-					<div class="description">
-						Feed back remanence in ms  before unselect a item
+						Translation vector [tx, ty, tz]
+<=> obj.translate (tx, ty, tz)
 						
 					</div>
 					
@@ -2910,7 +2848,7 @@ Options :
 									<b>r</b>
 									
 								</dt>
-								<dd>{float} rotion angle</dd>
+								<dd>{{float|array}} rotion angle</dd>
 							
 							</dl>
 						
@@ -3345,7 +3283,7 @@ Options :
 					<div class="fixedFont">
 					
 					
-					<b>translate</b>(x, y)
+					<b>translate</b>(x, y, z)
 					
 					</div>
 					<div class="description">
@@ -3370,6 +3308,12 @@ Options :
 									
 								</dt>
 								<dd>{int} translation over the y axis</dd>
+							
+								<dt>
+									<b>z</b>
+									
+								</dt>
+								<dd>{int} translation over the x axis</dd>
 							
 							</dl>
 						
