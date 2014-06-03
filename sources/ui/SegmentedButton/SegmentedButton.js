@@ -327,8 +327,13 @@ util.defineClassProperties (SegmentedButton, {
       }
       if (!this._is_toggle_buttons)
       {
-        util.removeClassName (div, 'selected');
-        this._selected_index = -1;
+        var self = this;
+        this.__button_time_out = setTimeout (function ()
+        {
+          util.removeClassName (div, 'selected');
+          self.__button_time_out = 0;
+          self._selected_index = -1;
+        }, 300);
       }
     },
   
