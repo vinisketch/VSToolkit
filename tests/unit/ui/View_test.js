@@ -43,14 +43,14 @@ function testViewRotation ()
   assertNotNull ('testViewRotation 1', view);
   
   view.rotation = r; 
-  assertEquals ('testViewRotation 2', r, view._rotation);
+  assertEquals ('testViewRotation 2', r, view._rotation [2]);
 
   // bad values
   view.rotation = "string";
-  assertEquals ('testViewRotation 3', r, view._rotation);
+  assertEquals ('testViewRotation 3', r, view._rotation [2);
 
   view.rotation = ["array"];
-  assertEquals ('testViewRotation 4', r, view._rotation);
+  assertEquals ('testViewRotation 4', r, view._rotation [2);
   
   // test matrix result
   assertEquals ('testViewRotation 5', tr, vs.util.getElementTransform (view.view));
@@ -64,7 +64,7 @@ function testViewTranslation ()
   assertNotNull ('testViewTranslation 1', view);
   
   view.translation = t;  
-  assertArrayEquals ('testViewTranslation 2', t, [view.__view_t_x, view.__view_t_y]);
+  assertArrayEquals ('testViewTranslation 2', t, [view._translation [0], view._translation [1]]);
 
   // bad values
   view.translation = "string";
