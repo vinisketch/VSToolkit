@@ -9612,12 +9612,7 @@ AbstractList.prototype = {
     
     this.__elem = target;
     this._unselect_item ();
-//     if (this.__elem_to_unselect)
-//     {
-//       this._untouchItemFeedback (this.__elem_to_unselect);
-//       this.__elem_to_unselect = null;
-//     }
-//     this.__elem_to_unselect = target;
+
     if (target) {
       this.__elem_to_unselect = target;
       this._touchItemFeedback (target);
@@ -9637,14 +9632,8 @@ AbstractList.prototype = {
   didTap : function (nb_tap, comp, target, e)
   {
     this._unselect_item ();
-//    this.__elem_to_unselect = this.__elem;
     if (target) {
       this._updateSelectItem (target);
-// 
-//       if (this.__elem_to_unselect) {
-//         this._untouchItemFeedback (this.__elem_to_unselect);
-//       }
-//       this.__elem_to_unselect = null;
     }
   },
   
@@ -18427,8 +18416,13 @@ util.defineClassProperties (SegmentedButton, {
       }
       if (!this._is_toggle_buttons)
       {
-        util.removeClassName (div, 'selected');
-        this._selected_index = -1;
+        var self = this;
+        this.__button_time_out = setTimeout (function ()
+        {
+          util.removeClassName (div, 'selected');
+          self.__button_time_out = 0;
+          self._selected_index = -1;
+        }, 300);
       }
     },
   
