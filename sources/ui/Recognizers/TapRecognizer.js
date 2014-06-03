@@ -73,8 +73,6 @@ var MULTI_TAP_DELAY = 100;
 TapRecognizer.prototype = {
 
   __is_touched: false,
-  __unselect_time_out: 0,
-  __unselect_clb: null,
   __did_tap_time_out: 0,
   __tap_mode: 0,
 
@@ -111,12 +109,6 @@ TapRecognizer.prototype = {
     
     if (this.__tap_mode === 0) {
       this.__tap_mode = 1;
-    }
-
-    if (this.__unselect_time_out) {
-      clearTimeout (this.__unselect_time_out);
-      this.__unselect_time_out = 0;
-      if (this.__unselect_clb) this.__unselect_clb ();
     }
 
     this.__tap_elem = e.targetPointerList[0].currentTarget;
@@ -186,26 +178,21 @@ TapRecognizer.prototype = {
     this.__is_touched = false;
     var
       self = this,
-      target = self.__tap_elem,
+      target = this.__tap_elem,
       comp = (target)?target._comp_:null;
     
-    self.__tap_elem = undefined;
+    this.__tap_elem = undefined;
   
     this.removePointerListener (document, core.POINTER_END, this.obj);
     this.removePointerListener (document, core.POINTER_MOVE, this.obj);
 
     if (this.delegate && this.delegate.didUntouch) {
-      this.__unselect_clb = function () {
-        try {
-          self.delegate.didUntouch (comp, target, e);
-        } catch (exp) {
-          if (exp.stack) console.log (exp.stack);
-          console.log (exp);
-        }
-        self.__unselect_time_out = 0;
-        delete (self.__unselect_clb);
+      try {
+        this.delegate.didUntouch (comp, target, e);
+      } catch (exp) {
+        if (exp.stack) console.log (exp.stack);
+        console.log (exp);
       }
-      this.__unselect_time_out = setTimeout (this.__unselect_clb, View.UNSELECT_DELAY);        
     }
     
     if (this.delegate && this.delegate.didTap) {

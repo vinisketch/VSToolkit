@@ -319,15 +319,13 @@ NavigationBar.prototype = {
         vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
         vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);        
         
-        setTimeout (function () 
-          { util.removeClassName (self, 'active'); }, 200);
+        util.removeClassName (self, 'active');
         this.propagate ('buttonselect', event.currentTarget.spec);
       break;
 
       case core.POINTER_MOVE:
         event.preventDefault ();
-        setTimeout (function () 
-          { util.removeClassName (self, 'active'); }, 200);
+        util.removeClassName (self, 'active');
         vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
         vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);
       break;

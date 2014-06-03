@@ -383,10 +383,6 @@ util.defineClassProperties (ToolBar, {
       
       if (this.__select_item === item) return;
 
-      if (this.__remove_time_out) {
-        clearTimeout (this.__remove_time_out);
-        this.__remove_time_out = 0;
-      }
       if (this.__select_item) {
         this.__select_item.removeClassName ("select");
       }
@@ -395,12 +391,8 @@ util.defineClassProperties (ToolBar, {
       
       if (!this._is_toggle_buttons)
       {
-        this.__remove_time_out = setTimeout (function () {
-            self.__select_item.removeClassName ("select");
-            self.__select_item = null;
-            self.__remove_time_out = 0;
-          },View.UNSELECT_DELAY
-        );
+        self.__select_item.removeClassName ("select");
+        self.__select_item = null;
       }
      
       this.propagate ("itemselect", v);

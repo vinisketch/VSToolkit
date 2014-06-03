@@ -49,7 +49,6 @@ AbstractList.prototype = {
    * @type {PointerRecognizer}
    */
   __tap_recognizer: null,
-  __list_time_out: 0,
 
    /**
    * @protected
@@ -222,47 +221,37 @@ AbstractList.prototype = {
     }
     
     this.__elem = target;
-    if (this.__list_time_out) {
-      clearTimeout (this.__list_time_out);
-      this.__list_time_out = 0;
+    this._unselect_item ();
+
+    if (target) {
+      this.__elem_to_unselect = target;
+      this._touchItemFeedback (target);
     }
-    if (this.__elem_to_unselect)
-    {
-      this._untouchItemFeedback (this.__elem_to_unselect);
-      this.__elem_to_unselect = null;
-    }
-    this.__elem_to_unselect = target;
-    if (target) this._touchItemFeedback (target);
   },
   
   /**
    * @protected
    * @function
    */
-  didUntouch : function (comp, e, target)
+  didUntouch : function (comp, target, e)
   {
-    if (!this.__list_time_out && this.__elem_to_unselect)
-    {
-      this._untouchItemFeedback (this.__elem_to_unselect);
-      this.__elem_to_unselect = null;
-    }
+    this._unselect_item ()
     this.__elem = null;
   },
   
   didTap : function (nb_tap, comp, target, e)
   {
-    var self = this;
-    this.__elem_to_unselect = this.__elem;
-    if (this.__elem) {
-      this._updateSelectItem (this.__elem);
-
-      this.__list_time_out = setTimeout (function () {
-        if (self.__elem_to_unselect) {
-          self._untouchItemFeedback (self.__elem_to_unselect);
-        }
-        self.__elem_to_unselect = null;
-        self.__list_time_out = 0;
-      }, View.UNSELECT_DELAY);
+    this._unselect_item ();
+    if (target) {
+      this._updateSelectItem (target);
+    }
+  },
+  
+  _unselect_item : function () {
+    if (this.__elem_to_unselect)
+    {
+      this._untouchItemFeedback (this.__elem_to_unselect);
+      this.__elem_to_unselect = null;
     }
   },
 

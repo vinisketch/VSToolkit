@@ -152,20 +152,6 @@ View.LEGACY_FLOW_LAYOUT = 'flow_layout';
 *********************************************************************/
 
 /**
- * Feed back remanence in ms before select a item
- * @name vs.ui.View.SELECT_DELAY
- * @const
- */
-View.SELECT_DELAY = 150;
-
-/**
- * Feed back remanence in ms  before unselect a item
- * @name vs.ui.View.UNSELECT_DELAY
- * @const
- */
-View.UNSELECT_DELAY = 300;
-
-/**
  * Threshold in px  use to unselect a item when pointer move
  * @name vs.ui.View.MOVE_THRESHOLD
  * @const
