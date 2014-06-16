@@ -33,24 +33,31 @@
  *  Structure used for managing events
  *  @private
  */
-function Handler (_obj, _func) {
-  this.obj = _obj;
-  if (util.isFunction (_func)) {
-    this.func_ptr = _func;
+function Handler () {}
+var Handler__pool = [];
+
+Handler.prototype.configure = function (obj, func) {
+  this.obj = obj;
+  if (util.isFunction (func)) {
+    this.func_ptr = func;
   }
-  else if (util.isString (_func)) {
-    this.func_name = _func;
+  else if (util.isString (func)) {
+    this.func_name = func;
   }
 }
 
-/**
- * @private
- */
-Handler.prototype.destructor = function () {
-  delete (this.obj);
-  delete (this.func_ptr);
-  delete (this.func_name);
-};
+Handler.retain = function () {
+  var l = Handler__pool.length;
+  if (l) {
+    return Handler__pool.pop ();
+  }
+  return new Handler ();
+}
+
+Handler.release = function (handler) {
+  Handler__pool.push (handler);
+}
+
 
 /**
  *  Structure used for managing task
