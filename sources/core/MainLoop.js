@@ -38,6 +38,9 @@ var Handler__pool = [];
 
 Handler.prototype.configure = function (obj, func) {
   this.obj = obj;
+  this.func_name = null;
+  this.func_ptr = null;
+
   if (util.isFunction (func)) {
     this.func_ptr = func;
   }
