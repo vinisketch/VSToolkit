@@ -17,7 +17,7 @@
 */
 
 import vs_utils from 'vs_utils';
-import vs_core from '../core';
+import vs_core from 'vs_core';
 
 /**
  * objects inside the RSSItem object

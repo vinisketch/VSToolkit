@@ -17,7 +17,7 @@
 */
 
 import vs_utils from 'vs_utils';
-import vs_core from '../core';
+import vs_core from 'vs_core';
 
 /**
  *  The GoogleSearch class
@@ -264,7 +264,7 @@ GoogleSearch.prototype = {
     // 4) parse the result.
     if (xmlhttp.readyState === 4)
     {
-      var coord_data = eval ('(' + xmlhttp.responseText + ')');
+      var coord_data = JSON.parse (xmlhttp.responseText);
       if (coord_data.responseStatus !== 200)
       {
         this.ERROR_CODE = 3;
