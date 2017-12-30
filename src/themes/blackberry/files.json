@@ -1,0 +1,24 @@
+
+{
+  "concat" : {
+    "vs_ui_bb.css": [
+      "ui/Application.css",
+      "ui/Button.css",
+      "ui/List.css",
+      "ui/RadioButton.css",
+      "ui/CheckBox.css",
+      "ui/Slider.css",
+      "ui/Switch.css",
+      "ui/TextArea.css",
+      "ui/ProgressBar.css",
+      "ui/InputField.css",
+      "ui/ComboBox.css",
+      "ui/SegmentedButton.css",
+      "ui/Picker.css",
+      "ext/ui/Accordion.css"
+    ],
+    "vs_ext_bb.css": [ "ext/ui/Accordion.css" ]
+  },
+  "copy": ["ui/*.png"]
+} 
+

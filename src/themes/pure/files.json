@@ -1,0 +1,26 @@
+{
+  "concat" : {
+    "vs_ui_pure.less": [
+      "../generic/lesshat.less",
+      "../generic/lesshat-ext.less",
+      "ui/Application.less",
+      "ui/Button.less",
+      "ui/List.less",
+      "ui/InputField.less",
+      "ui/Switch.less",
+      "ui/TextArea.less",
+      "ui/SegmentedButton.less",
+      "ui/Slider.less",
+      "ui/ProgressBar.less",
+      "ui/RadioButton.less",
+      "ui/NavigationBar.less",
+      "ui/CheckBox.less",
+      "ui/Picker.less",
+      "ui/ComboBox.less",
+      "ui/PopOver.less",
+      "ui/ToolBar.less"
+    ]
+  },
+  "copy": ["ui/*.ttf"]
+}
+

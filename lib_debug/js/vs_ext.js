@@ -20,6 +20,7 @@
 
 var document = window.document;
 
+
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
@@ -50,6 +51,1134 @@ var vs = window.vs,
   ext = vs.ext,
   ext_ui = ext.ui,
   ext_fx = ext.fx;
+
+/**
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ *  The vs.ext.ui.Accordion class
+ *
+ *  @extends vs.ui.View
+ *  @class
+ *  The Accordion class is a subclass of View that allows you to show
+ *  a set of panels which can be collapsed or expanded.
+ *  <p/>
+ *  Events:
+ *  <ul>
+ *    <li /> panel_select: Fired after a panel is expanded. Data = index
+ *           of the panel (zero-indexed number)
+ *  </ul>
+ *  <p>
+ *  @example
+ *  var config = {};
+ *  var config.id = vs.core.createId ();
+ *
+ *  var accordion = new vs.ext.ui.Accordion ();
+ *  accordion.init ();
+ *  accordion.size = [300, 500];
+ *  
+ *  accordion.add (obj1);
+ *  accordion.add (tabList3);
+ *  accordion.add (vv);
+ *
+ *  @author David Thevenin
+ *
+ * @name vs.ext.ui.Accordion 
+ *  @constructor
+ *   Creates a new vs.ext.ui.Accordion.
+ *
+ * @param  {Object} config The configuration structure [mandatory]
+*/
+var Accordion = function (config)
+{
+  this.parent = ui.View;
+  this.parent (config);
+  this.constructor = Accordion;
+  
+  this.__ab_a_items = [];
+}
+
+/** 
+ * Widgets keep there size and position
+ * @see vs.ext.ui.Accordion#stretch 
+ * @name vs.ext.ui.Accordion.STRETCH_NONE 
+ * @const
+ */
+Accordion.STRETCH_NONE = 0;
+
+/** 
+ * Widgets size fit the panel view size
+ * @see vs.ext.ui.Accordion#stretch 
+ * @name vs.ext.ui.Accordion.STRETCH_FILL 
+ * @const
+ */
+Accordion.STRETCH_FILL = 1;
+
+
+Accordion.prototype = {
+  
+  /*****************************************************************
+   *               private/protected members
+   ****************************************************************/
+
+  /**
+   * @protected
+   */
+  _stretch: Accordion.STRETCH_NONE,
+  
+  /**
+   * @private
+   */
+  __ab_a_items: undefined,
+  
+  /**
+   * @private
+   */
+  __ab_a_current_index: undefined,
+    
+  /**
+   * @private
+   */
+  __ab_a_head_height: 33,
+    
+  /*****************************************************************
+   *                 
+   ****************************************************************/
+  
+  /**
+   *  Add the child component to the accordion and set the panel title.
+   *  <p>
+   *  Call push is similar to call add followed by setPanelTitle.
+   *  <p>
+   *
+   * @name vs.ext.ui.Accordion#push 
+   * @function
+   * @param {vs.ui.View} child The component to be added.
+   * @param {String} title the new panel title
+   */
+  push : function (child, title)
+  {
+    if (!child) { return; }
+    this.add (child);
+    var index = this._getIndexForChild (child)
+    this.setPanelTitle (index, title);
+  },
+  
+  /**
+   *  Add the specified child component to this component.
+   *  <p>
+   *  The add is a lazy add! The child's view can be already in
+   *  the HTML DOM. In that case, the add methode do not modify the DOM.
+   *  <p>
+   *
+   * @name vs.ext.ui.Accordion#add
+   * @function
+   * @param  {vs.ui.View} child The component to be added.
+   */
+  add : function (child)
+  {
+    if (!child) { return; }
+    var view, index, result;
+    
+    if (!child.id) { child.id = vs.core.createId (); }
+    
+    index = this.__ab_a_items.length;
+    
+    result = this._createView (child, 'Section ' + (index + 1), index);
+    this.view.appendChild (result.dt);
+    ui.View.prototype.add.call (this, child, 'children', result.dd);
+    
+    this.__ab_a_items.push (result);
+    this._updateSizePanel ();
+  },
+  
+  /**
+   *  Remove the specified child component from this component.
+   * 
+   *  @example
+   *  myObject.remove (myButton);
+   *
+   * @name vs.ext.ui.Accordion#remove 
+   * @function
+   * @param  {vs.core.EventSource} child The component to be removed.
+   */
+  remove : function (child)
+  {
+    var index = this._getIndexForChild (child), panel;
+    if (index === -1)
+    { return; }
+    
+    ui.View.prototype.remove.call (this, child);
+    panel = this.__ab_a_items [index];
+    panel.dd.removeChild (child.view);
+    this.view.removeChild (panel.dt);
+    vs.removePointerListener (panel.dt, core.POINTER_START, this);
+    delete (panel.dt);
+    delete (panel.dd);
+    delete (panel);
+    
+    this.__ab_a_items.remove (index);
+
+    if (index === this.__ab_a_current_index)
+    // Show the first panel
+    {
+      this.__ab_a_current_index = null;
+      this.expandPanel (0);
+    }
+    else
+    // update widget size (and children) to fit with the new available space
+    { this._updateSizePanel (); }
+  },
+  
+  /**
+   * @private
+   */
+  _getIndexForChild : function (child)
+  {
+    if (!child) { return -1; }
+    
+    var index, panel;
+    
+    for (index = 0; index < this.__ab_a_items.length; index++)
+    {
+      panel = this.__ab_a_items [index];
+      if (!panel || !panel.dd)
+      { continue; }
+      if (panel.dd.__child === child)
+      { return index; }
+    }
+    return -1;
+  },
+  
+  /**
+   * @private
+   */
+  _createView : function (child, title, index)
+  {
+    var panel = {}, mode;
+    
+    panel.dt = document.createElement ('dt');
+    util.setElementInnerText (panel.dt, title);
+    panel.title = title;
+
+    panel.dd = document.createElement ('dd');      
+    if (this._stretch === Accordion.STRETCH_FILL)
+    {
+      child.position = [0, 0];
+    }
+    panel.dd.appendChild (child.view);
+    
+    mode = (index)?'collapsed':'expanded'
+
+    panel.dd.setAttribute ("class", mode);
+    panel.dt.setAttribute ("class", mode);
+    panel.dd.__child = child
+    panel.child = child;
+
+    if (mode === 'collapsed')
+    {
+      panel.dd.style.width = '100%';
+      panel.dd.style.height = '0px';
+    }
+    else
+    {
+      panel.dd.style.width = '100%';
+      panel.dd.style.height = child._size [1] + 'px';
+      this.__ab_a_current_index = index;
+    }
+        
+    if (this._stretch === Accordion.STRETCH_FILL)
+    {
+      child.size = [this._size[0] - 2, this._size[1]];
+    }
+    panel.dt.__dd = panel.dd;
+    panel.dt.__index = index;
+    vs.addPointerListener (panel.dt, core.POINTER_START, this);
+    return panel;
+  },
+  
+  /**
+   *  Expand a part of the accordion.
+   *  <p>
+   *  The index can be zero-indexed number to match the position or the title of 
+   *  the panel you want to open.
+   *  <p>
+   *  @example
+   *  var accordion = new vs.ext.ui.Accordion (conf);
+   *  ....
+   *  accordion.expandPanel (2);
+   *  accordion.expandPanel ('Section 2');
+   *
+   * @name vs.ext.ui.Accordion#expandPanel 
+   * @function
+   * @param  {number | String} index position or title of the panel to open
+   */
+  expandPanel: function (index)
+  {
+    var panel, i;
+    
+    if (util.isNumber (index) && index >= 0 && 
+        index < this.__ab_a_items.length)
+    {
+      if (index === this.__ab_a_current_index)
+      {
+        return;
+      }
+      
+      panel = this.__ab_a_items [this.__ab_a_current_index];
+      if (panel)
+      {
+        util.removeClassName (panel.dt, 'expanded');
+        util.addClassName (panel.dt, 'collapsed');
+        util.removeClassName (panel.dd, 'expanded');
+        util.addClassName (panel.dd, 'collapsed');
+        panel.dd.style.height = '0px';
+      }
+  
+      panel = this.__ab_a_items [index];
+      util.removeClassName (panel.dt, 'collapsed');
+      util.addClassName (panel.dt, 'expanded');
+      util.removeClassName (panel.dd, 'collapsed');
+      util.addClassName (panel.dd, 'expanded');
+  
+      this.__ab_a_current_index = index;
+      this._updateSizePanel ();
+      this.propagate ('panel_select', index);
+      return;
+    }
+    if (util.isString (index))
+    {
+      for (i = 0; i < this.__ab_a_items.length; i++)
+      {
+        panel = this.__ab_a_items [i];
+        if (panel.title === index)
+        {
+          this.expandPanel (i);
+          return;
+        }
+      }
+    }
+  },
+  
+  /**
+   *  Set a title for a give panel
+   *  <p>
+   *  The index can be zero-indexed number to match the position or the title of 
+   *  the panel you want to open.
+   *  <p>
+   *  @example
+   *  var accordion = new vs.ext.ui.Accordion (conf);
+   *  ....
+   *  accordion.setPanelTitle (2, 'info 2');
+   *  accordion.setPanelTitle ('Section 1', 'info 1');
+   *
+   * @name vs.ext.ui.Accordion#setPanelTitle 
+   * @function
+   * @param  {number | String} index position or title of the panel to open
+   * @param  {String} title the new panel title
+   */
+  setPanelTitle: function (index, title)
+  {
+    var panel, i;
+    
+    if (util.isNumber (index) && index >= 0 && 
+        index < this.__ab_a_items.length)
+    {
+      panel = this.__ab_a_items [index];
+      panel.title = title;
+      util.setElementInnerText (panel.dt, title);
+      
+      return;
+    }
+    if (util.isString (index))
+    {
+      for (i = 0; i < this.__ab_a_items.length; i++)
+      {
+        panel = this.__ab_a_items [i];
+        if (panel.title === index)
+        {
+          this.setPanelTitle (i, title);
+          return;
+        }
+      }
+    }
+  },
+  
+  /********************************************************************
+                    GUI Utilities
+  ********************************************************************/
+
+  /**
+   * @ignore
+   */
+  show: function ()
+  {
+    vs.ui.View.prototype.show.call (this);
+    
+    this._updateSizePanel ();
+  },
+  
+  /**
+   * @ignore
+   */
+  refresh: function ()
+  {
+    vs.ui.View.prototype.refresh.call (this);
+    
+    this._updateSizePanel ();
+  },
+  
+  /**
+   * @private
+   */
+  _updateSize: function ()
+  {
+    vs.ui.View.prototype._updateSize.call (this);
+    
+    this._updateSizePanel ();
+  },
+  
+  /**
+   * @private
+   */
+  _updateSizePanel: function ()
+  {
+    var height, panel, i;
+    panel = this.__ab_a_items [this.__ab_a_current_index];
+    if (panel)
+    {
+      height = this._size [1];
+      this.__ab_a_head_height = panel.dt.offsetHeight;
+      height -= this.__ab_a_items.length * this.__ab_a_head_height + 2;
+      panel.dd.style.height = height + 'px';
+      if (this._stretch === Accordion.STRETCH_FILL)
+      {
+        panel.child.size = [this._size[0] - 2, height];
+      }
+    }
+  },
+  
+  /*****************************************************************
+   *               Events management
+   ****************************************************************/
+
+  /**
+   * @private
+   */
+  handleEvent : function (e)
+  {
+    var elem = e.target, pageY, pageX, delta;
+
+    if (elem.nodeType !== 1)
+    {
+      elem = elem.parentElement;
+    }
+    if (e.type === core.POINTER_START)
+    {
+      // prevent multi touch events
+      if (e.targetPointerList.length === 0 || e.nbPointers > 1) { return; }
+      
+      e.stopPropagation ();
+      e.preventDefault ();
+      
+      if (util.hasClassName (elem, 'expanded'))
+      { return false; }
+
+      vs.addPointerListener (document, core.POINTER_MOVE, this, false);
+      vs.addPointerListener (document, core.POINTER_END, this, false);
+      
+      this.__touch_start_x = e.targetPointerList[0].pageX;
+      this.__touch_start_y = e.targetPointerList[0].pageY;
+
+      this.__elem = elem;
+
+      if (this.__elem_to_unselect)
+      {
+        util.removeClassName (this.__elem_to_unselect, 'selected');
+        this.__elem_to_unselect = null;
+      }
+      util.addClassName (this.__elem, 'selected');
+    }
+    else if (e.type === core.POINTER_MOVE)
+    {
+      // do not manage event for other targets
+      if (e.targetPointerList.length === 0) { return; }
+      
+      e.stopPropagation ();
+      e.preventDefault ();
+
+      pageX = e.targetPointerList[0].pageX;
+      pageY = e.targetPointerList[0].pageY;
+      delta = 
+        Math.abs (pageY - this.__touch_start_y) + 
+        Math.abs (pageX - this.__touch_start_x);  
+                
+      // this is a move, not a selection => deactivate the selected element
+      // if needs
+      if (this.__elem && (delta > ui.View.MOVE_THRESHOLD * 2))
+      {
+        util.removeClassName (this.__elem, 'selected');
+        this.__elem = null;
+      }            
+    }
+    else if (e.type === core.POINTER_END)
+    {
+      e.stopPropagation ();
+      e.preventDefault ();
+
+      // Stop tracking when the last finger is removed from this element
+      vs.removePointerListener (document, core.POINTER_MOVE, this);
+      vs.removePointerListener (document, core.POINTER_END, this);
+                  
+      // a item is selected. propagate the change
+      if (this.__elem)
+      {
+        util.addClassName (this.__elem, 'selected');
+
+        this.__elem_to_unselect = this.__elem;
+        util.removeClassName (this.__elem_to_unselect, 'selected');
+        this.__elem_to_unselect = null;
+        
+        if (util.isNumber (elem.__index))
+        {
+          this.expandPanel (elem.__index);
+        }
+      }
+
+      this.__elem = null;
+    }
+          
+    return false;
+  }
+}
+util.extendClass (Accordion, vs.ui.View);
+
+util.defineClassProperty (Accordion, 'stretch',
+{
+  /**
+   * Configure widgets to fit the view or to keep its original size.
+   * <p>The property can take four values : 
+   * <ul>
+   *   <li/>vs.ext.ui.Accordion.STRETCH_NONE;
+   *   <li/>vs.ext.ui.Accordion.STRETCH_FILL;
+   * </ul>
+   * @name vs.ext.ui.Accordion#stretch 
+   * @type {number}
+   */
+  set : function (v)
+  {
+    if (!util.isNumber (v)) { return; }
+    if (v !== Accordion.STRETCH_FILL &&
+        v !== Accordion.STRETCH_NONE)
+    { return; }
+    
+    this._stretch = v;
+    
+    if (this._stretch === Accordion.STRETCH_FILL)
+    {
+      util.addClassName (this.view, 'fill');
+    }
+    else
+    {
+      util.removeClassName (this.view, 'fill');
+    }
+    this._updateSizePanel ();
+  },
+
+  /*****************************************************************
+   *
+   ****************************************************************/
+
+  /**
+   * Get the image stretch mode (vs.ext.ui.Accordion.STRETCH_FILL or 
+   * vs.ext.ui.Accordion.STRETCH_NONE)
+   * @return {number}
+   */
+  get : function ()
+  {
+    return this._stretch;
+  }
+});
+
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+ext_ui.Accordion = Accordion;
+
+
+/**
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ *  The vs.ext.ui.Carousel class
+ *
+ *  @extends vs.ui.View
+ *  @class
+ *  Carousel presents a slide carousel. This carousel can be controller
+ *  by a swipe on the screen or through methods (goToNextView, ...)
+ *  <p>
+ *  Carousel is a vs.ui.View. You can set the view size, to defined the bound
+ *  inside children's view will be draw. Children are fixed
+ *  on top left of the carousel.
+ *  <p>
+ *  Although carousel views are displayed vertically by default, you can
+ *  use the orientation property to have it display horizontally.
+ *  <p>
+ *  You can set a delegate to be informed when the view will change
+ *  (after a swipe or a method call).
+ *
+ *  <p>
+ *  Delegate should implement:
+ *  <ul>
+ *    <li/>carouselViewWillChange : function (view /*vs.ui.View /)
+ *  </ul>
+ *  <p>
+ *  @example
+ *  var carousel = new Carousel (config);
+ *  // set child component view (you can add instantiated view or component name
+ *  carousel.add (view1);
+ *  carousel.add (view2);
+ *  carousel.add (view3);
+ *  carousel.add (view4);
+ *  // change the orientation
+ *  carousel.orientation = vs.fx.SwipeController.VERTICAL
+ *  // set a delegate
+ *  var delegate = {};
+ *  delegate.carouselViewWillChange = function (view) { ... };
+ *  carousel.delegate = delegate;
+ *  
+ *  @author David Thevenin
+ *  @name vs.ext.ui.Carousel
+ *
+ *  @constructor
+ *   Creates a new Carousel.
+ *
+ *  @param {Object} config the configuration structure [mandatory]
+ */
+function Carousel (config)
+{
+  this.parent = vs.ui.View;
+  this.parent (config);
+  this.constructor = Carousel;
+  
+  this.__indicators_list = {};
+}
+
+/**
+ * Horizontal carousel (defaut)
+ * @name vs.ext.ui.Carousel.HORIZONTAL
+ * @const
+ */
+Carousel.HORIZONTAL = vs.fx.SwipeController.HORIZONTAL;
+
+/**
+ * Vertical carousel
+ * @name vs.ext.ui.Carousel.VERTICAL
+ * @const
+ */
+Carousel.VERTICAL = vs.fx.SwipeController.VERTICAL;
+
+Carousel.prototype = {
+
+ /**********************************************************************
+ 
+ *********************************************************************/
+
+   /**
+   * @protected
+   * @type {boolean}
+   */
+  _indicators_visibility : true,
+  
+   /**
+   * @protected
+   * @type {Object}
+   */
+  _delegate: null,
+
+  /**
+   *
+   * @protected
+   * @type {number}
+   */
+  _orientation : Carousel.HORIZONTAL,
+
+  /**
+   * The vs.fx.SwipeController that will manage the carousel slide
+   * @private
+   * @type {vs.fx.SwipeController}
+   */
+  _swipe_controller : null,
+  
+  /**
+   * The indicators view
+   * @private
+   * @type {DivHtmlElement}
+   */
+  __indicators : null,
+  
+  /**
+   * The selected indicator view
+   * @private
+   * @type {SpanHtmlElement}
+   */
+  __selected_indicator : null,
+  
+  /**
+   * The list of indicators
+   * @private
+   * @type {Object.<string>}
+   */
+  __indicators_list : null,
+  
+  /**
+   * Indicator change timer
+   * @private
+   * @type {number}
+   */
+  __indicators_timer : 0,  
+  
+ /**********************************************************************
+                  In/Out properties declarations 
+  *********************************************************************/
+
+
+ /**********************************************************************
+ 
+ *********************************************************************/
+  
+  /**
+   * @protected
+   */
+  destructor : function ()
+  {
+    util.free (this._swipe_controller);
+
+    vs.ui.View.prototype.destructor.call (this);
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  initComponent : function ()
+  {
+    vs.ui.View.prototype.initComponent.call (this);
+        
+    this.__indicators =
+      this.view.querySelector ('.vs_ext_ui_carousel >.indicators');
+    vs.util.addClassName (this.__indicators, 'horizontal');
+
+    this._swipe_controller = new vs.fx.SwipeController (this);
+    this._swipe_controller.delegate = this;
+    this._swipe_controller.isTactile = true;
+    this._swipe_controller.animationMode = vs.fx.SwipeController.PIXEL;
+    this._swipe_controller.init ();
+  },
+  
+  /**
+   * @protected
+   * @function
+   */
+  refresh : function ()
+  {
+    if (this._swipe_controller && this._swipe_controller.refresh)
+    { this._swipe_controller.refresh (); }
+
+    vs.ui.View.prototype.refresh.call (this);
+  },
+  
+ /**********************************************************************
+ 
+ *********************************************************************/
+ 
+  /**
+   * @private
+   * @function
+   */
+  controllerViewWillChange : function (from_comp, to_comp, controller)
+  {
+    if (this.__indicators_timer)
+    {
+      clearTimeout (this.__indicators_timer);
+      __indicators_timer = 0;
+    }
+    
+    var i_id = to_comp.id, self = this;
+    this.__indicators_timer = setTimeout (function ()
+    {
+      if (self.__selected_indicator)
+      {
+        vs.util.removeClassName (self.__selected_indicator, 'selected');
+      }
+      self.__selected_indicator = self.__indicators_list [i_id];
+      vs.util.addClassName (self.__selected_indicator, 'selected');
+    }, 500);
+    
+    if (this._delegate && this._delegate.carouselViewWillChange)
+    {
+      this._delegate.carouselViewWillChange (to_comp);
+    }
+  },
+   
+   /**
+   *  Add a child component to the carousel
+   *  <p>
+   *  The component can be a graphic component (vs.ui.View) or
+   *  a non graphic component (vs.core.EventSource).
+   *  In case of vs.ui.View its mandatory to set the extension.
+   *  <p>
+   *  @example
+   *  var carousel = new Carousel (config);
+   *  carousel.init ();
+   *  // instanced component
+   *  var comp = new AComponent (data);
+   *  carousel.add (comp);
+   *
+   * @name vs.ext.ui.Carousel#add
+   * @function
+   * @param {vs.ui.View} child The component to add.
+   */
+  add : function (child)
+  {
+    vs.ui.View.prototype.add.call (this, child, 'children');
+    this.push (child)
+  },
+
+   /**
+   *  Add a child component to the carousel
+   *  <p>
+   *  The component must be a graphic component (vs.ui.View).
+   *  It will be instantiated, init and added automaticaly
+   *  <p>
+   *  @example
+   *  var carousel = new Carousel (config);
+   *  carousel.init ();
+   *  myController.push ('AComponent1', data1);
+   *  myController.push ('AComponent1', data2);
+   *  myController.push ('AComponent2', data3);
+   *
+   * @name vs.ext.ui.Carousel#push
+   * @function
+   * @param {vs.ui.View | String} comp The GUI component or the component
+   *     name to instanciate   
+   * @param {Object} config Configuration structure need to build the 
+   *     component.
+   */
+  push : function (child, config)
+  {
+    // Test if the component is already added
+    if (this.isChild (child))
+    {
+      if (this._swipe_controller.isStateExit (child.id))
+      { return; }
+    }
+    
+    var span, state_id = this._swipe_controller.push (child, config);
+    
+    span = document.createElement ('span');
+    
+    this.__indicators.appendChild (span);
+    this.__indicators_list [state_id] = span;
+  },
+
+  /**
+   *  Remove the specified child component from this component.
+   * 
+   *  @example
+   *  myObject.remove (myButton);
+   *
+   * @name vs.ext.ui.Carousel#remove
+   * @function
+   * @param {vs.core.EventSource} child The component to be removed.
+   */
+  remove : function (child)
+  {
+    if (!child || !child.id)
+    { return; }
+    
+    var span = this.__indicators_list [child.id];
+    
+    this.__indicators.removeChild (span);
+    delete (this.__indicators_list [child.id]);
+
+    vs.ui.View.prototype.remove.call (this, child);
+  },
+
+  /**
+   * Remove all panels
+   * @name vs.ext.ui.Carousel#removeAllChildren
+   * @param {Boolean} should_free free children
+   * @return {Array} list of removed child if not should_free
+   * @function
+   */
+  removeAllChildren : function (should_free)
+  {
+    var children = [];
+    
+    for (var id in this.__indicators_list)
+    {
+      var comp = vs.core.Object._obs [id];
+      this.remove (comp);
+      if (should_free) util.free (comp);
+      else children.push (comp);
+    }
+    
+    return (should_free)?undefined:children;
+  },
+
+ /**********************************************************************
+ 
+ *********************************************************************/
+ 
+  /**
+   * Go to the next view
+   * @name vs.ext.ui.Carousel#goToNextView
+   * @function
+   */
+  goToNextView : function ()
+  {
+    this._swipe_controller.goToNextView ();
+  },
+ 
+  /**
+   * Go to the previous view
+   * @name vs.ext.ui.Carousel#goToPreviousView
+   * @function
+   */
+  goToPreviousView : function ()
+  {
+    this._swipe_controller.goToPreviousView ();
+  },
+
+  /**
+   *  Go to the view specified by its id
+   *
+   * @name vs.ext.ui.Carousel#goToView
+   * @param {string} id The component id
+   * @function
+   */
+  goToView : function (id)
+  {
+    this._swipe_controller.goToViewId (id);
+  },
+
+  /**
+   *  Go to the view specified by its position (index start at 0)
+   *
+   * @name vs.ext.ui.Carousel#goToViewAt
+   * @param {number} index The component index
+   * @function
+   */
+  goToViewAt : function (index)
+  {
+    this._swipe_controller.goToViewAt (index);
+  }
+};
+util.extendClass (Carousel, vs.ui.View);
+
+/********************************************************************
+                  Define class properties
+********************************************************************/
+
+util.defineClassProperties (Carousel, {
+
+  'size': {
+    /** 
+     * Getter|Setter for size. Gives access to the size of the GUI Object
+     * @name vs.ext.ui.Carousel#size 
+     * @function.
+     * @type {Array.<number>}
+     */ 
+    set : function (v)
+    {
+      if (!v) { return; } 
+      if (!util.isArray (v) || v.length !== 2) { return; }
+      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+      
+      this._size [0] = v [0];
+      this._size [1] = v [1];
+      
+      if (!this.view) { return; }
+      this._updateSizeAndPos ();
+  
+      if (this._swipe_controller && this._swipe_controller.refresh)
+      { this._swipe_controller.refresh (); }
+    },
+    
+    /**
+     * @type {Array.<number>}
+     * @ignore
+     */
+    get : function ()
+    {
+      var view = this.view;
+       if (view && view.parentNode)
+      {
+        this._size [0] = view.offsetWidth;
+        this._size [1] = view.offsetHeight;
+      }
+      return this._size.slice ();
+    }
+  },
+  'delegate': {
+
+    /** 
+     * Set the delegate.
+     * It should implements following methods
+     *  <ul>
+     *    <li/>carouselViewWillChange : function (view /* vs.ui.View /)
+     *  </ul>
+     * @name vs.ext.ui.Carousel#delegate 
+     * @type Object
+     */ 
+    set : function (v)
+    {
+      this._delegate = v;
+    }
+  },
+  'indicatorsVisibility': {
+
+    /** 
+     * Set indicators visible or not
+     * <p>
+     * By default its set to true
+     * @name vs.ext.ui.Carousel#indicatorsVisibility 
+     * @type boolean
+     */ 
+    set : function (v)
+    { 
+      if (v)
+      {
+        this._indicators_visibility = true;
+        util.setElementVisibility (this.__indicators, true);
+      }
+      else
+      {
+        this._indicators_visibility = false
+        util.setElementVisibility (this.__indicators, false);
+      }
+    }
+  },
+      
+  'isCircular': {
+    /** 
+     * Getter|Setter for circular swipe
+     * @name vs.ext.ui.Carousel#isCircular 
+     * @type {boolean}
+     */ 
+    set : function (v)
+    {
+      this._swipe_controller.isCircular = v;
+    },
+  
+    /** 
+     * @ignore
+     * @return {boolean}
+     */ 
+    get : function ()
+    {
+      return this._swipe_controller.isCircular;
+    }
+  },
+  
+  'isContinuousSwipe': {
+    /** 
+     * Getter|Setter Continuous Swipe
+     * @name vs.ext.ui.Carousel#isContinuousSwipe 
+     * @type {boolean}
+     */ 
+    set : function (v)
+    {
+      this._swipe_controller.isContinuousSwipe = v;
+    },
+  
+    /** 
+     * @ignore
+     * @return {boolean}
+     */ 
+    get : function ()
+    {
+      return this._swipe_controller.isContinuousSwipe;
+    }
+  },
+
+  'orientation': {
+
+    /** 
+     * Getter|Setter for the tab bar style
+     * @name vs.ext.ui.Carousel#orientation 
+     * @type String
+     */ 
+    set : function (v)
+    {
+      if (v !== Carousel.HORIZONTAL &&
+          v !== Carousel.VERTICAL) { return; }
+      
+      if (this._orientation === v) { return; }
+      if (v === Carousel.HORIZONTAL)
+      {
+        vs.util.removeClassName (this.__indicators, 'vertical');
+        vs.util.addClassName (this.__indicators, 'horizontal');
+      }
+      else
+      {
+        vs.util.removeClassName (this.__indicators, 'horizontal');
+        vs.util.addClassName (this.__indicators, 'vertical');
+      }
+      this._orientation = v;
+      this._swipe_controller.orientation = v;
+    },
+  
+    /** 
+     * @return {String}
+     * @ignore
+     */ 
+    get : function ()
+    {
+      return this._orientation;
+      }
+    }
+  }
+);
+
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+ext_ui.Carousel = Carousel;
+
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
@@ -1331,1145 +2460,16 @@ function createInfoWindowClass ()
 *********************************************************************/
 /** @private */
 ext_ui.GMap = GMap;
-/**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
-  contributors. All rights reserved
-  
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published
-  by the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU Lesser General Public License for more details.
-  
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
 
-/**
- *  The vs.ext.ui.Carousel class
- *
- *  @extends vs.ui.View
- *  @class
- *  Carousel presents a slide carousel. This carousel can be controller
- *  by a swipe on the screen or through methods (goToNextView, ...)
- *  <p>
- *  Carousel is a vs.ui.View. You can set the view size, to defined the bound
- *  inside children's view will be draw. Children are fixed
- *  on top left of the carousel.
- *  <p>
- *  Although carousel views are displayed vertically by default, you can
- *  use the orientation property to have it display horizontally.
- *  <p>
- *  You can set a delegate to be informed when the view will change
- *  (after a swipe or a method call).
- *
- *  <p>
- *  Delegate should implement:
- *  <ul>
- *    <li/>carouselViewWillChange : function (view /*vs.ui.View /)
- *  </ul>
- *  <p>
- *  @example
- *  var carousel = new Carousel (config);
- *  // set child component view (you can add instantiated view or component name
- *  carousel.add (view1);
- *  carousel.add (view2);
- *  carousel.add (view3);
- *  carousel.add (view4);
- *  // change the orientation
- *  carousel.orientation = vs.fx.SwipeController.VERTICAL
- *  // set a delegate
- *  var delegate = {};
- *  delegate.carouselViewWillChange = function (view) { ... };
- *  carousel.delegate = delegate;
- *  
- *  @author David Thevenin
- *  @name vs.ext.ui.Carousel
- *
- *  @constructor
- *   Creates a new Carousel.
- *
- *  @param {Object} config the configuration structure [mandatory]
- */
-function Carousel (config)
-{
-  this.parent = vs.ui.View;
-  this.parent (config);
-  this.constructor = Carousel;
-  
-  this.__indicators_list = {};
-}
-
-/**
- * Horizontal carousel (defaut)
- * @name vs.ext.ui.Carousel.HORIZONTAL
- * @const
- */
-Carousel.HORIZONTAL = vs.fx.SwipeController.HORIZONTAL;
-
-/**
- * Vertical carousel
- * @name vs.ext.ui.Carousel.VERTICAL
- * @const
- */
-Carousel.VERTICAL = vs.fx.SwipeController.VERTICAL;
-
-Carousel.prototype = {
-
- /**********************************************************************
- 
- *********************************************************************/
-
-   /**
-   * @protected
-   * @type {boolean}
-   */
-  _indicators_visibility : true,
-  
-   /**
-   * @protected
-   * @type {Object}
-   */
-  _delegate: null,
-
-  /**
-   *
-   * @protected
-   * @type {number}
-   */
-  _orientation : Carousel.HORIZONTAL,
-
-  /**
-   * The vs.fx.SwipeController that will manage the carousel slide
-   * @private
-   * @type {vs.fx.SwipeController}
-   */
-  _swipe_controller : null,
-  
-  /**
-   * The indicators view
-   * @private
-   * @type {DivHtmlElement}
-   */
-  __indicators : null,
-  
-  /**
-   * The selected indicator view
-   * @private
-   * @type {SpanHtmlElement}
-   */
-  __selected_indicator : null,
-  
-  /**
-   * The list of indicators
-   * @private
-   * @type {Object.<string>}
-   */
-  __indicators_list : null,
-  
-  /**
-   * Indicator change timer
-   * @private
-   * @type {number}
-   */
-  __indicators_timer : 0,  
-  
- /**********************************************************************
-                  In/Out properties declarations 
-  *********************************************************************/
-
-
- /**********************************************************************
- 
- *********************************************************************/
-  
-  /**
-   * @protected
-   */
-  destructor : function ()
-  {
-    util.free (this._swipe_controller);
-
-    vs.ui.View.prototype.destructor.call (this);
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  initComponent : function ()
-  {
-    vs.ui.View.prototype.initComponent.call (this);
-        
-    this.__indicators =
-      this.view.querySelector ('.vs_ext_ui_carousel >.indicators');
-    vs.util.addClassName (this.__indicators, 'horizontal');
-
-    this._swipe_controller = new vs.fx.SwipeController (this);
-    this._swipe_controller.delegate = this;
-    this._swipe_controller.isTactile = true;
-    this._swipe_controller.animationMode = vs.fx.SwipeController.PIXEL;
-    this._swipe_controller.init ();
-  },
-  
-  /**
-   * @protected
-   * @function
-   */
-  refresh : function ()
-  {
-    if (this._swipe_controller && this._swipe_controller.refresh)
-    { this._swipe_controller.refresh (); }
-
-    vs.ui.View.prototype.refresh.call (this);
-  },
-  
- /**********************************************************************
- 
- *********************************************************************/
- 
-  /**
-   * @private
-   * @function
-   */
-  controllerViewWillChange : function (from_comp, to_comp, controller)
-  {
-    if (this.__indicators_timer)
-    {
-      clearTimeout (this.__indicators_timer);
-      __indicators_timer = 0;
-    }
-    
-    var i_id = to_comp.id, self = this;
-    this.__indicators_timer = setTimeout (function ()
-    {
-      if (self.__selected_indicator)
-      {
-        vs.util.removeClassName (self.__selected_indicator, 'selected');
-      }
-      self.__selected_indicator = self.__indicators_list [i_id];
-      vs.util.addClassName (self.__selected_indicator, 'selected');
-    }, 500);
-    
-    if (this._delegate && this._delegate.carouselViewWillChange)
-    {
-      this._delegate.carouselViewWillChange (to_comp);
-    }
-  },
-   
-   /**
-   *  Add a child component to the carousel
-   *  <p>
-   *  The component can be a graphic component (vs.ui.View) or
-   *  a non graphic component (vs.core.EventSource).
-   *  In case of vs.ui.View its mandatory to set the extension.
-   *  <p>
-   *  @example
-   *  var carousel = new Carousel (config);
-   *  carousel.init ();
-   *  // instanced component
-   *  var comp = new AComponent (data);
-   *  carousel.add (comp);
-   *
-   * @name vs.ext.ui.Carousel#add
-   * @function
-   * @param {vs.ui.View} child The component to add.
-   */
-  add : function (child)
-  {
-    vs.ui.View.prototype.add.call (this, child, 'children');
-    this.push (child)
-  },
-
-   /**
-   *  Add a child component to the carousel
-   *  <p>
-   *  The component must be a graphic component (vs.ui.View).
-   *  It will be instantiated, init and added automaticaly
-   *  <p>
-   *  @example
-   *  var carousel = new Carousel (config);
-   *  carousel.init ();
-   *  myController.push ('AComponent1', data1);
-   *  myController.push ('AComponent1', data2);
-   *  myController.push ('AComponent2', data3);
-   *
-   * @name vs.ext.ui.Carousel#push
-   * @function
-   * @param {vs.ui.View | String} comp The GUI component or the component
-   *     name to instanciate   
-   * @param {Object} config Configuration structure need to build the 
-   *     component.
-   */
-  push : function (child, config)
-  {
-    // Test if the component is already added
-    if (this.isChild (child))
-    {
-      if (this._swipe_controller.isStateExit (child.id))
-      { return; }
-    }
-    
-    var span, state_id = this._swipe_controller.push (child, config);
-    
-    span = document.createElement ('span');
-    
-    this.__indicators.appendChild (span);
-    this.__indicators_list [state_id] = span;
-  },
-
-  /**
-   *  Remove the specified child component from this component.
-   * 
-   *  @example
-   *  myObject.remove (myButton);
-   *
-   * @name vs.ext.ui.Carousel#remove
-   * @function
-   * @param {vs.core.EventSource} child The component to be removed.
-   */
-  remove : function (child)
-  {
-    if (!child || !child.id)
-    { return; }
-    
-    var span = this.__indicators_list [child.id];
-    
-    this.__indicators.removeChild (span);
-    delete (this.__indicators_list [child.id]);
-
-    vs.ui.View.prototype.remove.call (this, child);
-  },
-
-  /**
-   * Remove all panels
-   * @name vs.ext.ui.Carousel#removeAllChildren
-   * @param {Boolean} should_free free children
-   * @return {Array} list of removed child if not should_free
-   * @function
-   */
-  removeAllChildren : function (should_free)
-  {
-    var children = [];
-    
-    for (var id in this.__indicators_list)
-    {
-      var comp = vs.core.Object._obs [id];
-      this.remove (comp);
-      if (should_free) util.free (comp);
-      else children.push (comp);
-    }
-    
-    return (should_free)?undefined:children;
-  },
-
- /**********************************************************************
- 
- *********************************************************************/
- 
-  /**
-   * Go to the next view
-   * @name vs.ext.ui.Carousel#goToNextView
-   * @function
-   */
-  goToNextView : function ()
-  {
-    this._swipe_controller.goToNextView ();
-  },
- 
-  /**
-   * Go to the previous view
-   * @name vs.ext.ui.Carousel#goToPreviousView
-   * @function
-   */
-  goToPreviousView : function ()
-  {
-    this._swipe_controller.goToPreviousView ();
-  },
-
-  /**
-   *  Go to the view specified by its id
-   *
-   * @name vs.ext.ui.Carousel#goToView
-   * @param {string} id The component id
-   * @function
-   */
-  goToView : function (id)
-  {
-    this._swipe_controller.goToViewId (id);
-  },
-
-  /**
-   *  Go to the view specified by its position (index start at 0)
-   *
-   * @name vs.ext.ui.Carousel#goToViewAt
-   * @param {number} index The component index
-   * @function
-   */
-  goToViewAt : function (index)
-  {
-    this._swipe_controller.goToViewAt (index);
-  }
-};
-util.extendClass (Carousel, vs.ui.View);
-
-/********************************************************************
-                  Define class properties
-********************************************************************/
-
-util.defineClassProperties (Carousel, {
-
-  'size': {
-    /** 
-     * Getter|Setter for size. Gives access to the size of the GUI Object
-     * @name vs.ext.ui.Carousel#size 
-     * @function.
-     * @type {Array.<number>}
-     */ 
-    set : function (v)
-    {
-      if (!v) { return; } 
-      if (!util.isArray (v) || v.length !== 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
-      
-      this._size [0] = v [0];
-      this._size [1] = v [1];
-      
-      if (!this.view) { return; }
-      this._updateSizeAndPos ();
-  
-      if (this._swipe_controller && this._swipe_controller.refresh)
-      { this._swipe_controller.refresh (); }
-    },
-    
-    /**
-     * @type {Array.<number>}
-     * @ignore
-     */
-    get : function ()
-    {
-      var view = this.view;
-       if (view && view.parentNode)
-      {
-        this._size [0] = view.offsetWidth;
-        this._size [1] = view.offsetHeight;
-      }
-      return this._size.slice ();
-    }
-  },
-  'delegate': {
-
-    /** 
-     * Set the delegate.
-     * It should implements following methods
-     *  <ul>
-     *    <li/>carouselViewWillChange : function (view /* vs.ui.View /)
-     *  </ul>
-     * @name vs.ext.ui.Carousel#delegate 
-     * @type Object
-     */ 
-    set : function (v)
-    {
-      this._delegate = v;
-    }
-  },
-  'indicatorsVisibility': {
-
-    /** 
-     * Set indicators visible or not
-     * <p>
-     * By default its set to true
-     * @name vs.ext.ui.Carousel#indicatorsVisibility 
-     * @type boolean
-     */ 
-    set : function (v)
-    { 
-      if (v)
-      {
-        this._indicators_visibility = true;
-        util.setElementVisibility (this.__indicators, true);
-      }
-      else
-      {
-        this._indicators_visibility = false
-        util.setElementVisibility (this.__indicators, false);
-      }
-    }
-  },
-      
-  'isCircular': {
-    /** 
-     * Getter|Setter for circular swipe
-     * @name vs.ext.ui.Carousel#isCircular 
-     * @type {boolean}
-     */ 
-    set : function (v)
-    {
-      this._swipe_controller.isCircular = v;
-    },
-  
-    /** 
-     * @ignore
-     * @return {boolean}
-     */ 
-    get : function ()
-    {
-      return this._swipe_controller.isCircular;
-    }
-  },
-  
-  'isContinuousSwipe': {
-    /** 
-     * Getter|Setter Continuous Swipe
-     * @name vs.ext.ui.Carousel#isContinuousSwipe 
-     * @type {boolean}
-     */ 
-    set : function (v)
-    {
-      this._swipe_controller.isContinuousSwipe = v;
-    },
-  
-    /** 
-     * @ignore
-     * @return {boolean}
-     */ 
-    get : function ()
-    {
-      return this._swipe_controller.isContinuousSwipe;
-    }
-  },
-
-  'orientation': {
-
-    /** 
-     * Getter|Setter for the tab bar style
-     * @name vs.ext.ui.Carousel#orientation 
-     * @type String
-     */ 
-    set : function (v)
-    {
-      if (v !== Carousel.HORIZONTAL &&
-          v !== Carousel.VERTICAL) { return; }
-      
-      if (this._orientation === v) { return; }
-      if (v === Carousel.HORIZONTAL)
-      {
-        vs.util.removeClassName (this.__indicators, 'vertical');
-        vs.util.addClassName (this.__indicators, 'horizontal');
-      }
-      else
-      {
-        vs.util.removeClassName (this.__indicators, 'horizontal');
-        vs.util.addClassName (this.__indicators, 'vertical');
-      }
-      this._orientation = v;
-      this._swipe_controller.orientation = v;
-    },
-  
-    /** 
-     * @return {String}
-     * @ignore
-     */ 
-    get : function ()
-    {
-      return this._orientation;
-      }
-    }
-  }
-);
-
-/********************************************************************
-                      Export
-*********************************************************************/
-/** @private */
-ext_ui.Carousel = Carousel;
-/**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
-  contributors. All rights reserved
-  
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published
-  by the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU Lesser General Public License for more details.
-  
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-/**
- *  The vs.ext.ui.Accordion class
- *
- *  @extends vs.ui.View
- *  @class
- *  The Accordion class is a subclass of View that allows you to show
- *  a set of panels which can be collapsed or expanded.
- *  <p/>
- *  Events:
- *  <ul>
- *    <li /> panel_select: Fired after a panel is expanded. Data = index
- *           of the panel (zero-indexed number)
- *  </ul>
- *  <p>
- *  @example
- *  var config = {};
- *  var config.id = vs.core.createId ();
- *
- *  var accordion = new vs.ext.ui.Accordion ();
- *  accordion.init ();
- *  accordion.size = [300, 500];
- *  
- *  accordion.add (obj1);
- *  accordion.add (tabList3);
- *  accordion.add (vv);
- *
- *  @author David Thevenin
- *
- * @name vs.ext.ui.Accordion 
- *  @constructor
- *   Creates a new vs.ext.ui.Accordion.
- *
- * @param  {Object} config The configuration structure [mandatory]
-*/
-var Accordion = function (config)
-{
-  this.parent = ui.View;
-  this.parent (config);
-  this.constructor = Accordion;
-  
-  this.__ab_a_items = [];
-}
-
-/** 
- * Widgets keep there size and position
- * @see vs.ext.ui.Accordion#stretch 
- * @name vs.ext.ui.Accordion.STRETCH_NONE 
- * @const
- */
-Accordion.STRETCH_NONE = 0;
-
-/** 
- * Widgets size fit the panel view size
- * @see vs.ext.ui.Accordion#stretch 
- * @name vs.ext.ui.Accordion.STRETCH_FILL 
- * @const
- */
-Accordion.STRETCH_FILL = 1;
-
-
-Accordion.prototype = {
-  
-  /*****************************************************************
-   *               private/protected members
-   ****************************************************************/
-
-  /**
-   * @protected
-   */
-  _stretch: Accordion.STRETCH_NONE,
-  
-  /**
-   * @private
-   */
-  __ab_a_items: undefined,
-  
-  /**
-   * @private
-   */
-  __ab_a_current_index: undefined,
-    
-  /**
-   * @private
-   */
-  __ab_a_head_height: 33,
-    
-  /*****************************************************************
-   *                 
-   ****************************************************************/
-  
-  /**
-   *  Add the child component to the accordion and set the panel title.
-   *  <p>
-   *  Call push is similar to call add followed by setPanelTitle.
-   *  <p>
-   *
-   * @name vs.ext.ui.Accordion#push 
-   * @function
-   * @param {vs.ui.View} child The component to be added.
-   * @param {String} title the new panel title
-   */
-  push : function (child, title)
-  {
-    if (!child) { return; }
-    this.add (child);
-    var index = this._getIndexForChild (child)
-    this.setPanelTitle (index, title);
-  },
-  
-  /**
-   *  Add the specified child component to this component.
-   *  <p>
-   *  The add is a lazy add! The child's view can be already in
-   *  the HTML DOM. In that case, the add methode do not modify the DOM.
-   *  <p>
-   *
-   * @name vs.ext.ui.Accordion#add
-   * @function
-   * @param  {vs.ui.View} child The component to be added.
-   */
-  add : function (child)
-  {
-    if (!child) { return; }
-    var view, index, result;
-    
-    if (!child.id) { child.id = vs.core.createId (); }
-    
-    index = this.__ab_a_items.length;
-    
-    result = this._createView (child, 'Section ' + (index + 1), index);
-    this.view.appendChild (result.dt);
-    ui.View.prototype.add.call (this, child, 'children', result.dd);
-    
-    this.__ab_a_items.push (result);
-    this._updateSizePanel ();
-  },
-  
-  /**
-   *  Remove the specified child component from this component.
-   * 
-   *  @example
-   *  myObject.remove (myButton);
-   *
-   * @name vs.ext.ui.Accordion#remove 
-   * @function
-   * @param  {vs.core.EventSource} child The component to be removed.
-   */
-  remove : function (child)
-  {
-    var index = this._getIndexForChild (child), panel;
-    if (index === -1)
-    { return; }
-    
-    ui.View.prototype.remove.call (this, child);
-    panel = this.__ab_a_items [index];
-    panel.dd.removeChild (child.view);
-    this.view.removeChild (panel.dt);
-    vs.removePointerListener (panel.dt, core.POINTER_START, this);
-    delete (panel.dt);
-    delete (panel.dd);
-    delete (panel);
-    
-    this.__ab_a_items.remove (index);
-
-    if (index === this.__ab_a_current_index)
-    // Show the first panel
-    {
-      this.__ab_a_current_index = null;
-      this.expandPanel (0);
-    }
-    else
-    // update widget size (and children) to fit with the new available space
-    { this._updateSizePanel (); }
-  },
-  
-  /**
-   * @private
-   */
-  _getIndexForChild : function (child)
-  {
-    if (!child) { return -1; }
-    
-    var index, panel;
-    
-    for (index = 0; index < this.__ab_a_items.length; index++)
-    {
-      panel = this.__ab_a_items [index];
-      if (!panel || !panel.dd)
-      { continue; }
-      if (panel.dd.__child === child)
-      { return index; }
-    }
-    return -1;
-  },
-  
-  /**
-   * @private
-   */
-  _createView : function (child, title, index)
-  {
-    var panel = {}, mode;
-    
-    panel.dt = document.createElement ('dt');
-    util.setElementInnerText (panel.dt, title);
-    panel.title = title;
-
-    panel.dd = document.createElement ('dd');      
-    if (this._stretch === Accordion.STRETCH_FILL)
-    {
-      child.position = [0, 0];
-    }
-    panel.dd.appendChild (child.view);
-    
-    mode = (index)?'collapsed':'expanded'
-
-    panel.dd.setAttribute ("class", mode);
-    panel.dt.setAttribute ("class", mode);
-    panel.dd.__child = child
-    panel.child = child;
-
-    if (mode === 'collapsed')
-    {
-      panel.dd.style.width = '100%';
-      panel.dd.style.height = '0px';
-    }
-    else
-    {
-      panel.dd.style.width = '100%';
-      panel.dd.style.height = child._size [1] + 'px';
-      this.__ab_a_current_index = index;
-    }
-        
-    if (this._stretch === Accordion.STRETCH_FILL)
-    {
-      child.size = [this._size[0] - 2, this._size[1]];
-    }
-    panel.dt.__dd = panel.dd;
-    panel.dt.__index = index;
-    vs.addPointerListener (panel.dt, core.POINTER_START, this);
-    return panel;
-  },
-  
-  /**
-   *  Expand a part of the accordion.
-   *  <p>
-   *  The index can be zero-indexed number to match the position or the title of 
-   *  the panel you want to open.
-   *  <p>
-   *  @example
-   *  var accordion = new vs.ext.ui.Accordion (conf);
-   *  ....
-   *  accordion.expandPanel (2);
-   *  accordion.expandPanel ('Section 2');
-   *
-   * @name vs.ext.ui.Accordion#expandPanel 
-   * @function
-   * @param  {number | String} index position or title of the panel to open
-   */
-  expandPanel: function (index)
-  {
-    var panel, i;
-    
-    if (util.isNumber (index) && index >= 0 && 
-        index < this.__ab_a_items.length)
-    {
-      if (index === this.__ab_a_current_index)
-      {
-        return;
-      }
-      
-      panel = this.__ab_a_items [this.__ab_a_current_index];
-      if (panel)
-      {
-        util.removeClassName (panel.dt, 'expanded');
-        util.addClassName (panel.dt, 'collapsed');
-        util.removeClassName (panel.dd, 'expanded');
-        util.addClassName (panel.dd, 'collapsed');
-        panel.dd.style.height = '0px';
-      }
-  
-      panel = this.__ab_a_items [index];
-      util.removeClassName (panel.dt, 'collapsed');
-      util.addClassName (panel.dt, 'expanded');
-      util.removeClassName (panel.dd, 'collapsed');
-      util.addClassName (panel.dd, 'expanded');
-  
-      this.__ab_a_current_index = index;
-      this._updateSizePanel ();
-      this.propagate ('panel_select', index);
-      return;
-    }
-    if (util.isString (index))
-    {
-      for (i = 0; i < this.__ab_a_items.length; i++)
-      {
-        panel = this.__ab_a_items [i];
-        if (panel.title === index)
-        {
-          this.expandPanel (i);
-          return;
-        }
-      }
-    }
-  },
-  
-  /**
-   *  Set a title for a give panel
-   *  <p>
-   *  The index can be zero-indexed number to match the position or the title of 
-   *  the panel you want to open.
-   *  <p>
-   *  @example
-   *  var accordion = new vs.ext.ui.Accordion (conf);
-   *  ....
-   *  accordion.setPanelTitle (2, 'info 2');
-   *  accordion.setPanelTitle ('Section 1', 'info 1');
-   *
-   * @name vs.ext.ui.Accordion#setPanelTitle 
-   * @function
-   * @param  {number | String} index position or title of the panel to open
-   * @param  {String} title the new panel title
-   */
-  setPanelTitle: function (index, title)
-  {
-    var panel, i;
-    
-    if (util.isNumber (index) && index >= 0 && 
-        index < this.__ab_a_items.length)
-    {
-      panel = this.__ab_a_items [index];
-      panel.title = title;
-      util.setElementInnerText (panel.dt, title);
-      
-      return;
-    }
-    if (util.isString (index))
-    {
-      for (i = 0; i < this.__ab_a_items.length; i++)
-      {
-        panel = this.__ab_a_items [i];
-        if (panel.title === index)
-        {
-          this.setPanelTitle (i, title);
-          return;
-        }
-      }
-    }
-  },
-  
-  /********************************************************************
-                    GUI Utilities
-  ********************************************************************/
-
-  /**
-   * @ignore
-   */
-  show: function ()
-  {
-    vs.ui.View.prototype.show.call (this);
-    
-    this._updateSizePanel ();
-  },
-  
-  /**
-   * @ignore
-   */
-  refresh: function ()
-  {
-    vs.ui.View.prototype.refresh.call (this);
-    
-    this._updateSizePanel ();
-  },
-  
-  /**
-   * @private
-   */
-  _updateSize: function ()
-  {
-    vs.ui.View.prototype._updateSize.call (this);
-    
-    this._updateSizePanel ();
-  },
-  
-  /**
-   * @private
-   */
-  _updateSizePanel: function ()
-  {
-    var height, panel, i;
-    panel = this.__ab_a_items [this.__ab_a_current_index];
-    if (panel)
-    {
-      height = this._size [1];
-      this.__ab_a_head_height = panel.dt.offsetHeight;
-      height -= this.__ab_a_items.length * this.__ab_a_head_height + 2;
-      panel.dd.style.height = height + 'px';
-      if (this._stretch === Accordion.STRETCH_FILL)
-      {
-        panel.child.size = [this._size[0] - 2, height];
-      }
-    }
-  },
-  
-  /*****************************************************************
-   *               Events management
-   ****************************************************************/
-
-  /**
-   * @private
-   */
-  handleEvent : function (e)
-  {
-    var elem = e.target, pageY, pageX, delta;
-
-    if (elem.nodeType !== 1)
-    {
-      elem = elem.parentElement;
-    }
-    if (e.type === core.POINTER_START)
-    {
-      // prevent multi touch events
-      if (e.targetPointerList.length === 0 || e.nbPointers > 1) { return; }
-      
-      e.stopPropagation ();
-      e.preventDefault ();
-      
-      if (util.hasClassName (elem, 'expanded'))
-      { return false; }
-
-      vs.addPointerListener (document, core.POINTER_MOVE, this, false);
-      vs.addPointerListener (document, core.POINTER_END, this, false);
-      
-      this.__touch_start_x = e.targetPointerList[0].pageX;
-      this.__touch_start_y = e.targetPointerList[0].pageY;
-
-      this.__elem = elem;
-
-      if (this.__elem_to_unselect)
-      {
-        util.removeClassName (this.__elem_to_unselect, 'selected');
-        this.__elem_to_unselect = null;
-      }
-      util.addClassName (this.__elem, 'selected');
-    }
-    else if (e.type === core.POINTER_MOVE)
-    {
-      // do not manage event for other targets
-      if (e.targetPointerList.length === 0) { return; }
-      
-      e.stopPropagation ();
-      e.preventDefault ();
-
-      pageX = e.targetPointerList[0].pageX;
-      pageY = e.targetPointerList[0].pageY;
-      delta = 
-        Math.abs (pageY - this.__touch_start_y) + 
-        Math.abs (pageX - this.__touch_start_x);  
-                
-      // this is a move, not a selection => deactivate the selected element
-      // if needs
-      if (this.__elem && (delta > ui.View.MOVE_THRESHOLD * 2))
-      {
-        util.removeClassName (this.__elem, 'selected');
-        this.__elem = null;
-      }            
-    }
-    else if (e.type === core.POINTER_END)
-    {
-      e.stopPropagation ();
-      e.preventDefault ();
-
-      // Stop tracking when the last finger is removed from this element
-      vs.removePointerListener (document, core.POINTER_MOVE, this);
-      vs.removePointerListener (document, core.POINTER_END, this);
-                  
-      // a item is selected. propagate the change
-      if (this.__elem)
-      {
-        util.addClassName (this.__elem, 'selected');
-
-        this.__elem_to_unselect = this.__elem;
-        util.removeClassName (this.__elem_to_unselect, 'selected');
-        this.__elem_to_unselect = null;
-        
-        if (util.isNumber (elem.__index))
-        {
-          this.expandPanel (elem.__index);
-        }
-      }
-
-      this.__elem = null;
-    }
-          
-    return false;
-  }
-}
-util.extendClass (Accordion, vs.ui.View);
-
-util.defineClassProperty (Accordion, 'stretch',
-{
-  /**
-   * Configure widgets to fit the view or to keep its original size.
-   * <p>The property can take four values : 
-   * <ul>
-   *   <li/>vs.ext.ui.Accordion.STRETCH_NONE;
-   *   <li/>vs.ext.ui.Accordion.STRETCH_FILL;
-   * </ul>
-   * @name vs.ext.ui.Accordion#stretch 
-   * @type {number}
-   */
-  set : function (v)
-  {
-    if (!util.isNumber (v)) { return; }
-    if (v !== Accordion.STRETCH_FILL &&
-        v !== Accordion.STRETCH_NONE)
-    { return; }
-    
-    this._stretch = v;
-    
-    if (this._stretch === Accordion.STRETCH_FILL)
-    {
-      util.addClassName (this.view, 'fill');
-    }
-    else
-    {
-      util.removeClassName (this.view, 'fill');
-    }
-    this._updateSizePanel ();
-  },
-
-  /*****************************************************************
-   *
-   ****************************************************************/
-
-  /**
-   * Get the image stretch mode (vs.ext.ui.Accordion.STRETCH_FILL or 
-   * vs.ext.ui.Accordion.STRETCH_NONE)
-   * @return {number}
-   */
-  get : function ()
-  {
-    return this._stretch;
-  }
-});
-
-/********************************************************************
-                      Export
-*********************************************************************/
-/** @private */
-ext_ui.Accordion = Accordion;
-
-
-GMap.prototype.html_template = "\
-<div class='vs_ext_ui_gmap'></div>\
+Accordion.prototype.html_template = "<dl class='vs_ext_ui_accordion' x-hag-hole='children'></dl> \
 ";
 
-Carousel.prototype.html_template = "\
-<div class='vs_ext_ui_carousel'>\
-  <div class='views' x-hag-hole='children'></div>\
-  <div class='indicators'></div>\
-</div>\
-";
+Carousel.prototype.html_template = "<div class='vs_ext_ui_carousel'> \
+  <div class='views' x-hag-hole='children'></div> \
+  <div class='indicators'></div> \
+</div>";
 
-Accordion.prototype.html_template = "\
-<dl class='vs_ext_ui_accordion' x-hag-hole='children'></dl>\
-";
+GMap.prototype.html_template = "<div class='vs_ext_ui_gmap'></div>";
+
 
 })(window);

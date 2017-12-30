@@ -1,0 +1,31 @@
+
+{
+  "concat": {
+    "vs_ui_android.less": 
+    [
+      "../generic/lesshat.less",
+      "../generic/lesshat-ext.less",
+      "ui/Application.less",
+      "ui/Button.less",
+      "ui/List.less",
+      "ui/RadioButton.less",
+      "ui/NavigationBar.less",
+      "ui/CheckBox.less",
+      "ui/Slider.less",
+      "ui/ProgressBar.less",
+      "ui/InputField.less",
+      "ui/Picker.less",
+      "ui/ComboBox.less",
+      "ui/Switch.less",
+      "ui/TextArea.less",
+      "ui/PopOver.less",
+      "ui/ToolBar.less",
+      "ui/SegmentedButton.less"
+    ],
+    "vs_ext_android.css":
+    [
+      "ext/ui/GMap.css",
+      "ext/ui/Accordion.css"
+    ]
+  }
+}

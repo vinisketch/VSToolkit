@@ -1,0 +1,50 @@
+
+{
+  "concat" : {
+    "vs_ui.less": [
+      "lesshat.less",
+      "lesshat-ext.less",
+      "ui/Application.less",
+      "ui/View.less",
+      "ui/SplitView.less",
+      "ui/ScrollView.less",
+      "ui/ScrollImageView.less",
+      "ui/TextLabel.less",
+      "ui/TextArea.less",
+      "ui/ScrollBar.less",
+      "ui/Button.less",
+      "ui/List.less",
+      "ui/ComboBox.less",
+      "ui/RadioButton.less",
+      "ui/CheckBox.less",
+      "ui/NavigationBar.less",
+      "ui/ToolBar.less",
+      "ui/Canvas.less",
+      "ui/ProgressBar.less",
+      "ui/Slider.less",
+      "ui/ImageView.less",
+      "ui/InputField.less",
+      "ui/PopOver.less",
+      "ui/Switch.less",
+      "ui/Picker.less",
+      "ui/SVGView.less",
+      "ui/SegmentedButton.less",
+      "ui/Layout.less"
+    ],
+    "vs_av.css": ["av/Video.css"],
+    "vs_ext.css": [
+      "ext/ui/GMap.css",
+      "ext/ui/Carousel.css",
+      "ext/ui/Accordion.css",
+      "ext/ui/CustomElement.css"
+    ]
+  },
+  "copy": [
+    "ui/*.ttf",
+    "ui/*.eot",
+    "ui/*.png",
+    "ui/ie10.css",
+    "ui/toolbar_icons/**"
+  ]
+}
+

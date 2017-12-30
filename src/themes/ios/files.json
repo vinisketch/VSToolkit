@@ -1,0 +1,31 @@
+{
+  "concat" : {
+    "vs_ui_ios.less": [
+      "../generic/lesshat.less",
+      "../generic/lesshat-ext.less",
+      "ui/Application.less",
+      "ui/Button.less",
+      "ui/List.less",
+      "ui/RadioButton.less",
+      "ui/NavigationBar.less",
+      "ui/CheckBox.less",
+      "ui/Slider.less",
+      "ui/ProgressBar.less",
+      "ui/InputField.less",
+      "ui/Picker.less",
+      "ui/Switch.less",
+      "ui/TextArea.less",
+      "ui/ComboBox.less",
+      "ui/PopOver.less",
+      "ui/ToolBar.less",
+      "ui/SegmentedButton.less"
+    ],
+    "vs_ext_ios.less": [
+      "../generic/lesshat.less",
+      "../generic/lesshat-ext.less",
+      "ext/ui/GMap.less",
+      "ext/ui/Accordion.less"
+    ]
+  },
+  "copy": ["ui/*.png", "ext/ui/*.png"]
+}

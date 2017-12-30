@@ -20,6 +20,7 @@
 
 var document = window.document;
 
+
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
@@ -52,6 +53,212 @@ var vs = window.vs,
   ext_fx = ext.fx;
 
 var exports = vs.ext.fx;
+
+/******************************************************************************
+          
+******************************************************************************/
+
+/**
+ *  Default parameters for createTransition
+ *
+ *  @private
+ **/
+var AnimationDefaultOption = {
+  duration: 300,
+  begin: 0,
+  pace: Pace.getLinearPace (),
+  steps: 0,
+  repeat: 1,
+  startClb: null,
+  endClb: null
+}
+
+/******************************************************************************
+          
+******************************************************************************/
+
+/**
+ *  createTransition (obj, property, options)
+ *
+ *  Instruments a object property with an animation
+ *  When the property is change, instead of XXX
+ *
+ *  @public
+ *  @function
+ *  @name vs.ext.fx.createTransition
+ *
+ *  @param obj {Object} 
+ *  @param property {String} the property name to instrument
+ *  @param options {Object} Animation options [optional]
+ *  @return {Chronometer} the animation object. Call freeTransition to delete
+ *            the object
+ **/
+var createTransition = function (obj, property, options)
+{
+  var animOptions = vs.util.clone (AnimationDefaultOption);
+  if (options) {
+    for (var key in options) animOptions [key] = options [key];
+  }
+  
+  var chrono = new Chronometer (animOptions).init ();
+  var pace = animOptions.pace;
+  var traj = animOptions.trajectory;
+
+  chrono.__clb = function (i) {
+  
+    pace._tick_i = i;
+    if (pace._timing) {
+      pace._tick_out = pace._timing (i);
+    }
+    else {
+      pace._tick_out = pace._tick_in;
+    }
+    
+    traj._tick = pace._tick_out;
+    if (traj.compute ()) {
+      obj [property] = traj._out;
+      obj.propertyChange ();
+    }
+  }
+  
+  chrono.__data_to_delete = [chrono, pace, traj];
+  
+  return chrono;
+}
+
+/**
+ *  freeTransition (anim)
+ *
+ *  Free the transition animation
+ *
+ *  @public
+ *  @function
+ *  @name vs.ext.fx.freeTransition
+ *
+ *  @param {Chronometer} chrono the animation to free
+ **/
+var freeTransition = function (chrono)
+{
+  if (!chrono) return;
+  
+  if (chrono.__data_to_delete) {
+    chrono.__data_to_delete.forEach (function (obj) {
+      vs.util.free (obj);
+    });
+  }
+  
+  vs.util.free (chrono);
+}
+
+var animateTransitionBis = function (obj, srcs, targets, options)
+{
+  if (!vs.util.isArray (srcs) || !vs.util.isArray (targets)) return;
+  if (srcs.length !== targets.length) return;
+  
+  var animOptions = vs.util.clone (AnimationDefaultOption);
+  if (options) {
+    for (var key in options) animOptions [key] = options [key];
+  }
+  
+  var chrono = new Chronometer (animOptions).init ();
+  var pace = animOptions.pace;
+  var traj = animOptions.trajectory;
+
+  chrono.__clb = function (i) {
+    pace.tickIn = i;
+    pace.propertiesDidChange ();
+    
+    traj.tick = pace.tickOut;
+    traj.propertiesDidChange ();
+    
+    for (var i = 0; i < srcs.length; i++) { obj [targets[i]] = traj [srcs[i]]; }
+    obj.propertyChange ();
+  }
+  
+  return chrono;
+}
+
+/**
+ *  Attach a transition animation to a property
+ *
+ *  When the property is changed, then the property value is animated along the
+ *  trajectory defined as parameter
+ *
+ *  @public
+ *  @function
+ *  @name vs.ext.fx.attachTransition
+ *
+ *  @param comp {Object} the component
+ *  @param property {String} the property name to instrument
+ *  @param options {Object} Animation options [optional]
+ **/
+function attachTransition (comp, property, options)
+{
+  var animOptions = vs.util.clone (AnimationDefaultOption);
+  if (options) {
+    for (var key in options)
+      animOptions [key] = options [key];
+  }
+  
+  var
+    chrono = new Chronometer (animOptions).init (),
+    pace = animOptions.pace,
+    traj = animOptions.trajectory,
+    _property = '_' + vs.util.underscore (property),
+    set_function;
+    
+  if (!traj) throw new Error ("Error StringTrajectory");
+
+  chrono.__clb = function (i) {
+  
+    pace._tick_i = i;
+    if (pace._timing) {
+      pace._tick_out = pace._timing (i);
+    }
+    else {
+      pace._tick_out = pace._tick_in;
+    }
+    
+    traj._tick = pace._tick_out;
+    if (traj.compute ()) {
+      set_function.call (comp, traj._out);
+      comp.propertyChange ();
+    }
+  }
+    
+  var desc = comp.getPropertyDescriptor (property);
+  if (!desc || !desc.set) throw new Error ("Error StringTrajectory");
+  set_function = desc.set;
+  
+  function descriptorInstrument ()
+  {
+    var instrumentedDesc = {};
+    if (desc.get) instrumentedDesc.get = desc.get;
+
+    instrumentedDesc.set = function (v) {
+      traj.values = [this [_property], v];
+      chrono.start ();
+    }
+    
+    instrumentedDesc.configurable = desc.configurable;
+    instrumentedDesc.enumerable = desc.enumerable;
+
+    Object.defineProperty (comp, "__trans_anim_" + property, desc);
+    Object.defineProperty (comp, property, instrumentedDesc);
+  }
+  
+  removeTransition (comp, property);
+  descriptorInstrument ();
+}
+
+function removeTransition (comp, property)
+{
+  var desc = comp.getPropertyDescriptor ("__trans_anim_" + property);
+  if (desc) {
+    Object.defineProperty (comp, property, desc);
+    delete (comp ["__trans_anim_" + property]);
+  }
+}
 
 
 /**
@@ -259,90 +466,7 @@ util.extend (Animation, {
   FadeInLeft:    FadeInLeft,
   FadeOutLeft:   FadeOutLeft
 });
-// port of webkit cubic bezier handling by http://www.netzgesta.de/dev/
-/*!
- *  Copyright (c) 2006 Apple Computer, Inc. All rights reserved.
- *  
- *  Redistribution and use in source and binary forms, with or without 
- *  modification, are permitted provided that the following conditions are met:
- *  
- *  1. Redistributions of source code must retain the above copyright notice, 
- *  this list of conditions and the following disclaimer.
- *  
- *  2. Redistributions in binary form must reproduce the above copyright notice, 
- *  this list of conditions and the following disclaimer in the documentation 
- *  and/or other materials provided with the distribution.
- *  
- *  3. Neither the name of the copyright holder(s) nor the names of any 
- *  contributors may be used to endorse or promote products derived from 
- *  this software without specific prior written permission.
- *  
- *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
- *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
- *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
- *  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE 
- *  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
- *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
- *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON 
- *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
- *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
- *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
- */
-function CubicBezier (t,p1x,p1y,p2x,p2y)
-{
-  var ax=0,bx=0,cx=0,ay=0,by=0,cy=0,epsilon=1.0/200.0;
-  function sampleCurveX(t) {return ((ax*t+bx)*t+cx)*t;};
-  function sampleCurveY(t) {return ((ay*t+by)*t+cy)*t;};
-  function sampleCurveDerivativeX(t) {return (3.0*ax*t+2.0*bx)*t+cx;};
-  function solve(x) {return sampleCurveY(solveCurveX(x));};
-  function fabs(n) {if(n>=0) {return n;}else {return 0-n;}};
-  
-  function solveCurveX (x)
-  {
-    var t0,t1,t2,x2,d2,i;
-    for (t2 = x, i = 0; i < 8; i++) {
-      x2 = sampleCurveX (t2) - x;
-      if (fabs (x2) < epsilon) return t2;
-      d2 = sampleCurveDerivativeX (t2);
-      if (fabs (d2) < 1e-6) break;
-      t2 = t2 - x2 / d2;
-    }
-    t0=0.0; t1=1.0; t2=x;
-    if (t2 < t0) return t0;
-    if (t2 > t1) return t1;
-    while (t0 < t1) {
-      x2 = sampleCurveX(t2);
-      if (fabs(x2-x)<epsilon) return t2;
-      if (x > x2) {t0=t2;}
-      else {t1=t2;}
-      t2 = (t1 - t0) * 0.5 + t0;
-    }
-    return t2; // Failure.
-  };
-  cx = 3.0 * p1x;
-  bx = 3.0 * (p2x - p1x) - cx;
-  ax = 1.0 - cx - bx;
-  cy = 3.0 * p1y;
-  by = 3.0 * (p2y - p1y) - cy;
-  ay = 1.0 - cy - by;
-  
-  return solve (t);
-}
 
-/**
- *  generateCubicBezierFunction(x1, y1, x2, y2) -> Function
- *
- *  Generates a transition easing function that is compatible
- *  with WebKit's CSS transitions `-webkit-transition-timing-function`
- *  CSS property.
- *
- *  The W3C has more information about 
- *  <a href="http://www.w3.org/TR/css3-transitions/#transition-timing-function_tag">
- *  CSS3 transition timing functions</a>.
- **/
-function generateCubicBezierFunction (x1, y1, x2, y2) {
-  return (function(pos) {return CubicBezier (pos,x1,y1,x2,y2);});
-}
 /**
  *  The vs.ext.fx.Chronometer class
  *
@@ -758,6 +882,112 @@ var Chronometer = vs.core.createClass ({
     }
   }
 });
+
+// port of webkit cubic bezier handling by http://www.netzgesta.de/dev/
+/*!
+ *  Copyright (c) 2006 Apple Computer, Inc. All rights reserved.
+ *  
+ *  Redistribution and use in source and binary forms, with or without 
+ *  modification, are permitted provided that the following conditions are met:
+ *  
+ *  1. Redistributions of source code must retain the above copyright notice, 
+ *  this list of conditions and the following disclaimer.
+ *  
+ *  2. Redistributions in binary form must reproduce the above copyright notice, 
+ *  this list of conditions and the following disclaimer in the documentation 
+ *  and/or other materials provided with the distribution.
+ *  
+ *  3. Neither the name of the copyright holder(s) nor the names of any 
+ *  contributors may be used to endorse or promote products derived from 
+ *  this software without specific prior written permission.
+ *  
+ *  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+ *  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+ *  THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE 
+ *  ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE 
+ *  FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES 
+ *  (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; 
+ *  LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON 
+ *  ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+ *  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS 
+ *  SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+function CubicBezier (t,p1x,p1y,p2x,p2y)
+{
+  var ax=0,bx=0,cx=0,ay=0,by=0,cy=0,epsilon=1.0/200.0;
+  function sampleCurveX(t) {return ((ax*t+bx)*t+cx)*t;};
+  function sampleCurveY(t) {return ((ay*t+by)*t+cy)*t;};
+  function sampleCurveDerivativeX(t) {return (3.0*ax*t+2.0*bx)*t+cx;};
+  function solve(x) {return sampleCurveY(solveCurveX(x));};
+  function fabs(n) {if(n>=0) {return n;}else {return 0-n;}};
+  
+  function solveCurveX (x)
+  {
+    var t0,t1,t2,x2,d2,i;
+    for (t2 = x, i = 0; i < 8; i++) {
+      x2 = sampleCurveX (t2) - x;
+      if (fabs (x2) < epsilon) return t2;
+      d2 = sampleCurveDerivativeX (t2);
+      if (fabs (d2) < 1e-6) break;
+      t2 = t2 - x2 / d2;
+    }
+    t0=0.0; t1=1.0; t2=x;
+    if (t2 < t0) return t0;
+    if (t2 > t1) return t1;
+    while (t0 < t1) {
+      x2 = sampleCurveX(t2);
+      if (fabs(x2-x)<epsilon) return t2;
+      if (x > x2) {t0=t2;}
+      else {t1=t2;}
+      t2 = (t1 - t0) * 0.5 + t0;
+    }
+    return t2; // Failure.
+  };
+  cx = 3.0 * p1x;
+  bx = 3.0 * (p2x - p1x) - cx;
+  ax = 1.0 - cx - bx;
+  cy = 3.0 * p1y;
+  by = 3.0 * (p2y - p1y) - cy;
+  ay = 1.0 - cy - by;
+  
+  return solve (t);
+}
+
+/**
+ *  generateCubicBezierFunction(x1, y1, x2, y2) -> Function
+ *
+ *  Generates a transition easing function that is compatible
+ *  with WebKit's CSS transitions `-webkit-transition-timing-function`
+ *  CSS property.
+ *
+ *  The W3C has more information about 
+ *  <a href="http://www.w3.org/TR/css3-transitions/#transition-timing-function_tag">
+ *  CSS3 transition timing functions</a>.
+ **/
+function generateCubicBezierFunction (x1, y1, x2, y2) {
+  return (function(pos) {return CubicBezier (pos,x1,y1,x2,y2);});
+}
+
+/********************************************************************
+                      Export
+*********************************************************************/
+/** @private */
+vs.util.extend (exports, {
+  Animation:                     Animation,
+  Trajectory:                    Trajectory,
+  Vector1D:                      Vector1D,
+  Vector2D:                      Vector2D,
+  Circular2D:                    Circular2D,
+  Pace:                          Pace,
+  Chronometer:                   Chronometer,
+  generateCubicBezierFunction:   generateCubicBezierFunction,
+  createTransition:              createTransition,
+  freeTransition:                freeTransition,
+  animateTransitionBis:          animateTransitionBis,
+  attachTransition:              attachTransition,
+  removeTransition:              removeTransition
+});
+
 /**
  *  The vs.ext.fx.Pace class
  *
@@ -955,6 +1185,7 @@ Pace.getInvertLinearPace = function () {
     timing: function (t) { return 1 - t; }
   }).init ();
 }
+
 /**
  *  The vs.ext.fx.Trajectory class
  *
@@ -1370,230 +1601,16 @@ var Circular2D = vs.core.createClass ({
     return true;
   }
 });
-/******************************************************************************
-          
-******************************************************************************/
 
-/**
- *  Default parameters for createTransition
- *
- *  @private
- **/
-var AnimationDefaultOption = {
-  duration: 300,
-  begin: 0,
-  pace: Pace.getLinearPace (),
-  steps: 0,
-  repeat: 1,
-  startClb: null,
-  endClb: null
-}
+Accordion.prototype.html_template = "<dl class='vs_ext_ui_accordion' x-hag-hole='children'></dl> \
+";
 
-/******************************************************************************
-          
-******************************************************************************/
+Carousel.prototype.html_template = "<div class='vs_ext_ui_carousel'> \
+  <div class='views' x-hag-hole='children'></div> \
+  <div class='indicators'></div> \
+</div>";
 
-/**
- *  createTransition (obj, property, options)
- *
- *  Instruments a object property with an animation
- *  When the property is change, instead of XXX
- *
- *  @public
- *  @function
- *  @name vs.ext.fx.createTransition
- *
- *  @param obj {Object} 
- *  @param property {String} the property name to instrument
- *  @param options {Object} Animation options [optional]
- *  @return {Chronometer} the animation object. Call freeTransition to delete
- *            the object
- **/
-var createTransition = function (obj, property, options)
-{
-  var animOptions = vs.util.clone (AnimationDefaultOption);
-  if (options) {
-    for (var key in options) animOptions [key] = options [key];
-  }
-  
-  var chrono = new Chronometer (animOptions).init ();
-  var pace = animOptions.pace;
-  var traj = animOptions.trajectory;
+GMap.prototype.html_template = "<div class='vs_ext_ui_gmap'></div>";
 
-  chrono.__clb = function (i) {
-  
-    pace._tick_i = i;
-    if (pace._timing) {
-      pace._tick_out = pace._timing (i);
-    }
-    else {
-      pace._tick_out = pace._tick_in;
-    }
-    
-    traj._tick = pace._tick_out;
-    if (traj.compute ()) {
-      obj [property] = traj._out;
-      obj.propertyChange ();
-    }
-  }
-  
-  chrono.__data_to_delete = [chrono, pace, traj];
-  
-  return chrono;
-}
-
-/**
- *  freeTransition (anim)
- *
- *  Free the transition animation
- *
- *  @public
- *  @function
- *  @name vs.ext.fx.freeTransition
- *
- *  @param {Chronometer} chrono the animation to free
- **/
-var freeTransition = function (chrono)
-{
-  if (!chrono) return;
-  
-  if (chrono.__data_to_delete) {
-    chrono.__data_to_delete.forEach (function (obj) {
-      vs.util.free (obj);
-    });
-  }
-  
-  vs.util.free (chrono);
-}
-
-var animateTransitionBis = function (obj, srcs, targets, options)
-{
-  if (!vs.util.isArray (srcs) || !vs.util.isArray (targets)) return;
-  if (srcs.length !== targets.length) return;
-  
-  var animOptions = vs.util.clone (AnimationDefaultOption);
-  if (options) {
-    for (var key in options) animOptions [key] = options [key];
-  }
-  
-  var chrono = new Chronometer (animOptions).init ();
-  var pace = animOptions.pace;
-  var traj = animOptions.trajectory;
-
-  chrono.__clb = function (i) {
-    pace.tickIn = i;
-    pace.propertiesDidChange ();
-    
-    traj.tick = pace.tickOut;
-    traj.propertiesDidChange ();
-    
-    for (var i = 0; i < srcs.length; i++) { obj [targets[i]] = traj [srcs[i]]; }
-    obj.propertyChange ();
-  }
-  
-  return chrono;
-}
-
-/**
- *  Attach a transition animation to a property
- *
- *  When the property is changed, then the property value is animated along the
- *  trajectory defined as parameter
- *
- *  @public
- *  @function
- *  @name vs.ext.fx.attachTransition
- *
- *  @param comp {Object} the component
- *  @param property {String} the property name to instrument
- *  @param options {Object} Animation options [optional]
- **/
-function attachTransition (comp, property, options)
-{
-  var animOptions = vs.util.clone (AnimationDefaultOption);
-  if (options) {
-    for (var key in options)
-      animOptions [key] = options [key];
-  }
-  
-  var
-    chrono = new Chronometer (animOptions).init (),
-    pace = animOptions.pace,
-    traj = animOptions.trajectory,
-    _property = '_' + vs.util.underscore (property),
-    set_function;
-    
-  if (!traj) throw new Error ("Error StringTrajectory");
-
-  chrono.__clb = function (i) {
-  
-    pace._tick_i = i;
-    if (pace._timing) {
-      pace._tick_out = pace._timing (i);
-    }
-    else {
-      pace._tick_out = pace._tick_in;
-    }
-    
-    traj._tick = pace._tick_out;
-    if (traj.compute ()) {
-      set_function.call (comp, traj._out);
-      comp.propertyChange ();
-    }
-  }
-    
-  var desc = comp.getPropertyDescriptor (property);
-  if (!desc || !desc.set) throw new Error ("Error StringTrajectory");
-  set_function = desc.set;
-  
-  function descriptorInstrument ()
-  {
-    var instrumentedDesc = {};
-    if (desc.get) instrumentedDesc.get = desc.get;
-
-    instrumentedDesc.set = function (v) {
-      traj.values = [this [_property], v];
-      chrono.start ();
-    }
-    
-    instrumentedDesc.configurable = desc.configurable;
-    instrumentedDesc.enumerable = desc.enumerable;
-
-    Object.defineProperty (comp, "__trans_anim_" + property, desc);
-    Object.defineProperty (comp, property, instrumentedDesc);
-  }
-  
-  removeTransition (comp, property);
-  descriptorInstrument ();
-}
-
-function removeTransition (comp, property)
-{
-  var desc = comp.getPropertyDescriptor ("__trans_anim_" + property);
-  if (desc) {
-    Object.defineProperty (comp, property, desc);
-    delete (comp ["__trans_anim_" + property]);
-  }
-}
-
-/********************************************************************
-                      Export
-*********************************************************************/
-/** @private */
-vs.util.extend (exports, {
-  Animation:                     Animation,
-  Trajectory:                    Trajectory,
-  Vector1D:                      Vector1D,
-  Vector2D:                      Vector2D,
-  Circular2D:                    Circular2D,
-  Pace:                          Pace,
-  Chronometer:                   Chronometer,
-  generateCubicBezierFunction:   generateCubicBezierFunction,
-  createTransition:              createTransition,
-  freeTransition:                freeTransition,
-  animateTransitionBis:          animateTransitionBis,
-  attachTransition:              attachTransition,
-  removeTransition:              removeTransition
-});
 
 })(window);

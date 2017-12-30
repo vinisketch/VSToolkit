@@ -1,0 +1,60 @@
+{
+  "name": "vs_toolkit",
+  "version": "1.0.1",
+  "description": "Toolkit for creating to easily develop Hybrid/Web Applications for mobile devices.",
+  "main": "index.js",
+  "repository": "git@github.com:vinisketch/VSToolkit.git",
+  "author": "<david.thevenin@gmail.com>",
+  "license": "MIT",
+  "babel": {
+    "presets": [
+      "es2015"
+    ],
+    "plugins": [
+      "transform-inline-environment-variables"
+    ]
+  },
+  "files": [
+    "dist/"
+  ],
+  "scripts": {
+    "grunt": "grunt",
+    "buildOld": "yarn grunt -s -- prod",
+    "build:core": "rollup -c ./rollup.config/core.js",
+    "build:data": "rollup -c ./rollup.config/data.js",
+    "build:iief:min": "uglifyjs --compress --mangle -o dist/js/vs_core.min.js -- dist/js/vs_core.js"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babelify": "^8.0.0",
+    "grunt": "^1.0.1",
+    "grunt-browserify": "^5.2.0",
+    "grunt-contrib-clean": "^1.1.0",
+    "grunt-contrib-concat": "^1.0.1",
+    "grunt-contrib-copy": "^1.0.0",
+    "grunt-contrib-less": "^1.4.1",
+    "grunt-contrib-uglify": "^3.1.0",
+    "include-all": "^4.0.3",
+    "less-plugin-autoprefix": "^1.5.1",
+    "less-plugin-clean-css": "^1.5.1",
+    "rollup": "^0.53.1",
+    "uglify-es": "^3.3.2"
+  },
+  "dependencies": {
+    "vs_gesture": "https://github.com/dthevenin/Gesture.git",
+    "vs_transform": "https://github.com/dthevenin/Transform.git",
+    "vs_util": "https://github.com/dthevenin/Util.git"
+  },
+  "clean": {
+    "options": {
+      "force": true
+    },
+    "debug": [
+      ".lib_debug/**"
+    ],
+    "release": [
+      "./lib/**"
+    ]
+  }
+}
