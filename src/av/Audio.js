@@ -18,6 +18,9 @@
  Use code from Canto.js Copyright 2010 David Flanagan
 */
 
+import vs_utils from 'vs_utils';
+import { Task, EventSource } from 'vs_core';
+
 /**
  *  The vs.av.Audio class
  *
@@ -64,7 +67,7 @@
 */
 function Audio (config)
 {
-  this.parent = core.EventSource;
+  this.parent = EventSource;
   this.parent (config);
   this.constructor = Audio;
 }
@@ -132,7 +135,7 @@ Audio.prototype = {
   /**
    * @private
    */
-  _state : core.Task.STOPPED,
+  _state : Task.STOPPED,
 
   /*****************************************************************
    *
@@ -193,10 +196,10 @@ Audio.prototype = {
    */
   play : function ()
   {
-    if (this._state === core.Task.STARTED) { return false; }
+    if (this._state === Task.STARTED) { return false; }
     if (!this.__audio) { return; }
 
-    this._state = core.Task.STARTED;
+    this._state = Task.STARTED;
     this.__audio.play ();
   },
   
@@ -220,11 +223,11 @@ Audio.prototype = {
    */
   pause : function ()
   {
-    if (this._state === core.Task.PAUSED) { return false; }
+    if (this._state === Task.PAUSED) { return false; }
 
     if (!this.__audio) { return; }
     this.__audio.pause ();
-    this._state = core.Task.PAUSED;
+    this._state = Task.PAUSED;
 
     if (this.delegate && this.delegate.taskDidPause) {
       try {
@@ -244,14 +247,14 @@ Audio.prototype = {
    */
   stop : function ()
   {
-    if (this._state === core.Task.STOPPED) { return false; }
+    if (this._state === Task.STOPPED) { return false; }
 
     if (!this.__audio) { return; }
     if (window.Media)
     { this.__audio.stop (); }
     else
     { this.__audio.pause (); }
-    this._state = core.Task.STOPPED;
+    this._state = Task.STOPPED;
 
     if (this.delegate && this.delegate.taskDidStop) {
       try {
@@ -287,7 +290,7 @@ Audio.prototype = {
     delete (this.__audio);
     this.__audio = null;
 
-    core.EventSource.prototype.destructor.call (this);
+    EventSource.prototype.destructor.call (this);
   },
 
   /**
@@ -297,7 +300,7 @@ Audio.prototype = {
    */
   initComponent: function ()
   {
-    core.EventSource.prototype.initComponent.call (this);
+    EventSource.prototype.initComponent.call (this);
     
     this.__audio = new window.Audio ();
 
@@ -336,7 +339,7 @@ Audio.prototype = {
       break;
 
       case 'ended':
-        this._state = core.Task.STOPED;
+        this._state = Task.STOPED;
         if (this.delegate && this.delegate.taskDidEnd) {        
           try {
             this.delegate.taskDidEnd (this);
@@ -350,7 +353,7 @@ Audio.prototype = {
       break;
 
       case 'pause':
-        this._state = core.Task.PAUSED;
+        this._state = Task.PAUSED;
         if (this.delegate && this.delegate.taskDidPause) {
           try {
             this.delegate.taskDidPause (this);
@@ -365,7 +368,7 @@ Audio.prototype = {
 
       case 'playing':
       case 'play':
-        this._state = core.Task.STARTED;
+        this._state = Task.STARTED;
         this.propagate (event.type);
       break;
 
@@ -382,13 +385,13 @@ Audio.prototype = {
     }
   }
 };
-util.extendClass (Audio, core.EventSource);
+vs_utils.extendClass (Audio, EventSource);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (Audio, {
+vs_utils.defineClassProperties (Audio, {
 
   'src': {
   
@@ -401,7 +404,7 @@ util.defineClassProperties (Audio, {
      */
     set : function (v)
     {
-      if (!vs.util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       
       this._src = v, self = this;
       
@@ -409,7 +412,7 @@ util.defineClassProperties (Audio, {
       {
         function onSuccess ()
         {
-          self._state = core.Task.STOPED;
+          self._state = Task.STOPED;
           if (self.delegate && self.delegate.taskDidEnd) {
             try {
               self.delegate.taskDidEnd (self);
@@ -513,7 +516,7 @@ util.defineClassProperties (Audio, {
      */
     set : function (v)
     {
-      if (!vs.util.isNumber (v)) { return; }
+      if (!vs_utils.isNumber (v)) { return; }
       if (v < 0 || v > 1) { return; }
       
       this._volume = v;
@@ -596,4 +599,4 @@ util.defineClassProperties (Audio, {
                       Export
 *********************************************************************/
 /** @private */
-av.Audio = Audio;
+export default Audio;

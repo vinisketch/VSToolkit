@@ -22,6 +22,7 @@
     "buildOld": "yarn grunt -s -- prod",
     "build:core": "rollup -c ./rollup.config/core.js",
     "build:data": "rollup -c ./rollup.config/data.js",
+    "build:av": "rollup -c ./rollup.config/av.js",
     "build:iief:min": "uglifyjs --compress --mangle -o dist/js/vs_core.min.js -- dist/js/vs_core.js"
   },
   "devDependencies": {
