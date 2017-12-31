@@ -16,6 +16,11 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import { extend, setElementTransform } from 'vs_utils';
+
+import StackController from './StackController';
+
 /**
  *  The vs.fx.SwipeController class <br />
  *  This layer manage a list of children using a horizontal layout.
@@ -74,9 +79,9 @@
  *
  * @param {vs.ui.View} owner the View using this Layer [mandatory]
  */
-var SwipeController = vs.core.createClass ({
+var SwipeController = vs_core.createClass ({
 
-  parent: vs.fx.StackController,
+  parent: StackController,
   
   /********************************************************************
                     protected members declarations
@@ -530,7 +535,7 @@ var SwipeController = vs.core.createClass ({
       {
         toComp.show ();
         toComp.refresh ();
-        vs.scheduleAction (function () {
+        vs_core.scheduleAction (function () {
           if (instant) {
             carousel_div.style.webkitTransitionDuration = "0ms";
           }
@@ -550,9 +555,9 @@ var SwipeController = vs.core.createClass ({
       catch (e) { if (e.stack) console.log (e.stack);console.error (e); }
     };
     runAnimation ();
-  } 
+  }
 });
-util.extend (SwipeController.prototype, ui.RecognizerManager);
+extend (SwipeController.prototype, ui.RecognizerManager);
 
 /**
  * The duration of the animation between two views
@@ -589,4 +594,4 @@ SwipeController.PIXEL = 1;
                       Export
 *********************************************************************/
 /** @private */
-fx.SwipeController = SwipeController;
+export default SwipeController;

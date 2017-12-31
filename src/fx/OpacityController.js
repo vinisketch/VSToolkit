@@ -16,6 +16,15 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import vs_ui from 'vs_ui';
+import {
+  isNumber, isString, isFunction,
+  extendClass, defineClassProperty
+} from 'vs_utils';
+
+import StackController from './StackController';
+
 /**
  *  The vs.fx.OpacityController class <br />
  *  @class
@@ -144,7 +153,7 @@ OpacityController.prototype = {
   {
     if (!comp) { return; }
     
-    if (!util.isString (comp))
+    if (!isString (comp))
     {
       var index = this._states_array.length;
       comp.position = [0, 0];
@@ -238,24 +247,24 @@ OpacityController.prototype = {
     if (output && this._output_action [output])
     {
       var clb = this._output_action [output];
-      if (util.isFunction (clb))
+      if (isFunction (clb))
       {
         clb.call (this.owner, event);
       }
-      else if (util.isString (clb))
+      else if (isString (clb))
       {
         this.owner [this._output_action [output]] (event);
       }
     }
   }
 };
-util.extendClass (OpacityController, StackController);
+extendClass (OpacityController, StackController);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperty (OpacityController, "animationDuration", {
+defineClassProperty (OpacityController, "animationDuration", {
   /** 
    * Set the animation/transition temporisation (in millisecond)
    * @name vs.fx.OpacityController#animationDuration 
@@ -264,7 +273,7 @@ util.defineClassProperty (OpacityController, "animationDuration", {
   set : function (time)
   {
     if (!time) { time = 0; }
-    if (!util.isNumber (time)) { return };
+    if (!isNumber (time)) { return };
     
     this._animation_duration = time;
     OpacityController._opacity_animation.durations = time / 1000 + "s";
@@ -275,4 +284,4 @@ util.defineClassProperty (OpacityController, "animationDuration", {
                       Export
 *********************************************************************/
 /** @private */
-fx.OpacityController = OpacityController;
+export default OpacityController;

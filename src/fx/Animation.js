@@ -16,6 +16,14 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import {
+  isNumber, isString, isArray,
+  extendClass, clone, defineClassProperties,
+  setElementTransform, SUPPORT_3D_TRANSFORM
+} from 'vs_utils';
+
+import { VSObject, Task, createId, scheduleAction } from 'vs_core';
+
 /**
  * @private
  * @const
@@ -100,9 +108,9 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
   function parseValue (v, data) {
     var matches, i, props = [], prop;
 
-    if (util.isNumber (v)) { return v; }
+    if (isNumber (v)) { return v; }
 
-    if (util.isString (v))
+    if (isString (v))
     {
       v = v.replace (AnimationWidthRegExp, comp.size [0] + 'px');
       v = v.replace (AnimationHeightRegExp, comp.size [1] + 'px');
@@ -174,7 +182,7 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
     for (key in animation.keyFrames)
     {
       data = animation.keyFrames [key];
-      if (util.isArray (data)) {
+      if (isArray (data)) {
         new_data = [];
         for (var i = 0; i < data.length; i++)
         {
@@ -227,7 +235,7 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
   }
 
   var
-    cssAnimation, anim_id = core.createId (),
+    cssAnimation, anim_id = createId (),
     isComplex = isComplexAnimation (),
     forceCallback = false, self = this;
 
@@ -238,7 +246,7 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
     { property = ANIMATION_DURATION; }
     else { property = TRANSITION_DURATION; }
 
-    if (util.isArray (anim_params.origin) && anim_params.origin.length === 2)
+    if (isArray (anim_params.origin) && anim_params.origin.length === 2)
     {
       var value = anim_params.origin [0] + '% ' + anim_params.origin [1] + '%';
       comp.setStyle (TRANSFORM_ORIGIN, value);
@@ -248,11 +256,11 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
     {
       comp.setStyle (property, 0);
     }
-    else if (util.isString (anim_params.durations))
+    else if (isString (anim_params.durations))
     {
       comp.setStyle (property, anim_params.durations);
     }
-    else if (util.isArray (anim_params.durations))
+    else if (isArray (anim_params.durations))
     {
       comp.setStyle (property, anim_params.durations.join (', '));
     }
@@ -264,7 +272,7 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
     if (isComplex) { property = ANIMATION_DELAY; }
     else { property = TRANSITION_DELAY; }
 
-    if (!now && util.isNumber (anim_params.delay))
+    if (!now && isNumber (anim_params.delay))
     {
       comp.setStyle (property, anim_params.delay + 'ms');
     }
@@ -274,11 +282,11 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
     if (isComplex) property = ANIMATION_TIMING_FUNC;
     else property = TRANSITION_TIMING_FUNC;
 
-    if (util.isString (anim_params.timings))
+    if (isString (anim_params.timings))
     {
       comp.setStyle (property, anim_params.timings);
     }
-    else if (util.isArray (anim_params.timings))
+    else if (isArray (anim_params.timings))
     {
       comp.setStyle (property, anim_params.timings.join (', '));
     }
@@ -294,7 +302,7 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
         comp.setStyle (ITERATION_COUNT, 'infinite');
       }
       else if (!anim_params.iterationCount ||
-               !util.isNumber (anim_params.iterationCount))
+               !isNumber (anim_params.iterationCount))
       {
         comp.setStyle (ITERATION_COUNT, '1');
       }
@@ -344,7 +352,7 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
 
     if (!forceCallback)
       comp.view.addEventListener (TRANSITION_END, callback, false);
-    else vs.scheduleAction (function () {
+    else scheduleAction (function () {
       callback ({currentTarget: comp.view});
     });
 
@@ -461,7 +469,7 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
 
     if (!forceCallback)
       comp.view.addEventListener (ANIMATION_END, callback, false);
-    else vs.scheduleAction (function () {
+    else scheduleAction (function () {
       callback ({currentTarget: comp.view});
     });
 
@@ -485,7 +493,7 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
       transform = '';
       data = anim_params.keyFrames [key];
       style = '';
-      if (util.isArray (data))
+      if (isArray (data))
       {
         for (var i = 0; i < data.length; i++)
         {
@@ -571,8 +579,8 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
     runComplexAnimation ();
   }
 
-  if (isComplex) { vs.scheduleAction (applyComplexAnimation); }
-  else { vs.scheduleAction (applySimpleAnimation); }
+  if (isComplex) { scheduleAction (applyComplexAnimation); }
+  else { scheduleAction (applySimpleAnimation); }
 
   return anim_id;
 };
@@ -642,7 +650,7 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
 */
 function Animation (animations)
 {
-  this.parent = core.Task;
+  this.parent = Task;
   this.parent ();
   this.constructor = Animation;
 
@@ -789,13 +797,13 @@ Animation.prototype = {
     for (i = 0 ; i < animations.length; i++)
     {
       option = animations [i];
-      if (!util.isArray (option) || option.length !== 2)
+      if (!isArray (option) || option.length !== 2)
       {
         console.warn ('vs.fx.Animation, invalid animations');
         continue;
       }
       prop = option [0]; value = option [1];
-      if (!util.isString (prop) || !util.isString (value))
+      if (!isString (prop) || !isString (value))
       {
         console.warn ('vs.fx.Animation, invalid constructor argument option: [' +
           prop + ', ' + value + ']');
@@ -848,7 +856,7 @@ Animation.prototype = {
       this.keyFrames ['100%'] = values;
       return;
     }
-    if (!util.isNumber (pos) || pos < 0 || pos > 100) { return; }
+    if (!isNumber (pos) || pos < 0 || pos > 100) { return; }
 
     this.keyFrames [pos+'%'] = values;
   },
@@ -900,7 +908,7 @@ Animation.prototype = {
    */
   _clone : function (obj, cloned_map)
   {
-    core.Object.prototype._clone.call (this, obj, cloned_map);
+    VSObject.prototype._clone.call (this, obj, cloned_map);
     
     var key, data;
     obj.keyFrames = {};
@@ -925,8 +933,8 @@ Animation.prototype = {
       {
         if (key === '100%') { continue; }
         data = this.keyFrames [key];
-        if (util.isArray (data)) { obj.keyFrames [key] = data.slice (); }
-        else { obj.keyFrames [key] = vs.util.clone (data); }
+        if (isArray (data)) { obj.keyFrames [key] = data.slice (); }
+        else { obj.keyFrames [key] = clone (data); }
       }
     }
 
@@ -952,13 +960,13 @@ Animation.prototype = {
     return this.process (param);
   }
 };
-util.extendClass (Animation, core.Task);
+extendClass (Animation, Task);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (Animation, {
+defineClassProperties (Animation, {
   'duration': {
     /**
      * Getter/Setter for animation duration
@@ -1099,9 +1107,9 @@ TranslateAnimation = function (x, y, z)
     else
       this.parent (['translate', '${x}px,${y}px']);
 
-    if (util.isNumber (x)) { this.x = x; }
-    if (util.isNumber (y)) { this.y = y; }
-    if (util.isNumber (z)) { this.z = z; }
+    if (isNumber (x)) { this.x = x; }
+    if (isNumber (y)) { this.y = y; }
+    if (isNumber (z)) { this.z = z; }
   }
   this.constructor = TranslateAnimation;
 }
@@ -1149,7 +1157,7 @@ TranslateAnimation.prototype = {
     obj.z = this.z;    
   }
 };
-util.extendClass (TranslateAnimation, Animation);
+extendClass (TranslateAnimation, Animation);
 
 /**
  *  @class
@@ -1185,7 +1193,7 @@ RotateAnimation = function (deg)
   {
     this.parent (['rotate', '${deg}deg']);
 
-    if (util.isNumber (deg)) { this.deg = deg; }
+    if (isNumber (deg)) { this.deg = deg; }
   }
   this.constructor = RotateAnimation;
 }
@@ -1215,7 +1223,7 @@ RotateAnimation.prototype = {
     obj.deg = this.deg;    
   }
 };
-util.extendClass (RotateAnimation, Animation);
+extendClass (RotateAnimation, Animation);
 
 /**
  *  @class
@@ -1250,9 +1258,9 @@ RotateXYZAnimation = function (degX, degY, degZ)
     this.parent (['rotateX', '${degX}deg'],
       ['rotateY', '${degY}deg'], ['rotate' ,'${degZ}deg']);
 
-    if (util.isNumber (degX)) { this.degX = degX; }
-    if (util.isNumber (degY)) { this.degY = degY; }
-    if (util.isNumber (degZ)) { this.degZ = degZ; }
+    if (isNumber (degX)) { this.degX = degX; }
+    if (isNumber (degY)) { this.degY = degY; }
+    if (isNumber (degZ)) { this.degZ = degZ; }
   }
   this.constructor = RotateXYZAnimation;
 }
@@ -1300,7 +1308,7 @@ RotateXYZAnimation.prototype = {
     obj.degZ = this.degZ;    
   }
 };
-util.extendClass (RotateXYZAnimation, Animation);
+extendClass (RotateXYZAnimation, Animation);
 
 /**
  *  @class
@@ -1334,7 +1342,7 @@ ScaleAnimation = function (sx, sy, sz)
   }
   else
   {
-    if (!util.isNumber (sy) && !util.isNumber (sy))
+    if (!isNumber (sy) && !isNumber (sy))
     {
       // scale on X and Y axies
       this.parent (['scale', '${sx}']);
@@ -1347,9 +1355,9 @@ ScaleAnimation = function (sx, sy, sz)
         ['scaleX', '${sx}'], ['scaleY', '${sy}'], ['scaleZ' ,'${sz}']
       );
 
-      if (util.isNumber (sx)) { this.sx = sx; }
-      if (util.isNumber (sy)) { this.sy = sy; }
-      if (util.isNumber (sz)) { this.sz = sz; }
+      if (isNumber (sx)) { this.sx = sx; }
+      if (isNumber (sy)) { this.sy = sy; }
+      if (isNumber (sz)) { this.sz = sz; }
     }
   }
   this.constructor = ScaleAnimation;
@@ -1398,7 +1406,7 @@ ScaleAnimation.prototype = {
     obj.sz = this.sz;    
   }
 };
-util.extendClass (ScaleAnimation, Animation);
+extendClass (ScaleAnimation, Animation);
 
 
 /**
@@ -1434,8 +1442,8 @@ SkewAnimation = function (ax, ay)
   {
     this.parent (['skew', '${ax}deg,${ay}deg']);
 
-    if (util.isNumber (ax)) { this.ax = ax; }
-    if (util.isNumber (ay)) { this.ay = ay; }
+    if (isNumber (ax)) { this.ax = ax; }
+    if (isNumber (ay)) { this.ay = ay; }
   }
   this.constructor = SkewAnimation;
 }
@@ -1474,7 +1482,7 @@ SkewAnimation.prototype = {
     obj.ay = this.ay;
   }
 };
-util.extendClass (SkewAnimation, Animation);
+extendClass (SkewAnimation, Animation);
 
 /**
  *  @class
@@ -1514,7 +1522,7 @@ OpacityAnimation = function (value)
   {
     this.parent (['opacity', '${value}']);
 
-    if (util.isNumber (value)) { this.value = value; }
+    if (isNumber (value)) { this.value = value; }
   }
   this.constructor = OpacityAnimation;
 }
@@ -1544,7 +1552,7 @@ OpacityAnimation.prototype = {
     obj.value = this.value;    
   }
 };
-util.extendClass (OpacityAnimation, Animation);
+extendClass (OpacityAnimation, Animation);
 
 /*************************************************************
                 Predefined animation
@@ -1633,11 +1641,13 @@ Animation.FadeOut.addKeyFrame (0, ['1']);
                       Export
 *********************************************************************/
 /** @private */
-fx.Animation = Animation;
-fx.cancelAnimation = cancelAnimation;
-fx.TranslateAnimation = TranslateAnimation;
-fx.RotateAnimation = RotateAnimation;
-fx.RotateXYZAnimation = RotateXYZAnimation;
-fx.ScaleAnimation = ScaleAnimation;
-fx.SkewAnimation = SkewAnimation;
-fx.OpacityAnimation = OpacityAnimation;
+export {
+  Animation,
+  cancelAnimation,
+  TranslateAnimation,
+  RotateAnimation,
+  RotateXYZAnimation,
+  ScaleAnimation,
+  SkewAnimation,
+  OpacityAnimation
+};

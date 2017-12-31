@@ -16,6 +16,12 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import { isNumber, setElementTransform, SUPPORT_3D_TRANSFORM } from 'vs_utils';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import StackController from './StackController';
+
 /**
  *  The vs.fx.CardController class <br />
  *  @class
@@ -94,9 +100,9 @@
  * @param {String} extension The hole into the vs.ui.View will be inserted. 
  *     ['children' by default]
  */
-var CardController = vs.core.createClass ({
+var CardController = vs_core.createClass ({
 
-  parent: vs.fx.StackController,
+  parent: StackController,
 
   /********************************************************************
                     protected members declarations
@@ -167,7 +173,7 @@ var CardController = vs.core.createClass ({
       set : function (v)
       {
         if (!v) { v = 0; }
-        if (!util.isNumber (v)) { return };
+        if (!isNumber (v)) { return };
       
         this._animation_duration = v;
         if (this._transition_out)
@@ -366,7 +372,7 @@ var CardController = vs.core.createClass ({
   {
     var t_ok = false, state, state_before_id, state_before, transform, index;
     
-    if (event.type === core.POINTER_START)
+    if (event.type === vs_core.POINTER_START)
     {
       if (this.__controller__._direction === CardController.LEFT_OUT ||
           this.__controller__._direction === CardController.RIGHT_OUT)
@@ -384,10 +390,10 @@ var CardController = vs.core.createClass ({
         {  this.__pos = event.clientY; }
       }
 
-      vs.addPointerListener (document, core.POINTER_END, this, true);
-      vs.addPointerListener (document, core.POINTER_MOVE, this, true);
+      addPointerListener(document, vs_core.POINTER_END, this, true);
+      addPointerListener(document, vs_core.POINTER_MOVE, this, true);
     }
-    else if (event.type === core.POINTER_MOVE)
+    else if (event.type === vs_core.POINTER_MOVE)
     {
       event.preventDefault ();
       state = this.__controller__._fsm._list_of_state 
@@ -500,7 +506,7 @@ var CardController = vs.core.createClass ({
         }
       }
     }
-    else if (event.type === core.POINTER_END)
+    else if (event.type === vs_core.POINTER_END)
     {
       state = this.__controller__._fsm._list_of_state   
         [this.__controller__._fsm._current_state];
@@ -591,8 +597,8 @@ var CardController = vs.core.createClass ({
           }
         }
       }
-      vs.removePointerListener (document, core.POINTER_END, this, true);
-      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
+      removePointerListener(document, vs_core.POINTER_END, this, true);
+      removePointerListener(document, vs_core.POINTER_MOVE, this, true);
     }
   },
   
@@ -663,7 +669,7 @@ var CardController = vs.core.createClass ({
       }
     };
     if (setInitialPosAnimation) setInitialPosAnimation.process (toComp, function () {
-      vs.scheduleAction (function () {runAnimation ();});
+      vs_core.scheduleAction (function () {runAnimation ();});
     });
     else runAnimation ();
   } 
@@ -707,4 +713,4 @@ CardController.BOTTOM_OUT = 3;
                       Export
 *********************************************************************/
 /** @private */
-fx.CardController = CardController;
+export default CardController;

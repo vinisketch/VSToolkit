@@ -1,5 +1,5 @@
 /**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+  Copyright (C) 2009-2018. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
   
   This program is free software: you can redistribute it and/or modify

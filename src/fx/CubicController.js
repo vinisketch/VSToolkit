@@ -16,6 +16,15 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+import {
+  isFunction, isString, isNumber, extendClass,
+  setElementTransform, SUPPORT_3D_TRANSFORM
+} from 'vs_utils';
+
+import StackController from './StackController';
+
 /**
  *  The vs.fx.CubicController class <br />
  *  @class
@@ -165,7 +174,7 @@ CubicController.prototype = {
   {
     if (!comp) { return; }
     
-    if (!util.isString (comp))
+    if (!isString (comp))
     {
       var index = this._states_array.length;
       comp.position = [0, 0];
@@ -186,7 +195,7 @@ CubicController.prototype = {
   {
     var t_ok = false, state, state_before_id, state_before, transform, index;
     
-    if (event.type === core.POINTER_START)
+    if (event.type === vs_core.POINTER_START)
     {
       if (this.__layer._orientation === CubicController.HORIZONTAL)
       {
@@ -203,12 +212,12 @@ CubicController.prototype = {
         {  this.__pos = event.clientY; }
       }
 
-      vs.addPointerListener (document, core.POINTER_END, this, true);
-      vs.addPointerListener (document, core.POINTER_MOVE, this, true);
+      addPointerListener(document, vs_core.POINTER_END, this, true);
+      addPointerListener(document, vs_core.POINTER_MOVE, this, true);
       
       this.animationDuration = 0;
     }
-    else if (event.type === core.POINTER_MOVE)
+    else if (event.type === vs_core.POINTER_MOVE)
     {
       event.preventDefault ();
       state = this.__layer._list_of_state [this.__layer._current_state];
@@ -273,7 +282,7 @@ CubicController.prototype = {
         }
       }
     }
-    else if (event.type === core.POINTER_END)
+    else if (event.type === vs_core.POINTER_END)
     {
       state = this.__layer._list_of_state [this.__layer._current_state];
       if (this.__delta > 50)
@@ -332,8 +341,8 @@ CubicController.prototype = {
           }
         }
       }
-      vs.removePointerListener (document, core.POINTER_END, this, true);
-      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
+      removePointerListener(document, vs_core.POINTER_END, this, true);
+      removePointerListener(document, vs_core.POINTER_MOVE, this, true);
     }
   },
   
@@ -434,21 +443,21 @@ CubicController.prototype = {
     if (output && this._output_action [output])
     {
       var clb = this._output_action [output];
-      if (util.isFunction (clb))
+      if (isFunction (clb))
       {
         clb.call (this.owner, event);
       }
-      else if (util.isString (clb))
+      else if (isString (clb))
       {
         this.owner [this._output_action [output]] (event);
       }
     }
   }
 };
-util.extendClass (CubicController, StackController);
+extendClass (CubicController, StackController);
 
 /********************************************************************
                       Export
 *********************************************************************/
 /** @private */
-fx.CubicController = CubicController;
+export default CubicController;

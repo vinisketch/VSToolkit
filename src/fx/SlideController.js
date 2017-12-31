@@ -16,6 +16,15 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import {
+  isNumber, free,
+  extendClass, defineClassProperty,
+  setElementTransform
+} from 'vs_utils';
+
+import StackController from './StackController';
+
 /**
  *  The vs.fx.SlideController class <br />
  *  This layer manage a list of children using a horizontal layout.
@@ -74,9 +83,9 @@
  *
  * @param {vs.ui.View} owner the View using this Layer [mandatory]
  */
-var SlideController = vs.core.createClass ({
+var SlideController = vs_core.createClass ({
 
-  parent: vs.fx.StackController,
+  parent: StackController,
   
   /********************************************************************
                     protected members declarations
@@ -166,7 +175,7 @@ var SlideController = vs.core.createClass ({
       set : function (v)
       {
         if (!v) { v = 0; }
-        if (!util.isNumber (v)) { return };
+        if (!isNumber (v)) { return };
       
         this._animation_duration = v;
         this._transition_out_left.duration = this._animation_duration + 'ms';
@@ -190,8 +199,8 @@ var SlideController = vs.core.createClass ({
         
         this._animation_mode = v;
         
-        util.free (this._transition_out_right);
-        util.free (this._transition_out_left);
+        free (this._transition_out_right);
+        free (this._transition_out_left);
         
         this._setUpAnimations ();
         this._updateViewSize ();
@@ -468,7 +477,7 @@ var SlideController = vs.core.createClass ({
     var t_ok = false, size = this.size,
       duration = this.__controller__._animation_duration;
           
-    if (event.type === core.POINTER_START)
+    if (event.type === vs_core.POINTER_START)
     {
       if (this.__controller__._orientation === SlideController.HORIZONTAL)
       {
@@ -485,13 +494,13 @@ var SlideController = vs.core.createClass ({
         {  this.__pos = event.clientY; }
       }
 
-      vs.addPointerListener (document, core.POINTER_END, this, true);
-      vs.addPointerListener (document, core.POINTER_MOVE, this, true);
+      vs.addPointerListener(document, vs_core.POINTER_END, this, true);
+      vs.addPointerListener(document, vs_core.POINTER_MOVE, this, true);
       
       this.animationDuration = 0;
       this.__delta = 0;
     }
-    else if (event.type === core.POINTER_MOVE)
+    else if (event.type === vs_core.POINTER_MOVE)
     {
       event.preventDefault ();
       if (this.__controller__._orientation === SlideController.HORIZONTAL)
@@ -509,7 +518,7 @@ var SlideController = vs.core.createClass ({
         {  this.__delta = event.clientY - this.__pos; }
       }  
     }
-    else if (event.type === core.POINTER_END)
+    else if (event.type === vs_core.POINTER_END)
     {
       if (this.__delta > 50)
       {
@@ -532,8 +541,8 @@ var SlideController = vs.core.createClass ({
           this.animationDuration = duration;
         }
       }
-      vs.removePointerListener (document, core.POINTER_END, this, true);
-      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
+      vs.removePointerListener(document, vs_core.POINTER_END, this, true);
+      vs.removePointerListener(document, vs_core.POINTER_MOVE, this, true);
     }
   },
   
@@ -658,4 +667,4 @@ SlideController.PIXEL = 1;
                       Export
 *********************************************************************/
 /** @private */
-fx.SlideController = SlideController;
+export default SlideController;

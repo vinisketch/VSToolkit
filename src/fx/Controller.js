@@ -16,6 +16,13 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import {
+  isNumber, isString, isFunction,
+  free, clone,
+  extendClass, defineClassProperties
+} from 'vs_utils';
+
 /**
  *  The Generic vs.fx.Controller class
  *
@@ -98,13 +105,13 @@
  */
 function Controller (owner)
 {
-  this.parent = core.EventSource;
+  this.parent = vs_core.EventSource;
   this.parent ();
   this.constructor = Controller;
 
   if (owner)
   {
-    this._fsm = new core.Fsm (this);
+    this._fsm = new vs_core.Fsm (this);
   
     // fsm goTo surcharge
     this._fsm.goTo = this.goTo;
@@ -158,8 +165,8 @@ Controller.prototype = {
     
     this._delegate = undefined;
 
-    util.free (this._fsm);
-    core.EventSource.prototype.destructor.call (this);
+    free (this._fsm);
+    vs_core.EventSource.prototype.destructor.call (this);
   },
 
   /**
@@ -168,7 +175,7 @@ Controller.prototype = {
    */
   initComponent : function ()
   {
-    core.EventSource.prototype.initComponent.call (this);
+    vs_core.EventSource.prototype.initComponent.call (this);
 
     if (this._fsm) this._fsm.init ();
     
@@ -278,11 +285,11 @@ Controller.prototype = {
     if (!data) { data = {}; }
     
     var state_id = null, binding, i, state;
-    if (util.isString (comp) && data.id)
+    if (isString (comp) && data.id)
     { state_id = data.id; }
-    else if (!util.isString (comp) && comp.id)
+    else if (!isString (comp) && comp.id)
     { state_id = comp.id; }
-    else { state_id = core.createId (); }
+    else { state_id = vs_core.createId (); }
     
     if (this.isStateExit (state_id))
     { return; }
@@ -329,9 +336,9 @@ Controller.prototype = {
     if (!comp || !this._owner || !this._fsm) { return; }
     
     var state_id = null;
-    if (util.isString (comp))
+    if (isString (comp))
     { state_id = comp; }
-    else if (!util.isString (comp))
+    else if (!isString (comp))
     { state_id = comp.id; }
     
     var state = this._fsm._list_of_state [state_id];
@@ -361,12 +368,12 @@ Controller.prototype = {
     if (!comp || !this._owner) { return; }
     
     if (!init_data) { init_data = {}; }
-    else { init_data = util.clone (init_data); }
+    else { init_data = clone (init_data); }
     
     var state = this._fsm._list_of_state [state_id];
     state.init_data = init_data;
     
-    if (util.isString (comp))
+    if (isString (comp))
     {
       state.comp_name = comp;
       state.comp = undefined;
@@ -763,11 +770,11 @@ Controller.prototype = {
     if (output && this._output_action [output])
     {
       var clb = this._output_action [output];
-      if (util.isFunction (clb))
+      if (isFunction (clb))
       {
         clb.call (this._owner, event);
       }
-      else if (util.isString (clb))
+      else if (isString (clb))
       {
         this._owner [this._output_action [output]] (event);
       }
@@ -804,13 +811,13 @@ Controller.prototype = {
     this._fsm.clear ();
   }
 };
-util.extendClass (Controller, core.EventSource);
+extendClass(Controller, vs_core.EventSource);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (Controller, {
+defineClassProperties (Controller, {
   'initialComponent': {
     /*****************************************************************
      *     Properties declaration
@@ -875,4 +882,4 @@ util.defineClassProperties (Controller, {
                       Export
 *********************************************************************/
 /** @private */
-fx.Controller = Controller;
+export default Controller;

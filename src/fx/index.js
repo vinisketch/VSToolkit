@@ -16,25 +16,35 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import { CSS_VENDOR } from 'vs_utils';
+
+import {
+  Animation,
+  cancelAnimation,
+  TranslateAnimation,
+  RotateAnimation,
+  RotateXYZAnimation,
+  ScaleAnimation,
+  SkewAnimation,
+  OpacityAnimation
+} from './Animation';
+import CardController from './CardController';
+import Controller from './Controller';
+import CubicController from './CubicController';
+import NavigationController from './NavigationController';
+import OpacityController from './OpacityController';
+import SlideController from './SlideController';
+import StackController from './StackController';
+import SwipeController from './SwipeController';
+
 /********************************************************************
                    
 *********************************************************************/
-/** @private */
-var vs = window.vs,
-  util = vs.util,
-  core = vs.core,
-  ui = vs.ui,
-  fx = vs.fx,
-  setElementTransform = util.setElementTransform,
-  getElementTransform = util.getElementTransform,
-  SUPPORT_3D_TRANSFORM = vs.SUPPORT_3D_TRANSFORM;
-  
-vs.CSS_VENDOR
 
 function createProperty (name)
 {
-  if (!vs.CSS_VENDOR) return name;
-  return '-' + vs.CSS_VENDOR.toLowerCase () + '-' + name;
+  if (!CSS_VENDOR) return name;
+  return '-' + CSS_VENDOR.toLowerCase () + '-' + name;
 }
 
 /** 
@@ -170,39 +180,57 @@ var ANIMATION_END = "animationend";
  */ 
 var TRANSITION_END = "transitionend";
 
-if (vs.CSS_VENDOR === 'webkit')
+if (CSS_VENDOR === 'webkit')
 {
   ANIMATION_END = "webkitAnimationEnd";
   TRANSITION_END = "webkitTransitionEnd";
 }  
-else if (vs.CSS_VENDOR === 'ms')
+else if (CSS_VENDOR === 'ms')
 {
   ANIMATION_END = "msAnimationEnd";
   TRANSITION_END = "msTransitionEnd";
 }  
-else if (vs.CSS_VENDOR === 'moz')
+else if (CSS_VENDOR === 'moz')
 {
   ANIMATION_END = "Mozanimationend";
   TRANSITION_END = "Moztransitionend";
 }
 
-util.extend (vs, {
-  ANIMATION_DURATION:        ANIMATION_DURATION,
-  ANIMATION_DELAY:           ANIMATION_DELAY,
-  ANIMATION_NAME:            ANIMATION_NAME,
-  ANIMATION_TIMING_FUNC:     ANIMATION_TIMING_FUNC,
-  ANIMATION_FILL_MODE:       ANIMATION_FILL_MODE,
+export {
+  ANIMATION_DURATION,
+  ANIMATION_DELAY,
+  ANIMATION_NAME,
+  ANIMATION_TIMING_FUNC,
+  ANIMATION_FILL_MODE,
 
-  TRANSITION_DURATION:       TRANSITION_DURATION,
-  TRANSITION_PROPERTY:       TRANSITION_PROPERTY,
-  TRANSITION_DELAY:          TRANSITION_DELAY,
-  TRANSITION_TIMING_FUNC:    TRANSITION_TIMING_FUNC,
+  TRANSITION_DURATION,
+  TRANSITION_PROPERTY,
+  TRANSITION_DELAY,
+  TRANSITION_TIMING_FUNC,
 
-  TRANSFORM_ORIGIN:          TRANSFORM_ORIGIN,
-  ITERATION_COUNT:           ITERATION_COUNT,
-  TRANSFORM:                 TRANSFORM,
-  KEY_FRAMES:                KEY_FRAMES,
+  TRANSFORM_ORIGIN,
+  ITERATION_COUNT,
+  TRANSFORM,
+  KEY_FRAMES,
 
-  ANIMATION_END:             ANIMATION_END,
-  TRANSITION_END:            TRANSITION_END
-});
+  ANIMATION_END,
+  TRANSITION_END,
+
+  Animation,
+  cancelAnimation,
+  TranslateAnimation,
+  RotateAnimation,
+  RotateXYZAnimation,
+  ScaleAnimation,
+  SkewAnimation,
+  OpacityAnimation,
+
+  CardController,
+  Controller,
+  CubicController,
+  NavigationController,
+  OpacityController,
+  SlideController,
+  StackController,
+  SwipeController
+};

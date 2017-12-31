@@ -16,6 +16,13 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import vs_ui from 'vs_ui';
+import {
+  isNumber, isArray, isString,
+  extendClass, defineClassProperties
+} from 'vs_utils';
+
 /**
  *  The vs.fx.NavigationController class implements a controller for navigating
  *  on hierarchical contents.
@@ -330,10 +337,10 @@ NavigationController.prototype = {
       if (!comp) { continue; }
       
       // component is specified by an id
-      if (util.isString (comp))
-      { comp = core.Object._obs [comp]; }
+      if (isString (comp))
+      { comp = vs_core.VSObject._obs [comp]; }
       
-      if (!comp instanceof vs.ui.View)
+      if (!comp instanceof vs_ui.View)
       { continue; }
       
       components.push (comp);
@@ -458,13 +465,13 @@ NavigationController.prototype = {
    */
   _animateComponents : fx.Controller.prototype._animateComponents
 };
-util.extendClass (NavigationController, StackController);
+extendClass (NavigationController, StackController);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (NavigationController, {
+defineClassProperties (NavigationController, {
   'viewSize': {
    /** 
      * Getter|Setter for view size.
@@ -475,8 +482,8 @@ util.defineClassProperties (NavigationController, {
     set : function (v)
     {
       if (!v) { return; } 
-      if (!util.isArray (v) || v.length !== 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+      if (!isArray (v) || v.length !== 2) { return; }
+      if (!isNumber (v[0]) || !isNumber(v[1])) { return; }
       
       if (!this._view_size)
       { this._view_size = []; }
@@ -547,4 +554,4 @@ util.defineClassProperties (NavigationController, {
                       Export
 *********************************************************************/
 /** @private */
-fx.NavigationController = NavigationController;
+export default NavigationController;

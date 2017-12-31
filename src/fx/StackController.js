@@ -16,6 +16,15 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import {
+  isNumber, isString, isArray, free,
+  extendClass, defineClassProperties
+} from 'vs_utils';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import Controller from './Controller';
+
 /**
  *  The vs.fx.StackController class <br />
  * 
@@ -284,9 +293,9 @@ StackController.prototype = {
     if (!comp) { return; }
     
     var state_id = null;
-    if (util.isString (comp))
+    if (isString (comp))
     { state_id = comp; }
-    else if (!util.isString (comp))
+    else if (!isString (comp))
     { state_id = comp.id; }
     
     var pos = this._states_array.findItem (state_id);
@@ -536,13 +545,13 @@ StackController.prototype = {
   handleEvent : function (event)
   {}
 };
-util.extendClass (StackController, Controller);
+extendClass (StackController, Controller);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (StackController, {
+defineClassProperties (StackController, {
 
   'viewSize': {
    /** 
@@ -554,8 +563,8 @@ util.defineClassProperties (StackController, {
     set : function (v)
     {
       if (!v) { return; } 
-      if (!util.isArray (v) || v.length !== 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+      if (!isArray (v) || v.length !== 2) { return; }
+      if (!isNumber (v[0]) || !isNumber(v[1])) { return; }
       
       if (!this._view_size)
       { this._view_size = []; }
@@ -596,7 +605,7 @@ util.defineClassProperties (StackController, {
         {
           this._owner_handler_event = this._owner.handleEvent;
           this._owner.handleEvent = this.handleEvent;
-          vs.addPointerListener (this._owner.view, core.POINTER_START, this._owner, false);
+          addPointerListener (this._owner.view, vs_core.POINTER_START, this._owner, false);
         }
         this._owner_handler_event_extended = true;
       }
@@ -607,7 +616,7 @@ util.defineClassProperties (StackController, {
         
         if (this._owner_handler_event_extended)
         {
-          vs.removePointerListener (this._owner.view, core.POINTER_START, this._owner, false);
+          removePointerListener(this._owner.view, vs_core.POINTER_START, this._owner, false);
           this._owner.handleEvent = this._owner_handler_event;
           
           this._owner_handler_event_extended = false;
@@ -633,7 +642,7 @@ util.defineClassProperties (StackController, {
     set : function (time)
     {
       if (!time) { time = 0; }
-      if (!util.isNumber (time)) { return };
+      if (!isNumber (time)) { return };
       
       this._animation_duration = time;
     }
@@ -643,4 +652,4 @@ util.defineClassProperties (StackController, {
                       Export
 *********************************************************************/
 /** @private */
-fx.StackController = StackController;
+export default StackController;
