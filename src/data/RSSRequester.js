@@ -596,7 +596,7 @@ RSSFeed.prototype = {
    */
   _rating: null,
 };
-vs_utils.extendClass (RSSFeed, core.EventSource);
+vs_utils.extendClass(RSSFeed, vs_core.EventSource);
 
 /********************************************************************
                   Define class properties
