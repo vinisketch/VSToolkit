@@ -15,7 +15,7 @@
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import { addPointerListener, removePointerListener, POINTER_START, POINTER_END } from 'vs_gesture';
 
 /**
  *  The vs.ui.PointerRecognizer class

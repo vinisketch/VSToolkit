@@ -18,7 +18,7 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import { addPointerListener, removePointerListener, POINTER_START, POINTER_END } from 'vs_gesture';
 
 import View from '../View/View';
 import html_template from './InputField.html';
@@ -138,7 +138,7 @@ InputField.prototype = {
     
     if (this._clear_button)
     {    
-      this.nodeUnbind (this._clear_button, vs_core.POINTER_START, 'cleanData');  
+      this.nodeUnbind (this._clear_button, POINTER_START, 'cleanData');  
     }
     delete (this._text_field);
 
@@ -159,7 +159,7 @@ InputField.prototype = {
     this._clear_button = this.view.querySelector ('.clear_button');
     if (this._clear_button)
     {
-      this.nodeBind (this._clear_button, vs_core.POINTER_START, 'cleanData');  
+      this.nodeBind (this._clear_button, POINTER_START, 'cleanData');  
     }
     this.type = this._type;
     this.value = this._value;
@@ -291,7 +291,7 @@ InputField.prototype = {
         return;
       }
       
-      removePointerListener (document, vs_core.POINTER_START, manageBlur, true);
+      removePointerListener (document, POINTER_START, manageBlur, true);
       self.setBlur ();
     }
 
@@ -314,7 +314,7 @@ InputField.prototype = {
       if (this._value) { this._activateDelete (true); }
       else { this._activateDelete (false); }
       
-      addPointerListener (document, vs_core.POINTER_START, manageBlur, true);
+      addPointerListener (document, POINTER_START, manageBlur, true);
       this.propagate ('focus');
     }
     else if (event.type === 'blur')

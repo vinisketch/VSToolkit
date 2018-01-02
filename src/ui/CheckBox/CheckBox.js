@@ -18,7 +18,7 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import { addPointerListener, removePointerListener, POINTER_START, POINTER_END } from 'vs_gesture';
 
 import View from '../View/View';
 import html_template from './CheckBox.html';
@@ -146,7 +146,7 @@ CheckBox.prototype = {
     {
       input = this.__inputs [0];
       
-      removePointerListener (input, vs_core.POINTER_START, this);
+      removePointerListener (input, POINTER_START, this);
       input.removeEventListener ('click', this);
       this.__inputs.remove (0);
       this.__labels.remove (0);
@@ -184,13 +184,13 @@ CheckBox.prototype = {
       this._list_items.appendChild (input);
       this.__inputs [i] = input;
       
-      addPointerListener (input, vs_core.POINTER_START, this);
+      addPointerListener (input, POINTER_START, this);
       input.addEventListener ('click', this);
 
       label = document.createElement ('label');
       label.value = i;
       label.setAttribute ("for", this._id + "_l" + i);
-      addPointerListener (label, vs_core.POINTER_START, this);
+      addPointerListener (label, POINTER_START, this);
       label.addEventListener ('click', this);
       vs_utils.setElementInnerText (label, item);
       this._list_items.appendChild (label);

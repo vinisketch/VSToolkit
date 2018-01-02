@@ -18,7 +18,7 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import { addPointerListener, removePointerListener, POINTER_START, POINTER_END, POINTER_MOVE } from 'vs_gesture';
 
 import View from '../View/View';
 import html_template from './NavigationBar.html';
@@ -318,25 +318,25 @@ NavigationBar.prototype = {
     
     switch (event.type)
     {
-      case vs_core.POINTER_START:
+      case POINTER_START:
         vs_utils.addClassName (self, 'active');
-        addPointerListener (event.currentTarget, vs_core.POINTER_END, this, true);
-        addPointerListener (event.currentTarget, vs_core.POINTER_MOVE, this, true);
+        addPointerListener (event.currentTarget, POINTER_END, this, true);
+        addPointerListener (event.currentTarget, POINTER_MOVE, this, true);
       break;
 
-      case vs_core.POINTER_END:
-        removePointerListener (event.currentTarget, vs_core.POINTER_END, this);
-        removePointerListener (event.currentTarget, vs_core.POINTER_MOVE, this);        
+      case POINTER_END:
+        removePointerListener (event.currentTarget, POINTER_END, this);
+        removePointerListener (event.currentTarget, POINTER_MOVE, this);        
         
         vs_utils.removeClassName (self, 'active');
         this.propagate ('buttonselect', event.currentTarget.spec);
       break;
 
-      case vs_core.POINTER_MOVE:
+      case POINTER_MOVE:
         event.preventDefault ();
         vs_utils.removeClassName (self, 'active');
-        removePointerListener (event.currentTarget, vs_core.POINTER_END, this);
-        removePointerListener (event.currentTarget, vs_core.POINTER_MOVE, this);
+        removePointerListener (event.currentTarget, POINTER_END, this);
+        removePointerListener (event.currentTarget, POINTER_MOVE, this);
       break;
     }
   },

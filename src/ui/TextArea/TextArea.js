@@ -18,7 +18,7 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import { addPointerListener, removePointerListener, POINTER_START, POINTER_END } from 'vs_gesture';
 
 import View from '../View/View';
 import html_template from './TextArea.html';
@@ -162,14 +162,14 @@ TextArea.prototype = {
       if (event.src === self.view)
       { return; }
       
-      removePointerListener (document, vs_core.POINTER_START, manageBlur, true);
+      removePointerListener (document, POINTER_START, manageBlur, true);
       self.setBlur ();
     }
     
     switch (event.type)
     {
       case 'focus':
-        addPointerListener (document, vs_core.POINTER_START, manageBlur, true);
+        addPointerListener (document, POINTER_START, manageBlur, true);
       break;
 
       case 'blur':

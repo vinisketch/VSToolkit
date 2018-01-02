@@ -18,7 +18,10 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import {
+  addPointerListener, removePointerListener,
+  POINTER_START, POINTER_END, POINTER_MOVE, POINTER_CANCEL
+} from 'vs_gesture';
 
 import View from '../View/View';
 import html_template from './Picker.html';
@@ -163,10 +166,10 @@ Picker.prototype = {
    */
   destructor : function ()
   {
-    removePointerListener (this.view, vs_core.POINTER_START, this, false);
+    removePointerListener (this.view, POINTER_START, this, false);
 
-    removePointerListener (document, vs_core.POINTER_START, this, false);
-    removePointerListener (document, vs_core.POINTER_MOVE, this, false);
+    removePointerListener (document, POINTER_START, this, false);
+    removePointerListener (document, POINTER_MOVE, this, false);
 
     vs_utils.removeAllElementChild (this._slots_view);
 
@@ -207,7 +210,7 @@ Picker.prototype = {
       case Application.CSS_DEFAULT:
       default:
         // Add scrolling to the slots
-        addPointerListener (this.view, vs_core.POINTER_START, this);
+        addPointerListener (this.view, POINTER_START, this);
         this._frame_border_width = 0;
       break;
       
@@ -337,7 +340,7 @@ Picker.prototype = {
     {
       case Application.CSS_WP7:
         ul.slotMaxScroll = this.view.clientHeight - ul.clientHeight;
-        addPointerListener (ul, vs_core.POINTER_START, this, true);
+        addPointerListener (ul, POINTER_START, this, true);
       break;
     }    
     
@@ -381,9 +384,9 @@ Picker.prototype = {
 
     if (!readonly)
     {
-      addPointerListener (button_incr, vs_core.POINTER_START, this);
-      addPointerListener (button_incr, vs_core.POINTER_END, this);
-      addPointerListener (button_incr, vs_core.POINTER_CANCEL, this);
+      addPointerListener (button_incr, POINTER_START, this);
+      addPointerListener (button_incr, POINTER_END, this);
+      addPointerListener (button_incr, POINTER_CANCEL, this);
     }
     
     // Create the slot
@@ -401,9 +404,9 @@ Picker.prototype = {
 
     if (!readonly)
     {
-      addPointerListener (button_decr, vs_core.POINTER_START, this);
-      addPointerListener (button_decr, vs_core.POINTER_END, this);
-      addPointerListener (button_decr, vs_core.POINTER_CANCEL, this);
+      addPointerListener (button_decr, POINTER_START, this);
+      addPointerListener (button_decr, POINTER_END, this);
+      addPointerListener (button_decr, POINTER_CANCEL, this);
     }
     
     return [button_incr, button_decr];
@@ -418,11 +421,11 @@ Picker.prototype = {
     var slotNum = e.target.slotPosition;
     switch (e.type)
     {
-      case vs_core.POINTER_START:
+      case POINTER_START:
         vs_utils.addClassName (e.target, 'active');
         break
       
-      case vs_core.POINTER_END:
+      case POINTER_END:
         var slot_elem = this._slots_elements[slotNum], slotMaxScroll,
           pos = slot_elem.slotYPosition;
         if (vs_utils.hasClassName (e.target, 'button_decr'))
@@ -438,7 +441,7 @@ Picker.prototype = {
         }
 
         this._scrollTo (slotNum, pos);
-      case vs_core.POINTER_CANCEL:
+      case POINTER_CANCEL:
         vs_utils.removeClassName (e.target, 'active');
         break
     }
@@ -690,15 +693,15 @@ Picker.prototype = {
     }
     else switch (e.type)
     {
-      case vs_core.POINTER_START:
+      case POINTER_START:
         this._scrollStart (e);
       break;
 
-      case vs_core.POINTER_MOVE:
+      case POINTER_MOVE:
         this._scrollMove (e);
       break;
 
-      case vs_core.POINTER_END:
+      case POINTER_END:
         this._scrollEnd (e);
       break;
 
@@ -783,8 +786,8 @@ Picker.prototype = {
     // If slot is readonly do nothing
     if (this._data[this._active_slot].style.match('readonly'))
     {
-      removePointerListener (document, vs_core.POINTER_MOVE, this, true);
-      removePointerListener (document, vs_core.POINTER_END, this, true);
+      removePointerListener (document, POINTER_MOVE, this, true);
+      removePointerListener (document, POINTER_END, this, true);
       return false;
     }
     
@@ -812,8 +815,8 @@ Picker.prototype = {
     this.scrollStartY = slot_elem.slotYPosition;
     this.scrollStartTime = e.timeStamp;
 
-    addPointerListener (document, vs_core.POINTER_MOVE, this, true);
-    addPointerListener (document, vs_core.POINTER_END, this, true);
+    addPointerListener (document, POINTER_MOVE, this, true);
+    addPointerListener (document, POINTER_END, this, true);
     
     switch (this._mode)
     {
@@ -873,8 +876,8 @@ Picker.prototype = {
    */
   _scrollEnd: function (e)
   {
-    removePointerListener (document, vs_core.POINTER_MOVE, this, true);
-    removePointerListener (document, vs_core.POINTER_END, this, true);
+    removePointerListener (document, POINTER_MOVE, this, true);
+    removePointerListener (document, POINTER_END, this, true);
     
     var elem = this._slots_elements[this._active_slot], scrollDist,
       scrollDur, newDur, newPos, self = this;

@@ -394,14 +394,14 @@ ScrollView.prototype = {
 //   {
 //     switch (e.type)
 //     {
-//       case vs_core.POINTER_START:
+//       case POINTER_START:
 //         this.pointerStart (e);
 //         break;
-//       case vs_core.POINTER_MOVE:
+//       case POINTER_MOVE:
 //         this._scroll_pointer_move (e);
 //         break;
 //       case vs_core.POINTER_CANCEL:
-//       case vs_core.POINTER_END:
+//       case POINTER_END:
 //         this._scroll_pointer_end (e);
 //         break;
 //       case 'gesturestart':

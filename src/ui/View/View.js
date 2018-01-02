@@ -18,7 +18,10 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import {
+  addPointerListener, removePointerListener,
+  POINTER_START, POINTER_END, POINTER_MOVE
+} from 'vs_gesture';
 
 import RecognizerManager from '../Recognizers/RecognizerManager';
 import Template from '../Template';
@@ -239,9 +242,9 @@ View.__comp_templates = {};
 View._propagate_pointer_event = function (obj, func_ptr, event)
 {
   var event_name = "";
-  if (event.type === vs_core.POINTER_START) { event_name = 'POINTER_START'; }
-  if (event.type === vs_core.POINTER_END) { event_name = 'POINTER_END'; }
-  if (event.type === vs_core.POINTER_MOVE) { event_name = 'POINTER_MOVE'; }
+  if (event.type === POINTER_START) { event_name = 'POINTER_START'; }
+  if (event.type === POINTER_END) { event_name = 'POINTER_END'; }
+  if (event.type === POINTER_MOVE) { event_name = 'POINTER_MOVE'; }
 
   event.type = event_name;
 
@@ -1265,8 +1268,8 @@ View.prototype = {
   bind : function (spec, obj, func, delay)
   {
     if (spec === 'POINTER_START' || spec === 'POINTER_END' ||
-        spec === 'POINTER_MOVE' || spec === vs_core.POINTER_START ||
-        spec === vs_core.POINTER_END || spec === vs_core.POINTER_MOVE)
+        spec === 'POINTER_MOVE' || spec === POINTER_START ||
+        spec === POINTER_END || spec === POINTER_MOVE)
     {
       if (!this.view) { return; }
 
@@ -1311,9 +1314,9 @@ View.prototype = {
         View._propagate_pointer_event (obj, func_ptr, event);
       };
 
-      if (spec === 'POINTER_START') { spec = vs_core.POINTER_START; }
-      if (spec === 'POINTER_MOVE') { spec = vs_core.POINTER_MOVE; }
-      if (spec === 'POINTER_END') { spec = vs_core.POINTER_END; }
+      if (spec === 'POINTER_START') { spec = POINTER_START; }
+      if (spec === 'POINTER_MOVE') { spec = POINTER_MOVE; }
+      if (spec === 'POINTER_END') { spec = POINTER_END; }
 
       this._pointerevent_handlers [obj.id + spec] = handler;
 
@@ -1336,13 +1339,13 @@ View.prototype = {
   unbind : function (spec, obj)
   {
     if (!spec || !obj) { return; }
-    if (spec === vs_core.POINTER_START || spec === vs_core.POINTER_END ||
-        spec === vs_core.POINTER_MOVE)
+    if (spec === POINTER_START || spec === POINTER_END ||
+        spec === POINTER_MOVE)
     {
       var handler = this._pointerevent_handlers [obj.id + spec];
       if (!handler || !this.view) { return; }
 
-      removePointerListener (this.view, vs_core.POINTER_END, handler);
+      removePointerListener (this.view, POINTER_END, handler);
     }
     vs_core.EventSource.prototype.unbind.call (this, spec, obj);
   },

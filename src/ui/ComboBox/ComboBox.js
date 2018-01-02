@@ -18,7 +18,7 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import { addPointerListener, removePointerListener, POINTER_START, POINTER_END } from 'vs_gesture';
 
 import View from '../View/View';
 import html_template from './ComboBox.html';
@@ -102,8 +102,8 @@ ComboBox.prototype = {
   {
     if (this._mode === ComboBox.NATIVE_MODE)
     {
-      removePointerListener (this.view, vs_core.POINTER_START, this);
-      removePointerListener (this.view, vs_core.POINTER_END, this);
+      removePointerListener (this.view, POINTER_START, this);
+      removePointerListener (this.view, POINTER_END, this);
     }
     else
     {
@@ -174,8 +174,8 @@ ComboBox.prototype = {
       this._select = document.createElement ('div');
       this.view.appendChild (this._select);
 
-      addPointerListener (this.view, vs_core.POINTER_START, this);
-      addPointerListener (this.view, vs_core.POINTER_END, this);
+      addPointerListener (this.view, POINTER_START, this);
+      addPointerListener (this.view, POINTER_END, this);
     }
     // Normal GUI
     else
@@ -200,7 +200,7 @@ ComboBox.prototype = {
   {
     e.preventDefault ();
     e.stopPropagation ();
-    if (e.type === vs_core.POINTER_START)
+    if (e.type === POINTER_START)
     {
       this.setFocus ();
       window.plugins.combo_picker.show (this, this._data, this._selected_item);

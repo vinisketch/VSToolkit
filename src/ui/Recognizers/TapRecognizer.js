@@ -18,6 +18,8 @@
 
 import vs_core from 'vs_core';
 import vs_utils from 'vs_utils';
+import { POINTER_START, POINTER_END, POINTER_MOVE } from 'vs_gesture';
+
 import PointerRecognizer from './PointerRecognizer';
 
 /**
@@ -88,7 +90,7 @@ TapRecognizer.prototype = {
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
-    this.addPointerListener (this.obj.view, vs_core.POINTER_START, this.obj);
+    this.addPointerListener (this.obj.view, POINTER_START, this.obj);
     this.reset ();
   },
 
@@ -98,7 +100,7 @@ TapRecognizer.prototype = {
    * @protected
    */
   uninit : function () {
-    this.removePointerListener (this.obj.view, vs_core.POINTER_START, this.obj);
+    this.removePointerListener (this.obj.view, POINTER_START, this.obj);
   },
 
   /**
@@ -131,8 +133,8 @@ TapRecognizer.prototype = {
       this.__did_tap_time_out = 0;
     }
   
-    this.addPointerListener (document, vs_core.POINTER_END, this.obj);
-    this.addPointerListener (document, vs_core.POINTER_MOVE, this.obj);
+    this.addPointerListener (document, POINTER_END, this.obj);
+    this.addPointerListener (document, POINTER_MOVE, this.obj);
   
     this.__start_x = e.targetPointerList[0].pageX;
     this.__start_y = e.targetPointerList[0].pageY;
@@ -159,8 +161,8 @@ TapRecognizer.prototype = {
     }
 
     // cancel the selection mode
-    this.removePointerListener (document, vs_core.POINTER_END, this.obj);
-    this.removePointerListener (document, vs_core.POINTER_MOVE, this.obj);
+    this.removePointerListener (document, POINTER_END, this.obj);
+    this.removePointerListener (document, POINTER_MOVE, this.obj);
     this.__is_touched = false;
 
     try {
@@ -187,8 +189,8 @@ TapRecognizer.prototype = {
     
     this.__tap_elem = undefined;
   
-    this.removePointerListener (document, vs_core.POINTER_END, this.obj);
-    this.removePointerListener (document, vs_core.POINTER_MOVE, this.obj);
+    this.removePointerListener (document, POINTER_END, this.obj);
+    this.removePointerListener (document, POINTER_MOVE, this.obj);
 
     if (this.delegate && this.delegate.didUntouch) {
       try {

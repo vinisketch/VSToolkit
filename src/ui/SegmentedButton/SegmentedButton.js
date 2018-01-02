@@ -18,7 +18,7 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import { addPointerListener, removePointerListener, POINTER_START, POINTER_END } from 'vs_gesture';
 
 import View from '../View/View';
 import html_template from './SegmentedButton.html';
@@ -179,7 +179,7 @@ SegmentedButton.prototype = {
     while (this._div_list.length)
     {
       var div = this._div_list [0];
-      removePointerListener (div, vs_core.POINTER_START, this);
+      removePointerListener (div, POINTER_START, this);
       
       this._div_list.remove (0);
     }
@@ -211,7 +211,7 @@ SegmentedButton.prototype = {
       // WP7 does not manage box model (then use inline-block instead of)
       if (width) vs_utils.setElementStyle (div, {"width": width + '%'});
 
-      addPointerListener (div, vs_core.POINTER_START, this);
+      addPointerListener (div, POINTER_START, this);
       
       this._div_list.push (div);
       subView.appendChild (div);
@@ -241,7 +241,7 @@ SegmentedButton.prototype = {
   handleEvent: function (e)
   {
     var target;
-    if (e.type === vs_core.POINTER_START)
+    if (e.type === POINTER_START)
     {
       // prevent multi touch events
       if (e.nbPointers > 1) { return; }

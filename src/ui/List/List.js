@@ -18,7 +18,7 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import { addPointerListener, removePointerListener, POINTER_START, POINTER_END, POINTER_MOVE } from 'vs_gesture';
 
 import View from '../View/View';
 import html_template from './List.html';
@@ -323,7 +323,7 @@ function buildSection (list, title, index, itemsSelectable)
 
     if (itemsSelectable)
     {
-      addPointerListener (listItem.view, vs_core.POINTER_START, list);
+      addPointerListener (listItem.view, POINTER_START, list);
     }
     content.appendChild (listItem.view);
     list.__item_obs.push (listItem);
@@ -518,7 +518,7 @@ function defaultListRenderData (itemsSelectable)
 
     if (itemsSelectable)
     {
-      addPointerListener (listItem.view, vs_core.POINTER_START, this);
+      addPointerListener (listItem.view, POINTER_START, this);
     }
     _list_items.appendChild (listItem.view);
     this.__item_obs.push (listItem);
@@ -972,8 +972,8 @@ List.prototype = {
       vs_utils.setElementTransform (self._list_items, '');
       self.__max_scroll = self.size [1] - self._list_items.offsetHeight;
       
-      addPointerListener (document, vs_core.POINTER_MOVE, accessBarMove, false);
-      addPointerListener (document, vs_core.POINTER_END, accessBarEnd, false);
+      addPointerListener (document, POINTER_MOVE, accessBarMove, false);
+      addPointerListener (document, POINTER_END, accessBarEnd, false);
       
       var _acces_index = e.targetPointerList[0].target._index_;
       if (!vs_utils.isNumber (_acces_index)) return;
@@ -1048,20 +1048,20 @@ List.prototype = {
     };
     
     var accessBarEnd = function (e) {
-      removePointerListener (document, vs_core.POINTER_MOVE, accessBarMove);
-      removePointerListener (document, vs_core.POINTER_END, accessBarEnd);
+      removePointerListener (document, POINTER_MOVE, accessBarMove);
+      removePointerListener (document, POINTER_END, accessBarEnd);
 
       self._direct_access_value.style.opacity = 0;
     };
 
     addPointerListener
-      (this._direct_access, vs_core.POINTER_START, accessBarStart, false);
+      (this._direct_access, POINTER_START, accessBarStart, false);
   },
   
   remove_directAccessBar : function ()
   {
     removePointerListener
-      (this._direct_access, vs_core.POINTER_START, this.__access_bar_start, false);
+      (this._direct_access, POINTER_START, this.__access_bar_start, false);
 
     this.view.removeChild (this._direct_access);
     this._direct_access = undefined;
@@ -1114,7 +1114,7 @@ vs_utils.defineClassProperties (List, {
         for (i = 0; i < this.__item_obs.length; i++)
         {
           obj = this.__item_obs [i];
-          addPointerListener (obj.view, vs_core.POINTER_START, this, true);
+          addPointerListener (obj.view, POINTER_START, this, true);
         }
       }
       else
@@ -1123,7 +1123,7 @@ vs_utils.defineClassProperties (List, {
         for (i = 0; i < this.__item_obs.length; i++)
         {
           obj = this.__item_obs [i];
-          removePointerListener (obj.view, vs_core.POINTER_START, this, true);
+          removePointerListener (obj.view, POINTER_START, this, true);
         }
       }
     }

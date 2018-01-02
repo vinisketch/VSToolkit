@@ -18,7 +18,7 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import { addPointerListener, removePointerListener, POINTER_START, POINTER_END } from 'vs_gesture';
 
 import View from '../View/View';
 import html_template from './Slider.html';
@@ -211,7 +211,7 @@ Slider.prototype = {
     this.__handle = this.view.querySelector ('.handle');
       
     // top/bottom click listening
-    addPointerListener (this.__handle, vs_core.POINTER_START, this, true);
+    addPointerListener (this.__handle, POINTER_START, this, true);
     if (!this.__drag_recognizer)
     {
       this.__drag_recognizer = new DragRecognizer (this);
@@ -230,7 +230,7 @@ Slider.prototype = {
     this.__handle_x = this.__handle.offsetLeft;
     this.__handle_y = this.__handle.offsetTop;
     
-    this.__abs_pos = vs_utilsgetElementAbsolutePosition (this.view);
+    this.__abs_pos = vs_utils.getElementAbsolutePosition (this.view);
 
     // set the new handler position
     var clientX = e.targetPointerList[0].pageX - this.__abs_pos.x;

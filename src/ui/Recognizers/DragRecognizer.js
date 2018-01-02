@@ -18,6 +18,8 @@
 
 import vs_core from 'vs_core';
 import vs_utils from 'vs_utils';
+import { POINTER_START, POINTER_END, POINTER_MOVE } from 'vs_gesture';
+
 import PointerRecognizer from './PointerRecognizer';
 
 /**
@@ -80,7 +82,7 @@ DragRecognizer.prototype = {
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
-    this.addPointerListener (this.obj.view, vs_core.POINTER_START, this.obj);
+    this.addPointerListener (this.obj.view, POINTER_START, this.obj);
     this.reset ();
   },
 
@@ -90,7 +92,7 @@ DragRecognizer.prototype = {
    * @protected
    */
   uninit : function () {
-    this.removePointerListener (this.obj.view, vs_core.POINTER_START, this.obj);
+    this.removePointerListener (this.obj.view, POINTER_START, this.obj);
   },
 
   /**
@@ -110,8 +112,8 @@ DragRecognizer.prototype = {
     this.__pointer_id = pointer.identifier;
     this.__is_dragged = true;
 
-    this.addPointerListener (document, vs_core.POINTER_END, this.obj);
-    this.addPointerListener (document, vs_core.POINTER_MOVE, this.obj);
+    this.addPointerListener (document, POINTER_END, this.obj);
+    this.addPointerListener (document, POINTER_MOVE, this.obj);
   
     try {
       if (this.delegate && this.delegate.didDragStart)
@@ -172,8 +174,8 @@ DragRecognizer.prototype = {
     this.__start_y = undefined;
     this.__pointer_id = undefined;
   
-    this.removePointerListener (document, vs_core.POINTER_END, this.obj);
-    this.removePointerListener (document, vs_core.POINTER_MOVE, this.obj);
+    this.removePointerListener (document, POINTER_END, this.obj);
+    this.removePointerListener (document, POINTER_MOVE, this.obj);
 
     try {
       if (this.delegate && this.delegate.didDragEnd)

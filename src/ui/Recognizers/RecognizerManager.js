@@ -18,7 +18,10 @@
 
 import vs_core from 'vs_core';
 import PointerRecognizer from './PointerRecognizer';
-
+import {
+  POINTER_START, POINTER_END, POINTER_MOVE,
+  GESTURE_START, GESTURE_CHANGE, GESTURE_END
+} from 'vs_gesture';
 /**
  * @protected
  */
@@ -34,43 +37,43 @@ var RecognizerManager = {
       if (!this._enable) { return; }
      
       switch (e.type) {
-        case vs_core.POINTER_START:
+        case POINTER_START:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerStart (e);
           });
         break;
 
-        case vs_core.POINTER_MOVE:
+        case POINTER_MOVE:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerMove (e);
           });
         break;
 
-        case vs_core.POINTER_END:
+        case POINTER_END:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerEnd (e);
           });
         break;
 
-        case vs_core.POINTER_CANCEL:
+        case POINTER_CANCEL:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerCancel (e);
           });
         break;
 
-        case vs_core.GESTURE_START:
+        case GESTURE_START:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.gestureStart (e);
           });
           break;
         
-        case vs_core.GESTURE_CHANGE:
+        case GESTURE_CHANGE:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.gestureChange (e);
           });
           break;
         
-        case vs_core.GESTURE_END:
+        case GESTURE_END:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.gestureEnd (e);
           });

@@ -18,7 +18,7 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
-import { addPointerListener, removePointerListener } from 'vs_gesture';
+import { addPointerListener, removePointerListener, POINTER_START, POINTER_END } from 'vs_gesture';
 
 import View from '../View/View';
 import html_template from './PopOver.html';
@@ -328,7 +328,7 @@ PopOver.prototype = {
       this._show_object (clb);
     }
     
-    addPointerListener (document, vs_core.POINTER_START, this, true); 
+    addPointerListener (document, POINTER_START, this, true); 
   },
   
   /**
@@ -374,7 +374,7 @@ PopOver.prototype = {
     if (!this.view) { return; }
     View.prototype.hide.call (this);
     
-    removePointerListener (document, vs_core.POINTER_START, this, true); 
+    removePointerListener (document, POINTER_START, this, true); 
     this.view.style.display = 'none';
   }
 };
