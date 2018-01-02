@@ -415,6 +415,8 @@ function scheduleAction (func, delay) {
 *********************************************************************/
 /** @private */
 export {
+  queueProcAsyncEvent,
+  queueProcSyncEvent,
   scheduleAction,
   Handler,
   ON_NEXT_FRAME

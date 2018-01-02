@@ -48,7 +48,7 @@ var vs = window.vs,
   core = vs.core,
   ui = vs.ui,
   fx = vs.fx,
-  setElementTransform = util.setElementTransform,
+  vs_utils.setElementTransform = util.setElementTransform,
   getElementTransform = util.getElementTransform,
   DeviceConfiguration = core.DeviceConfiguration,
   SUPPORT_3D_TRANSFORM = vs.SUPPORT_3D_TRANSFORM;
@@ -4831,9 +4831,9 @@ function blockListRenderData (itemsSelectable)
   util.removeAllElementChild (_list_items);
 
   if (SUPPORT_3D_TRANSFORM)
-    setElementTransform (_list_items, 'translate3d(0,0,0)');
+    vs_utils.setElementTransform (_list_items, 'translate3d(0,0,0)');
   else
-    setElementTransform (_list_items, 'translate(0,0)');
+    vs_utils.setElementTransform (_list_items, 'translate(0,0)');
 
   var parentElement = _list_items.parentElement;
   parentElement.removeChild (_list_items);
@@ -4939,9 +4939,9 @@ function defaultListRenderData (itemsSelectable)
   util.removeAllElementChild (_list_items);
   
   if (SUPPORT_3D_TRANSFORM)
-    setElementTransform (_list_items, 'translate3d(0,0,0)');
+    vs_utils.setElementTransform (_list_items, 'translate3d(0,0,0)');
   else
-    setElementTransform (_list_items, 'translate(0,0)');
+    vs_utils.setElementTransform (_list_items, 'translate(0,0)');
 
   var parentElement = _list_items.parentElement;
   parentElement.removeChild (_list_items);
@@ -6509,9 +6509,9 @@ Picker.prototype = {
     ul.style.webkitTransitionTimingFunction = 'cubic-bezier(0, 0, 0.2, 1)';   
 
     if (SUPPORT_3D_TRANSFORM)
-      setElementTransform (ul, 'translate3d(0,0,0)');
+      vs_utils.setElementTransform (ul, 'translate3d(0,0,0)');
     else
-      setElementTransform (ul, 'translate(0,0)');
+      vs_utils.setElementTransform (ul, 'translate(0,0)');
     
     // Save the slot for later use
     this._slots_elements.push (ul);
@@ -6800,9 +6800,9 @@ Picker.prototype = {
     elem.slotYPosition = pos;
 
     if (SUPPORT_3D_TRANSFORM)
-      setElementTransform (elem, 'translate3d(0,' + pos + 'px,0)');
+      vs_utils.setElementTransform (elem, 'translate3d(0,' + pos + 'px,0)');
     else
-      setElementTransform (elem, 'translate(0,' + pos + 'px)');
+      vs_utils.setElementTransform (elem, 'translate(0,' + pos + 'px)');
   },
   
   /**
@@ -11529,7 +11529,7 @@ ScrollView.prototype = {
 //     {
 //       this._sub_view.addEventListener ('webkitTransitionEnd', callback, false);
 //     }
-//     setElementTransform (this._sub_view, transform);
+//     vs_utils.setElementTransform (this._sub_view, transform);
 //   },
   
   /**
@@ -12540,9 +12540,9 @@ util.defineClassProperties (Slider, {
             (this._range [1] - this._range [0])) - d1;
         
         if (SUPPORT_3D_TRANSFORM)
-          setElementTransform (this.__handle, "translate3d(" + x + "px,-" + d2 + "px,0)");
+          vs_utils.setElementTransform (this.__handle, "translate3d(" + x + "px,-" + d2 + "px,0)");
         else
-          setElementTransform (this.__handle, "translate(" + x + "px,-" + d2 + "px)");
+          vs_utils.setElementTransform (this.__handle, "translate(" + x + "px,-" + d2 + "px)");
           
         this.view.style.backgroundSize = (x + d1) + "px 10px";
       }
@@ -12553,9 +12553,9 @@ util.defineClassProperties (Slider, {
             (this._range [1] - this._range [0])) - d1;
           
         if (SUPPORT_3D_TRANSFORM)
-          setElementTransform (this.__handle, "translate3d(-" + d2 + "px," + y + "px,0)");
+          vs_utils.setElementTransform (this.__handle, "translate3d(-" + d2 + "px," + y + "px,0)");
         else
-          setElementTransform (this.__handle, "translate(-" + d2 + "px," + y + "px)");
+          vs_utils.setElementTransform (this.__handle, "translate(-" + d2 + "px," + y + "px)");
           
         this.view.style.backgroundSize = "10px " + (y + d1) + "px";
       }
@@ -15425,7 +15425,7 @@ Scrollbar.prototype = {
     else
       pos = this.dir === 'horizontal' ? 'translate(' + Math.round(pos) + 'px,0)' : 'translate(0,' + Math.round(pos) + 'px)';
 		
-    setElementTransform (this.bar, pos);
+    vs_utils.setElementTransform (this.bar, pos);
   },
 
 	show: function ()
@@ -17856,7 +17856,7 @@ View.prototype = {
       transform += " translate(-50%,-50%)";
     }
 
-    setElementTransform (this.view, transform);
+    vs_utils.setElementTransform (this.view, transform);
     delete (matrix);
   }
 };

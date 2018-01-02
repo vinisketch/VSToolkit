@@ -23,7 +23,8 @@ import {
 import { addPointerListener, removePointerListener } from 'vs_gesture';
 
 import VSObject from './Object';
-import { Handler } from './MainLoop';
+import Event from './Event';
+import { Handler, queueProcAsyncEvent } from './MainLoop';
 
 /**
  *  @class

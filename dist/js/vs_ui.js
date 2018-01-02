@@ -244,43 +244,43 @@ var RecognizerManager = {
       if (!this._enable) { return; }
      
       switch (e.type) {
-        case vs_core$1.POINTER_START:
+        case vs_gesture.POINTER_START:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerStart (e);
           });
         break;
 
-        case vs_core$1.POINTER_MOVE:
+        case vs_gesture.POINTER_MOVE:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerMove (e);
           });
         break;
 
-        case vs_core$1.POINTER_END:
+        case vs_gesture.POINTER_END:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerEnd (e);
           });
         break;
 
-        case vs_core$1.POINTER_CANCEL:
+        case POINTER_CANCEL:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerCancel (e);
           });
         break;
 
-        case vs_core$1.GESTURE_START:
+        case vs_gesture.GESTURE_START:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.gestureStart (e);
           });
           break;
         
-        case vs_core$1.GESTURE_CHANGE:
+        case vs_gesture.GESTURE_CHANGE:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.gestureChange (e);
           });
           break;
         
-        case vs_core$1.GESTURE_END:
+        case vs_gesture.GESTURE_END:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.gestureEnd (e);
           });
@@ -1222,9 +1222,9 @@ View$1.__comp_templates = {};
 View$1._propagate_pointer_event = function (obj, func_ptr, event)
 {
   var event_name = "";
-  if (event.type === vs_core$1.POINTER_START) { event_name = 'POINTER_START'; }
-  if (event.type === vs_core$1.POINTER_END) { event_name = 'POINTER_END'; }
-  if (event.type === vs_core$1.POINTER_MOVE) { event_name = 'POINTER_MOVE'; }
+  if (event.type === vs_gesture.POINTER_START) { event_name = 'POINTER_START'; }
+  if (event.type === vs_gesture.POINTER_END) { event_name = 'POINTER_END'; }
+  if (event.type === vs_gesture.POINTER_MOVE) { event_name = 'POINTER_MOVE'; }
 
   event.type = event_name;
 
@@ -2248,8 +2248,8 @@ View$1.prototype = {
   bind : function (spec, obj, func, delay)
   {
     if (spec === 'POINTER_START' || spec === 'POINTER_END' ||
-        spec === 'POINTER_MOVE' || spec === vs_core$1.POINTER_START ||
-        spec === vs_core$1.POINTER_END || spec === vs_core$1.POINTER_MOVE)
+        spec === 'POINTER_MOVE' || spec === vs_gesture.POINTER_START ||
+        spec === vs_gesture.POINTER_END || spec === vs_gesture.POINTER_MOVE)
     {
       if (!this.view) { return; }
 
@@ -2294,9 +2294,9 @@ View$1.prototype = {
         View$1._propagate_pointer_event (obj, func_ptr, event);
       };
 
-      if (spec === 'POINTER_START') { spec = vs_core$1.POINTER_START; }
-      if (spec === 'POINTER_MOVE') { spec = vs_core$1.POINTER_MOVE; }
-      if (spec === 'POINTER_END') { spec = vs_core$1.POINTER_END; }
+      if (spec === 'POINTER_START') { spec = vs_gesture.POINTER_START; }
+      if (spec === 'POINTER_MOVE') { spec = vs_gesture.POINTER_MOVE; }
+      if (spec === 'POINTER_END') { spec = vs_gesture.POINTER_END; }
 
       this._pointerevent_handlers [obj.id + spec] = handler;
 
@@ -2319,13 +2319,13 @@ View$1.prototype = {
   unbind : function (spec, obj)
   {
     if (!spec || !obj) { return; }
-    if (spec === vs_core$1.POINTER_START || spec === vs_core$1.POINTER_END ||
-        spec === vs_core$1.POINTER_MOVE)
+    if (spec === vs_gesture.POINTER_START || spec === vs_gesture.POINTER_END ||
+        spec === vs_gesture.POINTER_MOVE)
     {
       var handler = this._pointerevent_handlers [obj.id + spec];
       if (!handler || !this.view) { return; }
 
-      vs_gesture.removePointerListener (this.view, vs_core$1.POINTER_END, handler);
+      vs_gesture.removePointerListener (this.view, vs_gesture.POINTER_END, handler);
     }
     vs_core$1.EventSource.prototype.unbind.call (this, spec, obj);
   },
@@ -6314,14 +6314,14 @@ ScrollView.prototype = {
 //   {
 //     switch (e.type)
 //     {
-//       case vs_core.POINTER_START:
+//       case POINTER_START:
 //         this.pointerStart (e);
 //         break;
-//       case vs_core.POINTER_MOVE:
+//       case POINTER_MOVE:
 //         this._scroll_pointer_move (e);
 //         break;
 //       case vs_core.POINTER_CANCEL:
-//       case vs_core.POINTER_END:
+//       case POINTER_END:
 //         this._scroll_pointer_end (e);
 //         break;
 //       case 'gesturestart':
@@ -7385,7 +7385,7 @@ CheckBox.prototype = {
     {
       input = this.__inputs [0];
       
-      vs_gesture.removePointerListener (input, vs_core$1.POINTER_START, this);
+      vs_gesture.removePointerListener (input, vs_gesture.POINTER_START, this);
       input.removeEventListener ('click', this);
       this.__inputs.remove (0);
       this.__labels.remove (0);
@@ -7423,13 +7423,13 @@ CheckBox.prototype = {
       this._list_items.appendChild (input);
       this.__inputs [i] = input;
       
-      vs_gesture.addPointerListener (input, vs_core$1.POINTER_START, this);
+      vs_gesture.addPointerListener (input, vs_gesture.POINTER_START, this);
       input.addEventListener ('click', this);
 
       label = document.createElement ('label');
       label.value = i;
       label.setAttribute ("for", this._id + "_l" + i);
-      vs_gesture.addPointerListener (label, vs_core$1.POINTER_START, this);
+      vs_gesture.addPointerListener (label, vs_gesture.POINTER_START, this);
       label.addEventListener ('click', this);
       vs_utils$1.setElementInnerText (label, item);
       this._list_items.appendChild (label);
@@ -7654,8 +7654,8 @@ ComboBox.prototype = {
   {
     if (this._mode === ComboBox.NATIVE_MODE)
     {
-      vs_gesture.removePointerListener (this.view, vs_core$1.POINTER_START, this);
-      vs_gesture.removePointerListener (this.view, vs_core$1.POINTER_END, this);
+      vs_gesture.removePointerListener (this.view, vs_gesture.POINTER_START, this);
+      vs_gesture.removePointerListener (this.view, vs_gesture.POINTER_END, this);
     }
     else
     {
@@ -7726,8 +7726,8 @@ ComboBox.prototype = {
       this._select = document.createElement ('div');
       this.view.appendChild (this._select);
 
-      vs_gesture.addPointerListener (this.view, vs_core$1.POINTER_START, this);
-      vs_gesture.addPointerListener (this.view, vs_core$1.POINTER_END, this);
+      vs_gesture.addPointerListener (this.view, vs_gesture.POINTER_START, this);
+      vs_gesture.addPointerListener (this.view, vs_gesture.POINTER_END, this);
     }
     // Normal GUI
     else
@@ -7752,7 +7752,7 @@ ComboBox.prototype = {
   {
     e.preventDefault ();
     e.stopPropagation ();
-    if (e.type === vs_core$1.POINTER_START)
+    if (e.type === vs_gesture.POINTER_START)
     {
       this.setFocus ();
       window.plugins.combo_picker.show (this, this._data, this._selected_item);
@@ -8170,7 +8170,7 @@ InputField.prototype = {
     
     if (this._clear_button)
     {    
-      this.nodeUnbind (this._clear_button, vs_core$1.POINTER_START, 'cleanData');  
+      this.nodeUnbind (this._clear_button, vs_gesture.POINTER_START, 'cleanData');  
     }
     delete (this._text_field);
 
@@ -8191,7 +8191,7 @@ InputField.prototype = {
     this._clear_button = this.view.querySelector ('.clear_button');
     if (this._clear_button)
     {
-      this.nodeBind (this._clear_button, vs_core$1.POINTER_START, 'cleanData');  
+      this.nodeBind (this._clear_button, vs_gesture.POINTER_START, 'cleanData');  
     }
     this.type = this._type;
     this.value = this._value;
@@ -8323,7 +8323,7 @@ InputField.prototype = {
         return;
       }
       
-      vs_gesture.removePointerListener (document, vs_core$1.POINTER_START, manageBlur, true);
+      vs_gesture.removePointerListener (document, vs_gesture.POINTER_START, manageBlur, true);
       self.setBlur ();
     }
 
@@ -8346,7 +8346,7 @@ InputField.prototype = {
       if (this._value) { this._activateDelete (true); }
       else { this._activateDelete (false); }
       
-      vs_gesture.addPointerListener (document, vs_core$1.POINTER_START, manageBlur, true);
+      vs_gesture.addPointerListener (document, vs_gesture.POINTER_START, manageBlur, true);
       this.propagate ('focus');
     }
     else if (event.type === 'blur')
@@ -8785,7 +8785,7 @@ function buildSection (list, title, index, itemsSelectable)
 
     if (itemsSelectable)
     {
-      vs_gesture.addPointerListener (listItem.view, vs_core$1.POINTER_START, list);
+      vs_gesture.addPointerListener (listItem.view, vs_gesture.POINTER_START, list);
     }
     content.appendChild (listItem.view);
     list.__item_obs.push (listItem);
@@ -8980,7 +8980,7 @@ function defaultListRenderData (itemsSelectable)
 
     if (itemsSelectable)
     {
-      vs_gesture.addPointerListener (listItem.view, vs_core$1.POINTER_START, this);
+      vs_gesture.addPointerListener (listItem.view, vs_gesture.POINTER_START, this);
     }
     _list_items.appendChild (listItem.view);
     this.__item_obs.push (listItem);
@@ -9434,8 +9434,8 @@ List.prototype = {
       vs_utils$1.setElementTransform (self._list_items, '');
       self.__max_scroll = self.size [1] - self._list_items.offsetHeight;
       
-      vs_gesture.addPointerListener (document, vs_core$1.POINTER_MOVE, accessBarMove, false);
-      vs_gesture.addPointerListener (document, vs_core$1.POINTER_END, accessBarEnd, false);
+      vs_gesture.addPointerListener (document, vs_gesture.POINTER_MOVE, accessBarMove, false);
+      vs_gesture.addPointerListener (document, vs_gesture.POINTER_END, accessBarEnd, false);
       
       var _acces_index = e.targetPointerList[0].target._index_;
       if (!vs_utils$1.isNumber (_acces_index)) return;
@@ -9510,20 +9510,20 @@ List.prototype = {
     };
     
     var accessBarEnd = function (e) {
-      vs_gesture.removePointerListener (document, vs_core$1.POINTER_MOVE, accessBarMove);
-      vs_gesture.removePointerListener (document, vs_core$1.POINTER_END, accessBarEnd);
+      vs_gesture.removePointerListener (document, vs_gesture.POINTER_MOVE, accessBarMove);
+      vs_gesture.removePointerListener (document, vs_gesture.POINTER_END, accessBarEnd);
 
       self._direct_access_value.style.opacity = 0;
     };
 
     vs_gesture.addPointerListener
-      (this._direct_access, vs_core$1.POINTER_START, accessBarStart, false);
+      (this._direct_access, vs_gesture.POINTER_START, accessBarStart, false);
   },
   
   remove_directAccessBar : function ()
   {
     vs_gesture.removePointerListener
-      (this._direct_access, vs_core$1.POINTER_START, this.__access_bar_start, false);
+      (this._direct_access, vs_gesture.POINTER_START, this.__access_bar_start, false);
 
     this.view.removeChild (this._direct_access);
     this._direct_access = undefined;
@@ -9576,7 +9576,7 @@ vs_utils$1.defineClassProperties (List, {
         for (i = 0; i < this.__item_obs.length; i++)
         {
           obj = this.__item_obs [i];
-          vs_gesture.addPointerListener (obj.view, vs_core$1.POINTER_START, this, true);
+          vs_gesture.addPointerListener (obj.view, vs_gesture.POINTER_START, this, true);
         }
       }
       else
@@ -9585,7 +9585,7 @@ vs_utils$1.defineClassProperties (List, {
         for (i = 0; i < this.__item_obs.length; i++)
         {
           obj = this.__item_obs [i];
-          vs_gesture.removePointerListener (obj.view, vs_core$1.POINTER_START, this, true);
+          vs_gesture.removePointerListener (obj.view, vs_gesture.POINTER_START, this, true);
         }
       }
     }
@@ -10040,25 +10040,25 @@ NavigationBar$1.prototype = {
     
     switch (event.type)
     {
-      case vs_core$1.POINTER_START:
+      case vs_gesture.POINTER_START:
         vs_utils$1.addClassName (self, 'active');
-        vs_gesture.addPointerListener (event.currentTarget, vs_core$1.POINTER_END, this, true);
-        vs_gesture.addPointerListener (event.currentTarget, vs_core$1.POINTER_MOVE, this, true);
+        vs_gesture.addPointerListener (event.currentTarget, vs_gesture.POINTER_END, this, true);
+        vs_gesture.addPointerListener (event.currentTarget, vs_gesture.POINTER_MOVE, this, true);
       break;
 
-      case vs_core$1.POINTER_END:
-        vs_gesture.removePointerListener (event.currentTarget, vs_core$1.POINTER_END, this);
-        vs_gesture.removePointerListener (event.currentTarget, vs_core$1.POINTER_MOVE, this);        
+      case vs_gesture.POINTER_END:
+        vs_gesture.removePointerListener (event.currentTarget, vs_gesture.POINTER_END, this);
+        vs_gesture.removePointerListener (event.currentTarget, vs_gesture.POINTER_MOVE, this);        
         
         vs_utils$1.removeClassName (self, 'active');
         this.propagate ('buttonselect', event.currentTarget.spec);
       break;
 
-      case vs_core$1.POINTER_MOVE:
+      case vs_gesture.POINTER_MOVE:
         event.preventDefault ();
         vs_utils$1.removeClassName (self, 'active');
-        vs_gesture.removePointerListener (event.currentTarget, vs_core$1.POINTER_END, this);
-        vs_gesture.removePointerListener (event.currentTarget, vs_core$1.POINTER_MOVE, this);
+        vs_gesture.removePointerListener (event.currentTarget, vs_gesture.POINTER_END, this);
+        vs_gesture.removePointerListener (event.currentTarget, vs_gesture.POINTER_MOVE, this);
       break;
     }
   },
@@ -10322,10 +10322,10 @@ Picker.prototype = {
    */
   destructor : function ()
   {
-    vs_gesture.removePointerListener (this.view, vs_core$1.POINTER_START, this, false);
+    vs_gesture.removePointerListener (this.view, vs_gesture.POINTER_START, this, false);
 
-    vs_gesture.removePointerListener (document, vs_core$1.POINTER_START, this, false);
-    vs_gesture.removePointerListener (document, vs_core$1.POINTER_MOVE, this, false);
+    vs_gesture.removePointerListener (document, vs_gesture.POINTER_START, this, false);
+    vs_gesture.removePointerListener (document, vs_gesture.POINTER_MOVE, this, false);
 
     vs_utils$1.removeAllElementChild (this._slots_view);
 
@@ -10366,7 +10366,7 @@ Picker.prototype = {
       case Application.CSS_DEFAULT:
       default:
         // Add scrolling to the slots
-        vs_gesture.addPointerListener (this.view, vs_core$1.POINTER_START, this);
+        vs_gesture.addPointerListener (this.view, vs_gesture.POINTER_START, this);
         this._frame_border_width = 0;
       break;
       
@@ -10496,7 +10496,7 @@ Picker.prototype = {
     {
       case Application.CSS_WP7:
         ul.slotMaxScroll = this.view.clientHeight - ul.clientHeight;
-        vs_gesture.addPointerListener (ul, vs_core$1.POINTER_START, this, true);
+        vs_gesture.addPointerListener (ul, vs_gesture.POINTER_START, this, true);
       break;
     }    
     
@@ -10540,9 +10540,9 @@ Picker.prototype = {
 
     if (!readonly)
     {
-      vs_gesture.addPointerListener (button_incr, vs_core$1.POINTER_START, this);
-      vs_gesture.addPointerListener (button_incr, vs_core$1.POINTER_END, this);
-      vs_gesture.addPointerListener (button_incr, vs_core$1.POINTER_CANCEL, this);
+      vs_gesture.addPointerListener (button_incr, vs_gesture.POINTER_START, this);
+      vs_gesture.addPointerListener (button_incr, vs_gesture.POINTER_END, this);
+      vs_gesture.addPointerListener (button_incr, vs_gesture.POINTER_CANCEL, this);
     }
     
     // Create the slot
@@ -10560,9 +10560,9 @@ Picker.prototype = {
 
     if (!readonly)
     {
-      vs_gesture.addPointerListener (button_decr, vs_core$1.POINTER_START, this);
-      vs_gesture.addPointerListener (button_decr, vs_core$1.POINTER_END, this);
-      vs_gesture.addPointerListener (button_decr, vs_core$1.POINTER_CANCEL, this);
+      vs_gesture.addPointerListener (button_decr, vs_gesture.POINTER_START, this);
+      vs_gesture.addPointerListener (button_decr, vs_gesture.POINTER_END, this);
+      vs_gesture.addPointerListener (button_decr, vs_gesture.POINTER_CANCEL, this);
     }
     
     return [button_incr, button_decr];
@@ -10577,11 +10577,11 @@ Picker.prototype = {
     var slotNum = e.target.slotPosition;
     switch (e.type)
     {
-      case vs_core$1.POINTER_START:
+      case vs_gesture.POINTER_START:
         vs_utils$1.addClassName (e.target, 'active');
         break
       
-      case vs_core$1.POINTER_END:
+      case vs_gesture.POINTER_END:
         var slot_elem = this._slots_elements[slotNum], slotMaxScroll,
           pos = slot_elem.slotYPosition;
         if (vs_utils$1.hasClassName (e.target, 'button_decr'))
@@ -10597,7 +10597,7 @@ Picker.prototype = {
         }
 
         this._scrollTo (slotNum, pos);
-      case vs_core$1.POINTER_CANCEL:
+      case vs_gesture.POINTER_CANCEL:
         vs_utils$1.removeClassName (e.target, 'active');
         break
     }
@@ -10849,15 +10849,15 @@ Picker.prototype = {
     }
     else switch (e.type)
     {
-      case vs_core$1.POINTER_START:
+      case vs_gesture.POINTER_START:
         this._scrollStart (e);
       break;
 
-      case vs_core$1.POINTER_MOVE:
+      case vs_gesture.POINTER_MOVE:
         this._scrollMove (e);
       break;
 
-      case vs_core$1.POINTER_END:
+      case vs_gesture.POINTER_END:
         this._scrollEnd (e);
       break;
 
@@ -10942,8 +10942,8 @@ Picker.prototype = {
     // If slot is readonly do nothing
     if (this._data[this._active_slot].style.match('readonly'))
     {
-      vs_gesture.removePointerListener (document, vs_core$1.POINTER_MOVE, this, true);
-      vs_gesture.removePointerListener (document, vs_core$1.POINTER_END, this, true);
+      vs_gesture.removePointerListener (document, vs_gesture.POINTER_MOVE, this, true);
+      vs_gesture.removePointerListener (document, vs_gesture.POINTER_END, this, true);
       return false;
     }
     
@@ -10971,8 +10971,8 @@ Picker.prototype = {
     this.scrollStartY = slot_elem.slotYPosition;
     this.scrollStartTime = e.timeStamp;
 
-    vs_gesture.addPointerListener (document, vs_core$1.POINTER_MOVE, this, true);
-    vs_gesture.addPointerListener (document, vs_core$1.POINTER_END, this, true);
+    vs_gesture.addPointerListener (document, vs_gesture.POINTER_MOVE, this, true);
+    vs_gesture.addPointerListener (document, vs_gesture.POINTER_END, this, true);
     
     switch (this._mode)
     {
@@ -11032,8 +11032,8 @@ Picker.prototype = {
    */
   _scrollEnd: function (e)
   {
-    vs_gesture.removePointerListener (document, vs_core$1.POINTER_MOVE, this, true);
-    vs_gesture.removePointerListener (document, vs_core$1.POINTER_END, this, true);
+    vs_gesture.removePointerListener (document, vs_gesture.POINTER_MOVE, this, true);
+    vs_gesture.removePointerListener (document, vs_gesture.POINTER_END, this, true);
     
     var elem = this._slots_elements[this._active_slot], scrollDist,
       scrollDur, newDur, newPos, self = this;
@@ -11620,7 +11620,7 @@ PopOver$1.prototype = {
       this._show_object (clb);
     }
     
-    vs_gesture.addPointerListener (document, vs_core$1.POINTER_START, this, true); 
+    vs_gesture.addPointerListener (document, vs_gesture.POINTER_START, this, true); 
   },
   
   /**
@@ -11666,7 +11666,7 @@ PopOver$1.prototype = {
     if (!this.view) { return; }
     View$1.prototype.hide.call (this);
     
-    vs_gesture.removePointerListener (document, vs_core$1.POINTER_START, this, true); 
+    vs_gesture.removePointerListener (document, vs_gesture.POINTER_START, this, true); 
     this.view.style.display = 'none';
   }
 };
@@ -12145,7 +12145,7 @@ RadioButton.prototype = {
     {
       input = this.__inputs [0];
       
-      vs_gesture.removePointerListener (input, vs_core$1.POINTER_START, this);
+      vs_gesture.removePointerListener (input, vs_gesture.POINTER_START, this);
       input.removeEventListener ('click', this);
       this.__inputs.remove (0);
       this.__labels.remove (0);
@@ -12183,13 +12183,13 @@ RadioButton.prototype = {
       
       this._list_items.appendChild (input);
       this.__inputs [i] = input;
-      vs_gesture.addPointerListener (input, vs_core$1.POINTER_START, this);
+      vs_gesture.addPointerListener (input, vs_gesture.POINTER_START, this);
       input.addEventListener ('click', this);
       
       label = document.createElement ('label');
       label.value = i;
       label.setAttribute ("for", this._id + "_l" + i);
-      vs_gesture.addPointerListener (label, vs_core$1.POINTER_START, this);
+      vs_gesture.addPointerListener (label, vs_gesture.POINTER_START, this);
       label.addEventListener ('click', this);
       vs_utils$1.setElementInnerText (label, item);
       this._list_items.appendChild (label);
@@ -12372,7 +12372,7 @@ DragRecognizer.prototype = {
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
-    this.addPointerListener (this.obj.view, vs_core$1.POINTER_START, this.obj);
+    this.addPointerListener (this.obj.view, vs_gesture.POINTER_START, this.obj);
     this.reset ();
   },
 
@@ -12382,7 +12382,7 @@ DragRecognizer.prototype = {
    * @protected
    */
   uninit : function () {
-    this.removePointerListener (this.obj.view, vs_core$1.POINTER_START, this.obj);
+    this.removePointerListener (this.obj.view, vs_gesture.POINTER_START, this.obj);
   },
 
   /**
@@ -12402,8 +12402,8 @@ DragRecognizer.prototype = {
     this.__pointer_id = pointer.identifier;
     this.__is_dragged = true;
 
-    this.addPointerListener (document, vs_core$1.POINTER_END, this.obj);
-    this.addPointerListener (document, vs_core$1.POINTER_MOVE, this.obj);
+    this.addPointerListener (document, vs_gesture.POINTER_END, this.obj);
+    this.addPointerListener (document, vs_gesture.POINTER_MOVE, this.obj);
   
     try {
       if (this.delegate && this.delegate.didDragStart)
@@ -12464,8 +12464,8 @@ DragRecognizer.prototype = {
     this.__start_y = undefined;
     this.__pointer_id = undefined;
   
-    this.removePointerListener (document, vs_core$1.POINTER_END, this.obj);
-    this.removePointerListener (document, vs_core$1.POINTER_MOVE, this.obj);
+    this.removePointerListener (document, vs_gesture.POINTER_END, this.obj);
+    this.removePointerListener (document, vs_gesture.POINTER_MOVE, this.obj);
 
     try {
       if (this.delegate && this.delegate.didDragEnd)
@@ -12567,7 +12567,7 @@ PinchRecognizer.prototype = {
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
-    this.addPointerListener (this.obj.view, vs_core$1.GESTURE_START, this.obj);
+    this.addPointerListener (this.obj.view, vs_gesture.GESTURE_START, this.obj);
     this.reset ();
   },
 
@@ -12577,7 +12577,7 @@ PinchRecognizer.prototype = {
    * @protected
    */
   uninit : function () {
-    this.removePointerListener (this.obj.view, vs_core$1.GESTURE_START, this.obj);
+    this.removePointerListener (this.obj.view, vs_gesture.GESTURE_START, this.obj);
   },
 
   /**
@@ -12586,8 +12586,8 @@ PinchRecognizer.prototype = {
    * @protected
    */
   gestureStart: function (e) {
-    this.addPointerListener (document, vs_core$1.GESTURE_CHANGE, this.obj);
-    this.addPointerListener (document, vs_core$1.GESTURE_END, this.obj);
+    this.addPointerListener (document, vs_gesture.GESTURE_CHANGE, this.obj);
+    this.addPointerListener (document, vs_gesture.GESTURE_END, this.obj);
 
     try {
       if (this.delegate && this.delegate.didPinchStart)
@@ -12624,8 +12624,8 @@ PinchRecognizer.prototype = {
    * @protected
    */
   gestureEnd: function (e) {
-    this.removePointerListener (document, vs_core$1.GESTURE_CHANGE, this.obj);
-    this.removePointerListener (document, vs_core$1.GESTURE_END, this.obj);
+    this.removePointerListener (document, vs_gesture.GESTURE_CHANGE, this.obj);
+    this.removePointerListener (document, vs_gesture.GESTURE_END, this.obj);
     
     try {
       if (this.delegate && this.delegate.didPinchEnd)
@@ -12721,7 +12721,7 @@ RotationRecognizer.prototype = {
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
-    this.addPointerListener (this.obj.view, vs_core$1.GESTURE_START, this.obj);
+    this.addPointerListener (this.obj.view, vs_gesture.GESTURE_START, this.obj);
     this.reset ();
   },
 
@@ -12731,7 +12731,7 @@ RotationRecognizer.prototype = {
    * @protected
    */
   uninit : function () {
-    this.removePointerListener (this.obj.view, vs_core$1.GESTURE_START, this.obj);
+    this.removePointerListener (this.obj.view, vs_gesture.GESTURE_START, this.obj);
   },
 
   /**
@@ -12740,8 +12740,8 @@ RotationRecognizer.prototype = {
    * @protected
    */
   gestureStart: function (e) {
-    this.addPointerListener (document, vs_core$1.GESTURE_CHANGE, this.obj);
-    this.addPointerListener (document, vs_core$1.GESTURE_END, this.obj);
+    this.addPointerListener (document, vs_gesture.GESTURE_CHANGE, this.obj);
+    this.addPointerListener (document, vs_gesture.GESTURE_END, this.obj);
 
     try {
       if (this.delegate && this.delegate.didRotationStart)
@@ -12775,8 +12775,8 @@ RotationRecognizer.prototype = {
    * @protected
    */
   gestureEnd: function (e) {
-    this.removePointerListener (document, vs_core$1.GESTURE_CHANGE, this.obj);
-    this.removePointerListener (document, vs_core$1.GESTURE_END, this.obj);
+    this.removePointerListener (document, vs_gesture.GESTURE_CHANGE, this.obj);
+    this.removePointerListener (document, vs_gesture.GESTURE_END, this.obj);
 
     try {
       if (this.delegate && this.delegate.didRotationEnd)
@@ -12884,7 +12884,7 @@ TapRecognizer$1.prototype = {
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
-    this.addPointerListener (this.obj.view, vs_core$1.POINTER_START, this.obj);
+    this.addPointerListener (this.obj.view, vs_gesture.POINTER_START, this.obj);
     this.reset ();
   },
 
@@ -12894,7 +12894,7 @@ TapRecognizer$1.prototype = {
    * @protected
    */
   uninit : function () {
-    this.removePointerListener (this.obj.view, vs_core$1.POINTER_START, this.obj);
+    this.removePointerListener (this.obj.view, vs_gesture.POINTER_START, this.obj);
   },
 
   /**
@@ -12927,8 +12927,8 @@ TapRecognizer$1.prototype = {
       this.__did_tap_time_out = 0;
     }
   
-    this.addPointerListener (document, vs_core$1.POINTER_END, this.obj);
-    this.addPointerListener (document, vs_core$1.POINTER_MOVE, this.obj);
+    this.addPointerListener (document, vs_gesture.POINTER_END, this.obj);
+    this.addPointerListener (document, vs_gesture.POINTER_MOVE, this.obj);
   
     this.__start_x = e.targetPointerList[0].pageX;
     this.__start_y = e.targetPointerList[0].pageY;
@@ -12955,8 +12955,8 @@ TapRecognizer$1.prototype = {
     }
 
     // cancel the selection mode
-    this.removePointerListener (document, vs_core$1.POINTER_END, this.obj);
-    this.removePointerListener (document, vs_core$1.POINTER_MOVE, this.obj);
+    this.removePointerListener (document, vs_gesture.POINTER_END, this.obj);
+    this.removePointerListener (document, vs_gesture.POINTER_MOVE, this.obj);
     this.__is_touched = false;
 
     try {
@@ -12983,8 +12983,8 @@ TapRecognizer$1.prototype = {
     
     this.__tap_elem = undefined;
   
-    this.removePointerListener (document, vs_core$1.POINTER_END, this.obj);
-    this.removePointerListener (document, vs_core$1.POINTER_MOVE, this.obj);
+    this.removePointerListener (document, vs_gesture.POINTER_END, this.obj);
+    this.removePointerListener (document, vs_gesture.POINTER_MOVE, this.obj);
 
     if (this.delegate && this.delegate.didUntouch) {
       try {
@@ -13603,7 +13603,7 @@ SegmentedButton.prototype = {
     while (this._div_list.length)
     {
       var div = this._div_list [0];
-      vs_gesture.removePointerListener (div, vs_core$1.POINTER_START, this);
+      vs_gesture.removePointerListener (div, vs_gesture.POINTER_START, this);
       
       this._div_list.remove (0);
     }
@@ -13635,7 +13635,7 @@ SegmentedButton.prototype = {
       // WP7 does not manage box model (then use inline-block instead of)
       if (width) vs_utils$1.setElementStyle (div, {"width": width + '%'});
 
-      vs_gesture.addPointerListener (div, vs_core$1.POINTER_START, this);
+      vs_gesture.addPointerListener (div, vs_gesture.POINTER_START, this);
       
       this._div_list.push (div);
       subView.appendChild (div);
@@ -13665,7 +13665,7 @@ SegmentedButton.prototype = {
   handleEvent: function (e)
   {
     var target;
-    if (e.type === vs_core$1.POINTER_START)
+    if (e.type === vs_gesture.POINTER_START)
     {
       // prevent multi touch events
       if (e.nbPointers > 1) { return; }
@@ -14072,7 +14072,7 @@ Slider.prototype = {
     this.__handle = this.view.querySelector ('.handle');
       
     // top/bottom click listening
-    vs_gesture.addPointerListener (this.__handle, vs_core$1.POINTER_START, this, true);
+    vs_gesture.addPointerListener (this.__handle, vs_gesture.POINTER_START, this, true);
     if (!this.__drag_recognizer)
     {
       this.__drag_recognizer = new DragRecognizer (this);
@@ -14091,7 +14091,7 @@ Slider.prototype = {
     this.__handle_x = this.__handle.offsetLeft;
     this.__handle_y = this.__handle.offsetTop;
     
-    this.__abs_pos = vs_utilsgetElementAbsolutePosition (this.view);
+    this.__abs_pos = vs_utils$1.getElementAbsolutePosition (this.view);
 
     // set the new handler position
     var clientX = e.targetPointerList[0].pageX - this.__abs_pos.x;
@@ -15743,14 +15743,14 @@ TextArea.prototype = {
       if (event.src === self.view)
       { return; }
       
-      vs_gesture.removePointerListener (document, vs_core$1.POINTER_START, manageBlur, true);
+      vs_gesture.removePointerListener (document, vs_gesture.POINTER_START, manageBlur, true);
       self.setBlur ();
     }
     
     switch (event.type)
     {
       case 'focus':
-        vs_gesture.addPointerListener (document, vs_core$1.POINTER_START, manageBlur, true);
+        vs_gesture.addPointerListener (document, vs_gesture.POINTER_START, manageBlur, true);
       break;
 
       case 'blur':
@@ -16966,21 +16966,7 @@ ToolBar$1.ZOMM_OUT = 'zoom_out';
 /********************************************************************
                    
 *********************************************************************/
-function preventBehavior(e) {
-  //  window.scrollTo (0, 0);
 
-  if (e.type == "touchstart" &&
-    (e.target.tagName == "INPUT" ||
-      e.target.tagName == "input" ||
-      e.target.tagName == "TEXTAREA" ||
-      e.target.tagName == "textarea")) {
-    // on android do not cancel event otherwise the keyboard does not appear
-    return;
-  }
-
-  e.preventDefault();
-  return false;
-}
 
 vs_utils$1.defineProperty(document, 'preventScroll', {
   get: function () {
@@ -16989,21 +16975,21 @@ vs_utils$1.defineProperty(document, 'preventScroll', {
 
   set: function (preventScroll) {
     document._preventScroll = preventScroll;
-    if (preventScroll) {
-      // for android
-      document.addEventListener("touchstart", preventBehavior, false);
-      // for android and other
-      document.addEventListener("touchmove", preventBehavior, false);
-      document.addEventListener("scroll", preventBehavior, false);
-      window.scrollTo(0, 0);
-    }
-    else {
-      // for android
-      document.removeEventListener("touchstart", preventBehavior, false);
-      // for android and other
-      document.removeEventListener("touchmove", preventBehavior, false);
-      document.removeEventListener("scroll", preventBehavior, false);
-    }
+    // if (preventScroll) {
+    //   // for android
+    //   document.addEventListener("touchstart", preventBehavior, false);
+    //   // for android and other
+    //   document.addEventListener("touchmove", preventBehavior, false);
+    //   document.addEventListener("scroll", preventBehavior, false);
+    //   window.scrollTo(0, 0);
+    // }
+    // else {
+    //   // for android
+    //   document.removeEventListener("touchstart", preventBehavior, false);
+    //   // for android and other
+    //   document.removeEventListener("touchmove", preventBehavior, false);
+    //   document.removeEventListener("scroll", preventBehavior, false);
+    // }
   }
 });
 

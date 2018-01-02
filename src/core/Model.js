@@ -19,6 +19,7 @@
 import VSObject from './Object';
 import { free, underscore, isArray, extendClass } from 'vs_utils';
 import { _default_df_ } from './Dataflow';
+import { queueProcSyncEvent } from './MainLoop';
 
 /**
  * The vs.core.Model class

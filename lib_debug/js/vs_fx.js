@@ -48,7 +48,7 @@ var vs = window.vs,
   core = vs.core,
   ui = vs.ui,
   fx = vs.fx,
-  setElementTransform = util.setElementTransform,
+  vs_utils.setElementTransform = util.setElementTransform,
   getElementTransform = util.getElementTransform,
   SUPPORT_3D_TRANSFORM = vs.SUPPORT_3D_TRANSFORM;
   
@@ -622,7 +622,7 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
         var matrix = comp.getCTM ();
         transform = matrix.toString () + ' ' + transform;
       }
-      setElementTransform (comp.view, transform);
+      vs_utils.setElementTransform (comp.view, transform);
     }
 
     comp.setStyle (TRANSITION_PROPERTY, properties.join (','));
@@ -2231,7 +2231,7 @@ var CardController = vs.core.createClass ({
     else transform += ")";
 
     comp.view.style.webkitTransitionDuration = '0';
-    setElementTransform (comp.view, transform);
+    vs_utils.setElementTransform (comp.view, transform);
   },
 
   /**
@@ -2303,7 +2303,7 @@ var CardController = vs.core.createClass ({
         if (this.__delta < 0)
         {
           state.comp.view.style.webkitTransitionDuration = 0;
-          setElementTransform (state.comp.view, transform);
+          vs_utils.setElementTransform (state.comp.view, transform);
         }
         else if (state_before_id)
         {
@@ -2333,7 +2333,7 @@ var CardController = vs.core.createClass ({
                 "translate(0px,"+(this.__delta-this._size[1])+"px)";
             }  
             state_before.comp.view.style.webkitTransitionDuration = 0;
-            setElementTransform (state_before.comp.view, transform);
+            vs_utils.setElementTransform (state_before.comp.view, transform);
           }
         }
       }
@@ -2342,7 +2342,7 @@ var CardController = vs.core.createClass ({
         if (this.__delta > 0)
         {
           state.comp.view.style.webkitTransitionDuration = 0;
-          setElementTransform (state.comp.view, transform);
+          vs_utils.setElementTransform (state.comp.view, transform);
         }
         else if (state_before_id)
         {
@@ -2371,7 +2371,7 @@ var CardController = vs.core.createClass ({
                 "translate(0px,"+(this._size[1]+this.__delta)+"px)";
             }  
             state_before.comp.view.style.webkitTransitionDuration = 0;
-            setElementTransform (state_before.comp.view, transform);
+            vs_utils.setElementTransform (state_before.comp.view, transform);
           }
         }
       }
@@ -2420,7 +2420,7 @@ var CardController = vs.core.createClass ({
 
           state.comp.view.style.webkitTransitionDuration =
             this.__controller__._animation_duration + 'ms';
-          setElementTransform (state.comp.view, transform);
+          vs_utils.setElementTransform (state.comp.view, transform);
         }
         else if ((this.__controller__._direction === CardController.RIGHT_OUT ||
             this.__controller__._direction === CardController.BOTTOM_OUT) &&
@@ -2432,7 +2432,7 @@ var CardController = vs.core.createClass ({
 
           state.comp.view.style.webkitTransitionDuration =
             this.__controller__._animation_duration + 'ms';
-          setElementTransform (state.comp.view, transform);
+          vs_utils.setElementTransform (state.comp.view, transform);
         }
         else if (state_before_id)
         {
@@ -2463,7 +2463,7 @@ var CardController = vs.core.createClass ({
 
             state_before.comp.view.style.webkitTransitionDuration =
               this.__controller__._animation_duration + 'ms';
-            setElementTransform (state_before.comp.view, transform);
+            vs_utils.setElementTransform (state_before.comp.view, transform);
           }
         }
       }
@@ -3707,7 +3707,7 @@ CubicController.prototype = {
       if (this.__delta < 0)
       {
         state.comp.view.style.webkitTransitionDuration = 0;
-        setElementTransform (state.comp.view, transform);
+        vs_utils.setElementTransform (state.comp.view, transform);
       }
       else if (state_before_id)
       {
@@ -3735,7 +3735,7 @@ CubicController.prototype = {
               "translate(0px,"+(this.__delta-this._size[1])+"px)";
           }  
           state_before.comp.view.style.webkitTransitionDuration = 0;
-          setElementTransform (state_before.comp.view, transform);
+          vs_utils.setElementTransform (state_before.comp.view, transform);
         }
       }
     }
@@ -3765,7 +3765,7 @@ CubicController.prototype = {
 
           state.comp.view.style.webkitTransitionDuration =
             this.__layer._animation_duration + 'ms';
-          setElementTransform (state.comp.view, transform);
+          vs_utils.setElementTransform (state.comp.view, transform);
         }
         else if (state_before_id)
         {
@@ -3794,7 +3794,7 @@ CubicController.prototype = {
             }  
             state_before.comp.view.style.webkitTransitionDuration =
               this.__layer._animation_duration + 'ms';
-            setElementTransform (state_before.comp.view, transform);
+            vs_utils.setElementTransform (state_before.comp.view, transform);
           }
         }
       }
@@ -5067,12 +5067,12 @@ var SlideController = vs.core.createClass ({
         
         // set no transformation for the current one
         state.comp.view.style.webkitTransitionDuration = '0';
-        setElementTransform (state.comp.view, "translate3D(0,0,0)");
+        vs_utils.setElementTransform (state.comp.view, "translate3D(0,0,0)");
         continue;
       }
       
       state.comp.view.style.webkitTransitionDuration = '0';
-      setElementTransform (state.comp.view, transform);
+      vs_utils.setElementTransform (state.comp.view, transform);
     } 
   },
   
@@ -5203,7 +5203,7 @@ var SlideController = vs.core.createClass ({
     }
 
     comp.view.style.webkitTransitionDuration = '0';
-    setElementTransform (comp.view, transform);
+    vs_utils.setElementTransform (comp.view, transform);
     comp.hide ();
   },
 
@@ -6492,7 +6492,7 @@ var SwipeController = vs.core.createClass ({
       var carousel_div = this._owner._holes.children;
       carousel_div.style.webkitTransitionDuration = "0ms";
       
-      setElementTransform (carousel_div,
+      vs_utils.setElementTransform (carousel_div,
         "translate3D(" +
         (this.__delta + this.__current_pos)
         + "px,0,0)");
@@ -6513,10 +6513,10 @@ var SwipeController = vs.core.createClass ({
         self._animation_duration + "ms";
 
       if (self._orientation === SwipeController.HORIZONTAL)
-        setElementTransform (carousel_div,
+        vs_utils.setElementTransform (carousel_div,
           "translate3D(" + self.__current_pos + "px,0,0)");
       else
-        setElementTransform (carousel_div,
+        vs_utils.setElementTransform (carousel_div,
           "translate3D(0," + self.__current_pos + "px,0)");
     }
     
@@ -6599,10 +6599,10 @@ var SwipeController = vs.core.createClass ({
           }
 
           if (self._orientation === SwipeController.HORIZONTAL)
-            setElementTransform (carousel_div,
+            vs_utils.setElementTransform (carousel_div,
               "translate3D(" + self.__current_pos + "px,0,0)");
           else
-            setElementTransform (carousel_div,
+            vs_utils.setElementTransform (carousel_div,
               "translate3D(0," + self.__current_pos + "px,0)");
         });
       }
