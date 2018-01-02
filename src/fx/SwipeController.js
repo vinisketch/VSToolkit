@@ -16,8 +16,9 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import vs_core from 'vs_core';
 import { extend, setElementTransform } from 'vs_utils';
+import vs_core from 'vs_core';
+import { RecognizerManager } from 'vs_ui';
 
 import StackController from './StackController';
 
@@ -557,7 +558,7 @@ var SwipeController = vs_core.createClass ({
     runAnimation ();
   }
 });
-extend (SwipeController.prototype, ui.RecognizerManager);
+extend (SwipeController.prototype, RecognizerManager);
 
 /**
  * The duration of the animation between two views

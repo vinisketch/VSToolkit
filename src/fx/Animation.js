@@ -1093,7 +1093,7 @@ Animation.EASE_IN_OUT = 'ease-in-out'
  * @param {number} y The translation value along the Y axis
  * @param {number} z The translation value along the Z axis if 3d css transform is possible
 */
-TranslateAnimation = function (x, y, z)
+var TranslateAnimation = function (x, y, z)
 {
   this.parent = Animation;
   if (!arguments.length)
@@ -1182,7 +1182,7 @@ extendClass (TranslateAnimation, Animation);
  *
  * @param {number} deg The rotation value along the Z axis
 */
-RotateAnimation = function (deg)
+var RotateAnimation = function (deg)
 {
   this.parent = Animation;
   if (!arguments.length)
@@ -1246,7 +1246,7 @@ extendClass (RotateAnimation, Animation);
  * @param {number} degY The rotation value along the Y axis
  * @param {number} degZ The rotation value along the Z axis
 */
-RotateXYZAnimation = function (degX, degY, degZ)
+var RotateXYZAnimation = function (degX, degY, degZ)
 {
   this.parent = Animation;
   if (!arguments.length)
@@ -1333,7 +1333,7 @@ extendClass (RotateXYZAnimation, Animation);
  * @param {number} sy The scale value along the Y axis
  * @param {number} sz The scale value along the Z axis
 */
-ScaleAnimation = function (sx, sy, sz)
+var ScaleAnimation = function (sx, sy, sz)
 {
   this.parent = Animation;
   if (!arguments.length)
@@ -1431,7 +1431,7 @@ extendClass (ScaleAnimation, Animation);
  * @param {number} x The scale value along the X axis
  * @param {number} y The scale value along the Y axis
 */
-SkewAnimation = function (ax, ay)
+var SkewAnimation = function (ax, ay)
 {
   this.parent = Animation;
   if (!arguments.length)
@@ -1511,7 +1511,7 @@ extendClass (SkewAnimation, Animation);
  *
  * @param {number} value The opacity value
 */
-OpacityAnimation = function (value)
+var OpacityAnimation = function (value)
 {
   this.parent = Animation;
   if (!arguments.length)

@@ -24,6 +24,7 @@ import {
 } from 'vs_utils';
 
 import StackController from './StackController';
+import { OpacityAnimation } from './Animation';
 
 /**
  *  The vs.fx.OpacityController class <br />

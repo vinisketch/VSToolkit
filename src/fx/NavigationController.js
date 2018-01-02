@@ -23,6 +23,9 @@ import {
   extendClass, defineClassProperties
 } from 'vs_utils';
 
+import Controller from './Controller';
+import StackController from './StackController';
+
 /**
  *  The vs.fx.NavigationController class implements a controller for navigating
  *  on hierarchical contents.
@@ -463,7 +466,7 @@ NavigationController.prototype = {
    *  do nothing, will be managed by _stackAnimateComponents
    *  @protected
    */
-  _animateComponents : fx.Controller.prototype._animateComponents
+  _animateComponents : Controller.prototype._animateComponents
 };
 extendClass (NavigationController, StackController);
 

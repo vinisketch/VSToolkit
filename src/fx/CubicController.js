@@ -24,6 +24,7 @@ import {
 } from 'vs_utils';
 
 import StackController from './StackController';
+import { RotateXYZAnimation } from './Animation';
 
 /**
  *  The vs.fx.CubicController class <br />
