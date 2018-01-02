@@ -24,6 +24,8 @@
     "build:data": "rollup -c ./rollup.config/data.js",
     "build:av": "rollup -c ./rollup.config/av.js",
     "build:fx": "rollup -c ./rollup.config/fx.js",
+    "build:ui": "rollup -c ./rollup.config/ui.js",
+    "build:all": "npm run build:core && npm run build:data && npm run build:av && npm run build:fx && npm run build:ui",
     "build:iief:min": "uglifyjs --compress --mangle -o dist/js/vs_core.min.js -- dist/js/vs_core.js"
   },
   "devDependencies": {
@@ -41,12 +43,13 @@
     "less-plugin-autoprefix": "^1.5.1",
     "less-plugin-clean-css": "^1.5.1",
     "rollup": "^0.53.1",
+    "rollup-plugin-html": "^0.2.1",
     "uglify-es": "^3.3.2"
   },
   "dependencies": {
     "vs_gesture": "https://github.com/dthevenin/Gesture.git",
     "vs_transform": "https://github.com/dthevenin/Transform.git",
-    "vs_util": "https://github.com/dthevenin/Util.git"
+    "vs_utils": "https://github.com/dthevenin/Util.git"
   },
   "clean": {
     "options": {
