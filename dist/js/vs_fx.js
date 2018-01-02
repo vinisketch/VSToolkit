@@ -2,7 +2,7 @@ var vs_fx = (function (exports,vs_utils,vs_core,vs_gesture,vs_ui) {
 'use strict';
 
 var vs_core__default = 'default' in vs_core ? vs_core['default'] : vs_core;
-vs_ui = vs_ui && vs_ui.hasOwnProperty('default') ? vs_ui['default'] : vs_ui;
+var vs_ui__default = 'default' in vs_ui ? vs_ui['default'] : vs_ui;
 
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
@@ -1091,7 +1091,7 @@ Animation$1.EASE_IN_OUT = 'ease-in-out';
  * @param {number} y The translation value along the Y axis
  * @param {number} z The translation value along the Z axis if 3d css transform is possible
 */
-TranslateAnimation = function (x, y, z)
+var TranslateAnimation$1 = function (x, y, z)
 {
   this.parent = Animation$1;
   if (!arguments.length)
@@ -1109,10 +1109,10 @@ TranslateAnimation = function (x, y, z)
     if (vs_utils.isNumber (y)) { this.y = y; }
     if (vs_utils.isNumber (z)) { this.z = z; }
   }
-  this.constructor = TranslateAnimation;
+  this.constructor = TranslateAnimation$1;
 };
 
-TranslateAnimation.prototype = {
+TranslateAnimation$1.prototype = {
 
   /**
    * The translation value along the X axis
@@ -1155,7 +1155,7 @@ TranslateAnimation.prototype = {
     obj.z = this.z;    
   }
 };
-vs_utils.extendClass (TranslateAnimation, Animation$1);
+vs_utils.extendClass (TranslateAnimation$1, Animation$1);
 
 /**
  *  @class
@@ -1180,7 +1180,7 @@ vs_utils.extendClass (TranslateAnimation, Animation$1);
  *
  * @param {number} deg The rotation value along the Z axis
 */
-RotateAnimation = function (deg)
+var RotateAnimation = function (deg)
 {
   this.parent = Animation$1;
   if (!arguments.length)
@@ -1244,7 +1244,7 @@ vs_utils.extendClass (RotateAnimation, Animation$1);
  * @param {number} degY The rotation value along the Y axis
  * @param {number} degZ The rotation value along the Z axis
 */
-RotateXYZAnimation = function (degX, degY, degZ)
+var RotateXYZAnimation = function (degX, degY, degZ)
 {
   this.parent = Animation$1;
   if (!arguments.length)
@@ -1331,7 +1331,7 @@ vs_utils.extendClass (RotateXYZAnimation, Animation$1);
  * @param {number} sy The scale value along the Y axis
  * @param {number} sz The scale value along the Z axis
 */
-ScaleAnimation = function (sx, sy, sz)
+var ScaleAnimation = function (sx, sy, sz)
 {
   this.parent = Animation$1;
   if (!arguments.length)
@@ -1429,7 +1429,7 @@ vs_utils.extendClass (ScaleAnimation, Animation$1);
  * @param {number} x The scale value along the X axis
  * @param {number} y The scale value along the Y axis
 */
-SkewAnimation = function (ax, ay)
+var SkewAnimation = function (ax, ay)
 {
   this.parent = Animation$1;
   if (!arguments.length)
@@ -1509,7 +1509,7 @@ vs_utils.extendClass (SkewAnimation, Animation$1);
  *
  * @param {number} value The opacity value
 */
-OpacityAnimation = function (value)
+var OpacityAnimation = function (value)
 {
   this.parent = Animation$1;
   if (!arguments.length)
@@ -2550,17 +2550,17 @@ vs_utils.defineClassProperties (Controller$1, {
  * @param {String} extension The hole into the vs.fx.View will be inserted. 
  *     ['children' by default]
  */
-function StackController$1 (owner)
+function StackController (owner)
 {
   this.parent = Controller$1;
   this.parent (owner);
-  this.constructor = StackController$1;
+  this.constructor = StackController;
   
   if (!arguments.length) return;
 
-  this._fsm.addInput (StackController$1.NEXT);
-  this._fsm.addInput (StackController$1.PRED);
-  this._fsm.addInput (StackController$1.FIRST);
+  this._fsm.addInput (StackController.NEXT);
+  this._fsm.addInput (StackController.PRED);
+  this._fsm.addInput (StackController.FIRST);
 
   this._states_array = new Array ();
 }
@@ -2569,37 +2569,37 @@ function StackController$1 (owner)
  * The duration of the animation between two views
  * @name vs.fx.StackController.ANIMATION_DURATION
  */
-StackController$1.ANIMATION_DURATION = 350;
+StackController.ANIMATION_DURATION = 350;
 
 /**
  * @private
  * @name vs.fx.StackController.NEXT
  * @const
  */
-StackController$1.NEXT = 'next';
+StackController.NEXT = 'next';
 
 /**
  * @private
  * @name vs.fx.StackController.PRED
  * @const
  */
-StackController$1.PRED = 'pred';
+StackController.PRED = 'pred';
 
 /**
  * @private
  * @name vs.fx.StackController.FIRST
  * @const
  */
-StackController$1.FIRST = 'first';
+StackController.FIRST = 'first';
 
 /**
  * @private
  * @name vs.fx.StackController.LAST
  * @const
  */
-StackController$1.LAST = 'last';
+StackController.LAST = 'last';
 
-StackController$1.prototype = {
+StackController.prototype = {
 
 /********************************************************************
                   protected members declarations
@@ -2627,7 +2627,7 @@ StackController$1.prototype = {
    * @protected
    * @function
    */
-  _animation_duration: StackController$1.ANIMATION_DURATION, 
+  _animation_duration: StackController.ANIMATION_DURATION, 
   
   /**
    * @protected
@@ -2732,10 +2732,10 @@ StackController$1.prototype = {
       return state_id;
     }
     
-    this.addTransition (this._last_comp_id, state_id, StackController$1.NEXT);
-    this.addTransition (state_id, this._last_comp_id, StackController$1.PRED);
+    this.addTransition (this._last_comp_id, state_id, StackController.NEXT);
+    this.addTransition (state_id, this._last_comp_id, StackController.PRED);
     this.addTransition 
-      (state_id, this._initial_component, StackController$1.FIRST);
+      (state_id, this._initial_component, StackController.FIRST);
  
     this._last_state = state_id;
     
@@ -2803,9 +2803,9 @@ StackController$1.prototype = {
     var pos = this._states_array.findItem (state_id);
     if (pos === -1) { return; }
     
-    this._fsm.removeTransitionTo (state_id, StackController$1.NEXT);
-    this._fsm.removeTransitionFrom (state_id, StackController$1.PRED);
-    this._fsm.removeTransitionFrom (state_id, StackController$1.FIRST);
+    this._fsm.removeTransitionTo (state_id, StackController.NEXT);
+    this._fsm.removeTransitionFrom (state_id, StackController.PRED);
+    this._fsm.removeTransitionFrom (state_id, StackController.FIRST);
 
     this._states_array.remove (pos);
 
@@ -2822,9 +2822,9 @@ StackController$1.prototype = {
         if (state_id_temp === state_id) { continue; }
         if (state_id_temp === this._initial_component) { continue; }
 
-        this._fsm.removeTransitionFrom (state_id_temp, StackController$1.FIRST);
+        this._fsm.removeTransitionFrom (state_id_temp, StackController.FIRST);
         this.addTransition
-          (state_id_temp, this._initial_component, StackController$1.FIRST);
+          (state_id_temp, this._initial_component, StackController.FIRST);
       }
     }
     if (this.__nb_panels === 0)
@@ -2913,10 +2913,10 @@ StackController$1.prototype = {
     {
       while (current_pos < pos - 1)
       {
-        this._fsm.fsmNotify (StackController$1.NEXT, null, true);
+        this._fsm.fsmNotify (StackController.NEXT, null, true);
         current_pos ++;
       }
-      this._fsm.fsmNotify (StackController$1.NEXT, null, true);
+      this._fsm.fsmNotify (StackController.NEXT, null, true);
       
       var state_to = this._fsm._list_of_state [this._fsm._current_state];
       this._stackAnimateComponents (1, state_from.comp, state_to.comp, clb, instant);
@@ -2925,10 +2925,10 @@ StackController$1.prototype = {
     {
       while (pos + 1 < current_pos )
       {
-        this._fsm.fsmNotify (StackController$1.PRED, null, true);
+        this._fsm.fsmNotify (StackController.PRED, null, true);
         current_pos --;
       }
-      this._fsm.fsmNotify (StackController$1.PRED, null, true);
+      this._fsm.fsmNotify (StackController.PRED, null, true);
 
       var state_to = this._fsm._list_of_state [this._fsm._current_state];
       this._stackAnimateComponents (-1, state_from.comp, state_to.comp, clb, instant);
@@ -2963,7 +2963,7 @@ StackController$1.prototype = {
   goToNextView : function (clb, instant)
   {
     var state_from = this._fsm._list_of_state [this._fsm._current_state],
-      r = this._fsm.fsmNotify (StackController$1.NEXT, null, true),
+      r = this._fsm.fsmNotify (StackController.NEXT, null, true),
       state_to = this._fsm._list_of_state [this._fsm._current_state];
 
     if (r) this._stackAnimateComponents (1, state_from.comp, state_to.comp, clb, instant);
@@ -2984,7 +2984,7 @@ StackController$1.prototype = {
   goToPreviousView : function (clb, instant)
   {
     var state_from = this._fsm._list_of_state [this._fsm._current_state],
-      r = this._fsm.fsmNotify (StackController$1.PRED, null, true),
+      r = this._fsm.fsmNotify (StackController.PRED, null, true),
       state_to = this._fsm._list_of_state [this._fsm._current_state];
 
     if (r) this._stackAnimateComponents (-1, state_from.comp, state_to.comp, clb, instant);
@@ -3005,7 +3005,7 @@ StackController$1.prototype = {
   goToFirstView : function (clb, instant, order)
   {
     var state_from = this._fsm._list_of_state [this._fsm._current_state],
-      r = this._fsm.fsmNotify (StackController$1.FIRST, null, true),
+      r = this._fsm.fsmNotify (StackController.FIRST, null, true),
       state_to = this._fsm._list_of_state [this._fsm._current_state];
 
     if (r) this._stackAnimateComponents (order?order:-1, state_from.comp, state_to.comp, clb, instant);
@@ -3030,7 +3030,7 @@ StackController$1.prototype = {
       state_from = this._fsm._list_of_state [this._fsm._current_state],
       r = this._fsm.goTo (
         this._last_state, null, {
-          on: StackController$1.LAST,
+          on: StackController.LAST,
           data: null
         }, instant),
       state_to = this._fsm._list_of_state [this._fsm._current_state];
@@ -3047,13 +3047,13 @@ StackController$1.prototype = {
   handleEvent : function (event)
   {}
 };
-vs_utils.extendClass (StackController$1, Controller$1);
+vs_utils.extendClass (StackController, Controller$1);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils.defineClassProperties (StackController$1, {
+vs_utils.defineClassProperties (StackController, {
 
   'viewSize': {
    /** 
@@ -3249,7 +3249,7 @@ vs_utils.defineClassProperties (StackController$1, {
  */
 var CardController = vs_core__default.createClass ({
 
-  parent: StackController$1,
+  parent: StackController,
 
   /********************************************************************
                     protected members declarations
@@ -3433,8 +3433,8 @@ var CardController = vs_core__default.createClass ({
       return state_id;
     }
     
-    this.addTransition (this._last_comp_id, state_id, StackController$1.NEXT);
-    this.addTransition (state_id, this._last_comp_id, StackController$1.PRED);
+    this.addTransition (this._last_comp_id, state_id, StackController.NEXT);
+    this.addTransition (state_id, this._last_comp_id, StackController.PRED);
    
     // create the second view 
     state = this._fsm._list_of_state [state_id];
@@ -3942,7 +3942,7 @@ CardController.BOTTOM_OUT = 3;
  */
 function CubicController (owner, extension)
 {
-  this.parent = StackController$1;
+  this.parent = StackController;
   this.parent (owner, extension);
   this.constructor = CubicController;
   
@@ -4027,7 +4027,7 @@ CubicController.prototype = {
       comp.position = [0, 0];
       comp.setStyle ('z-index', 1000 - index);
     }
-    return StackController$1.prototype.push.call
+    return StackController.prototype.push.call
       (this, comp, data, bindings);
   },
   
@@ -4213,7 +4213,7 @@ CubicController.prototype = {
     // manage output
     // TODO WARNING
         
-    StackController$1.prototype.goTo.call (this, state_id, output, event);
+    StackController.prototype.goTo.call (this, state_id, output, event);
     if (!state_id) { return; }
 
     this.owner.animationDuration = this._animation_duration;
@@ -4269,7 +4269,7 @@ CubicController.prototype = {
     if (index < this._states_array.length - 1)
     { initState.call (this, index + 1); }
      
-    if (event && event.on === StackController$1.NEXT && state_from)
+    if (event && event.on === StackController.NEXT && state_from)
     {
       if (this._orientation === CubicController.HORIZONTAL)
       {
@@ -4280,7 +4280,7 @@ CubicController.prototype = {
         CubicController._translate_animation.process (this.owner);
       }
     }
-    else if (event && event.on === StackController$1.PRED && state_to)
+    else if (event && event.on === StackController.PRED && state_to)
     {
       CubicController._translate_animation.x = 0;
       CubicController._translate_animation.y = 0;
@@ -4301,7 +4301,7 @@ CubicController.prototype = {
     }
   }
 };
-vs_utils.extendClass (CubicController, StackController$1);
+vs_utils.extendClass (CubicController, StackController);
 
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
@@ -4426,7 +4426,7 @@ vs_utils.extendClass (CubicController, StackController$1);
  */
 function NavigationController (owner, navBar, type)
 {
-  this.parent = Controller;
+  this.parent = Controller$1;
   this.parent (owner);
   this.constructor = NavigationController;
   
@@ -4515,7 +4515,7 @@ NavigationController.prototype = {
    */
   destructor: function ()
   {
-    Controller.prototype.destructor.call (this);
+    Controller$1.prototype.destructor.call (this);
   },
 
   /**
@@ -4524,7 +4524,7 @@ NavigationController.prototype = {
    */
   initComponent : function ()
   {
-    Controller.prototype.initComponent.call (this);
+    Controller$1.prototype.initComponent.call (this);
    
     var size = this._owner.size;
     
@@ -4598,7 +4598,7 @@ NavigationController.prototype = {
     if (!data) { data = {}; }
     
     var size, state_id =
-      Controller.prototype.push.call (this, comp, data, null, bindings);
+      Controller$1.prototype.push.call (this, comp, data, null, bindings);
     if (!state_id) { return; }
 
     var state = this._fsm._list_of_state [state_id];
@@ -4638,7 +4638,7 @@ NavigationController.prototype = {
       if (vs_utils.isString (comp))
       { comp = vs_core__default.VSObject._obs [comp]; }
       
-      if (!comp instanceof vs_ui.View)
+      if (!comp instanceof vs_ui__default.View)
       { continue; }
       
       components.push (comp);
@@ -4748,7 +4748,7 @@ NavigationController.prototype = {
   goTo : function (state_id, output, event, instant)
   {
     var ok = 
-      Controller.prototype.goTo.call (this, state_id, output, event, instant);
+      Controller$1.prototype.goTo.call (this, state_id, output, event, instant);
  
     if (ok && this.owner._nav_bar)
     {
@@ -4761,7 +4761,7 @@ NavigationController.prototype = {
    *  do nothing, will be managed by _stackAnimateComponents
    *  @protected
    */
-  _animateComponents : fx.Controller.prototype._animateComponents
+  _animateComponents : Controller$1.prototype._animateComponents
 };
 vs_utils.extendClass (NavigationController, StackController);
 
@@ -4938,7 +4938,7 @@ vs_utils.defineClassProperties (NavigationController, {
  */
 function OpacityController (owner, extension)
 {
-  this.parent = StackController$1;
+  this.parent = StackController;
   this.parent (owner, extension);
   this.constructor = OpacityController;
 
@@ -5001,7 +5001,7 @@ OpacityController.prototype = {
       comp.position = [0, 0];
       comp.setStyle ('z-index', 1000 - index);
     }
-    StackController$1.prototype.push.call (this, comp, data, bindings);
+    StackController.prototype.push.call (this, comp, data, bindings);
   },
   
 /*********************************************************
@@ -5026,7 +5026,7 @@ OpacityController.prototype = {
       state_from = this._list_of_state [this._current_state];
     // manage output
     // TODO WARNING
-    StackController$1.prototype.goTo.call (this, state_id, output, event);
+    StackController.prototype.goTo.call (this, state_id, output, event);
     if (!state_id) { return; }
 
 //    this.owner.animationDuration = this._animation_duration;
@@ -5075,12 +5075,12 @@ OpacityController.prototype = {
     if (index < this._states_array.length - 1)
     { initState.call (this, index + 1); }
      
-    if (event && event.on === StackController$1.NEXT && state_from)
+    if (event && event.on === StackController.NEXT && state_from)
     {
       OpacityController._opacity_animation.value = 0;
       OpacityController._opacity_animation.process (state_from.comp);
     }
-    else if (event && event.on === StackController$1.PRED && state_to)
+    else if (event && event.on === StackController.PRED && state_to)
     {
       OpacityController._opacity_animation.value = 1;
       OpacityController._opacity_animation.process (state_to.comp);
@@ -5100,7 +5100,7 @@ OpacityController.prototype = {
     }
   }
 };
-vs_utils.extendClass (OpacityController, StackController$1);
+vs_utils.extendClass (OpacityController, StackController);
 
 /********************************************************************
                   Define class properties
@@ -5200,7 +5200,7 @@ vs_utils.defineClassProperty (OpacityController, "animationDuration", {
  */
 var SlideController = vs_core__default.createClass ({
 
-  parent: StackController$1,
+  parent: StackController,
   
   /********************************************************************
                     protected members declarations
@@ -5493,8 +5493,8 @@ var SlideController = vs_core__default.createClass ({
       return state_id;
     }
     
-    this.addTransition (this._last_comp_id, state_id, StackController$1.NEXT);
-    this.addTransition (state_id, this._last_comp_id, StackController$1.PRED);
+    this.addTransition (this._last_comp_id, state_id, StackController.NEXT);
+    this.addTransition (state_id, this._last_comp_id, StackController.PRED);
     
     // create the second view 
     state = this._fsm._list_of_state [state_id];
@@ -5665,7 +5665,7 @@ var SlideController = vs_core__default.createClass ({
    */
   refresh: function ()
   {
-    StackController$1.prototype.refresh.call (this);
+    StackController.prototype.refresh.call (this);
     this._updateViewSize ();
   },
   
@@ -5854,7 +5854,7 @@ SlideController.PIXEL = 1;
  */
 var SwipeController = vs_core__default.createClass ({
 
-  parent: StackController$1,
+  parent: StackController,
   
   /********************************************************************
                     protected members declarations
@@ -6124,10 +6124,10 @@ var SwipeController = vs_core__default.createClass ({
       return state_id;
     }
     
-    this.addTransition (this._last_comp_id, state_id, StackController$1.NEXT);
-    this.addTransition (state_id, this._last_comp_id, StackController$1.PRED);
+    this.addTransition (this._last_comp_id, state_id, StackController.NEXT);
+    this.addTransition (state_id, this._last_comp_id, StackController.PRED);
     this.addTransition 
-      (state_id, this._initial_component, StackController$1.FIRST);
+      (state_id, this._initial_component, StackController.FIRST);
 
     this._last_state = state_id;
     
@@ -6239,7 +6239,7 @@ var SwipeController = vs_core__default.createClass ({
     
     if (this.__delta > 50)
     {
-      previous_state = this._fsm.getAccessibleStateOn (StackController$1.PRED);
+      previous_state = this._fsm.getAccessibleStateOn (StackController.PRED);
       if (!previous_state && this._is_circular)
         t_ok = this.goToLastView (null, null, -1);
       else t_ok = this.goToPreviousView ();
@@ -6248,7 +6248,7 @@ var SwipeController = vs_core__default.createClass ({
     }
     else if (this.__delta < -50)
     {
-      next_state = this._fsm.getAccessibleStateOn (StackController$1.NEXT);
+      next_state = this._fsm.getAccessibleStateOn (StackController.NEXT);
       if (!next_state && this._is_circular)
         t_ok = this.goToFirstView (null, null, 1);
       else t_ok = this.goToNextView ();
@@ -6266,7 +6266,7 @@ var SwipeController = vs_core__default.createClass ({
    */
   refresh: function ()
   {
-    StackController$1.prototype.refresh.call (this);
+    StackController.prototype.refresh.call (this);
     this._updateViewSize ();
   },
   
@@ -6317,7 +6317,7 @@ var SwipeController = vs_core__default.createClass ({
     runAnimation ();
   }
 });
-vs_utils.extend (SwipeController.prototype, ui.RecognizerManager);
+vs_utils.extend (SwipeController.prototype, vs_ui.RecognizerManager);
 
 /**
  * The duration of the animation between two views
@@ -6350,8 +6350,8 @@ SwipeController.VERTICAL = 1;
  */
 SwipeController.PIXEL = 1;
 
-/**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
+/** @license
+  Copyright (C) 2009-2018. David Thevenin, ViniSketch SARL (c), and 
   contributors. All rights reserved
   
   This program is free software: you can redistribute it and/or modify
@@ -6367,7 +6367,6 @@ SwipeController.PIXEL = 1;
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-
 /********************************************************************
                    
 *********************************************************************/
@@ -6542,7 +6541,7 @@ exports.TRANSFORM = TRANSFORM$1;
 exports.KEY_FRAMES = KEY_FRAMES$1;
 exports.Animation = Animation$1;
 exports.cancelAnimation = cancelAnimation;
-exports.TranslateAnimation = TranslateAnimation;
+exports.TranslateAnimation = TranslateAnimation$1;
 exports.RotateAnimation = RotateAnimation;
 exports.RotateXYZAnimation = RotateXYZAnimation;
 exports.ScaleAnimation = ScaleAnimation;
@@ -6554,7 +6553,7 @@ exports.CubicController = CubicController;
 exports.NavigationController = NavigationController;
 exports.OpacityController = OpacityController;
 exports.SlideController = SlideController;
-exports.StackController = StackController$1;
+exports.StackController = StackController;
 exports.SwipeController = SwipeController;
 
 return exports;
