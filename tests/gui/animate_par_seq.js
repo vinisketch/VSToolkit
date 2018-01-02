@@ -1,6 +1,6 @@
 function launchTest (test_view)
 {
-  var item1 = new vs.ui.TextLabel ({
+  var item1 = new vs_ui.TextLabel ({
     id: 'item1',
     text: 1,
     position:[50, 50],
@@ -12,7 +12,7 @@ function launchTest (test_view)
   item1.setStyle ('text-align', 'center');
   item1.setStyle ('-webkit-transform-origin', '50% 50%');
 
-  var item2 = new vs.ui.TextLabel ({
+  var item2 = new vs_ui.TextLabel ({
     id: 'item2',
     text: 2,
     position:[50, 300],

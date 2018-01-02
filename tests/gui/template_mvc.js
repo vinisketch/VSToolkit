@@ -23,7 +23,7 @@ var Contact = vs.core.createClass ({
 
 function launchTest (test_view)
 {
-  var tmp = new vs.ui.Template (contact_tmp_str);
+  var tmp = new vs_ui.Template (contact_tmp_str);
   var view = tmp.compileView ();
     
   test_view.appendChild (view.view);

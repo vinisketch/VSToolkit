@@ -1,35 +1,35 @@
 function launchTest (test_view)
 {
-  var view0 = new vs.ui.View ({
+  var view0 = new vs_ui.View ({
     position:[00, 00],
     size:[400, 500],
-    layout: vs.ui.View.ABSOLUTE_LAYOUT
+    layout: vs_ui.View.ABSOLUTE_LAYOUT
     }).init ();
   
   test_view.appendChild (view0.view);
 
-  var view1 = new vs.ui.View ({
+  var view1 = new vs_ui.View ({
     position:[20, 10],
     size:[100, 100],
-    layout: vs.ui.View.ABSOLUTE_LAYOUT
+    layout: vs_ui.View.ABSOLUTE_LAYOUT
     }).init ();
   view1.setStyle ('background-color', 'red');
   
   view0.add (view1);
 
-  var view2 = new vs.ui.View ({
+  var view2 = new vs_ui.View ({
     position:[20, 130],
     size:[100, 100],
-    layout: vs.ui.View.ABSOLUTE_LAYOUT
+    layout: vs_ui.View.ABSOLUTE_LAYOUT
     }).init ();
   view2.setStyle ('background-color', 'blue');
   
   view0.add (view2);
   
-  var view3 = new vs.ui.View ({
+  var view3 = new vs_ui.View ({
     position:[20, 250],
     size:[100, 100],
-    layout: vs.ui.View.ABSOLUTE_LAYOUT
+    layout: vs_ui.View.ABSOLUTE_LAYOUT
     }).init ();
   view3.setStyle ('background-color', 'green');
   

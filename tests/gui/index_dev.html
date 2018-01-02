@@ -2,20 +2,21 @@
 <head>
     <link rel="stylesheet" type="text/css" href="../../lib_debug/css/vs_ui.css">
     <link rel="stylesheet" type="text/css" href="../../lib_debug/css/vs_ui_ios.css">
-    <script type="text/javascript" src="../../lib_debug/js/vs_util.js"></script>
-    <script type="text/javascript" src="../../lib_debug/js/vs_core.js"></script>
-    <script type="text/javascript" src="../../lib_debug/js/vs_data.js"></script>
-    <script type="text/javascript" src="../../lib_debug/js/vs_ui.js"></script>
-    <script type="text/javascript" src="../../lib_debug/js/vs_fx.js"></script>
-    <script type="text/javascript" src="../../lib_debug/js/vs_ext_fx.js"></script>
+    <script type="text/javascript" src="../../node_modules/vs_utils/dist/vs_utils.js"></script>
+    <script type="text/javascript" src="../../node_modules/vs_gesture/dist/vs_gesture.js"></script>
+    <script type="text/javascript" src="../../dist/js/vs_core.js"></script>
+    <script type="text/javascript" src="../../dist/js/vs_data.js"></script>
+    <script type="text/javascript" src="../../dist/js/vs_ui.js"></script>
+    <script type="text/javascript" src="../../dist/js/vs_fx.js"></script>
+    <!-- <script type="text/javascript" src="../../dist/js/vs_ext_fx.js"></script> -->
     <script type="text/javascript" src="slider.js"></script>
     <link rel="stylesheet" type="text/css" href="css/template_mvc.css">
    
     <script>
       function start () {
-        var app = new vs.ui.Application ({
+        var app = new vs_ui.Application ({
           id: 'my_app',
-          layout: vs.ui.View.ABSOLUTE_LAYOUT
+          layout: vs_ui.View.ABSOLUTE_LAYOUT
         }).init ();
         
         launchTest (app.view);

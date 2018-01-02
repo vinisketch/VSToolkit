@@ -6,7 +6,7 @@ function testTemplateClone ()
   var r2 = "name:Salut2<span>,Gars2</span>"
   var r3 = "name:Salut3<span>,Gars2</span>"
 
-  var myTemplate = new vs.ui.Template (t)
+  var myTemplate = new vs_ui.Template (t)
   
   var view1 = myTemplate.compileView ();
   view1.lastname = "Salut1"
