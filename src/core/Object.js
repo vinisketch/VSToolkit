@@ -19,6 +19,8 @@
 import vs_utils from 'vs_utils';
 import { createId, createUniqueId } from './Core';
 
+import Model from './Model';
+
 /********************************************************************
 
 *********************************************************************/
@@ -226,7 +228,7 @@ VSObject.prototype =
     }
     else
     {
-      if (config) for (key in config)
+      if (config) for (var key in config)
       {
         if (key === 'id' || key === 'node' ||
             key === 'node_ref' || key === 'view')

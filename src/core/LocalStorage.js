@@ -20,6 +20,8 @@ import {
   isFunction, isString, extendClass, defineClassProperty
 } from 'vs_utils';
 
+import DataStorage from './DataStorage';
+
 /**
  *  @extends vs.core.DataStorage
  *  @class vs.core.LocalStorage 

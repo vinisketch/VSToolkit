@@ -22,6 +22,7 @@ import {
 } from 'vs_utils';
 
 import { createId } from './Core';
+import VSObject from './Object';
 
 // function Scheduler ()
 // {
@@ -59,7 +60,7 @@ import { createId } from './Core';
 */
 function Task (conf)
 {
-  this.parent = core.Object;
+  this.parent = VSObject;
   this.parent (conf);
   this.constructor = Task;
 };
@@ -132,7 +133,7 @@ Task.prototype = {
   destructor: function ()
   {
     this.stop ();
-    core.Object.prototype.destructor.call (this);
+    VSObject.prototype.destructor.call (this);
   },
   
   /**
@@ -140,12 +141,12 @@ Task.prototype = {
    * @function
    * @private
    *
-   * @param {vs.core.Object} obj The cloned object
+   * @param {vs.VSObject} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)
   {
-    core.Object.prototype.destructor._clone.call (this, obj, cloned_map);
+    VSObject.prototype.destructor._clone.call (this, obj, cloned_map);
     
     obj._state = this._state;
   },
@@ -180,7 +181,7 @@ Task.prototype = {
    */
   pause: function () {}
 };
-extendClass (Task, core.Object);
+extendClass (Task, VSObject);
 
 /********************************************************************
                   Define class properties
@@ -287,7 +288,7 @@ function Task_PAR (tasksAndParams)
  * @param list List of task to start parallel with an optional
  *  parameter
  */
-vs.par = function ()
+var par = function ()
 {
   if (arguments.length === 0) return;
 
@@ -601,7 +602,7 @@ function Task_SEQ (tasksAndParams)
  * @param list List of task to start sequentially with an optional
  *  parameter
  */
-vs.seq = function ()
+var seq = function ()
 {
   if (arguments.length === 0) return;
 
@@ -1009,6 +1010,7 @@ export {
   Task,
   Task_PAR,
   Task_SEQ,
-  TaskWait
+  TaskWait,
+  par, seq
 };
 

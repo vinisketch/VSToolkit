@@ -21,6 +21,9 @@ import {
   free, extendClass, defineClassProperties
 } from 'vs_utils';
 
+import AjaxJSONP from './AjaxJSONP';
+import DataStorage from './DataStorage';
+
 /**
  *  @extends vs.core.DataStorage
  *  @class vs.core.RestStorage

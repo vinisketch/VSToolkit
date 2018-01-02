@@ -198,5 +198,5 @@ KEYBOARD.SAVE = 258;
 /**
  * @private
  */
-core.KEYBOARD.bind = KEYBOARD_bind;
+KEYBOARD.bind = KEYBOARD_bind;
 export default KEYBOARD;

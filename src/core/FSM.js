@@ -17,7 +17,7 @@
  OTHER DEALINGS IN THE SOFTWARE.
 */
 
-import { extendClass, clone } from 'vs_utils';
+import { extendClass, defineClassProperty, clone } from 'vs_utils';
 import { createId } from './Core';
 
 /**

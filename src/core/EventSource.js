@@ -20,8 +20,11 @@ import {
   isString, isNumber, isFunction,
   extendClass, defineClassProperties, free,
 } from 'vs_utils';
-
 import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import VSObject from './Object';
+import { Handler } from './MainLoop';
+
 /**
  *  @class
  *  vs.core.EventSource is an  class that forms the basis of event and command
@@ -41,7 +44,7 @@ function EventSource (config)
 {
   this.parent = VSObject;
   this.parent (config);
-  this.constructor = core.EventSource;
+  this.constructor = EventSource;
 
   this.__bindings__ = {};
   this.__node_binds__ = {};

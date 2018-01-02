@@ -25,6 +25,8 @@ import {
   isFunction, isNumber, underscore, isString
 } from 'vs_utils';
 
+import VSObject from './Object';
+
 var _constructor_ = Object.prototype.constructor;
 
 /**
@@ -56,7 +58,7 @@ var _constructor_ = Object.prototype.constructor;
 function createClass (config)
 {
   var klass = null, __spec = {}, 
-    parent = vs.core.Object, properties = {};
+    parent = VSObject, properties = {};
 
   // Create the class
   klass = function ()
@@ -103,7 +105,7 @@ function createClass (config)
   if (parent.prototype) extendClass (klass, parent);
   
   // declare super methods
-  if (config) for (key in config)
+  if (config) for (var key in config)
   {
     if (!config.hasOwnProperty (key)) continue;
     var func = config [key];
@@ -125,21 +127,21 @@ function createClass (config)
  * @const
  * @type {number}
  */
-vs.core.Object.PROPERTY_IN = 1;
+VSObject.PROPERTY_IN = 1;
 
 /** 
  * @name vs.core.Object.PROPERTY_OUT
  * @const
  * @type {number}
  */
-vs.core.Object.PROPERTY_OUT = 2;
+VSObject.PROPERTY_OUT = 2;
 
 /** 
  * @name vs.core.Object.PROPERTY_IN_OUT
  * @const
  * @type {number}
  */
-vs.core.Object.PROPERTY_IN_OUT = 3;
+VSObject.PROPERTY_IN_OUT = 3;
 
 /** 
  * Regular expression used for parsing property export path.
@@ -164,7 +166,7 @@ function _setProperties (klass, properties)
     {
       export_value = value; desc = {};
       _prop_name = '_' + underscore (prop_name);
-      if (export_value & vs.core.Object.PROPERTY_IN)
+      if (export_value & VSObject.PROPERTY_IN)
       {
         desc.set = (function (prop_name, _prop_name)
         {
@@ -175,7 +177,7 @@ function _setProperties (klass, properties)
           };
         }(prop_name, _prop_name));
       }
-      if (export_value & vs.core.Object.PROPERTY_OUT)
+      if (export_value & VSObject.PROPERTY_OUT)
       {
         desc.get = (function (_prop_name)
         {

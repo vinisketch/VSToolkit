@@ -18,6 +18,7 @@
 
 import { isString, importFile } from 'vs_utils';
 import EventSource from './EventSource';
+import createClass from './Class';
 
 /**
  *  The AjaxJSONP class
@@ -45,7 +46,7 @@ import EventSource from './EventSource';
  *
  * @param {Object} config the configuration structure
  */
-var AjaxJSONP = core.createClass ({
+var AjaxJSONP = createClass ({
 
   parent: EventSource,
 

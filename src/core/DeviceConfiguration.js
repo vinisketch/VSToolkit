@@ -19,6 +19,7 @@
 
 import { isString, setActiveStyleSheet } from 'vs_utils';
 
+import VSObject from './Object';
 
 /**
  * This represents the mobile device, and provides properties for inspecting
@@ -614,9 +615,9 @@ DeviceConfiguration.prototype = {
       width = t;
     }
   
-    for (id in core.Object._obs)
+    for (id in VSObject._obs)
     {
-      comp = core.Object._obs [id];
+      comp = VSObject._obs [id];
       if (!comp) { continue; }
       
       if (comp._orientationWillChange)
@@ -651,9 +652,9 @@ DeviceConfiguration.prototype = {
     var orientationDidChangeFct = function ()
     {
       var id, comp;
-      for (id in core.Object._obs)
+      for (id in VSObject._obs)
       {
-        comp = core.Object._obs [id];
+        comp = VSObject._obs [id];
         if (!comp || !comp.orientationDidChange) { continue; }
       
         comp.orientationDidChange (orientation);

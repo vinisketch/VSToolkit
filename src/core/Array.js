@@ -22,6 +22,7 @@ import {
   isArray, isUndefined, isString, isNumber, isFunction,
   extendClass, defineClassProperties, free
 } from 'vs_utils';
+
 import Model from './Model';
 
 /**
@@ -100,7 +101,7 @@ VSArray.prototype = {
    */
   _instanciateModel : function (obj)
   {
-    if (obj instanceof vs.core.Model) return obj;
+    if (obj instanceof Model) return obj;
     if (obj instanceof Object && this._model_class)
     {
       try

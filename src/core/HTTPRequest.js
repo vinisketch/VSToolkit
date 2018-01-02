@@ -17,8 +17,10 @@
 */
 
 import {
-  isString, extendClass, defineClassProperty
+  isString, extendClass, defineClassProperty, defineClassProperties
 } from 'vs_utils';
+
+import EventSource from './EventSource';
 
 /**
  *  The HTTPRequest class
@@ -49,9 +51,9 @@ import {
  *
  * @param {Object} config the configuration structure
  */
-HTTPRequest = function (config)
+var HTTPRequest = function (config)
 {
-  this.parent = core.EventSource;
+  this.parent = EventSource;
   this.parent (config);
   this.constructor = HTTPRequest;
 
@@ -241,7 +243,7 @@ HTTPRequest.prototype = {
     }
   }
 };
-extendClass (HTTPRequest, core.EventSource);
+extendClass (HTTPRequest, EventSource);
 
 /********************************************************************
                   Define class properties

@@ -16,10 +16,12 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_gesture from 'vs_gesture';
+
 /**
  * @name vs.core.FORCE_EVENT_PROPAGATION_DELAY
  */
-core.FORCE_EVENT_PROPAGATION_DELAY = false;
+var FORCE_EVENT_PROPAGATION_DELAY = false;
 
 var EVENT_SUPPORT_GESTURE = false;
 var hasMSPointer = window.navigator.msPointerEnabled;
@@ -29,56 +31,56 @@ var hasMSPointer = window.navigator.msPointerEnabled;
  * @name vs.core.POINTER_START
  * @type {String}
  * @const
- */ 
-core.POINTER_START = vs.POINTER_START;
+ */
+var POINTER_START = vs_gesture.POINTER_START;
 
 /** 
  * Move pointer event (mousemove, touchmove, )
  * @name vs.core.POINTER_MOVE 
  * @type {String}
  * @const
- */ 
-core.POINTER_MOVE = vs.POINTER_MOVE;
+ */
+var POINTER_MOVE = vs_gesture.POINTER_MOVE;
 
 /** 
  * End pointer event (mouseup, touchend, )
  * @name vs.core.POINTER_END 
  * @type {String}
  * @const
- */ 
-core.POINTER_END = vs.POINTER_END;
+ */
+var POINTER_END = vs_gesture.POINTER_END;
 
 /** 
  * Cancel pointer event (mouseup, touchcancel, )
  * @name vs.core.POINTER_CANCEL 
  * @type {String}
  * @const
- */ 
-core.POINTER_CANCEL = vs.POINTER_CANCEL;
+ */
+var POINTER_CANCEL = vs_gesture.POINTER_CANCEL;
 
 /** 
  * Start gesture event
  * @name vs.core.GESTURE_START
  * @type {String}
  * @const
- */ 
-core.GESTURE_START = vs.GESTURE_START;
+ */
+var GESTURE_START = vs_gesture.GESTURE_START;
 
 /** 
  * Change gesture event
  * @name vs.core.GESTURE_MOVE 
  * @type {String}
  * @const
- */ 
-core.GESTURE_CHANGE = vs.GESTURE_CHANGE;
+ */
+var GESTURE_CHANGE = vs_gesture.GESTURE_CHANGE;
 
 /** 
  * End gesture event
  * @name vs.core.GESTURE_END 
  * @type {String}
  * @const
- */ 
-core.GESTURE_END = vs.GESTURE_END;
+ */
+var GESTURE_END = vs_gesture.GESTURE_END;
 
 /**
  *  @class
@@ -165,5 +167,13 @@ export default Event;
 
 /** touch event messages */
 export {
-  EVENT_SUPPORT_GESTURE
+  EVENT_SUPPORT_GESTURE,
+  FORCE_EVENT_PROPAGATION_DELAY,
+  POINTER_START,
+  POINTER_MOVE,
+  POINTER_END,
+  POINTER_CANCEL,
+  GESTURE_START,
+  GESTURE_CHANGE,
+  GESTURE_END
 };

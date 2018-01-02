@@ -416,5 +416,6 @@ function scheduleAction (func, delay) {
 /** @private */
 export {
   scheduleAction,
+  Handler,
   ON_NEXT_FRAME
 };

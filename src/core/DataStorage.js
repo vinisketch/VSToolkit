@@ -128,7 +128,7 @@ DataStorage.prototype = {
    *              
    ****************************************************************/
 };
-extendClass (DataStorage, core.EventSource);
+extendClass (DataStorage, EventSource);
 
 /********************************************************************
                       Export
