@@ -1,4 +1,5 @@
 import html from 'rollup-plugin-html';
+import visualizer from 'rollup-plugin-visualizer';
 
 export default {
   external: ['vs_utils', 'vs_core', 'vs_gesture'],
@@ -18,6 +19,9 @@ export default {
   plugins: [
     html({
       include: 'src/ui/**/*.html'
-    })
+    }),
+    // visualizer({
+    //   filename: './stats/ui.html'
+    // })
   ]
 };
