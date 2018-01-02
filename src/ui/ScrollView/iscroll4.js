@@ -20,7 +20,7 @@ var m = Math,
 	isIDevice = (/iphone|ipad/gi).test(navigator.appVersion),
 	isTouchPad = (/hp-tablet/gi).test(navigator.appVersion),
 
-  has3d = vs.SUPPORT_3D_TRANSFORM,
+  has3d = vs.vs_utils.SUPPORT_3D_TRANSFORM,
   hasTouch = 'ontouchstart' in window,
   hasTransform = vs.SUPPORT_CSS_TRANSFORM,
   hasTransitionEnd = hasTransform,
@@ -818,12 +818,12 @@ iScroll.prototype = {
 
 	_bind: function (type, el, bubble) {
 //		(el || this.scroller).addEventListener(type, this, !!bubble);
-		vs.addPointerListener ((el || this.scroller), type, this, !!bubble);
+		addPointerListener ((el || this.scroller), type, this, !!bubble);
 	},
 
 	_unbind: function (type, el, bubble) {
 //		(el || this.scroller).removeEventListener(type, this, !!bubble);
-		vs.removePointerListener ((el || this.scroller), type, this, !!bubble);
+		removePointerListener ((el || this.scroller), type, this, !!bubble);
 	},
 
 

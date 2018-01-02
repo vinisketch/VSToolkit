@@ -16,6 +16,9 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import vs_utils from 'vs_utils';
+import PointerRecognizer from './PointerRecognizer';
 
 /**
  *  The vs.ui.DragRecognizer class
@@ -77,7 +80,7 @@ DragRecognizer.prototype = {
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
-    this.addPointerListener (this.obj.view, core.POINTER_START, this.obj);
+    this.addPointerListener (this.obj.view, vs_core.POINTER_START, this.obj);
     this.reset ();
   },
 
@@ -87,7 +90,7 @@ DragRecognizer.prototype = {
    * @protected
    */
   uninit : function () {
-    this.removePointerListener (this.obj.view, core.POINTER_START, this.obj);
+    this.removePointerListener (this.obj.view, vs_core.POINTER_START, this.obj);
   },
 
   /**
@@ -107,8 +110,8 @@ DragRecognizer.prototype = {
     this.__pointer_id = pointer.identifier;
     this.__is_dragged = true;
 
-    this.addPointerListener (document, core.POINTER_END, this.obj);
-    this.addPointerListener (document, core.POINTER_MOVE, this.obj);
+    this.addPointerListener (document, vs_core.POINTER_END, this.obj);
+    this.addPointerListener (document, vs_core.POINTER_MOVE, this.obj);
   
     try {
       if (this.delegate && this.delegate.didDragStart)
@@ -169,8 +172,8 @@ DragRecognizer.prototype = {
     this.__start_y = undefined;
     this.__pointer_id = undefined;
   
-    this.removePointerListener (document, core.POINTER_END, this.obj);
-    this.removePointerListener (document, core.POINTER_MOVE, this.obj);
+    this.removePointerListener (document, vs_core.POINTER_END, this.obj);
+    this.removePointerListener (document, vs_core.POINTER_MOVE, this.obj);
 
     try {
       if (this.delegate && this.delegate.didDragEnd)
@@ -190,10 +193,10 @@ DragRecognizer.prototype = {
     return this.pointerEnd (e);
   }
 };
-util.extendClass (DragRecognizer, PointerRecognizer);
+vs_utils.extendClass (DragRecognizer, PointerRecognizer);
 
 /********************************************************************
                       Export
 *********************************************************************/
 /** @private */
-ui.DragRecognizer = DragRecognizer;
+export default DragRecognizer;

@@ -16,6 +16,10 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import html_template from './SplitView.html';
 
 /**
  *  The vs.ui.SplitView class
@@ -65,9 +69,9 @@
  *
  * @param {Object} config the configuration structure [mandatory]
 */
-var SplitView = vs.core.createClass ({
+var SplitView = vs_core.createClass ({
 
-  parent: vs.ui.View,
+  parent: View,
 
   properties: {
     "delegate": {
@@ -194,6 +198,8 @@ var SplitView = vs.core.createClass ({
   /*****************************************************************
    *                Private members
    ****************************************************************/
+
+  html_template: html_template,
    
    /**
    * @protected
@@ -342,14 +348,14 @@ var SplitView = vs.core.createClass ({
         {
           child = a [0];
           this.remove (child);
-          if (should_free) util.free (child);
+          if (should_free) vs_utils.free (child);
           else children.push (child);
         }
       }
       else
       {
         this.remove (a);
-        if (should_free) util.free (a);
+        if (should_free) vs_utils.free (a);
         else children.push (a);
       }
       delete (this.__children [key]);
@@ -524,4 +530,4 @@ SplitView.TOP = 'top';
                       Export
 *********************************************************************/
 /** @private */
-ui.SplitView = SplitView;
+export default SplitView;

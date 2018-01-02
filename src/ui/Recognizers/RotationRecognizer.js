@@ -16,6 +16,9 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import vs_utils from 'vs_utils';
+import PointerRecognizer from './PointerRecognizer';
 
 /**
  *  The vs.ui.RotationRecognizer class
@@ -71,7 +74,7 @@ RotationRecognizer.prototype = {
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
-    this.addPointerListener (this.obj.view, core.GESTURE_START, this.obj);
+    this.addPointerListener (this.obj.view, vs_core.GESTURE_START, this.obj);
     this.reset ();
   },
 
@@ -81,7 +84,7 @@ RotationRecognizer.prototype = {
    * @protected
    */
   uninit : function () {
-    this.removePointerListener (this.obj.view, core.GESTURE_START, this.obj);
+    this.removePointerListener (this.obj.view, vs_core.GESTURE_START, this.obj);
   },
 
   /**
@@ -90,8 +93,8 @@ RotationRecognizer.prototype = {
    * @protected
    */
   gestureStart: function (e) {
-    this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
-    this.addPointerListener (document, core.GESTURE_END, this.obj);
+    this.addPointerListener (document, vs_core.GESTURE_CHANGE, this.obj);
+    this.addPointerListener (document, vs_core.GESTURE_END, this.obj);
 
     try {
       if (this.delegate && this.delegate.didRotationStart)
@@ -125,8 +128,8 @@ RotationRecognizer.prototype = {
    * @protected
    */
   gestureEnd: function (e) {
-    this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
-    this.removePointerListener (document, core.GESTURE_END, this.obj);
+    this.removePointerListener (document, vs_core.GESTURE_CHANGE, this.obj);
+    this.removePointerListener (document, vs_core.GESTURE_END, this.obj);
 
     try {
       if (this.delegate && this.delegate.didRotationEnd)
@@ -146,10 +149,10 @@ RotationRecognizer.prototype = {
     return this.pointerEnd (e);
   }
 };
-util.extendClass (RotationRecognizer, PointerRecognizer);
+vs_utils.extendClass (RotationRecognizer, PointerRecognizer);
 
 /********************************************************************
                       Export
 *********************************************************************/
 /** @private */
-ui.RotationRecognizer = RotationRecognizer;
+export default RotationRecognizer;

@@ -16,6 +16,13 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import View from '../View/View';
+import html_template from './TextArea.html';
+
 /**
  * The vs.ui.TextArea component defines a multi-line text input control.
  * A text area can hold an unlimited number of characters, and the text
@@ -42,6 +49,8 @@ function TextArea (config)
 }
 
 TextArea.prototype = {
+
+  html_template: html_template,
   
   /**
    * Translate value on x
@@ -90,7 +99,7 @@ TextArea.prototype = {
   {
     View.prototype.initComponent.call (this);
     
-    if (!util.isString (this._value)) {return;}
+    if (!vs_utils.isString (this._value)) {return;}
     
     this.view.value = this._value;
 
@@ -153,14 +162,14 @@ TextArea.prototype = {
       if (event.src === self.view)
       { return; }
       
-      vs.removePointerListener (document, core.POINTER_START, manageBlur, true);
+      removePointerListener (document, vs_core.POINTER_START, manageBlur, true);
       self.setBlur ();
     }
     
     switch (event.type)
     {
       case 'focus':
-        vs.addPointerListener (document, core.POINTER_START, manageBlur, true);
+        addPointerListener (document, vs_core.POINTER_START, manageBlur, true);
       break;
 
       case 'blur':
@@ -180,13 +189,13 @@ TextArea.prototype = {
     }
   }
 };
-util.extendClass (TextArea, View);
+vs_utils.extendClass (TextArea, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperty (TextArea, "value", {
+vs_utils.defineClassProperty (TextArea, "value", {
   /**
    * Set the text value
    * @param {string} v
@@ -194,8 +203,8 @@ util.defineClassProperty (TextArea, "value", {
   set : function (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (util.isNumber (v)) { v = '' + v; }
-    else if (!util.isString (v))
+    else if (vs_utils.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -220,4 +229,4 @@ util.defineClassProperty (TextArea, "value", {
                       Export
 *********************************************************************/
 /** @private */
-ui.TextArea = TextArea;
+export default TextArea;

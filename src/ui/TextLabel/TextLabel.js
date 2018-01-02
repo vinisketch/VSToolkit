@@ -16,6 +16,11 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import html_template from './TextLabel.html';
+
 /**
  * A ui.vs.TextLabel.
  *
@@ -34,6 +39,8 @@ function TextLabel (config)
 }
 
 TextLabel.prototype = {
+
+  html_template: html_template,
   
   /**
    * The text value
@@ -65,16 +72,16 @@ TextLabel.prototype = {
     
     if (!this._text) { return; }
     
-    util.setElementInnerText (this.view, this._text);
+    vs_utils.setElementInnerText (this.view, this._text);
   }
 };
-util.extendClass (TextLabel, View);
+vs_utils.extendClass (TextLabel, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperty (TextLabel, "text", {
+vs_utils.defineClassProperty (TextLabel, "text", {
 
   /**
    * Set the text value
@@ -84,8 +91,8 @@ util.defineClassProperty (TextLabel, "text", {
   set : function (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (util.isNumber (v)) { v = '' + v; }
-    else if (!util.isString (v))
+    else if (vs_utils.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -94,7 +101,7 @@ util.defineClassProperty (TextLabel, "text", {
     this._text = v;
     if (this.view)
     {
-      util.setElementInnerText (this.view, this._text);
+      vs_utils.setElementInnerText (this.view, this._text);
     }
   },
 
@@ -114,4 +121,4 @@ util.defineClassProperty (TextLabel, "text", {
                       Export
 *********************************************************************/
 /** @private */
-ui.TextLabel = TextLabel;
+export default TextLabel;

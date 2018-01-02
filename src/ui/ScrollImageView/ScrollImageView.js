@@ -16,6 +16,12 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import html_template from './ScrollImageView.html';
+import ScrollView from '../ScrollView/ScrollView';
+
 /**
  *  The vs.ui.ScrollImageView class
  *
@@ -89,6 +95,8 @@ ScrollImageView.STRETCH_UNIFORM = 2;
 ScrollImageView.STRETCH_UNIFORM_FILL = 3;
 
 ScrollImageView.prototype = {
+
+  html_template: html_template,
 
   /**
    * @protected
@@ -291,13 +299,13 @@ ScrollImageView.prototype = {
 //    this._applyInsideTransformation ();
   }
 };
-util.extendClass (ScrollImageView, ScrollView);
+vs_utils.extendClass (ScrollImageView, ScrollView);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (ScrollImageView, {
+vs_utils.defineClassProperties (ScrollImageView, {
 
 'src': {
   /**
@@ -307,7 +315,7 @@ util.defineClassProperties (ScrollImageView, {
    */
   set : function (v)
   {
-    if (!util.isString (v)) { return; }
+    if (!vs_utils.isString (v)) { return; }
     
     this._image_loaded = false;
     this._src = v;
@@ -339,7 +347,7 @@ util.defineClassProperties (ScrollImageView, {
    */
   set : function (v)
   {
-    if (!util.isNumber (v)) { return; }
+    if (!vs_utils.isNumber (v)) { return; }
     if (v !== ScrollImageView.STRETCH_FILL &&
         v !== ScrollImageView.STRETCH_NONE &&
         v !== ScrollImageView.STRETCH_UNIFORM && 
@@ -370,9 +378,9 @@ util.defineClassProperties (ScrollImageView, {
    */
   set : function (v)
   {
-    if (!util.isArray (v) && v.length !== 2)
+    if (!vs_utils.isArray (v) && v.length !== 2)
     {
-      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
     }
     
     // reapply stretch mode
@@ -403,4 +411,4 @@ util.defineClassProperties (ScrollImageView, {
                       Export
 *********************************************************************/
 /** @private */
-ui.ScrollImageView = ScrollImageView;
+export default ScrollImageView;

@@ -16,6 +16,12 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import html_template from './Switch.html';
+import Application from '../Application/Application';
+
 /**
  *  The vs.ui.Switch class
  *
@@ -54,6 +60,8 @@ function Switch (config)
 }
 
 Switch.prototype = {
+
+  html_template: html_template,
   
   /*****************************************************************
    *               private/protected members
@@ -171,20 +179,20 @@ Switch.prototype = {
       if (self._toggled) {
         self.addClassName ('on');
         if (self._mode === Application.CSS_PURE) {
-          util.setElementTransform (self.__switch_view,
+          vs_utils.setElementTransform (self.__switch_view,
             "translate3d(-15px,0,0)");
         }
         else if (self._mode !== Application.CSS_ANDROID) {
-          util.setElementTransform (self.__switch_view,
+          vs_utils.setElementTransform (self.__switch_view,
             "translate3d(" + self.__switch_translate + "px,0,0)");
         }
         else if (self._mode === Application.CSS_ANDROID) {
-          util.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
+          vs_utils.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
         }
       }
       else {
         self.removeClassName ('on');
-        util.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
+        vs_utils.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
       }
       self.outPropertyChange ();
     });
@@ -207,7 +215,7 @@ Switch.prototype = {
   refresh: function () {
     View.prototype.refresh.call (this);
     
-    this._mode =  vs.ui.View.getDeviceCSSCode ();
+    this._mode =  View.getDeviceCSSCode ();
     this._setToggle (this._toggled);
   },
 
@@ -256,7 +264,7 @@ Switch.prototype = {
       this.addPointerRecognizer (this.__tap_recognizer);
     }
 
-    this._mode =  vs.ui.View.getDeviceCSSCode ();
+    this._mode = View.getDeviceCSSCode ();
     
     if (this._text_on)
     {
@@ -285,8 +293,8 @@ Switch.prototype = {
   _initWidthSwitch : function ()
   {
     var border = 
-      parseInt (vs.util.getElementStyle (this.view, 'border-left-width'), 10) + 
-      parseInt (vs.util.getElementStyle (this.view, 'border-right-width'), 10);
+      parseInt (vs_utilsgetElementStyle (this.view, 'border-left-width'), 10) + 
+      parseInt (vs_utilsgetElementStyle (this.view, 'border-right-width'), 10);
       
 		this.__switch_translate =
 		  this.view.offsetWidth - 
@@ -351,13 +359,13 @@ Switch.prototype = {
     this.view.style.bottom = 'auto';
   }
 };
-util.extendClass (Switch, View);
+vs_utils.extendClass (Switch, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (Switch, {
+vs_utils.defineClassProperties (Switch, {
 
   'textOn': {
     /** 
@@ -375,15 +383,15 @@ util.defineClassProperties (Switch, {
       }
   
       if (v === null || typeof (v) === "undefined") { v = ''; }
-      else if (util.isNumber (v)) { v = '' + v; }
-      else if (!util.isString (v))
+      else if (vs_utils.isNumber (v)) { v = '' + v; }
+      else if (!vs_utils.isString (v))
       {
         if (!v.toString) { return; }
         v = v.toString ();
       }
   
       this._text_on = v;
-      util.setElementInnerText (this.__toggle_on_view, this._text_on);
+      vs_utils.setElementInnerText (this.__toggle_on_view, this._text_on);
     },
   
     /** 
@@ -411,15 +419,15 @@ util.defineClassProperties (Switch, {
       }
   
       if (v === null || typeof (v) === "undefined") { v = ''; }
-      else if (util.isNumber (v)) { v = '' + v; }
-      else if (!util.isString (v))
+      else if (vs_utils.isNumber (v)) { v = '' + v; }
+      else if (!vs_utils.isString (v))
       {
         if (!v.toString) { return; }
         v = v.toString ();
       }
   
       this._text_off = v;
-      util.setElementInnerText (this.__toggle_off_view, this._text_off);
+      vs_utils.setElementInnerText (this.__toggle_off_view, this._text_off);
     },
   
     /** 
@@ -459,4 +467,4 @@ util.defineClassProperties (Switch, {
                       Export
 *********************************************************************/
 /** @private */
-ui.Switch = Switch;
+export default Switch;

@@ -214,7 +214,7 @@ var _template_view_clone = function (config, cloned_map) {
     (this.__shadow_view)?this.__shadow_view.__node.cloneNode (true):
     (config.node)?config.node:this.view.cloneNode (true);
   
-  return core.EventSource.prototype.clone.call (this, config, cloned_map);
+  return vs_core.EventSource.prototype.clone.call (this, config, cloned_map);
 };
 
 /**
@@ -242,7 +242,7 @@ function _instrument_component (obj, shadow_view, node) {
    * @private
    */
   var _create_node_property = function (view, prop_name, nodes) {
-    var desc = {}, _prop_name = '_' + util.underscore (prop_name);
+    var desc = {}, _prop_name = '_' + vs_utils.underscore (prop_name);
 
     desc.set = (function (nodes, prop_name, _prop_name) {
       return function (v) {
@@ -287,15 +287,15 @@ function _instrument_component (obj, shadow_view, node) {
    */
   var _create_iterate_property =
     function (obj, prop_name, shadow_view, parentElement) {
-    var desc = {}, _prop_name = '_' + util.underscore (prop_name);
+    var desc = {}, _prop_name = '_' + vs_utils.underscore (prop_name);
       
     desc.set = (function (prop_name, _prop_name, shadow_view, parentElement) {
       return function (v) {
-        if (!util.isArray (v)) { return; }
+        if (!vs_utils.isArray (v)) { return; }
       
         var i = 0, l = v.length, obj;
         this [_prop_name] = v;
-        util.removeAllElementChild (parentElement);
+        vs_utils.removeAllElementChild (parentElement);
         for (; i < l; i++) {
           obj = _instanciate_shadow_view (shadow_view, v [i]);
           parentElement.appendChild (obj.view);
@@ -386,7 +386,7 @@ function _pre_compile_shadow_view (self, className) {
   shadow_view.__all_properties = [];
 
   shadow_view.__class = _resolveClass (className);
-  if (!util.isFunction (shadow_view.__class)) {
+  if (!vs_utils.isFunction (shadow_view.__class)) {
     shadow_view.__class = ui.View;
   }
 
@@ -440,7 +440,7 @@ function _pre_compile_shadow_view (self, className) {
           index = indexs [i];
           str = str.replace (
             "${*" + index + "*}",
-            "\"+this._" + util.underscore (ctx.__all_properties [index]) + "+\""
+            "\"+this._" + vs_utils.underscore (ctx.__all_properties [index]) + "+\""
           );
         }
         
@@ -658,7 +658,7 @@ var _evalPath = function (root, path) {
 Template.parseHTML = function (html) {
   var div = document.createElement ('div');
   try {
-    util.safeInnerHTML (div, html);
+    vs_utils.safeInnerHTML (div, html);
 
     div = div.firstElementChild;
     if (div) {
@@ -677,4 +677,4 @@ Template.parseHTML = function (html) {
                       Export
 *********************************************************************/
 /** @private */
-vs.ui.Template = Template;
+export default Template;

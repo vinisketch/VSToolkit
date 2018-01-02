@@ -16,6 +16,14 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import View from '../View/View';
+import html_template from './RadioButton.html';
+import AbstractList from '../List/AbstractList';
+
 /**
  * A vs.ui.RadioButton.
  *  @class
@@ -42,7 +50,7 @@
  *  @example
  *  var config = {}
  *  config.data = ['item1, 'item2', 'item3'];
- *  config.id = vs.core.createId ();
+ *  config.id = vs_core.createId ();
  *
  *  var object = vs.ui.RadioButton (config);
  *  object.init ();
@@ -58,6 +66,8 @@ function RadioButton (config)
 }
 
 RadioButton.prototype = {
+
+  html_template: html_template,
 
   /**
    * @private
@@ -92,13 +102,13 @@ RadioButton.prototype = {
     this.__scroll_start = 0;
   
     // removes all items;
-    util.removeAllElementChild (this._list_items);
+    vs_utils.removeAllElementChild (this._list_items);
   
     while (this.__inputs.length)
     {
       input = this.__inputs [0];
       
-      vs.removePointerListener (input, core.POINTER_START, this);
+      removePointerListener (input, vs_core.POINTER_START, this);
       input.removeEventListener ('click', this);
       this.__inputs.remove (0);
       this.__labels.remove (0);
@@ -136,15 +146,15 @@ RadioButton.prototype = {
       
       this._list_items.appendChild (input);
       this.__inputs [i] = input;
-      vs.addPointerListener (input, core.POINTER_START, this);
+      addPointerListener (input, vs_core.POINTER_START, this);
       input.addEventListener ('click', this);
       
       label = document.createElement ('label');
       label.value = i;
       label.setAttribute ("for", this._id + "_l" + i);
-      vs.addPointerListener (label, core.POINTER_START, this);
+      addPointerListener (label, vs_core.POINTER_START, this);
       label.addEventListener ('click', this);
-      util.setElementInnerText (label, item);
+      vs_utils.setElementInnerText (label, item);
       this._list_items.appendChild (label);
       this.__labels [i] = label;
     }
@@ -162,8 +172,8 @@ RadioButton.prototype = {
       label = this.__inputs [index],
       input = this.__labels [index];
     
-    util.addClassName (label, 'pressed');
-    util.addClassName (input, 'pressed');
+    vs_utils.addClassName (label, 'pressed');
+    vs_utils.addClassName (input, 'pressed');
   },
   
   /**
@@ -177,8 +187,8 @@ RadioButton.prototype = {
       label = this.__inputs [index],
       input = this.__labels [index];
     
-    util.removeClassName (label, 'pressed');
-    util.removeClassName (input, 'pressed');
+    vs_utils.removeClassName (label, 'pressed');
+    vs_utils.removeClassName (input, 'pressed');
   },
       
   /**
@@ -202,13 +212,13 @@ RadioButton.prototype = {
     }
   }
 };
-util.extendClass (RadioButton, AbstractList);
+vs_utils.extendClass (RadioButton, AbstractList);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperty (RadioButton, "selectedIndex", {
+vs_utils.defineClassProperty (RadioButton, "selectedIndex", {
   /** 
    * Set the vs.ui.RadioButton selectedIndex
    *
@@ -217,7 +227,7 @@ util.defineClassProperty (RadioButton, "selectedIndex", {
    */ 
   set : function (v)
   {
-    if (!util.isNumber (v))
+    if (!vs_utils.isNumber (v))
     {
       v = parseInt (v);
     }
@@ -251,4 +261,4 @@ util.defineClassProperty (RadioButton, "selectedIndex", {
                       Export
 *********************************************************************/
 /** @private */
-ui.RadioButton = RadioButton;
+export default RadioButton;

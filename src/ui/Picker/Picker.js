@@ -16,6 +16,14 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import View from '../View/View';
+import html_template from './Picker.html';
+import Application from '../Application/Application';
+
 /**
  * 
  * Find more about the Spinning Wheel function at
@@ -90,6 +98,8 @@ Picker.NUMBERS =
 
 Picker.prototype = {
 
+  html_template: html_template,
+
   /**
    * @private
    * @type {Number}
@@ -153,12 +163,12 @@ Picker.prototype = {
    */
   destructor : function ()
   {
-    vs.removePointerListener (this.view, core.POINTER_START, this, false);
+    removePointerListener (this.view, vs_core.POINTER_START, this, false);
 
-    vs.removePointerListener (document, core.POINTER_START, this, false);
-    vs.removePointerListener (document, core.POINTER_MOVE, this, false);
+    removePointerListener (document, vs_core.POINTER_START, this, false);
+    removePointerListener (document, vs_core.POINTER_MOVE, this, false);
 
-    util.removeAllElementChild (this._slots_view);
+    vs_utils.removeAllElementChild (this._slots_view);
 
     delete (this._data);
     delete (this._slots_elements);
@@ -181,7 +191,7 @@ Picker.prototype = {
     this._data = [];
     this._slots_elements = [];
     
-    this._mode =  vs.ui.View.getDeviceCSSCode ();
+    this._mode = View.getDeviceCSSCode ();
     
     // Pseudo table element (inner wrapper)
     this._slots_view = this.view.querySelector ('.slots');
@@ -197,7 +207,7 @@ Picker.prototype = {
       case Application.CSS_DEFAULT:
       default:
         // Add scrolling to the slots
-        vs.addPointerListener (this.view, core.POINTER_START, this);
+        addPointerListener (this.view, vs_core.POINTER_START, this);
         this._frame_border_width = 0;
       break;
       
@@ -234,7 +244,7 @@ Picker.prototype = {
    */
   _remove_all_slots: function ()
   {
-    util.removeAllElementChild (this._slots_view);
+    vs_utils.removeAllElementChild (this._slots_view);
 
     delete (this._slots_elements);
     this._slots_elements = [];
@@ -272,7 +282,7 @@ Picker.prototype = {
 
     var width = 0;
     var os_device = window.deviceConfiguration.os;
-    if (data.length && os_device == DeviceConfiguration.OS_WP7)
+    if (data.length && os_device == vs_core.DeviceConfiguration.OS_WP7)
       width = Math.floor (100 / data.length);
     
      // Create the slot
@@ -280,7 +290,7 @@ Picker.prototype = {
     ul.index = l;
 
     // WP7 does not manage box model (then use inline-block instead of)
-    if (width) util.setElementStyle (ul, {"width": width + '%'});
+    if (width) vs_utils.setElementStyle (ul, {"width": width + '%'});
 
     out = '';
     
@@ -288,7 +298,7 @@ Picker.prototype = {
     {
       out += '<li>' + data.values[i] + '<' + '/li>';
     }
-    util.safeInnerHTML (ul, out);
+    vs_utils.safeInnerHTML (ul, out);
     
     if (this._mode === Application.CSS_ANDROID)
     {
@@ -327,17 +337,17 @@ Picker.prototype = {
     {
       case Application.CSS_WP7:
         ul.slotMaxScroll = this.view.clientHeight - ul.clientHeight;
-        vs.addPointerListener (ul, core.POINTER_START, this, true);
+        addPointerListener (ul, vs_core.POINTER_START, this, true);
       break;
     }    
     
     // Add default transition
     ul.style.webkitTransitionTimingFunction = 'cubic-bezier(0, 0, 0.2, 1)';   
 
-    if (SUPPORT_3D_TRANSFORM)
-      setElementTransform (ul, 'translate3d(0,0,0)');
+    if (vs_utils.SUPPORT_3D_TRANSFORM)
+      vs_utils.setElementTransform (ul, 'translate3d(0,0,0)');
     else
-      setElementTransform (ul, 'translate(0,0)');
+      vs_utils.setElementTransform (ul, 'translate(0,0)');
     
     // Save the slot for later use
     this._slots_elements.push (ul);
@@ -365,15 +375,15 @@ Picker.prototype = {
     else
     {
       button_incr.className = "button_incr";
-      util.setElementInnerText (button_incr, '+');
+      vs_utils.setElementInnerText (button_incr, '+');
       button_incr.slotPosition = i;
     }
 
     if (!readonly)
     {
-      vs.addPointerListener (button_incr, core.POINTER_START, this);
-      vs.addPointerListener (button_incr, core.POINTER_END, this);
-      vs.addPointerListener (button_incr, core.POINTER_CANCEL, this);
+      addPointerListener (button_incr, vs_core.POINTER_START, this);
+      addPointerListener (button_incr, vs_core.POINTER_END, this);
+      addPointerListener (button_incr, vs_core.POINTER_CANCEL, this);
     }
     
     // Create the slot
@@ -385,15 +395,15 @@ Picker.prototype = {
     else
     {
       button_decr.className = 'button_decr';
-      util.setElementInnerText (button_decr, '-');
+      vs_utils.setElementInnerText (button_decr, '-');
       button_decr.slotPosition = i;
     }
 
     if (!readonly)
     {
-      vs.addPointerListener (button_decr, core.POINTER_START, this);
-      vs.addPointerListener (button_decr, core.POINTER_END, this);
-      vs.addPointerListener (button_decr, core.POINTER_CANCEL, this);
+      addPointerListener (button_decr, vs_core.POINTER_START, this);
+      addPointerListener (button_decr, vs_core.POINTER_END, this);
+      addPointerListener (button_decr, vs_core.POINTER_CANCEL, this);
     }
     
     return [button_incr, button_decr];
@@ -408,14 +418,14 @@ Picker.prototype = {
     var slotNum = e.target.slotPosition;
     switch (e.type)
     {
-      case core.POINTER_START:
-        util.addClassName (e.target, 'active');
+      case vs_core.POINTER_START:
+        vs_utils.addClassName (e.target, 'active');
         break
       
-      case core.POINTER_END:
+      case vs_core.POINTER_END:
         var slot_elem = this._slots_elements[slotNum], slotMaxScroll,
           pos = slot_elem.slotYPosition;
-        if (util.hasClassName (e.target, 'button_decr'))
+        if (vs_utils.hasClassName (e.target, 'button_decr'))
         {
           pos += 44;
           if (pos > 0) { pos = 0;}
@@ -428,8 +438,8 @@ Picker.prototype = {
         }
 
         this._scrollTo (slotNum, pos);
-      case core.POINTER_CANCEL:
-        util.removeClassName (e.target, 'active');
+      case vs_core.POINTER_CANCEL:
+        vs_utils.removeClassName (e.target, 'active');
         break
     }
   },
@@ -625,10 +635,10 @@ Picker.prototype = {
     var elem = this._slots_elements [slot];
     elem.slotYPosition = pos;
 
-    if (SUPPORT_3D_TRANSFORM)
-      setElementTransform (elem, 'translate3d(0,' + pos + 'px,0)');
+    if (vs_utils.SUPPORT_3D_TRANSFORM)
+      vs_utils.setElementTransform (elem, 'translate3d(0,' + pos + 'px,0)');
     else
-      setElementTransform (elem, 'translate(0,' + pos + 'px)');
+      vs_utils.setElementTransform (elem, 'translate(0,' + pos + 'px)');
   },
   
   /**
@@ -680,15 +690,15 @@ Picker.prototype = {
     }
     else switch (e.type)
     {
-      case core.POINTER_START:
+      case vs_core.POINTER_START:
         this._scrollStart (e);
       break;
 
-      case core.POINTER_MOVE:
+      case vs_core.POINTER_MOVE:
         this._scrollMove (e);
       break;
 
-      case core.POINTER_END:
+      case vs_core.POINTER_END:
         this._scrollEnd (e);
       break;
 
@@ -719,7 +729,7 @@ Picker.prototype = {
 
       var delta = 0;
       // Find the clicked slot
-      var rec = util.getBoundingClientRect (this._slots_view);
+      var rec = vs_utils.getBoundingClientRect (this._slots_view);
       if (this._mode == Application.CSS_BLACKBERRY) { delta = 8; }
     
       // Clicked position
@@ -763,7 +773,7 @@ Picker.prototype = {
 
       case Application.CSS_WP7:
         this._active_slot = e.currentTarget.index;
-        util.addClassName ("dragging");
+        vs_utils.addClassName ("dragging");
       break;
     }
     
@@ -773,8 +783,8 @@ Picker.prototype = {
     // If slot is readonly do nothing
     if (this._data[this._active_slot].style.match('readonly'))
     {
-      vs.removePointerListener (document, core.POINTER_MOVE, this, true);
-      vs.removePointerListener (document, core.POINTER_END, this, true);
+      removePointerListener (document, vs_core.POINTER_MOVE, this, true);
+      removePointerListener (document, vs_core.POINTER_END, this, true);
       return false;
     }
     
@@ -786,10 +796,10 @@ Picker.prototype = {
     slot_elem.style.setProperty (vs.TRANSITION_DURATION, '0');   // Remove any residual transition
     
     // Stop and hold slot position
-    if (SUPPORT_3D_TRANSFORM)
+    if (vs_utils.SUPPORT_3D_TRANSFORM)
     {
       var
-        matrix = vs.util.getElementMatrixTransform (slot_elem),
+        matrix = vs_utilsgetElementMatrixTransform (slot_elem),
         pos_y = matrix.m42;
 
       if (pos_y != slot_elem.slotYPosition)
@@ -802,8 +812,8 @@ Picker.prototype = {
     this.scrollStartY = slot_elem.slotYPosition;
     this.scrollStartTime = e.timeStamp;
 
-    vs.addPointerListener (document, core.POINTER_MOVE, this, true);
-    vs.addPointerListener (document, core.POINTER_END, this, true);
+    addPointerListener (document, vs_core.POINTER_MOVE, this, true);
+    addPointerListener (document, vs_core.POINTER_END, this, true);
     
     switch (this._mode)
     {
@@ -817,10 +827,10 @@ Picker.prototype = {
         
         if (this.__elem_to_hide && this.__elem_to_hide != slot_elem)
         {
-          util.removeClassName (this.__elem_to_hide.parentElement, "visible");
+          vs_utils.removeClassName (this.__elem_to_hide.parentElement, "visible");
           this.__elem_to_hide = null;
         }
-        util.addClassName (slot_elem.parentElement, "visible");
+        vs_utils.addClassName (slot_elem.parentElement, "visible");
       break;
     }    
 
@@ -863,8 +873,8 @@ Picker.prototype = {
    */
   _scrollEnd: function (e)
   {
-    vs.removePointerListener (document, core.POINTER_MOVE, this, true);
-    vs.removePointerListener (document, core.POINTER_END, this, true);
+    removePointerListener (document, vs_core.POINTER_MOVE, this, true);
+    removePointerListener (document, vs_core.POINTER_END, this, true);
     
     var elem = this._slots_elements[this._active_slot], scrollDist,
       scrollDur, newDur, newPos, self = this;
@@ -883,7 +893,7 @@ Picker.prototype = {
           this.__elem_to_hide = elem;
           this.__timer = setTimeout (function ()
           {
-            util.removeClassName (self.__elem_to_hide.parentElement, "visible");
+            vs_utils.removeClassName (self.__elem_to_hide.parentElement, "visible");
             self.__elem_to_hide = null;
             self.removeClassName ("dragging");
           }, 1000);
@@ -1017,13 +1027,13 @@ Picker.prototype = {
     return false;
   }
 };
-util.extendClass (Picker, View);
+vs_utils.extendClass (Picker, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (Picker, {
+vs_utils.defineClassProperties (Picker, {
   'delegate': {
     /** 
      * Set the delegate.
@@ -1074,7 +1084,7 @@ util.defineClassProperties (Picker, {
     set : function (v)
     {
       var data, values, style, defaultValue, i;
-      if (!util.isArray (v))
+      if (!vs_utils.isArray (v))
       { return; }
       
       this.removeAllSlots ();
@@ -1130,4 +1140,4 @@ util.defineClassProperties (Picker, {
                       Export
 *********************************************************************/
 /** @private */
-ui.Picker = Picker;
+export default Picker;

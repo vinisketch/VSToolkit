@@ -16,6 +16,12 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import View from '../View/View';
+import html_template from './SegmentedButton.html';
 
 /**
  *  The vs.ui.SegmentedButton class
@@ -97,6 +103,8 @@ SegmentedButton.HORIZONTAL = 0;
 SegmentedButton.VERTICAL = 1;
 
 SegmentedButton.prototype = {
+
+  html_template: html_template,
   
   /*****************************************************************
    *               private/protected members
@@ -166,12 +174,12 @@ SegmentedButton.prototype = {
   {
     if (!this.view) { return; }
     
-    util.removeAllElementChild (this.view);
+    vs_utils.removeAllElementChild (this.view);
     
     while (this._div_list.length)
     {
       var div = this._div_list [0];
-      vs.removePointerListener (div, core.POINTER_START, this);
+      removePointerListener (div, vs_core.POINTER_START, this);
       
       this._div_list.remove (0);
     }
@@ -188,7 +196,7 @@ SegmentedButton.prototype = {
     this._cleanButtons ();
     var width = "";
     var os_device = window.deviceConfiguration.os;
-    if (this._items.length && os_device == DeviceConfiguration.OS_WP7)
+    if (this._items.length && os_device == vs_core.DeviceConfiguration.OS_WP7)
       width = Math.floor (100 / this._items.length);
       
     var subView = document.createElement ('div');
@@ -198,12 +206,12 @@ SegmentedButton.prototype = {
     {
       var div = document.createElement ('div');
       div._index = i;
-      util.setElementInnerText (div, this._items [i]);
+      vs_utils.setElementInnerText (div, this._items [i]);
       
       // WP7 does not manage box model (then use inline-block instead of)
-      if (width) util.setElementStyle (div, {"width": width + '%'});
+      if (width) vs_utils.setElementStyle (div, {"width": width + '%'});
 
-      vs.addPointerListener (div, core.POINTER_START, this);
+      addPointerListener (div, vs_core.POINTER_START, this);
       
       this._div_list.push (div);
       subView.appendChild (div);
@@ -233,7 +241,7 @@ SegmentedButton.prototype = {
   handleEvent: function (e)
   {
     var target;
-    if (e.type === core.POINTER_START)
+    if (e.type === vs_core.POINTER_START)
     {
       // prevent multi touch events
       if (e.nbPointers > 1) { return; }
@@ -262,13 +270,13 @@ SegmentedButton.prototype = {
     }
   }
 };
-util.extendClass (SegmentedButton, View);
+vs_utils.extendClass (SegmentedButton, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (SegmentedButton, {
+vs_utils.defineClassProperties (SegmentedButton, {
   'items': {
     /** 
      * Getter|Setter for text. Allow to get or change the text draw
@@ -279,7 +287,7 @@ util.defineClassProperties (SegmentedButton, {
     set : function (v)
     {
       var i, l;
-      if (!util.isArray (v) || !v.length) { return; }
+      if (!vs_utils.isArray (v) || !v.length) { return; }
       
       this._items.removeAll ();
       for (var i = 0, l = v.length; i < l; i++)
@@ -310,27 +318,27 @@ util.defineClassProperties (SegmentedButton, {
      */ 
     set : function (v)
     {
-      if (!util.isNumber (v)) { return; }
+      if (!vs_utils.isNumber (v)) { return; }
       if (v < 0 || v >= this._div_list.length) { return; }
           
       var div = this._div_list [this._selected_index];
       if (div)
       {
-        util.removeClassName (div, 'selected'); 
+        vs_utils.removeClassName (div, 'selected'); 
       }
       
       this._selected_index = v;
       var div = this._div_list [this._selected_index];
       if (div)
       {
-        util.addClassName (div, 'selected'); 
+        vs_utils.addClassName (div, 'selected'); 
       }
       if (!this._is_toggle_buttons)
       {
         var self = this;
         this.__button_time_out = setTimeout (function ()
         {
-          util.removeClassName (div, 'selected');
+          vs_utils.removeClassName (div, 'selected');
           self.__button_time_out = 0;
           self._selected_index = -1;
         }, 300);
@@ -354,7 +362,7 @@ util.defineClassProperties (SegmentedButton, {
      */ 
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       if (this._type)
       {
         this.removeClassName (this._type);
@@ -437,4 +445,4 @@ util.defineClassProperties (SegmentedButton, {
                       Export
 *********************************************************************/
 /** @private */
-ui.SegmentedButton = SegmentedButton;
+export default SegmentedButton;

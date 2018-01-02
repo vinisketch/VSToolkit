@@ -18,6 +18,11 @@
  Use code from Canto.js Copyright 2010 David Flanagan
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import html_template from './Canvas.html';
+
 /**
  *  The vs.ui.Canvas class
  *
@@ -66,6 +71,8 @@ function Canvas (config)
 }
 
 Canvas.prototype = {
+
+  html_template: html_template,
 
   /**
    *
@@ -397,7 +404,7 @@ Canvas.prototype = {
     }
   }
 };
-util.extendClass (Canvas, View);
+vs_utils.extendClass (Canvas, View);
 
 /**
  * @private
@@ -460,7 +467,7 @@ Canvas.setup = function ()
       };
     }(p));
 
-    util.defineProperty (Canvas.prototype, "c_" + p, d);
+    vs_utils.defineProperty (Canvas.prototype, "c_" + p, d);
   }  
 };
 
@@ -470,7 +477,7 @@ Canvas.setup ();
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperty (Canvas, "size", {
+vs_utils.defineClassProperty (Canvas, "size", {
  /** 
    * Getter|Setter for size. Gives access to the size of the vs.ui.Canvas
    * @name vs.ui.Canvas#size 
@@ -480,8 +487,8 @@ util.defineClassProperty (Canvas, "size", {
   set : function (v)
   {
     if (!v) { return; } 
-    if (!util.isArray (v) || v.length !== 2) { return; }
-    if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+    if (!vs_utils.isArray (v) || v.length !== 2) { return; }
+    if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
 
     this._size [0] = v [0];
     this._size [1] = v [1];
@@ -523,7 +530,7 @@ util.defineClassProperty (Canvas, "size", {
                       Export
 *********************************************************************/
 /** @private */
-ui.Canvas = Canvas;
+export default Canvas;
 
 /********************************************************************
                    Documentation

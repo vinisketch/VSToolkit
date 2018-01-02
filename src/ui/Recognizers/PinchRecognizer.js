@@ -16,6 +16,9 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import vs_utils from 'vs_utils';
+import PointerRecognizer from './PointerRecognizer';
 
 /**
  *  The vs.ui.PinchRecognizer class
@@ -79,7 +82,7 @@ PinchRecognizer.prototype = {
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
-    this.addPointerListener (this.obj.view, core.GESTURE_START, this.obj);
+    this.addPointerListener (this.obj.view, vs_core.GESTURE_START, this.obj);
     this.reset ();
   },
 
@@ -89,7 +92,7 @@ PinchRecognizer.prototype = {
    * @protected
    */
   uninit : function () {
-    this.removePointerListener (this.obj.view, core.GESTURE_START, this.obj);
+    this.removePointerListener (this.obj.view, vs_core.GESTURE_START, this.obj);
   },
 
   /**
@@ -98,8 +101,8 @@ PinchRecognizer.prototype = {
    * @protected
    */
   gestureStart: function (e) {
-    this.addPointerListener (document, core.GESTURE_CHANGE, this.obj);
-    this.addPointerListener (document, core.GESTURE_END, this.obj);
+    this.addPointerListener (document, vs_core.GESTURE_CHANGE, this.obj);
+    this.addPointerListener (document, vs_core.GESTURE_END, this.obj);
 
     try {
       if (this.delegate && this.delegate.didPinchStart)
@@ -136,8 +139,8 @@ PinchRecognizer.prototype = {
    * @protected
    */
   gestureEnd: function (e) {
-    this.removePointerListener (document, core.GESTURE_CHANGE, this.obj);
-    this.removePointerListener (document, core.GESTURE_END, this.obj);
+    this.removePointerListener (document, vs_core.GESTURE_CHANGE, this.obj);
+    this.removePointerListener (document, vs_core.GESTURE_END, this.obj);
     
     try {
       if (this.delegate && this.delegate.didPinchEnd)
@@ -159,10 +162,10 @@ PinchRecognizer.prototype = {
     return this.pointerEnd (e);
   }
 };
-util.extendClass (PinchRecognizer, PointerRecognizer);
+vs_utils.extendClass (PinchRecognizer, PointerRecognizer);
 
 /********************************************************************
                       Export
 *********************************************************************/
 /** @private */
-ui.PinchRecognizer = PinchRecognizer;
+export default PinchRecognizer;

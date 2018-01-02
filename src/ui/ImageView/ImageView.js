@@ -16,6 +16,11 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import html_template from './ImageView.html';
+
 /**
  * A vs.ui.ImageView.
  * @constructor
@@ -31,6 +36,8 @@ function ImageView (config)
 }
 
 ImageView.prototype = {
+
+  html_template: html_template,
 
   /**
    * The image url
@@ -79,13 +86,13 @@ ImageView.prototype = {
     this.view.setAttribute ('height', "100%");
   }
 };
-util.extendClass (ImageView, View);
+vs_utils.extendClass (ImageView, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (ImageView, {
+vs_utils.defineClassProperties (ImageView, {
 
   'src': {
     /**
@@ -95,7 +102,7 @@ util.defineClassProperties (ImageView, {
      */
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       
       this._src = v;
       
@@ -124,9 +131,9 @@ util.defineClassProperties (ImageView, {
      */
     set : function (v)
     {
-      if (!util.isArray (v) && v.length !== 2)
+      if (!vs_utils.isArray (v) && v.length !== 2)
       {
-        if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+        if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
       }
       if (this.view)
       {
@@ -157,4 +164,4 @@ util.defineClassProperties (ImageView, {
                       Export
 *********************************************************************/
 /** @private */
-ui.ImageView = ImageView;
+export default ImageView;

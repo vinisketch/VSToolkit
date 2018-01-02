@@ -16,6 +16,9 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+
 /** @preserve
 
   The code include code from :
@@ -35,7 +38,7 @@ function Scrollbar (dir, wrapper, fade, shrink)
 	this.dir = dir;
 	this.fade = fade;
 	this.shrink = shrink;
-	this.id = core.createId ();
+	this.id = vs_core.createId ();
 
 	// Create main scrollbar
 	this.bar = document.createElement ('div');
@@ -113,12 +116,12 @@ Scrollbar.prototype = {
 			}
 		}
 
-    if (SUPPORT_3D_TRANSFORM)
+    if (vs_utils.SUPPORT_3D_TRANSFORM)
       pos = this.dir === 'horizontal' ? 'translate3d(' + Math.round(pos) + 'px,0,0)' : 'translate3d(0,' + Math.round(pos) + 'px,0)';
     else
       pos = this.dir === 'horizontal' ? 'translate(' + Math.round(pos) + 'px,0)' : 'translate(0,' + Math.round(pos) + 'px)';
 		
-    setElementTransform (this.bar, pos);
+    vs_utils.setElementTransform (this.bar, pos);
   },
 
 	show: function ()

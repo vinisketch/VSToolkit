@@ -16,6 +16,14 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import View from '../View/View';
+import html_template from './List.html';
+import AbstractList from './AbstractList';
+
 /**
  * @public
  * @name vs.ui.AbstractListItem
@@ -58,9 +66,9 @@ AbstractListItem.prototype = {
    */
   didSelect : function () {}
 };
-util.extendClass (AbstractListItem, View);
+vs_utils.extendClass (AbstractListItem, View);
 
-util.defineClassProperties (AbstractListItem, {
+vs_utils.defineClassProperties (AbstractListItem, {
 
   'pressed': {
     /** 
@@ -140,8 +148,8 @@ DefaultListItem.prototype = {
   set title (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (util.isNumber (v)) { v = '' + v; }
-    else if (!util.isString (v))
+    else if (vs_utils.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -150,7 +158,7 @@ DefaultListItem.prototype = {
     this._title = v;
     if (this.view)
     {
-      util.setElementInnerText (this.view, this._title);
+      vs_utils.setElementInnerText (this.view, this._title);
       this.view.appendChild (this._label_view);
     }
   },
@@ -161,8 +169,8 @@ DefaultListItem.prototype = {
   set label (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (util.isNumber (v)) { v = '' + v; }
-    else if (!util.isString (v))
+    else if (vs_utils.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -171,7 +179,7 @@ DefaultListItem.prototype = {
     this._label = v;
     if (this.view)
     {
-      util.setElementInnerText (this._label_view, this._label);
+      vs_utils.setElementInnerText (this._label_view, this._label);
     }
     if (this._label && !this._label_view.parentNode)
       this.view.appendChild (this._label_view);
@@ -196,7 +204,7 @@ DefaultListItem.prototype = {
     this._label_view = document.createElement ('span');
   }
 };
-util.extendClass (DefaultListItem, AbstractListItem);
+vs_utils.extendClass (DefaultListItem, AbstractListItem);
 
 /**
  * @name vs.ui.SimpleListItem
@@ -222,8 +230,8 @@ SimpleListItem.prototype = {
   set title (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (util.isNumber (v)) { v = '' + v; }
-    else if (!util.isString (v))
+    else if (vs_utils.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -232,7 +240,7 @@ SimpleListItem.prototype = {
     this._title = v;
     if (this.view)
     {
-      util.setElementInnerText (this.title_view, this._title);
+      vs_utils.setElementInnerText (this.title_view, this._title);
     }
   },
 
@@ -266,7 +274,7 @@ SimpleListItem.prototype = {
     this.title_view = this.view.querySelector ('.title');
   }
 };
-util.extendClass (SimpleListItem, View);
+vs_utils.extendClass (SimpleListItem, View);
 
 /**********************************************************************
  
@@ -287,7 +295,7 @@ function buildSection (list, title, index, itemsSelectable)
   while (index < data.length)
   {
     item = data.item (index);
-    if (util.isString (item)) { break; }
+    if (vs_utils.isString (item)) { break; }
     
     item = data.item (index);
     if (list.__template_class)
@@ -303,7 +311,7 @@ function buildSection (list, title, index, itemsSelectable)
       listItem = new DefaultListItem ().init ();
     }
     // model update management
-    if (item instanceof core.Model)
+    if (item instanceof vs_core.Model)
     {
       listItem.link (item);
     }
@@ -315,7 +323,7 @@ function buildSection (list, title, index, itemsSelectable)
 
     if (itemsSelectable)
     {
-      vs.addPointerListener (listItem.view, core.POINTER_START, list);
+      addPointerListener (listItem.view, vs_core.POINTER_START, list);
     }
     content.appendChild (listItem.view);
     list.__item_obs.push (listItem);
@@ -326,8 +334,8 @@ function buildSection (list, title, index, itemsSelectable)
   {
     
     var os_device = window.deviceConfiguration.os;
-    if (os_device == DeviceConfiguration.OS_MEEGO ||
-        os_device == DeviceConfiguration.OS_SYMBIAN)
+    if (os_device == vs_core.DeviceConfiguration.OS_MEEGO ||
+        os_device == vs_core.DeviceConfiguration.OS_SYMBIAN)
     {
       title_view.appendChild (document.createElement ('div'));
       var tmp_title = document.createElement ('div');
@@ -336,7 +344,7 @@ function buildSection (list, title, index, itemsSelectable)
     }
     else
     {
-      util.setElementInnerText (title_view, title);
+      vs_utils.setElementInnerText (title_view, title);
     }
     section.appendChild (title_view);
   }
@@ -361,24 +369,24 @@ function blockListRenderData (itemsSelectable)
 // remove all children
   this._freeListItems ();
   
-  util.removeAllElementChild (_list_items);
+  vs_utils.removeAllElementChild (_list_items);
 
-  if (SUPPORT_3D_TRANSFORM)
-    setElementTransform (_list_items, 'translate3d(0,0,0)');
+  if (vs_utils.SUPPORT_3D_TRANSFORM)
+    vs_utils.setElementTransform (_list_items, 'translate3d(0,0,0)');
   else
-    setElementTransform (_list_items, 'translate(0,0)');
+    vs_utils.setElementTransform (_list_items, 'translate(0,0)');
 
   var parentElement = _list_items.parentElement;
   parentElement.removeChild (_list_items);
   
   index = 0;
-  util.setElementVisibility (_list_items, false);
+  vs_utils.setElementVisibility (_list_items, false);
   
   while (index < this._model.length)
   {
     item = this._model.item (index);
     title = null;
-    if (util.isString (item))
+    if (vs_utils.isString (item))
     {
       title = item; index ++;
     }
@@ -391,7 +399,7 @@ function blockListRenderData (itemsSelectable)
   {
     _list_items.style.width = 'auto';
   }
-  util.setElementVisibility (_list_items, true);
+  vs_utils.setElementVisibility (_list_items, true);
 };
 
 /**
@@ -410,31 +418,31 @@ function tabListRenderData (itemsSelectable)
   this._freeListItems ();
   this.__direct_access_letters = [];
   
-  util.removeAllElementChild (_list_items);
-  if (_direct_access) util.removeAllElementChild (_direct_access);
+  vs_utils.removeAllElementChild (_list_items);
+  if (_direct_access) vs_utils.removeAllElementChild (_direct_access);
 
-  if (SUPPORT_3D_TRANSFORM)
-    util.setElementTransform (_list_items, 'translate3d(0,0,0)');
+  if (vs_utils.SUPPORT_3D_TRANSFORM)
+    vs_utils.setElementTransform (_list_items, 'translate3d(0,0,0)');
   else
-    util.setElementTransform (_list_items, 'translate(0,0)');
+    vs_utils.setElementTransform (_list_items, 'translate(0,0)');
 
   var parentElement = _list_items.parentElement;
   parentElement.removeChild (_list_items);
   if (_direct_access) this.view.removeChild (_direct_access);
   
   index = 0;
-  util.setElementVisibility (_list_items, false);
+  vs_utils.setElementVisibility (_list_items, false);
   var title_index = 0;
   while (index < this._model.length)
   {
     item = this._model.item (index);
     title = null;
-    if (util.isString (item))
+    if (vs_utils.isString (item))
     {
       title = item; index ++;
       var elem = document.createElement ('div'),
         letter = title [0];
-      util.setElementInnerText (elem, letter);
+      vs_utils.setElementInnerText (elem, letter);
       this.__direct_access_letters.push (letter);
       elem._index_ = title_index++;
       if (_direct_access) _direct_access.appendChild (elem);
@@ -447,7 +455,7 @@ function tabListRenderData (itemsSelectable)
   parentElement.appendChild (_list_items);
   if (_direct_access) this.view.appendChild (_direct_access);
   _list_items.style.width = 'auto';
-  util.setElementVisibility (_list_items, true);
+  vs_utils.setElementVisibility (_list_items, true);
 };
 
 /**********************************************************************
@@ -469,18 +477,18 @@ function defaultListRenderData (itemsSelectable)
   // remove all children
   this._freeListItems ();
   
-  util.removeAllElementChild (_list_items);
+  vs_utils.removeAllElementChild (_list_items);
   
-  if (SUPPORT_3D_TRANSFORM)
-    setElementTransform (_list_items, 'translate3d(0,0,0)');
+  if (vs_utils.SUPPORT_3D_TRANSFORM)
+    vs_utils.setElementTransform (_list_items, 'translate3d(0,0,0)');
   else
-    setElementTransform (_list_items, 'translate(0,0)');
+    vs_utils.setElementTransform (_list_items, 'translate(0,0)');
 
   var parentElement = _list_items.parentElement;
   parentElement.removeChild (_list_items);
   
   index = 0;
-  util.setElementVisibility (_list_items, false);
+  vs_utils.setElementVisibility (_list_items, false);
         
   while (index < this._model.length)
   {
@@ -498,7 +506,7 @@ function defaultListRenderData (itemsSelectable)
       listItem = new DefaultListItem ().init ();
     }
     // model update management
-    if (item instanceof core.Model)
+    if (item instanceof vs_core.Model)
     {
       listItem.link (item);
     }
@@ -510,7 +518,7 @@ function defaultListRenderData (itemsSelectable)
 
     if (itemsSelectable)
     {
-      vs.addPointerListener (listItem.view, core.POINTER_START, this);
+      addPointerListener (listItem.view, vs_core.POINTER_START, this);
     }
     _list_items.appendChild (listItem.view);
     this.__item_obs.push (listItem);
@@ -520,7 +528,7 @@ function defaultListRenderData (itemsSelectable)
   parentElement.appendChild (_list_items);
   _list_items.style.width = 'auto';
 
-  util.setElementVisibility (_list_items, true);
+  vs_utils.setElementVisibility (_list_items, true);
 };
 
 /**********************************************************************
@@ -609,6 +617,8 @@ List.DEFAULT_LIST = 'DefaultList';
 
 List.prototype = {
 
+  html_template: html_template,
+
   _type: List.DEFAULT_LIST,
   
  /**********************************************************************
@@ -655,7 +665,7 @@ List.prototype = {
      
   /**
    * @private
-   * @type {vs.core.Object}
+   * @type {vs_core.Object}
    */
   __template_obj: null,
   __template_class: null,
@@ -691,7 +701,7 @@ List.prototype = {
   {
     if (!obj) return;
     
-    if (util.isFunction (obj)) {
+    if (vs_utils.isFunction (obj)) {
       this.__template_obj = null
       this.__template_class = obj;
     }
@@ -861,7 +871,7 @@ List.prototype = {
     {
       obj = this.__item_obs [i];
       obj.__parent = undefined;
-      util.free (obj);
+      vs_utils.free (obj);
     }
     
     this.__item_obs = [];
@@ -959,14 +969,14 @@ List.prototype = {
       e.stopPropagation ();
       e.preventDefault ();
       
-      util.setElementTransform (self._list_items, '');
+      vs_utils.setElementTransform (self._list_items, '');
       self.__max_scroll = self.size [1] - self._list_items.offsetHeight;
       
-      vs.addPointerListener (document, core.POINTER_MOVE, accessBarMove, false);
-      vs.addPointerListener (document, core.POINTER_END, accessBarEnd, false);
+      addPointerListener (document, vs_core.POINTER_MOVE, accessBarMove, false);
+      addPointerListener (document, vs_core.POINTER_END, accessBarEnd, false);
       
       var _acces_index = e.targetPointerList[0].target._index_;
-      if (!util.isNumber (_acces_index)) return;
+      if (!vs_utils.isNumber (_acces_index)) return;
      
       if (self._acces_index === _acces_index) return;
       self._acces_index = _acces_index;
@@ -981,19 +991,19 @@ List.prototype = {
 
         self.__scroll_start = newPos;
 
-        if (SUPPORT_3D_TRANSFORM) {
-          util.setElementTransform
+        if (vs_utils.SUPPORT_3D_TRANSFORM) {
+          vs_utils.setElementTransform
             (self._list_items, 'translate3d(0,' + newPos + 'px,0)');
         }
         else {
-          util.setElementTransform
+          vs_utils.setElementTransform
             (self._list_items, 'translate(0,' + newPos + 'px)');
         }
       }
 
-      bar_dim = util.getElementDimensions (self._direct_access);
+      bar_dim = vs_utils.getElementDimensions (self._direct_access);
       bar_dim.height -= 10;
-      bar_pos = util.getElementAbsolutePosition (self._direct_access);
+      bar_pos = vs_utils.getElementAbsolutePosition (self._direct_access);
       bar_pos.y += 5;
 
       var letter = self.__direct_access_letters [_acces_index];
@@ -1010,7 +1020,7 @@ List.prototype = {
       e.preventDefault ();
       
       var _acces_index = getIndex (e.pageY);
-      if (!util.isNumber (_acces_index)) return;
+      if (!vs_utils.isNumber (_acces_index)) return;
       
       if (self._acces_index === _acces_index) return;
       self._acces_index = _acces_index;
@@ -1025,11 +1035,11 @@ List.prototype = {
 
         self.__scroll_start = newPos;
 
-        if (SUPPORT_3D_TRANSFORM)
-          util.setElementTransform
+        if (vs_utils.SUPPORT_3D_TRANSFORM)
+          vs_utils.setElementTransform
             (self._list_items, 'translate3d(0,' + newPos + 'px,0)');
         else
-          util.setElementTransform
+          vs_utils.setElementTransform
             (self._list_items, 'translate(0,' + newPos + 'px)');
       }
       
@@ -1038,20 +1048,20 @@ List.prototype = {
     };
     
     var accessBarEnd = function (e) {
-      vs.removePointerListener (document, core.POINTER_MOVE, accessBarMove);
-      vs.removePointerListener (document, core.POINTER_END, accessBarEnd);
+      removePointerListener (document, vs_core.POINTER_MOVE, accessBarMove);
+      removePointerListener (document, vs_core.POINTER_END, accessBarEnd);
 
       self._direct_access_value.style.opacity = 0;
     };
 
-    vs.addPointerListener
-      (this._direct_access, core.POINTER_START, accessBarStart, false);
+    addPointerListener
+      (this._direct_access, vs_core.POINTER_START, accessBarStart, false);
   },
   
   remove_directAccessBar : function ()
   {
-    vs.removePointerListener
-      (this._direct_access, core.POINTER_START, this.__access_bar_start, false);
+    removePointerListener
+      (this._direct_access, vs_core.POINTER_START, this.__access_bar_start, false);
 
     this.view.removeChild (this._direct_access);
     this._direct_access = undefined;
@@ -1074,13 +1084,13 @@ List.prototype = {
     return item.parentElement;
   }
 };
-util.extendClass (List, AbstractList);
+vs_utils.extendClass (List, AbstractList);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (List, {
+vs_utils.defineClassProperties (List, {
   'itemsSelectable': {
     /** 
      * Allow deactivate the list item selection.
@@ -1104,7 +1114,7 @@ util.defineClassProperties (List, {
         for (i = 0; i < this.__item_obs.length; i++)
         {
           obj = this.__item_obs [i];
-          vs.addPointerListener (obj.view, core.POINTER_START, this, true);
+          addPointerListener (obj.view, vs_core.POINTER_START, this, true);
         }
       }
       else
@@ -1113,7 +1123,7 @@ util.defineClassProperties (List, {
         for (i = 0; i < this.__item_obs.length; i++)
         {
           obj = this.__item_obs [i];
-          vs.removePointerListener (obj.view, core.POINTER_START, this, true);
+          removePointerListener (obj.view, vs_core.POINTER_START, this, true);
         }
       }
     }
@@ -1158,7 +1168,7 @@ util.defineClassProperties (List, {
      */ 
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       if (v !== List.BLOCK_LIST &&
           v !== List.TAB_LIST && 
           v !== List.DEFAULT_LIST) { return; }
@@ -1233,7 +1243,7 @@ util.defineClassProperties (List, {
      */ 
     set : function (v)
     {
-      if (!util.isArray (v)) { return; }
+      if (!vs_utils.isArray (v)) { return; }
       this._filters = v;
       
       // TODO   on peut mieux faire : au lieu de faire
@@ -1257,10 +1267,9 @@ util.defineClassProperties (List, {
                       Export
 *********************************************************************/
 /** @private */
-ui.List = List;
-/** @private */
-ui.AbstractListItem = AbstractListItem;
-/** @private */
-ui.DefaultListItem = DefaultListItem;
-/** @private */
-ui.SimpleListItem = SimpleListItem;
+export {
+  List,
+  AbstractListItem,
+  DefaultListItem,
+  SimpleListItem
+}

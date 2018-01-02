@@ -16,6 +16,10 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import vs_utils from 'vs_utils';
+import PointerRecognizer from './PointerRecognizer';
+
 /**
  *  The vs.ui.TapRecognizer class
  *
@@ -84,7 +88,7 @@ TapRecognizer.prototype = {
   init : function (obj) {
     PointerRecognizer.prototype.init.call (this, obj);
     
-    this.addPointerListener (this.obj.view, core.POINTER_START, this.obj);
+    this.addPointerListener (this.obj.view, vs_core.POINTER_START, this.obj);
     this.reset ();
   },
 
@@ -94,7 +98,7 @@ TapRecognizer.prototype = {
    * @protected
    */
   uninit : function () {
-    this.removePointerListener (this.obj.view, core.POINTER_START, this.obj);
+    this.removePointerListener (this.obj.view, vs_core.POINTER_START, this.obj);
   },
 
   /**
@@ -127,8 +131,8 @@ TapRecognizer.prototype = {
       this.__did_tap_time_out = 0;
     }
   
-    this.addPointerListener (document, core.POINTER_END, this.obj);
-    this.addPointerListener (document, core.POINTER_MOVE, this.obj);
+    this.addPointerListener (document, vs_core.POINTER_END, this.obj);
+    this.addPointerListener (document, vs_core.POINTER_MOVE, this.obj);
   
     this.__start_x = e.targetPointerList[0].pageX;
     this.__start_y = e.targetPointerList[0].pageY;
@@ -155,8 +159,8 @@ TapRecognizer.prototype = {
     }
 
     // cancel the selection mode
-    this.removePointerListener (document, core.POINTER_END, this.obj);
-    this.removePointerListener (document, core.POINTER_MOVE, this.obj);
+    this.removePointerListener (document, vs_core.POINTER_END, this.obj);
+    this.removePointerListener (document, vs_core.POINTER_MOVE, this.obj);
     this.__is_touched = false;
 
     try {
@@ -183,8 +187,8 @@ TapRecognizer.prototype = {
     
     this.__tap_elem = undefined;
   
-    this.removePointerListener (document, core.POINTER_END, this.obj);
-    this.removePointerListener (document, core.POINTER_MOVE, this.obj);
+    this.removePointerListener (document, vs_core.POINTER_END, this.obj);
+    this.removePointerListener (document, vs_core.POINTER_MOVE, this.obj);
 
     if (this.delegate && this.delegate.didUntouch) {
       try {
@@ -220,10 +224,10 @@ TapRecognizer.prototype = {
     return this.pointerEnd (e);
   }
 };
-util.extendClass (TapRecognizer, PointerRecognizer);
+vs_utils.extendClass (TapRecognizer, PointerRecognizer);
 
 /********************************************************************
                       Export
 *********************************************************************/
 /** @private */
-ui.TapRecognizer = TapRecognizer;
+export default TapRecognizer;

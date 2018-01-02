@@ -16,6 +16,11 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import html_template from './SVGView.html';
+
 /**
  *  The vs.ui.SVGView class
  *
@@ -112,6 +117,8 @@ function load_svg_doc (path, id, svg_obj)
 
 SVGView.prototype = {
 
+  html_template: html_template,
+
   /**
    * The svg url
    * @private
@@ -135,7 +142,7 @@ SVGView.prototype = {
 
     var svg = document.createElementNS ("http://www.w3.org/2000/svg", 'svg');
 
-    util.removeAllElementChild (this.view);
+    vs_utils.removeAllElementChild (this.view);
     this.view.appendChild (svg);
     if (this._view_box) this.viewBox = this._view_box;
 
@@ -161,7 +168,7 @@ SVGView.prototype = {
           elem_id = node.getAttribute ('id');
           if (!elem_id)
           {
-            elem_id = vs.core.createId ();
+            elem_id = vs_core.createId ();
             node.setAttribute ('id', elem_id);
           }
           svg.appendChild (create_use (elem_id));
@@ -170,13 +177,13 @@ SVGView.prototype = {
     }
   }
 };
-util.extendClass (SVGView, View);
+vs_utils.extendClass (SVGView, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (SVGView, {
+vs_utils.defineClassProperties (SVGView, {
   'href': {
     /**
      * Set the image url
@@ -185,7 +192,7 @@ util.defineClassProperties (SVGView, {
      */
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
 
       this._href = v;
       var href, elem_id;
@@ -224,15 +231,15 @@ util.defineClassProperties (SVGView, {
      */
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
 
-      util.removeAllElementChild (this.view);
+      vs_utils.removeAllElementChild (this.view);
       if (this.__object)
       {
         delete (this.__object);
       }
 
-      util.safeInnerHTML (this.view, v);
+      vs_utils.safeInnerHTML (this.view, v);
       this._href = undefined;
     }
   },
@@ -245,7 +252,7 @@ util.defineClassProperties (SVGView, {
      */
     set : function (v)
     {
-      if (!util.isArray (v) || v.length != 4) { return; }
+      if (!vs_utils.isArray (v) || v.length != 4) { return; }
 
       this._view_box = v;
 
@@ -262,4 +269,4 @@ util.defineClassProperties (SVGView, {
                       Export
 *********************************************************************/
 /** @private */
-ui.SVGView = SVGView;
+export default SVGView;

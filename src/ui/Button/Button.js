@@ -17,6 +17,10 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import html_template from './Button.html';
 
 /**
  *  The vs.ui.Button class
@@ -145,7 +149,9 @@ Button.BLACK_STYLE = 'black_style';
 Button.SILVER_STYLE = 'silver_style';
 
 Button.prototype = {
-  
+
+  html_template: html_template,
+
   /*****************************************************************
    *               private/protected members
    ****************************************************************/
@@ -278,13 +284,13 @@ Button.prototype = {
     if (this._type) this.addClassName (this._type);
   }
 };
-util.extendClass (Button, View);
+vs_utils.extendClass (Button, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (Button, {
+vs_utils.defineClassProperties (Button, {
   'text': {
     /** 
      * Getter|Setter for text. Allow to get or change the text draw
@@ -295,8 +301,8 @@ util.defineClassProperties (Button, {
     set : function (v)
     {
       if (v === null || typeof (v) === "undefined") { v = ''; }
-      else if (util.isNumber (v)) { v = '' + v; }
-      else if (!util.isString (v))
+      else if (vs_utils.isNumber (v)) { v = '' + v; }
+      else if (!vs_utils.isString (v))
       {
         if (!v.toString) { return; }
         v = v.toString ();
@@ -305,7 +311,7 @@ util.defineClassProperties (Button, {
       this._text = v;
       if (this.text_view)
       {
-        util.setElementInnerText (this.text_view, this._text);
+        vs_utils.setElementInnerText (this.text_view, this._text);
       }
     },
   
@@ -326,7 +332,7 @@ util.defineClassProperties (Button, {
      */ 
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       
       // code to remove legacy spec
       v = v.replace ('_ios', '');
@@ -356,7 +362,7 @@ util.defineClassProperties (Button, {
      */ 
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       if (this._type)
       {
         this.removeClassName (this._type);
@@ -380,4 +386,4 @@ util.defineClassProperties (Button, {
                       Export
 *********************************************************************/
 /** @private */
-ui.Button = Button;
+export default Button;

@@ -16,6 +16,10 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import ScrollView from '../ScrollView/ScrollView';
 
 /**
  *  The vs.ui.AbstractList class
@@ -64,7 +68,7 @@ AbstractList.prototype = {
   
   /**
    * @private
-   * @type {vs.core.Array}
+   * @type {vs_core.Array}
    */
   _model: null,
        
@@ -118,7 +122,7 @@ AbstractList.prototype = {
     }
 
     this._model.unbindChange (null, this, this._modelChanged);
-    if (this._model_allocated) util.free (this._model);
+    if (this._model_allocated) vs_utils.free (this._model);
     this._model_allocated = false;
   },
   
@@ -130,7 +134,7 @@ AbstractList.prototype = {
   {
     ScrollView.prototype.initComponent.call (this);
     
-    this._model = new vs.core.Array ();
+    this._model = new vs_core.Array ();
     this._model.init ();
     this._model_allocated = true;
     this._model.bindChange (null, this, this._modelChanged);
@@ -268,7 +272,7 @@ AbstractList.prototype = {
   scrollToElementAt: function (index, time)
   {
     if (!this.__iscroll__) { return; }
-    if (!util.isNumber (time)) { time = 200; }
+    if (!vs_utils.isNumber (time)) { time = 200; }
     var elem = this.__item_obs [index];
     if (!elem) { return; }
 
@@ -283,13 +287,13 @@ AbstractList.prototype = {
 		this.__iscroll__.scrollTo (0, pos.top, 200);
   }
 };
-util.extendClass (AbstractList, ScrollView);
+vs_utils.extendClass (AbstractList, ScrollView);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (AbstractList, {
+vs_utils.defineClassProperties (AbstractList, {
 
   'scroll': {
     /** 
@@ -331,13 +335,13 @@ util.defineClassProperties (AbstractList, {
      * Getter|Setter for data. Allow to get or change the vertical list
      * @name vs.ui.AbstractList#model 
      *
-     * @type vs.core.Array
+     * @type vs_core.Array
      */ 
     set : function (v)
     {
       if (!v) return;
       
-      if (util.isArray (v))
+      if (vs_utils.isArray (v))
       {
         this._model.removeAll ();
         this._model.add.apply (this._model, v);
@@ -347,7 +351,7 @@ util.defineClassProperties (AbstractList, {
         if (this._model_allocated)
         {
           this._model.unbindChange (null, this, this._modelChanged);
-          util.free (this._model);
+          vs_utils.free (this._model);
         }
         this._model_allocated = false;
         this._model = v;
@@ -377,11 +381,11 @@ util.defineClassProperties (AbstractList, {
      */ 
     set : function (v)
     {
-      if (!util.isArray (v)) return;
+      if (!vs_utils.isArray (v)) return;
       
       if (!this._model_allocated)
       {
-        this._model = new vs.core.Array ();
+        this._model = new vs_core.Array ();
         this._model.init ();
         this._model_allocated = true;
         this._model.bindChange (null, this, this._modelChanged);
@@ -409,4 +413,4 @@ util.defineClassProperties (AbstractList, {
                       Export
 *********************************************************************/
 /** @private */
-ui.AbstractList = AbstractList;
+export default AbstractList;

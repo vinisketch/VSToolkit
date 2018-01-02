@@ -16,8 +16,15 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import View from '../View/View';
+import html_template from './NavigationBar.html';
+
 /**
- *  The vs.ui.NavivationBar class implements a view for controlling navigation
+ *  The vs.ui.NavigationBar class implements a view for controlling navigation
  *  on content views.
  *
  *  @extends vs.ui.View
@@ -66,6 +73,8 @@ NavigationBar.BLACK_TRANSLUCIDE_STYLE = 'black_translucide_style';
 NavigationBar.BLACK_STYLE = 'black_style';
 
 NavigationBar.prototype = {
+
+  html_template: html_template,
   
 /********************************************************************
                   protected members declarations
@@ -131,7 +140,7 @@ NavigationBar.prototype = {
     View.prototype.initComponent.call (this);
 
     var os_device = window.deviceConfiguration.os;
-    if (os_device == DeviceConfiguration.OS_SYMBIAN)
+    if (os_device == vs_core.DeviceConfiguration.OS_SYMBIAN)
     {
       this._hide_animation = new vs.fx.Animation (['translateY', '-50px']);
     }
@@ -164,8 +173,8 @@ NavigationBar.prototype = {
   {
     var i;
     
-    if (!state || !util.isString (state)) { return; }
-    if (!items || !util.isArray (items)) { return; }
+    if (!state || !vs_utils.isString (state)) { return; }
+    if (!items || !vs_utils.isArray (items)) { return; }
     
     this._states [state] = items.slice ();
     
@@ -175,7 +184,7 @@ NavigationBar.prototype = {
       for (key in this.__children)
       {
         children = this.__children [key];
-        if (util.isArray (children))
+        if (vs_utils.isArray (children))
         {
           for (i = 0; i < children.length; i++)
           {
@@ -224,7 +233,7 @@ NavigationBar.prototype = {
    */
   getStateItems : function (state, items)
   {
-    if (!state || !util.isString (state)) { return undefined; }
+    if (!state || !vs_utils.isString (state)) { return undefined; }
     
     if (this._states [state])
     {
@@ -262,7 +271,7 @@ NavigationBar.prototype = {
     for (key in this.__children)
     {
       children = this.__children [key];
-      if (util.isArray (children))
+      if (vs_utils.isArray (children))
       {
         for (i = 0; i < children.length; i++)
         {
@@ -309,25 +318,25 @@ NavigationBar.prototype = {
     
     switch (event.type)
     {
-      case core.POINTER_START:
-        util.addClassName (self, 'active');
-        vs.addPointerListener (event.currentTarget, core.POINTER_END, this, true);
-        vs.addPointerListener (event.currentTarget, core.POINTER_MOVE, this, true);
+      case vs_core.POINTER_START:
+        vs_utils.addClassName (self, 'active');
+        addPointerListener (event.currentTarget, vs_core.POINTER_END, this, true);
+        addPointerListener (event.currentTarget, vs_core.POINTER_MOVE, this, true);
       break;
 
-      case core.POINTER_END:
-        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
-        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);        
+      case vs_core.POINTER_END:
+        removePointerListener (event.currentTarget, vs_core.POINTER_END, this);
+        removePointerListener (event.currentTarget, vs_core.POINTER_MOVE, this);        
         
-        util.removeClassName (self, 'active');
+        vs_utils.removeClassName (self, 'active');
         this.propagate ('buttonselect', event.currentTarget.spec);
       break;
 
-      case core.POINTER_MOVE:
+      case vs_core.POINTER_MOVE:
         event.preventDefault ();
-        util.removeClassName (self, 'active');
-        vs.removePointerListener (event.currentTarget, core.POINTER_END, this);
-        vs.removePointerListener (event.currentTarget, core.POINTER_MOVE, this);
+        vs_utils.removeClassName (self, 'active');
+        removePointerListener (event.currentTarget, vs_core.POINTER_END, this);
+        removePointerListener (event.currentTarget, vs_core.POINTER_MOVE, this);
       break;
     }
   },
@@ -363,13 +372,13 @@ NavigationBar.prototype = {
     }
   }
 };
-util.extendClass (NavigationBar, View);
+vs_utils.extendClass (NavigationBar, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (NavigationBar, {
+vs_utils.defineClassProperties (NavigationBar, {
   'style': {
     /** 
      * Getter|Setter for the tab bar style
@@ -378,7 +387,7 @@ util.defineClassProperties (NavigationBar, {
      */ 
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       if (this._style)
       {
         this.removeClassName (this._style);
@@ -436,4 +445,4 @@ util.defineClassProperties (NavigationBar, {
                       Export
 *********************************************************************/
 /** @private */
-ui.NavigationBar = NavigationBar;
+export default NavigationBar;

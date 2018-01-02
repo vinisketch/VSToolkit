@@ -16,6 +16,13 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import View from '../View/View';
+import html_template from './InputField.html';
+
 /**
  *  The vs.ui.InputField class
  *
@@ -77,6 +84,8 @@ InputField.SEARCH = 'search';
 
 InputField.prototype = {
 
+  html_template: html_template,
+
   /**
    * The text field node
    * @private
@@ -129,7 +138,7 @@ InputField.prototype = {
     
     if (this._clear_button)
     {    
-      this.nodeUnbind (this._clear_button, core.POINTER_START, 'cleanData');  
+      this.nodeUnbind (this._clear_button, vs_core.POINTER_START, 'cleanData');  
     }
     delete (this._text_field);
 
@@ -150,7 +159,7 @@ InputField.prototype = {
     this._clear_button = this.view.querySelector ('.clear_button');
     if (this._clear_button)
     {
-      this.nodeBind (this._clear_button, core.POINTER_START, 'cleanData');  
+      this.nodeBind (this._clear_button, vs_core.POINTER_START, 'cleanData');  
     }
     this.type = this._type;
     this.value = this._value;
@@ -197,8 +206,8 @@ InputField.prototype = {
     if (!this._clear_button)
     { return; }
     
-    if (v) { util.setElementVisibility (this._clear_button, true); }
-    else { util.setElementVisibility (this._clear_button, false); }
+    if (v) { vs_utils.setElementVisibility (this._clear_button, true); }
+    else { vs_utils.setElementVisibility (this._clear_button, false); }
   },
   
   /**
@@ -282,7 +291,7 @@ InputField.prototype = {
         return;
       }
       
-      vs.removePointerListener (document, core.POINTER_START, manageBlur, true);
+      removePointerListener (document, vs_core.POINTER_START, manageBlur, true);
       self.setBlur ();
     }
 
@@ -305,7 +314,7 @@ InputField.prototype = {
       if (this._value) { this._activateDelete (true); }
       else { this._activateDelete (false); }
       
-      vs.addPointerListener (document, core.POINTER_START, manageBlur, true);
+      addPointerListener (document, vs_core.POINTER_START, manageBlur, true);
       this.propagate ('focus');
     }
     else if (event.type === 'blur')
@@ -317,13 +326,13 @@ InputField.prototype = {
     }
   }
 }
-util.extendClass (InputField, View);
+vs_utils.extendClass (InputField, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (InputField, {
+vs_utils.defineClassProperties (InputField, {
   'value': {
     /**
      * Allows to set the input value
@@ -333,8 +342,8 @@ util.defineClassProperties (InputField, {
     set : function (v)
     {
       if (v === null || typeof (v) === "undefined") { v = ''; }
-      else if (util.isNumber (v)) { v = '' + v; }
-      else if (!util.isString (v))
+      else if (vs_utils.isNumber (v)) { v = '' + v; }
+      else if (!vs_utils.isString (v))
       {
         if (!v.toString) { return; };
         v = v.toString ();
@@ -409,8 +418,8 @@ util.defineClassProperties (InputField, {
     set : function (v)
     {
       if (v === null || typeof (v) === "undefined") { v = ''; }
-      else if (util.isNumber (v)) { v = '' + v; }
-      else if (!util.isString (v))
+      else if (vs_utils.isNumber (v)) { v = '' + v; }
+      else if (!vs_utils.isString (v))
       {
         if (!v.toString) { return; };
         v = v.toString ();
@@ -429,4 +438,4 @@ util.defineClassProperties (InputField, {
                       Export
 *********************************************************************/
 /** @private */
-ui.InputField = InputField;
+export default InputField;

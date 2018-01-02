@@ -16,6 +16,11 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import html_template from './ProgressBar.html';
+
 /**
  *  The vs.ui.ProgressBar class
  *
@@ -76,6 +81,8 @@ ProgressBar.BORDER_WIDTH_SYMBIAN = 0;
 ProgressBar.BORDER_WIDTH_BB = 1;
 
 ProgressBar.prototype = {
+
+  html_template: html_template,
   
   /**
    *
@@ -131,7 +138,7 @@ ProgressBar.prototype = {
    */
   _updateSize: function ()
   {
-    util.setElementSize (this.view, this._size [0],  this._size [1]);
+    vs_utils.setElementSize (this.view, this._size [0],  this._size [1]);
     this.index = this._index;
   },
   
@@ -147,23 +154,23 @@ ProgressBar.prototype = {
     this.indeterminate = this._indeterminate;
 
     var os_device = window.deviceConfiguration.os;
-    if (os_device == DeviceConfiguration.OS_ANDROID)
+    if (os_device == vs_core.DeviceConfiguration.OS_ANDROID)
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_ANDROID * 2;
     }
-    else if (os_device == DeviceConfiguration.OS_IOS)
+    else if (os_device == vs_core.DeviceConfiguration.OS_IOS)
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_IOS * 2;
     }
-    else if (os_device == DeviceConfiguration.OS_WP7)
+    else if (os_device == vs_core.DeviceConfiguration.OS_WP7)
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_WP7 * 2;
     }
-    else if (os_device == DeviceConfiguration.OS_SYMBIAN)
+    else if (os_device == vs_core.DeviceConfiguration.OS_SYMBIAN)
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_SYMBIAN * 2;
     }
-    else if (os_device == DeviceConfiguration.OS_BLACK_BERRY)
+    else if (os_device == vs_core.DeviceConfiguration.OS_BLACK_BERRY)
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_BB * 2;
     }
@@ -181,13 +188,13 @@ ProgressBar.prototype = {
     View.prototype.refresh.call (this);
   }
 };
-util.extendClass (ProgressBar, View);
+vs_utils.extendClass (ProgressBar, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (ProgressBar, {
+vs_utils.defineClassProperties (ProgressBar, {
   'index': {
     /** 
      * Allow to set or get the progress bar index
@@ -196,7 +203,7 @@ util.defineClassProperties (ProgressBar, {
      */ 
     set : function (v)
     {
-      if (!util.isNumber (v)) { return; }
+      if (!vs_utils.isNumber (v)) { return; }
   
       this._index = v;
       
@@ -212,8 +219,8 @@ util.defineClassProperties (ProgressBar, {
       if (w < 0) { w = 0; }
           
       var os_device = window.deviceConfiguration.os;
-      if (os_device === DeviceConfiguration.OS_ANDROID ||
-          os_device === DeviceConfiguration.OS_IOS)
+      if (os_device === vs_core.DeviceConfiguration.OS_ANDROID ||
+          os_device === vs_core.DeviceConfiguration.OS_IOS)
       {
         this.__inner_view.style.width = (w + this.__border_width) + 'px';
       }
@@ -237,8 +244,8 @@ util.defineClassProperties (ProgressBar, {
      */ 
     set : function (v)
     {
-      if (!util.isArray (v) || v.length !== 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber (v[1])) { return; }
+      if (!vs_utils.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber (v[1])) { return; }
       if (v[0] === v[1] || v[0] > v[1]) { return; }
   
       this._range [0] = v [0];
@@ -266,12 +273,12 @@ util.defineClassProperties (ProgressBar, {
       if (v)
       {
         this._indeterminate = true;
-        if (this.view) util.addClassName (this.view, 'indeterminate');
+        if (this.view) vs_utils.addClassName (this.view, 'indeterminate');
       }
       else
       {
         this._indeterminate = false;
-        if (this.view) util.removeClassName (this.view, 'indeterminate');
+        if (this.view) vs_utils.removeClassName (this.view, 'indeterminate');
       }
     },
   
@@ -290,4 +297,4 @@ util.defineClassProperties (ProgressBar, {
                       Export
 *********************************************************************/
 /** @private */
-ui.ProgressBar = ProgressBar;
+export default ProgressBar;

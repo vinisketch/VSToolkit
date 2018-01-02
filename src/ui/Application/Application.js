@@ -16,6 +16,10 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+
 /**
  *  All application inherit from Application class.<br/>
  *  This is the root component from which all other components (widgets, ...)
@@ -118,12 +122,11 @@ Application.CSS_IOS7 = 103;
 /**
  * @private
  */
-var Application_applications = {};
+Application._applications = {};
 
 var ORIENTATION_CHANGE_EVT =
   'onorientationchange' in window ? 'orientationchange' : 'resize';
 
-vs.Application_applications = Application_applications;
 
 Application.prototype = {
   
@@ -146,7 +149,7 @@ Application.prototype = {
    */
   initComponent : function ()
   {
-    Application_applications [this.id] = this;
+    Application._applications [this.id] = this;
 
     View.prototype.initComponent.call (this);
     this.preventScroll = true;
@@ -177,7 +180,7 @@ Application.prototype = {
     window.addEventListener (ORIENTATION_CHANGE_EVT, function (e)
     {
       var orientation = window.orientation;
-      if (!util.isNumber (orientation)) {
+      if (!vs_utils.isNumber (orientation)) {
         if (window.outerWidth >= window.outerHeight) {
           orientation = 90; // LANDSCAPE
         }
@@ -258,7 +261,7 @@ Application.prototype = {
   /**
    *  @public
    *  Build the default dataflow associated to the application.
-   *  If you have created your own dataflow (with new vs.core.Dataflow), you
+   *  If you have created your own dataflow (with new vs_core.Dataflow), you
    *  have to build it explicitly.
    *
    * @name vs.ui.Application#buildDataflow 
@@ -297,7 +300,7 @@ Application.prototype = {
       self.propagate ('scriptloaded', path);
     };
     
-    util.importFile (path, document, endScriptLoad, "js");
+    vs_utils.importFile (path, document, endScriptLoad, "js");
   },
   
   /**
@@ -329,16 +332,16 @@ Application.prototype = {
       self.propagate ('cssloaded', path);
     };
 
-    util.importFile (path, document, endCssLoad, "css");
+    vs_utils.importFile (path, document, endCssLoad, "css");
   }  
 };
-util.extendClass (Application, View);
+vs_utils.extendClass (Application, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (Application, {
+vs_utils.defineClassProperties (Application, {
   'size': {
     /** 
      * Getter|Setter for size.<br/>
@@ -350,8 +353,8 @@ util.defineClassProperties (Application, {
     set : function (v)
     {
       if (!v) { return; }
-      if (!util.isArray (v) || v.length !== 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+      if (!vs_utils.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
       this._size [0] = v [0];
       this._size [1] = v [1];
       
@@ -461,11 +464,11 @@ Application.configureDevice = function ()
   
     if (name == 'default') {
       switch (window.deviceConfiguration.os) {
-        case DeviceConfiguration.OS_IOS:
+        case vs_core.DeviceConfiguration.OS_IOS:
           importCSS ("lib/css/vs_ui_ios.css", node);
         break;
    
-        case DeviceConfiguration.OS_ANDROID:
+        case vs_core.DeviceConfiguration.OS_ANDROID:
           importCSS ("lib/css/vs_ui_android.css", node);
         break;
       }
@@ -488,11 +491,11 @@ Application.configureDevice = function ()
     }
   }
 
-  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_4_INCH)
+  if (deviceConfiguration.screenSize === vs_core.DeviceConfiguration.SS_4_INCH)
     tid = "phone3_4";
-  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_7_INCH)
+  if (deviceConfiguration.screenSize === vs_core.DeviceConfiguration.SS_7_INCH)
     tid = "tablet7";  
-  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_10_INCH)
+  if (deviceConfiguration.screenSize === vs_core.DeviceConfiguration.SS_10_INCH)
     tid = "phone10";
   
   if (deviceConfiguration.orientation === 0 ||
@@ -512,9 +515,9 @@ Application.configureDevice = function ()
     return;
   }
 
-  size = getScreenSize (DeviceConfiguration.SS_7_INCH);
+  size = getScreenSize (vs_core.DeviceConfiguration.SS_7_INCH);
 
-  if (deviceConfiguration.screenSize === DeviceConfiguration.SS_10_INCH) {
+  if (deviceConfiguration.screenSize === vs_core.DeviceConfiguration.SS_10_INCH) {
     tid = "tablet7";
   }
 
@@ -536,7 +539,7 @@ Application.configureDevice = function ()
   }
 
   tid = "phone3_4";
-  size = getScreenSize (DeviceConfiguration.SS_4_INCH)
+  size = getScreenSize (vs_core.DeviceConfiguration.SS_4_INCH)
 
   if (deviceConfiguration.orientation === 0 ||
       deviceConfiguration.orientation === 90)
@@ -585,11 +588,11 @@ function getScreenSize (screenDef) {
   }
 
   switch (screenDef) {
-    case DeviceConfiguration.SS_7_INCH:
+    case vs_core.DeviceConfiguration.SS_7_INCH:
       return get7Inch ();
     break
 
-    case DeviceConfiguration.SS_4_INCH:
+    case vs_core.DeviceConfiguration.SS_4_INCH:
       return get4Inch ();
     break
   }
@@ -619,9 +622,9 @@ Application.getOrientation = function ()
 Application.start = function ()
 {
   var key, obj;
-  for (key in Application_applications)
+  for (key in Application._applications)
   {
-    obj = Application_applications [key];
+    obj = Application._applications [key];
     obj.propertyChange ();
     obj.applicationStarted ();
     vs.scheduleAction (function () {obj.refresh ();});
@@ -636,17 +639,17 @@ Application.stop = function ()
 {
   // un peu bourin pour le moment
   var key, obj;
-  for (key in Application_applications)
+  for (key in Application._applications)
   {
-    obj = Application_applications [key];
-    util.free (obj);
+    obj = Application._applications [key];
+    vs_utils.free (obj);
   }
-  Application_applications = {};
+  Application._applications = {};
 
-  for (var key in vs.core.Object._obs)
+  for (var key in vs_core.Object._obs)
   {
-    var obj = vs.core.Object._obs [key];
-    vs.util.free (obj);
+    var obj = vs_core.Object._obs [key];
+    vs_utilsfree (obj);
   }
 };
 
@@ -666,8 +669,8 @@ Application.sendStart = function ()
 Application.propagate = function (spec, data)
 {
   var key, obj;
-  for (key in Application_applications) {
-    obj = Application_applications [key];
+  for (key in Application._applications) {
+    obj = Application._applications [key];
     if (obj) obj.propagate (spec, data);
   }
 };
@@ -693,7 +696,7 @@ Application.preloadTemplates = function (templates)
 {
   for (var i = 0; i < templates.length; i++)
   {
-    util.preloadTemplate (templates[i]);
+    vs_utils.preloadTemplate (templates[i]);
   }
 };
 
@@ -723,24 +726,6 @@ ImagePreloader.prototype.preload = function (image)
   if (ImagePreloader.__image_path [image]) { return; }
   (new Image ()).src = image;
   ImagePreloader.__image_path [image] = true;
-};
-
-function preventBehavior (e)
-{
-//  window.scrollTo (0, 0);
-
-  if (e.type == "touchstart" &&
-      (e.target.tagName == "INPUT" ||
-       e.target.tagName == "input" ||
-       e.target.tagName == "TEXTAREA" ||
-       e.target.tagName == "textarea"))
-  {
-    // on android do not cancel event otherwise the keyboard does not appear
-    return;
-  }
-
-  e.preventDefault (); 
-  return false;
 };
 
 /**
@@ -818,4 +803,4 @@ Application.loadingStop = function ()
                       Export
 *********************************************************************/
 /** @private */
-ui.Application = Application;
+export default Application;

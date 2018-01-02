@@ -15,6 +15,7 @@
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
+import { addPointerListener, removePointerListener } from 'vs_gesture';
 
 /**
  *  The vs.ui.PointerRecognizer class
@@ -96,7 +97,7 @@ PointerRecognizer.prototype = {
     binding.listener = listener;
     binding.nb = 1;
     POINTER_LISTENERS.push (binding);
-    vs.addPointerListener (node, type, listener, useCapture);
+    addPointerListener (node, type, listener, useCapture);
     return true;
   },
 
@@ -121,7 +122,7 @@ PointerRecognizer.prototype = {
           binding.listener === listener) {
         binding.nb --;
         if (binding.nb === 0) {
-          vs.removePointerListener (node, type, listener, useCapture);
+          removePointerListener (node, type, listener, useCapture);
           POINTER_LISTENERS.remove (i);
         }
         return true;
@@ -210,4 +211,4 @@ PointerRecognizer.prototype = {
                       Export
 *********************************************************************/
 /** @private */
-ui.PointerRecognizer = PointerRecognizer;
+export default PointerRecognizer;

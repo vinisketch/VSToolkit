@@ -16,6 +16,10 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import html_template from './ToolBar.html';
 
 /**
  *  The vs.ui.ToolBar class
@@ -88,6 +92,8 @@ ToolBar.BLACK_TRANSLUCIDE_STYLE = 'black_translucide_style';
 ToolBar.BLUE_STYLE = 'blue_style';
 
 ToolBar.prototype = {
+
+  html_template: html_template,
   
 /********************************************************************
                   protected members declarations
@@ -153,11 +159,11 @@ ToolBar.prototype = {
    */
   destructor: function ()
   {
-    util.free (this._show_animation);
-    util.free (this._hide_animation);
+    vs_utils.free (this._show_animation);
+    vs_utils.free (this._hide_animation);
 
     this.removePointerRecognizer (this.recognizer);
-    util.free (this.recognizer);
+    vs_utils.free (this.recognizer);
 
     View.prototype.destructor.call (this);
   },
@@ -274,13 +280,13 @@ ToolBar.prototype = {
     delete (this._items [id]);
   }
 };
-util.extendClass (ToolBar, View);
+vs_utils.extendClass (ToolBar, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (ToolBar, {
+vs_utils.defineClassProperties (ToolBar, {
   'style': {
     /** 
      * Getter|Setter for the tab bar style
@@ -289,7 +295,7 @@ util.defineClassProperties (ToolBar, {
      */ 
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       if (this._style)
       {
         this.removeClassName (this._style);
@@ -325,7 +331,7 @@ util.defineClassProperties (ToolBar, {
      */
     set : function (v)
     {
-      if (!util.isArray (v)) { return; }
+      if (!vs_utils.isArray (v)) { return; }
       
       var id, i, spec;
       
@@ -492,13 +498,13 @@ ToolBar.Text.prototype = {
     this.view.appendChild (this._text_view);
   }
 };
-util.extendClass (ToolBar.Text, View);
+vs_utils.extendClass (ToolBar.Text, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperty (ToolBar.Text, "text", {
+vs_utils.defineClassProperty (ToolBar.Text, "text", {
 
   /** 
    * The text of the item
@@ -508,8 +514,8 @@ util.defineClassProperty (ToolBar.Text, "text", {
   set : function (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (util.isNumber (v)) { v = '' + v; }
-    else if (!util.isString (v))
+    else if (vs_utils.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -518,7 +524,7 @@ util.defineClassProperty (ToolBar.Text, "text", {
     this._text = v;
     if (this._text_view)
     {
-      util.setElementInnerText (this._text_view, this._text);
+      vs_utils.setElementInnerText (this._text_view, this._text);
     }
   },
 
@@ -630,13 +636,13 @@ ToolBar.Button.prototype = {
     this.view.style.backgroundImage = 'url(' + path + ')';
   }
 };
-util.extendClass (ToolBar.Button, View);
+vs_utils.extendClass (ToolBar.Button, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (ToolBar.Button, {
+vs_utils.defineClassProperties (ToolBar.Button, {
   "name": {
     /** 
      * The name of the button from the list (vs.ui.ToolBar.BUTTON_ADD,...)
@@ -649,7 +655,7 @@ util.defineClassProperties (ToolBar.Button, {
      */ 
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
 
       this._name = v;
       this.addClassName (this._name);
@@ -673,11 +679,11 @@ util.defineClassProperties (ToolBar.Button, {
      */ 
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
 
       this._label = v;
       
-      util.setElementInnerText (this.view, v);
+      vs_utils.setElementInnerText (this.view, v);
       if (v) {
         this.setStyle ("background-position", "center 0px");
       }
@@ -1023,4 +1029,4 @@ ToolBar.ZOMM_OUT = 'zoom_out';
                       Export
 *********************************************************************/
 /** @private */
-ui.ToolBar = ToolBar;
+export default ToolBar;

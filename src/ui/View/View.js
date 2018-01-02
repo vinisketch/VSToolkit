@@ -16,6 +16,14 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import RecognizerManager from '../Recognizers/RecognizerManager';
+import Template from '../Template';
+import html_template from './View.html';
+
 /**
  * @private
  */
@@ -41,7 +49,7 @@ function _findNodeRef (node, ref)
 /**
  *  The vs.ui.View class
  *
- *  @extends vs.core.EventSource
+ *  @extends vs_core.EventSource
  *  @class
  *  vs.ui.View is a class that defines the basic drawing, event-handling, of
  *  an application. You typically don’t interact with the vs.ui.View API
@@ -74,7 +82,7 @@ function _findNodeRef (node, ref)
  */
 function View (config)
 {
-  this.parent = core.EventSource;
+  this.parent = vs_core.EventSource;
   this.parent (config);
   this.constructor = View;
   
@@ -231,9 +239,9 @@ View.__comp_templates = {};
 View._propagate_pointer_event = function (obj, func_ptr, event)
 {
   var event_name = "";
-  if (event.type === core.POINTER_START) { event_name = 'POINTER_START'; }
-  if (event.type === core.POINTER_END) { event_name = 'POINTER_END'; }
-  if (event.type === core.POINTER_MOVE) { event_name = 'POINTER_MOVE'; }
+  if (event.type === vs_core.POINTER_START) { event_name = 'POINTER_START'; }
+  if (event.type === vs_core.POINTER_END) { event_name = 'POINTER_END'; }
+  if (event.type === vs_core.POINTER_MOVE) { event_name = 'POINTER_MOVE'; }
 
   event.type = event_name;
 
@@ -246,6 +254,8 @@ View._propagate_pointer_event = function (obj, func_ptr, event)
 var _template_nodes = null;
 
 View.prototype = {
+
+  html_template: html_template,
 
   /*****************************************************************
    *                Private members
@@ -390,11 +400,11 @@ View.prototype = {
         for (i = 0; i < a.length; i++)
         {
           child = a [i];
-          util.free (child);
+          vs_utils.free (child);
         }
       }
       else
-      { util.free (a); }
+      { vs_utils.free (a); }
       delete (this.__children [key]);
     }
     this.__children = {};
@@ -402,7 +412,7 @@ View.prototype = {
 
     this.clearTransformStack ();
 
-    core.EventSource.prototype.destructor.call (this);
+    vs_core.EventSource.prototype.destructor.call (this);
   },
 
   /**
@@ -446,7 +456,7 @@ View.prototype = {
    * @function
    * @private
    *
-   * @param {vs.core.Object} obj The cloned object
+   * @param {vs_core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   clone : function (config, cloned_map)
@@ -468,7 +478,7 @@ View.prototype = {
       for (; i < l; i++)
       {
         path = paths[i];
-        if (!path.id) path.id = core.createId ();
+        if (!path.id) path.id = vs_core.createId ();
         clonedViews [path[0].id] = _evalPath (root, path[1]);
       }
     }
@@ -496,7 +506,7 @@ View.prototype = {
           a = comp.__children [key];
           if (!a) { continue; }
           
-          if (util.isArray (a))
+          if (vs_utils.isArray (a))
           {
             l = a.length;
             for (i = 0; i < l; i++)
@@ -529,15 +539,15 @@ View.prototype = {
       config.node = node;
     }
 
-    return core.EventSource.prototype.clone.call (this, config, cloned_map);
+    return vs_core.EventSource.prototype.clone.call (this, config, cloned_map);
   },
 
    /**
-   * @name vs.core.Object#_clone_properties_value
+   * @name vs_core.Object#_clone_properties_value
    * @function
    * @protected
    *
-   * @param {vs.core.Object} obj The cloned object
+   * @param {vs_core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone_properties_value : function (obj, cloned_map)
@@ -558,7 +568,7 @@ View.prototype = {
   
       // property value copy
       if (this.isProperty (key))
-      { core.Object.__propertyCloneValue (key, this, obj); }
+      { vs_core.Object.__propertyCloneValue (key, this, obj); }
     }
   },
 
@@ -567,14 +577,14 @@ View.prototype = {
    * @function
    * @private
    *
-   * @param {vs.core.Object} obj The cloned object
+   * @param {vs_core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)
   {
     var anim, a, key, child, l, hole, cloned_comp;
 
-    core.EventSource.prototype._clone.call (this, obj, cloned_map);
+    vs_core.EventSource.prototype._clone.call (this, obj, cloned_map);
 
     // animations clone
     if (this._show_animation)
@@ -661,7 +671,7 @@ View.prototype = {
     {
       var template = new Template (_template);
       var node = template.__extend_component (this);
-      util.free (template);
+      vs_utils.free (template);
       return node;
     }
 
@@ -671,9 +681,9 @@ View.prototype = {
       node = Template.parseHTML (this.html_template);
       if (node) return node;
     }
-    if (util.isFunction (this.constructor))
+    if (vs_utils.isFunction (this.constructor))
     { compName = this.constructor.name; }
-    else if (util.isString (this.constructor))
+    else if (vs_utils.isString (this.constructor))
     { compName = this.constructor; }
     else
     { compName = View; }
@@ -722,7 +732,7 @@ View.prototype = {
       if (node_ref && root_id)
       {
         root_node = null;
-        obj = core.Object._obs [root_id];
+        obj = vs_core.Object._obs [root_id];
 
         if (obj && obj.view) { root_node = obj.view; }
         else
@@ -782,7 +792,7 @@ View.prototype = {
    */
   initComponent : function ()
   {
-    core.EventSource.prototype.initComponent.call (this);
+    vs_core.EventSource.prototype.initComponent.call (this);
 
     this._holes = {};
     this.__children = {};
@@ -811,7 +821,7 @@ View.prototype = {
    */
   componentDidInitialize : function ()
   {
-    core.EventSource.prototype.componentDidInitialize.call (this);
+    vs_core.EventSource.prototype.componentDidInitialize.call (this);
     if (this._magnet) this.view.style.setProperty ('position', 'absolute', null);
 
     if (this._magnet === View.MAGNET_CENTER)
@@ -894,7 +904,7 @@ View.prototype = {
    * @param {String} comp_name The GUI component name to instanciate
    * @param {Object} config Configuration structure need to build the component.
    * @param {String} extension The hole into the vs.ui.View will be insert.
-   * @return {vs.core.Object} the created component
+   * @return {vs_core.Object} the created component
    */
   createAndAddComponent : function (comp_name, config, extension)
   {
@@ -907,7 +917,7 @@ View.prototype = {
     // verify the component view already exists
     if (!config) {config = {};}
 
-    if (!config.id) { config.id = core.createId (); }
+    if (!config.id) { config.id = vs_core.createId (); }
 
     var view = this.__getGUInode (config),
       path, data, xmlRequest, div, children, i, len, obj, msg;
@@ -1014,7 +1024,7 @@ View.prototype = {
    * @name vs.ui.View#isChild
    * @function
    *
-   * @param {vs.core.EventSource} child The component to be removed.
+   * @param {vs_core.EventSource} child The component to be removed.
    * @return {boolean}
    */
   isChild : function (child)
@@ -1041,7 +1051,7 @@ View.prototype = {
    *  Add the specified child component to this component.
    *  <p>
    *  The component can be a graphic component (vs.ui.View) or
-   *  a non graphic component (vs.core.EventSource).
+   *  a non graphic component (vs_core.EventSource).
    *  In case of vs.ui.View its mandatory to set the extension.
    *  <p>
    *  The add is a lazy add! The child's view can be already in
@@ -1054,7 +1064,7 @@ View.prototype = {
    * @name vs.ui.View#add
    * @function
    *
-   * @param {vs.core.EventSource} child The component to be added.
+   * @param {vs_core.EventSource} child The component to be added.
    * @param {String} extension [optional] The hole into a vs.ui.View will be
    *       insert.
    */
@@ -1073,7 +1083,7 @@ View.prototype = {
     else { key = extension; }
 
     a = this.__children [key];
-    if (a && util.isArray (a)) { a.push (child); }
+    if (a && vs_utils.isArray (a)) { a.push (child); }
     else if (a)
     {
       b = [];
@@ -1112,7 +1122,7 @@ View.prototype = {
    * @name vs.ui.View#remove
    * @function
    *
-   * @param {vs.core.EventSource} child The component to be removed.
+   * @param {vs_core.EventSource} child The component to be removed.
    */
   remove : function (child)
   {
@@ -1183,14 +1193,14 @@ View.prototype = {
         {
           child = a [0];
           self.remove (child);
-          if (should_free) util.free (child);
+          if (should_free) vs_utils.free (child);
           else children.push (child);
         }
       }
       else
       {
         self.remove (a);
-        if (should_free) util.free (a);
+        if (should_free) vs_utils.free (a);
         else children.push (a);
       }
       delete (self.__children [ext]);
@@ -1237,15 +1247,15 @@ View.prototype = {
    *  you should set delay to 'true' otherwise you application will be stuck.
    *  But be careful this options add an overlay in the event propagation.
    *  For debug purpose or more secure coding you can force delay to true, for
-   *  all bind using global variable vs.core.FORCE_EVENT_PROPAGATION_DELAY.<br/>
-   *  You just have set as true (vs.core.FORCE_EVENT_PROPAGATION_DELAY = true)
+   *  all bind using global variable vs_core.FORCE_EVENT_PROPAGATION_DELAY.<br/>
+   *  You just have set as true (vs_core.FORCE_EVENT_PROPAGATION_DELAY = true)
    *  at beginning of your program.
    *
    * @name vs.ui.View#bind
    * @function
    *
    * @param {string} spec the event specification [mandatory]
-   * @param {vs.core.Object} obj the object interested to catch the event
+   * @param {vs_core.Object} obj the object interested to catch the event
    *    [mandatory]
    * @param {string} func the name of a callback. If its not defined
    *        notify method will be called [optional]
@@ -1255,16 +1265,16 @@ View.prototype = {
   bind : function (spec, obj, func, delay)
   {
     if (spec === 'POINTER_START' || spec === 'POINTER_END' ||
-        spec === 'POINTER_MOVE' || spec === core.POINTER_START ||
-        spec === core.POINTER_END || spec === core.POINTER_MOVE)
+        spec === 'POINTER_MOVE' || spec === vs_core.POINTER_START ||
+        spec === vs_core.POINTER_END || spec === vs_core.POINTER_MOVE)
     {
       if (!this.view) { return; }
 
       var func_ptr, self = this, handler;
       if (!func) { func = 'notify'; }
-      if (util.isFunction (func)) { func_ptr = func; }
-      else if (util.isString (func) &&
-               util.isFunction (obj [func]))
+      if (vs_utils.isFunction (func)) { func_ptr = func; }
+      else if (vs_utils.isString (func) &&
+               vs_utils.isFunction (obj [func]))
       {
         func_ptr = obj [func];
       }
@@ -1283,33 +1293,33 @@ View.prototype = {
       var self = this;
       handler = function (event)
       {
-        if (core.EVENT_SUPPORT_TOUCH && event.changedTouches &&
+        if (vs_core.EVENT_SUPPORT_TOUCH && event.changedTouches &&
             event.changedTouches.length > 1) { return; }
 
 //        event.stopPropagation ();
 //        event.preventDefault ();
 
         event.src = self;
-        if (core.EVENT_SUPPORT_TOUCH && event.changedTouches)
+        if (vs_core.EVENT_SUPPORT_TOUCH && event.changedTouches)
         {
           event.pageX = event.changedTouches[0].pageX;
           event.pageY = event.changedTouches[0].pageY;
-          var rec = util.getElementAbsolutePosition (self.view);
+          var rec = vs_utils.getElementAbsolutePosition (self.view);
           event.offsetX = event.changedTouches[0].pageX - rec.x;
           event.offsetY = event.changedTouches[0].pageY - rec.y;
         }
         View._propagate_pointer_event (obj, func_ptr, event);
       };
 
-      if (spec === 'POINTER_START') { spec = core.POINTER_START; }
-      if (spec === 'POINTER_MOVE') { spec = core.POINTER_MOVE; }
-      if (spec === 'POINTER_END') { spec = core.POINTER_END; }
+      if (spec === 'POINTER_START') { spec = vs_core.POINTER_START; }
+      if (spec === 'POINTER_MOVE') { spec = vs_core.POINTER_MOVE; }
+      if (spec === 'POINTER_END') { spec = vs_core.POINTER_END; }
 
       this._pointerevent_handlers [obj.id + spec] = handler;
 
-      vs.addPointerListener (this.view, spec, handler);
+      addPointerListener (this.view, spec, handler);
     }
-    return core.EventSource.prototype.bind.call (this, spec, obj, func, delay);
+    return vs_core.EventSource.prototype.bind.call (this, spec, obj, func, delay);
   },
 
   /**
@@ -1321,20 +1331,20 @@ View.prototype = {
    * @function
    *
    * @param {string} spec the event specification [mandatory]
-   * @param {vs.core.Object} obj the object you want unbind [mandatory]
+   * @param {vs_core.Object} obj the object you want unbind [mandatory]
    */
   unbind : function (spec, obj)
   {
     if (!spec || !obj) { return; }
-    if (spec === core.POINTER_START || spec === core.POINTER_END ||
-        spec === core.POINTER_MOVE)
+    if (spec === vs_core.POINTER_START || spec === vs_core.POINTER_END ||
+        spec === vs_core.POINTER_MOVE)
     {
       var handler = this._pointerevent_handlers [obj.id + spec];
       if (!handler || !this.view) { return; }
 
-      vs.removePointerListener (this.view, core.POINTER_END, handler);
+      removePointerListener (this.view, vs_core.POINTER_END, handler);
     }
-    core.EventSource.prototype.unbind.call (this, spec, obj);
+    vs_core.EventSource.prototype.unbind.call (this, spec, obj);
   },
 
 /********************************************************************
@@ -1553,7 +1563,7 @@ View.prototype = {
     { this.view.style.removeProperty (property); }
     else
     {
-      if (util.isNumber (value)) value = '' + value; // IE need string
+      if (vs_utils.isNumber (value)) value = '' + value; // IE need string
       this.view.style.setProperty (property, value, null);
     }
   },
@@ -1586,7 +1596,7 @@ View.prototype = {
     if (!this.view || !this.view.style)
     { return; }
 
-    util.setElementStyle (this.view, style);
+    vs_utils.setElementStyle (this.view, style);
   },
 
   /**
@@ -1595,7 +1605,7 @@ View.prototype = {
    *  @example
    *  myObject.addCssRules ('.classname1', ['color: red', 'margin: 0px']);
    *  <=> to
-   *  vs.util.addCssRules ('#' + myObject.id + ' .classname1', ['color: red', 'margin: 0px']);
+   *  vs_utilsaddCssRules ('#' + myObject.id + ' .classname1', ['color: red', 'margin: 0px']);
    *
    * @name vs.ui.View#addCssRules
    * @function
@@ -1605,7 +1615,7 @@ View.prototype = {
    */
   addCssRules : function (selector, rules)
   {
-    util.addCssRules ('#' + this._id + ' ' + selector, rules);
+    vs_utils.addCssRules ('#' + this._id + ' ' + selector, rules);
   },
 
   /**
@@ -1614,7 +1624,7 @@ View.prototype = {
    *  @example
    *  myObject.addCssRule ('.classname1', 'color: red');
    *  <=> to
-   *  vs.util.addCssRule ('#' + myObject.id + ' .classname1', 'color: red');
+   *  vs_utilsaddCssRule ('#' + myObject.id + ' .classname1', 'color: red');
    *
    * @name vs.ui.View#addCssRule
    * @function
@@ -1625,7 +1635,7 @@ View.prototype = {
    */
   addCssRule : function (selector, rule)
   {
-    util.addCssRule ('#' + this._id + ' ' + selector, rule);
+    vs_utils.addCssRule ('#' + this._id + ' ' + selector, rule);
   },
 
 /********************************************************************
@@ -1661,7 +1671,7 @@ View.prototype = {
       vs.scheduleAction (function()
       {
         self.refresh ();
-        if (clb && util.isFunction (clb)) clb.call (self);
+        if (clb && vs_utils.isFunction (clb)) clb.call (self);
       });
     });
   },
@@ -1677,7 +1687,7 @@ View.prototype = {
   {
     if (!this.view) { return; }
     if (this._visible) { return; }
-    if (!util.isFunction (clb)) clb = undefined; 
+    if (!vs_utils.isFunction (clb)) clb = undefined; 
 
     if (this.__view_display)
     {
@@ -1785,7 +1795,7 @@ View.prototype = {
       {
         this._show_animation = animations.clone ();
       }
-      else if (util.isArray (animations))
+      else if (vs_utils.isArray (animations))
       {
         this._show_animation = new vs.fx.Animation ();
         this._show_animation.setAnimations (animations);
@@ -1809,7 +1819,7 @@ View.prototype = {
         { this._show_animation.delay = options.delay; }
       }
     }
-    if (util.isFunction (clb)) { this.__show_clb = clb; }
+    if (vs_utils.isFunction (clb)) { this.__show_clb = clb; }
     else { this.__show_clb = clb; }
   },
 
@@ -1824,7 +1834,7 @@ View.prototype = {
   {
     if (!this.view) { return; }
     if (!this._visible && !this.__is_showing) { return; }
-    if (!util.isFunction (clb)) clb = undefined; 
+    if (!vs_utils.isFunction (clb)) clb = undefined; 
 
     this._visible = false;
     
@@ -1932,7 +1942,7 @@ View.prototype = {
       {
         this._hide_animation = animations.clone ();
       }
-      else if (util.isArray (animations))
+      else if (vs_utils.isArray (animations))
       {
         this._hide_animation = new vs.fx.Animation ();
         this._hide_animation.setAnimations (animations);
@@ -1956,7 +1966,7 @@ View.prototype = {
         { this._hide_animation.delay = options.delay; }
       }
     }
-    if (util.isFunction (clb)) { this.__hide_clb = clb; }
+    if (vs_utils.isFunction (clb)) { this.__hide_clb = clb; }
     else { this.__hide_clb = clb; }
   },
 
@@ -1980,7 +1990,7 @@ View.prototype = {
   {
     if (!this.view) { return; }
 
-    util.setElementVisibility (this.view, visibility);
+    vs_utils.setElementVisibility (this.view, visibility);
   },
 
 /********************************************************************
@@ -2004,7 +2014,7 @@ View.prototype = {
   {
     if (!this.view) { return false; }
 
-    return util.hasClassName (this.view, className);
+    return vs_utils.hasClassName (this.view, className);
   },
 
   /**
@@ -2026,7 +2036,7 @@ View.prototype = {
 
     var args = Array.prototype.slice.call (arguments);
     args.unshift (this.view);
-    util.addClassName.apply (this.view, args);
+    vs_utils.addClassName.apply (this.view, args);
   },
 
   /**
@@ -2048,7 +2058,7 @@ View.prototype = {
 
     var args = Array.prototype.slice.call (arguments);
     args.unshift (this.view);
-    util.removeClassName.apply (this.view, args);
+    vs_utils.removeClassName.apply (this.view, args);
   },
 
   /**
@@ -2065,9 +2075,9 @@ View.prototype = {
    */
   toggleClassName: function (className)
   {
-    if (!this.view || !util.isString (className)) { return; }
+    if (!this.view || !vs_utils.isString (className)) { return; }
 
-    util.toggleClassName (this.view, className);
+    vs_utils.toggleClassName (this.view, className);
   },
 
 /********************************************************************
@@ -2152,7 +2162,7 @@ View.prototype = {
     {
       anim = animations
     }
-    else if (util.isArray (animations))
+    else if (vs_utils.isArray (animations))
     {
       var anim = new vs.fx.Animation ();
       anim.setAnimations (animations);
@@ -2190,8 +2200,8 @@ View.prototype = {
    */
   translate: function (x, y, z)
   {
-    if (!util.isNumber (x) || !util.isNumber (y)) { return };
-    if (!util.isNumber (z)) z = 0;
+    if (!vs_utils.isNumber (x) || !vs_utils.isNumber (y)) { return };
+    if (!vs_utils.isNumber (z)) z = 0;
 
     this._translation[0] = x;
     this._translation[1] = y;
@@ -2210,18 +2220,18 @@ View.prototype = {
    */
   rotate: function (r)
   {
-    if (util.isNumber (r)) {
+    if (vs_utils.isNumber (r)) {
       this._rotation[0] = 0;
       this._rotation[1] = 0;
       this._rotation[2] = r;
     }
-    else if (util.isArray (r))
+    else if (vs_utils.isArray (r))
     {
-      if (util.isNumber (r[0])) this._rotation[0] = r[0];
+      if (vs_utils.isNumber (r[0])) this._rotation[0] = r[0];
       else this._rotation[0] = 0;
-      if (util.isNumber (r[1])) this._rotation[1] = r[1];
+      if (vs_utils.isNumber (r[1])) this._rotation[1] = r[1];
       else this._rotation[1] = 0;
-      if (util.isNumber (r[2])) this._rotation[2] = r[2];
+      if (vs_utils.isNumber (r[2])) this._rotation[2] = r[2];
       else this._rotation[2] = 0;
     }
 
@@ -2239,7 +2249,7 @@ View.prototype = {
    */
   scale: function (s)
   {
-    if (!util.isNumber (s)) { return };
+    if (!vs_utils.isNumber (s)) { return };
 
     if (s > this._max_scale) { s = this._max_scale; }
     if (s < this._min_scale) { s = this._min_scale; }
@@ -2261,7 +2271,7 @@ View.prototype = {
   setNewTransformOrigin : function (origin)
   {
     if (!origin) { return; }
-    if (!util.isNumber (origin.x) || !util.isNumber (origin.y)) { return; }
+    if (!vs_utils.isNumber (origin.x) || !vs_utils.isNumber (origin.y)) { return; }
 
     this.flushTransformStack ();
     
@@ -2291,7 +2301,6 @@ View.prototype = {
     if (!this._transforms_stack) this._transforms_stack = matrix;
     {
       this._transforms_stack = matrix.multiply (this._transforms_stack);
-      delete (matrix);
     }
 
     // Init a new transform space
@@ -2408,18 +2417,17 @@ View.prototype = {
       transform += " translate(-50%,-50%)";
     }
 
-    setElementTransform (this.view, transform);
-    delete (matrix);
+    vs_utils.setElementTransform (this.view, transform);
   }
 };
-util.extend (View.prototype, RecognizerManager);
-util.extendClass (View, core.EventSource);
+vs_utils.extend (View.prototype, RecognizerManager);
+vs_utils.extendClass (View, vs_core.EventSource);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (View, {
+vs_utils.defineClassProperties (View, {
 
   'size': {
     /**
@@ -2430,8 +2438,8 @@ util.defineClassProperties (View, {
      */
     set : function (v)
     {
-      if (!util.isArray (v) || v.length !== 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+      if (!vs_utils.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
 
       this._size [0] = v [0];
       this._size [1] = v [1];
@@ -2461,8 +2469,8 @@ util.defineClassProperties (View, {
     set : function (v)
     {
       if (!v) { return; }
-      if (!util.isArray (v) || v.length != 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+      if (!vs_utils.isArray (v) || v.length != 2) { return; }
+      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
 
       this._pos [0] = v [0];
       this._pos [1] = v [1];
@@ -2492,8 +2500,8 @@ util.defineClassProperties (View, {
     set : function (v)
     {
       if (!v) { return; }
-      if (!util.isArray (v) || v.length != 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+      if (!vs_utils.isArray (v) || v.length != 2) { return; }
+      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
 
       if (this._autosizing [0] === v [0] && this._autosizing [1] === v [1])
       { return; }
@@ -2517,7 +2525,7 @@ util.defineClassProperties (View, {
     set : function (code)
     {
       if (this._magnet === code) return;
-      if (!util.isNumber (code) || code < 0 || code > 5) return;
+      if (!vs_utils.isNumber (code) || code < 0 || code > 5) return;
       this._setMagnet (code);
     }
   },
@@ -2606,7 +2614,7 @@ util.defineClassProperties (View, {
      */
     set : function (v)
     {
-      if (!util.isNumber (v)) return;
+      if (!vs_utils.isNumber (v)) return;
       if (v < 0 || v > 1) return;
 
       if (this.view) this.view.style.opacity = v;
@@ -2624,7 +2632,7 @@ util.defineClassProperties (View, {
      */
     set : function (v)
     {
-      if (!util.isArray (v)) { return };
+      if (!vs_utils.isArray (v)) { return };
 
       this.translate (v[0], v[1], v[2]);
     },
@@ -2692,7 +2700,7 @@ util.defineClassProperties (View, {
      */
     set : function (v)
     {
-      if (!util.isNumber (v)) { return };
+      if (!vs_utils.isNumber (v)) { return };
       this._min_scale = v;
       
       if (this._scaling < this._min_scale) { this.scale (this._min_scale); }
@@ -2717,7 +2725,7 @@ util.defineClassProperties (View, {
      */
     set : function (v)
     {
-      if (!util.isNumber (v)) { return };
+      if (!vs_utils.isNumber (v)) { return };
       this._max_scale = v;
       
       if (this._scaling > this._max_scale) { this.scale (this._max_scale); }
@@ -2746,8 +2754,8 @@ util.defineClassProperties (View, {
      */
     set : function (v)
     {
-      if (!util.isArray (v) || v.length !== 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber (v[1])) { return; }
+      if (!vs_utils.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber (v[1])) { return; }
 
       this._transform_origin [0] = v [0];
       this._transform_origin [1] = v [1];
@@ -2848,7 +2856,7 @@ util.defineClassProperties (View, {
     {
       if (!this.view) return;
 
-      util.safeInnerHTML (this.view, v);
+      vs_utils.safeInnerHTML (this.view, v);
     },
   }
 });
@@ -2872,5 +2880,5 @@ function getDeviceCSSCode ()
                       Export
 *********************************************************************/
 /** @private */
-ui.View = View;
+export default View;
 View.getDeviceCSSCode = getDeviceCSSCode;

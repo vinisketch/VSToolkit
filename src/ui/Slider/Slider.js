@@ -16,6 +16,15 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import View from '../View/View';
+import html_template from './Slider.html';
+import Application from '../Application/Application';
+import DragRecognizer from '../Recognizers/DragRecognizer';
+
 /**
  *  The vs.ui.Slider class
  *
@@ -83,6 +92,8 @@ Slider.HORIZONTAL = 0;
 Slider.VERTICAL = 1;
 
 Slider.prototype = {
+
+  html_template: html_template,
 
   /*****************************************************************
    *
@@ -174,7 +185,7 @@ Slider.prototype = {
   {
     View.prototype.initComponent.call (this);
 
-    var os_device =  vs.ui.View.getDeviceCSSCode (); //window.deviceConfiguration.os;
+    var os_device = View.getDeviceCSSCode (); //window.deviceConfiguration.os;
 
     if (os_device == Application.CSS_IOS)
     {
@@ -200,7 +211,7 @@ Slider.prototype = {
     this.__handle = this.view.querySelector ('.handle');
       
     // top/bottom click listening
-    vs.addPointerListener (this.__handle, core.POINTER_START, this, true);
+    addPointerListener (this.__handle, vs_core.POINTER_START, this, true);
     if (!this.__drag_recognizer)
     {
       this.__drag_recognizer = new DragRecognizer (this);
@@ -219,7 +230,7 @@ Slider.prototype = {
     this.__handle_x = this.__handle.offsetLeft;
     this.__handle_y = this.__handle.offsetTop;
     
-    this.__abs_pos = vs.util.getElementAbsolutePosition (this.view);
+    this.__abs_pos = vs_utilsgetElementAbsolutePosition (this.view);
 
     // set the new handler position
     var clientX = e.targetPointerList[0].pageX - this.__abs_pos.x;
@@ -289,13 +300,13 @@ Slider.prototype = {
     View.prototype.refresh.call (this);
   }
 };
-util.extendClass (Slider, View);
+vs_utils.extendClass (Slider, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (Slider, {
+vs_utils.defineClassProperties (Slider, {
   'value':{
     /**
      * Set the current slider value
@@ -315,7 +326,7 @@ util.defineClassProperties (Slider, {
       var d1 = this.__handle_width / 2, d2 = 0;
        
       var os_device = window.deviceConfiguration.os;
-      if (os_device === DeviceConfiguration.OS_BLACK_BERRY)
+      if (os_device === vs_core.DeviceConfiguration.OS_BLACK_BERRY)
       {
         d2 = (this.__handle_height - this.__handle_delta) / 2;
       }
@@ -330,10 +341,10 @@ util.defineClassProperties (Slider, {
           x = Math.floor ((v - this._range [0]) * width /
             (this._range [1] - this._range [0])) - d1;
         
-        if (SUPPORT_3D_TRANSFORM)
-          setElementTransform (this.__handle, "translate3d(" + x + "px,-" + d2 + "px,0)");
+        if (vs_utils.SUPPORT_3D_TRANSFORM)
+          vs_utils.setElementTransform (this.__handle, "translate3d(" + x + "px,-" + d2 + "px,0)");
         else
-          setElementTransform (this.__handle, "translate(" + x + "px,-" + d2 + "px)");
+          vs_utils.setElementTransform (this.__handle, "translate(" + x + "px,-" + d2 + "px)");
           
         this.view.style.backgroundSize = (x + d1) + "px 10px";
       }
@@ -343,10 +354,10 @@ util.defineClassProperties (Slider, {
           y = Math.floor ((v - this._range [0]) * height /
             (this._range [1] - this._range [0])) - d1;
           
-        if (SUPPORT_3D_TRANSFORM)
-          setElementTransform (this.__handle, "translate3d(-" + d2 + "px," + y + "px,0)");
+        if (vs_utils.SUPPORT_3D_TRANSFORM)
+          vs_utils.setElementTransform (this.__handle, "translate3d(-" + d2 + "px," + y + "px,0)");
         else
-          setElementTransform (this.__handle, "translate(-" + d2 + "px," + y + "px)");
+          vs_utils.setElementTransform (this.__handle, "translate(-" + d2 + "px," + y + "px)");
           
         this.view.style.backgroundSize = "10px " + (y + d1) + "px";
       }
@@ -368,8 +379,8 @@ util.defineClassProperties (Slider, {
      */ 
     set : function (v)
     {
-      if (!util.isArray (v) || v.length !== 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber (v[1])) { return; }
+      if (!vs_utils.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber (v[1])) { return; }
       if (v[0] === v[1] || v[0] > v[1]) { return; }
   
       this._range [0] = v [0];
@@ -436,8 +447,8 @@ util.defineClassProperties (Slider, {
     set : function (v)
     {
       if (!v) { return; } 
-      if (!util.isArray (v) || v.length !== 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+      if (!vs_utils.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
       
       this._size [0] = v [0];
       this._size [1] = v [1];
@@ -468,4 +479,4 @@ util.defineClassProperties (Slider, {
                       Export
 *********************************************************************/
 /** @private */
-ui.Slider = Slider;
+export default Slider;

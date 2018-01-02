@@ -16,6 +16,13 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import View from '../View/View';
+import html_template from './PopOver.html';
+
 /**
  *  The vs.ui.PopOver class
  *
@@ -111,6 +118,8 @@ PopOver.LEFT = 2;
 PopOver.RIGHT = 3;
 
 PopOver.prototype = {
+
+  html_template: html_template,
   
   /*****************************************************************
    *               public members
@@ -255,7 +264,7 @@ PopOver.prototype = {
         break;
       }
       
-      pos = util.getElementAbsolutePosition (this.view.parentElement);
+      pos = vs_utils.getElementAbsolutePosition (this.view.parentElement);
       if (pos)
       {
         this.position = [envlop.x - pos.x, envlop.y - pos.y];
@@ -290,8 +299,8 @@ PopOver.prototype = {
   {
     if (!this.view || this._visible) { return; }
     
-    if (pos && util.isArray (pos) && pos.length === 2 &&
-      util.isNumber (pos[0]) && util.isNumber(pos[1]))
+    if (pos && vs_utils.isArray (pos) && pos.length === 2 &&
+      vs_utils.isNumber (pos[0]) && vs_utils.isNumber(pos[1]))
     {
       this._point_position = pos.slice ();;
     }
@@ -319,7 +328,7 @@ PopOver.prototype = {
       this._show_object (clb);
     }
     
-    vs.addPointerListener (document, core.POINTER_START, this, true); 
+    addPointerListener (document, vs_core.POINTER_START, this, true); 
   },
   
   /**
@@ -365,17 +374,17 @@ PopOver.prototype = {
     if (!this.view) { return; }
     View.prototype.hide.call (this);
     
-    vs.removePointerListener (document, core.POINTER_START, this, true); 
+    removePointerListener (document, vs_core.POINTER_START, this, true); 
     this.view.style.display = 'none';
   }
 };
-util.extendClass (PopOver, View);
+vs_utils.extendClass (PopOver, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (PopOver, {
+vs_utils.defineClassProperties (PopOver, {
   'hasFooter': {
     /** 
      * Activate/deactivate the footer space. If its activate, you can
@@ -452,4 +461,4 @@ util.defineClassProperties (PopOver, {
                       Export
 *********************************************************************/
 /** @private */
-ui.PopOver = PopOver;
+export default PopOver;

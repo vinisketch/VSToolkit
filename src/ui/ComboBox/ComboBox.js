@@ -16,6 +16,13 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import { addPointerListener, removePointerListener } from 'vs_gesture';
+
+import View from '../View/View';
+import html_template from './ComboBox.html';
+
 /**
  *  The vs.ui.ComboBox class
  *
@@ -28,7 +35,7 @@
  *  @example
  *  var config = {}
  *  config.data = ['item1, 'item2', 'item3'];
- *  config.id = vs.core.createId ();
+ *  config.id = vs_core.createId ();
  *
  *  var object = vs.ui.ComboBox (config);
  *  object.init ();
@@ -56,6 +63,8 @@ ComboBox.NORMAL_MODE = 1;
 ComboBox.NATIVE_MODE = 2;
 
 ComboBox.prototype = {
+
+  html_template: html_template,
     
   /**
    * @private
@@ -93,8 +102,8 @@ ComboBox.prototype = {
   {
     if (this._mode === ComboBox.NATIVE_MODE)
     {
-      vs.removePointerListener (this.view, core.POINTER_START, this);
-      vs.removePointerListener (this.view, core.POINTER_END, this);
+      removePointerListener (this.view, vs_core.POINTER_START, this);
+      removePointerListener (this.view, vs_core.POINTER_END, this);
     }
     else
     {
@@ -111,11 +120,11 @@ ComboBox.prototype = {
    */
   update_gui_combo_box : function ()
   {
-    if (!util.isArray (this._data)) { return; }
+    if (!vs_utils.isArray (this._data)) { return; }
     
     if (this._mode === ComboBox.NORMAL_MODE)
     {
-      util.removeAllElementChild (this._select);
+      vs_utils.removeAllElementChild (this._select);
         
       this._items = {};
   
@@ -142,7 +151,7 @@ ComboBox.prototype = {
     }
     else
     {
-      util.setElementInnerText (this._select, this._selected_item);
+      vs_utils.setElementInnerText (this._select, this._selected_item);
     }
   },
   
@@ -156,8 +165,8 @@ ComboBox.prototype = {
     
     // PG Native GUI
     if (window.cordova && (
-          window.deviceConfiguration.os === DeviceConfiguration.OS_IOS ||
-          window.deviceConfiguration.os === DeviceConfiguration.OS_ANDROID)
+          window.deviceConfiguration.os === vs_core.DeviceConfiguration.OS_IOS ||
+          window.deviceConfiguration.os === vs_core.DeviceConfiguration.OS_ANDROID)
         && window.plugins.combo_picker)
     {
       this._mode = ComboBox.NATIVE_MODE;
@@ -165,8 +174,8 @@ ComboBox.prototype = {
       this._select = document.createElement ('div');
       this.view.appendChild (this._select);
 
-      vs.addPointerListener (this.view, core.POINTER_START, this);
-      vs.addPointerListener (this.view, core.POINTER_END, this);
+      addPointerListener (this.view, vs_core.POINTER_START, this);
+      addPointerListener (this.view, vs_core.POINTER_END, this);
     }
     // Normal GUI
     else
@@ -191,7 +200,7 @@ ComboBox.prototype = {
   {
     e.preventDefault ();
     e.stopPropagation ();
-    if (e.type === core.POINTER_START)
+    if (e.type === vs_core.POINTER_START)
     {
       this.setFocus ();
       window.plugins.combo_picker.show (this, this._data, this._selected_item);
@@ -250,13 +259,13 @@ ComboBox.prototype = {
     }
   }
 };
-util.extendClass (ComboBox, View);
+vs_utils.extendClass (ComboBox, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (ComboBox, {
+vs_utils.defineClassProperties (ComboBox, {
   'selectedItem': {
     /** 
      * Getter|Setter for an item. Allow to select or get one item
@@ -266,7 +275,7 @@ util.defineClassProperties (ComboBox, {
      */ 
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       
       this._selected_item = v;
       
@@ -283,7 +292,7 @@ util.defineClassProperties (ComboBox, {
       }
       else
       {
-        util.setElementInnerText (this._select, this._selected_item);
+        vs_utils.setElementInnerText (this._select, this._selected_item);
       }
     },
   
@@ -305,7 +314,7 @@ util.defineClassProperties (ComboBox, {
      */ 
     set : function (v)
     {
-      if (!util.isArray (v)) { return; }
+      if (!vs_utils.isArray (v)) { return; }
   
       this._data = v.slice ();
       
@@ -318,4 +327,4 @@ util.defineClassProperties (ComboBox, {
                       Export
 *********************************************************************/
 /** @private */
-ui.ComboBox = ComboBox;
+export default ComboBox;

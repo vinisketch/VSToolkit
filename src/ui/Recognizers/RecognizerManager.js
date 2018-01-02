@@ -16,6 +16,9 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_core from 'vs_core';
+import PointerRecognizer from './PointerRecognizer';
+
 /**
  * @protected
  */
@@ -31,43 +34,43 @@ var RecognizerManager = {
       if (!this._enable) { return; }
      
       switch (e.type) {
-        case core.POINTER_START:
+        case vs_core.POINTER_START:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerStart (e);
           });
         break;
 
-        case core.POINTER_MOVE:
+        case vs_core.POINTER_MOVE:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerMove (e);
           });
         break;
 
-        case core.POINTER_END:
+        case vs_core.POINTER_END:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerEnd (e);
           });
         break;
 
-        case core.POINTER_CANCEL:
+        case vs_core.POINTER_CANCEL:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.pointerCancel (e);
           });
         break;
 
-        case core.GESTURE_START:
+        case vs_core.GESTURE_START:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.gestureStart (e);
           });
           break;
         
-        case core.GESTURE_CHANGE:
+        case vs_core.GESTURE_CHANGE:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.gestureChange (e);
           });
           break;
         
-        case core.GESTURE_END:
+        case vs_core.GESTURE_END:
           this.__pointer_recognizers.forEach (function (recognizer) {
             recognizer.gestureEnd (e);
           });
@@ -97,4 +100,5 @@ var RecognizerManager = {
     recognizer.uninit ();
   }
 };
-ui.RecognizerManager = RecognizerManager;
+
+export default RecognizerManager;

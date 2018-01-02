@@ -16,6 +16,11 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import vs_utils from 'vs_utils';
+import vs_core from 'vs_core';
+import View from '../View/View';
+import html_template from './ScrollView.html';
+
 /**
  *  The vs.ui.ScrollView class
  *
@@ -133,6 +138,8 @@ ScrollView.ROTATION_AND_SCALE = 3;
 
 ScrollView.prototype = {
 
+  html_template: html_template,
+
  /**********************************************************************
  
  *********************************************************************/
@@ -208,8 +215,8 @@ ScrollView.prototype = {
 //    */ 
 //   set transformOrigin (v)
 //   {
-//     if (!util.isArray (v) || v.length !== 2) { return; }
-//     if (!util.isNumber (v[0]) || !util.isNumber (v[1])) { return; }
+//     if (!vs_utils.isArray (v) || v.length !== 2) { return; }
+//     if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber (v[1])) { return; }
 // 
 //     this._transform_origin [0] = v [0];
 //     this._transform_origin [1] = v [1];
@@ -328,7 +335,7 @@ ScrollView.prototype = {
    * Add the specified child component to this component.
    * <p>
    * The component can be a graphic component (vs.ui.View) or
-   * a non graphic component (vs.core.EventSource).
+   * a non graphic component (vs_core.EventSource).
    * In case of vs.ui.View its mandatory to set the extension.
    * <p>
    * The add is a lazy add! The child's view can be already in
@@ -341,7 +348,7 @@ ScrollView.prototype = {
    * @name vs.ui.ScrollView#add
    * @function
    * 
-   * @param {vs.core.EventSource} child The component to be added.
+   * @param {vs_core.EventSource} child The component to be added.
    * @param {String} extension [optional] The hole into a vs.ui.View will be insert.
   */
   add : function (child, extension)
@@ -387,14 +394,14 @@ ScrollView.prototype = {
 //   {
 //     switch (e.type)
 //     {
-//       case core.POINTER_START:
+//       case vs_core.POINTER_START:
 //         this.pointerStart (e);
 //         break;
-//       case core.POINTER_MOVE:
+//       case vs_core.POINTER_MOVE:
 //         this._scroll_pointer_move (e);
 //         break;
-//       case core.POINTER_CANCEL:
-//       case core.POINTER_END:
+//       case vs_core.POINTER_CANCEL:
+//       case vs_core.POINTER_END:
 //         this._scroll_pointer_end (e);
 //         break;
 //       case 'gesturestart':
@@ -661,7 +668,7 @@ ScrollView.prototype = {
 //     }
 // 
 //     // apply translation, therefor a strange bug appear (flick)
-//     if (SUPPORT_3D_TRANSFORM)
+//     if (vs_utils.SUPPORT_3D_TRANSFORM)
 //       transform += 
 //         "translate3d("+this._ab_view_t_x+"px,"+this._ab_view_t_y+"px,0)";
 //     else
@@ -681,7 +688,7 @@ ScrollView.prototype = {
 //     {
 //       this._sub_view.addEventListener ('webkitTransitionEnd', callback, false);
 //     }
-//     setElementTransform (this._sub_view, transform);
+//     vs_utils.setElementTransform (this._sub_view, transform);
 //   },
   
   /**
@@ -734,13 +741,13 @@ ScrollView.prototype = {
     }
   }
 };
-util.extendClass (ScrollView, View);
+vs_utils.extendClass (ScrollView, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (ScrollView, {
+vs_utils.defineClassProperties (ScrollView, {
 'delegate': {
   /** 
    * Set the delegate.
@@ -832,7 +839,7 @@ util.defineClassProperties (ScrollView, {
   set : function (time)
   {
     if (!time) { time = 0; }
-    if (!util.isNumber (time)) { return };
+    if (!vs_utils.isNumber (time)) { return };
     
     this._animation_duration = time;
     
@@ -886,12 +893,12 @@ util.defineClassProperties (ScrollView, {
 
     if (this._layout)
     {
-      util.removeClassName (this._sub_view, this._layout);
+      vs_utils.removeClassName (this._sub_view, this._layout);
     }
     this._layout = v;
     if (this._layout)
     {
-      util.addClassName (this._sub_view, this._layout);
+      vs_utils.addClassName (this._sub_view, this._layout);
     }
   }
 },
@@ -907,7 +914,7 @@ util.defineClassProperties (ScrollView, {
   {
     if (!this._sub_view) return;
 
-    util.safeInnerHTML (this._sub_view, v);
+    vs_utils.safeInnerHTML (this._sub_view, v);
   },
 }
 });
@@ -916,4 +923,4 @@ util.defineClassProperties (ScrollView, {
                       Export
 *********************************************************************/
 /** @private */
-ui.ScrollView = ScrollView;
+export default ScrollView;
