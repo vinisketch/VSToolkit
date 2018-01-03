@@ -1,23 +1,24 @@
 var contact_tmp_str = 
 "<div class='contact'>\
-  <img src='' />\
+  <img src='${photo}' />\
   <div class='name'>${firstname} ${lastname}</div>\
   <div class='comp'>${companie}</div>\
   <div class='tel' x-hag-hole='tels'><div data-iterate='tels'>${@}</div></div>\
   <div class='address' x-hag-hole='addresses'><div data-iterate='addresses'>${address}</div></div>\
 </div>"
 
-var Contact = vs.core.createClass ({
+var Contact = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.core.Model,
+  parent: vs_core.Model,
 
   properties: {
-    firstname: vs.core.Object.PROPERTY_IN_OUT,
-    lastname: vs.core.Object.PROPERTY_IN_OUT,
-    companie: vs.core.Object.PROPERTY_IN_OUT,
-    tels: vs.core.Object.PROPERTY_IN_OUT,
-    addresses: vs.core.Object.PROPERTY_IN_OUT
+    photo: vs_core.VSObject.PROPERTY_IN_OUT,
+    firstname: vs_core.VSObject.PROPERTY_IN_OUT,
+    lastname: vs_core.VSObject.PROPERTY_IN_OUT,
+    companie: vs_core.VSObject.PROPERTY_IN_OUT,
+    tels: vs_core.VSObject.PROPERTY_IN_OUT,
+    addresses: vs_core.VSObject.PROPERTY_IN_OUT
   }
 });
 
@@ -29,6 +30,7 @@ function launchTest (test_view)
   test_view.appendChild (view.view);
   
   window.c = new Contact ();
+  c.photo = 'https://data.whicdn.com/images/35834939/large.jpg';
   c.firstname = 'John';
   c.lastname = 'Doe';
   c.companie = 'IBM';
@@ -46,11 +48,13 @@ function launchTest (test_view)
   window.cc = c.clone ();
   cloned_view.link (cc);
 
-  c.firstname = 'Jo';
-  c.tels.push ('34 8984 4389');
-  c.addresses.push ({address:'123 bd Saint Michel, 67000 Toulouse'});
-  c.propertyChange ('addresses');
-  c.propertyChange ('tels');
+  cc.photo = 'https://data.whicdn.com/images/39254141/large.jpg';
+  cc.firstname = 'Jo';
+  cc.tels.push ('34 8984 4389');
+  cc.addresses.length = 0;
+  cc.addresses.push ({address:'123 bd Saint Michel, 67000 Toulouse'});
+  cc.propertyChange ('addresses');
+  cc.propertyChange ('tels');
   
-  c.propertyChange ();
+  cc.propertyChange ();
 }
