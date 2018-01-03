@@ -1,71 +1,71 @@
 function launchTest (parent_view)
 {
-  var button1 = new vs.ui.Button ({
+  var button1 = new vs_ui.Button ({
     position:[50, 20], text: "Bounce", size:[130, 43]
   });
   button1.init ();
 
-  var button2 = new vs.ui.Button ({
+  var button2 = new vs_ui.Button ({
     position:[200, 20], text: "Shake", size:[130, 43]
   });
   button2.init ();
 
-  var button3 = new vs.ui.Button ({
+  var button3 = new vs_ui.Button ({
     position:[50, 430], text: "Swing", size:[130, 43]
   });
   button3.init ();
 
-  var button21 = new vs.ui.Button ({
+  var button21 = new vs_ui.Button ({
     position:[200, 430], text: "Pulse", size:[130, 43]
   });
   button21.init ();
 
-  var button22 = new vs.ui.Button ({
+  var button22 = new vs_ui.Button ({
     position:[200, 80], text: "FlipInX", size:[130, 100]
   });
   button22.init ();
 
-  var button23 = new vs.ui.Button ({
+  var button23 = new vs_ui.Button ({
     position:[50, 80], text: "FlipOutX", size:[130, 100]
   });
   button23.init ();
 
-  var button31 = new vs.ui.Button ({
+  var button31 = new vs_ui.Button ({
     position:[50, 200], text: "FlipInY", size:[130, 43]
   });
   button31.init ();
 
-  var button32 = new vs.ui.Button ({
+  var button32 = new vs_ui.Button ({
     position:[200, 200], text: "FlipOutY", size:[130, 43]
   });
   button32.init ();
 
-  var button33 = new vs.ui.Button ({
+  var button33 = new vs_ui.Button ({
     position:[50, 380], text: "FadeInDown", size:[130, 43]
   });
   button33.init ();
 
-  var button41 = new vs.ui.Button ({
+  var button41 = new vs_ui.Button ({
     position:[50, 250], text: "FlipInUp", size:[130, 43]
   });
   button41.init ();
 
-  var button42 = new vs.ui.Button ({
+  var button42 = new vs_ui.Button ({
     position:[200, 250], text: "FlipOutUp", size:[130, 43]
   });
   button42.init ();
 
-  var button43 = new vs.ui.Button ({
+  var button43 = new vs_ui.Button ({
     position:[200, 360], text: "FadeOutDown", size:[130, 43]
   });
   button43.init ();
 
-  var button51 = new vs.ui.Button ({
+  var button51 = new vs_ui.Button ({
     position:[50, 310], text: "FadeInLeft", size:[130, 43]
   });
   button51.init ();
 
-  var button52 = new vs.ui.Button ({
+  var button52 = new vs_ui.Button ({
     position:[200, 310], text: "FadeOutLeft", size:[130, 43]
   });
   button52.init ();

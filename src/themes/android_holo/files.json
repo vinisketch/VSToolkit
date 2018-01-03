@@ -1,0 +1,48 @@
+{
+  "concat" : {
+    "vs_ui_holo_light.less": [
+      "../generic/lesshat.less",
+      "../generic/lesshat-ext.less",
+      "ui/Holo_light.less",
+      "ui/Application.less",
+      "ui/Button.less",
+      "ui/List.less",
+      "ui/InputField.less",
+      "ui/Switch.less",
+      "ui/TextArea.less",
+      "ui/SegmentedButton.less",
+      "ui/Slider.less",
+      "ui/ProgressBar.less",
+      "ui/RadioButton.les",
+      "ui/NavigationBar.less",
+      "ui/CheckBox.less",
+      "ui/Picker.less",
+      "ui/ComboBox.less",
+      "ui/PopOver.less",
+      "ui/ToolBar.less"
+    ],
+    "vs_ui_holo_dark.less": [
+      "../generic/lesshat.less",
+      "../generic/lesshat-ext.less",
+      "ui/Holo_dark.less",
+      "ui/Application.less",
+      "ui/Button.less",
+      "ui/List.less",
+      "ui/InputField.less",
+      "ui/Switch.less",
+      "ui/TextArea.less",
+      "ui/SegmentedButton.less",
+      "ui/Slider.less",
+      "ui/ProgressBar.less",
+      "ui/RadioButton.les",
+      "ui/NavigationBar.less",
+      "ui/CheckBox.less",
+      "ui/Picker.less",
+      "ui/ComboBox.less",
+      "ui/PopOver.less",
+      "ui/ToolBar.less"
+    ]
+  },
+  "copy": ["ui/*.ttf"]
+}
+

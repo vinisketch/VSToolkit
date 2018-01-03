@@ -18,7 +18,7 @@
   background-color: #3C3C3C;
 }
 .base_background_selected {
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
 }
 .base_radius {
   -webkit-border-radius: 4px 4px;
@@ -172,7 +172,7 @@ body {
   background-color: #E5E7ED;
 }
 .vs_ui_button.pressed {
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
 }
 /***************************************************************************
 
@@ -300,14 +300,14 @@ body {
 }
 .vs_ui_button.default.grey.pressed {
   color: #282828;
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
 }
 .vs_ui_list {
   font-size: inherit;
   color: inherit;
 }
 li.pressed {
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
 }
 .vs_ui_list.DefaultList.arrow > ul > li::after,
 .vs_ui_list.BlockList.arrow > ul > li > ul > li::after,
@@ -467,7 +467,7 @@ ul > li:first-child:before {
   border-radius: 4px / 4px;
 }
 .vs_ui_inputfield.focus {
-  border: #3fb6f2 solid 2px;
+  border: #3FB6F2 solid 2px;
 }
 .vs_ui_inputfield > input {
   margin-left: 2px;
@@ -540,15 +540,15 @@ ul > li:first-child:before {
   overflow: visible;
 }
 .vs_ui_switch.on {
-  border-color: #3fb6f2;
-  background-color: #3fb6f2;
+  border-color: #3FB6F2;
+  background-color: #3FB6F2;
   /* 
   transition: border .25s,
               padding .25s .15s;
  */
 }
 .vs_ui_switch .toggle_on {
-  color: #ffffff;
+  color: #fff;
   right: 28px;
   line-height: 28px;
   padding-left: 5px;
@@ -593,7 +593,7 @@ ul > li:first-child:before {
   transform: translate3d(0, 0, 0);
 }
 .vs_ui_switch.on .switch {
-  background-color: #ffffff;
+  background-color: #fff;
 }
 .vs_ui_textarea {
   padding: 5px;
@@ -608,7 +608,7 @@ ul > li:first-child:before {
   border-radius: 4px / 4px;
 }
 .vs_ui_textarea:focus {
-  border: #3fb6f2 solid 2px;
+  border: #3FB6F2 solid 2px;
 }
 .vs_ui_segmentedbutton {
   font-weight: normal;
@@ -618,7 +618,7 @@ ul > li:first-child:before {
   background-color: #E5E7ED;
 }
 .vs_ui_segmentedbutton > div > div.selected {
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
   -webkit-transform: translate3d(-5%,-5%,0) scale(1.1);
   -moz-transform: translate3d(-5%,-5%,0) scale(1.1);
   -o-transform: translate3d(-5%,-5%,0) scale(1.1);
@@ -694,19 +694,19 @@ ul > li:first-child:before {
   background-color: #d3d3d3;
 }
 .vs_ui_slider.horizontal {
-  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzZmI2ZjIiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iODAlIiBzdG9wLWNvbG9yPSIjM2ZiNmYyIiBzdG9wLW9wYWNpdHk9IjEiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjbGVzc2hhdC1nZW5lcmF0ZWQpIiAvPjwvc3ZnPg==);
-  background-image: -webkit-linear-gradient(-90deg, #3fb6f2 0%, #3fb6f2 80%);
-  background-image: -moz-linear-gradient(-90deg, #3fb6f2 0%, #3fb6f2 80%);
-  background-image: -o-linear-gradient(-90deg, #3fb6f2 0%, #3fb6f2 80%);
-  background-image: linear-gradient(180deg, #3fb6f2 0%, #3fb6f2 80%);
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzRkI2RjIiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iODAlIiBzdG9wLWNvbG9yPSIjM0ZCNkYyIiBzdG9wLW9wYWNpdHk9IjEiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjbGVzc2hhdC1nZW5lcmF0ZWQpIiAvPjwvc3ZnPg==);
+  background-image: -webkit-linear-gradient(-90deg, #3FB6F2 0%, #3FB6F2 80%);
+  background-image: -moz-linear-gradient(-90deg, #3FB6F2 0%, #3FB6F2 80%);
+  background-image: -o-linear-gradient(-90deg, #3FB6F2 0%, #3FB6F2 80%);
+  background-image: linear-gradient(180deg, #3FB6F2 0%, #3FB6F2 80%);
   height: 8px !important;
 }
 .vs_ui_slider.vertical {
-  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMTAwJSIgeDI9IjAlIiB5Mj0iMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzZmI2ZjIiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iODAlIiBzdG9wLWNvbG9yPSIjM2ZiNmYyIiBzdG9wLW9wYWNpdHk9IjEiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjbGVzc2hhdC1nZW5lcmF0ZWQpIiAvPjwvc3ZnPg==);
-  background-image: -webkit-linear-gradient(0deg, #3fb6f2 0%, #3fb6f2 80%);
-  background-image: -moz-linear-gradient(0deg, #3fb6f2 0%, #3fb6f2 80%);
-  background-image: -o-linear-gradient(0deg, #3fb6f2 0%, #3fb6f2 80%);
-  background-image: linear-gradient(90deg, #3fb6f2 0%, #3fb6f2 80%);
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMTAwJSIgeDI9IjAlIiB5Mj0iMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzRkI2RjIiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iODAlIiBzdG9wLWNvbG9yPSIjM0ZCNkYyIiBzdG9wLW9wYWNpdHk9IjEiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjbGVzc2hhdC1nZW5lcmF0ZWQpIiAvPjwvc3ZnPg==);
+  background-image: -webkit-linear-gradient(0deg, #3FB6F2 0%, #3FB6F2 80%);
+  background-image: -moz-linear-gradient(0deg, #3FB6F2 0%, #3FB6F2 80%);
+  background-image: -o-linear-gradient(0deg, #3FB6F2 0%, #3FB6F2 80%);
+  background-image: linear-gradient(90deg, #3FB6F2 0%, #3FB6F2 80%);
   width: 8px !important;
 }
 .vs_ui_slider .handle {
@@ -714,10 +714,10 @@ ul > li:first-child:before {
   width: 30px;
   height: 30px;
   background-color: #d3d3d3;
-  border: 2px solid #ffffff;
+  border: 2px solid #fff;
 }
 .vs_ui_slider .handle:active {
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
 }
 .vs_ui_progressbar {
   height: 8px !important;
@@ -738,11 +738,11 @@ ul > li:first-child:before {
   -moz-background-clip: padding;
   border-radius: 2px;
   background-clip: padding-box;
-  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzZmI2ZjIiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iODAlIiBzdG9wLWNvbG9yPSIjM2ZiNmYyIiBzdG9wLW9wYWNpdHk9IjEiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjbGVzc2hhdC1nZW5lcmF0ZWQpIiAvPjwvc3ZnPg==);
-  background-image: -webkit-linear-gradient(-90deg, #3fb6f2 0%, #3fb6f2 80%);
-  background-image: -moz-linear-gradient(-90deg, #3fb6f2 0%, #3fb6f2 80%);
-  background-image: -o-linear-gradient(-90deg, #3fb6f2 0%, #3fb6f2 80%);
-  background-image: linear-gradient(180deg, #3fb6f2 0%, #3fb6f2 80%);
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9Imxlc3NoYXQtZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPjxzdG9wIG9mZnNldD0iMCUiIHN0b3AtY29sb3I9IiMzRkI2RjIiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iODAlIiBzdG9wLWNvbG9yPSIjM0ZCNkYyIiBzdG9wLW9wYWNpdHk9IjEiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjbGVzc2hhdC1nZW5lcmF0ZWQpIiAvPjwvc3ZnPg==);
+  background-image: -webkit-linear-gradient(-90deg, #3FB6F2 0%, #3FB6F2 80%);
+  background-image: -moz-linear-gradient(-90deg, #3FB6F2 0%, #3FB6F2 80%);
+  background-image: -o-linear-gradient(-90deg, #3FB6F2 0%, #3FB6F2 80%);
+  background-image: linear-gradient(180deg, #3FB6F2 0%, #3FB6F2 80%);
 }
 @-webkit-keyframes vs_ui_progressbar_anim {
   0% {
@@ -785,10 +785,10 @@ ul > li:first-child:before {
   }
 }
 .vs_ui_progressbar.indeterminate {
-  background-image: -webkit-linear-gradient(-27deg, rgba(255, 255, 255, 0) 23%, rgba(255, 255, 255, 0.8) 30%, #d7ebf8 30%, #d7ebf8 70%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0) 77%);
-  background-image: -moz-linear-gradient(-27deg, rgba(255, 255, 255, 0) 23%, rgba(255, 255, 255, 0.8) 30%, #d7ebf8 30%, #d7ebf8 70%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0) 77%);
-  background-image: -o-linear-gradient(-27deg, rgba(255, 255, 255, 0) 23%, rgba(255, 255, 255, 0.8) 30%, #d7ebf8 30%, #d7ebf8 70%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0) 77%);
-  background-image: linear-gradient(117deg, rgba(255, 255, 255, 0) 23%, rgba(255, 255, 255, 0.8) 30%, #d7ebf8 30%, #d7ebf8 70%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0) 77%);
+  background-image: -webkit-linear-gradient(-27deg, rgba(255, 255, 255, 0) 23%, rgba(255, 255, 255, 0.8) 30%, #D7EBF8 30%, #D7EBF8 70%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0) 77%);
+  background-image: -moz-linear-gradient(-27deg, rgba(255, 255, 255, 0) 23%, rgba(255, 255, 255, 0.8) 30%, #D7EBF8 30%, #D7EBF8 70%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0) 77%);
+  background-image: -o-linear-gradient(-27deg, rgba(255, 255, 255, 0) 23%, rgba(255, 255, 255, 0.8) 30%, #D7EBF8 30%, #D7EBF8 70%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0) 77%);
+  background-image: linear-gradient(117deg, rgba(255, 255, 255, 0) 23%, rgba(255, 255, 255, 0.8) 30%, #D7EBF8 30%, #D7EBF8 70%, rgba(255, 255, 255, 0.8) 70%, rgba(255, 255, 255, 0) 77%);
   background-color: #3FB6F2;
   background-repeat: repeat-x;
   background-position-x: 0%;
@@ -811,41 +811,6 @@ ul > li:first-child:before {
   -moz-animation-name: vs_ui_progressbar_anim;
   -o-animation-name: vs_ui_progressbar_anim;
   animation-name: vs_ui_progressbar_anim;
-}
-.vs_ui_radiobutton {
-  font-family: inherit;
-  color: black;
-}
-.vs_ui_radiobutton label {
-  padding: 9px 35px 0px 16px;
-  height: 40px;
-  position: relative;
-  border-top: 1px solid #CCCCCC;
-}
-.vs_ui_radiobutton label:nth-of-type(1) {
-  border: none;
-}
-.vs_ui_radiobutton label::after {
-  content: "\f10c";
-  color: #d3d3d3;
-  display: block;
-  width: 28px;
-  height: 28px;
-  right: 5px;
-  font: 28px/31px "FontAwesome";
-  -webkit-transform: translateY(-45%);
-  -moz-transform: translateY(-45%);
-  -o-transform: translateY(-45%);
-  -ms-transform: translateY(-45%);
-  transform: translateY(-45%);
-}
-input[type="radio"].pressed + label,
-.vs_ui_radiobutton label.pressed {
-  background-color: #cdd1dc;
-}
-input[type="radio"]:checked + label::after {
-  content: "\f192";
-  color: #3fb6f2;
 }
 .vs_ui_navigationbar {
   height: 44px;
@@ -880,7 +845,7 @@ input[type="radio"]:checked + label::after {
 }
 input[type="checkbox"].pressed + label,
 .vs_ui_checkbox label.pressed {
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
 }
 .vs_ui_checkbox label::after {
   color: #d3d3d3;
@@ -898,16 +863,16 @@ input[type="checkbox"].pressed + label,
 }
 input[type="checkbox"]:checked + label:after {
   content: "\f046";
-  color: #3fb6f2;
+  color: #3FB6F2;
 }
 .vs_ui_picker {
   height: 180px;
   font: bold 18pt/30pt "Helvetica Neue";
   color: black;
   overflow: hidden;
-  -webkit-mask-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.1)), color-stop(0.38, rgba(0, 0, 0, 0.5)), color-stop(0.38, #000000), color-stop(0.63, #000000), color-stop(0.63, rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.1)));
-  -ms-mask-image: -ms-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.1)), color-stop(0.38, rgba(0, 0, 0, 0.5)), color-stop(0.38, #000000), color-stop(0.63, #000000), color-stop(0.63, rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.1)));
-  mask-image: gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.1)), color-stop(0.38, rgba(0, 0, 0, 0.5)), color-stop(0.38, #000000), color-stop(0.63, #000000), color-stop(0.63, rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.1)));
+  -webkit-mask-image: -webkit-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.1)), color-stop(0.38, rgba(0, 0, 0, 0.5)), color-stop(0.38, black), color-stop(0.63, black), color-stop(0.63, rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.1)));
+  -ms-mask-image: -ms-gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.1)), color-stop(0.38, rgba(0, 0, 0, 0.5)), color-stop(0.38, black), color-stop(0.63, black), color-stop(0.63, rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.1)));
+  mask-image: gradient(linear, left bottom, left top, from(rgba(0, 0, 0, 0.1)), color-stop(0.38, rgba(0, 0, 0, 0.5)), color-stop(0.38, black), color-stop(0.63, black), color-stop(0.63, rgba(0, 0, 0, 0.5)), to(rgba(0, 0, 0, 0.1)));
 }
 .vs_ui_picker .slots {
   top: 50%;
@@ -964,7 +929,7 @@ input[type="checkbox"]:checked + label:after {
 }
 .vs_ui_combobox {
   height: 43px;
-  border: 2px solid #cdd1dc;
+  border: 2px solid #CDD1DC;
   padding: 0px;
   font-weight: normal;
   font-family: "Helvetica Neue";
@@ -975,7 +940,7 @@ input[type="checkbox"]:checked + label:after {
 }
 .vs_ui_combobox:focus,
 .vs_ui_combobox:active {
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
 }
 .vs_ui_combobox > select {
   padding-top: 2px;
@@ -1026,7 +991,7 @@ input[type="checkbox"]:checked + label:after {
 }
 .vs_ui_combobox:focus::after,
 .vs_ui_combobox:active::after {
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
 }
 .vs_ui_combobox:active::after {
   color: #fff !important;
@@ -1150,19 +1115,19 @@ input[type="checkbox"]:checked + label:after {
   background-color: #aaa;
 }
 .vs_ui_toolbar.black_style > div > div.select {
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
 }
 .vs_ui_toolbar.black_translucide_style > div > div.active {
   background-color: #aaa;
 }
 .vs_ui_toolbar.black_translucide_style > div > div.select {
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
 }
 .vs_ui_toolbar.blue_style > div > div.active {
   background-color: #aaa;
 }
 .vs_ui_toolbar.blue_style > div > div.select {
-  background-color: #cdd1dc;
+  background-color: #CDD1DC;
 }
 .vs_ui_toolbar_button.add {
   background-image: url(toolbar_icons/icon_add.png);

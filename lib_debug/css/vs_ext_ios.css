@@ -45,12 +45,12 @@
   border-radius: 5px;
 }
 .vs_ext_ui_accordion > dd {
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#ccd6dc), to(#adb7c1));
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#CCD6DC), to(#ADB7C1));
   -webkit-border-radius: 5px;
   margin: 3px 0;
 }
 .vs_ext_ui_accordion > dt.expanded {
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#9fb3cc), to(#5b80ab), color-stop(0.5, #6b8bb2), color-stop(0.51, #597eaa)) !important;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(#9FB3CC), to(#5B80AB), color-stop(0.5, #6B8BB2), color-stop(0.51, #597EAA)) !important;
   color: #f0f0f0;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
 }
