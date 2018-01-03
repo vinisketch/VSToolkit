@@ -51,14 +51,14 @@ function launchTest (test_view)
     duration: '4s'
   });  
   
-  vs.scheduleAction (function () {view1.hide ();}, 500);
-  vs.scheduleAction (function () {view1.show ();}, 1500);
+  vs_core.scheduleAction (function () {view1.hide ();}, 500);
+  vs_core.scheduleAction (function () {view1.show ();}, 1500);
 
-  vs.scheduleAction (function () {view2.hide ();}, 800);
-  vs.scheduleAction (function () {view2.show ();}, 4000);
+  vs_core.scheduleAction (function () {view2.hide ();}, 800);
+  vs_core.scheduleAction (function () {view2.show ();}, 4000);
 //   
-  vs.scheduleAction (function () {view3.hide ();}, 800);
-  vs.scheduleAction (function () {view3.show ();}, 4000);
-  vs.scheduleAction (function () {view3.hide ();}, 6000);
+  vs_core.scheduleAction (function () {view3.hide ();}, 800);
+  vs_core.scheduleAction (function () {view3.show ();}, 4000);
+  vs_core.scheduleAction (function () {view3.hide ();}, 6000);
   
 }
