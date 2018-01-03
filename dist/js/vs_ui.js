@@ -1,8 +1,1791 @@
 var vs_ui = (function (exports,vs_utils$1,vs_core$1,vs_gesture) {
 'use strict';
 
-vs_utils$1 = vs_utils$1 && vs_utils$1.hasOwnProperty('default') ? vs_utils$1['default'] : vs_utils$1;
-vs_core$1 = vs_core$1 && vs_core$1.hasOwnProperty('default') ? vs_core$1['default'] : vs_core$1;
+var vs_utils$1__default = 'default' in vs_utils$1 ? vs_utils$1['default'] : vs_utils$1;
+var vs_core$1__default = 'default' in vs_core$1 ? vs_core$1['default'] : vs_core$1;
+
+/**
+  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
+  contributors. All rights reserved
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/********************************************************************
+                   
+*********************************************************************/
+
+function createProperty(name) {
+  if (!vs_utils$1.CSS_VENDOR) return name;
+  return '-' + vs_utils$1.CSS_VENDOR.toLowerCase() + '-' + name;
+}
+
+/** 
+ * CSS property specifies the length of time that an animation should take to
+ * complete one cycle
+ * @name vs.ANIMATION_DURATION
+ * @type {String}
+ * @const
+ */
+var ANIMATION_DURATION = createProperty("animation-duration");
+
+/** 
+ * CSS property specifies when the animation should start. This lets the
+ * animation sequence begin some time after it's applied to an element
+ * @name vs.ANIMATION_DELAY
+ * @type {String}
+ * @const
+ */
+var ANIMATION_DELAY = createProperty("animation-delay");
+
+/** 
+ * CSS property specifies a list of animations that should be applied to the
+ * selected element.
+ * @name vs.ANIMATION_NAME
+ * @type {String}
+ * @const
+ */
+var ANIMATION_NAME = createProperty("animation-name");
+
+/** 
+ * CSS property specifies how a CSS animation should progress over the duration
+ * of each cycle
+ * @name vs.ANIMATION_TIMING_FUNC
+ * @type {String}
+ * @const
+ */
+var ANIMATION_TIMING_FUNC = createProperty("animation-timing-function");
+
+/** 
+ * CSS property specifies how a CSS animation should apply styles to its target
+ * before and after it is executing.
+ * @name vs.ANIMATION_FILL_MODE
+ * @type {String}
+ */
+var ANIMATION_FILL_MODE = createProperty("animation-fill-mode");
+
+/** 
+ * CSS property specifies the number of seconds or milliseconds a transition
+ * animation should take to complete
+ * @name vs.TRANSITION_DURATION
+ * @type {String}
+ * @const
+ */
+var TRANSITION_DURATION = createProperty("transition-duration");
+
+/** 
+ * CSS property specifies the length of time that an animation should take to
+ * complete one cycle
+ * @name vs.TRANSITION_DELAY
+ * @type {String}
+ * @const
+ */
+var TRANSITION_DELAY = createProperty("transition-delay");
+
+/** 
+ * CSS property specifies the amount of time to wait between a change bein
+ * requested to a property that is to be transitioned and the start of the
+ * transition effect
+ * @name vs.TRANSITION_TIMING_FUNC
+ * @type {String}
+ * @const
+ */
+var TRANSITION_TIMING_FUNC = createProperty("transition-timing-function");
+
+/** 
+ * CSS property is used to specify the names of CSS properties to which a
+ * transition effect should be applied
+ * @name vs.TRANSITION_PROPERTY
+ * @type {String}
+ * @const
+ */
+var TRANSITION_PROPERTY = createProperty("transition-property");
+
+/** 
+ * CSS property lets you modify the origin for transformations of an element.
+ * @name vs.TRANSFORM_ORIGIN
+ * @type {String}
+ * @const
+ */
+var TRANSFORM_ORIGIN = createProperty("transform-origin");
+
+/** 
+ * CSS property defines the number of times an animation cycle should be played
+ * before stopping
+ * @name vs.ITERATION_COUNT
+ * @type {String}
+ * @const
+ */
+var ITERATION_COUNT = createProperty("animation-iteration-count");
+
+/** 
+ * CSS property lets you modify the coordinate space of the CSS visual
+ * formatting model
+ * @name vs.TRANSFORM
+ * @type {String}
+ * @const
+ */
+var TRANSFORM = createProperty("transform");
+
+/** 
+ * CSS at-rule lets authors control the intermediate steps in a CSS animation
+ * sequence
+ * @name vs.KEY_FRAMES
+ * @type {String}
+ * @const
+ */
+var KEY_FRAMES = createProperty("keyframes");
+
+/** 
+ * The vs.ANIMATION_END event is fired when a CSS animation has completed.
+ * @name vs.ANIMATION_END
+ * @type {String}
+ */
+exports.ANIMATION_END = "animationend";
+
+/** 
+ * The vs.TRANSITION_END event is fired when a CSS transition has completed
+ * @name vs.TRANSITION_END
+ * @type {String}
+ */
+exports.TRANSITION_END = "transitionend";
+
+if (vs_utils$1.CSS_VENDOR === 'webkit') {
+  exports.ANIMATION_END = "webkitAnimationEnd";
+  exports.TRANSITION_END = "webkitTransitionEnd";
+}
+else if (vs_utils$1.CSS_VENDOR === 'ms') {
+  exports.ANIMATION_END = "msAnimationEnd";
+  exports.TRANSITION_END = "msTransitionEnd";
+}
+else if (vs_utils$1.CSS_VENDOR === 'moz') {
+  exports.ANIMATION_END = "Mozanimationend";
+  exports.TRANSITION_END = "Moztransitionend";
+}
+
+/**
+ * @private
+ * @const
+ */
+var AnimationWidthRegExp = new RegExp (/\$width/g);
+/**
+ * @private
+ * @const
+ */
+var AnimationHeightRegExp = new RegExp (/\$height/g);
+/**
+ * @private
+ * @const
+ */
+var AnimationXRegExp = new RegExp (/\$x/g);
+/**
+ * @private
+ * @const
+ */
+var AnimationYRegExp = new RegExp (/\$y/g);
+/**
+ * @private
+ * @const
+ */
+var AnimationVariableRegExp = new RegExp (/\$\{([\w]+)\}/g);
+
+/**
+ *  Cancel a playing animation
+ * @name vs.fx.cancelAnimation
+ * @param {String} id the animation id return par vs.fx.Animation.process ();
+ */
+function cancelAnimation (anim_id)
+{
+  if (!anim_id) { return false; }
+  var anim_name, cssAnimation, anim_id, data;
+
+  data = Animation.__css_animations [anim_id];
+  if (data && data.length === 2)
+  {
+    if (!data[1] || !data[1].getStyle || !data [0]) { return false; }
+
+    anim_name = data[1].getStyle (ANIMATION_NAME);
+    if (!anim_name) { return false; }
+
+    anim_name = anim_name.replace (anim_id, '');
+    data[1].setStyle (ANIMATION_NAME, anim_name);
+
+    try {
+      document.getElementsByTagName("head")[0].removeChild (data [0]);
+    }
+    catch (e)
+    {
+      if (e.stack) console.log (e.stack);
+      console.error (e);
+      return false;
+    }
+    delete (Animation.__css_animations [anim_id]);
+  }
+  else { return false; }
+
+  return true;
+}
+
+/**
+ *  @private
+ *
+ * @param {vs.fx.View} comp the component the view will be animated
+ * @param {vs.fx.Animation} animation the animation
+ * @param {Function} clb an optional callback to call at the end of animation
+ * @param {Object} ctx an optional execution context associated to the clb
+ * @return {String} return the identifier of the animation process. You can
+ *       use it to stop the animation for instance.
+ */
+var procesAnimation = function (comp, animation, clb, ctx, now)
+{
+  if (!animation || !comp || !comp.view)
+  {
+    console.error ('procesAnimation: invalid component parameter!');
+    return;
+  }
+
+  function parseValue (v, data) {
+    var matches, i, props = [], prop;
+
+    if (vs_utils$1.isNumber (v)) { return v; }
+
+    if (vs_utils$1.isString (v))
+    {
+      v = v.replace (AnimationWidthRegExp, comp.size [0] + 'px');
+      v = v.replace (AnimationHeightRegExp, comp.size [1] + 'px');
+      v = v.replace (AnimationXRegExp, comp.position [0] + 'px');
+      v = v.replace (AnimationYRegExp, comp.position [1] + 'px');
+
+      var matches = AnimationVariableRegExp.exec (v);
+      while (matches && matches.length === 2)
+      {
+        props.push (matches [1]);
+        matches = AnimationVariableRegExp.exec (v);
+      }
+      for (var i = 0; i < props.length; i++)
+      {
+        prop = props [i];
+        if (typeof data[prop] !== 'undefined')
+        { v = v.replace ('${' + prop + '}', data[prop]); }
+        else if (typeof animation[prop] !== 'undefined')
+        { v = v.replace ('${' + prop + '}', animation[prop]); }
+      }
+
+      return v;
+    }
+
+    console.warn
+      ("vs.fx.Animation._parseValue. Unknown value's type: " + v);
+    return 0;
+  }
+
+  function cloneParams (animation)
+  {
+    var params = {}, key, data;
+
+    if (animation.properties) {
+      params.properties = animation.properties.slice ();
+    }
+    else {
+      params.properties = [];
+    }
+    if (animation.values) {
+      params.values = animation.values.slice ();
+    }
+    else {
+      params.values = [];
+    }
+    if (animation.durations) {
+      params.durations = animation.durations;
+    }
+    if (animation.timings) {
+      params.timings = animation.timings.slice ();
+    }
+    else {
+      params.timings = [];
+    }
+    if (animation.origin) {
+      params.origin = animation.origin.slice ();
+    }
+
+    params.iterationCount = animation.iterationCount;
+    params.delay = animation.delay;
+    params.additive = animation.additive;
+
+    params.keyFrames = {};
+    if (!animation.keyFrames ['100%']) {
+      animation.keyFrames ['100%'] = animation;
+    }
+
+    var new_data;
+    for (key in animation.keyFrames)
+    {
+      data = animation.keyFrames [key];
+      if (vs_utils$1.isArray (data)) {
+        new_data = [];
+        for (var i = 0; i < data.length; i++)
+        {
+          value = data [i];
+          if (value == null || typeof value == 'undefined') continue;
+          new_data [i] = parseValue (value, animation);
+        }
+        params.keyFrames [key] = new_data;
+      }
+      else
+      {
+        for (i = 0; i < animation.properties.length; i++){
+          params.values [i] = parseValue (animation.values [i], data);
+        }
+        params.keyFrames [key] = {};
+      }
+    }
+
+    return params;
+  }
+
+  var anim_params = cloneParams (animation);
+  
+  return _procesAnimation (comp, animation, anim_params, clb, ctx, now);
+};
+
+/**
+ *  @private
+ *
+ * @param {vs.fx.View} comp the component the view will be animated
+ * @param {Object} anim_params the animation's parameters copy
+ * @param {vs.fx.Animation} animation the animation
+ * @param {Function} clb an optional callback to call at the end of animation
+ * @param {Object} ctx an optional execution context associated to the clb
+ * @return {String} return the identifier of the animation process. You can
+ *       use it to stop the animation for instance.
+ */
+var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
+{
+  if (!anim_params || !comp || !comp.view)
+  {
+    console.error ('procesAnimation: invalid component parameter!');
+    return;
+  }
+
+  function isComplexAnimation ()
+  {
+    if (anim_params.keyFrames ['0%']) { return true; }
+    return false;
+  }
+
+  var
+    cssAnimation, anim_id = vs_core$1.createId (),
+    isComplex = isComplexAnimation (),
+    forceCallback = false, self = this;
+
+  function initWithParameters ()
+  {
+    var property;
+    if (isComplex)
+    { property = ANIMATION_DURATION; }
+    else { property = TRANSITION_DURATION; }
+
+    if (vs_utils$1.isArray (anim_params.origin) && anim_params.origin.length === 2)
+    {
+      var value = anim_params.origin [0] + '% ' + anim_params.origin [1] + '%';
+      comp.setStyle (TRANSFORM_ORIGIN, value);
+    }
+
+    if (now)
+    {
+      comp.setStyle (property, 0);
+    }
+    else if (vs_utils$1.isString (anim_params.durations))
+    {
+      comp.setStyle (property, anim_params.durations);
+    }
+    else if (vs_utils$1.isArray (anim_params.durations))
+    {
+      comp.setStyle (property, anim_params.durations.join (', '));
+    }
+    else
+    {
+      comp.setStyle (property, Animation.DEFAULT_DURATION);
+    }
+
+    if (isComplex) { property = ANIMATION_DELAY; }
+    else { property = TRANSITION_DELAY; }
+
+    if (!now && vs_utils$1.isNumber (anim_params.delay))
+    {
+      comp.setStyle (property, anim_params.delay + 'ms');
+    }
+    else
+    { comp.setStyle (property, '0'); }
+
+    if (isComplex) property = ANIMATION_TIMING_FUNC;
+    else property = TRANSITION_TIMING_FUNC;
+
+    if (vs_utils$1.isString (anim_params.timings))
+    {
+      comp.setStyle (property, anim_params.timings);
+    }
+    else if (vs_utils$1.isArray (anim_params.timings))
+    {
+      comp.setStyle (property, anim_params.timings.join (', '));
+    }
+    else
+    {
+      comp.setStyle (property, Animation.EASE);
+    }
+
+    if (isComplex)
+    {
+      if (anim_params.iterationCount === 'infinite')
+      {
+        comp.setStyle (ITERATION_COUNT, 'infinite');
+      }
+      else if (!anim_params.iterationCount ||
+               !vs_utils$1.isNumber (anim_params.iterationCount))
+      {
+        comp.setStyle (ITERATION_COUNT, '1');
+      }
+      else
+      {
+        comp.setStyle (ITERATION_COUNT, anim_params.iterationCount);
+      }
+      
+      comp.setStyle (ANIMATION_FILL_MODE, "forwards");
+    }
+  }
+
+  function applySimpleAnimation ()
+  {
+    initWithParameters ();
+    var callback, i, dur;
+
+    callback = function (event)
+    {
+      // do nothing if that event just bubbled from our target's sub-tree
+      if (event.currentTarget !== comp.view) { return; }
+
+      if (!forceCallback)
+        comp.view.removeEventListener (exports.TRANSITION_END, callback, false);
+
+      // clear transition parameters
+      comp.view.style.removeProperty (TRANSITION_DURATION);
+      comp.view.style.removeProperty (TRANSITION_DELAY);
+
+      if (animation.delegate && animation.delegate.taskDidEnd) {
+        try {
+          animation.delegate.taskDidEnd (anim_params);
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack);
+          console.error (e);
+        }
+      }
+
+      if (clb) { clb.call (ctx?ctx:self); }
+    };
+
+    // if durations is egal to 0, no event is generated a the end.
+    // Then use a small time
+    dur = parseFloat (comp.view.style.getPropertyValue (TRANSITION_DURATION));
+    if (now || dur === 0) forceCallback = true;
+
+    if (!forceCallback)
+      comp.view.addEventListener (exports.TRANSITION_END, callback, false);
+    else vs_core$1.scheduleAction (function () {
+      callback ({currentTarget: comp.view});
+    });
+
+    applyStyleTo ();
+  }
+
+  function applyStyleTo ()
+  {
+    var
+      transform = '',
+      property, properties = [], value;
+
+    for (var i = 0; i < anim_params.properties.length; i++)
+    {
+      property = anim_params.properties [i];
+      value = anim_params.values [i];
+      if (property === 'rotate')
+      { transform += 'rotate(' + value + ') '; property = TRANSFORM;}
+      else if (property === 'skew')
+      { transform += 'skew(' + value + ') '; property = TRANSFORM;}
+      else if (vs_utils$1.SUPPORT_3D_TRANSFORM && property === 'translate')
+      { transform += 'translate3d(' + value + ') '; property = TRANSFORM;}
+      else if (property === 'translate')
+      { transform += 'translate(' + value + ') '; property = TRANSFORM;}
+      else if (property === 'translateX')
+      { transform += 'translateX(' + value + ') '; property = TRANSFORM;}
+      else if (property === 'translateY')
+      { transform += 'translateY(' + value + ') '; property = TRANSFORM;}
+      else if (property === 'rotateX')
+      { transform += 'rotateX(' + value + ') '; property = TRANSFORM;}
+      else if (property === 'rotateY')
+      { transform += 'rotateY(' + value + ') '; property = TRANSFORM;}
+      else if (property === 'scale')
+      { transform += 'scale(' + value + ') '; property = TRANSFORM;}
+      else
+      { comp.setStyle (property, value); }
+
+      if (properties.indexOf (property) == -1) properties.push (property);
+    }
+    if (transform)
+    {
+      if (anim_params.additive) {
+        var matrix = comp.getCTM ();
+        transform = matrix.toString () + ' ' + transform;
+      }
+      vs_utils$1.setElementTransform (comp.view, transform);
+    }
+
+    comp.setStyle (TRANSITION_PROPERTY, properties.join (','));
+  }
+
+  function runComplexAnimation ()
+  {
+    initWithParameters ();
+
+    var i, callback, value, anim_name, dur,
+
+    callback = function (event)
+    {
+      // do nothing if that event just bubbled from our target's sub-tree
+      if (event.currentTarget !== comp.view) { return; }
+
+      if (!forceCallback)
+        comp.view.removeEventListener (exports.ANIMATION_END, callback, false);
+
+      // apply the last state
+      if (isComplex) { applyStyleTo (); }
+
+      // clear animations parameters
+      comp.view.style.removeProperty (ANIMATION_DURATION);
+      comp.view.style.removeProperty (ANIMATION_DELAY);
+
+      // clean the animation
+      anim_name = comp.getStyle (ANIMATION_NAME);
+      if (anim_name)
+      {
+        anim_name = anim_name.replace (anim_id, '');
+        comp.setStyle (ANIMATION_NAME, anim_name);
+      }
+
+      try
+      {
+        data = Animation.__css_animations [anim_id];
+        if (data && data.length === 2)
+        {
+          document.getElementsByTagName("head")[0].removeChild (data [0]);
+          delete (Animation.__css_animations [anim_id]);
+        }
+      }
+      catch (e)
+      {
+        if (e.stack) console.log (e.stack);
+        console.error (e);
+        return false;
+      }
+
+      if (animation.delegate && animation.delegate.taskDidEnd) {
+        try {
+          animation.delegate.taskDidEnd (anim_params);
+        }
+        catch (e) {
+          if (e.stack) console.log (e.stack);
+          console.error (e);
+        }
+      }
+
+      if (clb) { clb.call (ctx?ctx:self); }
+    };
+
+    // if durations is egal to 0, no event is generated a the end.
+    // Then use a small time
+    dur = parseFloat (comp.view.style.getPropertyValue (ANIMATION_DURATION));
+    if (now || dur === 0) forceCallback = true;
+
+    if (!forceCallback)
+      comp.view.addEventListener (exports.ANIMATION_END, callback, false);
+    else vs_core$1.scheduleAction (function () {
+      callback ({currentTarget: comp.view});
+    });
+
+    anim_name = comp.getStyle (ANIMATION_NAME);
+
+    if (!anim_name) { anim_name = anim_id; }
+    else { anim_name += ', ' + anim_id; }
+
+    comp.setStyle (ANIMATION_NAME, anim_name);
+  }
+
+  function applyComplexAnimation ()
+  {
+    var data, key, style, i, property, transform, value,
+    cssAnimation = document.createElement('style');
+    cssAnimation.type = 'text/css';
+
+    var rules_str = '';
+    for (key in anim_params.keyFrames)
+    {
+      transform = '';
+      data = anim_params.keyFrames [key];
+      style = '';
+      if (vs_utils$1.isArray (data))
+      {
+        for (var i = 0; i < data.length; i++)
+        {
+          value = data [i];
+          if (value == null || typeof value == 'undefined') continue;
+          property = anim_params.properties [i];
+          if (!property) { continue; }
+          if (property === 'rotate')
+          { transform += 'rotate(' + value + ') '; }
+          else if (property === 'skew')
+          { transform += 'skew(' + value + ') '; }
+          else if (vs_utils$1.SUPPORT_3D_TRANSFORM && property === 'translate')
+          { transform += 'translate3d(' + value + ') '; }
+          else if (property === 'translate')
+          { transform += 'translate(' + value + ') '; }
+          else if (property === 'translateX')
+          { transform += 'translateX(' + value + ') '; }
+          else if (property === 'translateY')
+          { transform += 'translateY(' + value + ') '; }
+          else if (property === 'rotateX')
+          { transform += 'rotateX(' + value + ') '; }
+          else if (property === 'rotateY')
+          { transform += 'rotateY(' + value + ') '; }
+          else if (property === 'scale')
+          { transform += 'scale(' + value + ') '; }
+          else if (property === 'perspective')
+          { transform += 'perspective(' + value + ') '; }
+          else
+          { style += property + ':' + value + ';'; }
+        }
+      }
+      else
+      {
+        for (i = 0; i < anim_params.properties.length; i++)
+        {
+          value = anim_params.values [i];
+          property = anim_params.properties [i];
+          if (!property) { continue; }
+          if (property === 'rotate')
+          { transform += 'rotate(' + value + ') '; }
+          else if (property === 'skew')
+          { transform += 'skew(' + value + ') '; }
+          else if (vs_utils$1.SUPPORT_3D_TRANSFORM && property === 'translate')
+          { transform += 'translate3d(' + value + ') '; }
+          else if (property === 'translate')
+          { transform += 'translate(' + value + ') '; }
+          else if (property === 'translateX')
+          { transform += 'translateX(' + value + ') '; }
+          else if (property === 'translateY')
+          { transform += 'translateY(' + value + ') '; }
+          else if (property === 'rotateX')
+          { transform += 'rotateX(' + value + ') '; }
+          else if (property === 'rotateY')
+          { transform += 'rotateY(' + value + ') '; }
+          else if (property === 'scale')
+          { transform += 'scale(' + value + ') '; }
+          else if (property === 'perspective')
+          { transform += 'perspective(' + value + ') '; }
+          else
+          { style += property + ':' + value + ';'; }
+        }
+      }
+      if (transform)
+      {
+        if (anim_params.additive) {
+          var matrix = comp.getCTM ();
+          transform = matrix.toString () + ' ' + transform;
+        }
+        style += TRANSFORM + ': ' + transform + ';';
+      }
+
+      rules_str += key + ' { ' + style + ' } ';
+    }
+
+    var rules = document.createTextNode
+      ('@' + KEY_FRAMES + ' ' + anim_id + ' { ' + rules_str + ' }');
+
+    cssAnimation.appendChild (rules);
+    document.getElementsByTagName("head")[0].appendChild(cssAnimation);
+
+    Animation.__css_animations [anim_id] = [cssAnimation, comp];
+
+    runComplexAnimation ();
+  }
+
+  if (isComplex) { vs_core$1.scheduleAction (applyComplexAnimation); }
+  else { vs_core$1.scheduleAction (applySimpleAnimation); }
+
+  return anim_id;
+};
+
+/**
+ *  @class
+ *  An vs.fx.Animation object, contains information for animate a vs.fx.View
+ *  component.
+ *  <p>
+ *  It specifies the css properties to animate and the values for each
+ *  properties.
+ *  You can define one transformation or a set of transformation
+ *  for your animation. In case of multiple transformation the developer
+ *  an specify a duration for each transformation.
+ *  <p>
+ *  <u>Predefined animations</u>: {@link vs.fx.TranslateAnimation},
+ *  {@link vs.fx.RotateAnimation}, {@link vs.fx.RotateXYZAnimation},
+ *  {@link vs.fx.ScaleAnimation}, {@link vs.fx.SkewAnimation}
+ *
+ *  @see vs.fx.TranslateAnimation
+ *  @see vs.fx.RotateAnimation
+ *  @see vs.fx.RotateXYZAnimation
+ *  @see vs.fx.ScaleAnimation
+ *  @see vs.fx.SkewAnimation
+ *
+ *  @example
+ *  // animate with a constant
+ *  a = new vs.fx.Animation (['rotate', '30deg']);​
+ *  a.process (comp);
+ *
+ *  // animate with a predefined variable
+ *  a = new vs.fx.Animation (['translate', '$width']);​
+ *  a.process (comp);
+ *
+ *  // animate with a generic variable
+ *  a = new vs.fx.Animation (['rotate', '${r}deg']);​
+ *  a.r = 50;
+ *  a.process (comp);
+ *
+ * @example
+ * // example of multiple transformations an durations
+ * // define a animation with two transformations
+ * animation = new vs.fx.Animation ([‘width’, '100px'], ['opacity', '0'])
+ * // set duration for each
+ * animation.durations = ['1s', '2s'];
+ *
+ * @example
+ * // Defining a complex animation with key frames"
+ * var translate = new vs.fx.TranslateAnimation (130, 150);
+ * translate.durations = '3s';
+ * translate.iterationCount = 3;
+ *
+ * translate.addKeyFrame ('from', {x:0, y: 0, z:0});
+ * translate.addKeyFrame (20, {x:50, y: 0, z: 0});
+ * translate.addKeyFrame (40, {x:50, y: 50, z: 0});
+ *
+ * translate.process (myObject);
+ *
+ *  @author David Thevenin
+ * @name vs.fx.Animation
+ *  @extends vs.core.Task
+ *
+ *  @constructor
+ *  Main constructor
+ *
+ * @param {Array.<string>} animations The array of <property, value> to animate
+*/
+function Animation (animations)
+{
+  this.parent = vs_core$1.Task;
+  this.parent ();
+  this.constructor = Animation;
+
+  if (arguments.length)
+  {
+    this.setAnimations (arguments);
+    this.keyFrames ['100%'] = this;
+  }
+}
+
+/**
+ * @private
+ */
+Animation.__css_animations = {};
+
+Animation.DEFAULT_DURATION = '0.3s';
+Animation.DEFAULT_TIMING = Animation.EASE;
+
+Animation.prototype = {
+
+  /**
+   * The css properties to animate
+   * @type {Array.<string>}
+   * @name vs.fx.Animation#properties
+   */
+  properties: null,
+
+  /**
+   * The css values for each properties
+   * @type {Array.<string>}
+   * @name vs.fx.Animation#values
+   */
+  values: null,
+
+  /**
+   * The duration for each transformation. For setting only one duration,
+   * use a string (ex anim.duration = '3s')
+   * @type Array.<string>
+   * @name vs.fx.Animation#durations
+   */
+  durations: null,
+
+  /**
+   * Specifies how the intermediate values used during a transition are
+   * calculated. <p />Use the constants to specify preset points of the curve:
+   * ({@link vs.fx.Animation.EASE},
+   * {@link vs.fx.Animation.LINEAR}, {@link vs.fx.Animation.EASE_IN},
+   * {@link vs.fx.Animation.EASE_OUT}, {@link vs.fx.Animation.EASE_IN_OUT})
+   * or the cubic-bezier function to specify your own points.
+   * <p />
+   * Specifies a cubic Bézier curve : cubic-bezier(P1x,P1y,P2x,P2y) <br />
+   * Parameters: <br />
+   * - First point in the Bézier curve : P1x, P1y <br />
+   * - Second point in the Bézier curve : P2x, P2y <br />
+   *
+   * @type Array.<string>
+   * @name vs.fx.Animation#timings
+   */
+  timings: null,
+
+  /**
+   * Specifies the number of times an animation iterates.
+   * The transformations establishes the origin for transforms applied to
+   * your component with respect to its border box. By default the value
+   * is 50%, 50%.
+   * <p>The values is express as an array of percentages of the element’s size,
+   * origin [0] => pos X, origin [1] => pos Y
+   * @type {Array.<int>}
+   * @name vs.fx.Animation#origin
+   */
+  origin: null,
+
+  /**
+   * Sets the origin for the transformations
+   * By default it is set to 1.
+   * For infinite interation, use 'infinite' value.
+   * @type {{number | string}}
+   * @name vs.fx.Animation#iterationCount
+   */
+  iterationCount: 1,
+
+  /**
+   * The time to begin executing an animation after it is applied. <br/>
+   * If 0, the animation executes as soon as it is applied. <br/>
+   * If positive, it specifies an offset from the moment the animation is
+   * applied, and the animation delays execution by that offset. <br/>
+   * If negative, the animation executes the moment the property changes but
+   * appears to begin at the specified negative offset—that is, begins part-way
+   * through the animation. <br/>
+   * The unit is milliseconds.  <br/>
+   * By default it is set to 0.
+   * @type number
+   * @name vs.fx.Animation#delay
+   */
+  delay: 0,
+
+  /**
+   * @private
+   * @type Object
+   * @name vs.fx.Animation#keyFrames
+   */
+  keyFrames: null,
+  
+  /**
+   * An animation can manipulate the transform property. If you have applied
+   * your own transformation to the component, then the animation transform
+   * is added to the component's transformation.<br/>
+   * But if want the component to use only the animation transformation, then
+   * set up your animation with the property "additive" set to "false".<br/>
+   * By default it is set to true.
+   * @type boolean
+   * @name vs.fx.Animation#additive
+   */
+  additive: true,
+
+  /**
+   *  Defines the properties to animate.
+   *  <p>
+   *  When you call the method you redefines your animation, and all
+   *  animation options are set to default value.
+   *
+   * @example
+   * // define a animation with two transformations
+   * animation = new vs.fx.Animation ()
+   * animation.setAnimations ([[‘width’, '100px'], ['opacity', '0']]);
+   *
+   * @name vs.fx.Animation#setAnimations
+   * @function
+   * @param {Array.<Array>} animations The array of [property, value]
+   *         to animate
+   */
+  setAnimations : function (animations)
+  {
+    var i, prop, value, option;
+
+    this.properties = [];
+    this.values = [];
+    this.timings = [];
+    this.keyFrames = {};
+    this.origin = null;
+    this.durations = null;
+    this.timings = null;
+
+    for (i = 0 ; i < animations.length; i++)
+    {
+      option = animations [i];
+      if (!vs_utils$1.isArray (option) || option.length !== 2)
+      {
+        console.warn ('vs.fx.Animation, invalid animations');
+        continue;
+      }
+      prop = option [0]; value = option [1];
+      if (!vs_utils$1.isString (prop) || !vs_utils$1.isString (value))
+      {
+        console.warn ('vs.fx.Animation, invalid constructor argument option: [' +
+          prop + ', ' + value + ']');
+        continue;
+      }
+
+      this.properties.push (prop);
+      this.values.push (value);
+    }
+  },
+
+  /**
+   *  Add an animation Key frames.
+   *  By default an animation does not have key frames. But you can
+   *  define a complexe animation with key frames.
+   *  <br />
+   *  You have to define at least two key frames 'from' and 'to'.
+   *  Other frames are define as percentage value of the animation.
+   *  <p />
+   *  @example
+   *  var translate = new vs.fx.TranslateAnimation (130, 150);
+   *
+   *  translate.addKeyFrame ('from', {x:0, y: 0, z:0});
+   *  translate.addKeyFrame (20, {x:50, y: 0, z: 0});
+   *  translate.addKeyFrame (40, {x:50, y: 50, z: 0});
+   *
+   *  @example
+   *  var translate = new vs.fx.Animation (['translateY','100px'],['opacity', '0']);
+   *
+   *  translate.addKeyFrame ('from', ['0px', '1']);
+   *  translate.addKeyFrame (20, ['50px', '1']);
+   *  translate.addKeyFrame (40, ['80px', '1']);
+   *
+   * @name vs.fx.Animation#addKeyFrame
+   * @function
+   * @param {string | number} pos The percentage value of animation
+   * @param {Object | Array} values the object containing values for
+   *         the animation
+   */
+  addKeyFrame : function (pos, values)
+  {
+    if (!values) { return; }
+    if (pos === 'from')
+    {
+      this.keyFrames ['0%'] = values;
+      return;
+    }
+    if (pos === 'to')
+    {
+      this.keyFrames ['100%'] = values;
+      return;
+    }
+    if (!vs_utils$1.isNumber (pos) || pos < 0 || pos > 100) { return; }
+
+    this.keyFrames [pos+'%'] = values;
+  },
+
+  /**
+   *  Use this function for animate your graphic object.
+   *  <p>
+   *  You can set a callback function that will be call at the end of animation.
+   *  Associated to the callback you can defined a runtime context. This context
+   *  could be a object.
+   *
+   *  @example
+   *  obj.prototype.endAnimation = function (event)
+   *  { ... }
+   *
+   *  obj.prototype.animate = function ()
+   *  {
+   *    myAnimation.process (a_gui_object, this.endAnimation, this);
+   *  }
+   *
+   * @name vs.fx.Animation#process
+   * @function
+   * @param {vs.fx.View} comp The component the view will be animated
+   * @param {Function} clb an optional callback to call at the end of animation
+   * @param {Object} ctx an optional execution context associated to the
+   *          callback
+   * @param {boolean} now an optional parameter use to apply a animation without
+   *          delay or duration. It useful for configuring the initial position
+   *          of UI component.
+   * @return {String} return the identifier of the animation process. You can
+   *       use it to stop the animation for instance.
+   */
+  process : function (comp, clb, ctx, now)
+  {
+    return procesAnimation (comp, this, clb, ctx, now);
+  },
+
+/********************************************************************
+                  Task implementation
+********************************************************************/
+
+  /**
+   * @name vs.core.Animation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    vs_core$1.VSObject.prototype._clone.call (this, obj, cloned_map);
+    
+    var key, data;
+    obj.keyFrames = {};
+    obj.keyFrames ['100%'] = obj;
+
+    if (this.properties)
+    { obj.properties = this.properties.slice (); }
+    else { obj.properties = []; }
+    if (this.values)
+    { obj.values = this.values.slice (); }
+    else { obj.values = []; }
+    if (this.durations)
+    { obj.durations = this.durations; }
+    if (this.timings)
+    { obj.timings = this.timings.slice (); }
+    else { obj.timings = []; }
+    if (this.origin)
+    { obj.origin = this.origin.slice (); }
+    if (this.keyFrames)
+    {
+      for (key in this.keyFrames)
+      {
+        if (key === '100%') { continue; }
+        data = this.keyFrames [key];
+        if (vs_utils$1.isArray (data)) { obj.keyFrames [key] = data.slice (); }
+        else { obj.keyFrames [key] = vs_utils$1.clone (data); }
+      }
+    }
+
+    obj.iterationCount = this.iterationCount;
+    obj.delay = this.delay;
+  },
+
+/********************************************************************
+                  Task implementation
+********************************************************************/
+
+  /**
+   *  Starts the task
+   *
+   * @name vs.fx.Animation#start
+   * @function
+   * @param {any} param any parameter (scalar, Array, Object)
+   * @return {String} return the identifier of the animation process. You can
+   *       use it to stop the animation for instance.
+   */
+  start: function (param)
+  {
+    return this.process (param);
+  }
+};
+vs_utils$1.extendClass (Animation, vs_core$1.Task);
+
+/********************************************************************
+                  Define class properties
+********************************************************************/
+
+vs_utils$1.defineClassProperties (Animation, {
+  'duration': {
+    /**
+     * Getter/Setter for animation duration
+     * @name vs.fx.Animation#duration
+     *
+     * @type {String}
+     */
+    set : function (v)
+    {
+      if (!v) { return; }
+
+      this.durations = [v];
+    },
+
+    /**
+     * @ignore
+     */
+    get : function ()
+    {
+      if (this.durations && this.durations.length)
+      { return this.durations [0]; }
+      else
+      { return Animation.DEFAULT_DURATION; }
+    },
+  },
+  'timing': {
+    /**
+     * Getter/Setter for animation timing
+     * @name vs.fx.Animation#timing
+     *
+     * @type {String}
+     */
+    set : function (v)
+    {
+      if (!v) { return; }
+
+      this.timings = [v];
+    },
+
+    /**
+     * @ignore
+     */
+    get : function ()
+    {
+      if (this.timings && this.timings.length)
+      { return this.timings [0]; }
+      else
+      { return Animation.EASE; }
+    }
+  }
+});
+
+/*************************************************************
+                Timing Function
+*************************************************************/
+
+/**
+ * The ease timing function
+ * Equivalent to cubic-bezier(0.25, 0.1, 0.25, 1.0)
+ * @name vs.fx.Animation.EASE
+ * @const
+ */
+Animation.EASE = 'ease';
+
+/**
+ * The linear timing function
+ * Equivalent to cubic-bezier(0.0, 0.0, 1.0, 1.0)
+ * @name vs.fx.Animation.LINEAR
+ * @const
+ */
+Animation.LINEAR = 'linear';
+
+/**
+ * The ease in timing function
+ * Equivalent to cubic-bezier(0.42, 0, 1.0, 1.0)
+ * @name vs.fx.Animation.EASE_IN
+ * @const
+ */
+Animation.EASE_IN = 'ease-in';
+
+/**
+ * The ease out timing function
+ * Equivalent to cubic-bezier(0, 0, 0.58, 1.0)
+ * @name vs.fx.Animation.EASE_OUT
+ * @const
+ */
+Animation.EASE_OUT = 'ease-out';
+
+/**
+ * The ease in out timing function
+ * Equivalent to cubic-bezier(0.42, 0, 0.58, 1.0)
+ * @name vs.fx.Animation.EASE_IN_OUT
+ * @const
+ */
+Animation.EASE_IN_OUT = 'ease-in-out';
+
+/*************************************************************
+                Specifics animations
+*************************************************************/
+
+/**
+ *  @class
+ *  Animation for translate a object view over x, y, and z axes.
+ *  <p>
+ *
+ *  @example
+ *  // declare the animation
+ *  var translate = new vs.fx.TranslateAnimation (50, 50, 0);
+ *  translate.process (comp);
+ *
+ *  // reconfigure the animation
+ *  translate.x = 40;
+ *  translate.y = 140;
+ *  translate.process (comp);
+ *
+ *  @author David Thevenin
+ * @name vs.fx.TranslateAnimation
+ *
+ *  @constructor
+ *  Main constructor
+ *  @extends vs.fx.Animation
+ *
+ * @param {number} x The translation value along the X axis
+ * @param {number} y The translation value along the Y axis
+ * @param {number} z The translation value along the Z axis if 3d css transform is possible
+*/
+var TranslateAnimation = function (x, y, z)
+{
+  this.parent = Animation;
+  if (!arguments.length)
+  {
+    this.parent ();
+  }
+  else
+  {
+    if (vs_utils$1.SUPPORT_3D_TRANSFORM)
+      this.parent (['translate', '${x}px,${y}px,${z}px']);
+    else
+      this.parent (['translate', '${x}px,${y}px']);
+
+    if (vs_utils$1.isNumber (x)) { this.x = x; }
+    if (vs_utils$1.isNumber (y)) { this.y = y; }
+    if (vs_utils$1.isNumber (z)) { this.z = z; }
+  }
+  this.constructor = TranslateAnimation;
+};
+
+TranslateAnimation.prototype = {
+
+  /**
+   * The translation value along the X axis
+   * @public
+   * @type {number}
+   * @name vs.fx.TranslateAnimation#x
+   */
+  x: 0,
+
+  /**
+   * The translation value along the Y axis
+   * @public
+   * @type {number}
+   * @name vs.fx.TranslateAnimation#y
+   */
+  y: 0,
+
+  /**
+   * The translation value along the Z axis
+   * @public
+   * @type {number}
+   * @name vs.fx.TranslateAnimation#z
+   */
+  z: 0,
+  
+  /**
+   * @name vs.core.TranslateAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.x = this.x;
+    obj.y = this.y;
+    obj.z = this.z;    
+  }
+};
+vs_utils$1.extendClass (TranslateAnimation, Animation);
+
+/**
+ *  @class
+ *  Rotate your object any number of degrees along the Z axis.
+ *  <p>
+ *
+ *  @example
+ *  // declare the animation
+ *  var rotation = new vs.fx.RotateAnimation (50);
+ *  rotation.process (comp);
+ *
+ *  // reconfigure the animation
+ *  rotation.deg = 40;
+ *  rotation.process (comp);
+ *
+ *  @author David Thevenin
+ * @name vs.fx.RotateAnimation
+ *
+ *  @constructor
+ *  Main constructor
+ *  @extends vs.fx.Animation
+ *
+ * @param {number} deg The rotation value along the Z axis
+*/
+var RotateAnimation = function (deg)
+{
+  this.parent = Animation;
+  if (!arguments.length)
+  {
+    this.parent ();
+  }
+  else
+  {
+    this.parent (['rotate', '${deg}deg']);
+
+    if (vs_utils$1.isNumber (deg)) { this.deg = deg; }
+  }
+  this.constructor = RotateAnimation;
+};
+
+RotateAnimation.prototype = {
+
+  /**
+   * The rotation value along the Z axis
+   * @public
+   * @type {number}
+   * @name vs.fx.RotateAnimation#deg
+   */
+  deg: 0,
+  
+  /**
+   * @name vs.core.RotateAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.deg = this.deg;    
+  }
+};
+vs_utils$1.extendClass (RotateAnimation, Animation);
+
+/**
+ *  @class
+ *  Rotate your object any number of degrees over the X, Y and Z axes.
+ *  <p>
+ *
+ *  @example
+ *  // declare the animation
+ *  var rotation = new vs.fx.RotateXYZAnimation (50, 50, 10);
+ *  rotation.process (comp);
+ *
+ *  @author David Thevenin
+ * @name vs.fx.RotateXYZAnimation
+ *
+ *  @constructor
+ *  Main constructor
+ *  @extends vs.fx.Animation
+ *
+ * @param {number} degX The rotation value along the X axis
+ * @param {number} degY The rotation value along the Y axis
+ * @param {number} degZ The rotation value along the Z axis
+*/
+var RotateXYZAnimation = function (degX, degY, degZ)
+{
+  this.parent = Animation;
+  if (!arguments.length)
+  {
+    this.parent ();
+  }
+  else
+  {
+    this.parent (['rotateX', '${degX}deg'],
+      ['rotateY', '${degY}deg'], ['rotate' ,'${degZ}deg']);
+
+    if (vs_utils$1.isNumber (degX)) { this.degX = degX; }
+    if (vs_utils$1.isNumber (degY)) { this.degY = degY; }
+    if (vs_utils$1.isNumber (degZ)) { this.degZ = degZ; }
+  }
+  this.constructor = RotateXYZAnimation;
+};
+
+RotateXYZAnimation.prototype = {
+
+  /**
+   * The rotation value along the X axis
+   * @public
+   * @type {number}
+   * @name vs.fx.RotateXYZAnimation#degX
+   */
+  degX: 0,
+
+  /**
+   * The rotation value along the Y axis
+   * @public
+   * @type {number}
+   * @name vs.fx.RotateXYZAnimation#degY
+   */
+  degY: 0,
+
+  /**
+   * The rotation value along the Z axis
+   * @public
+   * @type {number}
+   * @name vs.fx.RotateXYZAnimation#degZ
+   */
+  degZ: 0,
+  
+  /**
+   * @name vs.core.RotateXYZAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.degX = this.degX;
+    obj.degY = this.degY;
+    obj.degZ = this.degZ;    
+  }
+};
+vs_utils$1.extendClass (RotateXYZAnimation, Animation);
+
+/**
+ *  @class
+ *  Scale your object over the X and Y axes
+ *  <p>
+ *  If the second parameter is not provided, it is takes a value equal to
+ *  the first.
+ *
+ *  @example
+ *  // declare the animation
+ *  var scale = new vs.fx.ScaleAnimation (0.5, 1);
+ *  scale.process (comp);
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *  Main constructor
+ *  @extends vs.fx.Animation
+ *
+ * @name vs.fx.ScaleAnimation
+ * @param {number} sx The scale value along the X axis
+ * @param {number} sy The scale value along the Y axis
+ * @param {number} sz The scale value along the Z axis
+*/
+var ScaleAnimation = function (sx, sy, sz)
+{
+  this.parent = Animation;
+  if (!arguments.length)
+  {
+    this.parent ();
+  }
+  else
+  {
+    if (!vs_utils$1.isNumber (sy) && !vs_utils$1.isNumber (sy))
+    {
+      // scale on X and Y axies
+      this.parent (['scale', '${sx}']);
+      this.sx = sx;
+      this.sy = sx;
+    }
+    else
+    {
+      this.parent (
+        ['scaleX', '${sx}'], ['scaleY', '${sy}'], ['scaleZ' ,'${sz}']
+      );
+
+      if (vs_utils$1.isNumber (sx)) { this.sx = sx; }
+      if (vs_utils$1.isNumber (sy)) { this.sy = sy; }
+      if (vs_utils$1.isNumber (sz)) { this.sz = sz; }
+    }
+  }
+  this.constructor = ScaleAnimation;
+};
+
+ScaleAnimation.prototype = {
+
+  /**
+   * The scale value along the X axis
+   * @public
+   * @type {number}
+   * @name vs.fx.ScaleAnimation#sx
+   */
+  sx: 1,
+
+  /**
+   * The scale value along the Y axis
+   * @public
+   * @type {number}
+   * @name vs.fx.ScaleAnimation#sy
+   */
+  sy: 1,
+
+  /**
+   * The scale value along the Z axis
+   * @public
+   * @type {number}
+   * @name vs.fx.ScaleAnimation#sz
+   */
+  sz: 1,
+  
+  /**
+   * @name vs.core.ScaleAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.sx = this.sx;
+    obj.sy = this.sy;
+    obj.sz = this.sz;    
+  }
+};
+vs_utils$1.extendClass (ScaleAnimation, Animation);
+
+
+/**
+ *  @class
+ *  Skew your object over the X and Y axes
+ *  <p>
+ *  If the second parameter is not provided, it is takes a value equal to
+ *  the first.
+ *
+ *  @example
+ *  // declare the animation
+ *  var scale = new vs.fx.SkewAnimation (0.5, 1);
+ *  scale.process (comp);
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *  Main constructor
+ *  @extends vs.fx.Animation
+ * @name vs.fx.SkewAnimation
+ *
+ * @param {number} x The scale value along the X axis
+ * @param {number} y The scale value along the Y axis
+*/
+var SkewAnimation = function (ax, ay)
+{
+  this.parent = Animation;
+  if (!arguments.length)
+  {
+    this.parent ();
+  }
+  else
+  {
+    this.parent (['skew', '${ax}deg,${ay}deg']);
+
+    if (vs_utils$1.isNumber (ax)) { this.ax = ax; }
+    if (vs_utils$1.isNumber (ay)) { this.ay = ay; }
+  }
+  this.constructor = SkewAnimation;
+};
+
+SkewAnimation.prototype = {
+
+  /**
+   * Specifies a skew transformation along the X axis by the given angle.
+   * @public
+   * @type {number}
+   * @name vs.fx.SkewAnimation#ax
+   */
+  ax: 0,
+
+  /**
+   *Specifies a skew transformation along the X axis by the given angle.
+   * @public
+   * @type {number}
+   * @name vs.fx.SkewAnimation#ay
+   */
+  ay: 0,
+  
+  /**
+   * @name vs.core.SkewAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.ax = this.ax;
+    obj.ay = this.ay;
+  }
+};
+vs_utils$1.extendClass (SkewAnimation, Animation);
+
+/**
+ *  @class
+ *  Animate the object' opacity
+ *
+ *  @example
+ *  // declare the pulseo opacity animation
+ *  var pulse = new vs.fx.OpacityAnimation (1);
+ *  pulse.addKeyFrame ('from', {value: 1});
+ *  pulse.addKeyFrame (12, {value: 0.5});
+ *  pulse.addKeyFrame (25, {value: 1});
+ *  pulse.addKeyFrame (37, {value: 0.5});
+ *  pulse.addKeyFrame (50, {value: 1});
+ *  pulse.addKeyFrame (62, {value: 0.5});
+ *  pulse.addKeyFrame (75, {value: 1});
+ *  pulse.addKeyFrame (87, {value: 0.5});
+ *  pulse.durations = '7s';
+ *  pulse.timings = vs.fx.Animation.LINEAR;
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *  Main constructor
+ *  @extends vs.fx.Animation
+ * @name vs.fx.OpacityAnimation
+ *
+ * @param {number} value The opacity value
+*/
+var OpacityAnimation = function (value)
+{
+  this.parent = Animation;
+  if (!arguments.length)
+  {
+    this.parent ();
+  }
+  else
+  {
+    this.parent (['opacity', '${value}']);
+
+    if (vs_utils$1.isNumber (value)) { this.value = value; }
+  }
+  this.constructor = OpacityAnimation;
+};
+
+OpacityAnimation.prototype = {
+
+  /**
+   * Specifies the opacity value
+   * @public
+   * @name vs.fx.OpacityAnimation#value
+   * @type {number}
+   */
+  value: 1,
+  
+  /**
+   * @name vs.core.OpacityAnimation#_clone
+   * @function
+   * @private
+   *
+   * @param {vs.core.Object} obj The cloned object
+   * @param {Object} map Map of cloned objects
+   */
+  _clone : function (obj, cloned_map)
+  {
+    Animation.prototype._clone.call (this, obj, cloned_map);
+    
+    obj.value = this.value;    
+  }
+};
+vs_utils$1.extendClass (OpacityAnimation, Animation);
+
+/*************************************************************
+                Predefined animation
+*************************************************************/
+
+/**
+ *  Slide a object to right.
+ * @name vs.fx.Animation.SlideOutRight
+ *  @type vs.fx.Animation
+ */
+Animation.SlideOutRight = new Animation (['translateX', '$width']);
+Animation.SlideOutRight.addKeyFrame (0, ['0px']);
+/**
+ *  Slide a object to left.
+ * @name vs.fx.Animation.SlideOutLeft
+ *  @type vs.fx.Animation
+ */
+Animation.SlideOutLeft = new Animation (['translateX', '-$width']);
+Animation.SlideOutLeft.addKeyFrame (0, ['0px']);
+
+/**
+ *  Slide a object to top.
+ * @name vs.fx.Animation.SlideOutTop
+ *  @type vs.fx.Animation
+ */
+Animation.SlideOutTop = new Animation (['translateY', '-$height']);
+Animation.SlideOutTop.addKeyFrame (0, ['0px']);
+
+/**
+ *  Slide a object to left.
+ * @name vs.fx.Animation.SlideOutBottom
+ *  @type vs.fx.Animation
+ */
+Animation.SlideOutBottom = new Animation (['translateY', '$height']);
+Animation.SlideOutBottom.addKeyFrame (0, ['0px']);
+
+/**
+ *  Slide a object to right.
+ * @name vs.fx.Animation.SlideInRight
+ *  @type vs.fx.Animation
+ */
+Animation.SlideInRight = new Animation (['translateX', '0px']);
+Animation.SlideInRight.addKeyFrame (0, ['$width']);
+
+/**
+ *  Slide a object to left.
+ * @name vs.fx.Animation.SlideInLeft
+ *  @type vs.fx.Animation
+ */
+Animation.SlideInLeft = new Animation (['translateX', '0px']);
+Animation.SlideInLeft.addKeyFrame (0, ['-$width']);
+
+/**
+ *  Slide a object to top.
+ * @name vs.fx.Animation.SlideInTop
+ *  @type vs.fx.Animation
+ */
+Animation.SlideInTop = new Animation (['translateY', '0px']);
+Animation.SlideInTop.addKeyFrame (0, ['-$height']);
+
+/**
+ *  Slide a object to left.
+ * @name vs.fx.Animation.SlideInBottom
+ *  @type vs.fx.Animation
+ */
+Animation.SlideInBottom = new Animation (['translateY', '0px']);
+Animation.SlideInBottom.addKeyFrame (0, ['$height']);
+
+/**
+ *  Fade in an object.
+ * @name vs.fx.Animation.FadeIn
+ *  @type vs.fx.Animation
+ */
+Animation.FadeIn = new Animation (['opacity', '1']);
+Animation.FadeIn.addKeyFrame (0, ['0']);
+
+/**
+ *  Fade out an object.
+ * @name vs.fx.Animation.FadeOut
+ *  @type vs.fx.Animation
+ */
+Animation.FadeOut = new Animation (['opacity', '0']);
+Animation.FadeOut.addKeyFrame (0, ['1']);
 
 /*
   Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), and
@@ -534,7 +2317,7 @@ var _template_view_clone = function (config, cloned_map) {
  * @private
  */
 var _template_view__clone = function (obj, cloned_map) {
-  ui.View.prototype._clone.call (this, obj, cloned_map);
+  View.prototype._clone.call (this, obj, cloned_map);
 
   _instrument_component (obj, this.__shadow_view, obj.view);
 
@@ -659,8 +2442,8 @@ function _instrument_component (obj, shadow_view, node) {
         shadow_view = ctx.__list_iterate_prop [prop_name], paths, nodes_cloned;
       
       if (shadow_view) {
-        path = _getPath$1 (ctx.__node, shadow_view.__parent_node);
-        node_cloned = _evalPath$1 (view_node, path);
+        const path = _getPath$1 (ctx.__node, shadow_view.__parent_node);
+        const node_cloned = _evalPath$1 (view_node, path);
 
         _create_iterate_property (obj, prop_name, shadow_view, node_cloned);
       }
@@ -700,7 +2483,7 @@ function _pre_compile_shadow_view (self, className) {
 
   shadow_view.__class = _resolveClass (className);
   if (!vs_utils.isFunction (shadow_view.__class)) {
-    shadow_view.__class = ui.View;
+    shadow_view.__class = View;
   }
 
   /**
@@ -785,7 +2568,7 @@ function _pre_compile_shadow_view (self, className) {
       shadow_view.__parent_node = parentElement;
       shadow_view.__node = node;
       shadow_view.__all_properties = ctx.__all_properties;
-      shadow_view.__class = ui.View;
+      shadow_view.__class = View;
       
       ctx = shadow_view;
     }
@@ -1063,11 +2846,11 @@ function _findNodeRef (node, ref)
  *
  * @param {Object} config the configuration structure [mandatory]
  */
-function View$1 (config)
+function View (config)
 {
-  this.parent = vs_core$1.EventSource;
+  this.parent = vs_core$1__default.EventSource;
   this.parent (config);
-  this.constructor = View$1;
+  this.constructor = View;
   
   // init recognizer support
   this.__pointer_recognizers = [];
@@ -1096,7 +2879,7 @@ function View$1 (config)
  * @name vs.ui.View.DEFAULT_LAYOUT
  * @const
  */
-View$1.DEFAULT_LAYOUT = null;
+View.DEFAULT_LAYOUT = null;
 
 /**
  * Horizontal layout
@@ -1104,9 +2887,9 @@ View$1.DEFAULT_LAYOUT = null;
  * @name vs.ui.View.HORIZONTAL_LAYOUT
  * @const
  */
-View$1.HORIZONTAL_LAYOUT = 'horizontal';
+View.HORIZONTAL_LAYOUT = 'horizontal';
 /** @private */
-View$1.LEGACY_HORIZONTAL_LAYOUT = 'horizontal_layout';
+View.LEGACY_HORIZONTAL_LAYOUT = 'horizontal_layout';
 
 /**
  * Vertical layout
@@ -1114,9 +2897,9 @@ View$1.LEGACY_HORIZONTAL_LAYOUT = 'horizontal_layout';
  * @name vs.ui.View.VERTICAL_LAYOUT
  * @const
  */
-View$1.VERTICAL_LAYOUT = 'vertical';
+View.VERTICAL_LAYOUT = 'vertical';
 /** @private */
-View$1.LEGACY_VERTICAL_LAYOUT = 'vertical_layout';
+View.LEGACY_VERTICAL_LAYOUT = 'vertical_layout';
 
 /**
  * Absolute layout
@@ -1124,9 +2907,9 @@ View$1.LEGACY_VERTICAL_LAYOUT = 'vertical_layout';
  * @name vs.ui.View.ABSOLUTE_LAYOUT
  * @const
  */
-View$1.ABSOLUTE_LAYOUT = 'absolute';
+View.ABSOLUTE_LAYOUT = 'absolute';
 /** @private */
-View$1.LEGACY_ABSOLUTE_LAYOUT = 'absolute_layout';
+View.LEGACY_ABSOLUTE_LAYOUT = 'absolute_layout';
 
 /**
  * Html flow layout
@@ -1134,9 +2917,9 @@ View$1.LEGACY_ABSOLUTE_LAYOUT = 'absolute_layout';
  * @name vs.ui.View.FLOW_LAYOUT
  * @const
  */
-View$1.FLOW_LAYOUT = 'flow';
+View.FLOW_LAYOUT = 'flow';
 /** @private */
-View$1.LEGACY_FLOW_LAYOUT = 'flow_layout';
+View.LEGACY_FLOW_LAYOUT = 'flow_layout';
 
 /********************************************************************
                     Delay constant
@@ -1147,7 +2930,7 @@ View$1.LEGACY_FLOW_LAYOUT = 'flow_layout';
  * @name vs.ui.View.MOVE_THRESHOLD
  * @const
  */
-View$1.MOVE_THRESHOLD = 20;
+View.MOVE_THRESHOLD = 20;
 
 /********************************************************************
                     Magnet contants
@@ -1158,42 +2941,42 @@ View$1.MOVE_THRESHOLD = 20;
  * @name vs.ui.View.MAGNET_NONE
  * @const
  */
-View$1.MAGNET_NONE = 0;
+View.MAGNET_NONE = 0;
 
 /**
  * The widget will be fixed on left
  * @name vs.ui.View.MAGNET_LEFT
  * @const
  */
-View$1.MAGNET_LEFT = 3;
+View.MAGNET_LEFT = 3;
 
 /**
  * The widget will be fixed on bottom
  * @name vs.ui.View.MAGNET_BOTTOM
  * @const
  */
-View$1.MAGNET_BOTTOM = 2;
+View.MAGNET_BOTTOM = 2;
 
 /**
  * The widget will be fixed on top
  * @name vs.ui.View.MAGNET_TOP
  * @const
  */
-View$1.MAGNET_TOP = 1;
+View.MAGNET_TOP = 1;
 
 /**
  * The widget will be fixed on right
  * @name vs.ui.View.MAGNET_RIGHT
  * @const
  */
-View$1.MAGNET_RIGHT = 4;
+View.MAGNET_RIGHT = 4;
 
 /**
  * The widget will centered
  * @name vs.ui.View.MAGNET_CENTER
  * @const
  */
-View$1.MAGNET_CENTER = 5;
+View.MAGNET_CENTER = 5;
 
 /********************************************************************
 
@@ -1202,24 +2985,24 @@ View$1.MAGNET_CENTER = 5;
 /**
  * @private
  */
-View$1.NON_G_OBJECT = '_non_g_object';
+View.NON_G_OBJECT = '_non_g_object';
 /**
  * @private
  */
-View$1.ANY_PLACE = 'children';
+View.ANY_PLACE = 'children';
 /**
  * @private
  */
-View$1._positionStyle = undefined;
+View._positionStyle = undefined;
 /**
  * @private
  */
-View$1.__comp_templates = {};
+View.__comp_templates = {};
 
 /**
  * @private
  */
-View$1._propagate_pointer_event = function (obj, func_ptr, event)
+View._propagate_pointer_event = function (obj, func_ptr, event)
 {
   var event_name = "";
   if (event.type === vs_gesture.POINTER_START) { event_name = 'POINTER_START'; }
@@ -1236,7 +3019,7 @@ View$1._propagate_pointer_event = function (obj, func_ptr, event)
  */
 var _template_nodes = null;
 
-View$1.prototype = {
+View.prototype = {
 
   html_template: html_template,
 
@@ -1253,7 +3036,7 @@ View$1.prototype = {
    * @protected
    * @type {number}
    */
-  _magnet: View$1.MAGNET_NONE,
+  _magnet: View.MAGNET_NONE,
 
   /**
    * @private
@@ -1383,11 +3166,11 @@ View$1.prototype = {
         for (i = 0; i < a.length; i++)
         {
           child = a [i];
-          vs_utils$1.free (child);
+          vs_utils$1__default.free (child);
         }
       }
       else
-      { vs_utils$1.free (a); }
+      { vs_utils$1__default.free (a); }
       delete (this.__children [key]);
     }
     this.__children = {};
@@ -1395,7 +3178,7 @@ View$1.prototype = {
 
     this.clearTransformStack ();
 
-    vs_core$1.EventSource.prototype.destructor.call (this);
+    vs_core$1__default.EventSource.prototype.destructor.call (this);
   },
 
   /**
@@ -1439,7 +3222,7 @@ View$1.prototype = {
    * @function
    * @private
    *
-   * @param {vs_core.Object} obj The cloned object
+   * @param {vs_core.VSObject} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   clone : function (config, cloned_map)
@@ -1461,7 +3244,7 @@ View$1.prototype = {
       for (; i < l; i++)
       {
         path = paths[i];
-        if (!path.id) path.id = vs_core$1.createId ();
+        if (!path.id) path.id = vs_core$1__default.createId ();
         clonedViews [path[0].id] = _evalPath (root, path[1]);
       }
     }
@@ -1489,7 +3272,7 @@ View$1.prototype = {
           a = comp.__children [key];
           if (!a) { continue; }
           
-          if (vs_utils$1.isArray (a))
+          if (vs_utils$1__default.isArray (a))
           {
             l = a.length;
             for (i = 0; i < l; i++)
@@ -1522,15 +3305,15 @@ View$1.prototype = {
       config.node = node;
     }
 
-    return vs_core$1.EventSource.prototype.clone.call (this, config, cloned_map);
+    return vs_core$1__default.EventSource.prototype.clone.call (this, config, cloned_map);
   },
 
    /**
-   * @name vs_core.Object#_clone_properties_value
+   * @name vs_core.VSObject#_clone_properties_value
    * @function
    * @protected
    *
-   * @param {vs_core.Object} obj The cloned object
+   * @param {vs_core.VSObject} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone_properties_value : function (obj, cloned_map)
@@ -1543,7 +3326,7 @@ View$1.prototype = {
 
       if (key == "size" || key == "position")
       {
-        value = this.size;
+        var value = this.size;
         if (!value || value.length !== 3 ||
             (value[0] === 0 && value[1] === 0))
         { continue; }
@@ -1551,7 +3334,7 @@ View$1.prototype = {
   
       // property value copy
       if (this.isProperty (key))
-      { vs_core$1.Object.__propertyCloneValue (key, this, obj); }
+      { vs_core$1__default.VSObject.__propertyCloneValue (key, this, obj); }
     }
   },
 
@@ -1560,14 +3343,14 @@ View$1.prototype = {
    * @function
    * @private
    *
-   * @param {vs_core.Object} obj The cloned object
+   * @param {vs_core.VSObject} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)
   {
     var anim, a, key, child, l, hole, cloned_comp;
 
-    vs_core$1.EventSource.prototype._clone.call (this, obj, cloned_map);
+    vs_core$1__default.EventSource.prototype._clone.call (this, obj, cloned_map);
 
     // animations clone
     if (this._show_animation)
@@ -1654,7 +3437,7 @@ View$1.prototype = {
     {
       var template = new Template (_template);
       var node = template.__extend_component (this);
-      vs_utils$1.free (template);
+      vs_utils$1__default.free (template);
       return node;
     }
 
@@ -1664,12 +3447,12 @@ View$1.prototype = {
       node = Template.parseHTML (this.html_template);
       if (node) return node;
     }
-    if (vs_utils$1.isFunction (this.constructor))
+    if (vs_utils$1__default.isFunction (this.constructor))
     { compName = this.constructor.name; }
-    else if (vs_utils$1.isString (this.constructor))
+    else if (vs_utils$1__default.isString (this.constructor))
     { compName = this.constructor; }
     else
-    { compName = View$1; }
+    { compName = View; }
 
     console.warn ("Impossible to instance view of component '" + compName + ", id [" + config.id +
       "]. A default one is created");
@@ -1702,7 +3485,7 @@ View$1.prototype = {
     node_ref = config.node_ref;
     if (node_ref)
     {
-      regexp_result = View$1._ref_template_reg.exec (node_ref);
+      regexp_result = View._ref_template_reg.exec (node_ref);
       // node ref with the new syntax : ref = root_id'#'node_ref
       if (regexp_result && regexp_result.length == 3)
       {
@@ -1715,7 +3498,7 @@ View$1.prototype = {
       if (node_ref && root_id)
       {
         root_node = null;
-        obj = vs_core$1.Object._obs [root_id];
+        obj = vs_core$1__default.VSObject._obs [root_id];
 
         if (obj && obj.view) { root_node = obj.view; }
         else
@@ -1775,7 +3558,7 @@ View$1.prototype = {
    */
   initComponent : function ()
   {
-    vs_core$1.EventSource.prototype.initComponent.call (this);
+    vs_core$1__default.EventSource.prototype.initComponent.call (this);
 
     this._holes = {};
     this.__children = {};
@@ -1804,10 +3587,10 @@ View$1.prototype = {
    */
   componentDidInitialize : function ()
   {
-    vs_core$1.EventSource.prototype.componentDidInitialize.call (this);
+    vs_core$1__default.EventSource.prototype.componentDidInitialize.call (this);
     if (this._magnet) this.view.style.setProperty ('position', 'absolute', null);
 
-    if (this._magnet === View$1.MAGNET_CENTER)
+    if (this._magnet === View.MAGNET_CENTER)
     {
       this._updateSizeAndPos ();
       this._applyTransformation ();
@@ -1829,7 +3612,7 @@ View$1.prototype = {
     if (!view || !view.parentElement) return;
 
     // update the real element size and position
-    vs.scheduleAction (function () {
+    vs_core$1__default.scheduleAction (function () {
       self._size [0] = view.offsetWidth;
       self._size [1] = view.offsetHeight;
       self._pos [0] = view.offsetLeft;
@@ -1887,7 +3670,7 @@ View$1.prototype = {
    * @param {String} comp_name The GUI component name to instanciate
    * @param {Object} config Configuration structure need to build the component.
    * @param {String} extension The hole into the vs.ui.View will be insert.
-   * @return {vs_core.Object} the created component
+   * @return {vs_core.VSObject} the created component
    */
   createAndAddComponent : function (comp_name, config, extension)
   {
@@ -1900,7 +3683,7 @@ View$1.prototype = {
     // verify the component view already exists
     if (!config) {config = {};}
 
-    if (!config.id) { config.id = vs_core$1.createId (); }
+    if (!config.id) { config.id = vs_core$1__default.createId (); }
 
     var view = this.__getGUInode (config),
       path, data, xmlRequest, div, children, i, len, obj, msg;
@@ -1931,7 +3714,7 @@ View$1.prototype = {
     {
       path = comp_name + '.xhtml';
 
-      data = View$1.__comp_templates [path];
+      data = View.__comp_templates [path];
       if (!data)
       {
         xmlRequest = new XMLHttpRequest ();
@@ -1943,7 +3726,7 @@ View$1.prototype = {
           if (xmlRequest.status === 200 || xmlRequest.status === 0)
           {
             data = xmlRequest.responseText;
-            View$1.__comp_templates [path] = data;
+            View.__comp_templates [path] = data;
           }
           else
           {
@@ -2060,13 +3843,13 @@ View$1.prototype = {
     if (this.isChild (child)) { return; }
 
     var key, a, b, hole;
-    if (!view) { key = View$1.NON_G_OBJECT; }
+    if (!view) { key = View.NON_G_OBJECT; }
     // a non graphical object
-    else if (!extension) { key = View$1.ANY_PLACE; }
+    else if (!extension) { key = View.ANY_PLACE; }
     else { key = extension; }
 
     a = this.__children [key];
-    if (a && vs_utils$1.isArray (a)) { a.push (child); }
+    if (a && vs_utils$1__default.isArray (a)) { a.push (child); }
     else if (a)
     {
       b = [];
@@ -2176,14 +3959,14 @@ View$1.prototype = {
         {
           child = a [0];
           self.remove (child);
-          if (should_free) vs_utils$1.free (child);
+          if (should_free) vs_utils$1__default.free (child);
           else children.push (child);
         }
       }
       else
       {
         self.remove (a);
-        if (should_free) vs_utils$1.free (a);
+        if (should_free) vs_utils$1__default.free (a);
         else children.push (a);
       }
       delete (self.__children [ext]);
@@ -2238,7 +4021,7 @@ View$1.prototype = {
    * @function
    *
    * @param {string} spec the event specification [mandatory]
-   * @param {vs_core.Object} obj the object interested to catch the event
+   * @param {vs_core.VSObject} obj the object interested to catch the event
    *    [mandatory]
    * @param {string} func the name of a callback. If its not defined
    *        notify method will be called [optional]
@@ -2255,9 +4038,9 @@ View$1.prototype = {
 
       var func_ptr, self = this, handler;
       if (!func) { func = 'notify'; }
-      if (vs_utils$1.isFunction (func)) { func_ptr = func; }
-      else if (vs_utils$1.isString (func) &&
-               vs_utils$1.isFunction (obj [func]))
+      if (vs_utils$1__default.isFunction (func)) { func_ptr = func; }
+      else if (vs_utils$1__default.isString (func) &&
+               vs_utils$1__default.isFunction (obj [func]))
       {
         func_ptr = obj [func];
       }
@@ -2276,22 +4059,22 @@ View$1.prototype = {
       var self = this;
       handler = function (event)
       {
-        if (vs_core$1.EVENT_SUPPORT_TOUCH && event.changedTouches &&
+        if (vs_core$1__default.EVENT_SUPPORT_TOUCH && event.changedTouches &&
             event.changedTouches.length > 1) { return; }
 
 //        event.stopPropagation ();
 //        event.preventDefault ();
 
         event.src = self;
-        if (vs_core$1.EVENT_SUPPORT_TOUCH && event.changedTouches)
+        if (vs_core$1__default.EVENT_SUPPORT_TOUCH && event.changedTouches)
         {
           event.pageX = event.changedTouches[0].pageX;
           event.pageY = event.changedTouches[0].pageY;
-          var rec = vs_utils$1.getElementAbsolutePosition (self.view);
+          var rec = vs_utils$1__default.getElementAbsolutePosition (self.view);
           event.offsetX = event.changedTouches[0].pageX - rec.x;
           event.offsetY = event.changedTouches[0].pageY - rec.y;
         }
-        View$1._propagate_pointer_event (obj, func_ptr, event);
+        View._propagate_pointer_event (obj, func_ptr, event);
       };
 
       if (spec === 'POINTER_START') { spec = vs_gesture.POINTER_START; }
@@ -2302,7 +4085,7 @@ View$1.prototype = {
 
       vs_gesture.addPointerListener (this.view, spec, handler);
     }
-    return vs_core$1.EventSource.prototype.bind.call (this, spec, obj, func, delay);
+    return vs_core$1__default.EventSource.prototype.bind.call (this, spec, obj, func, delay);
   },
 
   /**
@@ -2314,7 +4097,7 @@ View$1.prototype = {
    * @function
    *
    * @param {string} spec the event specification [mandatory]
-   * @param {vs_core.Object} obj the object you want unbind [mandatory]
+   * @param {vs_core.VSObject} obj the object you want unbind [mandatory]
    */
   unbind : function (spec, obj)
   {
@@ -2327,7 +4110,7 @@ View$1.prototype = {
 
       vs_gesture.removePointerListener (this.view, vs_gesture.POINTER_END, handler);
     }
-    vs_core$1.EventSource.prototype.unbind.call (this, spec, obj);
+    vs_core$1__default.EventSource.prototype.unbind.call (this, spec, obj);
   },
 
 /********************************************************************
@@ -2376,8 +4159,8 @@ View$1.prototype = {
       pHeight = parentElement.offsetHeight;
     }
 
-    if (this._magnet === View$1.MAGNET_LEFT) x = 0;
-    if (this._magnet === View$1.MAGNET_TOP) y = 0;
+    if (this._magnet === View.MAGNET_LEFT) x = 0;
+    if (this._magnet === View.MAGNET_TOP) y = 0;
 
     if (w < 0) { width = ''; }
     else if (aH === 5 || aH === 7) { width = 'auto'; }
@@ -2430,10 +4213,10 @@ View$1.prototype = {
       bottom += 'px';
     }
 
-    if (this._magnet === View$1.MAGNET_BOTTOM) { top = 'auto'; bottom = '0px'; }
-    if (this._magnet === View$1.MAGNET_RIGHT) { left = 'auto'; right = '0px'; }
+    if (this._magnet === View.MAGNET_BOTTOM) { top = 'auto'; bottom = '0px'; }
+    if (this._magnet === View.MAGNET_RIGHT) { left = 'auto'; right = '0px'; }
 
-    if (this._magnet === View$1.MAGNET_CENTER) {
+    if (this._magnet === View.MAGNET_CENTER) {
       top = '50%'; bottom = 'auto';
       left = '50%'; right = 'auto';
     }
@@ -2546,7 +4329,7 @@ View$1.prototype = {
     { this.view.style.removeProperty (property); }
     else
     {
-      if (vs_utils$1.isNumber (value)) value = '' + value; // IE need string
+      if (vs_utils$1__default.isNumber (value)) value = '' + value; // IE need string
       this.view.style.setProperty (property, value, null);
     }
   },
@@ -2579,7 +4362,7 @@ View$1.prototype = {
     if (!this.view || !this.view.style)
     { return; }
 
-    vs_utils$1.setElementStyle (this.view, style);
+    vs_utils$1__default.setElementStyle (this.view, style);
   },
 
   /**
@@ -2598,7 +4381,7 @@ View$1.prototype = {
    */
   addCssRules : function (selector, rules)
   {
-    vs_utils$1.addCssRules ('#' + this._id + ' ' + selector, rules);
+    vs_utils$1__default.addCssRules ('#' + this._id + ' ' + selector, rules);
   },
 
   /**
@@ -2618,7 +4401,7 @@ View$1.prototype = {
    */
   addCssRule : function (selector, rule)
   {
-    vs_utils$1.addCssRule ('#' + this._id + ' ' + selector, rule);
+    vs_utils$1__default.addCssRule ('#' + this._id + ' ' + selector, rule);
   },
 
 /********************************************************************
@@ -2644,17 +4427,17 @@ View$1.prototype = {
     var n = this.view, display = n.style.display, self = this;
 
     n.style.display = 'none';
-    vs.scheduleAction (function()
+    vs_core$1__default.scheduleAction (function()
     {
       if (display)
       { n.style.display = display; }
       else
       { n.style.removeProperty ('display'); }
 
-      vs.scheduleAction (function()
+      vs_core$1__default.scheduleAction (function()
       {
         self.refresh ();
-        if (clb && vs_utils$1.isFunction (clb)) clb.call (self);
+        if (clb && vs_utils$1__default.isFunction (clb)) clb.call (self);
       });
     });
   },
@@ -2670,7 +4453,7 @@ View$1.prototype = {
   {
     if (!this.view) { return; }
     if (this._visible) { return; }
-    if (!vs_utils$1.isFunction (clb)) clb = undefined; 
+    if (!vs_utils$1__default.isFunction (clb)) clb = undefined; 
 
     if (this.__view_display)
     {
@@ -2726,10 +4509,10 @@ View$1.prototype = {
       else
       {
         if (this.__show_clb) {
-          vs.scheduleAction (function () {self.__show_clb.call (self);});
+          vs_core$1__default.scheduleAction (function () {self.__show_clb.call (self);});
         }
         if (clb) {
-          vs.scheduleAction (function () {clb.call (self);});
+          vs_core$1__default.scheduleAction (function () {clb.call (self);});
         }
       }
     }
@@ -2774,13 +4557,13 @@ View$1.prototype = {
     }
     else
     {
-      if (animations instanceof vs.fx.Animation)
+      if (animations instanceof Animation)
       {
         this._show_animation = animations.clone ();
       }
-      else if (vs_utils$1.isArray (animations))
+      else if (vs_utils$1__default.isArray (animations))
       {
-        this._show_animation = new vs.fx.Animation ();
+        this._show_animation = new Animation ();
         this._show_animation.setAnimations (animations);
       }
       else
@@ -2802,7 +4585,7 @@ View$1.prototype = {
         { this._show_animation.delay = options.delay; }
       }
     }
-    if (vs_utils$1.isFunction (clb)) { this.__show_clb = clb; }
+    if (vs_utils$1__default.isFunction (clb)) { this.__show_clb = clb; }
     else { this.__show_clb = clb; }
   },
 
@@ -2817,7 +4600,7 @@ View$1.prototype = {
   {
     if (!this.view) { return; }
     if (!this._visible && !this.__is_showing) { return; }
-    if (!vs_utils$1.isFunction (clb)) clb = undefined; 
+    if (!vs_utils$1__default.isFunction (clb)) clb = undefined; 
 
     this._visible = false;
     
@@ -2872,10 +4655,10 @@ View$1.prototype = {
       else
       {
         if (this.__hide_clb) {
-          vs.scheduleAction (function () {self.__hide_clb.call (self);});
+          vs_core$1__default.scheduleAction (function () {self.__hide_clb.call (self);});
         }
         if (clb) {
-          vs.scheduleAction (function () {clb.call (self);});
+          vs_core$1__default.scheduleAction (function () {clb.call (self);});
         }
       }
     }
@@ -2921,13 +4704,13 @@ View$1.prototype = {
      }
     else
     {
-      if (animations instanceof vs.fx.Animation)
+      if (animations instanceof Animation)
       {
         this._hide_animation = animations.clone ();
       }
-      else if (vs_utils$1.isArray (animations))
+      else if (vs_utils$1__default.isArray (animations))
       {
-        this._hide_animation = new vs.fx.Animation ();
+        this._hide_animation = new Animation ();
         this._hide_animation.setAnimations (animations);
       }
       else
@@ -2949,7 +4732,7 @@ View$1.prototype = {
         { this._hide_animation.delay = options.delay; }
       }
     }
-    if (vs_utils$1.isFunction (clb)) { this.__hide_clb = clb; }
+    if (vs_utils$1__default.isFunction (clb)) { this.__hide_clb = clb; }
     else { this.__hide_clb = clb; }
   },
 
@@ -2973,7 +4756,7 @@ View$1.prototype = {
   {
     if (!this.view) { return; }
 
-    vs_utils$1.setElementVisibility (this.view, visibility);
+    vs_utils$1__default.setElementVisibility (this.view, visibility);
   },
 
 /********************************************************************
@@ -2997,7 +4780,7 @@ View$1.prototype = {
   {
     if (!this.view) { return false; }
 
-    return vs_utils$1.hasClassName (this.view, className);
+    return vs_utils$1__default.hasClassName (this.view, className);
   },
 
   /**
@@ -3019,7 +4802,7 @@ View$1.prototype = {
 
     var args = Array.prototype.slice.call (arguments);
     args.unshift (this.view);
-    vs_utils$1.addClassName.apply (this.view, args);
+    vs_utils$1__default.addClassName.apply (this.view, args);
   },
 
   /**
@@ -3041,7 +4824,7 @@ View$1.prototype = {
 
     var args = Array.prototype.slice.call (arguments);
     args.unshift (this.view);
-    vs_utils$1.removeClassName.apply (this.view, args);
+    vs_utils$1__default.removeClassName.apply (this.view, args);
   },
 
   /**
@@ -3058,9 +4841,9 @@ View$1.prototype = {
    */
   toggleClassName: function (className)
   {
-    if (!this.view || !vs_utils$1.isString (className)) { return; }
+    if (!this.view || !vs_utils$1__default.isString (className)) { return; }
 
-    vs_utils$1.toggleClassName (this.view, className);
+    vs_utils$1__default.toggleClassName (this.view, className);
   },
 
 /********************************************************************
@@ -3141,13 +4924,13 @@ View$1.prototype = {
   animate: function (animations, options, clb)
   {
     var anim;
-    if (animations instanceof vs.fx.Animation)
+    if (animations instanceof Animation)
     {
       anim = animations;
     }
-    else if (vs_utils$1.isArray (animations))
+    else if (vs_utils$1__default.isArray (animations))
     {
-      var anim = new vs.fx.Animation ();
+      var anim = new Animation ();
       anim.setAnimations (animations);
     }
     else
@@ -3183,8 +4966,8 @@ View$1.prototype = {
    */
   translate: function (x, y, z)
   {
-    if (!vs_utils$1.isNumber (x) || !vs_utils$1.isNumber (y)) { return }
-    if (!vs_utils$1.isNumber (z)) z = 0;
+    if (!vs_utils$1__default.isNumber (x) || !vs_utils$1__default.isNumber (y)) { return }
+    if (!vs_utils$1__default.isNumber (z)) z = 0;
 
     this._translation[0] = x;
     this._translation[1] = y;
@@ -3203,18 +4986,18 @@ View$1.prototype = {
    */
   rotate: function (r)
   {
-    if (vs_utils$1.isNumber (r)) {
+    if (vs_utils$1__default.isNumber (r)) {
       this._rotation[0] = 0;
       this._rotation[1] = 0;
       this._rotation[2] = r;
     }
-    else if (vs_utils$1.isArray (r))
+    else if (vs_utils$1__default.isArray (r))
     {
-      if (vs_utils$1.isNumber (r[0])) this._rotation[0] = r[0];
+      if (vs_utils$1__default.isNumber (r[0])) this._rotation[0] = r[0];
       else this._rotation[0] = 0;
-      if (vs_utils$1.isNumber (r[1])) this._rotation[1] = r[1];
+      if (vs_utils$1__default.isNumber (r[1])) this._rotation[1] = r[1];
       else this._rotation[1] = 0;
-      if (vs_utils$1.isNumber (r[2])) this._rotation[2] = r[2];
+      if (vs_utils$1__default.isNumber (r[2])) this._rotation[2] = r[2];
       else this._rotation[2] = 0;
     }
 
@@ -3232,7 +5015,7 @@ View$1.prototype = {
    */
   scale: function (s)
   {
-    if (!vs_utils$1.isNumber (s)) { return }
+    if (!vs_utils$1__default.isNumber (s)) { return }
 
     if (s > this._max_scale) { s = this._max_scale; }
     if (s < this._min_scale) { s = this._min_scale; }
@@ -3254,7 +5037,7 @@ View$1.prototype = {
   setNewTransformOrigin : function (origin)
   {
     if (!origin) { return; }
-    if (!vs_utils$1.isNumber (origin.x) || !vs_utils$1.isNumber (origin.y)) { return; }
+    if (!vs_utils$1__default.isNumber (origin.x) || !vs_utils$1__default.isNumber (origin.y)) { return; }
 
     this.flushTransformStack ();
     
@@ -3270,7 +5053,7 @@ View$1.prototype = {
   flushTransformStack : function ()
   {
     // Save current transform into a matrix
-    var matrix = new vs.CSSMatrix ();
+    var matrix = new vs_utils$1__default.CSSMatrix ();
     matrix = matrix.translate
       (this._transform_origin [0], this._transform_origin [1], 0);
     matrix = matrix.translate
@@ -3338,7 +5121,7 @@ View$1.prototype = {
    */
   getCTM: function ()
   {
-    var matrix, identity = new vs.CSSMatrix ();
+    var matrix, identity = new vs_utils$1__default.CSSMatrix ();
 
     // apply current transformation
     matrix = identity.translate (
@@ -3377,7 +5160,7 @@ View$1.prototype = {
     function multiplyParentTCM (parent)
     {
       // no parent return identity matrix
-      if (!parent) return new vs.CSSMatrix ();
+      if (!parent) return new vs_utils$1__default.CSSMatrix ();
       // apply parent transformation matrix recurcively
       return multiplyParentTCM (parent.__parent).multiply (parent.getCTM ());
     }
@@ -3395,22 +5178,22 @@ View$1.prototype = {
       matrix = this.getCTM (),
       transform = matrix.getMatrix3dStr ();
 
-    if (this._magnet === View$1.MAGNET_CENTER)
+    if (this._magnet === View.MAGNET_CENTER)
     {
       transform += " translate(-50%,-50%)";
     }
 
-    vs_utils$1.setElementTransform (this.view, transform);
+    vs_utils$1__default.setElementTransform (this.view, transform);
   }
 };
-vs_utils$1.extend (View$1.prototype, RecognizerManager);
-vs_utils$1.extendClass (View$1, vs_core$1.EventSource);
+vs_utils$1__default.extend (View.prototype, RecognizerManager);
+vs_utils$1__default.extendClass (View, vs_core$1__default.EventSource);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (View$1, {
+vs_utils$1__default.defineClassProperties (View, {
 
   'size': {
     /**
@@ -3421,8 +5204,8 @@ vs_utils$1.defineClassProperties (View$1, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isArray (v) || v.length !== 2) { return; }
-      if (!vs_utils$1.isNumber (v[0]) || !vs_utils$1.isNumber(v[1])) { return; }
+      if (!vs_utils$1__default.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils$1__default.isNumber (v[0]) || !vs_utils$1__default.isNumber(v[1])) { return; }
 
       this._size [0] = v [0];
       this._size [1] = v [1];
@@ -3452,8 +5235,8 @@ vs_utils$1.defineClassProperties (View$1, {
     set : function (v)
     {
       if (!v) { return; }
-      if (!vs_utils$1.isArray (v) || v.length != 2) { return; }
-      if (!vs_utils$1.isNumber (v[0]) || !vs_utils$1.isNumber(v[1])) { return; }
+      if (!vs_utils$1__default.isArray (v) || v.length != 2) { return; }
+      if (!vs_utils$1__default.isNumber (v[0]) || !vs_utils$1__default.isNumber(v[1])) { return; }
 
       this._pos [0] = v [0];
       this._pos [1] = v [1];
@@ -3483,8 +5266,8 @@ vs_utils$1.defineClassProperties (View$1, {
     set : function (v)
     {
       if (!v) { return; }
-      if (!vs_utils$1.isArray (v) || v.length != 2) { return; }
-      if (!vs_utils$1.isNumber (v[0]) || !vs_utils$1.isNumber(v[1])) { return; }
+      if (!vs_utils$1__default.isArray (v) || v.length != 2) { return; }
+      if (!vs_utils$1__default.isNumber (v[0]) || !vs_utils$1__default.isNumber(v[1])) { return; }
 
       if (this._autosizing [0] === v [0] && this._autosizing [1] === v [1])
       { return; }
@@ -3508,7 +5291,7 @@ vs_utils$1.defineClassProperties (View$1, {
     set : function (code)
     {
       if (this._magnet === code) return;
-      if (!vs_utils$1.isNumber (code) || code < 0 || code > 5) return;
+      if (!vs_utils$1__default.isNumber (code) || code < 0 || code > 5) return;
       this._setMagnet (code);
     }
   },
@@ -3597,7 +5380,7 @@ vs_utils$1.defineClassProperties (View$1, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isNumber (v)) return;
+      if (!vs_utils$1__default.isNumber (v)) return;
       if (v < 0 || v > 1) return;
 
       if (this.view) this.view.style.opacity = v;
@@ -3615,7 +5398,7 @@ vs_utils$1.defineClassProperties (View$1, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isArray (v)) { return }
+      if (!vs_utils$1__default.isArray (v)) { return }
 
       this.translate (v[0], v[1], v[2]);
     },
@@ -3683,7 +5466,7 @@ vs_utils$1.defineClassProperties (View$1, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isNumber (v)) { return }
+      if (!vs_utils$1__default.isNumber (v)) { return }
       this._min_scale = v;
       
       if (this._scaling < this._min_scale) { this.scale (this._min_scale); }
@@ -3708,7 +5491,7 @@ vs_utils$1.defineClassProperties (View$1, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isNumber (v)) { return }
+      if (!vs_utils$1__default.isNumber (v)) { return }
       this._max_scale = v;
       
       if (this._scaling > this._max_scale) { this.scale (this._max_scale); }
@@ -3737,8 +5520,8 @@ vs_utils$1.defineClassProperties (View$1, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isArray (v) || v.length !== 2) { return; }
-      if (!vs_utils$1.isNumber (v[0]) || !vs_utils$1.isNumber (v[1])) { return; }
+      if (!vs_utils$1__default.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils$1__default.isNumber (v[0]) || !vs_utils$1__default.isNumber (v[1])) { return; }
 
       this._transform_origin [0] = v [0];
       this._transform_origin [1] = v [1];
@@ -3801,15 +5584,15 @@ vs_utils$1.defineClassProperties (View$1, {
      */
     set : function (v)
     {
-      if (v !== View$1.HORIZONTAL_LAYOUT &&
-          v !== View$1.DEFAULT_LAYOUT &&
-          v !== View$1.ABSOLUTE_LAYOUT &&
-          v !== View$1.VERTICAL_LAYOUT &&
-          v !== View$1.FLOW_LAYOUT &&
-          v !== View$1.LEGACY_HORIZONTAL_LAYOUT &&
-          v !== View$1.LEGACY_ABSOLUTE_LAYOUT &&
-          v !== View$1.LEGACY_VERTICAL_LAYOUT &&
-          v !== View$1.LEGACY_FLOW_LAYOUT && v)
+      if (v !== View.HORIZONTAL_LAYOUT &&
+          v !== View.DEFAULT_LAYOUT &&
+          v !== View.ABSOLUTE_LAYOUT &&
+          v !== View.VERTICAL_LAYOUT &&
+          v !== View.FLOW_LAYOUT &&
+          v !== View.LEGACY_HORIZONTAL_LAYOUT &&
+          v !== View.LEGACY_ABSOLUTE_LAYOUT &&
+          v !== View.LEGACY_VERTICAL_LAYOUT &&
+          v !== View.LEGACY_FLOW_LAYOUT && v)
       {
         console.error ("Unsupported layout '" + v + "'!");
         return;
@@ -3839,12 +5622,12 @@ vs_utils$1.defineClassProperties (View$1, {
     {
       if (!this.view) return;
 
-      vs_utils$1.safeInnerHTML (this.view, v);
+      vs_utils$1__default.safeInnerHTML (this.view, v);
     },
   }
 });
 
-View$1._ref_template_reg = /(\w+)#(\w+)/;
+View._ref_template_reg = /(\w+)#(\w+)/;
 
 function getDeviceCSSCode ()
 {	
@@ -3859,7 +5642,7 @@ function getDeviceCSSCode ()
 	return parseInt (val || 0, 10);
 }
 
-View$1.getDeviceCSSCode = getDeviceCSSCode;
+View.getDeviceCSSCode = getDeviceCSSCode;
 
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
@@ -3907,7 +5690,7 @@ var Application = function (config)
 {
   this._layout = undefined;
   
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = Application;
 };
@@ -4010,7 +5793,7 @@ Application.prototype = {
   {
     Application._applications [this.id] = this;
 
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
     this.preventScroll = true;
 
     if (this.view instanceof HTMLHtmlElement)
@@ -4039,7 +5822,7 @@ Application.prototype = {
     window.addEventListener (ORIENTATION_CHANGE_EVT, function (e)
     {
       var orientation = window.orientation;
-      if (!vs_utils$1.isNumber (orientation)) {
+      if (!vs_utils$1__default.isNumber (orientation)) {
         if (window.outerWidth >= window.outerHeight) {
           orientation = 90; // LANDSCAPE
         }
@@ -4128,7 +5911,7 @@ Application.prototype = {
    */
   buildDataflow: function ()
   {
-    vs._default_df_.build ();
+    vs_core$1__default.DataFlow._default_df_.build ();
   },
     
   /**
@@ -4158,7 +5941,7 @@ Application.prototype = {
       self.propagate ('scriptloaded', path);
     };
     
-    vs_utils$1.importFile (path, document, endScriptLoad, "js");
+    vs_utils$1__default.importFile (path, document, endScriptLoad, "js");
   },
   
   /**
@@ -4189,16 +5972,16 @@ Application.prototype = {
       self.propagate ('cssloaded', path);
     };
 
-    vs_utils$1.importFile (path, document, endCssLoad, "css");
+    vs_utils$1__default.importFile (path, document, endCssLoad, "css");
   }  
 };
-vs_utils$1.extendClass (Application, View$1);
+vs_utils$1__default.extendClass (Application, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (Application, {
+vs_utils$1__default.defineClassProperties (Application, {
   'size': {
     /** 
      * Getter|Setter for size.<br/>
@@ -4210,8 +5993,8 @@ vs_utils$1.defineClassProperties (Application, {
     set : function (v)
     {
       if (!v) { return; }
-      if (!vs_utils$1.isArray (v) || v.length !== 2) { return; }
-      if (!vs_utils$1.isNumber (v[0]) || !vs_utils$1.isNumber(v[1])) { return; }
+      if (!vs_utils$1__default.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils$1__default.isNumber (v[0]) || !vs_utils$1__default.isNumber(v[1])) { return; }
       this._size [0] = v [0];
       this._size [1] = v [1];
       
@@ -4321,11 +6104,11 @@ Application.configureDevice = function ()
   
     if (name == 'default') {
       switch (window.deviceConfiguration.os) {
-        case vs_core$1.DeviceConfiguration.OS_IOS:
+        case vs_core$1__default.DeviceConfiguration.OS_IOS:
           importCSS ("lib/css/vs_ui_ios.css", node);
         break;
    
-        case vs_core$1.DeviceConfiguration.OS_ANDROID:
+        case vs_core$1__default.DeviceConfiguration.OS_ANDROID:
           importCSS ("lib/css/vs_ui_android.css", node);
         break;
       }
@@ -4348,11 +6131,11 @@ Application.configureDevice = function ()
     }
   }
 
-  if (deviceConfiguration.screenSize === vs_core$1.DeviceConfiguration.SS_4_INCH)
+  if (deviceConfiguration.screenSize === vs_core$1__default.DeviceConfiguration.SS_4_INCH)
     tid = "phone3_4";
-  if (deviceConfiguration.screenSize === vs_core$1.DeviceConfiguration.SS_7_INCH)
+  if (deviceConfiguration.screenSize === vs_core$1__default.DeviceConfiguration.SS_7_INCH)
     tid = "tablet7";  
-  if (deviceConfiguration.screenSize === vs_core$1.DeviceConfiguration.SS_10_INCH)
+  if (deviceConfiguration.screenSize === vs_core$1__default.DeviceConfiguration.SS_10_INCH)
     tid = "phone10";
   
   if (deviceConfiguration.orientation === 0 ||
@@ -4372,9 +6155,9 @@ Application.configureDevice = function ()
     return;
   }
 
-  size = getScreenSize (vs_core$1.DeviceConfiguration.SS_7_INCH);
+  size = getScreenSize (vs_core$1__default.DeviceConfiguration.SS_7_INCH);
 
-  if (deviceConfiguration.screenSize === vs_core$1.DeviceConfiguration.SS_10_INCH) {
+  if (deviceConfiguration.screenSize === vs_core$1__default.DeviceConfiguration.SS_10_INCH) {
     tid = "tablet7";
   }
 
@@ -4396,7 +6179,7 @@ Application.configureDevice = function ()
   }
 
   tid = "phone3_4";
-  size = getScreenSize (vs_core$1.DeviceConfiguration.SS_4_INCH);
+  size = getScreenSize (vs_core$1__default.DeviceConfiguration.SS_4_INCH);
 
   if (deviceConfiguration.orientation === 0 ||
       deviceConfiguration.orientation === 90)
@@ -4445,11 +6228,11 @@ function getScreenSize (screenDef) {
   }
 
   switch (screenDef) {
-    case vs_core$1.DeviceConfiguration.SS_7_INCH:
+    case vs_core$1__default.DeviceConfiguration.SS_7_INCH:
       return get7Inch ();
     break
 
-    case vs_core$1.DeviceConfiguration.SS_4_INCH:
+    case vs_core$1__default.DeviceConfiguration.SS_4_INCH:
       return get4Inch ();
     break
   }
@@ -4484,9 +6267,9 @@ Application.start = function ()
     obj = Application._applications [key];
     obj.propertyChange ();
     obj.applicationStarted ();
-    vs.scheduleAction (function () {obj.refresh ();});
+    vs_core$1__default.scheduleAction (function () {obj.refresh ();});
   }
-  vs.scheduleAction (function () {vs._default_df_.build ();});
+  vs_core$1__default.scheduleAction (function () {vs_core$1__default.DataFlow._default_df_.build ();});
 };
 
 /**
@@ -4499,13 +6282,13 @@ Application.stop = function ()
   for (key in Application._applications)
   {
     obj = Application._applications [key];
-    vs_utils$1.free (obj);
+    vs_utils$1__default.free (obj);
   }
   Application._applications = {};
 
-  for (var key in vs_core$1.Object._obs)
+  for (var key in vs_core$1__default.VSObject._obs)
   {
-    var obj = vs_core$1.Object._obs [key];
+    var obj = vs_core$1__default.VSObject._obs [key];
     vs_utilsfree (obj);
   }
 };
@@ -4553,7 +6336,7 @@ Application.preloadTemplates = function (templates)
 {
   for (var i = 0; i < templates.length; i++)
   {
-    vs_utils$1.preloadTemplate (templates[i]);
+    vs_utils$1__default.preloadTemplate (templates[i]);
   }
 };
 
@@ -4656,6 +6439,230 @@ Application.loadingStop = function ()
 {
 };
 
+/*
+  Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), and
+  IGEL Co., Ltd. All rights reserved
+
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
+
+/**
+ *  The vs.ui.TapRecognizer class
+ *
+ *  @extends vs.ui.PointerRecognizer
+ *
+ *  @class
+ *  vs.ui.TapRecognizer is a concrete subclass of vs.ui.PointerRecognizer that
+ *  looks for single or multiple taps/clicks.<br />
+ *
+ *  The TapRecognizer delegate has to implement following methods:
+ *  <ul>
+ *    <li /> didTouch (comp, target, event). Call when the element is touched; It useful to
+ *      implement this method to implement a feedback on the event (for instance
+ *      add a pressed class)
+ *    <li /> didUntouch (comp, target, event). Call when the element is untouched; It useful to
+ *      implement this method to implement a feedback on the event (for instance
+ *      remove a pressed class)
+ *    <li /> didTap (nb_tap, comp, target, event). Call when the element si tap/click. nb_tap
+ *      is the number of tap/click.
+ *  </ul>
+ *  <p>
+ *
+ *  @example
+ *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
+ *  var recognizer = new TapRecognizer ({
+ *    didTouch : function (comp) {
+ *      comp.addClassName ("pressed");
+ *    },
+ *    didUntouch : function (comp) {
+ *      comp.removeClassName ("pressed");
+ *    },
+ *    didTap : function (nb_tap, view) {
+ *      comp.view.hide ();
+ *    }
+ *  });
+ *  my_view.addPointerRecognizer (recognizer);
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *   Creates a new vs.ui.TapRecognizer.
+ *
+ * @name vs.ui.TapRecognizer
+ *
+ * @param {ReconizerDelegate} delegate the delegate [mandatory]
+ */
+function TapRecognizer (delegate) {
+  this.parent = PointerRecognizer;
+  this.parent (delegate);
+  this.constructor = TapRecognizer;
+}
+
+var MULTI_TAP_DELAY = 100;
+
+TapRecognizer.prototype = {
+
+  __is_touched: false,
+  __did_tap_time_out: 0,
+  __tap_mode: 0,
+
+  /**
+   * @name vs.ui.TapRecognizer#init
+   * @function
+   * @protected
+   */
+  init : function (obj) {
+    PointerRecognizer.prototype.init.call (this, obj);
+    
+    this.addPointerListener (this.obj.view, vs_gesture.POINTER_START, this.obj);
+    this.reset ();
+  },
+
+  /**
+   * @name vs.ui.TapRecognizer#uninit
+   * @function
+   * @protected
+   */
+  uninit : function () {
+    this.removePointerListener (this.obj.view, vs_gesture.POINTER_START, this.obj);
+  },
+
+  /**
+   * @name vs.ui.TapRecognizer#pointerStart
+   * @function
+   * @protected
+   */
+  pointerStart: function (e) {
+    if (this.__is_touched) { return; }
+    // prevent multi touch events
+    if (e.targetPointerList.length === 0 || e.nbPointers > 1) { return; }
+    
+    if (this.__tap_mode === 0) {
+      this.__tap_mode = 1;
+    }
+
+    this.__tap_elem = e.targetPointerList[0].currentTarget;
+
+    try {
+      if (this.delegate && this.delegate.didTouch)
+        this.delegate.didTouch (this.__tap_elem._comp_, this.__tap_elem, e);
+    } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
+      console.log (exp);
+    }
+
+    if (this.__did_tap_time_out) {
+      this.__tap_mode ++;
+      clearTimeout (this.__did_tap_time_out);
+      this.__did_tap_time_out = 0;
+    }
+  
+    this.addPointerListener (document, vs_gesture.POINTER_END, this.obj);
+    this.addPointerListener (document, vs_gesture.POINTER_MOVE, this.obj);
+  
+    this.__start_x = e.targetPointerList[0].pageX;
+    this.__start_y = e.targetPointerList[0].pageY;
+    this.__is_touched = true;
+  
+    return false;
+  },
+
+  /**
+   * @name vs.ui.TapRecognizer#pointerMove
+   * @function
+   * @protected
+   */
+  pointerMove: function (e) {
+    // do not manage event for other targets
+    if (!this.__is_touched || e.pointerList.length === 0) { return; }
+
+    var dx = e.pointerList[0].pageX - this.__start_x;
+    var dy = e.pointerList[0].pageY - this.__start_y;
+    
+    if (Math.abs (dx) + Math.abs (dy) < View.MOVE_THRESHOLD) {
+      // we still in selection mode
+      return false;
+    }
+
+    // cancel the selection mode
+    this.removePointerListener (document, vs_gesture.POINTER_END, this.obj);
+    this.removePointerListener (document, vs_gesture.POINTER_MOVE, this.obj);
+    this.__is_touched = false;
+
+    try {
+      if (this.delegate && this.delegate.didUntouch)
+        this.delegate.didUntouch (this.__tap_elem._comp_, this.__tap_elem, e);
+    } catch (exp) {
+      if (exp.stack) console.log (exp.stack);
+      console.log (exp);
+    }
+  },
+
+  /**
+   * @name vs.ui.TapRecognizer#init
+   * @function
+   * @protected
+   */
+  pointerEnd: function (e) {
+    if (!this.__is_touched) { return; }
+    this.__is_touched = false;
+    var
+      self = this,
+      target = this.__tap_elem,
+      comp = (target)?target._comp_:null;
+    
+    this.__tap_elem = undefined;
+  
+    this.removePointerListener (document, vs_gesture.POINTER_END, this.obj);
+    this.removePointerListener (document, vs_gesture.POINTER_MOVE, this.obj);
+
+    if (this.delegate && this.delegate.didUntouch) {
+      try {
+        this.delegate.didUntouch (comp, target, e);
+      } catch (exp) {
+        if (exp.stack) console.log (exp.stack);
+        console.log (exp);
+      }
+    }
+    
+    if (this.delegate && this.delegate.didTap) {
+      this.__did_tap_time_out = setTimeout (function () {
+        try {
+          self.delegate.didTap (self.__tap_mode, comp, target, e);
+        } catch (exp) {
+          if (exp.stack) console.log (exp.stack);
+          console.log (exp);
+        }
+        self.__tap_mode = 0;
+        self.__did_tap_time_out = 0;
+      }, MULTI_TAP_DELAY);
+    } else {
+      self.__tap_mode = 0;
+    }
+  },
+
+  /**
+   * @name vs.ui.TapRecognizer#pointerCancel
+   * @function
+   * @protected
+   */
+  pointerCancel: function (e) {
+    return this.pointerEnd (e);
+  }
+};
+vs_utils$1__default.extendClass (TapRecognizer, PointerRecognizer);
+
 var html_template$1 = "<div class=\"vs_ui_button\"><div></div></div>";
 
 /*
@@ -4721,7 +6728,7 @@ var html_template$1 = "<div class=\"vs_ui_button\"><div></div></div>";
 */
 function Button (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = Button;
 }
@@ -4907,7 +6914,7 @@ Button.prototype = {
       this.removePointerRecognizer (this.__tap_recognizer);
       this.__tap_recognizer = null;
     }
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -4916,7 +6923,7 @@ Button.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
     
     this.text_view = this.view.firstElementChild;
 
@@ -4939,13 +6946,13 @@ Button.prototype = {
     if (this._type) this.addClassName (this._type);
   }
 };
-vs_utils$1.extendClass (Button, View$1);
+vs_utils$1__default.extendClass (Button, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (Button, {
+vs_utils$1__default.defineClassProperties (Button, {
   'text': {
     /** 
      * Getter|Setter for text. Allow to get or change the text draw
@@ -4956,8 +6963,8 @@ vs_utils$1.defineClassProperties (Button, {
     set : function (v)
     {
       if (v === null || typeof (v) === "undefined") { v = ''; }
-      else if (vs_utils$1.isNumber (v)) { v = '' + v; }
-      else if (!vs_utils$1.isString (v))
+      else if (vs_utils$1__default.isNumber (v)) { v = '' + v; }
+      else if (!vs_utils$1__default.isString (v))
       {
         if (!v.toString) { return; }
         v = v.toString ();
@@ -4966,7 +6973,7 @@ vs_utils$1.defineClassProperties (Button, {
       this._text = v;
       if (this.text_view)
       {
-        vs_utils$1.setElementInnerText (this.text_view, this._text);
+        vs_utils$1__default.setElementInnerText (this.text_view, this._text);
       }
     },
   
@@ -4987,7 +6994,7 @@ vs_utils$1.defineClassProperties (Button, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
       
       // code to remove legacy spec
       v = v.replace ('_ios', '');
@@ -5017,7 +7024,7 @@ vs_utils$1.defineClassProperties (Button, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
       if (this._type)
       {
         this.removeClassName (this._type);
@@ -5101,7 +7108,7 @@ var html_template$2 = "<div class=\"vs_ui_canvas\"><canvas class=\"canvas_inner\
 */
 function Canvas (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = Canvas;
 }
@@ -5134,7 +7141,7 @@ Canvas.prototype = {
    */
   destructor: function ()
   {
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -5143,7 +7150,7 @@ Canvas.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
     
     this.canvas_node = this.view.firstChild;
     if (this.canvas_node)
@@ -5440,7 +7447,7 @@ Canvas.prototype = {
     }
   }
 };
-vs_utils$1.extendClass (Canvas, View$1);
+vs_utils$1__default.extendClass (Canvas, View);
 
 /**
  * @private
@@ -5503,7 +7510,7 @@ Canvas.setup = function ()
       };
     }(p));
 
-    vs_utils$1.defineProperty (Canvas.prototype, "c_" + p, d);
+    vs_utils$1__default.defineProperty (Canvas.prototype, "c_" + p, d);
   }  
 };
 
@@ -5513,7 +7520,7 @@ Canvas.setup ();
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperty (Canvas, "size", {
+vs_utils$1__default.defineClassProperty (Canvas, "size", {
  /** 
    * Getter|Setter for size. Gives access to the size of the vs.ui.Canvas
    * @name vs.ui.Canvas#size 
@@ -5523,8 +7530,8 @@ vs_utils$1.defineClassProperty (Canvas, "size", {
   set : function (v)
   {
     if (!v) { return; } 
-    if (!vs_utils$1.isArray (v) || v.length !== 2) { return; }
-    if (!vs_utils$1.isNumber (v[0]) || !vs_utils$1.isNumber(v[1])) { return; }
+    if (!vs_utils$1__default.isArray (v) || v.length !== 2) { return; }
+    if (!vs_utils$1__default.isNumber (v[0]) || !vs_utils$1__default.isNumber(v[1])) { return; }
 
     this._size [0] = v [0];
     this._size [1] = v [1];
@@ -5977,7 +7984,7 @@ var html_template$4 = "<div class=\"vs_ui_scrollview\">\n  <div x-hag-hole=\"top
  */
 function ScrollView (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = ScrollView;
   
@@ -6173,7 +8180,7 @@ ScrollView.prototype = {
     
     function endRefresh () {
       if (!this.__i__) return; // component was deleted!
-      View$1.prototype.refresh.call (this);
+      View.prototype.refresh.call (this);
  
       if (css)
       {
@@ -6227,7 +8234,7 @@ ScrollView.prototype = {
       if (this.__iscroll__) this.__iscroll__.refresh ();
     }
     
-    vs.scheduleAction (endRefresh.bind (this));
+    vs_core$1__default.scheduleAction (endRefresh.bind (this));
   },
     
   /**
@@ -6247,7 +8254,7 @@ ScrollView.prototype = {
     {
       this._sub_view.parentElement.removeChild (this._sub_view);
     }
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
     delete (this._sub_view);
   },
   
@@ -6280,7 +8287,7 @@ ScrollView.prototype = {
     if (child instanceof ToolBar)
     { extension = 'bottom_bar'; }
     
-    View$1.prototype.add.call (this, child, extension);
+    View.prototype.add.call (this, child, extension);
   },
   
   /**
@@ -6289,7 +8296,7 @@ ScrollView.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
     
     this._sub_view = this.view.querySelector ('.content');
     
@@ -6617,7 +8624,7 @@ ScrollView.prototype = {
    */
   _updateSize: function ()
   {
-    View$1.prototype._updateSize.call (this);
+    View.prototype._updateSize.call (this);
     this.refresh ();
   },
   
@@ -6661,13 +8668,13 @@ ScrollView.prototype = {
     }
   }
 };
-vs_utils$1.extendClass (ScrollView, View$1);
+vs_utils$1__default.extendClass (ScrollView, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (ScrollView, {
+vs_utils$1__default.defineClassProperties (ScrollView, {
 'delegate': {
   /** 
    * Set the delegate.
@@ -6759,7 +8766,7 @@ vs_utils$1.defineClassProperties (ScrollView, {
   set : function (time)
   {
     if (!time) { time = 0; }
-    if (!vs_utils$1.isNumber (time)) { return }
+    if (!vs_utils$1__default.isNumber (time)) { return }
     
     this._animation_duration = time;
     
@@ -6789,15 +8796,15 @@ vs_utils$1.defineClassProperties (ScrollView, {
    */ 
   set : function (v)
   {
-    if (v !== View$1.HORIZONTAL_LAYOUT &&
-        v !== View$1.DEFAULT_LAYOUT &&
-        v !== View$1.ABSOLUTE_LAYOUT &&
-        v !== View$1.VERTICAL_LAYOUT &&
-        v !== View$1.FLOW_LAYOUT &&
-        v !== View$1.LEGACY_HORIZONTAL_LAYOUT &&
-        v !== View$1.LEGACY_ABSOLUTE_LAYOUT &&
-        v !== View$1.LEGACY_VERTICAL_LAYOUT &&
-        v !== View$1.LEGACY_FLOW_LAYOUT && v)
+    if (v !== View.HORIZONTAL_LAYOUT &&
+        v !== View.DEFAULT_LAYOUT &&
+        v !== View.ABSOLUTE_LAYOUT &&
+        v !== View.VERTICAL_LAYOUT &&
+        v !== View.FLOW_LAYOUT &&
+        v !== View.LEGACY_HORIZONTAL_LAYOUT &&
+        v !== View.LEGACY_ABSOLUTE_LAYOUT &&
+        v !== View.LEGACY_VERTICAL_LAYOUT &&
+        v !== View.LEGACY_FLOW_LAYOUT && v)
     {
       console.error ("Unsupported layout '" + v + "'!");
       return;
@@ -6813,12 +8820,12 @@ vs_utils$1.defineClassProperties (ScrollView, {
 
     if (this._layout)
     {
-      vs_utils$1.removeClassName (this._sub_view, this._layout);
+      vs_utils$1__default.removeClassName (this._sub_view, this._layout);
     }
     this._layout = v;
     if (this._layout)
     {
-      vs_utils$1.addClassName (this._sub_view, this._layout);
+      vs_utils$1__default.addClassName (this._sub_view, this._layout);
     }
   }
 },
@@ -6834,7 +8841,7 @@ vs_utils$1.defineClassProperties (ScrollView, {
   {
     if (!this._sub_view) return;
 
-    vs_utils$1.safeInnerHTML (this._sub_view, v);
+    vs_utils$1__default.safeInnerHTML (this._sub_view, v);
   },
 }
 });
@@ -6958,7 +8965,7 @@ AbstractList.prototype = {
     }
 
     this._model.unbindChange (null, this, this._modelChanged);
-    if (this._model_allocated) vs_utils$1.free (this._model);
+    if (this._model_allocated) vs_utils$1__default.free (this._model);
     this._model_allocated = false;
   },
   
@@ -6970,7 +8977,7 @@ AbstractList.prototype = {
   {
     ScrollView.prototype.initComponent.call (this);
     
-    this._model = new vs_core$1.Array ();
+    this._model = new vs_core$1__default.Array ();
     this._model.init ();
     this._model_allocated = true;
     this._model.bindChange (null, this, this._modelChanged);
@@ -7108,7 +9115,7 @@ AbstractList.prototype = {
   scrollToElementAt: function (index, time)
   {
     if (!this.__iscroll__) { return; }
-    if (!vs_utils$1.isNumber (time)) { time = 200; }
+    if (!vs_utils$1__default.isNumber (time)) { time = 200; }
     var elem = this.__item_obs [index];
     if (!elem) { return; }
 
@@ -7123,13 +9130,13 @@ AbstractList.prototype = {
 		this.__iscroll__.scrollTo (0, pos.top, 200);
   }
 };
-vs_utils$1.extendClass (AbstractList, ScrollView);
+vs_utils$1__default.extendClass (AbstractList, ScrollView);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (AbstractList, {
+vs_utils$1__default.defineClassProperties (AbstractList, {
 
   'scroll': {
     /** 
@@ -7177,7 +9184,7 @@ vs_utils$1.defineClassProperties (AbstractList, {
     {
       if (!v) return;
       
-      if (vs_utils$1.isArray (v))
+      if (vs_utils$1__default.isArray (v))
       {
         this._model.removeAll ();
         this._model.add.apply (this._model, v);
@@ -7187,7 +9194,7 @@ vs_utils$1.defineClassProperties (AbstractList, {
         if (this._model_allocated)
         {
           this._model.unbindChange (null, this, this._modelChanged);
-          vs_utils$1.free (this._model);
+          vs_utils$1__default.free (this._model);
         }
         this._model_allocated = false;
         this._model = v;
@@ -7217,11 +9224,11 @@ vs_utils$1.defineClassProperties (AbstractList, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isArray (v)) return;
+      if (!vs_utils$1__default.isArray (v)) return;
       
       if (!this._model_allocated)
       {
-        this._model = new vs_core$1.Array ();
+        this._model = new vs_core$1__default.Array ();
         this._model.init ();
         this._model_allocated = true;
         this._model.bindChange (null, this, this._modelChanged);
@@ -7343,7 +9350,7 @@ CheckBox.prototype = {
    */
   selectItem : function (index)
   {
-    if (!vs_utils$1.isNumber (index)) { return; }
+    if (!vs_utils$1__default.isNumber (index)) { return; }
     if (index < 0 || index >= this.__inputs.length) { return; }
     
     var item = this.__inputs [index];
@@ -7379,7 +9386,7 @@ CheckBox.prototype = {
     this.__scroll_start = 0;
   
     // removes all items;
-    vs_utils$1.removeAllElementChild (this._list_items);
+    vs_utils$1__default.removeAllElementChild (this._list_items);
   
     while (this.__inputs.length)
     {
@@ -7431,7 +9438,7 @@ CheckBox.prototype = {
       label.setAttribute ("for", this._id + "_l" + i);
       vs_gesture.addPointerListener (label, vs_gesture.POINTER_START, this);
       label.addEventListener ('click', this);
-      vs_utils$1.setElementInnerText (label, item);
+      vs_utils$1__default.setElementInnerText (label, item);
       this._list_items.appendChild (label);
       this.__labels [i] = label;
     }
@@ -7451,8 +9458,8 @@ CheckBox.prototype = {
       label = this.__inputs [index],
       input = this.__labels [index];
     
-    vs_utils$1.addClassName (label, 'pressed');
-    vs_utils$1.addClassName (input, 'pressed');
+    vs_utils$1__default.addClassName (label, 'pressed');
+    vs_utils$1__default.addClassName (input, 'pressed');
   },
   
   /**
@@ -7465,8 +9472,8 @@ CheckBox.prototype = {
       label = this.__inputs [index],
       input = this.__labels [index];
     
-    vs_utils$1.removeClassName (label, 'pressed');
-    vs_utils$1.removeClassName (input, 'pressed');
+    vs_utils$1__default.removeClassName (label, 'pressed');
+    vs_utils$1__default.removeClassName (input, 'pressed');
   },
       
   /**
@@ -7497,13 +9504,13 @@ CheckBox.prototype = {
     }
   }
 };
-vs_utils$1.extendClass (CheckBox, AbstractList);
+vs_utils$1__default.extendClass (CheckBox, AbstractList);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperty (CheckBox, "selectedIndexes", {
+vs_utils$1__default.defineClassProperty (CheckBox, "selectedIndexes", {
   /** 
    * Getter|Setter for items. Allow to select or get one or more items
    * @name vs.ui.CheckBox#selectedIndexes
@@ -7512,7 +9519,7 @@ vs_utils$1.defineClassProperty (CheckBox, "selectedIndexes", {
    */ 
   set : function (v)
   {
-    if (!vs_utils$1.isArray (v)) { return; }
+    if (!vs_utils$1__default.isArray (v)) { return; }
     
     var index, len, i, item;
     
@@ -7520,7 +9527,7 @@ vs_utils$1.defineClassProperty (CheckBox, "selectedIndexes", {
     for (i = 0; i < v.length; i++)
     {
       index = v [i];
-      if (!vs_utils$1.isNumber (index)) { continue; }
+      if (!vs_utils$1__default.isNumber (index)) { continue; }
       
       this._selected_indexes.push (index);
     }
@@ -7605,7 +9612,7 @@ function ComboBox (config)
   this._data = new Array ();
   this._items = {};
 
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = ComboBox;
 }
@@ -7663,7 +9670,7 @@ ComboBox.prototype = {
       this.nodeUnbind (this._select, 'blur');
     }
 
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -7672,11 +9679,11 @@ ComboBox.prototype = {
    */
   update_gui_combo_box : function ()
   {
-    if (!vs_utils$1.isArray (this._data)) { return; }
+    if (!vs_utils$1__default.isArray (this._data)) { return; }
     
     if (this._mode === ComboBox.NORMAL_MODE)
     {
-      vs_utils$1.removeAllElementChild (this._select);
+      vs_utils$1__default.removeAllElementChild (this._select);
         
       this._items = {};
   
@@ -7703,7 +9710,7 @@ ComboBox.prototype = {
     }
     else
     {
-      vs_utils$1.setElementInnerText (this._select, this._selected_item);
+      vs_utils$1__default.setElementInnerText (this._select, this._selected_item);
     }
   },
   
@@ -7713,12 +9720,12 @@ ComboBox.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
     
     // PG Native GUI
     if (window.cordova && (
-          window.deviceConfiguration.os === vs_core$1.DeviceConfiguration.OS_IOS ||
-          window.deviceConfiguration.os === vs_core$1.DeviceConfiguration.OS_ANDROID)
+          window.deviceConfiguration.os === vs_core$1__default.DeviceConfiguration.OS_IOS ||
+          window.deviceConfiguration.os === vs_core$1__default.DeviceConfiguration.OS_ANDROID)
         && window.plugins.combo_picker)
     {
       this._mode = ComboBox.NATIVE_MODE;
@@ -7811,13 +9818,13 @@ ComboBox.prototype = {
     }
   }
 };
-vs_utils$1.extendClass (ComboBox, View$1);
+vs_utils$1__default.extendClass (ComboBox, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (ComboBox, {
+vs_utils$1__default.defineClassProperties (ComboBox, {
   'selectedItem': {
     /** 
      * Getter|Setter for an item. Allow to select or get one item
@@ -7827,7 +9834,7 @@ vs_utils$1.defineClassProperties (ComboBox, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
       
       this._selected_item = v;
       
@@ -7844,7 +9851,7 @@ vs_utils$1.defineClassProperties (ComboBox, {
       }
       else
       {
-        vs_utils$1.setElementInnerText (this._select, this._selected_item);
+        vs_utils$1__default.setElementInnerText (this._select, this._selected_item);
       }
     },
   
@@ -7866,7 +9873,7 @@ vs_utils$1.defineClassProperties (ComboBox, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isArray (v)) { return; }
+      if (!vs_utils$1__default.isArray (v)) { return; }
   
       this._data = v.slice ();
       
@@ -7904,7 +9911,7 @@ var html_template$6 = "<img class=\"vs_ui_imageview\">";
  */
 function ImageView (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = ImageView;
 }
@@ -7935,7 +9942,7 @@ ImageView.prototype = {
       this.view.src = 
         'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
     }
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -7944,7 +9951,7 @@ ImageView.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
     
     this.view.ondragstart = function (e) { e.preventDefault(); return false; };
 
@@ -7960,13 +9967,13 @@ ImageView.prototype = {
     this.view.setAttribute ('height', "100%");
   }
 };
-vs_utils$1.extendClass (ImageView, View$1);
+vs_utils$1__default.extendClass (ImageView, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (ImageView, {
+vs_utils$1__default.defineClassProperties (ImageView, {
 
   'src': {
     /**
@@ -7976,7 +9983,7 @@ vs_utils$1.defineClassProperties (ImageView, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
       
       this._src = v;
       
@@ -8005,9 +10012,9 @@ vs_utils$1.defineClassProperties (ImageView, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isArray (v) && v.length !== 2)
+      if (!vs_utils$1__default.isArray (v) && v.length !== 2)
       {
-        if (!vs_utils$1.isNumber (v[0]) || !vs_utils$1.isNumber(v[1])) { return; }
+        if (!vs_utils$1__default.isNumber (v[0]) || !vs_utils$1__default.isNumber(v[1])) { return; }
       }
       if (this.view)
       {
@@ -8088,7 +10095,7 @@ var html_template$7 = "<div class=\"vs_ui_inputfield\"><input type=\"text\" valu
 */
 function InputField (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = InputField;
 }
@@ -8174,7 +10181,7 @@ InputField.prototype = {
     }
     delete (this._text_field);
 
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -8183,7 +10190,7 @@ InputField.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
         
     this._text_field = this.view.querySelector ('input');
     this._text_field.name = this.id;
@@ -8238,8 +10245,8 @@ InputField.prototype = {
     if (!this._clear_button)
     { return; }
     
-    if (v) { vs_utils$1.setElementVisibility (this._clear_button, true); }
-    else { vs_utils$1.setElementVisibility (this._clear_button, false); }
+    if (v) { vs_utils$1__default.setElementVisibility (this._clear_button, true); }
+    else { vs_utils$1__default.setElementVisibility (this._clear_button, false); }
   },
   
   /**
@@ -8358,13 +10365,13 @@ InputField.prototype = {
     }
   }
 };
-vs_utils$1.extendClass (InputField, View$1);
+vs_utils$1__default.extendClass (InputField, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (InputField, {
+vs_utils$1__default.defineClassProperties (InputField, {
   'value': {
     /**
      * Allows to set the input value
@@ -8374,8 +10381,8 @@ vs_utils$1.defineClassProperties (InputField, {
     set : function (v)
     {
       if (v === null || typeof (v) === "undefined") { v = ''; }
-      else if (vs_utils$1.isNumber (v)) { v = '' + v; }
-      else if (!vs_utils$1.isString (v))
+      else if (vs_utils$1__default.isNumber (v)) { v = '' + v; }
+      else if (!vs_utils$1__default.isString (v))
       {
         if (!v.toString) { return; }
         v = v.toString ();
@@ -8450,8 +10457,8 @@ vs_utils$1.defineClassProperties (InputField, {
     set : function (v)
     {
       if (v === null || typeof (v) === "undefined") { v = ''; }
-      else if (vs_utils$1.isNumber (v)) { v = '' + v; }
-      else if (!vs_utils$1.isString (v))
+      else if (vs_utils$1__default.isNumber (v)) { v = '' + v; }
+      else if (!vs_utils$1__default.isString (v))
       {
         if (!v.toString) { return; }
         v = v.toString ();
@@ -8492,7 +10499,7 @@ var html_template$8 = "<div class=\"vs_ui_list\"><ul x-hag-hole=\"item_children\
  */
 var AbstractListItem = function (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = AbstractListItem;
 };
@@ -8528,9 +10535,9 @@ AbstractListItem.prototype = {
    */
   didSelect : function () {}
 };
-vs_utils$1.extendClass (AbstractListItem, View$1);
+vs_utils$1__default.extendClass (AbstractListItem, View);
 
-vs_utils$1.defineClassProperties (AbstractListItem, {
+vs_utils$1__default.defineClassProperties (AbstractListItem, {
 
   'pressed': {
     /** 
@@ -8610,8 +10617,8 @@ DefaultListItem.prototype = {
   set title (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (vs_utils$1.isNumber (v)) { v = '' + v; }
-    else if (!vs_utils$1.isString (v))
+    else if (vs_utils$1__default.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils$1__default.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -8620,7 +10627,7 @@ DefaultListItem.prototype = {
     this._title = v;
     if (this.view)
     {
-      vs_utils$1.setElementInnerText (this.view, this._title);
+      vs_utils$1__default.setElementInnerText (this.view, this._title);
       this.view.appendChild (this._label_view);
     }
   },
@@ -8631,8 +10638,8 @@ DefaultListItem.prototype = {
   set label (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (vs_utils$1.isNumber (v)) { v = '' + v; }
-    else if (!vs_utils$1.isString (v))
+    else if (vs_utils$1__default.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils$1__default.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -8641,7 +10648,7 @@ DefaultListItem.prototype = {
     this._label = v;
     if (this.view)
     {
-      vs_utils$1.setElementInnerText (this._label_view, this._label);
+      vs_utils$1__default.setElementInnerText (this._label_view, this._label);
     }
     if (this._label && !this._label_view.parentNode)
       this.view.appendChild (this._label_view);
@@ -8666,7 +10673,7 @@ DefaultListItem.prototype = {
     this._label_view = document.createElement ('span');
   }
 };
-vs_utils$1.extendClass (DefaultListItem, AbstractListItem);
+vs_utils$1__default.extendClass (DefaultListItem, AbstractListItem);
 
 /**
  * @name vs.ui.SimpleListItem
@@ -8674,7 +10681,7 @@ vs_utils$1.extendClass (DefaultListItem, AbstractListItem);
  */
 function SimpleListItem (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = SimpleListItem;
 }
@@ -8692,8 +10699,8 @@ SimpleListItem.prototype = {
   set title (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (vs_utils$1.isNumber (v)) { v = '' + v; }
-    else if (!vs_utils$1.isString (v))
+    else if (vs_utils$1__default.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils$1__default.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -8702,7 +10709,7 @@ SimpleListItem.prototype = {
     this._title = v;
     if (this.view)
     {
-      vs_utils$1.setElementInnerText (this.title_view, this._title);
+      vs_utils$1__default.setElementInnerText (this.title_view, this._title);
     }
   },
 
@@ -8736,7 +10743,7 @@ SimpleListItem.prototype = {
     this.title_view = this.view.querySelector ('.title');
   }
 };
-vs_utils$1.extendClass (SimpleListItem, View$1);
+vs_utils$1__default.extendClass (SimpleListItem, View);
 
 /**********************************************************************
  
@@ -8757,7 +10764,7 @@ function buildSection (list, title, index, itemsSelectable)
   while (index < data.length)
   {
     item = data.item (index);
-    if (vs_utils$1.isString (item)) { break; }
+    if (vs_utils$1__default.isString (item)) { break; }
     
     item = data.item (index);
     if (list.__template_class)
@@ -8773,7 +10780,7 @@ function buildSection (list, title, index, itemsSelectable)
       listItem = new DefaultListItem ().init ();
     }
     // model update management
-    if (item instanceof vs_core$1.Model)
+    if (item instanceof vs_core$1__default.Model)
     {
       listItem.link (item);
     }
@@ -8796,8 +10803,8 @@ function buildSection (list, title, index, itemsSelectable)
   {
     
     var os_device = window.deviceConfiguration.os;
-    if (os_device == vs_core$1.DeviceConfiguration.OS_MEEGO ||
-        os_device == vs_core$1.DeviceConfiguration.OS_SYMBIAN)
+    if (os_device == vs_core$1__default.DeviceConfiguration.OS_MEEGO ||
+        os_device == vs_core$1__default.DeviceConfiguration.OS_SYMBIAN)
     {
       title_view.appendChild (document.createElement ('div'));
       var tmp_title = document.createElement ('div');
@@ -8806,7 +10813,7 @@ function buildSection (list, title, index, itemsSelectable)
     }
     else
     {
-      vs_utils$1.setElementInnerText (title_view, title);
+      vs_utils$1__default.setElementInnerText (title_view, title);
     }
     section.appendChild (title_view);
   }
@@ -8831,24 +10838,24 @@ function blockListRenderData (itemsSelectable)
 // remove all children
   this._freeListItems ();
   
-  vs_utils$1.removeAllElementChild (_list_items);
+  vs_utils$1__default.removeAllElementChild (_list_items);
 
-  if (vs_utils$1.SUPPORT_3D_TRANSFORM)
-    vs_utils$1.setElementTransform (_list_items, 'translate3d(0,0,0)');
+  if (vs_utils$1__default.SUPPORT_3D_TRANSFORM)
+    vs_utils$1__default.setElementTransform (_list_items, 'translate3d(0,0,0)');
   else
-    vs_utils$1.setElementTransform (_list_items, 'translate(0,0)');
+    vs_utils$1__default.setElementTransform (_list_items, 'translate(0,0)');
 
   var parentElement = _list_items.parentElement;
   parentElement.removeChild (_list_items);
   
   index = 0;
-  vs_utils$1.setElementVisibility (_list_items, false);
+  vs_utils$1__default.setElementVisibility (_list_items, false);
   
   while (index < this._model.length)
   {
     item = this._model.item (index);
     title = null;
-    if (vs_utils$1.isString (item))
+    if (vs_utils$1__default.isString (item))
     {
       title = item; index ++;
     }
@@ -8861,7 +10868,7 @@ function blockListRenderData (itemsSelectable)
   {
     _list_items.style.width = 'auto';
   }
-  vs_utils$1.setElementVisibility (_list_items, true);
+  vs_utils$1__default.setElementVisibility (_list_items, true);
 }
 
 /**
@@ -8880,31 +10887,31 @@ function tabListRenderData (itemsSelectable)
   this._freeListItems ();
   this.__direct_access_letters = [];
   
-  vs_utils$1.removeAllElementChild (_list_items);
-  if (_direct_access) vs_utils$1.removeAllElementChild (_direct_access);
+  vs_utils$1__default.removeAllElementChild (_list_items);
+  if (_direct_access) vs_utils$1__default.removeAllElementChild (_direct_access);
 
-  if (vs_utils$1.SUPPORT_3D_TRANSFORM)
-    vs_utils$1.setElementTransform (_list_items, 'translate3d(0,0,0)');
+  if (vs_utils$1__default.SUPPORT_3D_TRANSFORM)
+    vs_utils$1__default.setElementTransform (_list_items, 'translate3d(0,0,0)');
   else
-    vs_utils$1.setElementTransform (_list_items, 'translate(0,0)');
+    vs_utils$1__default.setElementTransform (_list_items, 'translate(0,0)');
 
   var parentElement = _list_items.parentElement;
   parentElement.removeChild (_list_items);
   if (_direct_access) this.view.removeChild (_direct_access);
   
   index = 0;
-  vs_utils$1.setElementVisibility (_list_items, false);
+  vs_utils$1__default.setElementVisibility (_list_items, false);
   var title_index = 0;
   while (index < this._model.length)
   {
     item = this._model.item (index);
     title = null;
-    if (vs_utils$1.isString (item))
+    if (vs_utils$1__default.isString (item))
     {
       title = item; index ++;
       var elem = document.createElement ('div'),
         letter = title [0];
-      vs_utils$1.setElementInnerText (elem, letter);
+      vs_utils$1__default.setElementInnerText (elem, letter);
       this.__direct_access_letters.push (letter);
       elem._index_ = title_index++;
       if (_direct_access) _direct_access.appendChild (elem);
@@ -8917,7 +10924,7 @@ function tabListRenderData (itemsSelectable)
   parentElement.appendChild (_list_items);
   if (_direct_access) this.view.appendChild (_direct_access);
   _list_items.style.width = 'auto';
-  vs_utils$1.setElementVisibility (_list_items, true);
+  vs_utils$1__default.setElementVisibility (_list_items, true);
 }
 
 /**********************************************************************
@@ -8939,18 +10946,18 @@ function defaultListRenderData (itemsSelectable)
   // remove all children
   this._freeListItems ();
   
-  vs_utils$1.removeAllElementChild (_list_items);
+  vs_utils$1__default.removeAllElementChild (_list_items);
   
-  if (vs_utils$1.SUPPORT_3D_TRANSFORM)
-    vs_utils$1.setElementTransform (_list_items, 'translate3d(0,0,0)');
+  if (vs_utils$1__default.SUPPORT_3D_TRANSFORM)
+    vs_utils$1__default.setElementTransform (_list_items, 'translate3d(0,0,0)');
   else
-    vs_utils$1.setElementTransform (_list_items, 'translate(0,0)');
+    vs_utils$1__default.setElementTransform (_list_items, 'translate(0,0)');
 
   var parentElement = _list_items.parentElement;
   parentElement.removeChild (_list_items);
   
   index = 0;
-  vs_utils$1.setElementVisibility (_list_items, false);
+  vs_utils$1__default.setElementVisibility (_list_items, false);
         
   while (index < this._model.length)
   {
@@ -8968,7 +10975,7 @@ function defaultListRenderData (itemsSelectable)
       listItem = new DefaultListItem ().init ();
     }
     // model update management
-    if (item instanceof vs_core$1.Model)
+    if (item instanceof vs_core$1__default.Model)
     {
       listItem.link (item);
     }
@@ -8990,7 +10997,7 @@ function defaultListRenderData (itemsSelectable)
   parentElement.appendChild (_list_items);
   _list_items.style.width = 'auto';
 
-  vs_utils$1.setElementVisibility (_list_items, true);
+  vs_utils$1__default.setElementVisibility (_list_items, true);
 }
 
 /**********************************************************************
@@ -9127,7 +11134,7 @@ List.prototype = {
      
   /**
    * @private
-   * @type {vs_core.Object}
+   * @type {vs_core.VSObject}
    */
   __template_obj: null,
   __template_class: null,
@@ -9163,7 +11170,7 @@ List.prototype = {
   {
     if (!obj) return;
     
-    if (vs_utils$1.isFunction (obj)) {
+    if (vs_utils$1__default.isFunction (obj)) {
       this.__template_obj = null;
       this.__template_class = obj;
     }
@@ -9333,7 +11340,7 @@ List.prototype = {
     {
       obj = this.__item_obs [i];
       obj.__parent = undefined;
-      vs_utils$1.free (obj);
+      vs_utils$1__default.free (obj);
     }
     
     this.__item_obs = [];
@@ -9431,14 +11438,14 @@ List.prototype = {
       e.stopPropagation ();
       e.preventDefault ();
       
-      vs_utils$1.setElementTransform (self._list_items, '');
+      vs_utils$1__default.setElementTransform (self._list_items, '');
       self.__max_scroll = self.size [1] - self._list_items.offsetHeight;
       
       vs_gesture.addPointerListener (document, vs_gesture.POINTER_MOVE, accessBarMove, false);
       vs_gesture.addPointerListener (document, vs_gesture.POINTER_END, accessBarEnd, false);
       
       var _acces_index = e.targetPointerList[0].target._index_;
-      if (!vs_utils$1.isNumber (_acces_index)) return;
+      if (!vs_utils$1__default.isNumber (_acces_index)) return;
      
       if (self._acces_index === _acces_index) return;
       self._acces_index = _acces_index;
@@ -9453,19 +11460,19 @@ List.prototype = {
 
         self.__scroll_start = newPos;
 
-        if (vs_utils$1.SUPPORT_3D_TRANSFORM) {
-          vs_utils$1.setElementTransform
+        if (vs_utils$1__default.SUPPORT_3D_TRANSFORM) {
+          vs_utils$1__default.setElementTransform
             (self._list_items, 'translate3d(0,' + newPos + 'px,0)');
         }
         else {
-          vs_utils$1.setElementTransform
+          vs_utils$1__default.setElementTransform
             (self._list_items, 'translate(0,' + newPos + 'px)');
         }
       }
 
-      bar_dim = vs_utils$1.getElementDimensions (self._direct_access);
+      bar_dim = vs_utils$1__default.getElementDimensions (self._direct_access);
       bar_dim.height -= 10;
-      bar_pos = vs_utils$1.getElementAbsolutePosition (self._direct_access);
+      bar_pos = vs_utils$1__default.getElementAbsolutePosition (self._direct_access);
       bar_pos.y += 5;
 
       var letter = self.__direct_access_letters [_acces_index];
@@ -9482,7 +11489,7 @@ List.prototype = {
       e.preventDefault ();
       
       var _acces_index = getIndex (e.pageY);
-      if (!vs_utils$1.isNumber (_acces_index)) return;
+      if (!vs_utils$1__default.isNumber (_acces_index)) return;
       
       if (self._acces_index === _acces_index) return;
       self._acces_index = _acces_index;
@@ -9497,11 +11504,11 @@ List.prototype = {
 
         self.__scroll_start = newPos;
 
-        if (vs_utils$1.SUPPORT_3D_TRANSFORM)
-          vs_utils$1.setElementTransform
+        if (vs_utils$1__default.SUPPORT_3D_TRANSFORM)
+          vs_utils$1__default.setElementTransform
             (self._list_items, 'translate3d(0,' + newPos + 'px,0)');
         else
-          vs_utils$1.setElementTransform
+          vs_utils$1__default.setElementTransform
             (self._list_items, 'translate(0,' + newPos + 'px)');
       }
       
@@ -9546,13 +11553,13 @@ List.prototype = {
     return item.parentElement;
   }
 };
-vs_utils$1.extendClass (List, AbstractList);
+vs_utils$1__default.extendClass (List, AbstractList);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (List, {
+vs_utils$1__default.defineClassProperties (List, {
   'itemsSelectable': {
     /** 
      * Allow deactivate the list item selection.
@@ -9630,7 +11637,7 @@ vs_utils$1.defineClassProperties (List, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
       if (v !== List.BLOCK_LIST &&
           v !== List.TAB_LIST && 
           v !== List.DEFAULT_LIST) { return; }
@@ -9705,7 +11712,7 @@ vs_utils$1.defineClassProperties (List, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isArray (v)) { return; }
+      if (!vs_utils$1__default.isArray (v)) { return; }
       this._filters = v;
       
       // TODO   on peut mieux faire : au lieu de faire
@@ -9766,7 +11773,7 @@ var html_template$9 = "<div class=\"vs_ui_navigationbar\" x-hag-hole=\"children\
  */
 function NavigationBar$1 (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = NavigationBar$1;
   
@@ -9850,7 +11857,7 @@ NavigationBar$1.prototype = {
    */
   destructor: function ()
   {
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
     
   /**
@@ -9859,18 +11866,18 @@ NavigationBar$1.prototype = {
    */
   initComponent: function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
 
     var os_device = window.deviceConfiguration.os;
-    if (os_device == vs_core$1.DeviceConfiguration.OS_SYMBIAN)
+    if (os_device == vs_core$1__default.DeviceConfiguration.OS_SYMBIAN)
     {
-      this._hide_animation = new vs.fx.Animation (['translateY', '-50px']);
+      this._hide_animation = new Animation (['translateY', '-50px']);
     }
     else
     {
-      this._hide_animation = new vs.fx.Animation (['translateY', '-44px']);
+      this._hide_animation = new Animation (['translateY', '-44px']);
     }
-    this._show_animation = new vs.fx.Animation (['translateY', '0px']);
+    this._show_animation = new Animation (['translateY', '0px']);
 
     this.style = this._style;
   },
@@ -9895,8 +11902,8 @@ NavigationBar$1.prototype = {
   {
     var i;
     
-    if (!state || !vs_utils$1.isString (state)) { return; }
-    if (!items || !vs_utils$1.isArray (items)) { return; }
+    if (!state || !vs_utils$1__default.isString (state)) { return; }
+    if (!items || !vs_utils$1__default.isArray (items)) { return; }
     
     this._states [state] = items.slice ();
     
@@ -9906,7 +11913,7 @@ NavigationBar$1.prototype = {
       for (key in this.__children)
       {
         children = this.__children [key];
-        if (vs_utils$1.isArray (children))
+        if (vs_utils$1__default.isArray (children))
         {
           for (i = 0; i < children.length; i++)
           {
@@ -9955,7 +11962,7 @@ NavigationBar$1.prototype = {
    */
   getStateItems : function (state, items)
   {
-    if (!state || !vs_utils$1.isString (state)) { return undefined; }
+    if (!state || !vs_utils$1__default.isString (state)) { return undefined; }
     
     if (this._states [state])
     {
@@ -9993,7 +12000,7 @@ NavigationBar$1.prototype = {
     for (key in this.__children)
     {
       children = this.__children [key];
-      if (vs_utils$1.isArray (children))
+      if (vs_utils$1__default.isArray (children))
       {
         for (i = 0; i < children.length; i++)
         {
@@ -10041,7 +12048,7 @@ NavigationBar$1.prototype = {
     switch (event.type)
     {
       case vs_gesture.POINTER_START:
-        vs_utils$1.addClassName (self, 'active');
+        vs_utils$1__default.addClassName (self, 'active');
         vs_gesture.addPointerListener (event.currentTarget, vs_gesture.POINTER_END, this, true);
         vs_gesture.addPointerListener (event.currentTarget, vs_gesture.POINTER_MOVE, this, true);
       break;
@@ -10050,13 +12057,13 @@ NavigationBar$1.prototype = {
         vs_gesture.removePointerListener (event.currentTarget, vs_gesture.POINTER_END, this);
         vs_gesture.removePointerListener (event.currentTarget, vs_gesture.POINTER_MOVE, this);        
         
-        vs_utils$1.removeClassName (self, 'active');
+        vs_utils$1__default.removeClassName (self, 'active');
         this.propagate ('buttonselect', event.currentTarget.spec);
       break;
 
       case vs_gesture.POINTER_MOVE:
         event.preventDefault ();
-        vs_utils$1.removeClassName (self, 'active');
+        vs_utils$1__default.removeClassName (self, 'active');
         vs_gesture.removePointerListener (event.currentTarget, vs_gesture.POINTER_END, this);
         vs_gesture.removePointerListener (event.currentTarget, vs_gesture.POINTER_MOVE, this);
       break;
@@ -10082,7 +12089,7 @@ NavigationBar$1.prototype = {
   {
     var state, items;
     
-    View$1.prototype.remove.call (this, child);
+    View.prototype.remove.call (this, child);
     
     for (state in this._states)
     {
@@ -10094,13 +12101,13 @@ NavigationBar$1.prototype = {
     }
   }
 };
-vs_utils$1.extendClass (NavigationBar$1, View$1);
+vs_utils$1__default.extendClass (NavigationBar$1, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (NavigationBar$1, {
+vs_utils$1__default.defineClassProperties (NavigationBar$1, {
   'style': {
     /** 
      * Getter|Setter for the tab bar style
@@ -10109,7 +12116,7 @@ vs_utils$1.defineClassProperties (NavigationBar$1, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
       if (this._style)
       {
         this.removeClassName (this._style);
@@ -10240,7 +12247,7 @@ var html_template$10 = "<div class=\"vs_ui_picker\">\n  <div class=\"slots\"></d
  */
 function Picker (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = Picker;
 }
@@ -10327,7 +12334,7 @@ Picker.prototype = {
     vs_gesture.removePointerListener (document, vs_gesture.POINTER_START, this, false);
     vs_gesture.removePointerListener (document, vs_gesture.POINTER_MOVE, this, false);
 
-    vs_utils$1.removeAllElementChild (this._slots_view);
+    vs_utils$1__default.removeAllElementChild (this._slots_view);
 
     delete (this._data);
     delete (this._slots_elements);
@@ -10336,7 +12343,7 @@ Picker.prototype = {
  
     delete (this._current_values);
  
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
   
   /**
@@ -10345,12 +12352,12 @@ Picker.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
 
     this._data = [];
     this._slots_elements = [];
     
-    this._mode = View$1.getDeviceCSSCode ();
+    this._mode = View.getDeviceCSSCode ();
     
     // Pseudo table element (inner wrapper)
     this._slots_view = this.view.querySelector ('.slots');
@@ -10403,7 +12410,7 @@ Picker.prototype = {
    */
   _remove_all_slots: function ()
   {
-    vs_utils$1.removeAllElementChild (this._slots_view);
+    vs_utils$1__default.removeAllElementChild (this._slots_view);
 
     delete (this._slots_elements);
     this._slots_elements = [];
@@ -10441,7 +12448,7 @@ Picker.prototype = {
 
     var width = 0;
     var os_device = window.deviceConfiguration.os;
-    if (data.length && os_device == vs_core$1.DeviceConfiguration.OS_WP7)
+    if (data.length && os_device == vs_core$1__default.DeviceConfiguration.OS_WP7)
       width = Math.floor (100 / data.length);
     
      // Create the slot
@@ -10449,7 +12456,7 @@ Picker.prototype = {
     ul.index = l;
 
     // WP7 does not manage box model (then use inline-block instead of)
-    if (width) vs_utils$1.setElementStyle (ul, {"width": width + '%'});
+    if (width) vs_utils$1__default.setElementStyle (ul, {"width": width + '%'});
 
     out = '';
     
@@ -10457,7 +12464,7 @@ Picker.prototype = {
     {
       out += '<li>' + data.values[i] + '<' + '/li>';
     }
-    vs_utils$1.safeInnerHTML (ul, out);
+    vs_utils$1__default.safeInnerHTML (ul, out);
     
     if (this._mode === Application.CSS_ANDROID)
     {
@@ -10503,10 +12510,10 @@ Picker.prototype = {
     // Add default transition
     ul.style.webkitTransitionTimingFunction = 'cubic-bezier(0, 0, 0.2, 1)';   
 
-    if (vs_utils$1.SUPPORT_3D_TRANSFORM)
-      vs_utils$1.setElementTransform (ul, 'translate3d(0,0,0)');
+    if (vs_utils$1__default.SUPPORT_3D_TRANSFORM)
+      vs_utils$1__default.setElementTransform (ul, 'translate3d(0,0,0)');
     else
-      vs_utils$1.setElementTransform (ul, 'translate(0,0)');
+      vs_utils$1__default.setElementTransform (ul, 'translate(0,0)');
     
     // Save the slot for later use
     this._slots_elements.push (ul);
@@ -10534,7 +12541,7 @@ Picker.prototype = {
     else
     {
       button_incr.className = "button_incr";
-      vs_utils$1.setElementInnerText (button_incr, '+');
+      vs_utils$1__default.setElementInnerText (button_incr, '+');
       button_incr.slotPosition = i;
     }
 
@@ -10554,7 +12561,7 @@ Picker.prototype = {
     else
     {
       button_decr.className = 'button_decr';
-      vs_utils$1.setElementInnerText (button_decr, '-');
+      vs_utils$1__default.setElementInnerText (button_decr, '-');
       button_decr.slotPosition = i;
     }
 
@@ -10578,13 +12585,13 @@ Picker.prototype = {
     switch (e.type)
     {
       case vs_gesture.POINTER_START:
-        vs_utils$1.addClassName (e.target, 'active');
+        vs_utils$1__default.addClassName (e.target, 'active');
         break
       
       case vs_gesture.POINTER_END:
         var slot_elem = this._slots_elements[slotNum], slotMaxScroll,
           pos = slot_elem.slotYPosition;
-        if (vs_utils$1.hasClassName (e.target, 'button_decr'))
+        if (vs_utils$1__default.hasClassName (e.target, 'button_decr'))
         {
           pos += 44;
           if (pos > 0) { pos = 0;}
@@ -10598,7 +12605,7 @@ Picker.prototype = {
 
         this._scrollTo (slotNum, pos);
       case vs_gesture.POINTER_CANCEL:
-        vs_utils$1.removeClassName (e.target, 'active');
+        vs_utils$1__default.removeClassName (e.target, 'active');
         break
     }
   },
@@ -10794,10 +12801,10 @@ Picker.prototype = {
     var elem = this._slots_elements [slot];
     elem.slotYPosition = pos;
 
-    if (vs_utils$1.SUPPORT_3D_TRANSFORM)
-      vs_utils$1.setElementTransform (elem, 'translate3d(0,' + pos + 'px,0)');
+    if (vs_utils$1__default.SUPPORT_3D_TRANSFORM)
+      vs_utils$1__default.setElementTransform (elem, 'translate3d(0,' + pos + 'px,0)');
     else
-      vs_utils$1.setElementTransform (elem, 'translate(0,' + pos + 'px)');
+      vs_utils$1__default.setElementTransform (elem, 'translate(0,' + pos + 'px)');
   },
   
   /**
@@ -10888,7 +12895,7 @@ Picker.prototype = {
 
       var delta = 0;
       // Find the clicked slot
-      var rec = vs_utils$1.getBoundingClientRect (this._slots_view);
+      var rec = vs_utils$1__default.getBoundingClientRect (this._slots_view);
       if (this._mode == Application.CSS_BLACKBERRY) { delta = 8; }
     
       // Clicked position
@@ -10932,7 +12939,7 @@ Picker.prototype = {
 
       case Application.CSS_WP7:
         this._active_slot = e.currentTarget.index;
-        vs_utils$1.addClassName ("dragging");
+        vs_utils$1__default.addClassName ("dragging");
       break;
     }
     
@@ -10955,7 +12962,7 @@ Picker.prototype = {
     slot_elem.style.setProperty (vs.TRANSITION_DURATION, '0');   // Remove any residual transition
     
     // Stop and hold slot position
-    if (vs_utils$1.SUPPORT_3D_TRANSFORM)
+    if (vs_utils$1__default.SUPPORT_3D_TRANSFORM)
     {
       var
         matrix = vs_utilsgetElementMatrixTransform (slot_elem),
@@ -10986,10 +12993,10 @@ Picker.prototype = {
         
         if (this.__elem_to_hide && this.__elem_to_hide != slot_elem)
         {
-          vs_utils$1.removeClassName (this.__elem_to_hide.parentElement, "visible");
+          vs_utils$1__default.removeClassName (this.__elem_to_hide.parentElement, "visible");
           this.__elem_to_hide = null;
         }
-        vs_utils$1.addClassName (slot_elem.parentElement, "visible");
+        vs_utils$1__default.addClassName (slot_elem.parentElement, "visible");
       break;
     }    
 
@@ -11052,7 +13059,7 @@ Picker.prototype = {
           this.__elem_to_hide = elem;
           this.__timer = setTimeout (function ()
           {
-            vs_utils$1.removeClassName (self.__elem_to_hide.parentElement, "visible");
+            vs_utils$1__default.removeClassName (self.__elem_to_hide.parentElement, "visible");
             self.__elem_to_hide = null;
             self.removeClassName ("dragging");
           }, 1000);
@@ -11186,13 +13193,13 @@ Picker.prototype = {
     return false;
   }
 };
-vs_utils$1.extendClass (Picker, View$1);
+vs_utils$1__default.extendClass (Picker, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (Picker, {
+vs_utils$1__default.defineClassProperties (Picker, {
   'delegate': {
     /** 
      * Set the delegate.
@@ -11243,7 +13250,7 @@ vs_utils$1.defineClassProperties (Picker, {
     set : function (v)
     {
       var data, values, style, defaultValue, i;
-      if (!vs_utils$1.isArray (v))
+      if (!vs_utils$1__default.isArray (v))
       { return; }
       
       this.removeAllSlots ();
@@ -11376,7 +13383,7 @@ var html_template$11 = "<div class=\"vs_ui_popover\">\n  <div class=\"header\" x
 */
 function PopOver$1 (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = PopOver$1;
 }
@@ -11454,7 +13461,7 @@ PopOver$1.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
     
     this._arrow = this.view.querySelector ('.vs_ui_popover >.arrow');
     
@@ -11556,7 +13563,7 @@ PopOver$1.prototype = {
         break;
       }
       
-      pos = vs_utils$1.getElementAbsolutePosition (this.view.parentElement);
+      pos = vs_utils$1__default.getElementAbsolutePosition (this.view.parentElement);
       if (pos)
       {
         this.position = [envlop.x - pos.x, envlop.y - pos.y];
@@ -11591,8 +13598,8 @@ PopOver$1.prototype = {
   {
     if (!this.view || this._visible) { return; }
     
-    if (pos && vs_utils$1.isArray (pos) && pos.length === 2 &&
-      vs_utils$1.isNumber (pos[0]) && vs_utils$1.isNumber(pos[1]))
+    if (pos && vs_utils$1__default.isArray (pos) && pos.length === 2 &&
+      vs_utils$1__default.isNumber (pos[0]) && vs_utils$1__default.isNumber(pos[1]))
     {
       this._point_position = pos.slice ();
     }
@@ -11664,19 +13671,19 @@ PopOver$1.prototype = {
   hide : function ()
   {
     if (!this.view) { return; }
-    View$1.prototype.hide.call (this);
+    View.prototype.hide.call (this);
     
     vs_gesture.removePointerListener (document, vs_gesture.POINTER_START, this, true); 
     this.view.style.display = 'none';
   }
 };
-vs_utils$1.extendClass (PopOver$1, View$1);
+vs_utils$1__default.extendClass (PopOver$1, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (PopOver$1, {
+vs_utils$1__default.defineClassProperties (PopOver$1, {
   'hasFooter': {
     /** 
      * Activate/deactivate the footer space. If its activate, you can
@@ -11786,7 +13793,7 @@ var html_template$12 = "<div class=\"vs_ui_progressbar\"><div></div></div>";
 */
 function ProgressBar (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = ProgressBar;
   
@@ -11877,7 +13884,7 @@ ProgressBar.prototype = {
    */
   destructor: function ()
   {
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -11886,7 +13893,7 @@ ProgressBar.prototype = {
    */
   _updateSize: function ()
   {
-    vs_utils$1.setElementSize (this.view, this._size [0],  this._size [1]);
+    vs_utils$1__default.setElementSize (this.view, this._size [0],  this._size [1]);
     this.index = this._index;
   },
   
@@ -11896,29 +13903,29 @@ ProgressBar.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
     
     this.__inner_view = this.view.firstElementChild;
     this.indeterminate = this._indeterminate;
 
     var os_device = window.deviceConfiguration.os;
-    if (os_device == vs_core$1.DeviceConfiguration.OS_ANDROID)
+    if (os_device == vs_core$1__default.DeviceConfiguration.OS_ANDROID)
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_ANDROID * 2;
     }
-    else if (os_device == vs_core$1.DeviceConfiguration.OS_IOS)
+    else if (os_device == vs_core$1__default.DeviceConfiguration.OS_IOS)
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_IOS * 2;
     }
-    else if (os_device == vs_core$1.DeviceConfiguration.OS_WP7)
+    else if (os_device == vs_core$1__default.DeviceConfiguration.OS_WP7)
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_WP7 * 2;
     }
-    else if (os_device == vs_core$1.DeviceConfiguration.OS_SYMBIAN)
+    else if (os_device == vs_core$1__default.DeviceConfiguration.OS_SYMBIAN)
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_SYMBIAN * 2;
     }
-    else if (os_device == vs_core$1.DeviceConfiguration.OS_BLACK_BERRY)
+    else if (os_device == vs_core$1__default.DeviceConfiguration.OS_BLACK_BERRY)
     {
       this.__border_width = ProgressBar.BORDER_WIDTH_BB * 2;
     }
@@ -11933,16 +13940,16 @@ ProgressBar.prototype = {
   refresh : function ()
   {
     this.index = this._index;
-    View$1.prototype.refresh.call (this);
+    View.prototype.refresh.call (this);
   }
 };
-vs_utils$1.extendClass (ProgressBar, View$1);
+vs_utils$1__default.extendClass (ProgressBar, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (ProgressBar, {
+vs_utils$1__default.defineClassProperties (ProgressBar, {
   'index': {
     /** 
      * Allow to set or get the progress bar index
@@ -11951,7 +13958,7 @@ vs_utils$1.defineClassProperties (ProgressBar, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isNumber (v)) { return; }
+      if (!vs_utils$1__default.isNumber (v)) { return; }
   
       this._index = v;
       
@@ -11967,8 +13974,8 @@ vs_utils$1.defineClassProperties (ProgressBar, {
       if (w < 0) { w = 0; }
           
       var os_device = window.deviceConfiguration.os;
-      if (os_device === vs_core$1.DeviceConfiguration.OS_ANDROID ||
-          os_device === vs_core$1.DeviceConfiguration.OS_IOS)
+      if (os_device === vs_core$1__default.DeviceConfiguration.OS_ANDROID ||
+          os_device === vs_core$1__default.DeviceConfiguration.OS_IOS)
       {
         this.__inner_view.style.width = (w + this.__border_width) + 'px';
       }
@@ -11992,8 +13999,8 @@ vs_utils$1.defineClassProperties (ProgressBar, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isArray (v) || v.length !== 2) { return; }
-      if (!vs_utils$1.isNumber (v[0]) || !vs_utils$1.isNumber (v[1])) { return; }
+      if (!vs_utils$1__default.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils$1__default.isNumber (v[0]) || !vs_utils$1__default.isNumber (v[1])) { return; }
       if (v[0] === v[1] || v[0] > v[1]) { return; }
   
       this._range [0] = v [0];
@@ -12021,12 +14028,12 @@ vs_utils$1.defineClassProperties (ProgressBar, {
       if (v)
       {
         this._indeterminate = true;
-        if (this.view) vs_utils$1.addClassName (this.view, 'indeterminate');
+        if (this.view) vs_utils$1__default.addClassName (this.view, 'indeterminate');
       }
       else
       {
         this._indeterminate = false;
-        if (this.view) vs_utils$1.removeClassName (this.view, 'indeterminate');
+        if (this.view) vs_utils$1__default.removeClassName (this.view, 'indeterminate');
       }
     },
   
@@ -12139,7 +14146,7 @@ RadioButton.prototype = {
     this.__scroll_start = 0;
   
     // removes all items;
-    vs_utils$1.removeAllElementChild (this._list_items);
+    vs_utils$1__default.removeAllElementChild (this._list_items);
   
     while (this.__inputs.length)
     {
@@ -12191,7 +14198,7 @@ RadioButton.prototype = {
       label.setAttribute ("for", this._id + "_l" + i);
       vs_gesture.addPointerListener (label, vs_gesture.POINTER_START, this);
       label.addEventListener ('click', this);
-      vs_utils$1.setElementInnerText (label, item);
+      vs_utils$1__default.setElementInnerText (label, item);
       this._list_items.appendChild (label);
       this.__labels [i] = label;
     }
@@ -12209,8 +14216,8 @@ RadioButton.prototype = {
       label = this.__inputs [index],
       input = this.__labels [index];
     
-    vs_utils$1.addClassName (label, 'pressed');
-    vs_utils$1.addClassName (input, 'pressed');
+    vs_utils$1__default.addClassName (label, 'pressed');
+    vs_utils$1__default.addClassName (input, 'pressed');
   },
   
   /**
@@ -12224,8 +14231,8 @@ RadioButton.prototype = {
       label = this.__inputs [index],
       input = this.__labels [index];
     
-    vs_utils$1.removeClassName (label, 'pressed');
-    vs_utils$1.removeClassName (input, 'pressed');
+    vs_utils$1__default.removeClassName (label, 'pressed');
+    vs_utils$1__default.removeClassName (input, 'pressed');
   },
       
   /**
@@ -12249,13 +14256,13 @@ RadioButton.prototype = {
     }
   }
 };
-vs_utils$1.extendClass (RadioButton, AbstractList);
+vs_utils$1__default.extendClass (RadioButton, AbstractList);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperty (RadioButton, "selectedIndex", {
+vs_utils$1__default.defineClassProperty (RadioButton, "selectedIndex", {
   /** 
    * Set the vs.ui.RadioButton selectedIndex
    *
@@ -12264,7 +14271,7 @@ vs_utils$1.defineClassProperty (RadioButton, "selectedIndex", {
    */ 
   set : function (v)
   {
-    if (!vs_utils$1.isNumber (v))
+    if (!vs_utils$1__default.isNumber (v))
     {
       v = parseInt (v);
     }
@@ -12485,7 +14492,7 @@ DragRecognizer.prototype = {
     return this.pointerEnd (e);
   }
 };
-vs_utils$1.extendClass (DragRecognizer, PointerRecognizer);
+vs_utils$1__default.extendClass (DragRecognizer, PointerRecognizer);
 
 /*
   Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), and
@@ -12647,7 +14654,7 @@ PinchRecognizer.prototype = {
     return this.pointerEnd (e);
   }
 };
-vs_utils$1.extendClass (PinchRecognizer, PointerRecognizer);
+vs_utils$1__default.extendClass (PinchRecognizer, PointerRecognizer);
 
 /*
   Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), and
@@ -12796,231 +14803,7 @@ RotationRecognizer.prototype = {
     return this.pointerEnd (e);
   }
 };
-vs_utils$1.extendClass (RotationRecognizer, PointerRecognizer);
-
-/*
-  Copyright (C) 2009-2013. David Thevenin, ViniSketch (c), and
-  IGEL Co., Ltd. All rights reserved
-
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published
-  by the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-/**
- *  The vs.ui.TapRecognizer class
- *
- *  @extends vs.ui.PointerRecognizer
- *
- *  @class
- *  vs.ui.TapRecognizer is a concrete subclass of vs.ui.PointerRecognizer that
- *  looks for single or multiple taps/clicks.<br />
- *
- *  The TapRecognizer delegate has to implement following methods:
- *  <ul>
- *    <li /> didTouch (comp, target, event). Call when the element is touched; It useful to
- *      implement this method to implement a feedback on the event (for instance
- *      add a pressed class)
- *    <li /> didUntouch (comp, target, event). Call when the element is untouched; It useful to
- *      implement this method to implement a feedback on the event (for instance
- *      remove a pressed class)
- *    <li /> didTap (nb_tap, comp, target, event). Call when the element si tap/click. nb_tap
- *      is the number of tap/click.
- *  </ul>
- *  <p>
- *
- *  @example
- *  var my_view = new vs.ui.View ({id: "my_view"}).init ();
- *  var recognizer = new TapRecognizer ({
- *    didTouch : function (comp) {
- *      comp.addClassName ("pressed");
- *    },
- *    didUntouch : function (comp) {
- *      comp.removeClassName ("pressed");
- *    },
- *    didTap : function (nb_tap, view) {
- *      comp.view.hide ();
- *    }
- *  });
- *  my_view.addPointerRecognizer (recognizer);
- *
- *  @author David Thevenin
- *
- *  @constructor
- *   Creates a new vs.ui.TapRecognizer.
- *
- * @name vs.ui.TapRecognizer
- *
- * @param {ReconizerDelegate} delegate the delegate [mandatory]
- */
-function TapRecognizer$1 (delegate) {
-  this.parent = PointerRecognizer;
-  this.parent (delegate);
-  this.constructor = TapRecognizer$1;
-}
-
-var MULTI_TAP_DELAY = 100;
-
-TapRecognizer$1.prototype = {
-
-  __is_touched: false,
-  __did_tap_time_out: 0,
-  __tap_mode: 0,
-
-  /**
-   * @name vs.ui.TapRecognizer#init
-   * @function
-   * @protected
-   */
-  init : function (obj) {
-    PointerRecognizer.prototype.init.call (this, obj);
-    
-    this.addPointerListener (this.obj.view, vs_gesture.POINTER_START, this.obj);
-    this.reset ();
-  },
-
-  /**
-   * @name vs.ui.TapRecognizer#uninit
-   * @function
-   * @protected
-   */
-  uninit : function () {
-    this.removePointerListener (this.obj.view, vs_gesture.POINTER_START, this.obj);
-  },
-
-  /**
-   * @name vs.ui.TapRecognizer#pointerStart
-   * @function
-   * @protected
-   */
-  pointerStart: function (e) {
-    if (this.__is_touched) { return; }
-    // prevent multi touch events
-    if (e.targetPointerList.length === 0 || e.nbPointers > 1) { return; }
-    
-    if (this.__tap_mode === 0) {
-      this.__tap_mode = 1;
-    }
-
-    this.__tap_elem = e.targetPointerList[0].currentTarget;
-
-    try {
-      if (this.delegate && this.delegate.didTouch)
-        this.delegate.didTouch (this.__tap_elem._comp_, this.__tap_elem, e);
-    } catch (exp) {
-      if (exp.stack) console.log (exp.stack);
-      console.log (exp);
-    }
-
-    if (this.__did_tap_time_out) {
-      this.__tap_mode ++;
-      clearTimeout (this.__did_tap_time_out);
-      this.__did_tap_time_out = 0;
-    }
-  
-    this.addPointerListener (document, vs_gesture.POINTER_END, this.obj);
-    this.addPointerListener (document, vs_gesture.POINTER_MOVE, this.obj);
-  
-    this.__start_x = e.targetPointerList[0].pageX;
-    this.__start_y = e.targetPointerList[0].pageY;
-    this.__is_touched = true;
-  
-    return false;
-  },
-
-  /**
-   * @name vs.ui.TapRecognizer#pointerMove
-   * @function
-   * @protected
-   */
-  pointerMove: function (e) {
-    // do not manage event for other targets
-    if (!this.__is_touched || e.pointerList.length === 0) { return; }
-
-    var dx = e.pointerList[0].pageX - this.__start_x;
-    var dy = e.pointerList[0].pageY - this.__start_y;
-    
-    if (Math.abs (dx) + Math.abs (dy) < View.MOVE_THRESHOLD) {
-      // we still in selection mode
-      return false;
-    }
-
-    // cancel the selection mode
-    this.removePointerListener (document, vs_gesture.POINTER_END, this.obj);
-    this.removePointerListener (document, vs_gesture.POINTER_MOVE, this.obj);
-    this.__is_touched = false;
-
-    try {
-      if (this.delegate && this.delegate.didUntouch)
-        this.delegate.didUntouch (this.__tap_elem._comp_, this.__tap_elem, e);
-    } catch (exp) {
-      if (exp.stack) console.log (exp.stack);
-      console.log (exp);
-    }
-  },
-
-  /**
-   * @name vs.ui.TapRecognizer#init
-   * @function
-   * @protected
-   */
-  pointerEnd: function (e) {
-    if (!this.__is_touched) { return; }
-    this.__is_touched = false;
-    var
-      self = this,
-      target = this.__tap_elem,
-      comp = (target)?target._comp_:null;
-    
-    this.__tap_elem = undefined;
-  
-    this.removePointerListener (document, vs_gesture.POINTER_END, this.obj);
-    this.removePointerListener (document, vs_gesture.POINTER_MOVE, this.obj);
-
-    if (this.delegate && this.delegate.didUntouch) {
-      try {
-        this.delegate.didUntouch (comp, target, e);
-      } catch (exp) {
-        if (exp.stack) console.log (exp.stack);
-        console.log (exp);
-      }
-    }
-    
-    if (this.delegate && this.delegate.didTap) {
-      this.__did_tap_time_out = setTimeout (function () {
-        try {
-          self.delegate.didTap (self.__tap_mode, comp, target, e);
-        } catch (exp) {
-          if (exp.stack) console.log (exp.stack);
-          console.log (exp);
-        }
-        self.__tap_mode = 0;
-        self.__did_tap_time_out = 0;
-      }, MULTI_TAP_DELAY);
-    } else {
-      self.__tap_mode = 0;
-    }
-  },
-
-  /**
-   * @name vs.ui.TapRecognizer#pointerCancel
-   * @function
-   * @protected
-   */
-  pointerCancel: function (e) {
-    return this.pointerEnd (e);
-  }
-};
-vs_utils$1.extendClass (TapRecognizer$1, PointerRecognizer);
+vs_utils$1__default.extendClass (RotationRecognizer, PointerRecognizer);
 
 var html_template$14 = "<div class=\"vs_ui_scrollimageview\"><img class=\"content\"></div>\n";
 
@@ -13253,7 +15036,7 @@ ScrollImageView.prototype = {
     }
 
     if (this.__scroll_activated) { this._scroll_refresh (this._pinch); }
-    View$1.prototype.refresh.call (this);
+    View.prototype.refresh.call (this);
   },
 
   /**
@@ -13274,7 +15057,7 @@ ScrollImageView.prototype = {
     this.propagate ('load');
     
     var self = this;
-    vs.scheduleAction (function ()
+    vs_core$1__default.scheduleAction (function ()
     {
       self.refresh ();
 //      self._applyInsideTransformation ();
@@ -13319,13 +15102,13 @@ ScrollImageView.prototype = {
 //    this._applyInsideTransformation ();
   }
 };
-vs_utils$1.extendClass (ScrollImageView, ScrollView);
+vs_utils$1__default.extendClass (ScrollImageView, ScrollView);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (ScrollImageView, {
+vs_utils$1__default.defineClassProperties (ScrollImageView, {
 
 'src': {
   /**
@@ -13335,7 +15118,7 @@ vs_utils$1.defineClassProperties (ScrollImageView, {
    */
   set : function (v)
   {
-    if (!vs_utils$1.isString (v)) { return; }
+    if (!vs_utils$1__default.isString (v)) { return; }
     
     this._image_loaded = false;
     this._src = v;
@@ -13367,7 +15150,7 @@ vs_utils$1.defineClassProperties (ScrollImageView, {
    */
   set : function (v)
   {
-    if (!vs_utils$1.isNumber (v)) { return; }
+    if (!vs_utils$1__default.isNumber (v)) { return; }
     if (v !== ScrollImageView.STRETCH_FILL &&
         v !== ScrollImageView.STRETCH_NONE &&
         v !== ScrollImageView.STRETCH_UNIFORM && 
@@ -13398,9 +15181,9 @@ vs_utils$1.defineClassProperties (ScrollImageView, {
    */
   set : function (v)
   {
-    if (!vs_utils$1.isArray (v) && v.length !== 2)
+    if (!vs_utils$1__default.isArray (v) && v.length !== 2)
     {
-      if (!vs_utils$1.isNumber (v[0]) || !vs_utils$1.isNumber(v[1])) { return; }
+      if (!vs_utils$1__default.isNumber (v[0]) || !vs_utils$1__default.isNumber(v[1])) { return; }
     }
     
     // reapply stretch mode
@@ -13485,7 +15268,7 @@ var html_template$15 = "<div class=\"vs_ui_segmentedbutton\"></div>";
 */
 function SegmentedButton (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = SegmentedButton;
 }
@@ -13587,7 +15370,7 @@ SegmentedButton.prototype = {
   destructor : function ()
   {
     this._cleanButtons ();
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -13598,7 +15381,7 @@ SegmentedButton.prototype = {
   {
     if (!this.view) { return; }
     
-    vs_utils$1.removeAllElementChild (this.view);
+    vs_utils$1__default.removeAllElementChild (this.view);
     
     while (this._div_list.length)
     {
@@ -13620,7 +15403,7 @@ SegmentedButton.prototype = {
     this._cleanButtons ();
     var width = "";
     var os_device = window.deviceConfiguration.os;
-    if (this._items.length && os_device == vs_core$1.DeviceConfiguration.OS_WP7)
+    if (this._items.length && os_device == vs_core$1__default.DeviceConfiguration.OS_WP7)
       width = Math.floor (100 / this._items.length);
       
     var subView = document.createElement ('div');
@@ -13630,10 +15413,10 @@ SegmentedButton.prototype = {
     {
       var div = document.createElement ('div');
       div._index = i;
-      vs_utils$1.setElementInnerText (div, this._items [i]);
+      vs_utils$1__default.setElementInnerText (div, this._items [i]);
       
       // WP7 does not manage box model (then use inline-block instead of)
-      if (width) vs_utils$1.setElementStyle (div, {"width": width + '%'});
+      if (width) vs_utils$1__default.setElementStyle (div, {"width": width + '%'});
 
       vs_gesture.addPointerListener (div, vs_gesture.POINTER_START, this);
       
@@ -13649,7 +15432,7 @@ SegmentedButton.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
     this._items = new Array ();
     this._div_list = new Array ();
 
@@ -13694,13 +15477,13 @@ SegmentedButton.prototype = {
     }
   }
 };
-vs_utils$1.extendClass (SegmentedButton, View$1);
+vs_utils$1__default.extendClass (SegmentedButton, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (SegmentedButton, {
+vs_utils$1__default.defineClassProperties (SegmentedButton, {
   'items': {
     /** 
      * Getter|Setter for text. Allow to get or change the text draw
@@ -13711,7 +15494,7 @@ vs_utils$1.defineClassProperties (SegmentedButton, {
     set : function (v)
     {
       var i, l;
-      if (!vs_utils$1.isArray (v) || !v.length) { return; }
+      if (!vs_utils$1__default.isArray (v) || !v.length) { return; }
       
       this._items.removeAll ();
       for (var i = 0, l = v.length; i < l; i++)
@@ -13742,27 +15525,27 @@ vs_utils$1.defineClassProperties (SegmentedButton, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isNumber (v)) { return; }
+      if (!vs_utils$1__default.isNumber (v)) { return; }
       if (v < 0 || v >= this._div_list.length) { return; }
           
       var div = this._div_list [this._selected_index];
       if (div)
       {
-        vs_utils$1.removeClassName (div, 'selected'); 
+        vs_utils$1__default.removeClassName (div, 'selected'); 
       }
       
       this._selected_index = v;
       var div = this._div_list [this._selected_index];
       if (div)
       {
-        vs_utils$1.addClassName (div, 'selected'); 
+        vs_utils$1__default.addClassName (div, 'selected'); 
       }
       if (!this._is_toggle_buttons)
       {
         var self = this;
         this.__button_time_out = setTimeout (function ()
         {
-          vs_utils$1.removeClassName (div, 'selected');
+          vs_utils$1__default.removeClassName (div, 'selected');
           self.__button_time_out = 0;
           self._selected_index = -1;
         }, 300);
@@ -13786,7 +15569,7 @@ vs_utils$1.defineClassProperties (SegmentedButton, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
       if (this._type)
       {
         this.removeClassName (this._type);
@@ -13923,7 +15706,7 @@ var html_template$16 = "<div class=\"vs_ui_slider\"><div class=\"handle\"></div>
 */
 function Slider (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = Slider;
   
@@ -14035,7 +15818,7 @@ Slider.prototype = {
       this.removePointerRecognizer (this.__drag_recognizer);
       this.__drag_recognizer = null;
     }
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -14044,9 +15827,9 @@ Slider.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
 
-    var os_device = View$1.getDeviceCSSCode (); //window.deviceConfiguration.os;
+    var os_device = View.getDeviceCSSCode (); //window.deviceConfiguration.os;
 
     if (os_device == Application.CSS_IOS)
     {
@@ -14091,7 +15874,7 @@ Slider.prototype = {
     this.__handle_x = this.__handle.offsetLeft;
     this.__handle_y = this.__handle.offsetTop;
     
-    this.__abs_pos = vs_utils$1.getElementAbsolutePosition (this.view);
+    this.__abs_pos = vs_utils$1__default.getElementAbsolutePosition (this.view);
 
     // set the new handler position
     var clientX = e.targetPointerList[0].pageX - this.__abs_pos.x;
@@ -14158,16 +15941,16 @@ Slider.prototype = {
     // force GUI update
     this.value = this._value;
 
-    View$1.prototype.refresh.call (this);
+    View.prototype.refresh.call (this);
   }
 };
-vs_utils$1.extendClass (Slider, View$1);
+vs_utils$1__default.extendClass (Slider, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (Slider, {
+vs_utils$1__default.defineClassProperties (Slider, {
   'value':{
     /**
      * Set the current slider value
@@ -14187,7 +15970,7 @@ vs_utils$1.defineClassProperties (Slider, {
       var d1 = this.__handle_width / 2, d2 = 0;
        
       var os_device = window.deviceConfiguration.os;
-      if (os_device === vs_core$1.DeviceConfiguration.OS_BLACK_BERRY)
+      if (os_device === vs_core$1__default.DeviceConfiguration.OS_BLACK_BERRY)
       {
         d2 = (this.__handle_height - this.__handle_delta) / 2;
       }
@@ -14201,10 +15984,10 @@ vs_utils$1.defineClassProperties (Slider, {
         width = this.view.offsetWidth, x = Math.floor ((v - this._range [0]) * width /
             (this._range [1] - this._range [0])) - d1;
         
-        if (vs_utils$1.SUPPORT_3D_TRANSFORM)
-          vs_utils$1.setElementTransform (this.__handle, "translate3d(" + x + "px,-" + d2 + "px,0)");
+        if (vs_utils$1__default.SUPPORT_3D_TRANSFORM)
+          vs_utils$1__default.setElementTransform (this.__handle, "translate3d(" + x + "px,-" + d2 + "px,0)");
         else
-          vs_utils$1.setElementTransform (this.__handle, "translate(" + x + "px,-" + d2 + "px)");
+          vs_utils$1__default.setElementTransform (this.__handle, "translate(" + x + "px,-" + d2 + "px)");
           
         this.view.style.backgroundSize = (x + d1) + "px 10px";
       }
@@ -14213,10 +15996,10 @@ vs_utils$1.defineClassProperties (Slider, {
         height = this.view.offsetHeight, y = Math.floor ((v - this._range [0]) * height /
             (this._range [1] - this._range [0])) - d1;
           
-        if (vs_utils$1.SUPPORT_3D_TRANSFORM)
-          vs_utils$1.setElementTransform (this.__handle, "translate3d(-" + d2 + "px," + y + "px,0)");
+        if (vs_utils$1__default.SUPPORT_3D_TRANSFORM)
+          vs_utils$1__default.setElementTransform (this.__handle, "translate3d(-" + d2 + "px," + y + "px,0)");
         else
-          vs_utils$1.setElementTransform (this.__handle, "translate(-" + d2 + "px," + y + "px)");
+          vs_utils$1__default.setElementTransform (this.__handle, "translate(-" + d2 + "px," + y + "px)");
           
         this.view.style.backgroundSize = "10px " + (y + d1) + "px";
       }
@@ -14238,8 +16021,8 @@ vs_utils$1.defineClassProperties (Slider, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isArray (v) || v.length !== 2) { return; }
-      if (!vs_utils$1.isNumber (v[0]) || !vs_utils$1.isNumber (v[1])) { return; }
+      if (!vs_utils$1__default.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils$1__default.isNumber (v[0]) || !vs_utils$1__default.isNumber (v[1])) { return; }
       if (v[0] === v[1] || v[0] > v[1]) { return; }
   
       this._range [0] = v [0];
@@ -14306,8 +16089,8 @@ vs_utils$1.defineClassProperties (Slider, {
     set : function (v)
     {
       if (!v) { return; } 
-      if (!vs_utils$1.isArray (v) || v.length !== 2) { return; }
-      if (!vs_utils$1.isNumber (v[0]) || !vs_utils$1.isNumber(v[1])) { return; }
+      if (!vs_utils$1__default.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils$1__default.isNumber (v[0]) || !vs_utils$1__default.isNumber(v[1])) { return; }
       
       this._size [0] = v [0];
       this._size [1] = v [1];
@@ -14403,9 +16186,9 @@ var html_template$17 = "<div class=\"vs_ui_splitview\">\n  <div x-hag-hole=\"sec
  *
  * @param {Object} config the configuration structure [mandatory]
 */
-var SplitView = vs_core$1.createClass ({
+var SplitView = vs_core$1__default.createClass ({
 
-  parent: View$1,
+  parent: View,
 
   properties: {
     "delegate": {
@@ -14682,14 +16465,14 @@ var SplitView = vs_core$1.createClass ({
         {
           child = a [0];
           this.remove (child);
-          if (should_free) vs_utils$1.free (child);
+          if (should_free) vs_utils$1__default.free (child);
           else children.push (child);
         }
       }
       else
       {
         this.remove (a);
-        if (should_free) vs_utils$1.free (a);
+        if (should_free) vs_utils$1__default.free (a);
         else children.push (a);
       }
       delete (this.__children [key]);
@@ -14743,7 +16526,7 @@ var SplitView = vs_core$1.createClass ({
         
         if (!this.isChild (child))
         {
-          View$1.prototype.add.call (this, child, 'second_panel');
+          View.prototype.add.call (this, child, 'second_panel');
         }
         child.show (child.refresh);
         
@@ -14757,7 +16540,7 @@ var SplitView = vs_core$1.createClass ({
       {
         if (this.isChild (child))
         {
-          View$1.prototype.remove.call (this, child);
+          View.prototype.remove.call (this, child);
         }
         if (!this._pop_over.isChild (child))
         {
@@ -14903,7 +16686,7 @@ var html_template$18 = "<div class=\"vs_ui_svgview\"></div>\n";
 */
 function SVGView (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = SVGView;
 }
@@ -14999,7 +16782,7 @@ SVGView.prototype = {
 
     var svg = document.createElementNS ("http://www.w3.org/2000/svg", 'svg');
 
-    vs_utils$1.removeAllElementChild (this.view);
+    vs_utils$1__default.removeAllElementChild (this.view);
     this.view.appendChild (svg);
     if (this._view_box) this.viewBox = this._view_box;
 
@@ -15025,7 +16808,7 @@ SVGView.prototype = {
           elem_id = node.getAttribute ('id');
           if (!elem_id)
           {
-            elem_id = vs_core$1.createId ();
+            elem_id = vs_core$1__default.createId ();
             node.setAttribute ('id', elem_id);
           }
           svg.appendChild (create_use (elem_id));
@@ -15034,13 +16817,13 @@ SVGView.prototype = {
     }
   }
 };
-vs_utils$1.extendClass (SVGView, View$1);
+vs_utils$1__default.extendClass (SVGView, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (SVGView, {
+vs_utils$1__default.defineClassProperties (SVGView, {
   'href': {
     /**
      * Set the image url
@@ -15049,7 +16832,7 @@ vs_utils$1.defineClassProperties (SVGView, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
 
       this._href = v;
       var href, elem_id;
@@ -15088,15 +16871,15 @@ vs_utils$1.defineClassProperties (SVGView, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
 
-      vs_utils$1.removeAllElementChild (this.view);
+      vs_utils$1__default.removeAllElementChild (this.view);
       if (this.__object)
       {
         delete (this.__object);
       }
 
-      vs_utils$1.safeInnerHTML (this.view, v);
+      vs_utils$1__default.safeInnerHTML (this.view, v);
       this._href = undefined;
     }
   },
@@ -15109,7 +16892,7 @@ vs_utils$1.defineClassProperties (SVGView, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isArray (v) || v.length != 4) { return; }
+      if (!vs_utils$1__default.isArray (v) || v.length != 4) { return; }
 
       this._view_box = v;
 
@@ -15175,7 +16958,7 @@ var html_template$19 = "<div class=\"vs_ui_switch\">\n  <div>\n    <div class=\"
 */
 function Switch (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = Switch;
 }
@@ -15294,26 +17077,26 @@ Switch.prototype = {
       self._toggled = false;
     }
   
-    vs.scheduleAction (function () {
+    vs_core$1__default.scheduleAction (function () {
       self._initWidthSwitch ();
     
       if (self._toggled) {
         self.addClassName ('on');
         if (self._mode === Application.CSS_PURE) {
-          vs_utils$1.setElementTransform (self.__switch_view,
+          vs_utils$1__default.setElementTransform (self.__switch_view,
             "translate3d(-15px,0,0)");
         }
         else if (self._mode !== Application.CSS_ANDROID) {
-          vs_utils$1.setElementTransform (self.__switch_view,
+          vs_utils$1__default.setElementTransform (self.__switch_view,
             "translate3d(" + self.__switch_translate + "px,0,0)");
         }
         else if (self._mode === Application.CSS_ANDROID) {
-          vs_utils$1.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
+          vs_utils$1__default.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
         }
       }
       else {
         self.removeClassName ('on');
-        vs_utils$1.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
+        vs_utils$1__default.setElementTransform (self.__switch_view, "translate3d(0,0,0)");
       }
       self.outPropertyChange ();
     });
@@ -15324,7 +17107,7 @@ Switch.prototype = {
    * @function
    */
   viewDidAdd: function () {
-    View$1.prototype.viewDidAdd.call (this);
+    View.prototype.viewDidAdd.call (this);
     
     this._setToggle (this._toggled);
   },
@@ -15334,9 +17117,9 @@ Switch.prototype = {
    * @function
    */
   refresh: function () {
-    View$1.prototype.refresh.call (this);
+    View.prototype.refresh.call (this);
     
-    this._mode =  View$1.getDeviceCSSCode ();
+    this._mode =  View.getDeviceCSSCode ();
     this._setToggle (this._toggled);
   },
 
@@ -15361,7 +17144,7 @@ Switch.prototype = {
       this.removePointerRecognizer (this.__tap_recognizer);
       this.__tap_recognizer = null;
     }
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -15370,7 +17153,7 @@ Switch.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
 
     this.__toggle_on_view =
       this.view.querySelector ('.vs_ui_switch .toggle_on');
@@ -15385,7 +17168,7 @@ Switch.prototype = {
       this.addPointerRecognizer (this.__tap_recognizer);
     }
 
-    this._mode = View$1.getDeviceCSSCode ();
+    this._mode = View.getDeviceCSSCode ();
     
     if (this._text_on)
     {
@@ -15480,13 +17263,13 @@ Switch.prototype = {
     this.view.style.bottom = 'auto';
   }
 };
-vs_utils$1.extendClass (Switch, View$1);
+vs_utils$1__default.extendClass (Switch, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (Switch, {
+vs_utils$1__default.defineClassProperties (Switch, {
 
   'textOn': {
     /** 
@@ -15504,15 +17287,15 @@ vs_utils$1.defineClassProperties (Switch, {
       }
   
       if (v === null || typeof (v) === "undefined") { v = ''; }
-      else if (vs_utils$1.isNumber (v)) { v = '' + v; }
-      else if (!vs_utils$1.isString (v))
+      else if (vs_utils$1__default.isNumber (v)) { v = '' + v; }
+      else if (!vs_utils$1__default.isString (v))
       {
         if (!v.toString) { return; }
         v = v.toString ();
       }
   
       this._text_on = v;
-      vs_utils$1.setElementInnerText (this.__toggle_on_view, this._text_on);
+      vs_utils$1__default.setElementInnerText (this.__toggle_on_view, this._text_on);
     },
   
     /** 
@@ -15540,15 +17323,15 @@ vs_utils$1.defineClassProperties (Switch, {
       }
   
       if (v === null || typeof (v) === "undefined") { v = ''; }
-      else if (vs_utils$1.isNumber (v)) { v = '' + v; }
-      else if (!vs_utils$1.isString (v))
+      else if (vs_utils$1__default.isNumber (v)) { v = '' + v; }
+      else if (!vs_utils$1__default.isString (v))
       {
         if (!v.toString) { return; }
         v = v.toString ();
       }
   
       this._text_off = v;
-      vs_utils$1.setElementInnerText (this.__toggle_off_view, this._text_off);
+      vs_utils$1__default.setElementInnerText (this.__toggle_off_view, this._text_off);
     },
   
     /** 
@@ -15570,7 +17353,7 @@ vs_utils$1.defineClassProperties (Switch, {
     set : function (v)
     {
       var self = this;
-      vs.scheduleAction (function () { self._setToggle (v); });
+      vs_core$1__default.scheduleAction (function () { self._setToggle (v); });
     },
   
     /** 
@@ -15624,7 +17407,7 @@ var html_template$20 = "<textarea class=\"vs_ui_textarea\"></textarea>";
  */
 function TextArea (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = TextArea;
 }
@@ -15669,7 +17452,7 @@ TextArea.prototype = {
     this.view.removeEventListener ('blur', this);
     this.view.removeEventListener ('textInput', this);
 
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -15678,9 +17461,9 @@ TextArea.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
     
-    if (!vs_utils$1.isString (this._value)) {return;}
+    if (!vs_utils$1__default.isString (this._value)) {return;}
     
     this.view.value = this._value;
 
@@ -15770,13 +17553,13 @@ TextArea.prototype = {
     }
   }
 };
-vs_utils$1.extendClass (TextArea, View$1);
+vs_utils$1__default.extendClass (TextArea, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperty (TextArea, "value", {
+vs_utils$1__default.defineClassProperty (TextArea, "value", {
   /**
    * Set the text value
    * @param {string} v
@@ -15784,8 +17567,8 @@ vs_utils$1.defineClassProperty (TextArea, "value", {
   set : function (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (vs_utils$1.isNumber (v)) { v = '' + v; }
-    else if (!vs_utils$1.isString (v))
+    else if (vs_utils$1__default.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils$1__default.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -15838,7 +17621,7 @@ var html_template$21 = "<div class=\"vs_ui_textlabel\"></div>\n\n";
  */
 function TextLabel (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = TextLabel;
 }
@@ -15864,7 +17647,7 @@ TextLabel.prototype = {
    */
   destructor: function ()
   {
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -15873,20 +17656,20 @@ TextLabel.prototype = {
    */
   initComponent : function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
     
     if (!this._text) { return; }
     
-    vs_utils$1.setElementInnerText (this.view, this._text);
+    vs_utils$1__default.setElementInnerText (this.view, this._text);
   }
 };
-vs_utils$1.extendClass (TextLabel, View$1);
+vs_utils$1__default.extendClass (TextLabel, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperty (TextLabel, "text", {
+vs_utils$1__default.defineClassProperty (TextLabel, "text", {
 
   /**
    * Set the text value
@@ -15896,8 +17679,8 @@ vs_utils$1.defineClassProperty (TextLabel, "text", {
   set : function (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (vs_utils$1.isNumber (v)) { v = '' + v; }
-    else if (!vs_utils$1.isString (v))
+    else if (vs_utils$1__default.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils$1__default.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -15906,7 +17689,7 @@ vs_utils$1.defineClassProperty (TextLabel, "text", {
     this._text = v;
     if (this.view)
     {
-      vs_utils$1.setElementInnerText (this.view, this._text);
+      vs_utils$1__default.setElementInnerText (this.view, this._text);
     }
   },
 
@@ -15983,7 +17766,7 @@ var html_template$22 = "<div class=\"vs_ui_toolbar\">\n  <div x-hag-hole=\"child
 */
 function ToolBar$1 (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = ToolBar$1;
   
@@ -16079,13 +17862,13 @@ ToolBar$1.prototype = {
    */
   destructor: function ()
   {
-    vs_utils$1.free (this._show_animation);
-    vs_utils$1.free (this._hide_animation);
+    vs_utils$1__default.free (this._show_animation);
+    vs_utils$1__default.free (this._hide_animation);
 
     this.removePointerRecognizer (this.recognizer);
-    vs_utils$1.free (this.recognizer);
+    vs_utils$1__default.free (this.recognizer);
 
-    View$1.prototype.destructor.call (this);
+    View.prototype.destructor.call (this);
   },
 
   /**
@@ -16094,10 +17877,10 @@ ToolBar$1.prototype = {
    */
   initComponent: function ()
   {
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
 
-    this._hide_animation = new vs.fx.Animation (['translateY', '44px']);
-    this._show_animation = new vs.fx.Animation (['translateY', '0px']);
+    this._hide_animation = new Animation (['translateY', '44px']);
+    this._show_animation = new Animation (['translateY', '0px']);
 
     this.style = this._style;
 
@@ -16200,13 +17983,13 @@ ToolBar$1.prototype = {
     delete (this._items [id]);
   }
 };
-vs_utils$1.extendClass (ToolBar$1, View$1);
+vs_utils$1__default.extendClass (ToolBar$1, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (ToolBar$1, {
+vs_utils$1__default.defineClassProperties (ToolBar$1, {
   'style': {
     /** 
      * Getter|Setter for the tab bar style
@@ -16215,7 +17998,7 @@ vs_utils$1.defineClassProperties (ToolBar$1, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
       if (this._style)
       {
         this.removeClassName (this._style);
@@ -16251,7 +18034,7 @@ vs_utils$1.defineClassProperties (ToolBar$1, {
      */
     set : function (v)
     {
-      if (!vs_utils$1.isArray (v)) { return; }
+      if (!vs_utils$1__default.isArray (v)) { return; }
       
       var id, i, spec;
       
@@ -16373,7 +18156,7 @@ vs_utils$1.defineClassProperties (ToolBar$1, {
 */
 ToolBar$1.Text = function (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = ToolBar$1.Text;
 };
@@ -16411,20 +18194,20 @@ ToolBar$1.Text.prototype = {
       this.__config__.node.className = 'vs_ui_toolbar_text';
     }
 
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
 
     this._text_view = document.createElement ('div');
     this._text_view.className = "text_view";
     this.view.appendChild (this._text_view);
   }
 };
-vs_utils$1.extendClass (ToolBar$1.Text, View$1);
+vs_utils$1__default.extendClass (ToolBar$1.Text, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperty (ToolBar$1.Text, "text", {
+vs_utils$1__default.defineClassProperty (ToolBar$1.Text, "text", {
 
   /** 
    * The text of the item
@@ -16434,8 +18217,8 @@ vs_utils$1.defineClassProperty (ToolBar$1.Text, "text", {
   set : function (v)
   {
     if (v === null || typeof (v) === "undefined") { v = ''; }
-    else if (vs_utils$1.isNumber (v)) { v = '' + v; }
-    else if (!vs_utils$1.isString (v))
+    else if (vs_utils$1__default.isNumber (v)) { v = '' + v; }
+    else if (!vs_utils$1__default.isString (v))
     {
       if (!v.toString) { return; }
       v = v.toString ();
@@ -16444,7 +18227,7 @@ vs_utils$1.defineClassProperty (ToolBar$1.Text, "text", {
     this._text = v;
     if (this._text_view)
     {
-      vs_utils$1.setElementInnerText (this._text_view, this._text);
+      vs_utils$1__default.setElementInnerText (this._text_view, this._text);
     }
   },
 
@@ -16494,7 +18277,7 @@ vs_utils$1.defineClassProperty (ToolBar$1.Text, "text", {
 */
 ToolBar$1.Button = function (config)
 {
-  this.parent = View$1;
+  this.parent = View;
   this.parent (config);
   this.constructor = ToolBar$1.Button;
 };
@@ -16540,7 +18323,7 @@ ToolBar$1.Button.prototype = {
       this.__config__.node.className = 'vs_ui_toolbar_button';
     }
 
-    View$1.prototype.initComponent.call (this);
+    View.prototype.initComponent.call (this);
   },
   
   /**
@@ -16556,13 +18339,13 @@ ToolBar$1.Button.prototype = {
     this.view.style.backgroundImage = 'url(' + path + ')';
   }
 };
-vs_utils$1.extendClass (ToolBar$1.Button, View$1);
+vs_utils$1__default.extendClass (ToolBar$1.Button, View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-vs_utils$1.defineClassProperties (ToolBar$1.Button, {
+vs_utils$1__default.defineClassProperties (ToolBar$1.Button, {
   "name": {
     /** 
      * The name of the button from the list (vs.ui.ToolBar.BUTTON_ADD,...)
@@ -16575,7 +18358,7 @@ vs_utils$1.defineClassProperties (ToolBar$1.Button, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
 
       this._name = v;
       this.addClassName (this._name);
@@ -16599,11 +18382,11 @@ vs_utils$1.defineClassProperties (ToolBar$1.Button, {
      */ 
     set : function (v)
     {
-      if (!vs_utils$1.isString (v)) { return; }
+      if (!vs_utils$1__default.isString (v)) { return; }
 
       this._label = v;
       
-      vs_utils$1.setElementInnerText (this.view, v);
+      vs_utils$1__default.setElementInnerText (this.view, v);
       if (v) {
         this.setStyle ("background-position", "center 0px");
       }
@@ -16968,7 +18751,7 @@ ToolBar$1.ZOMM_OUT = 'zoom_out';
 *********************************************************************/
 
 
-vs_utils$1.defineProperty(document, 'preventScroll', {
+vs_utils$1__default.defineProperty(document, 'preventScroll', {
   get: function () {
     return document._preventScroll;
   },
@@ -17013,7 +18796,7 @@ exports.RadioButton = RadioButton;
 exports.DragRecognizer = DragRecognizer;
 exports.PinchRecognizer = PinchRecognizer;
 exports.RotationRecognizer = RotationRecognizer;
-exports.TapRecognizer = TapRecognizer$1;
+exports.TapRecognizer = TapRecognizer;
 exports.ScrollImageView = ScrollImageView;
 exports.ScrollView = ScrollView;
 exports.SegmentedButton = SegmentedButton;
@@ -17024,8 +18807,29 @@ exports.Switch = Switch;
 exports.TextArea = TextArea;
 exports.TextLabel = TextLabel;
 exports.ToolBar = ToolBar$1;
-exports.View = View$1;
+exports.View = View;
 exports.Template = Template;
+exports.ANIMATION_DURATION = ANIMATION_DURATION;
+exports.ANIMATION_DELAY = ANIMATION_DELAY;
+exports.ANIMATION_NAME = ANIMATION_NAME;
+exports.ANIMATION_TIMING_FUNC = ANIMATION_TIMING_FUNC;
+exports.ANIMATION_FILL_MODE = ANIMATION_FILL_MODE;
+exports.TRANSITION_DURATION = TRANSITION_DURATION;
+exports.TRANSITION_PROPERTY = TRANSITION_PROPERTY;
+exports.TRANSITION_DELAY = TRANSITION_DELAY;
+exports.TRANSITION_TIMING_FUNC = TRANSITION_TIMING_FUNC;
+exports.TRANSFORM_ORIGIN = TRANSFORM_ORIGIN;
+exports.ITERATION_COUNT = ITERATION_COUNT;
+exports.TRANSFORM = TRANSFORM;
+exports.KEY_FRAMES = KEY_FRAMES;
+exports.Animation = Animation;
+exports.cancelAnimation = cancelAnimation;
+exports.TranslateAnimation = TranslateAnimation;
+exports.RotateAnimation = RotateAnimation;
+exports.RotateXYZAnimation = RotateXYZAnimation;
+exports.ScaleAnimation = ScaleAnimation;
+exports.SkewAnimation = SkewAnimation;
+exports.OpacityAnimation = OpacityAnimation;
 
 return exports;
 

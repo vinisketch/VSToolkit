@@ -1,1639 +1,8 @@
-var vs_fx = (function (exports,vs_utils,vs_core,vs_gesture,vs_ui) {
+var vs_fx = (function (exports,vs_core,vs_utils,vs_gesture,vs_ui) {
 'use strict';
 
-var vs_core__default = 'default' in vs_core ? vs_core['default'] : vs_core;
+vs_core = vs_core && vs_core.hasOwnProperty('default') ? vs_core['default'] : vs_core;
 var vs_ui__default = 'default' in vs_ui ? vs_ui['default'] : vs_ui;
-
-/**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and
-  contributors. All rights reserved
-
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published
-  by the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU Lesser General Public License for more details.
-
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-/**
- * @private
- * @const
- */
-var AnimationWidthRegExp = new RegExp (/\$width/g);
-/**
- * @private
- * @const
- */
-var AnimationHeightRegExp = new RegExp (/\$height/g);
-/**
- * @private
- * @const
- */
-var AnimationXRegExp = new RegExp (/\$x/g);
-/**
- * @private
- * @const
- */
-var AnimationYRegExp = new RegExp (/\$y/g);
-/**
- * @private
- * @const
- */
-var AnimationVariableRegExp = new RegExp (/\$\{([\w]+)\}/g);
-
-/**
- *  Cancel a playing animation
- * @name vs.fx.cancelAnimation
- * @param {String} id the animation id return par vs.fx.Animation.process ();
- */
-function cancelAnimation (anim_id)
-{
-  if (!anim_id) { return false; }
-  var anim_name, cssAnimation, anim_id, data;
-
-  data = Animation$1.__css_animations [anim_id];
-  if (data && data.length === 2)
-  {
-    if (!data[1] || !data[1].getStyle || !data [0]) { return false; }
-
-    anim_name = data[1].getStyle (ANIMATION_NAME);
-    if (!anim_name) { return false; }
-
-    anim_name = anim_name.replace (anim_id, '');
-    data[1].setStyle (ANIMATION_NAME, anim_name);
-
-    try {
-      document.getElementsByTagName("head")[0].removeChild (data [0]);
-    }
-    catch (e)
-    {
-      if (e.stack) console.log (e.stack);
-      console.error (e);
-      return false;
-    }
-    delete (Animation$1.__css_animations [anim_id]);
-  }
-  else { return false; }
-
-  return true;
-}
-
-/**
- *  @private
- *
- * @param {vs.fx.View} comp the component the view will be animated
- * @param {vs.fx.Animation} animation the animation
- * @param {Function} clb an optional callback to call at the end of animation
- * @param {Object} ctx an optional execution context associated to the clb
- * @return {String} return the identifier of the animation process. You can
- *       use it to stop the animation for instance.
- */
-var procesAnimation = function (comp, animation, clb, ctx, now)
-{
-  if (!animation || !comp || !comp.view)
-  {
-    console.error ('procesAnimation: invalid component parameter!');
-    return;
-  }
-
-  function parseValue (v, data) {
-    var matches, i, props = [], prop;
-
-    if (vs_utils.isNumber (v)) { return v; }
-
-    if (vs_utils.isString (v))
-    {
-      v = v.replace (AnimationWidthRegExp, comp.size [0] + 'px');
-      v = v.replace (AnimationHeightRegExp, comp.size [1] + 'px');
-      v = v.replace (AnimationXRegExp, comp.position [0] + 'px');
-      v = v.replace (AnimationYRegExp, comp.position [1] + 'px');
-
-      var matches = AnimationVariableRegExp.exec (v);
-      while (matches && matches.length === 2)
-      {
-        props.push (matches [1]);
-        matches = AnimationVariableRegExp.exec (v);
-      }
-      for (var i = 0; i < props.length; i++)
-      {
-        prop = props [i];
-        if (typeof data[prop] !== 'undefined')
-        { v = v.replace ('${' + prop + '}', data[prop]); }
-        else if (typeof animation[prop] !== 'undefined')
-        { v = v.replace ('${' + prop + '}', animation[prop]); }
-      }
-
-      return v;
-    }
-
-    console.warn
-      ("vs.fx.Animation._parseValue. Unknown value's type: " + v);
-    return 0;
-  }
-
-  function cloneParams (animation)
-  {
-    var params = {}, key, data;
-
-    if (animation.properties) {
-      params.properties = animation.properties.slice ();
-    }
-    else {
-      params.properties = [];
-    }
-    if (animation.values) {
-      params.values = animation.values.slice ();
-    }
-    else {
-      params.values = [];
-    }
-    if (animation.durations) {
-      params.durations = animation.durations;
-    }
-    if (animation.timings) {
-      params.timings = animation.timings.slice ();
-    }
-    else {
-      params.timings = [];
-    }
-    if (animation.origin) {
-      params.origin = animation.origin.slice ();
-    }
-
-    params.iterationCount = animation.iterationCount;
-    params.delay = animation.delay;
-    params.additive = animation.additive;
-
-    params.keyFrames = {};
-    if (!animation.keyFrames ['100%']) {
-      animation.keyFrames ['100%'] = animation;
-    }
-
-    var new_data;
-    for (key in animation.keyFrames)
-    {
-      data = animation.keyFrames [key];
-      if (vs_utils.isArray (data)) {
-        new_data = [];
-        for (var i = 0; i < data.length; i++)
-        {
-          value = data [i];
-          if (value == null || typeof value == 'undefined') continue;
-          new_data [i] = parseValue (value, animation);
-        }
-        params.keyFrames [key] = new_data;
-      }
-      else
-      {
-        for (i = 0; i < animation.properties.length; i++){
-          params.values [i] = parseValue (animation.values [i], data);
-        }
-        params.keyFrames [key] = {};
-      }
-    }
-
-    return params;
-  }
-
-  var anim_params = cloneParams (animation);
-  
-  return _procesAnimation (comp, animation, anim_params, clb, ctx, now);
-};
-
-/**
- *  @private
- *
- * @param {vs.fx.View} comp the component the view will be animated
- * @param {Object} anim_params the animation's parameters copy
- * @param {vs.fx.Animation} animation the animation
- * @param {Function} clb an optional callback to call at the end of animation
- * @param {Object} ctx an optional execution context associated to the clb
- * @return {String} return the identifier of the animation process. You can
- *       use it to stop the animation for instance.
- */
-var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
-{
-  if (!anim_params || !comp || !comp.view)
-  {
-    console.error ('procesAnimation: invalid component parameter!');
-    return;
-  }
-
-  function isComplexAnimation ()
-  {
-    if (anim_params.keyFrames ['0%']) { return true; }
-    return false;
-  }
-
-  var
-    cssAnimation, anim_id = vs_core.createId (),
-    isComplex = isComplexAnimation (),
-    forceCallback = false, self = this;
-
-  function initWithParameters ()
-  {
-    var property;
-    if (isComplex)
-    { property = ANIMATION_DURATION; }
-    else { property = TRANSITION_DURATION; }
-
-    if (vs_utils.isArray (anim_params.origin) && anim_params.origin.length === 2)
-    {
-      var value = anim_params.origin [0] + '% ' + anim_params.origin [1] + '%';
-      comp.setStyle (TRANSFORM_ORIGIN, value);
-    }
-
-    if (now)
-    {
-      comp.setStyle (property, 0);
-    }
-    else if (vs_utils.isString (anim_params.durations))
-    {
-      comp.setStyle (property, anim_params.durations);
-    }
-    else if (vs_utils.isArray (anim_params.durations))
-    {
-      comp.setStyle (property, anim_params.durations.join (', '));
-    }
-    else
-    {
-      comp.setStyle (property, Animation$1.DEFAULT_DURATION);
-    }
-
-    if (isComplex) { property = ANIMATION_DELAY; }
-    else { property = TRANSITION_DELAY; }
-
-    if (!now && vs_utils.isNumber (anim_params.delay))
-    {
-      comp.setStyle (property, anim_params.delay + 'ms');
-    }
-    else
-    { comp.setStyle (property, '0'); }
-
-    if (isComplex) property = ANIMATION_TIMING_FUNC;
-    else property = TRANSITION_TIMING_FUNC;
-
-    if (vs_utils.isString (anim_params.timings))
-    {
-      comp.setStyle (property, anim_params.timings);
-    }
-    else if (vs_utils.isArray (anim_params.timings))
-    {
-      comp.setStyle (property, anim_params.timings.join (', '));
-    }
-    else
-    {
-      comp.setStyle (property, Animation$1.EASE);
-    }
-
-    if (isComplex)
-    {
-      if (anim_params.iterationCount === 'infinite')
-      {
-        comp.setStyle (ITERATION_COUNT, 'infinite');
-      }
-      else if (!anim_params.iterationCount ||
-               !vs_utils.isNumber (anim_params.iterationCount))
-      {
-        comp.setStyle (ITERATION_COUNT, '1');
-      }
-      else
-      {
-        comp.setStyle (ITERATION_COUNT, anim_params.iterationCount);
-      }
-      
-      comp.setStyle (ANIMATION_FILL_MODE, "forwards");
-    }
-  }
-
-  function applySimpleAnimation ()
-  {
-    initWithParameters ();
-    var callback, i, dur;
-
-    callback = function (event)
-    {
-      // do nothing if that event just bubbled from our target's sub-tree
-      if (event.currentTarget !== comp.view) { return; }
-
-      if (!forceCallback)
-        comp.view.removeEventListener (TRANSITION_END, callback, false);
-
-      // clear transition parameters
-      comp.view.style.removeProperty (TRANSITION_DURATION);
-      comp.view.style.removeProperty (TRANSITION_DELAY);
-
-      if (animation.delegate && animation.delegate.taskDidEnd) {
-        try {
-          animation.delegate.taskDidEnd (anim_params);
-        }
-        catch (e) {
-          if (e.stack) console.log (e.stack);
-          console.error (e);
-        }
-      }
-
-      if (clb) { clb.call (ctx?ctx:self); }
-    };
-
-    // if durations is egal to 0, no event is generated a the end.
-    // Then use a small time
-    dur = parseFloat (comp.view.style.getPropertyValue (TRANSITION_DURATION));
-    if (now || dur === 0) forceCallback = true;
-
-    if (!forceCallback)
-      comp.view.addEventListener (TRANSITION_END, callback, false);
-    else vs_core.scheduleAction (function () {
-      callback ({currentTarget: comp.view});
-    });
-
-    applyStyleTo ();
-  }
-
-  function applyStyleTo ()
-  {
-    var
-      transform = '',
-      property, properties = [], value;
-
-    for (i = 0; i < anim_params.properties.length; i++)
-    {
-      property = anim_params.properties [i];
-      value = anim_params.values [i];
-      if (property === 'rotate')
-      { transform += 'rotate(' + value + ') '; property = TRANSFORM;}
-      else if (property === 'skew')
-      { transform += 'skew(' + value + ') '; property = TRANSFORM;}
-      else if (vs_utils.SUPPORT_3D_TRANSFORM && property === 'translate')
-      { transform += 'translate3d(' + value + ') '; property = TRANSFORM;}
-      else if (property === 'translate')
-      { transform += 'translate(' + value + ') '; property = TRANSFORM;}
-      else if (property === 'translateX')
-      { transform += 'translateX(' + value + ') '; property = TRANSFORM;}
-      else if (property === 'translateY')
-      { transform += 'translateY(' + value + ') '; property = TRANSFORM;}
-      else if (property === 'rotateX')
-      { transform += 'rotateX(' + value + ') '; property = TRANSFORM;}
-      else if (property === 'rotateY')
-      { transform += 'rotateY(' + value + ') '; property = TRANSFORM;}
-      else if (property === 'scale')
-      { transform += 'scale(' + value + ') '; property = TRANSFORM;}
-      else
-      { comp.setStyle (property, value); }
-
-      if (properties.indexOf (property) == -1) properties.push (property);
-    }
-    if (transform)
-    {
-      if (anim_params.additive) {
-        var matrix = comp.getCTM ();
-        transform = matrix.toString () + ' ' + transform;
-      }
-      vs_utils.setElementTransform (comp.view, transform);
-    }
-
-    comp.setStyle (TRANSITION_PROPERTY, properties.join (','));
-  }
-
-  function runComplexAnimation ()
-  {
-    initWithParameters ();
-
-    var i, callback, value, anim_name, dur,
-
-    callback = function (event)
-    {
-      // do nothing if that event just bubbled from our target's sub-tree
-      if (event.currentTarget !== comp.view) { return; }
-
-      if (!forceCallback)
-        comp.view.removeEventListener (ANIMATION_END, callback, false);
-
-      // apply the last state
-      if (isComplex) { applyStyleTo (); }
-
-      // clear animations parameters
-      comp.view.style.removeProperty (ANIMATION_DURATION);
-      comp.view.style.removeProperty (ANIMATION_DELAY);
-
-      // clean the animation
-      anim_name = comp.getStyle (ANIMATION_NAME);
-      if (anim_name)
-      {
-        anim_name = anim_name.replace (anim_id, '');
-        comp.setStyle (ANIMATION_NAME, anim_name);
-      }
-
-      try
-      {
-        data = Animation$1.__css_animations [anim_id];
-        if (data && data.length === 2)
-        {
-          document.getElementsByTagName("head")[0].removeChild (data [0]);
-          delete (Animation$1.__css_animations [anim_id]);
-        }
-      }
-      catch (e)
-      {
-        if (e.stack) console.log (e.stack);
-        console.error (e);
-        return false;
-      }
-
-      if (animation.delegate && animation.delegate.taskDidEnd) {
-        try {
-          animation.delegate.taskDidEnd (anim_params);
-        }
-        catch (e) {
-          if (e.stack) console.log (e.stack);
-          console.error (e);
-        }
-      }
-
-      if (clb) { clb.call (ctx?ctx:self); }
-    };
-
-    // if durations is egal to 0, no event is generated a the end.
-    // Then use a small time
-    dur = parseFloat (comp.view.style.getPropertyValue (ANIMATION_DURATION));
-    if (now || dur === 0) forceCallback = true;
-
-    if (!forceCallback)
-      comp.view.addEventListener (ANIMATION_END, callback, false);
-    else vs_core.scheduleAction (function () {
-      callback ({currentTarget: comp.view});
-    });
-
-    anim_name = comp.getStyle (ANIMATION_NAME);
-
-    if (!anim_name) { anim_name = anim_id; }
-    else { anim_name += ', ' + anim_id; }
-
-    comp.setStyle (ANIMATION_NAME, anim_name);
-  }
-
-  function applyComplexAnimation ()
-  {
-    var data, key, style, i, property, transform, value,
-    cssAnimation = document.createElement('style');
-    cssAnimation.type = 'text/css';
-
-    var rules_str = '';
-    for (key in anim_params.keyFrames)
-    {
-      transform = '';
-      data = anim_params.keyFrames [key];
-      style = '';
-      if (vs_utils.isArray (data))
-      {
-        for (var i = 0; i < data.length; i++)
-        {
-          value = data [i];
-          if (value == null || typeof value == 'undefined') continue;
-          property = anim_params.properties [i];
-          if (!property) { continue; }
-          if (property === 'rotate')
-          { transform += 'rotate(' + value + ') '; }
-          else if (property === 'skew')
-          { transform += 'skew(' + value + ') '; }
-          else if (vs_utils.SUPPORT_3D_TRANSFORM && property === 'translate')
-          { transform += 'translate3d(' + value + ') '; }
-          else if (property === 'translate')
-          { transform += 'translate(' + value + ') '; }
-          else if (property === 'translateX')
-          { transform += 'translateX(' + value + ') '; }
-          else if (property === 'translateY')
-          { transform += 'translateY(' + value + ') '; }
-          else if (property === 'rotateX')
-          { transform += 'rotateX(' + value + ') '; }
-          else if (property === 'rotateY')
-          { transform += 'rotateY(' + value + ') '; }
-          else if (property === 'scale')
-          { transform += 'scale(' + value + ') '; }
-          else if (property === 'perspective')
-          { transform += 'perspective(' + value + ') '; }
-          else
-          { style += property + ':' + value + ';'; }
-        }
-      }
-      else
-      {
-        for (i = 0; i < anim_params.properties.length; i++)
-        {
-          value = anim_params.values [i];
-          property = anim_params.properties [i];
-          if (!property) { continue; }
-          if (property === 'rotate')
-          { transform += 'rotate(' + value + ') '; }
-          else if (property === 'skew')
-          { transform += 'skew(' + value + ') '; }
-          else if (vs_utils.SUPPORT_3D_TRANSFORM && property === 'translate')
-          { transform += 'translate3d(' + value + ') '; }
-          else if (property === 'translate')
-          { transform += 'translate(' + value + ') '; }
-          else if (property === 'translateX')
-          { transform += 'translateX(' + value + ') '; }
-          else if (property === 'translateY')
-          { transform += 'translateY(' + value + ') '; }
-          else if (property === 'rotateX')
-          { transform += 'rotateX(' + value + ') '; }
-          else if (property === 'rotateY')
-          { transform += 'rotateY(' + value + ') '; }
-          else if (property === 'scale')
-          { transform += 'scale(' + value + ') '; }
-          else if (property === 'perspective')
-          { transform += 'perspective(' + value + ') '; }
-          else
-          { style += property + ':' + value + ';'; }
-        }
-      }
-      if (transform)
-      {
-        if (anim_params.additive) {
-          var matrix = comp.getCTM ();
-          transform = matrix.toString () + ' ' + transform;
-        }
-        style += TRANSFORM + ': ' + transform + ';';
-      }
-
-      rules_str += key + ' { ' + style + ' } ';
-    }
-
-    var rules = document.createTextNode
-      ('@' + KEY_FRAMES + ' ' + anim_id + ' { ' + rules_str + ' }');
-
-    cssAnimation.appendChild (rules);
-    document.getElementsByTagName("head")[0].appendChild(cssAnimation);
-
-    Animation$1.__css_animations [anim_id] = [cssAnimation, comp];
-
-    runComplexAnimation ();
-  }
-
-  if (isComplex) { vs_core.scheduleAction (applyComplexAnimation); }
-  else { vs_core.scheduleAction (applySimpleAnimation); }
-
-  return anim_id;
-};
-
-/**
- *  @class
- *  An vs.fx.Animation object, contains information for animate a vs.fx.View
- *  component.
- *  <p>
- *  It specifies the css properties to animate and the values for each
- *  properties.
- *  You can define one transformation or a set of transformation
- *  for your animation. In case of multiple transformation the developer
- *  an specify a duration for each transformation.
- *  <p>
- *  <u>Predefined animations</u>: {@link vs.fx.TranslateAnimation},
- *  {@link vs.fx.RotateAnimation}, {@link vs.fx.RotateXYZAnimation},
- *  {@link vs.fx.ScaleAnimation}, {@link vs.fx.SkewAnimation}
- *
- *  @see vs.fx.TranslateAnimation
- *  @see vs.fx.RotateAnimation
- *  @see vs.fx.RotateXYZAnimation
- *  @see vs.fx.ScaleAnimation
- *  @see vs.fx.SkewAnimation
- *
- *  @example
- *  // animate with a constant
- *  a = new vs.fx.Animation (['rotate', '30deg']);​
- *  a.process (comp);
- *
- *  // animate with a predefined variable
- *  a = new vs.fx.Animation (['translate', '$width']);​
- *  a.process (comp);
- *
- *  // animate with a generic variable
- *  a = new vs.fx.Animation (['rotate', '${r}deg']);​
- *  a.r = 50;
- *  a.process (comp);
- *
- * @example
- * // example of multiple transformations an durations
- * // define a animation with two transformations
- * animation = new vs.fx.Animation ([‘width’, '100px'], ['opacity', '0'])
- * // set duration for each
- * animation.durations = ['1s', '2s'];
- *
- * @example
- * // Defining a complex animation with key frames"
- * var translate = new vs.fx.TranslateAnimation (130, 150);
- * translate.durations = '3s';
- * translate.iterationCount = 3;
- *
- * translate.addKeyFrame ('from', {x:0, y: 0, z:0});
- * translate.addKeyFrame (20, {x:50, y: 0, z: 0});
- * translate.addKeyFrame (40, {x:50, y: 50, z: 0});
- *
- * translate.process (myObject);
- *
- *  @author David Thevenin
- * @name vs.fx.Animation
- *  @extends vs.core.Task
- *
- *  @constructor
- *  Main constructor
- *
- * @param {Array.<string>} animations The array of <property, value> to animate
-*/
-function Animation$1 (animations)
-{
-  this.parent = vs_core.Task;
-  this.parent ();
-  this.constructor = Animation$1;
-
-  if (arguments.length)
-  {
-    this.setAnimations (arguments);
-    this.keyFrames ['100%'] = this;
-  }
-}
-
-/**
- * @private
- */
-Animation$1.__css_animations = {};
-
-Animation$1.DEFAULT_DURATION = '0.3s';
-Animation$1.DEFAULT_TIMING = Animation$1.EASE;
-
-Animation$1.prototype = {
-
-  /**
-   * The css properties to animate
-   * @type {Array.<string>}
-   * @name vs.fx.Animation#properties
-   */
-  properties: null,
-
-  /**
-   * The css values for each properties
-   * @type {Array.<string>}
-   * @name vs.fx.Animation#values
-   */
-  values: null,
-
-  /**
-   * The duration for each transformation. For setting only one duration,
-   * use a string (ex anim.duration = '3s')
-   * @type Array.<string>
-   * @name vs.fx.Animation#durations
-   */
-  durations: null,
-
-  /**
-   * Specifies how the intermediate values used during a transition are
-   * calculated. <p />Use the constants to specify preset points of the curve:
-   * ({@link vs.fx.Animation.EASE},
-   * {@link vs.fx.Animation.LINEAR}, {@link vs.fx.Animation.EASE_IN},
-   * {@link vs.fx.Animation.EASE_OUT}, {@link vs.fx.Animation.EASE_IN_OUT})
-   * or the cubic-bezier function to specify your own points.
-   * <p />
-   * Specifies a cubic Bézier curve : cubic-bezier(P1x,P1y,P2x,P2y) <br />
-   * Parameters: <br />
-   * - First point in the Bézier curve : P1x, P1y <br />
-   * - Second point in the Bézier curve : P2x, P2y <br />
-   *
-   * @type Array.<string>
-   * @name vs.fx.Animation#timings
-   */
-  timings: null,
-
-  /**
-   * Specifies the number of times an animation iterates.
-   * The transformations establishes the origin for transforms applied to
-   * your component with respect to its border box. By default the value
-   * is 50%, 50%.
-   * <p>The values is express as an array of percentages of the element’s size,
-   * origin [0] => pos X, origin [1] => pos Y
-   * @type {Array.<int>}
-   * @name vs.fx.Animation#origin
-   */
-  origin: null,
-
-  /**
-   * Sets the origin for the transformations
-   * By default it is set to 1.
-   * For infinite interation, use 'infinite' value.
-   * @type {{number | string}}
-   * @name vs.fx.Animation#iterationCount
-   */
-  iterationCount: 1,
-
-  /**
-   * The time to begin executing an animation after it is applied. <br/>
-   * If 0, the animation executes as soon as it is applied. <br/>
-   * If positive, it specifies an offset from the moment the animation is
-   * applied, and the animation delays execution by that offset. <br/>
-   * If negative, the animation executes the moment the property changes but
-   * appears to begin at the specified negative offset—that is, begins part-way
-   * through the animation. <br/>
-   * The unit is milliseconds.  <br/>
-   * By default it is set to 0.
-   * @type number
-   * @name vs.fx.Animation#delay
-   */
-  delay: 0,
-
-  /**
-   * @private
-   * @type Object
-   * @name vs.fx.Animation#keyFrames
-   */
-  keyFrames: null,
-  
-  /**
-   * An animation can manipulate the transform property. If you have applied
-   * your own transformation to the component, then the animation transform
-   * is added to the component's transformation.<br/>
-   * But if want the component to use only the animation transformation, then
-   * set up your animation with the property "additive" set to "false".<br/>
-   * By default it is set to true.
-   * @type boolean
-   * @name vs.fx.Animation#additive
-   */
-  additive: true,
-
-  /**
-   *  Defines the properties to animate.
-   *  <p>
-   *  When you call the method you redefines your animation, and all
-   *  animation options are set to default value.
-   *
-   * @example
-   * // define a animation with two transformations
-   * animation = new vs.fx.Animation ()
-   * animation.setAnimations ([[‘width’, '100px'], ['opacity', '0']]);
-   *
-   * @name vs.fx.Animation#setAnimations
-   * @function
-   * @param {Array.<Array>} animations The array of [property, value]
-   *         to animate
-   */
-  setAnimations : function (animations)
-  {
-    var i, prop, value, option;
-
-    this.properties = [];
-    this.values = [];
-    this.timings = [];
-    this.keyFrames = {};
-    this.origin = null;
-    this.durations = null;
-    this.timings = null;
-
-    for (i = 0 ; i < animations.length; i++)
-    {
-      option = animations [i];
-      if (!vs_utils.isArray (option) || option.length !== 2)
-      {
-        console.warn ('vs.fx.Animation, invalid animations');
-        continue;
-      }
-      prop = option [0]; value = option [1];
-      if (!vs_utils.isString (prop) || !vs_utils.isString (value))
-      {
-        console.warn ('vs.fx.Animation, invalid constructor argument option: [' +
-          prop + ', ' + value + ']');
-        continue;
-      }
-
-      this.properties.push (prop);
-      this.values.push (value);
-    }
-  },
-
-  /**
-   *  Add an animation Key frames.
-   *  By default an animation does not have key frames. But you can
-   *  define a complexe animation with key frames.
-   *  <br />
-   *  You have to define at least two key frames 'from' and 'to'.
-   *  Other frames are define as percentage value of the animation.
-   *  <p />
-   *  @example
-   *  var translate = new vs.fx.TranslateAnimation (130, 150);
-   *
-   *  translate.addKeyFrame ('from', {x:0, y: 0, z:0});
-   *  translate.addKeyFrame (20, {x:50, y: 0, z: 0});
-   *  translate.addKeyFrame (40, {x:50, y: 50, z: 0});
-   *
-   *  @example
-   *  var translate = new vs.fx.Animation (['translateY','100px'],['opacity', '0']);
-   *
-   *  translate.addKeyFrame ('from', ['0px', '1']);
-   *  translate.addKeyFrame (20, ['50px', '1']);
-   *  translate.addKeyFrame (40, ['80px', '1']);
-   *
-   * @name vs.fx.Animation#addKeyFrame
-   * @function
-   * @param {string | number} pos The percentage value of animation
-   * @param {Object | Array} values the object containing values for
-   *         the animation
-   */
-  addKeyFrame : function (pos, values)
-  {
-    if (!values) { return; }
-    if (pos === 'from')
-    {
-      this.keyFrames ['0%'] = values;
-      return;
-    }
-    if (pos === 'to')
-    {
-      this.keyFrames ['100%'] = values;
-      return;
-    }
-    if (!vs_utils.isNumber (pos) || pos < 0 || pos > 100) { return; }
-
-    this.keyFrames [pos+'%'] = values;
-  },
-
-  /**
-   *  Use this function for animate your graphic object.
-   *  <p>
-   *  You can set a callback function that will be call at the end of animation.
-   *  Associated to the callback you can defined a runtime context. This context
-   *  could be a object.
-   *
-   *  @example
-   *  obj.prototype.endAnimation = function (event)
-   *  { ... }
-   *
-   *  obj.prototype.animate = function ()
-   *  {
-   *    myAnimation.process (a_gui_object, this.endAnimation, this);
-   *  }
-   *
-   * @name vs.fx.Animation#process
-   * @function
-   * @param {vs.fx.View} comp The component the view will be animated
-   * @param {Function} clb an optional callback to call at the end of animation
-   * @param {Object} ctx an optional execution context associated to the
-   *          callback
-   * @param {boolean} now an optional parameter use to apply a animation without
-   *          delay or duration. It useful for configuring the initial position
-   *          of UI component.
-   * @return {String} return the identifier of the animation process. You can
-   *       use it to stop the animation for instance.
-   */
-  process : function (comp, clb, ctx, now)
-  {
-    return procesAnimation (comp, this, clb, ctx, now);
-  },
-
-/********************************************************************
-                  Task implementation
-********************************************************************/
-
-  /**
-   * @name vs.core.Animation#_clone
-   * @function
-   * @private
-   *
-   * @param {vs.core.Object} obj The cloned object
-   * @param {Object} map Map of cloned objects
-   */
-  _clone : function (obj, cloned_map)
-  {
-    vs_core.VSObject.prototype._clone.call (this, obj, cloned_map);
-    
-    var key, data;
-    obj.keyFrames = {};
-    obj.keyFrames ['100%'] = obj;
-
-    if (this.properties)
-    { obj.properties = this.properties.slice (); }
-    else { obj.properties = []; }
-    if (this.values)
-    { obj.values = this.values.slice (); }
-    else { obj.values = []; }
-    if (this.durations)
-    { obj.durations = this.durations; }
-    if (this.timings)
-    { obj.timings = this.timings.slice (); }
-    else { obj.timings = []; }
-    if (this.origin)
-    { obj.origin = this.origin.slice (); }
-    if (this.keyFrames)
-    {
-      for (key in this.keyFrames)
-      {
-        if (key === '100%') { continue; }
-        data = this.keyFrames [key];
-        if (vs_utils.isArray (data)) { obj.keyFrames [key] = data.slice (); }
-        else { obj.keyFrames [key] = vs_utils.clone (data); }
-      }
-    }
-
-    obj.iterationCount = this.iterationCount;
-    obj.delay = this.delay;
-  },
-
-/********************************************************************
-                  Task implementation
-********************************************************************/
-
-  /**
-   *  Starts the task
-   *
-   * @name vs.fx.Animation#start
-   * @function
-   * @param {any} param any parameter (scalar, Array, Object)
-   * @return {String} return the identifier of the animation process. You can
-   *       use it to stop the animation for instance.
-   */
-  start: function (param)
-  {
-    return this.process (param);
-  }
-};
-vs_utils.extendClass (Animation$1, vs_core.Task);
-
-/********************************************************************
-                  Define class properties
-********************************************************************/
-
-vs_utils.defineClassProperties (Animation$1, {
-  'duration': {
-    /**
-     * Getter/Setter for animation duration
-     * @name vs.fx.Animation#duration
-     *
-     * @type {String}
-     */
-    set : function (v)
-    {
-      if (!v) { return; }
-
-      this.durations = [v];
-    },
-
-    /**
-     * @ignore
-     */
-    get : function ()
-    {
-      if (this.durations && this.durations.length)
-      { return this.durations [0]; }
-      else
-      { return Animation$1.DEFAULT_DURATION; }
-    },
-  },
-  'timing': {
-    /**
-     * Getter/Setter for animation timing
-     * @name vs.fx.Animation#timing
-     *
-     * @type {String}
-     */
-    set : function (v)
-    {
-      if (!v) { return; }
-
-      this.timings = [v];
-    },
-
-    /**
-     * @ignore
-     */
-    get : function ()
-    {
-      if (this.timings && this.timings.length)
-      { return this.timings [0]; }
-      else
-      { return Animation$1.EASE; }
-    }
-  }
-});
-
-/*************************************************************
-                Timing Function
-*************************************************************/
-
-/**
- * The ease timing function
- * Equivalent to cubic-bezier(0.25, 0.1, 0.25, 1.0)
- * @name vs.fx.Animation.EASE
- * @const
- */
-Animation$1.EASE = 'ease';
-
-/**
- * The linear timing function
- * Equivalent to cubic-bezier(0.0, 0.0, 1.0, 1.0)
- * @name vs.fx.Animation.LINEAR
- * @const
- */
-Animation$1.LINEAR = 'linear';
-
-/**
- * The ease in timing function
- * Equivalent to cubic-bezier(0.42, 0, 1.0, 1.0)
- * @name vs.fx.Animation.EASE_IN
- * @const
- */
-Animation$1.EASE_IN = 'ease-in';
-
-/**
- * The ease out timing function
- * Equivalent to cubic-bezier(0, 0, 0.58, 1.0)
- * @name vs.fx.Animation.EASE_OUT
- * @const
- */
-Animation$1.EASE_OUT = 'ease-out';
-
-/**
- * The ease in out timing function
- * Equivalent to cubic-bezier(0.42, 0, 0.58, 1.0)
- * @name vs.fx.Animation.EASE_IN_OUT
- * @const
- */
-Animation$1.EASE_IN_OUT = 'ease-in-out';
-
-/*************************************************************
-                Specifics animations
-*************************************************************/
-
-/**
- *  @class
- *  Animation for translate a object view over x, y, and z axes.
- *  <p>
- *
- *  @example
- *  // declare the animation
- *  var translate = new vs.fx.TranslateAnimation (50, 50, 0);
- *  translate.process (comp);
- *
- *  // reconfigure the animation
- *  translate.x = 40;
- *  translate.y = 140;
- *  translate.process (comp);
- *
- *  @author David Thevenin
- * @name vs.fx.TranslateAnimation
- *
- *  @constructor
- *  Main constructor
- *  @extends vs.fx.Animation
- *
- * @param {number} x The translation value along the X axis
- * @param {number} y The translation value along the Y axis
- * @param {number} z The translation value along the Z axis if 3d css transform is possible
-*/
-var TranslateAnimation$1 = function (x, y, z)
-{
-  this.parent = Animation$1;
-  if (!arguments.length)
-  {
-    this.parent ();
-  }
-  else
-  {
-    if (vs_utils.SUPPORT_3D_TRANSFORM)
-      this.parent (['translate', '${x}px,${y}px,${z}px']);
-    else
-      this.parent (['translate', '${x}px,${y}px']);
-
-    if (vs_utils.isNumber (x)) { this.x = x; }
-    if (vs_utils.isNumber (y)) { this.y = y; }
-    if (vs_utils.isNumber (z)) { this.z = z; }
-  }
-  this.constructor = TranslateAnimation$1;
-};
-
-TranslateAnimation$1.prototype = {
-
-  /**
-   * The translation value along the X axis
-   * @public
-   * @type {number}
-   * @name vs.fx.TranslateAnimation#x
-   */
-  x: 0,
-
-  /**
-   * The translation value along the Y axis
-   * @public
-   * @type {number}
-   * @name vs.fx.TranslateAnimation#y
-   */
-  y: 0,
-
-  /**
-   * The translation value along the Z axis
-   * @public
-   * @type {number}
-   * @name vs.fx.TranslateAnimation#z
-   */
-  z: 0,
-  
-  /**
-   * @name vs.core.TranslateAnimation#_clone
-   * @function
-   * @private
-   *
-   * @param {vs.core.Object} obj The cloned object
-   * @param {Object} map Map of cloned objects
-   */
-  _clone : function (obj, cloned_map)
-  {
-    Animation$1.prototype._clone.call (this, obj, cloned_map);
-    
-    obj.x = this.x;
-    obj.y = this.y;
-    obj.z = this.z;    
-  }
-};
-vs_utils.extendClass (TranslateAnimation$1, Animation$1);
-
-/**
- *  @class
- *  Rotate your object any number of degrees along the Z axis.
- *  <p>
- *
- *  @example
- *  // declare the animation
- *  var rotation = new vs.fx.RotateAnimation (50);
- *  rotation.process (comp);
- *
- *  // reconfigure the animation
- *  rotation.deg = 40;
- *  rotation.process (comp);
- *
- *  @author David Thevenin
- * @name vs.fx.RotateAnimation
- *
- *  @constructor
- *  Main constructor
- *  @extends vs.fx.Animation
- *
- * @param {number} deg The rotation value along the Z axis
-*/
-var RotateAnimation = function (deg)
-{
-  this.parent = Animation$1;
-  if (!arguments.length)
-  {
-    this.parent ();
-  }
-  else
-  {
-    this.parent (['rotate', '${deg}deg']);
-
-    if (vs_utils.isNumber (deg)) { this.deg = deg; }
-  }
-  this.constructor = RotateAnimation;
-};
-
-RotateAnimation.prototype = {
-
-  /**
-   * The rotation value along the Z axis
-   * @public
-   * @type {number}
-   * @name vs.fx.RotateAnimation#deg
-   */
-  deg: 0,
-  
-  /**
-   * @name vs.core.RotateAnimation#_clone
-   * @function
-   * @private
-   *
-   * @param {vs.core.Object} obj The cloned object
-   * @param {Object} map Map of cloned objects
-   */
-  _clone : function (obj, cloned_map)
-  {
-    Animation$1.prototype._clone.call (this, obj, cloned_map);
-    
-    obj.deg = this.deg;    
-  }
-};
-vs_utils.extendClass (RotateAnimation, Animation$1);
-
-/**
- *  @class
- *  Rotate your object any number of degrees over the X, Y and Z axes.
- *  <p>
- *
- *  @example
- *  // declare the animation
- *  var rotation = new vs.fx.RotateXYZAnimation (50, 50, 10);
- *  rotation.process (comp);
- *
- *  @author David Thevenin
- * @name vs.fx.RotateXYZAnimation
- *
- *  @constructor
- *  Main constructor
- *  @extends vs.fx.Animation
- *
- * @param {number} degX The rotation value along the X axis
- * @param {number} degY The rotation value along the Y axis
- * @param {number} degZ The rotation value along the Z axis
-*/
-var RotateXYZAnimation = function (degX, degY, degZ)
-{
-  this.parent = Animation$1;
-  if (!arguments.length)
-  {
-    this.parent ();
-  }
-  else
-  {
-    this.parent (['rotateX', '${degX}deg'],
-      ['rotateY', '${degY}deg'], ['rotate' ,'${degZ}deg']);
-
-    if (vs_utils.isNumber (degX)) { this.degX = degX; }
-    if (vs_utils.isNumber (degY)) { this.degY = degY; }
-    if (vs_utils.isNumber (degZ)) { this.degZ = degZ; }
-  }
-  this.constructor = RotateXYZAnimation;
-};
-
-RotateXYZAnimation.prototype = {
-
-  /**
-   * The rotation value along the X axis
-   * @public
-   * @type {number}
-   * @name vs.fx.RotateXYZAnimation#degX
-   */
-  degX: 0,
-
-  /**
-   * The rotation value along the Y axis
-   * @public
-   * @type {number}
-   * @name vs.fx.RotateXYZAnimation#degY
-   */
-  degY: 0,
-
-  /**
-   * The rotation value along the Z axis
-   * @public
-   * @type {number}
-   * @name vs.fx.RotateXYZAnimation#degZ
-   */
-  degZ: 0,
-  
-  /**
-   * @name vs.core.RotateXYZAnimation#_clone
-   * @function
-   * @private
-   *
-   * @param {vs.core.Object} obj The cloned object
-   * @param {Object} map Map of cloned objects
-   */
-  _clone : function (obj, cloned_map)
-  {
-    Animation$1.prototype._clone.call (this, obj, cloned_map);
-    
-    obj.degX = this.degX;
-    obj.degY = this.degY;
-    obj.degZ = this.degZ;    
-  }
-};
-vs_utils.extendClass (RotateXYZAnimation, Animation$1);
-
-/**
- *  @class
- *  Scale your object over the X and Y axes
- *  <p>
- *  If the second parameter is not provided, it is takes a value equal to
- *  the first.
- *
- *  @example
- *  // declare the animation
- *  var scale = new vs.fx.ScaleAnimation (0.5, 1);
- *  scale.process (comp);
- *
- *  @author David Thevenin
- *
- *  @constructor
- *  Main constructor
- *  @extends vs.fx.Animation
- *
- * @name vs.fx.ScaleAnimation
- * @param {number} sx The scale value along the X axis
- * @param {number} sy The scale value along the Y axis
- * @param {number} sz The scale value along the Z axis
-*/
-var ScaleAnimation = function (sx, sy, sz)
-{
-  this.parent = Animation$1;
-  if (!arguments.length)
-  {
-    this.parent ();
-  }
-  else
-  {
-    if (!vs_utils.isNumber (sy) && !vs_utils.isNumber (sy))
-    {
-      // scale on X and Y axies
-      this.parent (['scale', '${sx}']);
-      this.sx = sx;
-      this.sy = sx;
-    }
-    else
-    {
-      this.parent (
-        ['scaleX', '${sx}'], ['scaleY', '${sy}'], ['scaleZ' ,'${sz}']
-      );
-
-      if (vs_utils.isNumber (sx)) { this.sx = sx; }
-      if (vs_utils.isNumber (sy)) { this.sy = sy; }
-      if (vs_utils.isNumber (sz)) { this.sz = sz; }
-    }
-  }
-  this.constructor = ScaleAnimation;
-};
-
-ScaleAnimation.prototype = {
-
-  /**
-   * The scale value along the X axis
-   * @public
-   * @type {number}
-   * @name vs.fx.ScaleAnimation#sx
-   */
-  sx: 1,
-
-  /**
-   * The scale value along the Y axis
-   * @public
-   * @type {number}
-   * @name vs.fx.ScaleAnimation#sy
-   */
-  sy: 1,
-
-  /**
-   * The scale value along the Z axis
-   * @public
-   * @type {number}
-   * @name vs.fx.ScaleAnimation#sz
-   */
-  sz: 1,
-  
-  /**
-   * @name vs.core.ScaleAnimation#_clone
-   * @function
-   * @private
-   *
-   * @param {vs.core.Object} obj The cloned object
-   * @param {Object} map Map of cloned objects
-   */
-  _clone : function (obj, cloned_map)
-  {
-    Animation$1.prototype._clone.call (this, obj, cloned_map);
-    
-    obj.sx = this.sx;
-    obj.sy = this.sy;
-    obj.sz = this.sz;    
-  }
-};
-vs_utils.extendClass (ScaleAnimation, Animation$1);
-
-
-/**
- *  @class
- *  Skew your object over the X and Y axes
- *  <p>
- *  If the second parameter is not provided, it is takes a value equal to
- *  the first.
- *
- *  @example
- *  // declare the animation
- *  var scale = new vs.fx.SkewAnimation (0.5, 1);
- *  scale.process (comp);
- *
- *  @author David Thevenin
- *
- *  @constructor
- *  Main constructor
- *  @extends vs.fx.Animation
- * @name vs.fx.SkewAnimation
- *
- * @param {number} x The scale value along the X axis
- * @param {number} y The scale value along the Y axis
-*/
-var SkewAnimation = function (ax, ay)
-{
-  this.parent = Animation$1;
-  if (!arguments.length)
-  {
-    this.parent ();
-  }
-  else
-  {
-    this.parent (['skew', '${ax}deg,${ay}deg']);
-
-    if (vs_utils.isNumber (ax)) { this.ax = ax; }
-    if (vs_utils.isNumber (ay)) { this.ay = ay; }
-  }
-  this.constructor = SkewAnimation;
-};
-
-SkewAnimation.prototype = {
-
-  /**
-   * Specifies a skew transformation along the X axis by the given angle.
-   * @public
-   * @type {number}
-   * @name vs.fx.SkewAnimation#ax
-   */
-  ax: 0,
-
-  /**
-   *Specifies a skew transformation along the X axis by the given angle.
-   * @public
-   * @type {number}
-   * @name vs.fx.SkewAnimation#ay
-   */
-  ay: 0,
-  
-  /**
-   * @name vs.core.SkewAnimation#_clone
-   * @function
-   * @private
-   *
-   * @param {vs.core.Object} obj The cloned object
-   * @param {Object} map Map of cloned objects
-   */
-  _clone : function (obj, cloned_map)
-  {
-    Animation$1.prototype._clone.call (this, obj, cloned_map);
-    
-    obj.ax = this.ax;
-    obj.ay = this.ay;
-  }
-};
-vs_utils.extendClass (SkewAnimation, Animation$1);
-
-/**
- *  @class
- *  Animate the object' opacity
- *
- *  @example
- *  // declare the pulseo opacity animation
- *  var pulse = new vs.fx.OpacityAnimation (1);
- *  pulse.addKeyFrame ('from', {value: 1});
- *  pulse.addKeyFrame (12, {value: 0.5});
- *  pulse.addKeyFrame (25, {value: 1});
- *  pulse.addKeyFrame (37, {value: 0.5});
- *  pulse.addKeyFrame (50, {value: 1});
- *  pulse.addKeyFrame (62, {value: 0.5});
- *  pulse.addKeyFrame (75, {value: 1});
- *  pulse.addKeyFrame (87, {value: 0.5});
- *  pulse.durations = '7s';
- *  pulse.timings = vs.fx.Animation.LINEAR;
- *
- *  @author David Thevenin
- *
- *  @constructor
- *  Main constructor
- *  @extends vs.fx.Animation
- * @name vs.fx.OpacityAnimation
- *
- * @param {number} value The opacity value
-*/
-var OpacityAnimation = function (value)
-{
-  this.parent = Animation$1;
-  if (!arguments.length)
-  {
-    this.parent ();
-  }
-  else
-  {
-    this.parent (['opacity', '${value}']);
-
-    if (vs_utils.isNumber (value)) { this.value = value; }
-  }
-  this.constructor = OpacityAnimation;
-};
-
-OpacityAnimation.prototype = {
-
-  /**
-   * Specifies the opacity value
-   * @public
-   * @name vs.fx.OpacityAnimation#value
-   * @type {number}
-   */
-  value: 1,
-  
-  /**
-   * @name vs.core.OpacityAnimation#_clone
-   * @function
-   * @private
-   *
-   * @param {vs.core.Object} obj The cloned object
-   * @param {Object} map Map of cloned objects
-   */
-  _clone : function (obj, cloned_map)
-  {
-    Animation$1.prototype._clone.call (this, obj, cloned_map);
-    
-    obj.value = this.value;    
-  }
-};
-vs_utils.extendClass (OpacityAnimation, Animation$1);
-
-/*************************************************************
-                Predefined animation
-*************************************************************/
-
-/**
- *  Slide a object to right.
- * @name vs.fx.Animation.SlideOutRight
- *  @type vs.fx.Animation
- */
-Animation$1.SlideOutRight = new Animation$1 (['translateX', '$width']);
-Animation$1.SlideOutRight.addKeyFrame (0, ['0px']);
-/**
- *  Slide a object to left.
- * @name vs.fx.Animation.SlideOutLeft
- *  @type vs.fx.Animation
- */
-Animation$1.SlideOutLeft = new Animation$1 (['translateX', '-$width']);
-Animation$1.SlideOutLeft.addKeyFrame (0, ['0px']);
-
-/**
- *  Slide a object to top.
- * @name vs.fx.Animation.SlideOutTop
- *  @type vs.fx.Animation
- */
-Animation$1.SlideOutTop = new Animation$1 (['translateY', '-$height']);
-Animation$1.SlideOutTop.addKeyFrame (0, ['0px']);
-
-/**
- *  Slide a object to left.
- * @name vs.fx.Animation.SlideOutBottom
- *  @type vs.fx.Animation
- */
-Animation$1.SlideOutBottom = new Animation$1 (['translateY', '$height']);
-Animation$1.SlideOutBottom.addKeyFrame (0, ['0px']);
-
-/**
- *  Slide a object to right.
- * @name vs.fx.Animation.SlideInRight
- *  @type vs.fx.Animation
- */
-Animation$1.SlideInRight = new Animation$1 (['translateX', '0px']);
-Animation$1.SlideInRight.addKeyFrame (0, ['$width']);
-
-/**
- *  Slide a object to left.
- * @name vs.fx.Animation.SlideInLeft
- *  @type vs.fx.Animation
- */
-Animation$1.SlideInLeft = new Animation$1 (['translateX', '0px']);
-Animation$1.SlideInLeft.addKeyFrame (0, ['-$width']);
-
-/**
- *  Slide a object to top.
- * @name vs.fx.Animation.SlideInTop
- *  @type vs.fx.Animation
- */
-Animation$1.SlideInTop = new Animation$1 (['translateY', '0px']);
-Animation$1.SlideInTop.addKeyFrame (0, ['-$height']);
-
-/**
- *  Slide a object to left.
- * @name vs.fx.Animation.SlideInBottom
- *  @type vs.fx.Animation
- */
-Animation$1.SlideInBottom = new Animation$1 (['translateY', '0px']);
-Animation$1.SlideInBottom.addKeyFrame (0, ['$height']);
-
-/**
- *  Fade in an object.
- * @name vs.fx.Animation.FadeIn
- *  @type vs.fx.Animation
- */
-Animation$1.FadeIn = new Animation$1 (['opacity', '1']);
-Animation$1.FadeIn.addKeyFrame (0, ['0']);
-
-/**
- *  Fade out an object.
- * @name vs.fx.Animation.FadeOut
- *  @type vs.fx.Animation
- */
-Animation$1.FadeOut = new Animation$1 (['opacity', '0']);
-Animation$1.FadeOut.addKeyFrame (0, ['1']);
 
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
@@ -1735,13 +104,13 @@ Animation$1.FadeOut.addKeyFrame (0, ['1']);
  */
 function Controller$1 (owner)
 {
-  this.parent = vs_core__default.EventSource;
+  this.parent = vs_core.EventSource;
   this.parent ();
   this.constructor = Controller$1;
 
   if (owner)
   {
-    this._fsm = new vs_core__default.Fsm (this);
+    this._fsm = new vs_core.Fsm (this);
   
     // fsm goTo surcharge
     this._fsm.goTo = this.goTo;
@@ -1796,7 +165,7 @@ Controller$1.prototype = {
     this._delegate = undefined;
 
     vs_utils.free (this._fsm);
-    vs_core__default.EventSource.prototype.destructor.call (this);
+    vs_core.EventSource.prototype.destructor.call (this);
   },
 
   /**
@@ -1805,7 +174,7 @@ Controller$1.prototype = {
    */
   initComponent : function ()
   {
-    vs_core__default.EventSource.prototype.initComponent.call (this);
+    vs_core.EventSource.prototype.initComponent.call (this);
 
     if (this._fsm) this._fsm.init ();
     
@@ -1919,7 +288,7 @@ Controller$1.prototype = {
     { state_id = data.id; }
     else if (!vs_utils.isString (comp) && comp.id)
     { state_id = comp.id; }
-    else { state_id = vs_core__default.createId (); }
+    else { state_id = vs_core.createId (); }
     
     if (this.isStateExit (state_id))
     { return; }
@@ -2139,7 +508,7 @@ Controller$1.prototype = {
         console.error (e);
       }
     };
-    vs.scheduleAction (function () {runAnimation ();});
+    vs_core.scheduleAction (function () {runAnimation ();});
   },
 
 
@@ -2441,7 +810,7 @@ Controller$1.prototype = {
     this._fsm.clear ();
   }
 };
-vs_utils.extendClass(Controller$1, vs_core__default.EventSource);
+vs_utils.extendClass(Controller$1, vs_core.EventSource);
 
 /********************************************************************
                   Define class properties
@@ -3107,7 +1476,7 @@ vs_utils.defineClassProperties (StackController, {
         {
           this._owner_handler_event = this._owner.handleEvent;
           this._owner.handleEvent = this.handleEvent;
-          vs_gesture.addPointerListener (this._owner.view, vs_core__default.POINTER_START, this._owner, false);
+          vs_gesture.addPointerListener (this._owner.view, vs_core.POINTER_START, this._owner, false);
         }
         this._owner_handler_event_extended = true;
       }
@@ -3118,7 +1487,7 @@ vs_utils.defineClassProperties (StackController, {
         
         if (this._owner_handler_event_extended)
         {
-          vs_gesture.removePointerListener(this._owner.view, vs_core__default.POINTER_START, this._owner, false);
+          vs_gesture.removePointerListener(this._owner.view, vs_core.POINTER_START, this._owner, false);
           this._owner.handleEvent = this._owner_handler_event;
           
           this._owner_handler_event_extended = false;
@@ -3247,7 +1616,7 @@ vs_utils.defineClassProperties (StackController, {
  * @param {String} extension The hole into the vs.ui.View will be inserted. 
  *     ['children' by default]
  */
-var CardController = vs_core__default.createClass ({
+var CardController = vs_core.createClass ({
 
   parent: StackController,
 
@@ -3517,7 +1886,7 @@ var CardController = vs_core__default.createClass ({
   {
     var t_ok = false, state, state_before_id, state_before, transform, index;
     
-    if (event.type === vs_core__default.POINTER_START)
+    if (event.type === vs_core.POINTER_START)
     {
       if (this.__controller__._direction === CardController.LEFT_OUT ||
           this.__controller__._direction === CardController.RIGHT_OUT)
@@ -3535,10 +1904,10 @@ var CardController = vs_core__default.createClass ({
         {  this.__pos = event.clientY; }
       }
 
-      vs_gesture.addPointerListener(document, vs_core__default.POINTER_END, this, true);
-      vs_gesture.addPointerListener(document, vs_core__default.POINTER_MOVE, this, true);
+      vs_gesture.addPointerListener(document, vs_core.POINTER_END, this, true);
+      vs_gesture.addPointerListener(document, vs_core.POINTER_MOVE, this, true);
     }
-    else if (event.type === vs_core__default.POINTER_MOVE)
+    else if (event.type === vs_core.POINTER_MOVE)
     {
       event.preventDefault ();
       state = this.__controller__._fsm._list_of_state 
@@ -3651,7 +2020,7 @@ var CardController = vs_core__default.createClass ({
         }
       }
     }
-    else if (event.type === vs_core__default.POINTER_END)
+    else if (event.type === vs_core.POINTER_END)
     {
       state = this.__controller__._fsm._list_of_state   
         [this.__controller__._fsm._current_state];
@@ -3742,8 +2111,8 @@ var CardController = vs_core__default.createClass ({
           }
         }
       }
-      vs_gesture.removePointerListener(document, vs_core__default.POINTER_END, this, true);
-      vs_gesture.removePointerListener(document, vs_core__default.POINTER_MOVE, this, true);
+      vs_gesture.removePointerListener(document, vs_core.POINTER_END, this, true);
+      vs_gesture.removePointerListener(document, vs_core.POINTER_MOVE, this, true);
     }
   },
   
@@ -3814,7 +2183,7 @@ var CardController = vs_core__default.createClass ({
       }
     };
     if (setInitialPosAnimation) setInitialPosAnimation.process (toComp, function () {
-      vs_core__default.scheduleAction (function () {runAnimation ();});
+      vs_core.scheduleAction (function () {runAnimation ();});
     });
     else runAnimation ();
   } 
@@ -3953,7 +2322,7 @@ function CubicController (owner, extension)
 ********************************************************************/
 }
 
-CubicController._translate_animation = new RotateXYZAnimation (-90,0,0);
+CubicController._translate_animation = new vs_ui.RotateXYZAnimation (-90,0,0);
 CubicController._translate_animation.init ();
 CubicController._translate_animation.addKeyFrame ('from', {degX:0});
 CubicController._translate_animation.addKeyFrame (50, {degX:-92});
@@ -4042,7 +2411,7 @@ CubicController.prototype = {
   {
     var t_ok = false, state, state_before_id, state_before, transform, index;
     
-    if (event.type === vs_core__default.POINTER_START)
+    if (event.type === vs_core.POINTER_START)
     {
       if (this.__layer._orientation === CubicController.HORIZONTAL)
       {
@@ -4059,12 +2428,12 @@ CubicController.prototype = {
         {  this.__pos = event.clientY; }
       }
 
-      vs_gesture.addPointerListener(document, vs_core__default.POINTER_END, this, true);
-      vs_gesture.addPointerListener(document, vs_core__default.POINTER_MOVE, this, true);
+      vs_gesture.addPointerListener(document, vs_core.POINTER_END, this, true);
+      vs_gesture.addPointerListener(document, vs_core.POINTER_MOVE, this, true);
       
       this.animationDuration = 0;
     }
-    else if (event.type === vs_core__default.POINTER_MOVE)
+    else if (event.type === vs_core.POINTER_MOVE)
     {
       event.preventDefault ();
       state = this.__layer._list_of_state [this.__layer._current_state];
@@ -4129,7 +2498,7 @@ CubicController.prototype = {
         }
       }
     }
-    else if (event.type === vs_core__default.POINTER_END)
+    else if (event.type === vs_core.POINTER_END)
     {
       state = this.__layer._list_of_state [this.__layer._current_state];
       if (this.__delta > 50)
@@ -4188,8 +2557,8 @@ CubicController.prototype = {
           }
         }
       }
-      vs_gesture.removePointerListener(document, vs_core__default.POINTER_END, this, true);
-      vs_gesture.removePointerListener(document, vs_core__default.POINTER_MOVE, this, true);
+      vs_gesture.removePointerListener(document, vs_core.POINTER_END, this, true);
+      vs_gesture.removePointerListener(document, vs_core.POINTER_MOVE, this, true);
     }
   },
   
@@ -4636,7 +3005,7 @@ NavigationController.prototype = {
       
       // component is specified by an id
       if (vs_utils.isString (comp))
-      { comp = vs_core__default.VSObject._obs [comp]; }
+      { comp = vs_core.VSObject._obs [comp]; }
       
       if (!comp instanceof vs_ui__default.View)
       { continue; }
@@ -4946,7 +3315,7 @@ function OpacityController (owner, extension)
 }
 
 /** @private */
-OpacityController._opacity_animation = new OpacityAnimation (1);
+OpacityController._opacity_animation = new vs_ui.OpacityAnimation (1);
 OpacityController._opacity_animation.init ();
 OpacityController._opacity_animation.durations = "0.2s";
 
@@ -5198,7 +3567,7 @@ vs_utils.defineClassProperty (OpacityController, "animationDuration", {
  *
  * @param {vs.ui.View} owner the View using this Layer [mandatory]
  */
-var SlideController = vs_core__default.createClass ({
+var SlideController = vs_core.createClass ({
 
   parent: StackController,
   
@@ -5590,7 +3959,7 @@ var SlideController = vs_core__default.createClass ({
     var t_ok = false, size = this.size,
       duration = this.__controller__._animation_duration;
           
-    if (event.type === vs_core__default.POINTER_START)
+    if (event.type === vs_core.POINTER_START)
     {
       if (this.__controller__._orientation === SlideController.HORIZONTAL)
       {
@@ -5607,13 +3976,13 @@ var SlideController = vs_core__default.createClass ({
         {  this.__pos = event.clientY; }
       }
 
-      vs.addPointerListener(document, vs_core__default.POINTER_END, this, true);
-      vs.addPointerListener(document, vs_core__default.POINTER_MOVE, this, true);
+      vs.addPointerListener(document, vs_core.POINTER_END, this, true);
+      vs.addPointerListener(document, vs_core.POINTER_MOVE, this, true);
       
       this.animationDuration = 0;
       this.__delta = 0;
     }
-    else if (event.type === vs_core__default.POINTER_MOVE)
+    else if (event.type === vs_core.POINTER_MOVE)
     {
       event.preventDefault ();
       if (this.__controller__._orientation === SlideController.HORIZONTAL)
@@ -5631,7 +4000,7 @@ var SlideController = vs_core__default.createClass ({
         {  this.__delta = event.clientY - this.__pos; }
       }  
     }
-    else if (event.type === vs_core__default.POINTER_END)
+    else if (event.type === vs_core.POINTER_END)
     {
       if (this.__delta > 50)
       {
@@ -5654,8 +4023,8 @@ var SlideController = vs_core__default.createClass ({
           this.animationDuration = duration;
         }
       }
-      vs.removePointerListener(document, vs_core__default.POINTER_END, this, true);
-      vs.removePointerListener(document, vs_core__default.POINTER_MOVE, this, true);
+      vs.removePointerListener(document, vs_core.POINTER_END, this, true);
+      vs.removePointerListener(document, vs_core.POINTER_MOVE, this, true);
     }
   },
   
@@ -5710,7 +4079,7 @@ var SlideController = vs_core__default.createClass ({
       {
         toComp.show ();
         toComp.refresh ();
-        vs.scheduleAction (function () {
+        vs_core.scheduleAction (function () {
           if (instant)
           {
             var inDurations = animationIn.durations;
@@ -5731,7 +4100,7 @@ var SlideController = vs_core__default.createClass ({
       catch (e) { if (e.stack) console.log (e.stack);console.error (e); }
     };
     setPosition.process (toComp, function () {
-      vs.scheduleAction (function () {runAnimation ();});
+      vs_core.scheduleAction (function () {runAnimation ();});
     });
   } 
 });
@@ -5852,7 +4221,7 @@ SlideController.PIXEL = 1;
  *
  * @param {vs.ui.View} owner the View using this Layer [mandatory]
  */
-var SwipeController = vs_core__default.createClass ({
+var SwipeController = vs_core.createClass ({
 
   parent: StackController,
   
@@ -6295,7 +4664,7 @@ var SwipeController = vs_core__default.createClass ({
       {
         toComp.show ();
         toComp.refresh ();
-        vs_core__default.scheduleAction (function () {
+        vs_core.scheduleAction (function () {
           if (instant) {
             carousel_div.style.webkitTransitionDuration = "0ms";
           }
@@ -6367,186 +4736,7 @@ SwipeController.PIXEL = 1;
   You should have received a copy of the GNU Lesser General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
-/********************************************************************
-                   
-*********************************************************************/
 
-function createProperty (name)
-{
-  if (!vs_utils.CSS_VENDOR) return name;
-  return '-' + vs_utils.CSS_VENDOR.toLowerCase () + '-' + name;
-}
-
-/** 
- * CSS property specifies the length of time that an animation should take to
- * complete one cycle
- * @name vs.ANIMATION_DURATION
- * @type {String}
- * @const
- */ 
-var ANIMATION_DURATION$1 = createProperty ("animation-duration");
-
-/** 
- * CSS property specifies when the animation should start. This lets the
- * animation sequence begin some time after it's applied to an element
- * @name vs.ANIMATION_DELAY
- * @type {String}
- * @const
- */ 
-var ANIMATION_DELAY$1 = createProperty ("animation-delay");
-
-/** 
- * CSS property specifies a list of animations that should be applied to the
- * selected element.
- * @name vs.ANIMATION_NAME
- * @type {String}
- * @const
- */ 
-var ANIMATION_NAME$1 = createProperty ("animation-name");
-
-/** 
- * CSS property specifies how a CSS animation should progress over the duration
- * of each cycle
- * @name vs.ANIMATION_TIMING_FUNC
- * @type {String}
- * @const
- */ 
-var ANIMATION_TIMING_FUNC$1 = createProperty ("animation-timing-function");
-
-/** 
- * CSS property specifies how a CSS animation should apply styles to its target
- * before and after it is executing.
- * @name vs.ANIMATION_FILL_MODE
- * @type {String}
- */ 
-var ANIMATION_FILL_MODE$1 = createProperty ("animation-fill-mode");
-
-
-/** 
- * CSS property specifies the number of seconds or milliseconds a transition
- * animation should take to complete
- * @name vs.TRANSITION_DURATION
- * @type {String}
- * @const
- */ 
-var TRANSITION_DURATION$1 = createProperty ("transition-duration");
-
-/** 
- * CSS property specifies the length of time that an animation should take to
- * complete one cycle
- * @name vs.TRANSITION_DELAY
- * @type {String}
- * @const
- */ 
-var TRANSITION_DELAY$1 = createProperty ("transition-delay");
-
-/** 
- * CSS property specifies the amount of time to wait between a change bein
- * requested to a property that is to be transitioned and the start of the
- * transition effect
- * @name vs.TRANSITION_TIMING_FUNC
- * @type {String}
- * @const
- */ 
-var TRANSITION_TIMING_FUNC$1 = createProperty ("transition-timing-function");
-
-/** 
- * CSS property is used to specify the names of CSS properties to which a
- * transition effect should be applied
- * @name vs.TRANSITION_PROPERTY
- * @type {String}
- * @const
- */ 
-var TRANSITION_PROPERTY$1 = createProperty ("transition-property");
-
-
-/** 
- * CSS property lets you modify the origin for transformations of an element.
- * @name vs.TRANSFORM_ORIGIN
- * @type {String}
- * @const
- */ 
-var TRANSFORM_ORIGIN$1 = createProperty ("transform-origin");
-
-/** 
- * CSS property defines the number of times an animation cycle should be played
- * before stopping
- * @name vs.ITERATION_COUNT
- * @type {String}
- * @const
- */ 
-var ITERATION_COUNT$1 = createProperty ("animation-iteration-count");
-
-/** 
- * CSS property lets you modify the coordinate space of the CSS visual
- * formatting model
- * @name vs.TRANSFORM
- * @type {String}
- * @const
- */ 
-var TRANSFORM$1 = createProperty ("transform");
-
-/** 
- * CSS at-rule lets authors control the intermediate steps in a CSS animation
- * sequence
- * @name vs.KEY_FRAMES
- * @type {String}
- * @const
- */ 
-var KEY_FRAMES$1 = createProperty ("keyframes");
-
-
-/** 
- * The vs.ANIMATION_END event is fired when a CSS animation has completed.
- * @name vs.ANIMATION_END
- * @type {String}
- */ 
-exports.ANIMATION_END = "animationend";
-
-/** 
- * The vs.TRANSITION_END event is fired when a CSS transition has completed
- * @name vs.TRANSITION_END
- * @type {String}
- */ 
-exports.TRANSITION_END = "transitionend";
-
-if (vs_utils.CSS_VENDOR === 'webkit')
-{
-  exports.ANIMATION_END = "webkitAnimationEnd";
-  exports.TRANSITION_END = "webkitTransitionEnd";
-}  
-else if (vs_utils.CSS_VENDOR === 'ms')
-{
-  exports.ANIMATION_END = "msAnimationEnd";
-  exports.TRANSITION_END = "msTransitionEnd";
-}  
-else if (vs_utils.CSS_VENDOR === 'moz')
-{
-  exports.ANIMATION_END = "Mozanimationend";
-  exports.TRANSITION_END = "Moztransitionend";
-}
-
-exports.ANIMATION_DURATION = ANIMATION_DURATION$1;
-exports.ANIMATION_DELAY = ANIMATION_DELAY$1;
-exports.ANIMATION_NAME = ANIMATION_NAME$1;
-exports.ANIMATION_TIMING_FUNC = ANIMATION_TIMING_FUNC$1;
-exports.ANIMATION_FILL_MODE = ANIMATION_FILL_MODE$1;
-exports.TRANSITION_DURATION = TRANSITION_DURATION$1;
-exports.TRANSITION_PROPERTY = TRANSITION_PROPERTY$1;
-exports.TRANSITION_DELAY = TRANSITION_DELAY$1;
-exports.TRANSITION_TIMING_FUNC = TRANSITION_TIMING_FUNC$1;
-exports.TRANSFORM_ORIGIN = TRANSFORM_ORIGIN$1;
-exports.ITERATION_COUNT = ITERATION_COUNT$1;
-exports.TRANSFORM = TRANSFORM$1;
-exports.KEY_FRAMES = KEY_FRAMES$1;
-exports.Animation = Animation$1;
-exports.cancelAnimation = cancelAnimation;
-exports.TranslateAnimation = TranslateAnimation$1;
-exports.RotateAnimation = RotateAnimation;
-exports.RotateXYZAnimation = RotateXYZAnimation;
-exports.ScaleAnimation = ScaleAnimation;
-exports.SkewAnimation = SkewAnimation;
-exports.OpacityAnimation = OpacityAnimation;
 exports.CardController = CardController;
 exports.Controller = Controller$1;
 exports.CubicController = CubicController;
@@ -6558,4 +4748,4 @@ exports.SwipeController = SwipeController;
 
 return exports;
 
-}({},vs_utils,vs_core,vs_gesture,vs_ui));
+}({},vs_core,vs_utils,vs_gesture,vs_ui));
