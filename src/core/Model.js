@@ -21,7 +21,7 @@ import { free, underscore, isArray, extendClass } from 'vs_utils';
 import VSObject from './Object';
 import EventSource from './EventSource';
 import Event from './Event';
-import { _default_df_ } from './Dataflow';
+import DataFlow from './Dataflow';
 import { queueProcSyncEvent } from './MainLoop';
 
 /**
@@ -342,7 +342,7 @@ Model.prototype = {
    */
   propertyChange : function (property)
   {
-    if (_default_df_) { _default_df_.propagate (this, property); }
+    if (DataFlow._default_df_) { DataFlow._default_df_.propagate (this, property); }
 
     if (this.__should_propagate_changes__)
     {

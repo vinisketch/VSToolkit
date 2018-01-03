@@ -16,7 +16,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import { _default_df_ } from './Dataflow';
+import Dataflow from './Dataflow';
 
 /**
  *  @class
@@ -49,7 +49,7 @@ var Connector = function (object, property_name) {
  *        to
  */
 Connector.prototype.to = function (object, property_name, func) {
-  _default_df_.connect (this._base_object, this.property_out, object, property_name, func);
+  Dataflow._default_df_.connect (this._base_object, this.property_out, object, property_name, func);
   this._previous_object = object;
   
   return this;

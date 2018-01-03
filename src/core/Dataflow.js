@@ -703,7 +703,4 @@ DataFlow.prototype = {
 *********************************************************************/
 export default DataFlow;
 
-var _default_df_ = new DataFlow();
-export {
-  _default_df_
-};
+DataFlow._default_df_ = new DataFlow();
