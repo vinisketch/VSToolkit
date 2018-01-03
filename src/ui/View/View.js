@@ -22,6 +22,7 @@ import {
   addPointerListener, removePointerListener,
   POINTER_START, POINTER_END, POINTER_MOVE
 } from 'vs_gesture';
+import { Animation } from '../Animation';
 
 import RecognizerManager from '../Recognizers/RecognizerManager';
 import Template from '../Template';
@@ -1794,13 +1795,13 @@ View.prototype = {
     }
     else
     {
-      if (animations instanceof vs.fx.Animation)
+      if (animations instanceof Animation)
       {
         this._show_animation = animations.clone ();
       }
       else if (vs_utils.isArray (animations))
       {
-        this._show_animation = new vs.fx.Animation ();
+        this._show_animation = new Animation ();
         this._show_animation.setAnimations (animations);
       }
       else
@@ -1941,13 +1942,13 @@ View.prototype = {
      }
     else
     {
-      if (animations instanceof vs.fx.Animation)
+      if (animations instanceof Animation)
       {
         this._hide_animation = animations.clone ();
       }
       else if (vs_utils.isArray (animations))
       {
-        this._hide_animation = new vs.fx.Animation ();
+        this._hide_animation = new Animation ();
         this._hide_animation.setAnimations (animations);
       }
       else
@@ -2161,13 +2162,13 @@ View.prototype = {
   animate: function (animations, options, clb)
   {
     var anim;
-    if (animations instanceof vs.fx.Animation)
+    if (animations instanceof Animation)
     {
       anim = animations
     }
     else if (vs_utils.isArray (animations))
     {
-      var anim = new vs.fx.Animation ();
+      var anim = new Animation ();
       anim.setAnimations (animations);
     }
     else

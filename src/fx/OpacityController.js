@@ -17,14 +17,13 @@
 */
 
 import vs_core from 'vs_core';
-import vs_ui from 'vs_ui';
 import {
   isNumber, isString, isFunction,
   extendClass, defineClassProperty
 } from 'vs_utils';
+import { OpacityAnimation } from 'vs_ui';
 
 import StackController from './StackController';
-import { OpacityAnimation } from './Animation';
 
 /**
  *  The vs.fx.OpacityController class <br />

@@ -22,9 +22,9 @@ import {
   isFunction, isString, isNumber, extendClass,
   setElementTransform, SUPPORT_3D_TRANSFORM
 } from 'vs_utils';
+import { RotateXYZAnimation } from 'vs_ui';
 
 import StackController from './StackController';
-import { RotateXYZAnimation } from './Animation';
 
 /**
  *  The vs.fx.CubicController class <br />

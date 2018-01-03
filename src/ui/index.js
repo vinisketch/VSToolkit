@@ -133,3 +133,4 @@ export {
   View,
   Template
 }
+export * from './Animation';

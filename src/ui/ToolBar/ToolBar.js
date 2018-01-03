@@ -18,6 +18,7 @@
 
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
+import { Animation } from '../Animation';
 import View from '../View/View';
 import html_template from './ToolBar.html';
 import TapRecognizer from '../Recognizers/TapRecognizer';
@@ -177,8 +178,8 @@ ToolBar.prototype = {
   {
     View.prototype.initComponent.call (this);
 
-    this._hide_animation = new vs.fx.Animation (['translateY', '44px']);
-    this._show_animation = new vs.fx.Animation (['translateY', '0px']);
+    this._hide_animation = new Animation (['translateY', '44px']);
+    this._show_animation = new Animation (['translateY', '0px']);
 
     this.style = this._style;
 
