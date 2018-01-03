@@ -459,7 +459,7 @@ View.prototype = {
    * @function
    * @private
    *
-   * @param {vs_core.Object} obj The cloned object
+   * @param {vs_core.VSObject} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   clone : function (config, cloned_map)
@@ -546,11 +546,11 @@ View.prototype = {
   },
 
    /**
-   * @name vs_core.Object#_clone_properties_value
+   * @name vs_core.VSObject#_clone_properties_value
    * @function
    * @protected
    *
-   * @param {vs_core.Object} obj The cloned object
+   * @param {vs_core.VSObject} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone_properties_value : function (obj, cloned_map)
@@ -563,7 +563,7 @@ View.prototype = {
 
       if (key == "size" || key == "position")
       {
-        value = this.size;
+        var value = this.size;
         if (!value || value.length !== 3 ||
             (value[0] === 0 && value[1] === 0))
         { continue; }
@@ -571,7 +571,7 @@ View.prototype = {
   
       // property value copy
       if (this.isProperty (key))
-      { vs_core.Object.__propertyCloneValue (key, this, obj); }
+      { vs_core.VSObject.__propertyCloneValue (key, this, obj); }
     }
   },
 
@@ -580,7 +580,7 @@ View.prototype = {
    * @function
    * @private
    *
-   * @param {vs_core.Object} obj The cloned object
+   * @param {vs_core.VSObject} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)
@@ -735,7 +735,7 @@ View.prototype = {
       if (node_ref && root_id)
       {
         root_node = null;
-        obj = vs_core.Object._obs [root_id];
+        obj = vs_core.VSObject._obs [root_id];
 
         if (obj && obj.view) { root_node = obj.view; }
         else
@@ -907,7 +907,7 @@ View.prototype = {
    * @param {String} comp_name The GUI component name to instanciate
    * @param {Object} config Configuration structure need to build the component.
    * @param {String} extension The hole into the vs.ui.View will be insert.
-   * @return {vs_core.Object} the created component
+   * @return {vs_core.VSObject} the created component
    */
   createAndAddComponent : function (comp_name, config, extension)
   {
@@ -1258,7 +1258,7 @@ View.prototype = {
    * @function
    *
    * @param {string} spec the event specification [mandatory]
-   * @param {vs_core.Object} obj the object interested to catch the event
+   * @param {vs_core.VSObject} obj the object interested to catch the event
    *    [mandatory]
    * @param {string} func the name of a callback. If its not defined
    *        notify method will be called [optional]
@@ -1334,7 +1334,7 @@ View.prototype = {
    * @function
    *
    * @param {string} spec the event specification [mandatory]
-   * @param {vs_core.Object} obj the object you want unbind [mandatory]
+   * @param {vs_core.VSObject} obj the object you want unbind [mandatory]
    */
   unbind : function (spec, obj)
   {
@@ -2290,7 +2290,7 @@ View.prototype = {
   flushTransformStack : function ()
   {
     // Save current transform into a matrix
-    var matrix = new vs.CSSMatrix ();
+    var matrix = new vs_utils.CSSMatrix ();
     matrix = matrix.translate
       (this._transform_origin [0], this._transform_origin [1], 0);
     matrix = matrix.translate
@@ -2358,7 +2358,7 @@ View.prototype = {
    */
   getCTM: function ()
   {
-    var matrix, identity = new vs.CSSMatrix ();
+    var matrix, identity = new vs_utils.CSSMatrix ();
 
     // apply current transformation
     matrix = identity.translate (
@@ -2397,7 +2397,7 @@ View.prototype = {
     function multiplyParentTCM (parent)
     {
       // no parent return identity matrix
-      if (!parent) return new vs.CSSMatrix ();
+      if (!parent) return new vs_utils.CSSMatrix ();
       // apply parent transformation matrix recurcively
       return multiplyParentTCM (parent.__parent).multiply (parent.getCTM ());
     }

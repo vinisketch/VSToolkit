@@ -20,6 +20,7 @@ import vs_core from 'vs_core';
 import vs_utils from 'vs_utils';
 import { POINTER_START, POINTER_END, POINTER_MOVE } from 'vs_gesture';
 
+import View from '../View/View';
 import PointerRecognizer from './PointerRecognizer';
 
 /**

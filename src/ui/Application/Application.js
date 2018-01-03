@@ -646,9 +646,9 @@ Application.stop = function ()
   }
   Application._applications = {};
 
-  for (var key in vs_core.Object._obs)
+  for (var key in vs_core.VSObject._obs)
   {
-    var obj = vs_core.Object._obs [key];
+    var obj = vs_core.VSObject._obs [key];
     vs_utilsfree (obj);
   }
 };

@@ -16,6 +16,8 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
+import View from './View/View';
+
 /**
  *  @class
  *  vs.ui.Template is GUI template system you can use to create the view
@@ -221,7 +223,7 @@ var _template_view_clone = function (config, cloned_map) {
  * @private
  */
 var _template_view__clone = function (obj, cloned_map) {
-  ui.View.prototype._clone.call (this, obj, cloned_map);
+  View.prototype._clone.call (this, obj, cloned_map);
 
   _instrument_component (obj, this.__shadow_view, obj.view);
 
@@ -346,8 +348,8 @@ function _instrument_component (obj, shadow_view, node) {
         shadow_view = ctx.__list_iterate_prop [prop_name], paths, nodes_cloned;
       
       if (shadow_view) {
-        path = _getPath (ctx.__node, shadow_view.__parent_node);
-        node_cloned = _evalPath (view_node, path);
+        const path = _getPath (ctx.__node, shadow_view.__parent_node);
+        const node_cloned = _evalPath (view_node, path);
 
         _create_iterate_property (obj, prop_name, shadow_view, node_cloned);
       }
@@ -387,7 +389,7 @@ function _pre_compile_shadow_view (self, className) {
 
   shadow_view.__class = _resolveClass (className);
   if (!vs_utils.isFunction (shadow_view.__class)) {
-    shadow_view.__class = ui.View;
+    shadow_view.__class = View;
   }
 
   /**
@@ -472,7 +474,7 @@ function _pre_compile_shadow_view (self, className) {
       shadow_view.__parent_node = parentElement;
       shadow_view.__node = node;
       shadow_view.__all_properties = ctx.__all_properties;
-      shadow_view.__class = ui.View;
+      shadow_view.__class = View;
       
       ctx = shadow_view;
     }

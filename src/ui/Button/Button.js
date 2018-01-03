@@ -20,6 +20,7 @@
 import vs_utils from 'vs_utils';
 import vs_core from 'vs_core';
 import View from '../View/View';
+import TapRecognizer from '../Recognizers/TapRecognizer';
 import html_template from './Button.html';
 
 /**

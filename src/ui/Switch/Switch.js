@@ -21,6 +21,7 @@ import vs_core from 'vs_core';
 import View from '../View/View';
 import html_template from './Switch.html';
 import Application from '../Application/Application';
+import TapRecognizer from '../Recognizers/TapRecognizer';
 
 /**
  *  The vs.ui.Switch class

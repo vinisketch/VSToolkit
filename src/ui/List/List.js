@@ -665,7 +665,7 @@ List.prototype = {
      
   /**
    * @private
-   * @type {vs_core.Object}
+   * @type {vs_core.VSObject}
    */
   __template_obj: null,
   __template_class: null,
