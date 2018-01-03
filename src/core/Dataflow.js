@@ -20,6 +20,7 @@ import {
   isArray, isString, isFunction, underscore
 } from 'vs_utils';
 
+import VSObject from './Object';
 
 var edge_id_counter = 1;
 

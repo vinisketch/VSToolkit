@@ -525,7 +525,7 @@ VSObject.prototype =
   link : function (model)
   {
     // model update management
-    if (model instanceof vs.core.Model)
+    if (model instanceof Model)
     {
       if (this.__model) this.__model.unlinkTo (this);
       this.__model = model;

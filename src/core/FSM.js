@@ -104,7 +104,7 @@ import { createId } from './Core';
  */
 var Fsm = function (owner)
 {
-  this.parent = core.EventSource;
+  this.parent = EventSource;
   this.parent (createId ());
   this.constructor = Fsm;
   
@@ -139,7 +139,7 @@ Fsm.prototype =
     delete (this._inputs);
     delete (this._output_action);
     
-    core.EventSource.prototype.destructor.call (this);
+    EventSource.prototype.destructor.call (this);
   },
 
   /*****************************************************************

@@ -16,8 +16,11 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import VSObject from './Object';
 import { free, underscore, isArray, extendClass } from 'vs_utils';
+
+import VSObject from './Object';
+import EventSource from './EventSource';
+import Event from './Event';
 import { _default_df_ } from './Dataflow';
 import { queueProcSyncEvent } from './MainLoop';
 
@@ -265,10 +268,10 @@ Model.prototype = {
       
       // remove property if its dynamic
       // deactivate
-//       if (self.__properties__ && 
-//           self.__properties__.indexOf (prop_name) !== -1) {
-//         delete (self [prop_name]);
-//       }
+      // if (self.__properties__ && 
+      //     self.__properties__.indexOf (prop_name) !== -1) {
+      //   delete (self [prop_name]);
+      // }
     });
   },
 
@@ -409,15 +412,15 @@ Model.prototype = {
     }
 
 
-//         if (isString (value))
-//         {
-//           result = vs_utils.__date_reg_exp.exec (value);
-//           if (result && result [1]) // JSON Date -> Date generation
-//           {
-//             this ['_' + key] = new Date (parseInt (result [1]));
-//           }
-//           else this ['_' + key] = value; // String
-//         }
+    // if (isString (value))
+    // {
+    //   result = vs_utils.__date_reg_exp.exec (value);
+    //   if (result && result [1]) // JSON Date -> Date generation
+    //   {
+    //     this ['_' + key] = new Date (parseInt (result [1]));
+    //   }
+    //   else this ['_' + key] = value; // String
+    // }
     
     this [_prop_name] = model;
   }
