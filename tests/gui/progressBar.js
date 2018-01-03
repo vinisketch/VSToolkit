@@ -29,5 +29,5 @@ function launchTest (test_view)
     if (index > 100) index = 0;
   }
   
-  vs.scheduleAction (function () {setInterval (updateProgress, 10)}, 1000);
+  vs_core.scheduleAction (function () {setInterval (updateProgress, 10)}, 1000);
 }
