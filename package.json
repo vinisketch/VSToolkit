@@ -25,7 +25,7 @@
     "build:av": "rollup -c ./rollup.config/av.js",
     "build:fx": "rollup -c ./rollup.config/fx.js",
     "build:ui": "rollup -c ./rollup.config/ui.js",
-    "build:all": "npm run build:core && npm run build:data && npm run build:av && npm run build:fx && npm run build:ui",
+    "build:all": "npm run build:core && npm run build:data && npm run build:ui && npm run build:av && npm run build:fx",
     "build:iief:min": "uglifyjs --compress --mangle -o dist/js/vs_core.min.js -- dist/js/vs_core.js"
   },
   "devDependencies": {
