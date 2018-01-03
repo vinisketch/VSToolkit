@@ -1,6 +1,6 @@
 {
   "name": "vs_toolkit",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Toolkit for creating to easily develop Hybrid/Web Applications for mobile devices.",
   "main": "index.js",
   "repository": "git@github.com:vinisketch/VSToolkit.git",
