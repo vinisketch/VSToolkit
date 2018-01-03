@@ -263,7 +263,7 @@ defineClassProperty (Task, "state", {
 */
 function Task_PAR (tasksAndParams)
 {
-  this.parent = core.Task;
+  this.parent = Task;
   this.parent ();
   this.constructor = Task_PAR;
 
@@ -577,7 +577,7 @@ extendClass (Task_PAR, Task);
  */
 function Task_SEQ (tasksAndParams)
 {
-  this.parent = core.Task;
+  this.parent = Task;
   this.parent ();
   this.constructor = Task_SEQ;
 
@@ -861,7 +861,7 @@ extendClass (Task_SEQ, Task);
  */
 function TaskWait (time)
 {
-  this.parent = core.Task;
+  this.parent = Task;
   this.parent ();
   this.constructor = TaskWait;
   this._state = Task.STOPPED;

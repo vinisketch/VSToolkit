@@ -258,7 +258,7 @@ GMap.prototype = {
     this._gmap = new google.maps.Map (this.view, myOptions);
     
     var self = this;
-    vs.scheduleAction (function () { clear_view_style (self)});
+    vs_core.scheduleAction (function () { clear_view_style (self)});
   },
   
   /**
@@ -1125,9 +1125,9 @@ function createInfoWindowClass ()
           return false;
         }
  
-        vs.removePointerListener (document, core.POINTER_END, this);
-        vs.removePointerListener (document, core.POINTER_MOVE, this);
-        if (this.marker) vs.scheduleAction (function () {self.initMapEvent ();});
+        vs_gesture.removePointerListener (document, core.POINTER_END, this);
+        vs_gesture.removePointerListener (document, core.POINTER_MOVE, this);
+        if (this.marker) vs_core.scheduleAction (function () {self.initMapEvent ();});
         util.removeClassName (this.view, "selected");
  
         return false;
@@ -1139,9 +1139,9 @@ function createInfoWindowClass ()
         e.stopPropagation ();
         e.preventDefault ();
 
-        vs.removePointerListener (document, core.POINTER_END, this);
-        vs.removePointerListener (document, core.POINTER_MOVE, this);
-        if (this.marker) vs.scheduleAction (function () {self.initMapEvent ();});
+        vs_gesture.removePointerListener (document, core.POINTER_END, this);
+        vs_gesture.removePointerListener (document, core.POINTER_MOVE, this);
+        if (this.marker) vs_core.scheduleAction (function () {self.initMapEvent ();});
         util.removeClassName (this.view, "selected");
         
         this.vs_map.annotationSelect (this.id);
@@ -1208,7 +1208,7 @@ function createInfoWindowClass ()
     }
 
     // update position to correctly manage the info bubble size
-    vs.scheduleAction (function ()
+    vs_core.scheduleAction (function ()
     {
       var width = div.offsetWidth;
       var height = div.offsetHeight;

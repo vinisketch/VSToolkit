@@ -597,7 +597,7 @@ var SlideController = vs_core.createClass ({
       {
         toComp.show ();
         toComp.refresh ();
-        vs.scheduleAction (function () {
+        vs_core.scheduleAction (function () {
           if (instant)
           {
             var inDurations = animationIn.durations;
@@ -618,7 +618,7 @@ var SlideController = vs_core.createClass ({
       catch (e) { if (e.stack) console.log (e.stack);console.error (e); }
     };
     setPosition.process (toComp, function () {
-      vs.scheduleAction (function () {runAnimation ();});
+      vs_core.scheduleAction (function () {runAnimation ();});
     });
   } 
 });

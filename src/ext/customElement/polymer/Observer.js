@@ -116,7 +116,7 @@ function deferMutation(fn) {
   if (!isPendingMutations) {
     isPendingMutations = true;
     var async = (window.Platform && window.Platform.endOfMicrotask) ||
-        vs.scheduleAction;
+        vs_core.scheduleAction;
     async(takeMutations);
   }
 }

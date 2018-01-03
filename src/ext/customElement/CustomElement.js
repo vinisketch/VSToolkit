@@ -15,12 +15,12 @@
 var UNMUTABLE_ATTRIBUTES = ["id", "is", "x-hag-comp", "peg", "properties", "name"];
 
 function NO_CONTENT (node) {
-  vs.util.removeAllElementChild (node);
+  vs_util.removeAllElementChild (node);
 }
 
 function TEXT_CONTENT (node, config) {
   var text = node.textContent;
-  vs.util.removeAllElementChild (node);
+  vs_util.removeAllElementChild (node);
   
   if (text) config.text = text;
 }
@@ -38,7 +38,7 @@ function RADIO_CHECK_BUTTON_CONTENT (node, config) {
     if (item.nodeName == "VS-ITEM") model.push (item.textContent);
   }
   
-  vs.util.removeAllElementChild (node);
+  vs_util.removeAllElementChild (node);
   
   config.model = model;
 }
@@ -49,7 +49,7 @@ function get_extern_component (href, result_clb) {
 
   var node = EXTERN_COMPONENT [href], data, clbs;
   
-  if (!vs.util.isFunction (result_clb)) result_clb = null;
+  if (!vs_util.isFunction (result_clb)) result_clb = null;
 
   if (node) {
     if (result_clb) result_clb (node);
@@ -68,7 +68,7 @@ function get_extern_component (href, result_clb) {
     var clbs = LOADING_CLBS [href];
     if (clbs) {
       clbs.forEach (function (result_clb) {
-        vs.scheduleAction (function () {result_clb (data)});
+        vs_core.scheduleAction (function () {result_clb (data)});
       })
       clbs = [];
       delete (LOADING_CLBS [href]);
@@ -225,7 +225,7 @@ function _setCompProperties (comp, properties)
       };
     }(value[0], value[1]));
     
-    vs.util.defineProperty (comp, prop_name, desc);
+    vs_util.defineProperty (comp, prop_name, desc);
     comp.__properties__.push (prop_name);
   }
 }
@@ -284,7 +284,7 @@ function LIST_TEMPLATE_CONTENT (node, config) {
     }
   }
   
-  vs.util.removeAllElementChild (node);
+  vs_util.removeAllElementChild (node);
   
   config.__template_obj = template_comp;
 }
@@ -398,7 +398,7 @@ function ARRAY_DECODER (value) {
     if (exp.stack) console.error (exp.stack);
     console.error (exp);
   }
-  if (vs.util.isArray (result)) return result;
+  if (vs_util.isArray (result)) return result;
   
   return;
 }
@@ -424,11 +424,11 @@ function DYNAMIC_DECODER (value, comp, prop_name) {
   if (!comp || !prop_name) return STRING_DECODER (value);
   
   var old_value = comp [prop_name];
-  if (vs.util.isNumber (old_value)) return INT_DECODER (value);
-  if (vs.util.isArray (old_value)) return ARRAY_DECODER (value);
-  if (vs.util.isString (old_value)) return STRING_DECODER (value);
-  if (vs.util.isUndefined (old_value)) return STRING_DECODER (value);
-  if (vs.util.isObject (old_value)) return OBJECT_DECODER (value);
+  if (vs_util.isNumber (old_value)) return INT_DECODER (value);
+  if (vs_util.isArray (old_value)) return ARRAY_DECODER (value);
+  if (vs_util.isString (old_value)) return STRING_DECODER (value);
+  if (vs_util.isUndefined (old_value)) return STRING_DECODER (value);
+  if (vs_util.isObject (old_value)) return OBJECT_DECODER (value);
   
   return STRING_DECODER (value);
 }
@@ -468,7 +468,7 @@ function buildConfiguration (node) {
   
   while (l--) {
     attribute = attributes.item (l);
-    name = vs.util.camelize (attribute.name);
+    name = vs_util.camelize (attribute.name);
     if (name == "id") {
       config.id = attribute.value;
       continue;
@@ -499,7 +499,7 @@ function buildBinding (node, comp) {
     
   for (i = 0; i < attributes.length; ) {
     attribute = attributes.item (i);
-    name = vs.util.camelize (attribute.name);
+    name = vs_util.camelize (attribute.name);
     if (name == "onload") {
       var value = attribute.value;
       if (value) {
@@ -564,7 +564,7 @@ function declareComponent (className, comp_name, manage_content,
   
   comp_proto = Object.create (node.constructor.prototype);
   
-  if (vs.util.isFunction (createdCallback)) {
+  if (vs_util.isFunction (createdCallback)) {
     comp_proto.createdCallback = createdCallback;
   }
   else comp_proto.createdCallback = function () {
@@ -600,7 +600,7 @@ function declareComponent (className, comp_name, manage_content,
     buildBinding (this, _comp_);
   };
   
-  if (vs.util.isFunction (attachedCallback)) {
+  if (vs_util.isFunction (attachedCallback)) {
     comp_proto.attachedCallback = attachedCallback;
   }
   else comp_proto.attachedCallback = function () {
@@ -631,7 +631,7 @@ function declareComponent (className, comp_name, manage_content,
  //   console.log (this.nodeName);
   };
         
-  if (vs.util.isFunction (detachedCallback)) {
+  if (vs_util.isFunction (detachedCallback)) {
     comp_proto.detachedCallback = detachedCallback;
   }
   else comp_proto.detachedCallback = function () {
@@ -643,7 +643,7 @@ function declareComponent (className, comp_name, manage_content,
     if (UNMUTABLE_ATTRIBUTES.indexOf (name) !== -1) return;
     
     var comp = this._comp_;
-    name = vs.util.camelize (name)
+    name = vs_util.camelize (name)
     
     if (!comp) return;
 
@@ -686,7 +686,7 @@ window.addEventListener ('DOMContentLoaded', function() {
 window.addEventListener ('WebComponentsReady', function() {
   // show body now that everything is ready
   vs.ui.Application.start ();
-  vs.scheduleAction (function () {
+  vs_core.scheduleAction (function () {
     document.body.style.opacity = 1;
   });
   

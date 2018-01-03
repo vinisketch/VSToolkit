@@ -509,7 +509,7 @@ Controller.prototype = {
         console.error (e);
       }
     };
-    vs.scheduleAction (function () {runAnimation ();});
+    vs_core.scheduleAction (function () {runAnimation ();});
   },
 
 

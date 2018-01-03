@@ -164,7 +164,7 @@ var Chronometer = vs.core.createClass ({
       // manage delayed chronometer
       if (begin > 0)
       {
-        vs.scheduleAction (_start.bind (this), begin);
+        vs_core.scheduleAction (_start.bind (this), begin);
         return;
       }
     
@@ -234,7 +234,7 @@ var Chronometer = vs.core.createClass ({
       {
         this.__repeat_dur --;
         // schedule a new chronometer cycle
-        vs.scheduleAction (this._start_clock.bind (this), vs.ON_NEXT_FRAME);
+        vs_core.scheduleAction (this._start_clock.bind (this), vs.ON_NEXT_FRAME);
       }
       else
       {
@@ -252,7 +252,7 @@ var Chronometer = vs.core.createClass ({
     }
     else {
       // schedule a new tick
-      vs.scheduleAction (this._clock.bind (this), vs.ON_NEXT_FRAME);
+      vs_core.scheduleAction (this._clock.bind (this), vs.ON_NEXT_FRAME);
       this.__setTick ((currTime - this.__start_time) / this._duration);
       this.propagateChange ('tick');
       if (this.__clb) this.__clb (this._tick);
@@ -271,7 +271,7 @@ var Chronometer = vs.core.createClass ({
       this.__start_time += pause_dur;
       this.__end_time += pause_dur;
       this._state = vs.core.Task.STARTED;
-      vs.scheduleAction (this._clock.bind (this));
+      vs_core.scheduleAction (this._clock.bind (this));
       return;
     }
     
@@ -285,7 +285,7 @@ var Chronometer = vs.core.createClass ({
     this.propagateChange ('tick');
     if (this.__clb) this.__clb (this._tick);
     
-    vs.scheduleAction (this._clock.bind (this));
+    vs_core.scheduleAction (this._clock.bind (this));
   },
 
   /**
@@ -307,7 +307,7 @@ var Chronometer = vs.core.createClass ({
       if (this.__repeat_dur > 1)
       {
         this.__repeat_dur --;
-        vs.scheduleAction (this._start_steps.bind (this), vs.ON_NEXT_FRAME);
+        vs_core.scheduleAction (this._start_steps.bind (this), vs.ON_NEXT_FRAME);
       }
       else
       {
@@ -328,7 +328,7 @@ var Chronometer = vs.core.createClass ({
       this.propagateChange ('tick');
       if (this.__clb) this.__clb (this._tick);
       var step_dur = this._duration / this._steps
-      vs.scheduleAction (this._step.bind (this), step_dur);
+      vs_core.scheduleAction (this._step.bind (this), step_dur);
     }
   },
   
@@ -342,7 +342,7 @@ var Chronometer = vs.core.createClass ({
     if (this._state === vs.core.Task.PAUSED)
     {
       this._state = vs.core.Task.STARTED;
-      vs.scheduleAction (this._step.bind (this));
+      vs_core.scheduleAction (this._step.bind (this));
       return;
     }
 
@@ -357,7 +357,7 @@ var Chronometer = vs.core.createClass ({
     this.__steps = this._steps - 1 - Math.floor (this.__time_decl / step_dur);
     this.__time_decl = 0;
     
-    vs.scheduleAction (this._step.bind (this), step_dur);
+    vs_core.scheduleAction (this._step.bind (this), step_dur);
   },
 
   /**

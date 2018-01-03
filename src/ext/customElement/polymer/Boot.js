@@ -14,7 +14,7 @@ function bootstrap() {
   // choose async
   var async = window.Platform && Platform.endOfMicrotask ? 
     Platform.endOfMicrotask :
-    vs.scheduleAction;
+    vs_core.scheduleAction;
   async(function() {
     // set internal 'ready' flag, now document.registerElement will trigger 
     // synchronous upgrades
