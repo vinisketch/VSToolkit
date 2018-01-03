@@ -174,7 +174,7 @@ Switch.prototype = {
       self._toggled = false;
     }
   
-    vs.scheduleAction (function () {
+    vs_core.scheduleAction (function () {
       self._initWidthSwitch ();
     
       if (self._toggled) {
@@ -450,7 +450,7 @@ vs_utils.defineClassProperties (Switch, {
     set : function (v)
     {
       var self = this;
-      vs.scheduleAction (function () { self._setToggle (v); });
+      vs_core.scheduleAction (function () { self._setToggle (v); });
     },
   
     /** 

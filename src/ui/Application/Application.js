@@ -269,7 +269,7 @@ Application.prototype = {
    */
   buildDataflow: function ()
   {
-    vs._default_df_.build ();
+    vs_core.DataFlow._default_df_.build ();
   },
     
   /**
@@ -627,9 +627,9 @@ Application.start = function ()
     obj = Application._applications [key];
     obj.propertyChange ();
     obj.applicationStarted ();
-    vs.scheduleAction (function () {obj.refresh ();});
+    vs_core.scheduleAction (function () {obj.refresh ();});
   }
-  vs.scheduleAction (function () {vs._default_df_.build ();});
+  vs_core.scheduleAction (function () {vs_core.DataFlow._default_df_.build ();});
 };
 
 /**

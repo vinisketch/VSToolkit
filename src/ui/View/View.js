@@ -849,7 +849,7 @@ View.prototype = {
     if (!view || !view.parentElement) return;
 
     // update the real element size and position
-    vs.scheduleAction (function () {
+    vs_core.scheduleAction (function () {
       self._size [0] = view.offsetWidth;
       self._size [1] = view.offsetHeight;
       self._pos [0] = view.offsetLeft;
@@ -1664,14 +1664,14 @@ View.prototype = {
     var n = this.view, display = n.style.display, self = this;
 
     n.style.display = 'none';
-    vs.scheduleAction (function()
+    vs_core.scheduleAction (function()
     {
       if (display)
       { n.style.display = display; }
       else
       { n.style.removeProperty ('display'); }
 
-      vs.scheduleAction (function()
+      vs_core.scheduleAction (function()
       {
         self.refresh ();
         if (clb && vs_utils.isFunction (clb)) clb.call (self);
@@ -1746,10 +1746,10 @@ View.prototype = {
       else
       {
         if (this.__show_clb) {
-          vs.scheduleAction (function () {self.__show_clb.call (self);});
+          vs_core.scheduleAction (function () {self.__show_clb.call (self);});
         }
         if (clb) {
-          vs.scheduleAction (function () {clb.call (self);});
+          vs_core.scheduleAction (function () {clb.call (self);});
         }
       }
     }
@@ -1892,10 +1892,10 @@ View.prototype = {
       else
       {
         if (this.__hide_clb) {
-          vs.scheduleAction (function () {self.__hide_clb.call (self);});
+          vs_core.scheduleAction (function () {self.__hide_clb.call (self);});
         }
         if (clb) {
-          vs.scheduleAction (function () {clb.call (self);});
+          vs_core.scheduleAction (function () {clb.call (self);});
         }
       }
     }

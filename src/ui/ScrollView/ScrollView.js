@@ -307,7 +307,7 @@ ScrollView.prototype = {
       if (this.__iscroll__) this.__iscroll__.refresh ();
     }
     
-    vs.scheduleAction (endRefresh.bind (this));
+    vs_core.scheduleAction (endRefresh.bind (this));
   },
     
   /**

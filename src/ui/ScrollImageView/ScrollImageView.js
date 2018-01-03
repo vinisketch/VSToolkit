@@ -254,7 +254,7 @@ ScrollImageView.prototype = {
     this.propagate ('load');
     
     var self = this;
-    vs.scheduleAction (function ()
+    vs_core.scheduleAction (function ()
     {
       self.refresh ();
 //      self._applyInsideTransformation ();
