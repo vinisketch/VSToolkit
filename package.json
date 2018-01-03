@@ -21,9 +21,15 @@
     "build:av:iief:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o dist/js/vs_av.min.js -- dist/js/vs_av.js",
     "build:fx:iief:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o dist/js/vs_fx.min.js -- dist/js/vs_fx.js",
     "build:ui:iief:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o dist/js/vs_ui.min.js -- dist/js/vs_ui.js",
-    "build:all:min": "npm run build:core:iief:min && npm run build:data:iief:min && npm run build:ui:iief:min && npm run build:av:iief:min && npm run build:fx:iief:min",
+    "build:iief:min": "npm run build:core:iief:min && npm run build:data:iief:min && npm run build:ui:iief:min && npm run build:av:iief:min && npm run build:fx:iief:min",
+    "build:core:amd:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o lib/vs_core.min.js -- lib/vs_core.js",
+    "build:data:amd:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o lib/vs_data.min.js -- lib/vs_data.js",
+    "build:av:amd:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o lib/vs_av.min.js -- lib/vs_av.js",
+    "build:fx:amd:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o lib/vs_fx.min.js -- lib/vs_fx.js",
+    "build:ui:amd:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o lib/vs_ui.min.js -- lib/vs_ui.js",
+    "build:amd:min": "npm run build:core:amd:min && npm run build:data:amd:min && npm run build:ui:amd:min && npm run build:av:amd:min && npm run build:fx:amd:min",
     "build:all": "npm run build:core && npm run build:data && npm run build:ui && npm run build:av && npm run build:fx",
-    "build": "npm run build:all && npm run build:all:min"
+    "build": "npm run build:all && npm run build:iief:min && npm run build:amd:min"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",

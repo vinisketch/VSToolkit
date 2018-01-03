@@ -7,6 +7,18 @@ export default {
       name: 'vs_data',
       globals: { vs_utils: 'vs_utils', vs_core: 'vs_core' },
       format: 'iife',
+    },
+    {
+      file: './es/vs_data.js',
+      name: 'vs_data',
+      globals: { vs_utils: 'vs_utils', vs_core: 'vs_core' },
+      format: 'es',
+    },
+    {
+      file: './lib/vs_data.js',
+      name: 'vs_data',
+      globals: { vs_utils: 'vs_utils', vs_core: 'vs_core' },
+      format: 'amd'
     }
   ],
   plugins: [

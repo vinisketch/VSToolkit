@@ -12,6 +12,28 @@ export default {
         vs_gesture: 'vs_gesture'
       },
       format: 'iife',
+    },
+    {
+      file: './es/vs_fx.js',
+      name: 'vs_fx',
+      globals: {
+        vs_utils: 'vs_utils',
+        vs_core: 'vs_core',
+        vs_ui: 'vs_ui',
+        vs_gesture: 'vs_gesture'
+      },
+      format: 'es',
+    },
+    {
+      file: './lib/vs_fx.js',
+      name: 'vs_fx',
+      globals: {
+        vs_utils: 'vs_utils',
+        vs_core: 'vs_core',
+        vs_ui: 'vs_ui',
+        vs_gesture: 'vs_gesture'
+      },
+      format: 'amd'
     }
   ],
   plugins: [

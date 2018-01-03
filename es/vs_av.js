@@ -1,54 +1,5 @@
-/** @license
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
-  contributors. All rights reserved
-  
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published
-  by the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU Lesser General Public License for more details.
-  
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-(function (window, undefined) {
-
-var document = window.document;
-
-
-/**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
-  contributors. All rights reserved
-  
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published
-  by the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU Lesser General Public License for more details.
-  
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
-*/
-
-/********************************************************************
-                   
-*********************************************************************/
-/** @private */
-var vs = window.vs,
-  util = vs.util,
-  core = vs.core,
-  ui = vs.ui,
-  av = vs.av;
-
+import vs_utils from 'vs_utils';
+import { EventSource, Task } from 'vs_core';
 
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
@@ -116,7 +67,7 @@ var vs = window.vs,
 */
 function Audio (config)
 {
-  this.parent = core.EventSource;
+  this.parent = EventSource;
   this.parent (config);
   this.constructor = Audio;
 }
@@ -184,7 +135,7 @@ Audio.prototype = {
   /**
    * @private
    */
-  _state : core.Task.STOPPED,
+  _state : Task.STOPPED,
 
   /*****************************************************************
    *
@@ -245,10 +196,10 @@ Audio.prototype = {
    */
   play : function ()
   {
-    if (this._state === core.Task.STARTED) { return false; }
+    if (this._state === Task.STARTED) { return false; }
     if (!this.__audio) { return; }
 
-    this._state = core.Task.STARTED;
+    this._state = Task.STARTED;
     this.__audio.play ();
   },
   
@@ -272,18 +223,18 @@ Audio.prototype = {
    */
   pause : function ()
   {
-    if (this._state === core.Task.PAUSED) { return false; }
+    if (this._state === Task.PAUSED) { return false; }
 
     if (!this.__audio) { return; }
     this.__audio.pause ();
-    this._state = core.Task.PAUSED;
+    this._state = Task.PAUSED;
 
     if (this.delegate && this.delegate.taskDidPause) {
       try {
         this.delegate.taskDidPause (this);
       }
       catch (e) {
-        if (e.stack) console.log (e.stack)
+        if (e.stack) console.log (e.stack);
         console.error (e);
       }
     }
@@ -296,21 +247,21 @@ Audio.prototype = {
    */
   stop : function ()
   {
-    if (this._state === core.Task.STOPPED) { return false; }
+    if (this._state === Task.STOPPED) { return false; }
 
     if (!this.__audio) { return; }
     if (window.Media)
     { this.__audio.stop (); }
     else
     { this.__audio.pause (); }
-    this._state = core.Task.STOPPED;
+    this._state = Task.STOPPED;
 
     if (this.delegate && this.delegate.taskDidStop) {
       try {
         this.delegate.taskDidStop (this);
       }
       catch (e) {
-        if (e.stack) console.log (e.stack)
+        if (e.stack) console.log (e.stack);
         console.error (e);
       }
     }
@@ -339,7 +290,7 @@ Audio.prototype = {
     delete (this.__audio);
     this.__audio = null;
 
-    core.EventSource.prototype.destructor.call (this);
+    EventSource.prototype.destructor.call (this);
   },
 
   /**
@@ -349,7 +300,7 @@ Audio.prototype = {
    */
   initComponent: function ()
   {
-    core.EventSource.prototype.initComponent.call (this);
+    EventSource.prototype.initComponent.call (this);
     
     this.__audio = new window.Audio ();
 
@@ -388,13 +339,13 @@ Audio.prototype = {
       break;
 
       case 'ended':
-        this._state = core.Task.STOPED;
+        this._state = Task.STOPED;
         if (this.delegate && this.delegate.taskDidEnd) {        
           try {
             this.delegate.taskDidEnd (this);
           }
           catch (e) {
-            if (e.stack) console.log (e.stack)
+            if (e.stack) console.log (e.stack);
             console.error (e);
           }
         }
@@ -402,13 +353,13 @@ Audio.prototype = {
       break;
 
       case 'pause':
-        this._state = core.Task.PAUSED;
+        this._state = Task.PAUSED;
         if (this.delegate && this.delegate.taskDidPause) {
           try {
             this.delegate.taskDidPause (this);
           }
           catch (e) {
-            if (e.stack) console.log (e.stack)
+            if (e.stack) console.log (e.stack);
             console.error (e);
           }
         }
@@ -417,7 +368,7 @@ Audio.prototype = {
 
       case 'playing':
       case 'play':
-        this._state = core.Task.STARTED;
+        this._state = Task.STARTED;
         this.propagate (event.type);
       break;
 
@@ -434,13 +385,13 @@ Audio.prototype = {
     }
   }
 };
-util.extendClass (Audio, core.EventSource);
+vs_utils.extendClass (Audio, EventSource);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (Audio, {
+vs_utils.defineClassProperties (Audio, {
 
   'src': {
   
@@ -453,7 +404,7 @@ util.defineClassProperties (Audio, {
      */
     set : function (v)
     {
-      if (!vs.util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       
       this._src = v, self = this;
       
@@ -461,13 +412,13 @@ util.defineClassProperties (Audio, {
       {
         function onSuccess ()
         {
-          self._state = core.Task.STOPED;
+          self._state = Task.STOPED;
           if (self.delegate && self.delegate.taskDidEnd) {
             try {
               self.delegate.taskDidEnd (self);
             }
             catch (e) {
-              if (e.stack) console.log (e.stack)
+              if (e.stack) console.log (e.stack);
               console.error (e);
             }
           }
@@ -565,7 +516,7 @@ util.defineClassProperties (Audio, {
      */
     set : function (v)
     {
-      if (!vs.util.isNumber (v)) { return; }
+      if (!vs_utils.isNumber (v)) { return; }
       if (v < 0 || v > 1) { return; }
       
       this._volume = v;
@@ -643,12 +594,6 @@ util.defineClassProperties (Audio, {
     },
   }
 });
-
-/********************************************************************
-                      Export
-*********************************************************************/
-/** @private */
-av.Audio = Audio;
 
 /**
   Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
@@ -787,7 +732,7 @@ Video.prototype = {
   /**
    *	@private
    */
-  _state : core.Task.STOPPED,
+  _state: Task.STOPPED,
 
   /*****************************************************************
    *
@@ -866,10 +811,10 @@ Video.prototype = {
    */
   play : function ()
   {
-    if (this._state === core.Task.STARTED) { return false; }
+    if (this._state === Task.STARTED) { return false; }
     if (!this.__video_node) { return; }
 
-    this._state = core.Task.STARTED;
+    this._state = Task.STARTED;
     this.__video_node.play ();
   },
   
@@ -895,18 +840,18 @@ Video.prototype = {
    */
   pause : function ()
   {
-    if (this._state === core.Task.PAUSED) { return false; }
+    if (this._state === Task.PAUSED) { return false; }
 
     if (!this.__video_node) { return; }
     this.__video_node.pause ();
-    this._state = core.Task.PAUSED;
+    this._state = Task.PAUSED;
 
     if (this.delegate && this.delegate.taskDidPause) {
       try {
         this.delegate.taskDidPause (this); 
       }
       catch (e) {
-        if (e.stack) console.log (e.stack)
+        if (e.stack) console.log (e.stack);
         console.error (e);
       }
     }
@@ -920,7 +865,7 @@ Video.prototype = {
    */
   stop : function ()
   {
-    if (this._state === core.Task.STOPPED) { return false; }
+    if (this._state === Task.STOPPED) { return false; }
 
     if (!this.__video_node) { return; }
     if (this.__video_node.stop) this.__video_node.stop ();
@@ -930,14 +875,14 @@ Video.prototype = {
       this.__video_node.currentTime = 0;
     }
     
-    this._state = core.Task.STOPPED;
+    this._state = Task.STOPPED;
 
     if (this.delegate && this.delegate.taskDidStop) {
       try {
         this.delegate.taskDidStop (this); 
       }
       catch (e) {
-        if (e.stack) console.log (e.stack)
+        if (e.stack) console.log (e.stack);
         console.error (e);
       }
     }
@@ -1013,13 +958,13 @@ Video.prototype = {
       break;
 
       case 'ended':
-        this._state = core.Task.STOPED;
+        this._state = Task.STOPED;
         if (this.delegate && this.delegate.taskDidEnd) {
           try {
             this.delegate.taskDidEnd (this); 
           }
           catch (e) {
-            if (e.stack) console.log (e.stack)
+            if (e.stack) console.log (e.stack);
             console.error (e);
           }
         }
@@ -1027,13 +972,13 @@ Video.prototype = {
       break;
 
       case 'pause':
-        this._state = core.Task.PAUSED;
+        this._state = Task.PAUSED;
         if (this.delegate && this.delegate.taskDidPause) {
           try {
             this.delegate.taskDidPause (this); 
           }
           catch (e) {
-            if (e.stack) console.log (e.stack)
+            if (e.stack) console.log (e.stack);
             console.error (e);
           }
         }
@@ -1042,7 +987,7 @@ Video.prototype = {
 
       case 'playing':
       case 'play':
-        this._state = core.Task.STARTED;
+        this._state = Task.STARTED;
         this.propagate (event.type);
       break;
 
@@ -1059,13 +1004,13 @@ Video.prototype = {
     }
   }
 };
-util.extendClass (Video, ui.View);
+vs_utils.extendClass (Video, ui.View);
 
 /********************************************************************
                   Define class properties
 ********************************************************************/
 
-util.defineClassProperties (Video, {
+vs_utils.defineClassProperties (Video, {
 
   'controls': {
   
@@ -1106,8 +1051,8 @@ util.defineClassProperties (Video, {
     set : function (v)
     {
       if (!v) { return; } 
-      if (!util.isArray (v) || v.length !== 2) { return; }
-      if (!util.isNumber (v[0]) || !util.isNumber(v[1])) { return; }
+      if (!vs_utils.isArray (v) || v.length !== 2) { return; }
+      if (!vs_utils.isNumber(v[0]) || !vs_utils.isNumber(v[1])) { return; }
   
       this._size [0] = v [0];
       this._size [1] = v [1];
@@ -1154,7 +1099,7 @@ util.defineClassProperties (Video, {
      */
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       
       this._src = v;
       
@@ -1184,7 +1129,7 @@ util.defineClassProperties (Video, {
      */
     set : function (v)
     {
-      if (!util.isString (v)) { return; }
+      if (!vs_utils.isString (v)) { return; }
       
       this._poster = v;
       
@@ -1271,7 +1216,7 @@ util.defineClassProperties (Video, {
      */
     set : function (v)
     {
-      if (!util.isNumber (v)) { return; }
+      if (!vs_utils.isNumber (v)) { return; }
       if (v < 0 || v > 1) { return; }
       
       this._volume = v;
@@ -1348,13 +1293,22 @@ util.defineClassProperties (Video, {
   }
 });
 
-/********************************************************************
-                      Export
-*********************************************************************/
-/** @private */
-av.Video = Video;
+/** @license
+  Copyright (C) 2009-2018. David Thevenin, ViniSketch SARL (c), and 
+  contributors. All rights reserved
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU Lesser General Public License as published
+  by the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+  GNU Lesser General Public License for more details.
+  
+  You should have received a copy of the GNU Lesser General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+*/
 
-Video.prototype.html_template = "<div class='vs_av_video'><video class='video_inner'></video></div>";
-
-
-})(window);
+export { Audio, Video };
