@@ -1,6 +1,6 @@
 import { DEFAULT_DATAFLOW } from './Dataflow';
 import { BaseIdentifiable, ObjectId } from './BaseIdentifiable';
-import { container } from "../../../VS_util/src/utils";
+import { container } from "vs_utils";
 
 /**
  *  The class Connector is Dataflow Connector. Show not be instanced.
