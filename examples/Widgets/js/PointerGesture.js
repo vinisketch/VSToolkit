@@ -1,7 +1,7 @@
 function initPointerGesture () {
 
   var view = buildPanel('demos_gesture');
-  view.layout = vs.ui.View.ABSOLUTE_LAYOUT;
+  view.layout = vs_ui.View.ABSOLUTE_LAYOUT;
 
   var scrollView = new MyView ({
     id:'myScroll',
@@ -13,7 +13,7 @@ function initPointerGesture () {
   var image_url = 
     "http://graphics8.nytimes.com/images/2009/06/11/business/11basics.600.jpg"
     
-  var image = new vs.ui.ImageView ({
+  var image = new vs_ui.ImageView ({
     src: image_url,
     size: [300, 200]
   }).init ();
@@ -23,38 +23,38 @@ function initPointerGesture () {
     id:'myScroll',
     size: [400, 300],
     position: [50, 350],
-    layout : vs.ui.View.ABSOLUTE_LAYOUT
+    layout : vs_ui.View.ABSOLUTE_LAYOUT
   }).init ();
   view.add (scrollView);
   scrollView.setStyle ('background', 'green');
   
-  button = new vs.ui.Button ({
+  button = new vs_ui.Button ({
     position:[100, 100], text: "hello",
-    type: vs.ui.Button.NAVIGATION_TYPE,
-    style: vs.ui.Button.BLACK_STYLE
+    type: vs_ui.Button.NAVIGATION_TYPE,
+    style: vs_ui.Button.BLACK_STYLE
   }).init ();
   scrollView.add (button);
 
-  button = new vs.ui.Button ({
+  button = new vs_ui.Button ({
     position:[100, 150], text: "Back",
-    type: vs.ui.Button.NAVIGATION_BACK_TYPE,
-    style: vs.ui.Button.BLACK_STYLE
+    type: vs_ui.Button.NAVIGATION_BACK_TYPE,
+    style: vs_ui.Button.BLACK_STYLE
   }).init ();
   scrollView.add (button);
 
-  button = new vs.ui.Button ({
+  button = new vs_ui.Button ({
     position:[200, 150], text: "Forward",
-    type: vs.ui.Button.NAVIGATION_FORWARD_TYPE,
-    style: vs.ui.Button.BLACK_STYLE
+    type: vs_ui.Button.NAVIGATION_FORWARD_TYPE,
+    style: vs_ui.Button.BLACK_STYLE
   }).init ();
   scrollView.add (button);
   
   return view;
 };
 
-var MyView = vs.core.createClass ({
+var MyView = vs_core.createClass ({
 
-  parent: vs.ui.View,
+  parent: vs_ui.View,
   
   constructor : function (config)
   {
@@ -67,9 +67,9 @@ var MyView = vs.core.createClass ({
   {
     this._super ();
 
-    this.addPointerRecognizer (new vs.ui.DragRecognizer (this));
-    this.addPointerRecognizer (new vs.ui.PinchRecognizer (this));
-    this.addPointerRecognizer (new vs.ui.RotationRecognizer (this));
+    this.addPointerRecognizer (new vs_ui.DragRecognizer (this));
+    this.addPointerRecognizer (new vs_ui.PinchRecognizer (this));
+    this.addPointerRecognizer (new vs_ui.RotationRecognizer (this));
   },
   
   didPinchChange : function (scale, e) {
@@ -135,7 +135,7 @@ var MyView = vs.core.createClass ({
         this._debugs [pointer.identifier] = div;
         document.body.appendChild (div, this.view);
       }
-      vs.util.setElementPos (div, pointer.pageX - 15, pointer.pageY - 15);
+      vs_utils.setElementPos (div, pointer.pageX - 15, pointer.pageY - 15);
       _pointers_ [pointer.identifier] = true;
      
       x += pointer.pageX;
@@ -150,8 +150,8 @@ var MyView = vs.core.createClass ({
       this._debugs ['centroid'] = centroid;
       document.body.appendChild (centroid, this.view);
     }
-    vs.util.setElementPos (centroid, x / nb_pointer - 10, y / nb_pointer - 10);
-    if (vs.util.isNumber (angle)) centroid.innerHTML = Math.floor (angle);
+    vs_utils.setElementPos (centroid, x / nb_pointer - 10, y / nb_pointer - 10);
+    if (vs_utils.isNumber (angle)) centroid.innerHTML = Math.floor (angle);
     else centroid.innerHTML = "";
     
     // remove old pointers trace

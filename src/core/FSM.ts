@@ -1,30 +1,29 @@
-/**
-  Copyright (C) 2009-2012. David Thevenin, ViniSketch SARL (c), and 
-  contributors. All rights reserved
-  
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU Lesser General Public License as published
-  by the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
-  
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU Lesser General Public License for more details.
-  
-  You should have received a copy of the GNU Lesser General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
- OTHER DEALINGS IN THE SOFTWARE.
-*/
-
-import { extendClass, defineClassProperty, clone } from 'vs_utils';
+import { isFunction, isString } from 'vs_utils';
 import { createId } from './Core';
-import {VSEventTarget} from "./event";
+import { EventSource } from "./event";
+import Component from "./Component";
+import { Action } from "./Action";
+
+interface Arc {
+  to: string;
+  on: string;
+  output: string;
+}
+
+export interface Transition extends Arc {
+  from: string;
+}
+
+export class State {
+  transitionEvents = new Map<string, Arc>();
+}
+
+type InputInfo = [string, string, EventSource];
 
 /**
  *  The Fsm class
  *
- *  @extends vs.core.EventSource
+ *  @extends core.EventSource
  *  @class
  *  Fsm element defines a deterministic Finite-State-Machine
  *  (aka Finite-State Automaton). A fsn is an automaton such as:
@@ -58,7 +57,7 @@ import {VSEventTarget} from "./event";
  *  lexem. For that, use the method Fsm.fsmNotify (String).<br /><br />
  *
  *  Automatons can have outputs associated to their transitions (aka Mealy
- *  machine) or states (aka Moore machine, not yet implemented). At that time 
+ *  machine) or states (aka Moore machine, not yet implemented). At that time
  *  the fsm emit event defined by an string (the output lexem) or call an
  *  action associated to the output lexem.
  *  The event can be received by setting a Binding on this fsm.
@@ -72,8 +71,8 @@ import {VSEventTarget} from "./event";
  *  Simple example to create a automata:
  *  @example
  *
- *   var my_fsm = new vs.core.Fsm (object);
- *   // States declaration 
+ *   var my_fsm = new core.Fsm (object);
+ *   // States declaration
  *   my_fsm.addState ("1");
  *   my_fsm.addState ("2");
  *   // Input lexems declaration
@@ -89,7 +88,7 @@ import {VSEventTarget} from "./event";
  *   my_fsm.setInitialState ("1");
  *   // activate the FSM
  *   my_fsm.activate ();
- * 
+ *
  *   // event associations
  *   // "a" will be generated after the button selection
  *   my_fsm.setInput ("a", aButton, 'select');
@@ -97,108 +96,102 @@ import {VSEventTarget} from "./event";
  *  @author David Thevenin
  *
  *  @constructor
- *   Creates a new vs.core.Fsm.
+ *   Creates a new core.Fsm.
  *
- * @name vs.core.Fsm
  *
- * @param {vs.core.Object} owner the Object using this Fsm [mandatory]
+ * @param {core.Object} owner the Object using this Fsm [mandatory]
  */
-export class Fsm extends VSEventTarget {
+export class Fsm extends Component {
 
-  constructor(owner) {
-    this.parent (createId ());
+  #listOfState = new Map<string, State>();   ///< List of fsm state : Q
+  #listInput = new Set<string>();   ///< List of input lexem (alphabet) : I
+  #listOutput = new Set<string>();  ///< List of output lexem (alphabet) : O
+
+  #initialState = "";  ///< initial state name
+  #currentState = "";  ///< current state name
+
+  #inputs = new Map<EventSource, InputInfo[]>();
+  #outputAction = new Map<string, string | Function>();
+
+  constructor(private owner: Component) {
+    super(createId());
     this.constructor = Fsm;
-
-    this.owner = owner;
-
-    this._list_of_state = {};   ///< List of fsm state : Q
-    this._list_input = new Array ();   ///< List of input lexem (alphabet) : I
-    this._list_output = new Array ();  ///< List of output lexem (alphabet) : O
-
-    this._initial_state = "";  ///< initial state name
-    this._current_state = "";  ///< current state name
-
-    this._inputs = {};
-    this._output_action = {};
   }
 
+  /**
+   *   Define the initiale state
+   *   Generate an exception if the state was not already defined
+   *
+   *   @name core.Fsm#initialState
+   *   @param {string} stateId the state
+   */
+  set initialState(stateId: string) {
+    if (!stateId) {
+      this.#initialState = undefined;
+      return;
+    }
+
+    if (!this.existState(stateId)) {
+      return;
+    }
+
+    // set initial state and go to it
+    this.#initialState = stateId;
+  }
 
   /**
-   * @protected
-   * @function
+   * @ignore
    */
-  destructor : function ()
-  {
-    delete (this._list_of_state);
-    
-    this.owner = undefined;
-  
-    delete (this._list_of_state);
-    delete (this._list_input);
-    delete (this._list_output);
-    delete (this._inputs);
-    delete (this._output_action);
-    
-    EventSource.prototype.destructor.call (this);
-  },
+  get initialState(): string {
+    return this.#initialState;
+  }
 
   /*****************************************************************
-  *     Generic function
-  ****************************************************************/
+   *     Generic function
+   ****************************************************************/
 
   /**
-   * @private
-   * @function
-   * 
-   * @param {vs.core.Object} obj The cloned object
+   * @priva
+   *
+   * @param {core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
-  _clone : function (obj, cloned_map)
-  {
-    EventSource.prototype._clone.call (this, obj, cloned_map);
+  // _clone(obj, cloned_map) {
+  //   super._clone(obj, cloned_map);
+  //
+  //   obj.owner = obj.__config__.owner;
+  //   obj.#currentState = "";
+  //
+  //   obj.#inputs = {};
+  //   obj._output_action = {};
+  //
+  //   // XXX TODO WARNING il faut refaire in inputs en outputs.
+  // }
 
-    obj.owner = obj.__config__.owner;
-    obj._current_state = "";
-    
-    obj._inputs = {};
-    obj._output_action = {};
-    
-    // XXX TODO WARNING il faut refaire in inputs en outputs.
-  },
-  
   /**
    *  Full facility constructor that takes specification of the fsm as
    *  parameter.
    *  transitions is an array of object {from, to, on, output}
-   *
-   * @name vs.core.Fsm#initWithData 
-   * @function
    *
    * @param {Array} states is an array of state
    * @param {Array} inputs is an array of input
    * @param {Array} outputs is an array of output
    * @param {Array} transitions is an array of object {from, to, on, output}
    */
-  initWithData : function (states, inputs, outputs, transitions)
-  {
-    if (!states || !inputs || !outputs || !transitions) { return; }
-    
-    for (var i = 0; i < states.length; i++)
-    { this.addState (states [i]); }
-    
-    for (var i = 0; i < inputs.length; i++)
-    { this.addInput (inputs [i]); }
-    
-    for (var i = 0; i < outputs.length; i++)
-    { this.addOutput (outputs [i]); }
-    
-    for (var i = 0; i < transitions.length; i++)
-    {
-      this.addTransition (transitions [i].from, transitions [i].to,
-        transitions [i].on, transitions [i].output);
+  initWithData(states: any[], inputs: any[], outputs: any[], transitions: Transition[]) {
+    if (!states || !inputs || !outputs || !transitions) {
+      return;
     }
-  },
-  
+
+    states.forEach(state => this.addState(state));
+    inputs.forEach(input => this.addInput(input));
+    outputs.forEach(output => this.addOutput(output));
+    transitions.forEach(transition => this.addTransition(
+      transition.from, transition.to,
+      transition.on, transition.output,
+    ));
+  }
+
   /**
    *  Full facility constructor that takes state x state matrix of the fsm as
    *  parameter:
@@ -225,391 +218,320 @@ export class Fsm extends VSEventTarget {
    *
    *  fsm = new Fsm (object);
    *  fsm.initWithMatrix (matrix);
-   *
-   * @name vs.core.Fsm#initWithMatrix 
-   * @function
    * @param {Array} matrix
    */
-  initWithMatrix : function (matrix)
-  {
+  initWithMatrix(matrix: string[][]) {
     // add state
-    for (var i = 1; i < matrix[0].length; i++)
-    { this.addState (matrix[0] [i]); }
-    
+    for (var i = 1; i < matrix[0].length; i++) {
+      this.addState(matrix[0] [i]);
+    }
+
     // add transition (add input / output)
-    for (var i = 1; i < matrix.length; i++)
-    {
+    for (var i = 1; i < matrix.length; i++) {
       var from = matrix[i][0]
 
-      for (var j = 1; j < matrix[0].length; j++)
-      {
+      for (var j = 1; j < matrix[0].length; j++) {
         var to = matrix[0][j];
-        var i_o =  matrix [i][j];
-        if (i_o)
-        {
-          var io_a = i_o.split ('/');
-          if (io_a[0]) this.addInput (io_a[0]);
-          if (io_a[1]) this.addOutput (io_a[1]);
-          
-          this.addTransition (from, to, io_a[0], io_a[1]);
+        var i_o = matrix [i][j];
+        if (i_o) {
+          var io_a = i_o.split('/');
+          if (io_a[0]) this.addInput(io_a[0]);
+          if (io_a[1]) this.addOutput(io_a[1]);
+
+          this.addTransition(from, to, io_a[0], io_a[1]);
         }
       }
     }
-  },
-  
+  }
+
   /*******************************************
-              Managing inputs
-  *******************************************/
-  
+   Managing inputs
+   *******************************************/
+
   /**
    *  Add an imput to the fsm
-   *  This input will be add to the list of input alphabet.
+   *  This input will be added to the list of input alphabet.
    *
-   * @name vs.core.Fsm#addInput 
-   * @function
-   *
-   * @param {string} input the new word that will be add to the alphabet
+   * @param {string} input the new word that will be added to the alphabet
    */
-  addInput : function (input)
-  {
-    if (!input || this.existInput (input)) { return; }
-    
-    this._list_input.push (input);
-  },
-  
+  addInput(input: string) {
+    if (!input || this.existInput(input)) {
+      return;
+    }
+
+    this.#listInput.add(input);
+  }
+
   /**
    *  Return the input alphabet of the fsm
    *
-   * @name vs.core.Fsm#getInputs 
-   * @function
-   *
    * @return {Array} the alphabet as a set of String
    */
-  getInputs : function ()
-  {
-    return this._list_input.slice ();
-  },
+  getInputs(): Iterator<string> {
+    return this.#listInput.values();
+  }
 
   /**
    *  Test if a word in inlcude in imput alphabet
    *
-   * @name vs.core.Fsm#existInput 
-   * @function
-   *
    * @param {string} input the input
    * @return true is exists
    */
-  existInput : function (input)
-  {
-    if (!input) { return; }
-    
-    return (this._list_input.findItem (input) > -1)
-  },
-    
+  existInput(input: string): boolean {
+    return this.#listInput.has(input);
+  }
+
   /*******************************************
-              Managing outputs
-  *******************************************/
+   Managing outputs
+   *******************************************/
   /**
    *  Add an ouput to the fsm
-   *  This ouput will be add to the list of ouput alphabet.
+   *  This ouput will be added to the list of ouput alphabet.
    *
-   * @name vs.core.Fsm#addOutput 
-   * @function
-   *
-   * @param {string} output the new word that will be add to the alphabet
+   * @param {string} output the new word that will be added to the alphabet
    */
-  addOutput : function (output)
-  {
-    if (!output || this.existOutput (output)) { return; }
-    
-    this._list_output.push (output);
-  },
+  addOutput(output: string) {
+    if (!output || this.existOutput(output)) {
+      return;
+    }
+
+    this.#listOutput.add(output);
+  }
 
   /**
    *  Return the ouput alphabet of the fsm
    *
-   * @name vs.core.Fsm#getOutputs 
-   * @function
-   *
    * @return the alphanet as a set of String
    */
-  getOutputs : function ()
-  {
-    return this._list_output.slice ();
-  },
+  getOutputs(): IterableIterator<string> {
+    return this.#listOutput.values();
+  }
 
   /**
    *  Test if a word in include in ouput alphabet
    *
-   * @name vs.core.Fsm#existOutput 
-   * @function
-   *
    * @param {string} output the output
    * @return true is exists
    */
-  existOutput : function (output)
-  {
-    if (!output) { return; }
-    
-    return (this._list_output.findItem (output) > -1)
-  },
-  
+  existOutput(output: string): boolean {
+    return this.#listOutput.has(output)
+  }
+
   /*******************************************
-              Managing States
-  *******************************************/
+   Managing States
+   *******************************************/
   /**
    *  Add a State to the fsm
    *
-   * @name vs.core.Fsm#addState 
-   * @function
-   *
    * @param {string} name the new state name
    */
-  addState : function (name)
-  {
-    if (!name || this.existState (name)) { return false; }
-    
-    var state = {};
-    state.transitionEvents = {};
-    
-    this._list_of_state [name] = state;
+  addState(name: string): boolean {
+    if (!name || this.existState(name)) {
+      return false;
+    }
+
+    const state = new State();
+
+    this.#listOfState.set(name, state);
     return true;
-  },
+  }
 
   /**
    *  Remove a State from the fsm
    *
-   * @name vs.core.Fsm#removeState 
-   * @function
-   *
    * @param {string} name the new state name
    */
-  removeState : function (name)
-  {
-    if (!name || !this.existState (name)) { return false; }
-        
-    delete (this._list_of_state [name]);
+  removeState(name: string): boolean {
+    if (!name || !this.existState(name)) {
+      return false;
+    }
+
+    this.#listOfState.delete(name);
     return true;
-  },
+  }
 
   /**
    *  Rename a State of the fsm
    *
-   * @name vs.core.Fsm#renameState 
-   * @function
-   *
-   * @param {string} old_name the old state name
-   * @param {string} new_name the new state name
+   * @param {string} oldName the old state name
+   * @param {string} newName the new state name
    */
-  renameState : function (old_name, new_name)
-  {
-    if (!old_name || !this.existState (old_name)) { return false; }
-    if (!new_name || this.existState (new_name)) { return false; }
-    
-    // change state name
-    this._list_of_state [new_name] = this._list_of_state [old_name];
-    delete (this._list_of_state [old_name]);
-    
-    // rename initial state if need
-    if (this._initial_state === old_name)
-    {
-      this._initial_state = new_name;
+  renameState(oldName: string, newName: string): boolean {
+    if (!oldName || !this.existState(oldName) || !newName || this.existState(newName)) {
+      return false;
     }
-    
+
+    // change state name
+    this.#listOfState.set(newName, this.#listOfState.get(oldName));
+    this.#listOfState.delete(oldName)
+
+    // rename initial state if need
+    if (this.#initialState === oldName) {
+      this.#initialState = newName;
+    }
+
     // change all transition to state with the new name
-    for (var state_id in this._list_of_state)
-    {
-      var state = this._list_of_state [state_id];
-      if (state === null) { continue; }
-      
-      for (var input in state.transitionEvents)
-      {
-        var t = state.transitionEvents [input];
-        
-        if (t.to === old_name)
-        {
-          t.to = new_name;
+    for (const state of this.#listOfState.values()) {
+      for (const t of state?.transitionEvents.values()) {
+        if (t.to === oldName) {
+          t.to = newName;
         }
       }
     }
-    
+
     return true;
-  },
+  }
 
   /**
    *  Get list of fsm State
    *
-   * @name vs.core.Fsm#getListState 
-   * @function
-   *
    * @return {Array} list of states
    */
-  getListState : function ()
-  {
-    var result = [];
-    
-    for (var key in this._list_of_state)
-    {
-      result.push (key);
-    }
-    return result;
-  },
+  getListState(): IterableIterator<State> {
+    return this.#listOfState.values();
+  }
 
   /**
    *  Test existance of a state
    *
-   * @name vs.core.Fsm#existState 
-   * @function
-   *
    * @param {string} state the state
    * @return true if state exists
    */
-  existState : function (state)
-  {
-    if (!state) { return false; }
-    
-    if (this._list_of_state [state]) { return true; }
-    return false;
-  },
-    
+  existState(state: string): boolean {
+    return this.#listOfState.has(state);
+  }
+
   /**
    *  Add a new transition from the state "from" to the state "to".
    *  The state from have to be already specified, otherwise, it will
-   *  generate a exception.
+   *  generate an exception.
    *
-   * @name vs.core.Fsm#addTransition 
-   * @function
    *
    * @param {string} from State from
    * @param {string} to State to
    * @param {string} on input lexem which cause the crossing of transition
-   * @param {string} ouput optional ouput lexem that will be produce by the 
+   * @param output
    *    crossing
    */
-  addTransition : function (from, to, on, output)
-  {
-    if (!from || !this.existState (from)) { return; }
-    if (!to || !this.existState (to)) { return; }
-    if (!on || !this.existInput (on)) { return; }
+  addTransition(from: string, to: string, on: string, output: string) {
+    if (!from || !this.existState(from)) {
+      return;
+    }
+    if (!to || !this.existState(to)) {
+      return;
+    }
+    if (!on || !this.existInput(on)) {
+      return;
+    }
 
-    var transition = {
+    const arc: Arc = {
       on: on,
       to: to,
-      output: output
+      output: output,
     };
-    this._list_of_state [from].transitionEvents [on] = transition;
-  },
+    this.#listOfState.get(from)!.transitionEvents.set(on, arc);
+  }
 
   /**
    *  Remove a transition from the state "from".
    *
-   * @name vs.core.Fsm#removeTransitionFrom 
-   * @function
-   *
    * @param {string} from State from
    * @param {string} on input lexem which cause the crossing of transition
    */
-  removeTransitionFrom : function (from, on)
-  {
-    if (!from || !this.existState (from)) { return; }
-    if (!on || !this.existInput (on)) { return; }
-
-    var state = this._list_of_state [from]
-    if (state.transitionEvents [on])
-    {
-      delete (state.transitionEvents [on]);
+  removeTransitionFrom(from: string, on: string) {
+    if (!from || !this.existState(from) || !on || !this.existInput(on)) {
+      return;
     }
-  },
+
+    const state = this.#listOfState.get(from);
+    state?.transitionEvents.delete(on);
+  }
 
   /**
    *  Remove a transition to the state "to".
    *
-   * @name vs.core.Fsm#removeTransitionTo 
-   * @function
-   *
    * @param {string} tp State tp
    * @param {string} on input lexem which cause the crossing of transition
    */
-  removeTransitionTo : function (to, on)
-  {
-    if (!to || !this.existState (to)) { return; }
-    if (!on || !this.existInput (on)) { return; }
-    
-    
-    for (var from in this._list_of_state)
-    {
-      var state = this._list_of_state [from];
-      var t = state.transitionEvents [on];
-      if (!t || t.to !== to) { continue; }
-      
-      delete (state.transitionEvents [on]);
+  removeTransitionTo(to: string, on: string) {
+    if (!to || !this.existState(to)) {
+      return;
     }
-  },
+    if (!on || !this.existInput(on)) {
+      return;
+    }
+
+    for (const from in this.#listOfState) {
+      const state = this.#listOfState.get(from);
+      const t = state.transitionEvents.get(on);
+      if (!t || t.to !== to) {
+        continue;
+      }
+
+      state.transitionEvents.delete(on);
+    }
+  }
 
   /**
    *  Return the list of transitions to the state set
    *
-   * @name vs.core.Fsm#getTransionsToState 
-   * @function
-   *
    * @param {string} to State to
    * @return {Array} list of transitions
    */
-  getTransionsToState : function (to)
-  {
-    if (!this.existState (to)) { return; }
-    
-    var result = [];
-    
-    for (var state_id in this._list_of_state)
-    {
-      var state = this._list_of_state [state_id];
-      if (state === null) { continue; }
-      
-      for (var input in state.transitionEvents)
-      {
-        var t = state.transitionEvents [input];
-        
-        if (t.to !== to) { continue; }
-        
-        var tt = clone (t);
-        tt.from = state_id;
-        result.push (tt);
+  getTransitionsToState(to: string): Transition[] {
+    if (!this.existState(to)) {
+      return [];
+    }
+
+    const result: Transition[] = [];
+
+    for (const [stateId, state] of this.#listOfState.entries()) {
+      for (const t of state?.transitionEvents.values()) {
+        if (t.to !== to) {
+          continue;
+        }
+
+        const tt: Transition = {
+          ...t,
+          from: stateId,
+        }
+        result.push(tt);
       }
     }
-    
+
     return result;
-  },
+  }
 
   /**
    *  Return the list of transitions from the state set
    *
-   * @name vs.core.Fsm#getTransionsFromState 
-   * @function
-   *
    * @param {string} from State from
    * @return {Array} list of transitions
    */
-  getTransionsFromState : function (from)
-  {
-    if (!this.existState (from)) { return; }
-    
-    var result = [];
-    
-    var state = this._list_of_state [from];
-    if (state === null) { return null; }
-    
-    for (var inputs in state.transitionEvents)
-    {
-      var t = state.transitionEvents [inputs];
-      
-      var tt = clone (t);
-      tt.from = from;
-      result.push (tt);
+  getTransitionsFromState(from: string): Transition[] | undefined {
+    if (!this.existState(from)) {
+      return;
     }
-    
+
+    const result: Transition[] = [];
+
+    const state = this.#listOfState.get(from);
+    if (!state) {
+      return undefined;
+    }
+
+    for (const input in state.transitionEvents) {
+      const t = state.transitionEvents.get(input);
+
+      const tt: Transition = {
+        ...t,
+        from: from,
+      }
+      result.push(tt);
+    }
+
     return result;
-  },
+  }
 
   /**
    *  Switch two states of the fsm
@@ -617,102 +539,99 @@ export class Fsm extends VSEventTarget {
    *  if states have transitions from or to them,
    *  the function reconfigures the transitions.
    *
-   * @name vs.core.Fsm#switchStates 
-   * @function
    *
-   * @param {string} state_id1 State 
-   * @param {string} state_id2 State 
+   * @param {string} stateId1 State
+   * @param {string} stateId2 State
    */
-  switchStates : function (state_id1, state_id2)
-  {
-    if (state_id1 === state_id2) { return; }
-   
-    if (!this.existState (state_id1) || !this.existState (state_id2))
-    { return; }
-  
+  switchStates(stateId1: string, stateId2: string) {
+    if (stateId1 === stateId2) {
+      return;
+    }
+
+    if (!this.existState(stateId1) || !this.existState(stateId2)) {
+      return;
+    }
+
     // 1) get all transitions coming from arriving to state 1 and 2
     // 1.1) get all transitions
-    var t_to_state1 = this.getTransionsToState (state_id1);
-    var t_from_state1 = this.getTransionsFromState (state_id1);
-    var t_to_state2 = this.getTransionsToState (state_id2);
-    var t_from_state2 = this.getTransionsFromState (state_id2);
-    
-    // 1.2) remove doublons in case state_id1 is connected to state_id2
+    const t_to_state1 = this.getTransitionsToState(stateId1);
+    const t_from_state1 = this.getTransitionsFromState(stateId1);
+    const t_to_state2 = this.getTransitionsToState(stateId2);
+    const t_from_state2 = this.getTransitionsFromState(stateId2);
+
+    // 1.2) remove duplicate in case stateId1 is connected to stateId2
     //   and vise versa.
-    for (var i = 0; i < t_to_state1.length;)
-    {
-      var t = t_to_state1 [i];
-      if (t.from === state_id2) { t_to_state1.remove (t); }
-      else { i++; }
+    for (let i = 0; i < t_to_state1.length;) {
+      const t = t_to_state1 [i];
+      if (t.from === stateId2) {
+        t_to_state1.splice(i, 1);
+      } else {
+        i++;
+      }
     }
-    for (var i = 0; i < t_from_state1.length;)
-    {
-      var t = t_from_state1 [i];
-      if (t.to === state_id2) { t_from_state1.remove (t); }
-      else { i++; }
+    for (let i = 0; i < t_from_state1.length;) {
+      const t = t_from_state1 [i];
+      if (t.to === stateId2) {
+        t_from_state1.splice(i, 1);
+      } else {
+        i++;
+      }
     }
 
     // 2) remove all these transitions in order to reconfigure the fsm
-    for (var i = 0; i < t_to_state1.length; i ++)
-    {
-      var t = t_to_state1 [i];
-      this.removeTransitionFrom (t.from, t.on);
+    for (let i = 0; i < t_to_state1.length; i++) {
+      const t = t_to_state1 [i];
+      this.removeTransitionFrom(t.from, t.on);
     }
-    for (var i = 0; i < t_from_state1.length; i ++)
-    {
-      var t = t_from_state1 [i];
-      this.removeTransitionFrom (t.from, t.on);
+    for (let i = 0; i < t_from_state1.length; i++) {
+      const t = t_from_state1 [i];
+      this.removeTransitionFrom(t.from, t.on);
     }
-    for (var i = 0; i < t_to_state2.length; i ++)
-    {
-      var t = t_to_state2 [i];
-      this.removeTransitionFrom (t.from, t.on);
+    for (let i = 0; i < t_to_state2.length; i++) {
+      const t = t_to_state2 [i];
+      this.removeTransitionFrom(t.from, t.on);
     }
-    for (var i = 0; i < t_from_state2.length; i ++)
-    {
-      var t = t_from_state2 [i];
-      this.removeTransitionFrom (t.from, t.on);
+    for (let i = 0; i < t_from_state2.length; i++) {
+      const t = t_from_state2 [i];
+      this.removeTransitionFrom(t.from, t.on);
     }
-    
+
     // 3) reconfigure the fsm
-    for (var i = 0; i < t_to_state1.length; i ++)
-    {
-      var t = t_to_state1 [i];
-      
-      var from = (t.from === state_id2)?state_id1:t.from;
-      this.addTransition (from, state_id2, t.on, t.output);
-    }
-    for (var i = 0; i < t_from_state1.length; i ++)
-    {
-      var t = t_from_state1 [i];
+    for (let i = 0; i < t_to_state1.length; i++) {
+      const t = t_to_state1 [i];
 
-      var to = (t.from === state_id2)?state_id1:t.to;
-      this.addTransition (state_id2, to, t.on, t.output);
+      const from = (t.from === stateId2) ? stateId1 : t.from;
+      this.addTransition(from, stateId2, t.on, t.output);
     }
-    for (var i = 0; i < t_to_state2.length; i ++)
-    {
-      var t = t_to_state2 [i];
+    for (let i = 0; i < t_from_state1.length; i++) {
+      const t = t_from_state1 [i];
 
-      var from = (t.from === state_id1)?state_id2:t.from;
-      this.addTransition (from, state_id1, t.on, t.output);
+      const to = (t.from === stateId2) ? stateId1 : t.to;
+      this.addTransition(stateId2, to, t.on, t.output);
     }
-    for (var i = 0; i < t_from_state2.length; i ++)
-    {
-      var t = t_from_state2 [i];
+    for (let i = 0; i < t_to_state2.length; i++) {
+      const t = t_to_state2 [i];
 
-      var to = (t.to === state_id1)?state_id2:t.to;
-      this.addTransition (state_id1, to, t.on, t.output);
+      const from = (t.from === stateId1) ? stateId2 : t.from;
+      this.addTransition(from, stateId1, t.on, t.output);
     }
-    
-    if (this._initial_state === state_id1)
-    { this._initial_state = state_id2; }
-    else if (this._initial_state === state_id2)
-    { this._initial_state = state_id1; }
-  },
-  
-/*******************************************
-            Managing Call
-*******************************************/
+    for (let i = 0; i < t_from_state2.length; i++) {
+      const t = t_from_state2 [i];
+
+      const to = (t.to === stateId1) ? stateId2 : t.to;
+      this.addTransition(stateId1, to, t.on, t.output);
+    }
+
+    if (this.#initialState === stateId1) {
+      this.#initialState = stateId2;
+    } else if (this.#initialState === stateId2) {
+      this.#initialState = stateId1;
+    }
+  }
+
+  /*******************************************
+   Managing Call
+   *******************************************/
   /**
    *   Build a event binding to an input lexem.
    *  To control the fsm and make it passes trought a transition, the
@@ -723,35 +642,31 @@ export class Fsm extends VSEventTarget {
    *  This method takes as parameter a pointer on the event source and the
    *  specification of the event.
    *
-   * @name vs.core.Fsm#setInput 
-   * @function
    *
    * @param {string} on input lexem on which is associated the event
-   * @param {vs.core.EventSource} src the object source of the event
-   * @param {string} spec the name of the event
+   * @param {core.EventSource} src the object source of the event
+   * @param eventSpec
    */
-  setInput : function (on, src, event_spec)
-  {
-    if (!on || !src || !event_spec) { return; }
-    
-    if (src.bind)
-    {
-      src.bind (event_spec, this);
+  setInput(on: string, src: EventSource, eventSpec: string) {
+    if (!on || !src || !eventSpec) {
+      return;
     }
-    else if (src.addEventListener)
-    {
-      this.nodeBind (src, event_spec);
-    }
-    else { return; }
 
-    var a = this._inputs [src];
-    if (!a)
-    {
-      a = [];
-      this._inputs [src] = a;
+    if (src.bind) {
+      src.bind(eventSpec, this, this.handleEvent);
+    // } else if (src.addEventListener) {
+    //   this.nodeBind(src, eventSpec);
+    } else {
+      return;
     }
-    a.push ([event_spec, on, src]);
-  },
+
+    let a = this.#inputs.get(src);
+    if (!a) {
+      a = [];
+      this.#inputs.set(src, a);
+    }
+    a.push([eventSpec, on, src]);
+  }
 
 
   /**
@@ -763,242 +678,184 @@ export class Fsm extends VSEventTarget {
    *  This method takes as parameter a pointer on an action object and a
    *  optional user data.
    *
-   * @name vs.core.Fsm#setOutput 
-   * @function
    *
    * @param {string}output output lexem on which is associated the action
    * @param {function|string} action the function's name a function of the
    *        fsm owner
    */
-  setOutput : function (output, action)
-  {
-    if (!output || !action) { return; }
-    
-    this._output_action [output] = action;
-  },
-  
-/*******************************************
-          Event managing methodes
-*******************************************/
+  setOutput(output: string, action: string | Function): void {
+    if (!output || !action) {
+      return;
+    }
+
+    this.#outputAction.set(output, action);
+  }
+
+  /*******************************************
+   Event managing methodes
+   *******************************************/
 
   /**
    *  Activate the FSM which start by the initial state.
    *  <p>
    *  Return false if no initial state is specified.
    *
-   * @name vs.core.Fsm#activate 
-   * @function
    *
    * @return {boolean} is activated
    */
-  activate : function ()
-  {
-    if (!this._initial_state || !this._list_of_state [this._initial_state])
-    { return false; }
-    
-    this.goTo (this._initial_state);
+  activate(): boolean {
+    if (!this.#initialState || !this.#listOfState.has(this.#initialState)) {
+      return false;
+    }
+
+    this.goTo(this.#initialState);
     return true;
-  },
-  
+  }
+
   /**
    *  Private method use by the fsm to cross a transition.
    *  @note for the moment only one ouput lexem can be generation when
    *  crossing a transition
    *  @private
    *
-   * @name vs.core.Fsm#goTo 
-   * @function
    *
    * @param {String} id_sate the id of target state.
    * @param {String} output
    * @param {Object} event the event
    * @return {Boolean} is the transition was reached
    */
-  goTo : function (state_id, output, event)
-  {
+  goTo(stateId: string, output?: string, event?: Event) {
     // manage output
     // TODO WARNING
-    var state = undefined;
-    
-    if (!this.existState (state_id))
-    { return false; }
-    
+    let state;
+
+    if (!this.existState(stateId)) {
+      return false;
+    }
+
     // hide old states view
-    if (this._current_state)
-    {
-      state = this._list_of_state [this._current_state];
+    if (this.#currentState) {
+      state = this.#listOfState.get(this.#currentState);
     }
-    
+
     ///
-    this._current_state = state_id;
-    
-    if (output && this._output_action [output])
-    {
-      var clb = this._output_action [output];
-      if (isFunction (clb))
-      {
-        clb.call (this.owner, event);
-      }
-      else if (isString (clb))
-      {
-        this.owner [this._output_action [output]] (event);
+    this.#currentState = stateId;
+
+    if (output && this.#outputAction.get(output)) {
+      const clb = this.#outputAction.get(output);
+      if (isFunction(clb)) {
+        clb.call(this.owner, event);
+      } else if (isString(clb)) {
+        // @ts-ignore
+        const func = this.owner[clb];
+        if (isFunction(func)) {
+          func(event);
+        }
       }
     }
-    
+
     return true;
-  },
-  
+  }
+
   /**
    *  Clear the fsm.
    *  All state, event and binding are deleted
    *
-   * @name vs.core.Fsm#clear
-   * @function
    */
-  clear : function ()
-  {
-    this._list_of_state = {};
-    
-    delete (this._list_input);
-    delete (this._list_output);
-    
-    this._list_input = new Array ();
-    this._list_output = new Array ();
-    
-    this._initial_state = "";
-    
+  clear(): void {
+    this.#listOfState.clear();
+
+    this.#listInput.clear();
+    this.#listOutput.clear();
+
+    this.#initialState = "";
+
     // remove input event bindings
-    for (var key in this._inputs)
-    {
-      var a = this._inputs [key];
-      
-      for (var i = 0; i < a.length; i++)
-      {
-        var src = a [i][2];
-        var event_spec = a [i][0];
-        if (src.bind)
-        {
-          src.unbind (event_spec, this)
-        }
-        else if (src.addEventListener)
-        {
-          this.nodeUnbind (src, event_spec);
+    for (const [key, a] of this.#inputs.entries()) {
+      for (let i = 0; i < a.length; i++) {
+        const [eventSpec, on, src] = a[i];
+        if (src.bind) {
+          src.unbind(eventSpec, this, this.handleEvent)
+        // } else if (src.addEventListener) {
+        //   this.nodeUnbind(src, event_spec);
         }
       }
     }
-    
-    this._current_state = "";
-  },
-  
+
+    this.#currentState = "";
+  }
+
   /**
    *  @private
    *
-   * @name vs.core.Fsm#notify 
    *
    * @param {Object} event the event
-   * @function
    */
-  notify : function (event)
-  {
-    var a = this._inputs [event.src];
-    if (!a) { return; }
-    
-    for (var i = 0; i < a.length; i++)
-    {
-      var spec = a [i][0], on = a [i][1];
-      if (event.type !== spec) continue;
-      
-      if (!this._list_of_state [this._current_state]) { continue; }
-      
-      this.fsmNotify (on, event.data);
+  private handleEvent = (event: Event): void => {
+    // @ts-ignore
+    const a = this.#inputs.get(event.src);
+    if (!a) {
+      return;
     }
-  },
-  
+
+    for (let i = 0; i < a.length; i++) {
+      const [spec, on, src] = a[i];
+      if (event.type !== spec) continue;
+
+      if (!this.#listOfState.has(this.#currentState)) {
+        continue;
+      }
+
+      // @ts-ignore
+      this.fsmNotify(on, event.data);
+    }
+  }
+
   /**
    *  Returns the state accessible on the given input from the current state.
    *  Returns undefined in no state is accessible.
    *
-   * @name vs.core.Fsm#getAccessibleStateOn 
-   * @function
    * @public
    *
    * @param {String} on input
-   * @return {Object} the state  
+   * @return {Object} the state
    */
-  getAccessibleStateOn: function (on) {
-    if (!this._list_of_state [this._current_state]) { return; }
-    
-    var transition =
-      this._list_of_state [this._current_state].transitionEvents [on];
-      
-    if (!transition) { return; }
-    
-    return this._list_of_state [transition.to];
-  },
-  
+  getAccessibleStateOn(on: string): State | undefined {
+    if (!this.#listOfState.has(this.#currentState)) {
+      return;
+    }
+
+    const transition = this.#listOfState.get(this.#currentState)?.transitionEvents.get(on);
+
+    if (!transition) {
+      return;
+    }
+
+    return this.#listOfState.get(transition.to);
+  }
+
   /**
    *  @public
    *
-   * @name vs.core.Fsm#fsmNotify 
-   * @function
    *
    * @param {String} on input
-   * @return {Object} data associate to the event 
+   * @return {Object} data associate to the event
    */
-  fsmNotify : function (on, data, instant)
-  {
-    if (!this._list_of_state [this._current_state]) { return; }
-    
-    var transition =
-      this._list_of_state [this._current_state].transitionEvents [on];
-      
-    if (!transition) { return false; }
-    
-    this.goTo (transition.to, transition.output, {on: on, data: data}, instant);
-    return true;
-  }
-};
-extendClass (Fsm, EventSource);
-
-/*****************************************************************
- *     Properties declaration
- ****************************************************************/
-
-defineClassProperty (Fsm, "initialState", {
-  /**
-   *   Define the initiale state
-   *   Generate a exception if the state was not already defined
-   *
-   *   @name vs.core.Fsm#initialState 
-   *   @param {string} state_id the state
-   */
-  set : function (state_id)
-  {
-    if (!state_id)
-    {
-      this._initial_state = undefined;
+  fsmNotify(on: string, data: any) {
+    if (!this.#listOfState.has(this.#currentState)) {
       return;
     }
-    
-    if (!this.existState (state_id)) { return; }
 
-    // set initial state and go to it   
-    this._initial_state = state_id;
-  },
-  
-  /**
-   * @ignore
-   */
-  get : function ()
-  {
-    return this._initial_state;
+    const transition =
+      this.#listOfState.get(this.#currentState).transitionEvents.get(on);
+
+    if (!transition) {
+      return false;
+    }
+
+    // @ts-ignore
+    this.goTo(transition.to, transition.output, { on, data: data });
+    return true;
   }
-});
+}
 
-/********************************************************************
-                      Export
-*********************************************************************/
-/**
- * @private
- */
-export Fsm;

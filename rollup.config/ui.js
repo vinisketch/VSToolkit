@@ -3,7 +3,7 @@ import visualizer from 'rollup-plugin-visualizer';
 
 export default {
   external: ['vs_utils', 'vs_core', 'vs_gesture'],
-  input: 'src/ui/index.js',
+  input: 'src/ui/index.ts',
   output: [
     {
       file: './dist/js/vs_ui.js',

@@ -1,39 +1,39 @@
-var TodoApp = vs.core.createClass ({
+var TodoApp = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   initComponent : function ()
   {
     this._super ();
     
     // GUI component declaration
-    this.listView = new vs.ui.List (
+    this.listView = new vs_ui.List (
       {id:"todos_list", type:"DefaultList", hasArrow:false, scroll:true});
     this.listView.init ();
     this.add (this.listView);
     
-    this.textlabel = new vs.ui.TextLabel ({id:"main_label", text:"Todos"});
+    this.textlabel = new vs_ui.TextLabel ({id:"main_label", text:"Todos"});
     this.textlabel.init ();
     this.add (this.textlabel);
     
-    this.textfield = new vs.ui.InputField (
+    this.textfield = new vs_ui.InputField (
       {id:"todo_text_field", placeholder: "What needs to be done?"});
     this.textfield.init ();
     this.add (this.textfield);
     
-    this.deleteButton = new vs.ui.Button (
+    this.deleteButton = new vs_ui.Button (
       {id:"delete_button", type:"nav", style:"blue_ios_style",
       text:"Remove completed items"});
     this.deleteButton.init ();
     this.add (this.deleteButton);
 
     // Todos items model
-    this.todosList = new vs.core.Array ({modelClass: Todo});
+    this.todosList = new vs_core.Array ({modelClass: Todo});
     this.todosList.init ();
     
     // Set globale local storage init and configuration
-    TodoApp.localStorage = new vs.core.LocalStorage ();
+    TodoApp.localStorage = new vs_core.LocalStorage ();
     TodoApp.localStorage.init ();
     TodoApp.localStorage.registerModel ("_todoslist_", this.todosList);
     TodoApp.localStorage.load ();
@@ -68,7 +68,7 @@ var TodoApp = vs.core.createClass ({
       if (item.done)
       {
         this.todosList.remove (i);
-        vs.util.free (item);
+        vs_utils.free (item);
       }
     }
     this.todosList.change ();
@@ -79,7 +79,7 @@ var TodoApp = vs.core.createClass ({
 
 function loadApplication ()
 {
- new TodoApp ({id:"todo_app", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
+ new TodoApp ({id:"todo_app", layout:vs_ui.View.ABSOLUTE_LAYOUT}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

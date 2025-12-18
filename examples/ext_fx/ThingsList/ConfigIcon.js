@@ -16,10 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
  
-var ConfigIcon = vs.core.createClass ({
+var ConfigIcon = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.View,
+  parent: vs_ui.View,
   
   template:
 "<div class=\"icon\"> \
@@ -30,13 +30,13 @@ var ConfigIcon = vs.core.createClass ({
   initComponent: function () {
     this._super ();
     
-    this.img = new vs.ui.View ({
+    this.img = new vs_ui.View ({
       node: this.view.querySelector ('div'),
       minScale: 0,
       scaling: 0,
     }).init ();
     
-    this.title = new vs.ui.View ({
+    this.title = new vs_ui.View ({
       node: this.view.querySelector ('.title'),
       minScale: 0,
       scaling: 0

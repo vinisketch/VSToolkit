@@ -5,10 +5,10 @@ var page_template_str =
   <div class='description'>${description}</div>\
 </div>"
 
-var FlipView = vs.core.createClass ({
+var FlipView = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.View,
+  parent: vs_ui.View,
   
   _current_sheet : null, // the flipping sheet
 
@@ -27,12 +27,12 @@ var FlipView = vs.core.createClass ({
     this.addClassName ('flipView');
     
     this.sheets = [];
-    var page_tmp = new vs.ui.Template (page_template_str);
+    var page_tmp = new vs_ui.Template (page_template_str);
     
     var l = info.length, i = 0;
     this._max_index = (l - 1) >> 1;
     while (i < l) {
-      var sheet = new vs.ui.View ().init ();
+      var sheet = new vs_ui.View ().init ();
       sheet.addClassName ('sheet');
       this.add (sheet);
       
@@ -51,14 +51,14 @@ var FlipView = vs.core.createClass ({
       }
       // create the last empty page
       else {
-        view = new vs.ui.View ().init ();
+        view = new vs_ui.View ().init ();
         view.addClassName ('page even');
         sheet.add (view);
       }
       sheet.view.style.zIndex = (l - i + 1) >> 1;
       this.sheets.push (sheet);
     }
-    this.view.addEventListener (vs.core.POINTER_START, this);
+    this.view.addEventListener (vs_core.POINTER_START, this);
   },
   
   handleEvent: function (e)
@@ -68,16 +68,16 @@ var FlipView = vs.core.createClass ({
         
     switch (e.type)
     {
-      case vs.core.POINTER_START:
+      case vs_core.POINTER_START:
         if (this._current_sheet) return;
         // prevent multi touch events
-        if (vs.core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+        if (vs_core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
 
         // we keep the event
         e.stopPropagation ();
         
-        var pos = vs.util.getElementAbsolutePosition (this.view);
-        this.__start_x = vs.core.EVENT_SUPPORT_TOUCH ?
+        var pos = vs_utils.getElementAbsolutePosition (this.view);
+        this.__start_x = vs_core.EVENT_SUPPORT_TOUCH ?
           e.touches[0].pageX : e.pageX - pos.x;
         
         if (this.__start_x < 300) {
@@ -91,8 +91,8 @@ var FlipView = vs.core.createClass ({
           this._current_sheet = this.sheets [this._sheet_index];
         }
         
-        document.addEventListener (vs.core.POINTER_END, this);
-        document.addEventListener (vs.core.POINTER_MOVE, this);
+        document.addEventListener (vs_core.POINTER_END, this);
+        document.addEventListener (vs_core.POINTER_MOVE, this);
         this._current_sheet.view.style.WebkitTransitionDuration = "0";
         
         // change the current zIndex to fix a bug with Chrome
@@ -103,16 +103,16 @@ var FlipView = vs.core.createClass ({
         return false;
       break;
 
-      case vs.core.POINTER_MOVE:
+      case vs_core.POINTER_MOVE:
         if (!this._current_sheet) return;
 
         // prevent multi touch events
-        if (vs.core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+        if (vs_core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
 
-        var pos = vs.util.getElementAbsolutePosition (this.view);
+        var pos = vs_utils.getElementAbsolutePosition (this.view);
 
         var dx = this._sheet_width +
-          (vs.core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX) - this.__start_x - pos.x;
+          (vs_core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX) - this.__start_x - pos.x;
         
         if (this._flipping_mode) dx -= (this._sheet_width * 2);
 
@@ -121,7 +121,7 @@ var FlipView = vs.core.createClass ({
         if (dx > this._sheet_width) dx = this._sheet_width;
         this._current_sheet_angle = Math.acos (dx/this._sheet_width);
         
-        vs.util.setElementTransform (
+        vs_utils.setElementTransform (
           this._current_sheet.view,
           "perspective(1500px) rotateY(-" + this._current_sheet_angle + "rad)"
         );
@@ -129,7 +129,7 @@ var FlipView = vs.core.createClass ({
         return false;
       break;
 
-      case vs.core.POINTER_END:
+      case vs_core.POINTER_END:
         if (!this._current_sheet) return;
         // we keep the event
         e.stopPropagation ();
@@ -140,7 +140,7 @@ var FlipView = vs.core.createClass ({
           if (this._current_sheet_angle > Math.PI / 2) {
             // finish to flip the page
             // cause a flicking bug, manage a small decalage
-            vs.util.setElementTransform (
+            vs_utils.setElementTransform (
               this._current_sheet.view, 
               "perspective(1500px) rotateY(-179.9999deg)"
             );
@@ -151,7 +151,7 @@ var FlipView = vs.core.createClass ({
           }
           else {
             // reset the current rotation
-            vs.util.setElementTransform (
+            vs_utils.setElementTransform (
               this._current_sheet.view,
               "perspective(1500px) rotateY(0deg)"
             );
@@ -161,7 +161,7 @@ var FlipView = vs.core.createClass ({
         else {
           if (this._current_sheet_angle < Math.PI / 2) {
             // finish to flip the page
-            vs.util.setElementTransform (
+            vs_utils.setElementTransform (
               this._current_sheet.view,
               "perspective(1500px) rotateY(0deg)"
             );
@@ -174,7 +174,7 @@ var FlipView = vs.core.createClass ({
           else {
             // reset the current rotation
             // cause a flicking bug, manage a small decalage
-            vs.util.setElementTransform (
+            vs_utils.setElementTransform (
               this._current_sheet.view, 
               "perspective(1500px) rotateY(-179.9999deg)"
             );
@@ -184,8 +184,8 @@ var FlipView = vs.core.createClass ({
 
         this._current_sheet = null;
         
-        document.removeEventListener (vs.core.POINTER_END, this);
-        document.removeEventListener (vs.core.POINTER_MOVE, this);
+        document.removeEventListener (vs_core.POINTER_END, this);
+        document.removeEventListener (vs_core.POINTER_MOVE, this);
         
         return false;
       break;

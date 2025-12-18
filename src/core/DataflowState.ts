@@ -1,17 +1,18 @@
 import { ObjectId } from './BaseIdentifiable';
-import { DataFlow, defaultDataflow } from './Dataflow';
-import DataflowComponent from './DataflowComponent';
+import { DataFlow, DEFAULT_DATAFLOW } from './Dataflow';
+import DataflowNode from './DataflowNode';
+import { container } from 'vs_utils';
 
 export default class DataflowState {
   private static readonly states = new Map<ObjectId, DataflowState>();
 
   readonly df = new Set<DataFlow>();
 
-  private constructor(private comp: DataflowComponent, df: DataFlow) {
+  private constructor(private comp: DataflowNode, df: DataFlow) {
     this.df.add(df);
   }
 
-  static add(comp: DataflowComponent, df: DataFlow = defaultDataflow): DataflowState {
+  static add(comp: DataflowNode, df = container.get(DEFAULT_DATAFLOW)): DataflowState {
     const state = new DataflowState(comp, df);
     DataflowState.states.set(comp.id, state);
     return state;
@@ -29,7 +30,7 @@ export default class DataflowState {
    * Manually tel an input property change.
    * <br/>
    * It will generate a call to propertiesDidChange.
-   * @name vs.core.Object#inPropertyDidChange
+   * @name core.Object#inPropertyDidChange
    * @function
    *
    */
@@ -50,7 +51,7 @@ export default class DataflowState {
    * If no property name is specified, the system will assume all component's
    * properties have been modified.
    *
-   * @name vs.core.Object#outPropertyChange
+   * @name core.Object#outPropertyChange
    * @function
    *
    * @param {String} property the name of the modified property.[optional]

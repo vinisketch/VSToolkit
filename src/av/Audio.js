@@ -24,9 +24,9 @@ import { Task, EventSource } from 'vs_core';
 /**
  *  The vs.av.Audio class
  *
- *  @extends vs.core.EventSource
+ *  @extends core.EventSource
  *  @class
- *  Implements {@link vs.core.Task}.
+ *  Implements {@link core.Task}.
  *  <p>
  *  The Audio class allow to show a movie clip or other video streams.
  *  <p>
@@ -43,9 +43,9 @@ import { Task, EventSource } from 'vs_core';
  *  <p>
  * The delegate has to implement:
  *  <ul>
- *    <li/>taskDidStop : function (vs.core.Task)
- *    <li/>taskDidPause : function (vs.core.Task)
- *    <li/>taskDidEnd : function (vs.core.Task)
+ *    <li/>taskDidStop : function (core.Task)
+ *    <li/>taskDidPause : function (core.Task)
+ *    <li/>taskDidEnd : function (core.Task)
  *  </ul>
  *  @author David Thevenin
  *
@@ -119,9 +119,9 @@ Audio.prototype = {
    * Methods are called when state changes (stop | pause)
    * Should implements: 
    *  <ul>
-   *    <li/>taskDidStop : function (vs.core.Task)
-   *    <li/>taskDidPause : function (vs.core.Task)
-   *    <li/>taskDidEnd : function (vs.core.Task)
+   *    <li/>taskDidStop : function (core.Task)
+   *    <li/>taskDidPause : function (core.Task)
+   *    <li/>taskDidEnd : function (core.Task)
    *  </ul>
    *	@property {object}
    * @name vs.av.Audio#delegate
@@ -412,7 +412,7 @@ vs_utils.defineClassProperties (Audio, {
       {
         function onSuccess ()
         {
-          self._state = Task.STOPED;
+          self.#state = Task.STOPED;
           if (self.delegate && self.delegate.taskDidEnd) {
             try {
               self.delegate.taskDidEnd (self);
@@ -582,9 +582,9 @@ vs_utils.defineClassProperties (Audio, {
   
     /** 
      * Return the task State. <br />
-     * Possible values: {@link vs.core.Task.STARTED},
-     * {@link vs.core.Task.STOPPED},
-     * {@link vs.core.Task.PAUSED}
+     * Possible values: {@link core.Task.STARTED},
+     * {@link core.Task.STOPPED},
+     * {@link core.Task.PAUSED}
      * @name vs.av.Audio#state
      * @type {number}
      */ 

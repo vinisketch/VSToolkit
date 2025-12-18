@@ -1,6 +1,10 @@
 import * as winston from 'winston';
-import { container } from 'vs_utils';
+// @ts-ignore
+import { container, applyMixins, SupportMixins } from 'vs_utils';
+// @ts-ignore
 import { Input, LOGGER, Component} from './dist/vs_core.es.js';
+import { BaseIdentifiable } from "./src/core/BaseIdentifiable";
+import { EventSource } from "./src/core/event";
 
 const logger = winston.createLogger({
   level: 'info',
@@ -15,45 +19,48 @@ container.registerValue(LOGGER, logger)
 
 
 
-// console.log(Input);
+console.log(Input);
+
+
+
+class MyComp extends Component {
+  // @Input aProp = 5;
+  constructor() {
+    super();
+  }
+}
+
+const myComp = new MyComp();
+console.log (myComp)
+
+
 //
-//
-//
-// class MyComp extends Component {
-//   @Input
-//   aProp = 5;
+// class Test extends SupportMixins {
+//   constructor() {
+//     super();
+//   }
 // }
 //
-// const myComp = new MyComp();
-// console.log (myComp)
-
-
-function trace(value, {kind, name}) {
-  if (kind === 'method') {
-    return function (...args) {
-      console.log(`CALL ${name}: ${JSON.stringify(args)}`);
-      const result = value.apply(this, args);
-      console.log('=> ' + JSON.stringify(result));
-      return result;
-    };
-  }
-}
-
-class StringBuilder {
-  #str = '';
-  @trace
-  add(str) {
-    this.#str += str;
-  }
-  @trace
-  toString() {
-    return this.#str;
-  }
-}
-
-const sb = new StringBuilder();
-sb.add('Home');
-sb.add('page');
-assert.equal(
-  sb.toString(), 'Homepage'
-);
+// class Test2 extends Test {
+//   constructor() {
+//     super();
+//   }
+// }
+//
+// class MyMixin {
+//   myFunction () {
+//     console.log('MyMixin.myFunction')
+//   }
+// }
+//
+//
+//
+// interface Test extends MyMixin {}
+//
+// applyMixins(Test, [MyMixin]);
+// // type Test = Test & MyMixin;
+//
+// const t = new Test2();
+//
+// console.log(t)
+// t.myFunction();

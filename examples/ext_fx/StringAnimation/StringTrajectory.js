@@ -18,7 +18,7 @@
 
 var chars = ['a', 'b', 'c', 'd', 'e', 'f', 'g', ' ', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '-', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0','!','¿','?','-','+','.',',',"'",'"','ç','ñ','à','á','è','é','ì','í','ò','ó','ù','ú','À','Á','È','É','Ì','Í','Ò','Ó','Ù','Ú'];
 
-var StringTrajectory = vs.core.createClass ({
+var StringTrajectory = vs_core.createClass ({
 
   parent: vs.ext.fx.Trajectory,
   
@@ -31,7 +31,7 @@ var StringTrajectory = vs.core.createClass ({
     values: {
       set: function (v)
       {
-        if (!vs.util.isArray (v)) return;
+        if (!vs_utils.isArray (v)) return;
         if (v.length < 1) return;
         
         this._values = v.slice ();
@@ -56,7 +56,7 @@ var StringTrajectory = vs.core.createClass ({
         this._model = v
       }
     },
-    out: vs.core.Object.PROPERTY_OUT
+    out: vs_core.VSObject.PROPERTY_OUT
   },
   
   constructor : function (config)
@@ -78,7 +78,7 @@ var StringTrajectory = vs.core.createClass ({
 
 var airport_trajectory = function ()
 {
-  if (!vs.util.isNumber (this._tick)) return false;
+  if (!vs_utils.isNumber (this._tick)) return false;
   
   var
     start = this._values [0].split (''),
@@ -138,7 +138,7 @@ var airport_trajectory = function ()
 
 var tick_trajectory = function ()
 {
-  if (!vs.util.isNumber (this._tick)) return false;
+  if (!vs_utils.isNumber (this._tick)) return false;
   
   var
     end = this._values [1].split (''),

@@ -33,8 +33,8 @@ PageFlipAnimation = function (owner, mode)
 {
   var node;
   
-  this.parent = vs.core.Task;
-  this.parent (vs.core.createId ());
+  this.parent = vs_core.Task;
+  this.parent (vs_core.createId ());
   this.constructor = PageFlipAnimation;
 
   this._owner = owner;
@@ -46,7 +46,7 @@ PageFlipAnimation = function (owner, mode)
   node.style.zIndex = 1002;
   node.style.webkitTransformStyle = "preserve-3d";
     
-  this._flip_page = new vs.ui.View ({node: node});
+  this._flip_page = new vs_ui.View ({node: node});
   this._flip_page.init ();
   
   this._front_page = document.createElement ('div');
@@ -70,13 +70,13 @@ PageFlipAnimation = function (owner, mode)
   node = document.createElement ('div');
   node.style.position = "absolute";
   node.style.backgroundColor = 'black';
-  this._flip_shadow = new vs.ui.View ({node: node});
+  this._flip_shadow = new vs_ui.View ({node: node});
   this._flip_shadow.init ();
 
   node = document.createElement ('div');
   node.style.position = "absolute";
   node.style.backgroundColor = 'black';
-  this._flip_shadow_bis = new vs.ui.View ({node: node});
+  this._flip_shadow_bis = new vs_ui.View ({node: node});
   this._flip_shadow_bis.init ();
 
   this._owner.view.style.webkitPerspective = '2000';
@@ -97,7 +97,7 @@ PageFlipAnimation.prototype =
 {
    /**
    * @private
-   * @type {vs.ui.View}
+   * @type {vs_ui.View}
    */
   _owner : null,
   
@@ -145,19 +145,19 @@ PageFlipAnimation.prototype =
 
   /**
    * @private
-   * @type vs.ui.View
+   * @type vs_ui.View
    */
   _flip_shadow : null,
 
   /**
    * @private
-   * @type vs.ui.View
+   * @type vs_ui.View
    */
   _flip_shadow_bis : null,
   
   /**
    * @private
-   * @type vs.ui.View
+   * @type vs_ui.View
    */
   __page_to_anim : null,
 
@@ -172,7 +172,7 @@ PageFlipAnimation.prototype =
    */ 
   set renderingModel (v)
   {
-    if (!vs.util.isNumber (v)) { return; }
+    if (!vs_utils.isNumber (v)) { return; }
     this._rendering_model = v;
 
     if (v === PageFlipAnimation.FLIP_HORIZONTAL ||
@@ -236,11 +236,11 @@ PageFlipAnimation.prototype =
     this._page_height = h;
     this._flip_page.size = [w, h];
     this._flip_page.position = [0, 0];
-    vs.util.setElementPos (this._back_page, 0, 0);
-    vs.util.setElementPos (this._front_page, 0, 0);
-    vs.util.setElementSize
+    vs_utils.setElementPos (this._back_page, 0, 0);
+    vs_utils.setElementPos (this._front_page, 0, 0);
+    vs_utils.setElementSize
       (this._back_page, this._page_width, this._page_height);
-    vs.util.setElementSize
+    vs_utils.setElementSize
       (this._front_page, this._page_width, this._page_height);
   },
 
@@ -800,23 +800,23 @@ PageFlipAnimation.prototype =
     this.processLeftOut (param);
   }
 };
-PageFlipAnimation.prototype.__proto__ = vs.core.Task.prototype;
+PageFlipAnimation.prototype.__proto__ = vs_core.Task.prototype;
 window.PageFlipAnimation = PageFlipAnimation;
 
 PageFlipAnimation._horizontal_animation = 
-  new vs.fx.Animation (['rotateY', '${a}deg']);
+  new vs_ui.Animation (['rotateY', '${a}deg']);
 
 PageFlipAnimation._vertical_animation = 
-  new vs.fx.Animation (['rotateX', '${a}deg']);
+  new vs_ui.Animation (['rotateX', '${a}deg']);
   
 PageFlipAnimation._shadow_animation_appear =
-  new vs.fx.Animation (['opacity', '${o}']);
+  new vs_ui.Animation (['opacity', '${o}']);
 PageFlipAnimation._shadow_animation_appear.addKeyFrame (0, {o: 0});
 PageFlipAnimation._shadow_animation_appear.addKeyFrame (100, {o: 0.7});
-PageFlipAnimation._shadow_animation_appear.timing = vs.fx.Animation.EASE_IN;
+PageFlipAnimation._shadow_animation_appear.timing = vs_ui.Animation.EASE_IN;
 
 PageFlipAnimation._shadow_animation_disappear = 
-  new vs.fx.Animation (['opacity', '${o}']);
+  new vs_ui.Animation (['opacity', '${o}']);
 PageFlipAnimation._shadow_animation_disappear.addKeyFrame (0, {o: 0.7});
 PageFlipAnimation._shadow_animation_disappear.addKeyFrame (100, {o: 0});
-PageFlipAnimation._shadow_animation_disappear.timing = vs.fx.Animation.EASE_OUT;
+PageFlipAnimation._shadow_animation_disappear.timing = vs_ui.Animation.EASE_OUT;

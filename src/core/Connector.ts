@@ -1,5 +1,6 @@
-import { defaultDataflow } from './Dataflow';
-import BaseIdentifiable, { ObjectId } from './BaseIdentifiable';
+import { DEFAULT_DATAFLOW } from './Dataflow';
+import { BaseIdentifiable, ObjectId } from './BaseIdentifiable';
+import { container } from "../../../VS_util/src/utils";
 
 /**
  *  The class Connector is Dataflow Connector. Show not be instanced.
@@ -13,13 +14,14 @@ export default class Connector {
   }
 
   /**
-   * @param {Component} objId the Component the connector will connected
+   * @param {Component} objId the Component the connector will be connected
    *        to
    * @param {String} pIn the Component in property name to connect
    *        to
    */
   to(object: BaseIdentifiable, pIn: string, func?: any) {
-    defaultDataflow.connect(this.objId, this.pOut, object.id, pIn, func);
+    const df = container.get(DEFAULT_DATAFLOW);
+    df.connect(this.objId, this.pOut, object.id, pIn, func);
     this.intermediateObjId = object.id;
 
     return this;

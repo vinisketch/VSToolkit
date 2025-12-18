@@ -1,36 +1,36 @@
-var Scroll = vs.core.createClass ({
+var Scroll = vs_core.createClass ({
 
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   applicationStarted : function (event) {
-    this.layout = vs.ui.View.ABSOLUTE_LAYOUT;
+    this.layout = vs_ui.View.ABSOLUTE_LAYOUT;
     
     scrollView = new MyView ({
       id:'myScroll',
       size : [600, 600],
       position: [000, 0],
-      layout : vs.ui.View.ABSOLUTE_LAYOUT
+      layout : vs_ui.View.ABSOLUTE_LAYOUT
     }).init ();
     this.add (scrollView);
 
-    button = new vs.ui.Button ({
+    button = new vs_ui.Button ({
       position:[220, 130], text: "hello",
-      type: vs.ui.Button.NAVIGATION_TYPE,
-      style: vs.ui.Button.BLACK_STYLE
+      type: vs_ui.Button.NAVIGATION_TYPE,
+      style: vs_ui.Button.BLACK_STYLE
     }).init ();
     scrollView.add (button);
 
-    button = new vs.ui.Button ({
+    button = new vs_ui.Button ({
       position:[220, 170], text: "Back",
-      type: vs.ui.Button.NAVIGATION_BACK_TYPE,
-      style: vs.ui.Button.BLACK_STYLE
+      type: vs_ui.Button.NAVIGATION_BACK_TYPE,
+      style: vs_ui.Button.BLACK_STYLE
     }).init ();
     scrollView.add (button);
 
-    button = new vs.ui.Button ({
+    button = new vs_ui.Button ({
       position:[320, 220], text: "Forward",
-      type: vs.ui.Button.NAVIGATION_FORWARD_TYPE,
-      style: vs.ui.Button.BLACK_STYLE
+      type: vs_ui.Button.NAVIGATION_FORWARD_TYPE,
+      style: vs_ui.Button.BLACK_STYLE
     }).init ();
     scrollView.add (button);
 
@@ -45,14 +45,14 @@ var Scroll = vs.core.createClass ({
 function loadApplication () {
   new Scroll ({id:"widgets"}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }
 
 
 
-var MyView = vs.core.createClass ({
+var MyView = vs_core.createClass ({
 
-  parent: vs.ui.View,
+  parent: vs_ui.View,
   
   constructor : function (config)
   {
@@ -65,9 +65,9 @@ var MyView = vs.core.createClass ({
   {
     this._super ();
     
-    this.view.addEventListener (vs.core.POINTER_START, this);
+    this.view.addEventListener (vs_core.POINTER_START, this);
     this.__pointers = {};
-    vs.util.setElementTransformOrigin (this.view, '0px 0px');
+    vs_utils.setElementTransformOrigin (this.view, '0px 0px');
   },
   
   /**
@@ -78,14 +78,14 @@ var MyView = vs.core.createClass ({
   {
     switch (e.type)
     {
-      case vs.core.POINTER_START:
+      case vs_core.POINTER_START:
         this.pointerStart (e);
         break;
-      case vs.core.POINTER_MOVE:
+      case vs_core.POINTER_MOVE:
         this.pointerMove (e);
         break;
-      case vs.core.POINTER_CANCEL:
-      case vs.core.POINTER_END:
+      case vs_core.POINTER_CANCEL:
+      case vs_core.POINTER_END:
         this.pointerEnd (e);
         break;
       case 'gesturestart':
@@ -179,7 +179,7 @@ var MyView = vs.core.createClass ({
         this._debugs [key] = div;
         this.view.parentElement.insertBefore (div, this.view);
       }
-      vs.util.setElementPos (div, pointer.x - 15, pointer.y - 15);
+      vs_utils.setElementPos (div, pointer.x - 15, pointer.y - 15);
       
       x += pointer.x;
       y += pointer.y;
@@ -194,8 +194,8 @@ var MyView = vs.core.createClass ({
       this._debugs ['barycentre'] = barycentre;
       this.view.parentElement.insertBefore (barycentre, this.view);
     }
-    vs.util.setElementPos (barycentre, x / nb_pointer - 10, y / nb_pointer - 10);
-    if (vs.util.isNumber (angle)) barycentre.innerHTML = Math.floor (angle);
+    vs_utils.setElementPos (barycentre, x / nb_pointer - 10, y / nb_pointer - 10);
+    if (vs_utils.isNumber (angle)) barycentre.innerHTML = Math.floor (angle);
     else barycentre.innerHTML = "";
     
     // remove old pointers trace
@@ -231,7 +231,7 @@ var MyView = vs.core.createClass ({
   {
     var result = {};
     
-    if (!vs.core.EVENT_SUPPORT_TOUCH)
+    if (!vs_core.EVENT_SUPPORT_TOUCH)
     {
       result ['_default_'] = {x: event.pageX, y: event.pageY, z: 0};
     }
@@ -257,9 +257,9 @@ var MyView = vs.core.createClass ({
     if (!this._binding_)
     {
 
-      document.addEventListener (vs.core.POINTER_MOVE, this);
-      document.addEventListener (vs.core.POINTER_END, this);
-      document.addEventListener (vs.core.POINTER_CANCEL, this);
+      document.addEventListener (vs_core.POINTER_MOVE, this);
+      document.addEventListener (vs_core.POINTER_END, this);
+      document.addEventListener (vs_core.POINTER_CANCEL, this);
       this._binding_ = true;
     }
     
@@ -336,11 +336,11 @@ var MyView = vs.core.createClass ({
     
     var count = this.countPointers (e);
 
-    if (this._binding_ && (!vs.core.EVENT_SUPPORT_TOUCH || count === 0))
+    if (this._binding_ && (!vs_core.EVENT_SUPPORT_TOUCH || count === 0))
     {
-      document.removeEventListener (vs.core.POINTER_MOVE, this);
-      document.removeEventListener (vs.core.POINTER_END, this);
-      document.removeEventListener (vs.core.POINTER_CANCEL, this);
+      document.removeEventListener (vs_core.POINTER_MOVE, this);
+      document.removeEventListener (vs_core.POINTER_END, this);
+      document.removeEventListener (vs_core.POINTER_CANCEL, this);
       this._binding_ = false;
       
       this._start_angle = undefined;

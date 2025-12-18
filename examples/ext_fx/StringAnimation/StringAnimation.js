@@ -16,20 +16,20 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Animations = vs.core.createClass ({
+var Animations = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
   
   mode: 'tick', //"text"
 
   applicationStarted : function (event) {
     this.layout = "horizontal";
     
-    this.area = new vs.ui.TextArea ().init ();
+    this.area = new vs_ui.TextArea ().init ();
     this.add (this.area);
 
-    this.label = new vs.ui.TextLabel ().init ();
+    this.label = new vs_ui.TextLabel ().init ();
     this.add (this.label);
     
     this.area.bind ("change", this, function () {
@@ -51,7 +51,7 @@ var Animations = vs.core.createClass ({
 });
 
 function loadApplication () {
-  new Animations ({id:"animations", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
+  new Animations ({id:"animations", layout:vs_ui.View.ABSOLUTE_LAYOUT}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

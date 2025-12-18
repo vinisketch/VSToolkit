@@ -1,7 +1,7 @@
-var BookReader = vs.core.createClass ({
+var BookReader = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
   
   applicationStarted : function (event)
   {
@@ -15,7 +15,7 @@ var BookReader = vs.core.createClass ({
     var pages = this.view.querySelectorAll (".page");
     for (var i = 0; i < pages.length; i++)
     {
-      var view = new vs.ui.View ({node: pages [i]}).init ();
+      var view = new vs_ui.View ({node: pages [i]}).init ();
       this.add (view);
       this.controller.push (view);
       
@@ -31,5 +31,5 @@ function loadApplication ()
 {
   window.app = new BookReader ({id:"bookreader"}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

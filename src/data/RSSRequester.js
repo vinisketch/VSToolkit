@@ -471,7 +471,7 @@ function RSSChannel (rssFeed, rssxml)
 /**
  *  The RSSFeed class
  *
- *  @extends vs.core.EventSource
+ *  @extends core.EventSource
  * @name vs.data.RSSFeed
  *
  *  @class

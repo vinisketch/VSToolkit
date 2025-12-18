@@ -333,12 +333,12 @@ var procesAnimation = function (comp, animation, clb, ctx, now)
     var new_data;
     for (key in animation.keyFrames)
     {
-      data = animation.keyFrames [key];
+      var data = animation.keyFrames [key];
       if (isArray (data)) {
         new_data = [];
         for (var i = 0; i < data.length; i++)
         {
-          value = data [i];
+          var value = data [i];
           if (value == null || typeof value == 'undefined') continue;
           new_data [i] = parseValue (value, animation);
         }
@@ -587,7 +587,7 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
 
       try
       {
-        data = Animation.__css_animations [anim_id];
+        var data = Animation.__css_animations [anim_id];
         if (data && data.length === 2)
         {
           document.getElementsByTagName("head")[0].removeChild (data [0]);
@@ -793,7 +793,7 @@ var _procesAnimation = function (comp, animation, anim_params, clb, ctx, now)
  *
  *  @author David Thevenin
  * @name vs.fx.Animation
- *  @extends vs.core.Task
+ *  @extends core.Task
  *
  *  @constructor
  *  Main constructor
@@ -1051,11 +1051,11 @@ Animation.prototype = {
 ********************************************************************/
 
   /**
-   * @name vs.core.Animation#_clone
+   * @name core.Animation#_clone
    * @function
    * @private
    *
-   * @param {vs.core.Object} obj The cloned object
+   * @param {core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)
@@ -1293,11 +1293,11 @@ TranslateAnimation.prototype = {
   z: 0,
   
   /**
-   * @name vs.core.TranslateAnimation#_clone
+   * @name core.TranslateAnimation#_clone
    * @function
    * @private
    *
-   * @param {vs.core.Object} obj The cloned object
+   * @param {core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)
@@ -1361,11 +1361,11 @@ RotateAnimation.prototype = {
   deg: 0,
   
   /**
-   * @name vs.core.RotateAnimation#_clone
+   * @name core.RotateAnimation#_clone
    * @function
    * @private
    *
-   * @param {vs.core.Object} obj The cloned object
+   * @param {core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)
@@ -1444,11 +1444,11 @@ RotateXYZAnimation.prototype = {
   degZ: 0,
   
   /**
-   * @name vs.core.RotateXYZAnimation#_clone
+   * @name core.RotateXYZAnimation#_clone
    * @function
    * @private
    *
-   * @param {vs.core.Object} obj The cloned object
+   * @param {core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)
@@ -1542,11 +1542,11 @@ ScaleAnimation.prototype = {
   sz: 1,
   
   /**
-   * @name vs.core.ScaleAnimation#_clone
+   * @name core.ScaleAnimation#_clone
    * @function
    * @private
    *
-   * @param {vs.core.Object} obj The cloned object
+   * @param {core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)
@@ -1619,11 +1619,11 @@ SkewAnimation.prototype = {
   ay: 0,
   
   /**
-   * @name vs.core.SkewAnimation#_clone
+   * @name core.SkewAnimation#_clone
    * @function
    * @private
    *
-   * @param {vs.core.Object} obj The cloned object
+   * @param {core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)
@@ -1690,11 +1690,11 @@ OpacityAnimation.prototype = {
   value: 1,
   
   /**
-   * @name vs.core.OpacityAnimation#_clone
+   * @name core.OpacityAnimation#_clone
    * @function
    * @private
    *
-   * @param {vs.core.Object} obj The cloned object
+   * @param {core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
   _clone : function (obj, cloned_map)

@@ -1,4 +1,4 @@
-import { isNotEmpty, isObject } from 'vs_utils';
+import { isEmpty, isObject, Mixin } from 'vs_utils';
 import Component from '../Component';
 import { queueProcAsyncEvent } from '../MainLoop';
 import Handler, { HandlerFunction } from './Handler';
@@ -26,10 +26,14 @@ export function isEventSource(obj: unknown): obj is EventSource {
  *
  * @param {Object} config the configuration structure [mandatory]
  */
-export class EventSource {
+export class EventSource extends Mixin {
   readonly #bindings = new Map<string, Handler[]>();
 
-  protected destructor(): void {
+  protected initMixin(): void {
+  }
+
+  protected releaseMixin (): void {
+    super.releaseMixin();
     for (const [spec, handlerList] of this.#bindings.entries()) {
       handlerList.forEach(handler => handler.release());
       handlerList.length = 0;
@@ -132,7 +136,7 @@ export class EventSource {
     const handlerList = this.#bindings.get(event.type);
 
     // bubbling
-    if (isNotEmpty(handlerList)) {
+    if (isEmpty(handlerList)) {
       if (isContainer(this)) {
         // @ts-ignore
         const parent = Container.getParent(this);

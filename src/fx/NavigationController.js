@@ -319,7 +319,7 @@ NavigationController.prototype = {
    *
    * @param {String} state The state (component id)  
    * @param {Array} configurations configuration parameters 
-   *     Structure have to follow : [{comp: vs.core.Object|String, properties:{prop_name: value}}
+   *     Structure have to follow : [{comp: core.Object|String, properties:{prop_name: value}}
    *
    * @name vs.fx.NavigationController#configureNavigationBarState
    * @function

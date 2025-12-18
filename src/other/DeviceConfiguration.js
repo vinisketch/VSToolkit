@@ -17,9 +17,9 @@
 */
 
 
-import { isString, setActiveStyleSheet } from 'vs_utils';
+import { isString, setActiveStyleSheet } from '../../../VS_util/dist/vs_utils.es';
 
-import VSObject from './Object';
+import VSObject from '../core/Object';
 
 /**
  * This represents the mobile device, and provides properties for inspecting

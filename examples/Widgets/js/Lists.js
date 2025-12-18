@@ -1,7 +1,7 @@
 function initStandardList () {
   var view = buildPanel　();
 
-  var listItems = new vs.ui.List ({
+  var listItems = new vs_ui.List ({
     scroll: true,
     hasArrow: true
   });
@@ -44,9 +44,9 @@ function initStandardList () {
 function initTabList () {
   var view = buildPanel　();
  
-  var listItems = new vs.ui.List ({
+  var listItems = new vs_ui.List ({
     scroll: true,
-    type: vs.ui.List.TAB_LIST
+    type: vs_ui.List.TAB_LIST
   });
   listItems.init ();
   view.add (listItems);
@@ -166,9 +166,9 @@ function initTabList () {
 function initBlockList () {
   var view = buildPanel　();
 
-  var listItems = new vs.ui.List ({
+  var listItems = new vs_ui.List ({
     scroll: true,
-    type: vs.ui.List.BLOCK_LIST
+    type: vs_ui.List.BLOCK_LIST
   });
   listItems.init ();
   view.add (listItems);

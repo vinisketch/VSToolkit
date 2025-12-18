@@ -2,7 +2,7 @@ var free = _delete;
 
 function testEventNew ()
 {
-  var o1 = new vs.core.Event ('src', 'type', 'data');
+  var o1 = new core.Event ('src', 'type', 'data');
   
   assertNotUndefined ('testEventNew 1', o1);
   assertEquals ('testEventNew 2', 'src', o1.src);
@@ -13,7 +13,7 @@ function testEventNew ()
 
 function testEventFree()
 {
-  var o1 = new vs.core.Event ('src', 'type', 'data');
+  var o1 = new core.Event ('src', 'type', 'data');
   
   vs.util.free (o1);
   assertNull ('testEventFree 1', o1.src);

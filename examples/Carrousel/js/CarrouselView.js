@@ -1,7 +1,7 @@
-var CarrouselView = vs.core.createClass ({
+var CarrouselView = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.View,
+  parent: vs_ui.View,
   
   _current_rotation: -90,
   
@@ -17,7 +17,7 @@ var CarrouselView = vs.core.createClass ({
     var base_url  = "http://tympanus.net/Tutorials/SlidingPanelPhotowallGallery/thumbs/";
     for (; i < 20; i++) {
       var url = base_url + ((i % 36) + 1) + ".jpg";
-      var image = new vs.ui.ImageView ({
+      var image = new vs_ui.ImageView ({
         size:[size, size],
         src: url
       }).init ();
@@ -29,7 +29,7 @@ var CarrouselView = vs.core.createClass ({
     }
     for (; i < 40; i++) {
       var url = base_url + ((i % 36) + 1) + ".jpg";
-      var image = new vs.ui.ImageView ({
+      var image = new vs_ui.ImageView ({
         size:[size, size],
         position: [0, (size + marge)],
         src: url
@@ -42,7 +42,7 @@ var CarrouselView = vs.core.createClass ({
     }
     for (; i < 60; i++) {
       var url = base_url + ((i % 36) + 1) + ".jpg";
-      var image = new vs.ui.ImageView ({
+      var image = new vs_ui.ImageView ({
         size:[size, size],
         position: [0, 2 * (size + marge)],
         src: url
@@ -53,7 +53,7 @@ var CarrouselView = vs.core.createClass ({
       var transform = 'rotateY('+ (posterAngle * i - 180) + 'deg) translateZ(-500px)';
 		  image.view.style.webkitTransform = transform;
     }
-    document.addEventListener (vs.core.POINTER_START, this);
+    document.addEventListener (vs_core.POINTER_START, this);
   },
   
   handleEvent: function (e)
@@ -63,29 +63,29 @@ var CarrouselView = vs.core.createClass ({
         
     switch (e.type)
     {
-      case vs.core.POINTER_START:
+      case vs_core.POINTER_START:
         // prevent multi touch events
-        if (vs.core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+        if (vs_core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
 
         // we keep the event
         e.stopPropagation ();
         
-        this.__start_x = vs.core.EVENT_SUPPORT_TOUCH ?
+        this.__start_x = vs_core.EVENT_SUPPORT_TOUCH ?
           e.touches[0].pageX : e.pageX;
           
-        document.addEventListener (vs.core.POINTER_END, this);
-        document.addEventListener (vs.core.POINTER_MOVE, this);
+        document.addEventListener (vs_core.POINTER_END, this);
+        document.addEventListener (vs_core.POINTER_MOVE, this);
         this.view.style.WebkitTransitionDuration = "0";
 
         return false;
       break;
 
-      case vs.core.POINTER_MOVE:
+      case vs_core.POINTER_MOVE:
        // prevent multi touch events
-        if (vs.core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
+        if (vs_core.EVENT_SUPPORT_TOUCH && e.touches.length > 1) { return; }
 
         this.__rotation =  this._current_rotation - (
-          (vs.core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX) - this.__start_x) / 8;
+          (vs_core.EVENT_SUPPORT_TOUCH ? e.touches[0].pageX : e.pageX) - this.__start_x) / 8;
  
         if (this.__rotation < -120) this.__rotation = -120;
         if (this.__rotation > -30) this.__rotation = -30
@@ -96,14 +96,14 @@ var CarrouselView = vs.core.createClass ({
         return false;
       break;
 
-      case vs.core.POINTER_END:
+      case vs_core.POINTER_END:
         // we keep the event
         e.stopPropagation ();
         
         this._current_rotation = this.__rotation;
         
-        document.removeEventListener (vs.core.POINTER_END, this);
-        document.removeEventListener (vs.core.POINTER_MOVE, this);
+        document.removeEventListener (vs_core.POINTER_END, this);
+        document.removeEventListener (vs_core.POINTER_MOVE, this);
         
         return false;
       break;

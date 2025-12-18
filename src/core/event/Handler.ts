@@ -1,9 +1,9 @@
-import Component from '../Component';
+import { Component } from '../Component';
 import { isFunction, isString } from 'vs_utils';
 
 export type HandlerFunction = string | Function;
 
-export default class Handler {
+export class Handler {
   static #pool: Handler[] = [];
   #funcName: string | undefined;
   #funcPtr: Function | undefined;

@@ -1,7 +1,7 @@
-var FlipBook = vs.core.createClass ({
+var FlipBook = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
   
   applicationStarted : function (event) {
     this.flipView = new FlipView ().init ();
@@ -13,5 +13,5 @@ function loadApplication ()
 {
   new FlipBook ({id:"flipBook"}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

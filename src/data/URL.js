@@ -27,7 +27,7 @@ import vs_core from 'vs_core';
  *  This code is based on parseUri, Copyright 2010 Steven Levithan 
  *  <stevenlevithan.com>
  *
- *  @extends vs.core.Object
+ *  @extends core.Object
  * @name vs.data.URL
  *  @class
  *

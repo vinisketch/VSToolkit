@@ -16,7 +16,7 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
  
-var AnimVector = vs.core.createClass ({
+var AnimVector = vs_core.createClass ({
 
   parent: vs.ext.fx.Trajectory,
   
@@ -28,21 +28,21 @@ var AnimVector = vs.core.createClass ({
   properties : {
     translations: {
       set: function (v) {
-        if (!vs.util.isArray (v) || v.length < 1) return;
+        if (!vs_utils.isArray (v) || v.length < 1) return;
         this._translations = v.slice ();
       }
     },
     
-    translation: vs.core.Object.PROPERTY_OUT,
+    translation: vs_core.VSObject.PROPERTY_OUT,
     
     scalings: {
       set: function (v) {
-        if (!vs.util.isArray (v) || v.length < 1) return;
+        if (!vs_utils.isArray (v) || v.length < 1) return;
         this._scalings = v.slice ();
       }
     },
     
-    scaling: vs.core.Object.PROPERTY_OUT
+    scaling: vs_core.VSObject.PROPERTY_OUT
   },
   
   constructor : function (config)
@@ -93,7 +93,7 @@ var AnimVector = vs.core.createClass ({
   
   compute: function ()
   {
-    if (!vs.util.isNumber (this._tick)) return;
+    if (!vs_utils.isNumber (this._tick)) return;
     
     this._compute_translate ();
     this._compute_scaling ();

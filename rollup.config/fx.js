@@ -1,6 +1,6 @@
 export default {
   external: ['vs_utils', 'vs_core', 'vs_ui', 'vs_gesture'],
-  input: 'src/fx/index.js',
+  input: 'src/fx/index.ts',
   output: [
     {
       file: './dist/js/vs_fx.js',

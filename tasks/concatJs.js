@@ -31,7 +31,7 @@ module.exports = function(grunt) {
         files: {
           'lib_debug/js/vs_core.js': [
             'sources/Header.js',
-            'sources/core/Core.js',
+            'sources/core/Core.ts',
             'sources/core/*.js',
             'sources/Footer.js'
           ],

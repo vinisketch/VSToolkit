@@ -17,10 +17,10 @@
  */
  
 
-var ListItem = vs.core.createClass ({
+var ListItem = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.AbstractListItem,
+  parent: vs_ui.AbstractListItem,
   
   template: "<li><p>${title}</p><p>${info}</p></li>",
   

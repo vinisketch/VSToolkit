@@ -1,12 +1,12 @@
 function testDataFlowPropagation1 () {
 
-  var TestObject = vs.core.createClass ({
+  var TestObject = core.createClass ({
 
-    parent: vs.core.Object,
+    parent: core.Object,
 
     properties : {
-      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
-      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+      "inOut1": core.Object.PROPERTY_IN_OUT,
+      "inOut2": core.Object.PROPERTY_IN_OUT
     }
   });
 
@@ -41,13 +41,13 @@ function testDataFlowPropagation1 () {
 
 function testDataFlowPropagation2 () {
 
-  var TestObject = vs.core.createClass ({
+  var TestObject = core.createClass ({
 
-    parent: vs.core.Object,
+    parent: core.Object,
 
     properties : {
-      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
-      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+      "inOut1": core.Object.PROPERTY_IN_OUT,
+      "inOut2": core.Object.PROPERTY_IN_OUT
     }
   });
 
@@ -79,13 +79,13 @@ function testDataFlowPropagation2 () {
 
 function testDataFlowPropagation3 () {
 
-  var TestObject = vs.core.createClass ({
+  var TestObject = core.createClass ({
 
-    parent: vs.core.Object,
+    parent: core.Object,
 
     properties : {
-      "in": vs.core.Object.PROPERTY_IN,
-      "out": vs.core.Object.PROPERTY_OUT
+      "in": core.Object.PROPERTY_IN,
+      "out": core.Object.PROPERTY_OUT
     },
     
     propertiesDidChange : function () {
@@ -116,12 +116,12 @@ function testDataFlowPropagation3 () {
 
 function testDataFlowFunction1 () {
 
-  var TestObject = vs.core.createClass ({
+  var TestObject = core.createClass ({
 
-    parent: vs.core.Object,
+    parent: core.Object,
 
     properties : {
-      "inOut": vs.core.Object.PROPERTY_IN_OUT
+      "inOut": core.Object.PROPERTY_IN_OUT
     }
   });
 
@@ -157,13 +157,13 @@ function testDataFlowFunction1 () {
 
 function testDataFlowFunction2 () {
 
-  var TestObject = vs.core.createClass ({
+  var TestObject = core.createClass ({
 
-    parent: vs.core.Object,
+    parent: core.Object,
 
     properties : {
-      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
-      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+      "inOut1": core.Object.PROPERTY_IN_OUT,
+      "inOut2": core.Object.PROPERTY_IN_OUT
     }
   });
 
@@ -199,22 +199,22 @@ function testDataFlowFunction2 () {
 
 function testDataFlowFunction3 () {
 
-  var TestObject1 = vs.core.createClass ({
+  var TestObject1 = core.createClass ({
 
-    parent: vs.core.Object,
+    parent: core.Object,
 
     properties : {
-      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
-      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+      "inOut1": core.Object.PROPERTY_IN_OUT,
+      "inOut2": core.Object.PROPERTY_IN_OUT
     }
   });
 
-  var TestObject2 = vs.core.createClass ({
+  var TestObject2 = core.createClass ({
 
-    parent: vs.core.Object,
+    parent: core.Object,
 
     properties : {
-      "inOut": vs.core.Object.PROPERTY_IN_OUT
+      "inOut": core.Object.PROPERTY_IN_OUT
     }
   });
 
@@ -252,13 +252,13 @@ function testDataFlowFunction3 () {
 
 function testDataFlowUnconnectAPI_ID_1 () {
 
-  var TestObject = vs.core.createClass ({
+  var TestObject = core.createClass ({
 
-    parent: vs.core.Object,
+    parent: core.Object,
 
     properties : {
-      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
-      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+      "inOut1": core.Object.PROPERTY_IN_OUT,
+      "inOut2": core.Object.PROPERTY_IN_OUT
     }
   });
 
@@ -312,13 +312,13 @@ function testDataFlowUnconnectAPI_ID_1 () {
 
 function testDataFlowUnconnectAPI_ID_2 () {
 
-  var TestObject = vs.core.createClass ({
+  var TestObject = core.createClass ({
 
-    parent: vs.core.Object,
+    parent: core.Object,
 
     properties : {
-      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
-      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+      "inOut1": core.Object.PROPERTY_IN_OUT,
+      "inOut2": core.Object.PROPERTY_IN_OUT
     }
   });
 
@@ -371,13 +371,13 @@ function testDataFlowUnconnectAPI_ID_2 () {
 
 function testDataFlowUnconnectAPI_PM_1 () {
 
-  var TestObject = vs.core.createClass ({
+  var TestObject = core.createClass ({
 
-    parent: vs.core.Object,
+    parent: core.Object,
 
     properties : {
-      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
-      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+      "inOut1": core.Object.PROPERTY_IN_OUT,
+      "inOut2": core.Object.PROPERTY_IN_OUT
     }
   });
 
@@ -428,13 +428,13 @@ function testDataFlowUnconnectAPI_PM_1 () {
 
 function testDataFlowReconnect () {
 
-  var TestObject = vs.core.createClass ({
+  var TestObject = core.createClass ({
 
-    parent: vs.core.Object,
+    parent: core.Object,
 
     properties : {
-      "inOut1": vs.core.Object.PROPERTY_IN_OUT,
-      "inOut2": vs.core.Object.PROPERTY_IN_OUT
+      "inOut1": core.Object.PROPERTY_IN_OUT,
+      "inOut2": core.Object.PROPERTY_IN_OUT
     }
   });
 

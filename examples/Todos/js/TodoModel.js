@@ -1,13 +1,13 @@
-var Todo = vs.core.createClass ({
+var Todo = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.core.Model,
+  parent: vs_core.Model,
   
   /** Properties definition */
   properties: {
-    content: vs.core.Object.PROPERTY_IN_OUT,
-    done: vs.core.Object.PROPERTY_IN_OUT,
-    date: vs.core.Object.PROPERTY_OUT
+    content: vs_core.VSObject.PROPERTY_IN_OUT,
+    done: vs_core.VSObject.PROPERTY_IN_OUT,
+    date: vs_core.VSObject.PROPERTY_OUT
   },
   
   constructor : function (config)

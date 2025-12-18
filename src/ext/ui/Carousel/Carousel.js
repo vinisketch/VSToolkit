@@ -232,7 +232,7 @@ Carousel.prototype = {
    *  Add a child component to the carousel
    *  <p>
    *  The component can be a graphic component (vs.ui.View) or
-   *  a non graphic component (vs.core.EventSource).
+   *  a non graphic component (core.EventSource).
    *  In case of vs.ui.View its mandatory to set the extension.
    *  <p>
    *  @example
@@ -297,7 +297,7 @@ Carousel.prototype = {
    *
    * @name vs.ext.ui.Carousel#remove
    * @function
-   * @param {vs.core.EventSource} child The component to be removed.
+   * @param {core.EventSource} child The component to be removed.
    */
   remove : function (child)
   {
@@ -325,7 +325,7 @@ Carousel.prototype = {
     
     for (var id in this.__indicators_list)
     {
-      var comp = vs.core.Object._obs [id];
+      var comp = core.Object._obs [id];
       this.remove (comp);
       if (should_free) util.free (comp);
       else children.push (comp);

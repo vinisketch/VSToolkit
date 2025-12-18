@@ -1,7 +1,7 @@
 /**
  *  The vs.ext.fx.Trajectory class
  *
- *  @extends vs.core.Object
+ *  @extends core.Object
  *  @class
  *  vs.ext.fx.Trajectory is a class with one input in, and any number of outputs.
  *  <br />It implements a parametric function in the input domain [0,1].<br />
@@ -18,7 +18,7 @@
  *
  * @param {Object} config the configuration structure [optional]
  */
-var Trajectory = vs.core.createClass ({
+var Trajectory = core.createClass ({
 
   /** @protected */
   _calcule_mode : 0,
@@ -27,8 +27,8 @@ var Trajectory = vs.core.createClass ({
                     Define class properties
   ********************************************************************/
   properties : {
-    calculeMode: vs.core.Object.PROPERTY_IN,
-    tick: vs.core.Object.PROPERTY_IN
+    calculeMode: core.Object.PROPERTY_IN,
+    tick: core.Object.PROPERTY_IN
   },
 
   initComponent: function () {
@@ -87,7 +87,7 @@ var Trajectory = vs.core.createClass ({
  *
  * @param {Object} config the configuration structure [optional]
  */
-var Vector1D = vs.core.createClass ({
+var Vector1D = core.createClass ({
 
   parent: Trajectory,
   
@@ -122,7 +122,7 @@ var Vector1D = vs.core.createClass ({
      *
      * @type number
      */
-    out: vs.core.Object.PROPERTY_OUT
+    out: core.Object.PROPERTY_OUT
   },
   
   /**
@@ -195,7 +195,7 @@ var Vector1D = vs.core.createClass ({
  *
  * @param {Object} config the configuration structure [optional]
  */
-var Vector2D = vs.core.createClass ({
+var Vector2D = core.createClass ({
 
   parent: Trajectory,
   
@@ -230,7 +230,7 @@ var Vector2D = vs.core.createClass ({
      *
      * @type Array<number>
      */
-    out: vs.core.Object.PROPERTY_OUT
+    out: core.Object.PROPERTY_OUT
   },
   
   /**
@@ -299,7 +299,7 @@ var Vector2D = vs.core.createClass ({
  *
  * @param {Object} config the configuration structure [optional]
  */
-var Circular2D = vs.core.createClass ({
+var Circular2D = core.createClass ({
 
   parent: Trajectory,
   
@@ -352,7 +352,7 @@ var Circular2D = vs.core.createClass ({
      *
      * @type Array<number>
      */
-    out: vs.core.Object.PROPERTY_OUT
+    out: core.Object.PROPERTY_OUT
   },
   
   /**

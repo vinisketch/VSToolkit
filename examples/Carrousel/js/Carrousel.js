@@ -1,7 +1,7 @@
-var CarrouselBook = vs.core.createClass ({
+var CarrouselBook = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
   
   applicationStarted : function (event) {
     this.carrouselView = new CarrouselView ().init ();
@@ -13,5 +13,5 @@ function loadApplication ()
 {
   new CarrouselBook ({id:"carrouselBook"}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

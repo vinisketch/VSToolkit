@@ -22,7 +22,7 @@ import vs_core from 'vs_core';
 /**
  *  The GoogleSearch class
  *
- *  @extends vs.core.EventSource
+ *  @extends core.EventSource
  *  @name vs.data.GoogleSearch
  *  @class vs.data.GoogleSearch
  *  provides an API to search information with the Google search engine.

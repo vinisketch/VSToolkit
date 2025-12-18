@@ -26,7 +26,7 @@ import { Task } from 'vs_core';
  *
  *  @extends vs.ui.View
  *  @class
- *  Implements {@link vs.core.Task}.
+ *  Implements {@link core.Task}.
  *  <p>
  *  The vs.av.Video class allow to show a movie clip or other video streams.
  *  <p>
@@ -43,9 +43,9 @@ import { Task } from 'vs_core';
  *  <p>
  * The delegate has to implement:
  *  <ul>
- *    <li/>taskDidStop : function (vs.core.Task)
- *    <li/>taskDidPause : function (vs.core.Task)
- *    <li/>taskDidEnd : function (vs.core.Task)
+ *    <li/>taskDidStop : function (core.Task)
+ *    <li/>taskDidPause : function (core.Task)
+ *    <li/>taskDidEnd : function (core.Task)
  *  </ul>
  *  @author David Thevenin
  *
@@ -122,9 +122,9 @@ Video.prototype = {
    * Methods are called when state changes (stop | pause)
    * Should implements: 
    *  <ul>
-   *    <li/>taskDidStop : function (vs.core.Task)
-   *    <li/>taskDidPause : function (vs.core.Task)
-   *    <li/>taskDidEnd : function (vs.core.Task)
+   *    <li/>taskDidStop : function (core.Task)
+   *    <li/>taskDidPause : function (core.Task)
+   *    <li/>taskDidEnd : function (core.Task)
    *  </ul>
    * @name vs.av.Video#delegate 
    * @property {object}
@@ -686,9 +686,9 @@ vs_utils.defineClassProperties (Video, {
   
     /** 
      * Return the task State. <br />
-     * Possible values: {@link vs.core.Task.STARTED},
-     * {@link vs.core.Task.STOPPED},
-     * {@link vs.core.Task.PAUSED}
+     * Possible values: {@link core.Task.STARTED},
+     * {@link core.Task.STOPPED},
+     * {@link core.Task.PAUSED}
      * @name vs.av.Video#state
      * @type {number}
      */ 
@@ -703,4 +703,4 @@ vs_utils.defineClassProperties (Video, {
                       Export
 *********************************************************************/
 /** @private */
-export default Video;
+export Video;

@@ -290,7 +290,7 @@ function testTemplateWithClass () {
   <div class='tels'><div data-iterate='tels'>${@}</div></div>\
 </div>";
 
-  var MyView = vs.core.createClass ({
+  var MyView = core.createClass ({
     parent: vs.ui.View,
     template: template_view
   });

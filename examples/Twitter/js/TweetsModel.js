@@ -1,19 +1,19 @@
-var TweetModel = vs.core.createClass ({
+var TweetModel = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.core.Model,
+  parent: vs_core.Model,
 
   properties : {
-    'img' : vs.core.Object.PROPERTY_IN_OUT,
-    'text' : vs.core.Object.PROPERTY_IN_OUT,
-    'author' : vs.core.Object.PROPERTY_IN_OUT
+    'img' : vs_core.VSObject.PROPERTY_IN_OUT,
+    'text' : vs_core.VSObject.PROPERTY_IN_OUT,
+    'author' : vs_core.VSObject.PROPERTY_IN_OUT
   }
 });
 
-var TweetsModel = vs.core.createClass ({
+var TweetsModel = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.core.Array,
+  parent: vs_core.Array,
 
   parseTimeline : function (timeline)
   {

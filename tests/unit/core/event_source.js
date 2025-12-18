@@ -2,7 +2,7 @@ var free = vs.util.free;
 
 function testEventSourceNew ()
 {
-  var o1 = new vs.core.EventSource ({id: 'id1'});
+  var o1 = new core.EventSource ({id: 'id1'});
   
   assertNotUndefined ('testEventSourceNew 1', o1);
   assertEquals ('testEventSourceNew 2', 'id1', o1._id);
@@ -12,9 +12,9 @@ function testEventSourceNew ()
 
 function testEventSourceBind ()
 {
-  var o1 = new vs.core.EventSource ({id: 'id1'});
+  var o1 = new core.EventSource ({id: 'id1'});
   
-  var o2 = new vs.core.EventSource ({id: 'id2'});
+  var o2 = new core.EventSource ({id: 'id2'});
 
   assertUndefined ('testEventSourceBind 1', o1.bind () );
   assertUndefined ('testEventSourceBind 2', o1.bind ('spec') );
@@ -62,8 +62,8 @@ function testEventSourceBind ()
 
 function testEventSourceFree ()
 {
-  var o1 = new vs.core.EventSource ({id: 'id1'});  
-  var o2 = new vs.core.EventSource ({id: 'id2'});
+  var o1 = new core.EventSource ({id: 'id1'});  
+  var o2 = new core.EventSource ({id: 'id2'});
 
   var handler = o1.bind ('spec', o2);
   var handlerBis = o1.bind ('specBis', o2, 'notify');
@@ -86,8 +86,8 @@ function testEventSourceFree ()
 
 function testEventSourceUnBind ()
 {
-  var o1 = new vs.core.EventSource ();  
-  var o2 = new vs.core.EventSource ({id: 'id2'});
+  var o1 = new core.EventSource ();  
+  var o2 = new core.EventSource ({id: 'id2'});
 
   var handler = o1.bind ('spec', o2);
   var handlerBis = o1.bind ('specBis', o2, 'notify');
@@ -124,8 +124,8 @@ function testEventSourceUnBind ()
 
 function testEventSourceClone ()
 {
-  var o1 = new vs.core.EventSource ();
-  var o2 = new vs.core.EventSource ({id: 'id2'});
+  var o1 = new core.EventSource ();
+  var o2 = new core.EventSource ({id: 'id2'});
 
   var handler = o1.bind ('spec', o2);
   var handlerBis = o1.bind ('specBis', o2, 'notify');
@@ -149,8 +149,8 @@ function testEventSourcePropagate ()
     clb ();
   }
 
-  var o1 = new vs.core.EventSource ();  
-  var o2 = new vs.core.EventSource ({id: 'id2'});
+  var o1 = new core.EventSource ();  
+  var o2 = new core.EventSource ({id: 'id2'});
 
   var result = false;
   function notify (event)
@@ -174,14 +174,14 @@ function testEventSourcePropagate ()
 
   result = false;
   assertFalse ('testEventSourcePropagate 4', result);
-  var event = new vs.core.Event (o1, 'specBis', 4);
+  var event = new core.Event (o1, 'specBis', 4);
   o1.notify (event);
   assertEquals ('testEventSourcePropagate 5', 'specBis', result.type);
   assertEquals ('testEventSourcePropagate 6', 4, result.data);
 
   result = false;
   assertFalse ('testEventSourcePropagate 7', result);
-  var event = new vs.core.Event (o1, 'specTer', 5);
+  var event = new core.Event (o1, 'specTer', 5);
   o1.notify (event);
   assertEquals ('testEventSourcePropagate 8', 'specTer', result.type);
   assertEquals ('testEventSourcePropagate 9', 5, result.data);
@@ -197,7 +197,7 @@ function testEventSourceNodeBind ()
     clb ();
   }
 
-  var o1 = new vs.core.EventSource ({id: 'id1'});
+  var o1 = new core.EventSource ({id: 'id1'});
   function notify (event)
   {
     result = {};
@@ -235,7 +235,7 @@ function testEventSourceNodeUnbind ()
     clb ();
   }
 
-  var o1 = new vs.core.EventSource ({id: 'id1'});
+  var o1 = new core.EventSource ({id: 'id1'});
   function notify (event)
   {
     result = {};
@@ -276,7 +276,7 @@ function testEventSourceNodeUnbind ()
 //     clb ();
 //   }
 // 
-//   var o1 = new vs.core.EventSource ({id: 'id1'});
+//   var o1 = new core.EventSource ({id: 'id1'});
 //   function notify (event)
 //   {
 //     result = {};
@@ -298,7 +298,7 @@ function testEventSourceNodeUnbind ()
 
 // function testEventSourceDocumentUnbind ()
 // {
-//   var o1 = new vs.core.EventSource ({id: 'id1'});
+//   var o1 = new core.EventSource ({id: 'id1'});
 //   function notify (event)
 //   {
 //     result = {};

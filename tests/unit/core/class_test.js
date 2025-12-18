@@ -1,20 +1,20 @@
 
 function testCreateClassBasic ()
 {
-  var Todo = vs.core.createClass ({});
+  var Todo = core.createClass ({});
 
   assertTrue ('testCreateClassBasic 1', (typeof Todo == "function"));
 }
 
 function testCreateClassProperties()
 {
-  var Test = vs.core.createClass ({
+  var Test = core.createClass ({
   
     /** Properties definition **/
     properties: {
-      content: vs.core.Object.PROPERTY_IN,
-      done: vs.core.Object.PROPERTY_IN_OUT,
-      date: vs.core.Object.PROPERTY_OUT
+      content: core.Object.PROPERTY_IN,
+      done: core.Object.PROPERTY_IN_OUT,
+      date: core.Object.PROPERTY_OUT
     } 
   });
   
@@ -35,7 +35,7 @@ function testCreateClassProperties()
 
 function testNewClassBasic ()
 {
-  var Todo = vs.core.createClass ({});
+  var Todo = core.createClass ({});
 
   assertTrue ('testNewClassBasic 1', (typeof Todo == "function"));
   
@@ -49,13 +49,13 @@ function testNewClassBasic ()
 
 function testNewClassProperties1 ()
 {
-  var Test = vs.core.createClass ({
+  var Test = core.createClass ({
   
     /** Properties definition **/
     properties: {
-      content: vs.core.Object.PROPERTY_IN,
-      done: vs.core.Object.PROPERTY_IN_OUT,
-      date: vs.core.Object.PROPERTY_OUT
+      content: core.Object.PROPERTY_IN,
+      done: core.Object.PROPERTY_IN_OUT,
+      date: core.Object.PROPERTY_OUT
     } 
   });
   
@@ -79,13 +79,13 @@ function testNewClassProperties1 ()
 
 function testNewClassProperties2 ()
 {
-  var Test = vs.core.createClass ({
+  var Test = core.createClass ({
   
     /** Properties definition **/
     properties: {
-      content: vs.core.Object.PROPERTY_IN,
-      done: vs.core.Object.PROPERTY_IN_OUT,
-      date: vs.core.Object.PROPERTY_OUT
+      content: core.Object.PROPERTY_IN,
+      done: core.Object.PROPERTY_IN_OUT,
+      date: core.Object.PROPERTY_OUT
     } 
   });
   

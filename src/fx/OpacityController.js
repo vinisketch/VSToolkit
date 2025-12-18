@@ -284,4 +284,4 @@ defineClassProperty (OpacityController, "animationDuration", {
                       Export
 *********************************************************************/
 /** @private */
-export default OpacityController;
+export OpacityController;

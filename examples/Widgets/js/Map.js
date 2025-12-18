@@ -6,11 +6,11 @@ function initMapPanel () {
     </div>";      
 
   var view = buildPanel();
-  view.layout = vs.ui.View.ABSOLUTE_LAYOUT;
+  view.layout = vs_ui.View.ABSOLUTE_LAYOUT;
 
-  var searchField = new vs.ui.InputField ({
+  var searchField = new vs_ui.InputField ({
     id: 'map_search',
-    type: vs.ui.InputField.SEARCH
+    type: vs_ui.InputField.SEARCH
   }).init ();
   view.add (searchField);
   searchField.setStyle ("margin", '5px');

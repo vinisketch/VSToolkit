@@ -1,12 +1,12 @@
-// import EventTarget from './EventTarget';
+// import EventSource from './EventSource';
 // import VSObject from './Object';
 //
 // /**
-//  * The vs.core.Model class
+//  * The core.Model class
 //  *
-//  * @extends vs.core.EventTarget
+//  * @extends core.EventSource
 //  * @class
-//  * vs.core.Model is a class that defines the basic Model mechanisms to implement
+//  * core.Model is a class that defines the basic Model mechanisms to implement
 //  * a MVC like architecture. If you need to implement a MVC component, you
 //  * should extend this class.<br/><br/> >>>> THIS CODE IS STILL UNDER BETA AND
 //  * THE API MAY CHANGE IN THE FUTURE <<< <p>
@@ -26,13 +26,13 @@
 //  * <p/>
 //  * The fallowing example show a TodoModel class with three properties
 //  * @example
-//  *  class TodoModel extends vs.core.Model {
+//  *  class TodoModel extends core.Model {
 //  *
 //  *   // Properties definition
 //  *   properties : {
-//  *     content: vs.core.Object.PROPERTY_IN_OUT,
-//  *     done: vs.core.Object.PROPERTY_IN_OUT,
-//  *     date: vs.core.Object.PROPERTY_OUT
+//  *     content: core.Object.PROPERTY_IN_OUT,
+//  *     done: core.Object.PROPERTY_IN_OUT,
+//  *     date: core.Object.PROPERTY_OUT
 //  *   },
 //  *
 //  *   // Initialization
@@ -46,18 +46,18 @@
 //  * var myModel = new TodoModel ({content:"Something to do"});
 //  * myModel.init ();
 //  *
-//  * @see vs.core.DataStorage
+//  * @see core.DataStorage
 //  * @author David Thevenin
 //  *
 //  *  @constructor
 //  *  Main constructor
 //  *
-//  * @name vs.core.Model
+//  * @name core.Model
 //  *
 //  * @param {Object} config the configuration structure
 //  */
 //
-// export class Model extends EventTarget {
+// export class Model extends EventSource {
 //   #shouldPropagateChange = true;
 //   readonly #links = [];
 //
@@ -68,7 +68,7 @@
 //    * bind your object (the observer) to this object using 'bindChange' method.
 //    * <p/>
 //    *
-//    * @name vs.core.Model#bindChange
+//    * @name core.Model#bindChange
 //    * @function
 //    * @example
 //    *  // Listen every change of the model
@@ -77,7 +77,7 @@
 //    *  myModel.bindChange ('add', this, this.onChange);
 //    *
 //    * @param {string} action the event specification [optional]
-//    * @param {vs.core.Object} obj the object interested to catch the event [mandatory]
+//    * @param {core.Object} obj the object interested to catch the event [mandatory]
 //    * @param {string} func the name of a callback. If its not defined
 //    *        notify method will be called [optional]
 //    */
@@ -92,11 +92,11 @@
 //    *  <p>
 //    *  Should be call when you want stop event listening on this object
 //    *
-//    * @name vs.core.Model#unbindChange
+//    * @name core.Model#unbindChange
 //    * @function
 //    *
 //    * @param {string} spec the event specification [optional]
-//    * @param {vs.core.Object} obj the object you want unbind [mandatory]
+//    * @param {core.Object} obj the object you want unbind [mandatory]
 //    * @param {string} func the name of a callback. If its not defined
 //    *        all binding with <spec, obj> will be removed
 //    */
@@ -113,7 +113,7 @@
 //    * <p>
 //    * Calling model.change () will reactivate event propagation.
 //    *
-//    * @name vs.core.Model#stopPropagation
+//    * @name core.Model#stopPropagation
 //    * @function
 //    */
 //   stopPropagation(): void {
@@ -126,7 +126,7 @@
 //    *  <p>
 //    *  Calling model.change () will reactivate event propagation.
 //    *
-//    * @name vs.core.Model#hasToPropagateChange
+//    * @name core.Model#hasToPropagateChange
 //    * @function
 //    * @protected
 //    */
@@ -142,7 +142,7 @@
 //    * <p>
 //    * Calling myModel.change () reactivate automatic change propagation
 //    *
-//    * @name vs.core.Model#change
+//    * @name core.Model#change
 //    * @function
 //    *
 //    * @param {String} action the event specification [optional]
@@ -179,7 +179,7 @@
 //    * Removes all elements of this Model.<br/>
 //    * This is an abstract method, and should be implemented with your own
 //    * object.
-//    * @name vs.core.Model#clear
+//    * @name core.Model#clear
 //    * @param {Boolean} should_free free content items
 //    * @function
 //    */
@@ -203,30 +203,30 @@
 //   /**
 //    *  Propagate an event
 //    *  <p>
-//    *  All Object listening this EventTarget will receive this new handled
+//    *  All Object listening this EventSource will receive this new handled
 //    *  event.
 //    *
-//    * @name vs.core.EventTarget#propagate
+//    * @name core.EventSource#propagate
 //    * @function
 //    *
 //    * @param {String} spec the event specification [mandatory]
 //    * @param {Object} data an optional data event [optional]
-//    * @param {vs.core.Object} srcTarget a event source, By default this object
+//    * @param {core.Object} srcTarget a event source, By default this object
 //    *        is the event source [mandatory]
 //    */
 //   propagate (type, data, srcTarget) {
 //     this.#shouldPropagateChanges = true;
 //
-//     EventTarget.prototype.propagate.call (this, type, data, srcTarget);
+//     EventSource.prototype.propagate.call (this, type, data, srcTarget);
 //   }
 //
 //   /**
 //    * @protected
 //    *
-//    * @name vs.core.Model#linkTo
+//    * @name core.Model#linkTo
 //    * @function
 //    *
-//    * @param {vs.core.Object} linkTo object
+//    * @param {core.Object} linkTo object
 //    */
 //   linkTo (obj) {
 //     if (obj instanceof VSObject) {
@@ -237,10 +237,10 @@
 //   /**
 //    * @protected
 //    *
-//    * @name vs.core.Model#unlinkTo
+//    * @name core.Model#unlinkTo
 //    * @function
 //    *
-//    * @param {vs.core.Object} linkTo object
+//    * @param {core.Object} linkTo object
 //    */
 //   unlinkTo (obj) {
 //     if (obj instanceof VSObject) {
@@ -254,7 +254,7 @@
 //    * If no property name is specified, the system will assume all component's
 //    * input properties have been modified.
 //    *
-//    * @name vs.core.Model#propertyChange
+//    * @name core.Model#propertyChange
 //    * @function
 //    *
 //    * @param {String} property the name of the modified property.[optional]

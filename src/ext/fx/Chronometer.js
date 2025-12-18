@@ -1,11 +1,11 @@
 /**
  *  The vs.ext.fx.Chronometer class
  *
- *  @extends vs.core.Task
+ *  @extends core.Task
  *  @class
  *  vs.ext.fx.Chronometer is a periodical signal (tick) generator, that produces
  *  values from 0 to 1 when is started;<br />
- *  That element is a vs.core.Task then it can be started, stopped, paused and
+ *  That element is a core.Task then it can be started, stopped, paused and
  * it is compatible with de PAR / SEQ scheduling.
  *  <br />
  *  <hr />
@@ -46,9 +46,9 @@
  *
  * @param {Object} config the configuration structure [optional]
  */
-var Chronometer = vs.core.createClass ({
+var Chronometer = core.createClass ({
 
-  parent: vs.core.Task,
+  parent: core.Task,
 
   /** @protected */
   _duration: 300,
@@ -77,7 +77,7 @@ var Chronometer = vs.core.createClass ({
      *
      * @type number
      */
-    duration: vs.core.Object.PROPERTY_IN,
+    duration: core.Object.PROPERTY_IN,
 
     /**
      * set chronometer begin
@@ -85,7 +85,7 @@ var Chronometer = vs.core.createClass ({
      *
      * @type number
      */
-    begin: vs.core.Object.PROPERTY_IN,
+    begin: core.Object.PROPERTY_IN,
 
     /**
      * set chronometer steps
@@ -111,7 +111,7 @@ var Chronometer = vs.core.createClass ({
      *
      * @type number
      */
-    repeat: vs.core.Object.PROPERTY_IN,
+    repeat: core.Object.PROPERTY_IN,
 
     /**
      * set chronometer pace
@@ -119,7 +119,7 @@ var Chronometer = vs.core.createClass ({
      *
      * @type vs.ext.fx.Pace
      */
-    pace: vs.core.Object.PROPERTY_IN,
+    pace: core.Object.PROPERTY_IN,
 
     /**
      * set input tick
@@ -127,26 +127,26 @@ var Chronometer = vs.core.createClass ({
      *
      * @type number
      */
-    tick: vs.core.Object.PROPERTY_OUT
+    tick: core.Object.PROPERTY_OUT
   },
   
   initComponent: function (event)
   {
-    this._state = vs.core.Task.STOPPED;
+    this.#state = core.Task.STOPPED;
     this._super ();
   },
   
   /**
    *  Starts the task
    *
-   * @name vs.core.Task#start
+   * @name core.Task#start
    * @function
    *
    * @param {any} param any parameter (scalar, Array, Object)
    */
   start: function (param)
   {
-    if (this._state === vs.core.Task.STARTED) return;
+    if (this._state === core.Task.STARTED) return;
 
     // schedule a chronometer cycle
     function _start ()
@@ -155,7 +155,7 @@ var Chronometer = vs.core.createClass ({
       else this._start_steps ();
     }
     
-    if (this._state === vs.core.Task.STOPPED)
+    if (this._state === core.Task.STOPPED)
     {
       var begin = this._begin || 0;
       this.__time_decl = 0;
@@ -221,7 +221,7 @@ var Chronometer = vs.core.createClass ({
    */
   _clock : function ()
   {
-    if (this._state !== vs.core.Task.STARTED) return;
+    if (this._state !== core.Task.STARTED) return;
     
     var currTime = Date.now ();
     
@@ -238,7 +238,7 @@ var Chronometer = vs.core.createClass ({
       }
       else
       {
-        this._state = vs.core.Task.STOPPED;
+        this.#state = core.Task.STOPPED;
         if (this.delegate && this.delegate.taskDidEnd) {
           try {
             this.delegate.taskDidEnd (this);
@@ -265,12 +265,12 @@ var Chronometer = vs.core.createClass ({
    */
   _start_clock: function ()
   {
-    if (this._state === vs.core.Task.PAUSED)
+    if (this._state === core.Task.PAUSED)
     {
       var pause_dur = Date.now () - this.__pause_time;
       this.__start_time += pause_dur;
       this.__end_time += pause_dur;
-      this._state = vs.core.Task.STARTED;
+      this.#state = core.Task.STARTED;
       vs_core.scheduleAction (this._clock.bind (this));
       return;
     }
@@ -280,7 +280,7 @@ var Chronometer = vs.core.createClass ({
     
     if (vs.util.isFunction (this.__param)) this.__clb = this.__param;
 
-    this._state = vs.core.Task.STARTED;
+    this.#state = core.Task.STARTED;
     this.__setTick (0);
     this.propagateChange ('tick');
     if (this.__clb) this.__clb (this._tick);
@@ -294,7 +294,7 @@ var Chronometer = vs.core.createClass ({
    */
   _step : function ()
   {
-    if (this._state !== vs.core.Task.STARTED) return;
+    if (this._state !== core.Task.STARTED) return;
     
     var step = (this._steps - this.__steps)
     this.__steps --;
@@ -311,7 +311,7 @@ var Chronometer = vs.core.createClass ({
       }
       else
       {
-        this._state = vs.core.Task.STOPPED;
+        this.#state = core.Task.STOPPED;
         if (this.delegate && this.delegate.taskDidEnd) {
           try {
             this.delegate.taskDidEnd (this);
@@ -339,16 +339,16 @@ var Chronometer = vs.core.createClass ({
   _start_steps: function ()
   {
     // step chronometer implement a simplistic time management and pause.
-    if (this._state === vs.core.Task.PAUSED)
+    if (this._state === core.Task.PAUSED)
     {
-      this._state = vs.core.Task.STARTED;
+      this.#state = core.Task.STARTED;
       vs_core.scheduleAction (this._step.bind (this));
       return;
     }
 
     if (vs.util.isFunction (this.__param)) this.__clb = this.__param;
 
-    this._state = vs.core.Task.STARTED;
+    this.#state = core.Task.STARTED;
     this.__setTick (0);
     this.propagateChange ('tick');
     if (this.__clb) this.__clb (this._tick);
@@ -365,12 +365,12 @@ var Chronometer = vs.core.createClass ({
    *  When the task is stopped, it calls the TaskDelegate.taskDidStop
    *  if it declared.
    *
-   * @name vs.core.Task#stop
+   * @name core.Task#stop
    * @function
    */
   stop: function ()
   {
-    this._state = vs.core.Task.STOPPED;
+    this.#state = core.Task.STOPPED;
     this.__pause_time = 0;
 
     this.__setTick (0);
@@ -393,13 +393,13 @@ var Chronometer = vs.core.createClass ({
    *  When the task is paused, it calls the TaskDelegate.taskDidPause
    *  if it declared.
    *
-   * @name vs.core.Task#pause
+   * @name core.Task#pause
    * @function
    */
   pause: function ()
   {
-    if (!this._state === vs.core.Task.STARTED) return;
-    this._state = vs.core.Task.PAUSED;
+    if (!this._state === core.Task.STARTED) return;
+    this.#state = core.Task.PAUSED;
     this.__pause_time = Date.now ();
 
     if (this.delegate && this.delegate.taskDidPause) {

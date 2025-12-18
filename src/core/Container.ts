@@ -1,31 +1,26 @@
-import Component from './Component';
 import { isObject } from 'vs_utils';
+import Component from './Component';
 
-export default class Container extends Component {
-  #parent: Container | undefined;
-  #children: Container[] = [];
+const childToParent = new WeakMap<Component, Container>();
 
-  protected destructor() {
-    if (this.#parent) {
-      this.#parent.remove(this);
-    }
+export default class Container {
+  #children: Component[] = [];
 
-    this.#children.forEach(child => child.destructor());
-    this.#children.length = 0;
-    super.destructor();
+  static getParent(comp: Component): Container | undefined {
+    return childToParent.get(comp);
   }
 
-  get parent(): Container | undefined {
-    return this.#parent;
+  destructor() {
+    this.removeAllChildren();
   }
 
   /**
    *  Return true if the set component is a child o the current component
    *
-   * @param {View} child The component to be removed.
+   * @param {Component} child The component to be removed.
    * @return {boolean}
    */
-  isChild(child: Container): boolean {
+  isChild(child: Component): boolean {
     return this.#children.indexOf(child) !== -1;
   }
 
@@ -44,14 +39,14 @@ export default class Container extends Component {
    *  myObject.add (myButton, 'children');
    *
    */
-  add(child: Container): void {
-    if (this.isChild(child)) {
-      return;
+  add(child: Component): void {
+    if (childToParent.has(child)) {
+      throw new Error('Component is already a child of another Container');
     }
 
     this.#children.push(child);
 
-    child.#parent = this;
+    childToParent.set(child, this);
   }
 
   /**
@@ -61,9 +56,9 @@ export default class Container extends Component {
    *  myObject.remove (myButton);
    *
    *
-   * @param {View} child The component to be removed.
+   * @param {Component} child The component to be removed.
    */
-  remove(child: Container): void {
+  remove(child: Component): void {
     if (!this.isChild(child)) {
       return;
     }
@@ -73,7 +68,7 @@ export default class Container extends Component {
       throw new Error('Not a child of this component');
     }
     this.#children.splice(idx, 1);
-    child.#parent = undefined;
+    childToParent.delete(child);
   }
 
   /**
@@ -84,9 +79,7 @@ export default class Container extends Component {
    *
    */
   removeAllChildren(): void {
-    this.#children.forEach(child => {
-      child.#parent = undefined;
-    });
+    this.#children.forEach(child => childToParent.delete(child));
     this.#children.length = 0;
   }
 }

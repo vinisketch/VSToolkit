@@ -23,19 +23,19 @@ import {
   extendClass, defineClassProperties, free
 } from 'vs_utils';
 
-import Model from './Model';
+import Model from '../core/Model';
 
 /**
  *  @class
- *  vs.core.Array is an Array of Object or Model.
+ *  core.Array is an Array of Object or Model.
  *
- * @extends vs.core.Model
+ * @extends core.Model
  * @author David Thevenin
  *
  *  @constructor
  *  Main constructor
  *
- * @name vs.core.Array
+ * @name core.Array
  *
  * @param {Object} config the configuration structure
 */
@@ -62,7 +62,7 @@ VSArray.prototype = {
    ****************************************************************/
 
   /**
-   * @name vs.core.Array#initComponent
+   * @name core.Array#initComponent
    * @function
    * @protected
    */
@@ -81,7 +81,7 @@ VSArray.prototype = {
   /**
    * Returns the nth element
    *
-   * @name vs.core.Array#item
+   * @name core.Array#item
    * @function
    *
    * @param {number} index
@@ -96,7 +96,7 @@ VSArray.prototype = {
 
   /**
    * @private
-   * @name vs.core.Array#_instanceModel
+   * @name core.Array#_instanceModel
    * @function
    */
   _instanciateModel : function (obj)
@@ -124,10 +124,10 @@ VSArray.prototype = {
    * Adds one or more elements to the end of an array and returns the
    * new length of the array.
    *
-   * @name vs.core.Array#add
+   * @name core.Array#add
    * @function
    *
-   * @param {...vs.core.Object} datas
+   * @param {...core.Object} datas
    */
   add : function ()
   {
@@ -145,11 +145,11 @@ VSArray.prototype = {
   /**
    * Adds one or more elements to the end of an array and returns the
    *
-   * @name vs.core.Array#addAtIndex
+   * @name core.Array#addAtIndex
    * @function
    *
    * @param {number} index the position
-   * @param {...vs.core.Object} datas
+   * @param {...core.Object} datas
    */
   addAtIndex : function ()
   {
@@ -173,7 +173,7 @@ VSArray.prototype = {
    * ...
    * myarray.remove (3, 5); //remove the fourth, fifth and sixth items
    *
-   * @name vs.core.Array#remove
+   * @name core.Array#remove
    * @function
    *
    * @param {int} from Index of the first element to be removed
@@ -187,7 +187,7 @@ VSArray.prototype = {
 
   /**
    * Removes all elements of this Array.<br/>
-   * @name vs.core.Array#removeAll
+   * @name core.Array#removeAll
    * @function
    */
   removeAll : function ()
@@ -202,7 +202,7 @@ VSArray.prototype = {
 
   /**
    * Removes all elements of this Array.<br/>
-   * @name vs.core.Array#clear
+   * @name core.Array#clear
    * @param {Boolean} should_free free content items
    * @function
    */
@@ -220,7 +220,7 @@ VSArray.prototype = {
   /**
    *  .
    *
-   * @name vs.core.Array#indexOf
+   * @name core.Array#indexOf
    * @function
    * @param {String} str the url to parse
    */
@@ -238,7 +238,7 @@ VSArray.prototype = {
    *  Returns a copy of the objet's properties for JSON stringification.<p/>
    *  This can be used for persistence or serialization.
    *
-   * @name vs.core.Array#toJSON
+   * @name core.Array#toJSON
    * @function
    * @return {Object} the object value for stringify
    */
@@ -329,8 +329,8 @@ defineClassProperties (VSArray, {
     /**
      * Set data elements for the array
      *
-     * @name vs.core.Array#data
-     * @type {Array | vs.core.Array}
+     * @name core.Array#data
+     * @type {Array | core.Array}
      */
     set : function (v)
     {
@@ -353,7 +353,7 @@ defineClassProperties (VSArray, {
     /**
      * Returns an array of elements
      *
-     * @name vs.core.Array#data
+     * @name core.Array#data
      * @type {Array}
      */
     get : function ()
@@ -367,7 +367,7 @@ defineClassProperties (VSArray, {
     /**
      * Reflects the number of elements in an array.
      *
-     * @name vs.core.Array#length
+     * @name core.Array#length
      * @type {number}
      */
     get : function ()
@@ -381,8 +381,8 @@ defineClassProperties (VSArray, {
     /**
      * Set this property to specify the model class that the Array contains
      *
-     * @name vs.core.Array#modelClass
-     * @type {vs.core.Model}
+     * @name core.Array#modelClass
+     * @type {core.Model}
      */
     set : function (v)
     {
@@ -396,7 +396,7 @@ defineClassProperties (VSArray, {
     /**
      * Select the nth element. The output property value, will be changed
      *
-     * @name vs.core.Array#index
+     * @name core.Array#index
      * @type {number}
      */
     set : function (v)
@@ -417,7 +417,7 @@ defineClassProperties (VSArray, {
     /**
      *  Return the current index value
      *
-     * @name vs.core.Array#value
+     * @name core.Array#value
      * @type {number}
      */
     get : function ()
@@ -431,7 +431,7 @@ defineClassProperties (VSArray, {
      *  Return the current selected element. This property change when
      *  array#index property change or if the method item is called.
      *
-     * @name vs.core.Array#value
+     * @name core.Array#value
      * @type {number}
      */
     get : function ()

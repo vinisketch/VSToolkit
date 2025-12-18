@@ -1,35 +1,44 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import Component, { ObjectConfig } from './Component';
-import {
-  clone, isDate, isFunction, isString, underscore,
-} from 'vs_utils';
-import DataflowState from './DataflowState';
-import logger from '../logger';
+import { isString, SupportMixins } from 'vs_utils';
+import { createUniqueId, ObjectConfig } from './helpers';
+// import DataflowState from './DataflowState';
 import Connector from './Connector';
+import { BaseIdentifiable, ObjectId } from "./BaseIdentifiable";
 
-export default class DataflowComponent {
+const nodesBis = new Map<object, DataflowNode>();
+export function Input(value: any, { name, addInitializer, ...rest}: any) {
+  console.log(addInitializer)
+  console.log(rest)
+  addInitializer(function () {
+    let node = nodesBis.get(this);
+    if (!node) {
+      node = new DataflowNode(this.id);
+      nodesBis.set(this, node);
+    }
+  });
+}
+
+export default class DataflowNode extends SupportMixins implements BaseIdentifiable  {
   #configParams: ObjectConfig | undefined;
-
-  constructor(config?: ObjectConfig) {
-    // eslint-disable-next-line no-nested-ternary
-    super(isString(config) ? config : isString(config?.id) ? config?.id : undefined);
-
-    if (config) this.#configParams = clone(config);
-
-    DataflowState.add(this);
-
-    this.registerInitFunction(this.dataFlowComponentInit);
+  readonly id: string;
+  static readonly #nodes = new Map<string, DataflowNode>();
+  static get(id: string): DataflowNode | undefined {
+    return DataflowNode.#nodes.get(id);
   }
 
-  private dataFlowComponentInit = (): void => {
+  constructor(id?: ObjectId) {
+    super();
+    this.id = isString(id)? id : createUniqueId();
+    // DataflowState.add(this);
+    DataflowNode.#nodes.set(this.id, this);
     if (this.#configParams) {
       this.configure(this.#configParams);
       this.#configParams = undefined;
     }
-  };
+  }
 
   /**
-   *  Object configuation method. <p>
+   *  Object configuration method. <p>
    *  Call this method to adjust some properties of the internal components
    *  using one call. <br/>
    *  It takes as parameters, an associated array <propertyName, value>.
@@ -52,48 +61,48 @@ export default class DataflowComponent {
    *        object.
    */
   protected configure(config: Exclude<ObjectConfig, 'id'>) {
-    let shouldPropagate = false;
-    // let props; let key; let i; ; let
-    //   desc;
-    const state = DataflowState.get(this.id)!;
-    state.pausePropagation();
-
-    // Manage model
-    // if (config instanceof Model) {
-    //   desc = this.getPropertyDescriptor ('model');
-    //   if (desc && desc.set) {
-    //     // model property assignation
-    //     this.model = config;
+    // let shouldPropagate = false;
+    // // let props; let key; let i; ; let
+    // //   desc;
+    // const state = DataflowState.get(this.id)!;
+    // state.pausePropagation();
+    //
+    // // Manage model
+    // // if (config instanceof Model) {
+    // //   desc = this.getPropertyDescriptor ('model');
+    // //   if (desc && desc.set) {
+    // //     // model property assignation
+    // //     this.model = config;
+    // //     shouldPropagate = true;
+    // //   }
+    // //   else {
+    // //     // one by one property copy
+    // //     props = config.getModelProperties ();
+    // //     for (i = 0; i < props.length; i += 1)
+    // //     {
+    // //       key = props [i];
+    // //       if (key === 'id') continue;
+    // //       this [key] = config [key];
+    // //       shouldPropagate = true;
+    // //     }
+    // //   }
+    // // }
+    // // else {
+    // if (config) {
+    //   const properties = this.getModelProperties();
+    //   properties.forEach(key => {
+    //     // @ts-ignore
+    //     this[key] = config[key];
     //     shouldPropagate = true;
-    //   }
-    //   else {
-    //     // one by one property copy
-    //     props = config.getModelProperties ();
-    //     for (i = 0; i < props.length; i += 1)
-    //     {
-    //       key = props [i];
-    //       if (key === 'id') continue;
-    //       this [key] = config [key];
-    //       shouldPropagate = true;
-    //     }
-    //   }
+    //   });
     // }
-    // else {
-    if (config) {
-      const properties = this.getModelProperties();
-      properties.forEach(key => {
-        // @ts-ignore
-        this[key] = config[key];
-        shouldPropagate = true;
-      });
-    }
+    // // }
+    //
+    // state.restartPropagation();
+    // if (shouldPropagate) {
+    //   this.propertiesDidChange();
+    //   state.propagate();
     // }
-
-    state.restartPropagation();
-    if (shouldPropagate) {
-      this.propertiesDidChange();
-      state.propagate();
-    }
   }
 
   /**
@@ -116,38 +125,38 @@ export default class DataflowComponent {
    *  Returns a copy of the objet's properties for JSON stringification.<p/>
    *  This can be used for persistence or serialization.
    */
-  protected override serialize(): any {
-    const base = super.serialize();
-    const properties = this.getModelProperties();
-
-    if (properties) {
-      properties.forEach(propName => {
-        // @ts-ignore TODO a fixer
-        const value = this[`_${underscore(propName)}`];
-        if (value === undefined) {
-          return;
-        }
-        let result;
-        if (isDate(value)) {
-          result = value;
-        } else if (isFunction(value.serialize)) {
-          logger.warn('THIS CASE IS NOT PROPERLY MANAGED, (especially deserialization)');
-          result = value.serialize();
-        } else {
-          result = value;
-        }
-        base[propName] = result;
-      });
-    }
-    return base;
-  }
-
-  /**
-   * @protected
-   */
-  protected override deserialize(data: any): void {
-    this.configure(data);
-  }
+  // protected override serialize(): any {
+  //   const base = super.serialize();
+  //   const properties = this.getModelProperties();
+  //
+  //   if (properties) {
+  //     properties.forEach(propName => {
+  //       // @ts-ignore TODO a fixer
+  //       const value = this[`_${underscore(propName)}`];
+  //       if (value === undefined) {
+  //         return;
+  //       }
+  //       let result;
+  //       if (isDate(value)) {
+  //         result = value;
+  //       } else if (isFunction(value.serialize)) {
+  //         logger.warn('THIS CASE IS NOT PROPERLY MANAGED, (especially deserialization)');
+  //         result = value.serialize();
+  //       } else {
+  //         result = value;
+  //       }
+  //       base[propName] = result;
+  //     });
+  //   }
+  //   return base;
+  // }
+  //
+  // /**
+  //  * @protected
+  //  */
+  // protected override deserialize(data: any): void {
+  //   this.configure(data);
+  // }
 
   /**
    * Returns a property descriptor for a property (along the object's
@@ -162,7 +171,7 @@ export default class DataflowComponent {
     if (desc) return desc;
 
     /** @private */
-    function getOwnPropertyDescriptor(obj: DataflowComponent): PropertyDescriptor | undefined {
+    function getOwnPropertyDescriptor(obj: DataflowNode): PropertyDescriptor | undefined {
       if (!obj) return undefined;
       const proto = Object.getPrototypeOf(obj);
       if (!proto) return undefined;
@@ -180,7 +189,7 @@ export default class DataflowComponent {
   }
 
   /**
-   * Connect two components within the datalfow.
+   * Connect two components within the dataflow.
    * This method return a Connector that will allow you to declare your
    * dataflow with a simple chaining API.
    *

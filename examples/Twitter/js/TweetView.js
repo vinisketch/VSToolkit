@@ -1,7 +1,7 @@
-var TweetView = vs.core.createClass ({
+var TweetView = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.View,
+  parent: vs_ui.View,
 
   properties : {
     user : {

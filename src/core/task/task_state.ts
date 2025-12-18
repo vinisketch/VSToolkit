@@ -1,22 +1,22 @@
-export enum Task_state {
+export enum TaskState {
   /**
    * The task is started
    * @const
-   * @name vs.core.TaskState.STARTED
+   * @name core.TaskState.STARTED
    */
   STARTED = 1,
 
   /**
    * The task is stopped
    * @const
-   * @name vs.core.TaskState.STOPPED
+   * @name core.TaskState.STOPPED
    */
   STOPPED = 0,
 
   /**
    * The task is paused
    * @const
-   * @name vs.core.TaskState.PAUSED
+   * @name core.TaskState.PAUSED
    */
   PAUSED = 2,
 }

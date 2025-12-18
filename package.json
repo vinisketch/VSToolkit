@@ -2,64 +2,46 @@
   "name": "vs_toolkit",
   "version": "1.0.3",
   "description": "Toolkit for creating to easily develop Hybrid/Web Applications for mobile devices.",
-  "main": "index.js",
   "repository": "git@github.com:vinisketch/VSToolkit.git",
-  "author": "<david.thevenin@gmail.com>",
+  "author": "<david@thevenin.jp>",
   "license": "MIT",
-  "files": [
-    "dist/"
-  ],
   "scripts": {
-    "grunt": "grunt",
-    "build:core": "rollup -c ./rollup.config/core.js",
-    "build:data": "rollup -c ./rollup.config/data.js",
-    "build:av": "rollup -c ./rollup.config/av.js",
-    "build:fx": "rollup -c ./rollup.config/fx.js",
-    "build:ui": "rollup -c ./rollup.config/ui.js",
-    "build:core:iief:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o dist/js/vs_core.min.js -- dist/js/vs_core.js",
-    "build:data:iief:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o dist/js/vs_data.min.js -- dist/js/vs_data.js",
-    "build:av:iief:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o dist/js/vs_av.min.js -- dist/js/vs_av.js",
-    "build:fx:iief:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o dist/js/vs_fx.min.js -- dist/js/vs_fx.js",
-    "build:ui:iief:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o dist/js/vs_ui.min.js -- dist/js/vs_ui.js",
-    "build:iief:min": "npm run build:core:iief:min && npm run build:data:iief:min && npm run build:ui:iief:min && npm run build:av:iief:min && npm run build:fx:iief:min",
-    "build:core:amd:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o lib/vs_core.min.js -- lib/vs_core.js",
-    "build:data:amd:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o lib/vs_data.min.js -- lib/vs_data.js",
-    "build:av:amd:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o lib/vs_av.min.js -- lib/vs_av.js",
-    "build:fx:amd:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o lib/vs_fx.min.js -- lib/vs_fx.js",
-    "build:ui:amd:min": "node_modules/uglify-es/bin/uglifyjs --compress --mangle -o lib/vs_ui.min.js -- lib/vs_ui.js",
-    "build:amd:min": "npm run build:core:amd:min && npm run build:data:amd:min && npm run build:ui:amd:min && npm run build:av:amd:min && npm run build:fx:amd:min",
-    "build:all": "npm run build:core && npm run build:data && npm run build:ui && npm run build:av && npm run build:fx",
-    "build": "npm run build:all && npm run build:iief:min && npm run build:amd:min"
+    "clean": "rimraf dist build",
+    "prepublish": "npm run clean && npm run build",
+    "tsc": "tsc -p src/tsconfig.json",
+    "btest": "tsc -p tsconfig.test.json",
+    "prebuild": "npm run tsc",
+    "build:core": "rollup -c ./rollup.config/core.mjs",
+    "build:data": "rollup -c ./rollup.config/data.mjs",
+    "build": "npm run build:core"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "grunt": "^1.0.1",
-    "grunt-browserify": "^5.2.0",
-    "grunt-contrib-clean": "^1.1.0",
-    "grunt-contrib-concat": "^1.0.1",
-    "grunt-contrib-copy": "^1.0.0",
-    "grunt-contrib-less": "^1.4.1",
-    "less-plugin-autoprefix": "^1.5.1",
-    "less-plugin-clean-css": "^1.5.1",
-    "rollup": "^0.53.1",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "jest": "^30.2.0",
+    "mocha": "^11.7.5",
+    "nyc": "^17.1.0",
+    "rimraf": "^6.1.2",
+    "rollup": "^4.53.5",
+    "rollup-plugin-dts": "^6.3.0",
+    "rollup-plugin-esbuild": "^6.2.1",
     "rollup-plugin-html": "^0.2.1",
-    "rollup-plugin-visualizer": "^0.3.1",
-    "uglify-es": "^3.3.2"
+    "rollup-plugin-visualizer": "^6.0.5",
+    "typescript": "^5.9.3"
   },
   "dependencies": {
-    "vs_gesture": "https://github.com/dthevenin/Gesture.git#v1.0.3",
-    "vs_transform": "https://github.com/dthevenin/Transform.git#v1.0.2",
-    "vs_utils": "https://github.com/dthevenin/Util.git#v1.0.3"
+    "vs_ui_utils": "file:/Users/dthevenin/Projects/little_bird/VS_ui_utils",
+    "vs_utils": "file:/Users/dthevenin/Projects/little_bird/VS_utils",
+    "winston": "^3.19.0"
   },
-  "clean": {
-    "options": {
-      "force": true
-    },
-    "debug": [
-      ".lib_debug/**"
-    ],
-    "release": [
-      "./lib/**"
-    ]
+  "types": "./dist/",
+  "exports": {
+    "core": {
+      "import": "./dist/vs_core.es.js",
+      "require": "./dist/vs_core.amd.js",
+      "types": "./dist/vs_core.d.js"
+    }
+  },
+  "engines": {
+    "node": ">=15.0.0"
   }
 }

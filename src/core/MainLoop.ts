@@ -1,6 +1,10 @@
-import installPostMessageImplementation from './polyfillSetImmediate';
 import { isFunction } from 'vs_utils';
-import logger from '../../../src/logger';
+import {
+  initSetImmediatePolyfill,
+  runImmediatePolyfill
+} from './polyfillSetImmediate';
+import { Event } from './event';
+import { Action } from "./Action";
 
 /**
  * Schedule your action on next frame.
@@ -33,11 +37,6 @@ const asyncEventsQueue: EventBurst[] = [];
 // Event reference on the current synchronous event.
 let syncEvent: EventBurst | undefined = undefined;
 
-// Actions queue. This array contains all actions (Action object)
-// that have to be executed.
-const mainActionsQueue: Action[] = [];
-const tmpActionsQueue: Action[] = [];
-
 // Boolean indicating if we are propagating a event or not.
 // To secure event propagation, in particular to avoid a event pass a previous
 // event, we manage a events queue and block new propagation if a event is
@@ -48,45 +47,13 @@ let isSyncEventsPropagating = false;
 // Boolean indicating if we are running an action or not.
 // This boolean is used only in case we use our own implementation of
 // setImmediate.
-let isActionRuning = false;
+let isActionRunning = false;
 let isWaiting = false;
 
 /********************************************************************
  Actions Management
  *********************************************************************/
 
-/**
- *  Structure used for managing events
- *  @private
- */
-export class Action {
-  private static pool: Action[] = [];
-
-  private func: ((...arg: unknown[]) => void) | undefined;
-  private ctx: any | undefined;
-
-  configure(func: (...args: any[]) => void, ctx?: any) {
-    this.func = func;
-    this.ctx = ctx;
-  }
-
-  /**
-   * Run the action. This method is called with our setImmediate
-   * implementation
-   */
-  run = (): void => this.func?.call(this.ctx);
-
-  static retain(): Action {
-    if (Action.pool.length > 0) {
-      return Action.pool.pop()!;
-    }
-    return new Action();
-  }
-
-  static release(action: Action): void {
-    Action.pool.push(action);
-  }
-}
 
 /**
  * Install our awn setImmediate implementation, if needs
@@ -94,93 +61,10 @@ export class Action {
  * @private
  */
 
-let loopSetImmediate: (func: () => void) => void;
-
-let is_actions_are_scheduled = false;
-let scheduleDoActions;
-
-function queueAction(func: Action, ctx?: any) {
-//   var action = Action.retain();
-//   action.configure (func, ctx);
-
-  mainActionsQueue.push(func);
-
-  if (!is_actions_are_scheduled) {
-    is_actions_are_scheduled = true;
-    scheduleDoActions();
-  }
-}
-
-/**
- * @private
- */
-function doAllActions () {
-  var queue = mainActionsQueue;
-
-  is_actions_are_scheduled = false;
-
-  if (queue.length) {
-
-    // switch queues
-    mainActionsQueue = tmpActionsQueue;
-    tmpActionsQueue = queue;
-
-    try {
-      // execute actions
-      var i = 0, l = queue.length, func;
-      for (; i < l; i++) {
-        func = queue [i];
-        func.call ();
-      }
-    }
-    catch (e) {
-      if (e.stack) console.error (e.stack);
-      else console.error (e);
-    }
-    // clean the queue
-    queue.length = 0;
-  }
-}
-
-/**
- * doAction, execute one action. This method is called with our setImmediate
- * implementation.
- *
- * @private
- */
-function installPostMessageImplementation () {
-
-  var MESSAGE_PREFIX = "vs.scheduler" + Math.random ();
-
-  function onGlobalMessage (event) {
-    if (event.data === MESSAGE_PREFIX) {
-      doAllActions ();
-    }
-  }
-
-  if (window.addEventListener) {
-    window.addEventListener ("message", onGlobalMessage, false);
-  }
-
-  return function () {
-    window.postMessage (MESSAGE_PREFIX, "*");
-  };
-}
-
-
-// @ts-ignore
-if (!window.setImmediate) {
-  // scheduleDoActions, asynchronously execute pending actions.
-  // if postMessage exists, use it (this is the faster way)
-  // otherwise use traditional setTimeout (f, 0) that add a minimum 4ms delay
-  scheduleDoActions = (window.postMessage)?
-    installPostMessageImplementation ():
-    function () { setTimeout (doAllActions, 0) };
-  loopSetImmediate = (func: () => void) => setTimeout(func, 0);
-}
-else {
-  loopSetImmediate = window.setImmediate.bind(window);
-}
+const loopSetImmediate =
+  (typeof setImmediate !== 'undefined') ? setImmediate :
+  (typeof window !== 'undefined' && window.setImmediate) ? window.setImmediate.bind(window) :
+  initSetImmediatePolyfill();
 
 /**
  * Schedule an action to be executed asynchronously.
@@ -232,8 +116,6 @@ export function scheduleAction(action: Action, delay?: number) {
     requestAnimationFrame(action.run);
   } else loopSetImmediate(action.run);
 }
-
-
 
 
 // /********************************************************************
@@ -294,8 +176,8 @@ function doOneEvent(burst: EventBurst, isSynchron?: boolean): void {
           handler.handleEvent.call(handler, event);
         }
       } catch (e: any) {
-        if (e.stack) logger.error(e.stack);
-        else logger.error(e);
+        // if (e.stack) logger.error(e.stack);
+        // else logger.error(e);
       }
     }
     endPropagation();
@@ -343,7 +225,7 @@ function doOneSyncEvent(): void {
 function serviceLoop() {
   if (syncEvent) doOneSyncEvent();
 
-  if ((asyncEventsQueue.length === 0 && mainActionsQueue.length === 0) || isWaiting) return;
+  if (isWaiting) return;
 
   function loop() {
     isWaiting = false;
@@ -357,7 +239,7 @@ function serviceLoop() {
   }
 
   // dispatch an event to observers
-  if (mainActionsQueue.length) scheduleDoActions();
+  runImmediatePolyfill();
   if (asyncEventsQueue.length) doOneAsyncEvent();
 }
 

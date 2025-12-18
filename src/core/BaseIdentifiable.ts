@@ -1,5 +1,5 @@
 export type ObjectId = string;
 
-export default interface BaseIdentifiable {
+export interface BaseIdentifiable {
   readonly id: string;
 }

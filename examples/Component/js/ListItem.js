@@ -1,7 +1,7 @@
-var ListItem = vs.core.createClass ({
+var ListItem = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.View,
+  parent: vs_ui.View,
   
   properties : {
     url : "image#src",
@@ -14,11 +14,11 @@ var ListItem = vs.core.createClass ({
         
     var config = {};
     
-    this.image = new vs.ui.ImageView ({node_ref: this.id + "#image"});
+    this.image = new vs_ui.ImageView ({node_ref: this.id + "#image"});
     this.image.init ();
     this.add (this.image);
         
-    this.label = new vs.ui.TextLabel ({node_ref: this.id + "#textlabel"});
+    this.label = new vs_ui.TextLabel ({node_ref: this.id + "#textlabel"});
     this.label.init ();    
     this.add (this.label);
   }

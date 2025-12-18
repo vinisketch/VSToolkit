@@ -16,10 +16,10 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
  
-var ConfigPanel = vs.core.createClass ({
+var ConfigPanel = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.View,
+  parent: vs_ui.View,
   
   template:
 '<div class="config_panel"> \

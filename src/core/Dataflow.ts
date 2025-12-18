@@ -1,11 +1,10 @@
 import {
-  isArray, isFunction, isNotEmpty, isNumber, isString,
-} from '../utils';
-import BaseIdentifiable, { ObjectId } from './BaseIdentifiable';
-import logger from '../logger';
-import Component from './Component';
+  isArray, isFunction, isNotEmpty, isNumber, isString, container, injectionToken
+} from 'vs_utils';
+import { BaseIdentifiable, ObjectId } from './BaseIdentifiable';
 import DataflowState from './DataflowState';
-import DataflowComponent from './DataflowComponent';
+import DataflowNode from './DataflowNode';
+import { LOGGER } from "./ILogger";
 
 let edgeIdCount = 1;
 
@@ -27,7 +26,7 @@ interface CompiledEdge {
 }
 
 interface CompiledConnection {
-  obj: Component,
+  obj: DataflowNode,
   other: number,
   cEdges: CompiledEdge[],
   state: DataflowState,
@@ -40,16 +39,16 @@ type Connection = [ObjectId, number, Edges];
 type Connections = Array<Connection>;
 
 function buildConnectParameters(
-  src: ObjectId | DataflowComponent,
+  src: ObjectId | DataflowNode,
   outDesc: string | string[],
-  trg: ObjectId | DataflowComponent,
+  trg: ObjectId | DataflowNode,
   inDesc: string | string[],
-): [DataflowComponent, string[], DataflowComponent, string[]] {
-  const srcObj = isString(src) ? Component.instances[src] : src;
+): [DataflowNode, string[], DataflowNode, string[]] {
+  const srcObj = isString(src) ? DataflowNode.get(src) : src;
   if (!srcObj || !DataflowState.get(srcObj.id)) {
     throw new Error(`Unknown component or not data flow compatible, with id ${src}`);
   }
-  const trgObj = isString(trg) ? Component.instances[trg] : trg;
+  const trgObj = isString(trg) ? DataflowNode.get(trg) : trg;
   if (!trgObj || !DataflowState.get(trgObj.id)) {
     throw new Error(`Unknown component or not data flow compatible, with id ${trg}`);
   }
@@ -61,7 +60,7 @@ function buildConnectParameters(
     throw new Error('DataFlow.[dis]connect, parameter error');
   }
 
-  return [srcObj as DataflowComponent, propertiesOut, trgObj as DataflowComponent, propertiesIn];
+  return [srcObj, propertiesOut, trgObj, propertiesIn];
 }
 
 /**
@@ -87,14 +86,14 @@ function arrayMin(indegrees: number []): number {
   return minIndex;
 }
 
-function generateGetters(obj: DataflowComponent, properties: string[]): Getter<any>[] {
+function generateGetters(obj: DataflowNode, properties: string[]): Getter<any>[] {
   return properties.map(pName => {
     const descriptor = obj.getPropertyDescriptor(pName);
     return descriptor?.get;
   }).filter(isNotEmpty);
 }
 
-function generateSetters(obj: DataflowComponent, properties: string[]): Setter<any>[] {
+function generateSetters(obj: DataflowNode, properties: string[]): Setter<any>[] {
   return properties.map(pName => {
     const descriptor = obj.getPropertyDescriptor(pName);
     return descriptor?.set;
@@ -111,6 +110,7 @@ function generateSetters(obj: DataflowComponent, properties: string[]): Setter<a
  */
 export class DataFlow {
   private static propagationCount = 0;
+  private readonly logger = container.get(LOGGER);
 
   #isPropagating = false;
   // edges from components Object[component.id] => Array[3] <Object, , properties>
@@ -122,7 +122,7 @@ export class DataFlow {
   #listNode: Array<ObjectId> = [];
   #shouldNotPropagate = 0;
 
-  readonly #dataflowNodes: DataflowComponent[] = [];
+  readonly #dataflowNodes: DataflowNode[] = [];
 
   #isSorted = false;
   #isCyclic = false;
@@ -159,7 +159,7 @@ export class DataFlow {
 
         // set properties in values
         if (params.length !== edge.setters.length) {
-          logger.error('Dataflow, invalid parameters');
+          this.logger.error('Dataflow, invalid parameters');
           return;
         }
 
@@ -183,7 +183,7 @@ export class DataFlow {
    * @param {Boolean} outputPropagation, do a propagation, starting from
    *         output property instead of input property (default configuration)
    */
-  propagate(obj: DataflowComponent, outputPropagation = false): void {
+  propagate(obj: DataflowNode, outputPropagation = false): void {
     // The graph is sorted and save into an array.
     // Propagation consist of take each object of tree, one by one, following
     // the array order, and propagation value between node, and call
@@ -257,9 +257,9 @@ export class DataFlow {
    * @param func
    */
   connect(
-    src: ObjectId | DataflowComponent,
+    src: ObjectId | DataflowNode,
     outDesc: string | string[],
-    trg: ObjectId | DataflowComponent,
+    trg: ObjectId | DataflowNode,
     inDesc: string | string[],
     func?: unknown,
   ): number {
@@ -314,16 +314,16 @@ export class DataFlow {
    *  df.disconnect(obj_src, property_out, obj_trg, property_in);
    *
    * @param {Number|String|Object} edgeId the id of the edge to remove (this id is returned
-   *                 by connect method) or obj_src the Component (or Id) source.
+   *                 by connect method) or obj_src the DataflowNode (or Id) source.
    * @param {String|Array} property_out one or an array of output property name(s)
-   * @param {String|Object} obj_trg the Component (or Id) target.
+   * @param {String|Object} obj_trg the DataflowNode (or Id) target.
    * @param {String|Array} property_in one or an array of input property name(s)
    */
   disconnect(edgeId: number): void;
   disconnect(src: ObjectId, outDesc: string, trg: ObjectId, inDesc: string): void;
-  disconnect(src: Component, outDesc: string, trg: Component, inDesc: string): void;
+  disconnect(src: DataflowNode, outDesc: string, trg: DataflowNode, inDesc: string): void;
   disconnect(src: ObjectId, outDesc: string[], trg: ObjectId, inDesc: string[]): void;
-  disconnect(src: Component, outDesc: string[], trg: Component, inDesc: string[]): void;
+  disconnect(src: DataflowNode, outDesc: string[], trg: DataflowNode, inDesc: string[]): void;
   disconnect(src: any, outDesc?: any, trg?: any, inDesc?: any): void {
     if (isNumber(src)) {
       this.disconnectById(src);
@@ -337,12 +337,12 @@ export class DataFlow {
    * Remove a dataflow connection using a edge parameters
    *
    * @private
-   * @param {String|Object} obj_src the Component (or Id) source.
+   * @param {String|Object} obj_src the DataflowNode (or Id) source.
    * @param {String|Array} property_out one or an array of output property name(s)
-   * @param {String|Object} obj_trg the Component (or Id) target.
+   * @param {String|Object} obj_trg the DataflowNode (or Id) target.
    * @param {String|Array} property_in one or an array of input property name(s)
    */
-  protected disconnectByParams(srcObj: Component, propertiesOut: string[], trgObj:Component, propertiesIn: string[]) {
+  protected disconnectByParams(srcObj: DataflowNode, propertiesOut: string[], trgObj:DataflowNode, propertiesIn: string[]) {
     const connections = this.#edgesFrom.get(srcObj.id);
     if (!connections) {
       return;
@@ -484,7 +484,7 @@ export class DataFlow {
 
     if (violationCount > 0) {
       const edgecount = this.#edgesFrom.size;
-      logger.warn(
+      this.logger.warn(
         'WARNING: Cycles detected during topological sort.'
         + '%d dependencies out of %d have been violated.\n',
         violationCount,
@@ -522,7 +522,7 @@ export class DataFlow {
     this.#dataflowNodes.length = 0;
     for (let i = 0; i < nodeList.length; i++) {
       const id = nodeList[i];
-      const obj = Component.instances[id] as DataflowComponent;
+      const obj = DataflowNode.get(id);
       if (obj) {
         this.#dataflowNodes.push(obj);
       }
@@ -530,7 +530,7 @@ export class DataFlow {
 
     this.#optimizedEdges.clear();
     for (const [id, data] of edgeRefs.entries()) {
-      const objSrc = Component.instances[id] as DataflowComponent;
+      const objSrc = DataflowNode.get(id);
       // if (!objSrc) {
       //   continue;
       // }
@@ -541,7 +541,7 @@ export class DataFlow {
       for (let i = 0; i < data.length; i++) {
         const connections = data[i];
         const cid = connections[0];
-        const objTrg = Component.instances[cid] as DataflowComponent;
+        const objTrg = DataflowNode.get(cid);
         // if (!objTrg) {
         //   continue;
         // }
@@ -576,4 +576,5 @@ export class DataFlow {
   }
 }
 
-export const defaultDataflow = new DataFlow();
+export const DEFAULT_DATAFLOW = injectionToken<DataFlow>("DEFAULT_DATAFLOW");
+container.registerFactory(DEFAULT_DATAFLOW, () => new DataFlow())

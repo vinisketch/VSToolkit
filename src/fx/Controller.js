@@ -29,7 +29,7 @@ import {
  *  @see vs.fx.SwipeController
  *  @see vs.fx.CardController
  *  @see vs.fx.NavigationController
- *  @extends vs.core.EventSource
+ *  @extends core.EventSource
  *
  *  @class
  *  This class can be used to implement your custom GUI controller.
@@ -135,7 +135,7 @@ Controller.prototype = {
 
    /**
    * @protected
-   * @type {vs.core.Fsm}
+   * @type {core.Fsm}
    */
   _fsm: null,
 
@@ -529,7 +529,7 @@ Controller.prototype = {
    *
    * @param {string} comp_id the component id [mandatory]
    * @param {string} spec the event specification [mandatory]
-   * @param {vs.core.Object} obj the object interested to catch the event [mandatory]
+   * @param {core.Object} obj the object interested to catch the event [mandatory]
    * @param {string} func the name of a callback. If its not defined
    *        notify method will be called [optional]
    */
@@ -726,7 +726,7 @@ Controller.prototype = {
     }
     
     ///
-    this._current_state = state_id;
+    this.#currentState = state_id;
     
     // show new states view
     state_to = this._list_of_state [this._current_state];

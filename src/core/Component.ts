@@ -1,66 +1,44 @@
-import { isString, toJSON, parseJSON } from 'vs_utils';
-import BaseIdentifiable, { ObjectId } from '../../../src/core/BaseIdentifiable';
-import logger from '../../../src/logger';
-import { VSEventTargetInterface } from '../../../src/core/event';
+import { toJSON, parseJSON, applyMixins, isString, SupportMixins } from 'vs_utils';
+import { BaseIdentifiable,  ObjectId } from './BaseIdentifiable';
+import DataflowNode from "./DataflowNode";
+import { EventSource } from './event';
+import { createUniqueId, ObjectConfig } from './helpers';
 
-let idIndex = 1;
-
-/**
- * Returns a local unique Id <p>
- * The algorithm is based on an index initialized when the page is loaded.
- */
-// eslint-disable-next-line no-plusplus
-export const createUniqueId = (): string => `vs_id_${idIndex++}_${Date.now()}_${Math.floor(Math.random() * 1000000)}`;
-
-export type ObjectConfig = Record<string, any>;
 
 export type InitFunction = () => void;
 
 /**
  *  @class Object
- *  vs.core.Object is the root class of most class hierarchies. Through
- *  vs.core.Object, objects inherit a basic interface for configuration
- *  and clone mechanism. It provides an unique identifier for objects.
+ *  core.Object is the root class of most class hierarchies. Through
+ *  core.Object, objects inherit a basic interface for configuration
+ *  and clone mechanism. It provides a unique identifier for objects.
  *
  *  @author David Thevenin
  *
  *  @constructor
  *  Main constructor
  *
- * @name vs.core.Object
- *
  * @param {Object} config the configuration structure
 */
-export default class Component implements BaseIdentifiable, VSEventTargetInterface {
+class Component extends SupportMixins implements BaseIdentifiable {
   public static instances: { [id: string]: Component; } = {};
 
-  readonly id: string;
   #initialised = false;
   #initFunctions = new Set<InitFunction>();
+  readonly id: string;
 
   constructor(id?: ObjectId) {
-    // configuration
-    if (isString(id)) {
-      this.id = id;
-    } else {
-      this.id = createUniqueId();
-    }
+    super();
+    this.id = isString(id) ? id : createUniqueId();
     // save the current object
     Component.instances[this.id] = this;
-  }
-
-  protected registerInitFunction(func: InitFunction) {
-    this.#initFunctions.add(func);
   }
 
   /**
    *  Object default init. <p>
    *
-   * @name vs.core.Object#init
-   * @function
-   *
    *  @example
-   *  myObject = new vs.core.Object (vs.core.createId ());
+   *  myObject = new core.Object (core.createId ());
    *  myObject.init ();
    *  @return {Object} this
    */
@@ -77,7 +55,7 @@ export default class Component implements BaseIdentifiable, VSEventTargetInterfa
       // Call optional end initialization method
       this.componentDidInitialize();
     } catch (e) {
-      logger.error('Component init failed with the error: ', e);
+      throw new Error('Component init failed with the error: ' + e);
     }
 
     return this;
@@ -121,7 +99,7 @@ export default class Component implements BaseIdentifiable, VSEventTargetInterfa
       const rawData = parseJSON(json);
       this.deserialize(rawData);
     } catch (e) {
-      logger.error('parseJSON failed with error: ', e);
+      throw new Error('parseJSON failed with error: ' + e);
     }
   }
 
@@ -136,12 +114,10 @@ export default class Component implements BaseIdentifiable, VSEventTargetInterfa
   // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
   protected deserialize(data: any): void {
   }
-
-
-  /***
-   * VS Event Target implementation
-   */
-
-
-
 }
+
+interface Component extends BaseIdentifiable, EventSource {}
+
+applyMixins(Component, [EventSource]);
+
+export { Component };

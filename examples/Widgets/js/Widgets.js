@@ -1,18 +1,18 @@
-var Widgets = vs.core.createClass ({
+var Widgets = vs_core.createClass ({
 
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   applicationStarted : function (event) {
-    this.splitView = new vs.ui.SplitView ({
-      mode: vs.ui.SplitView.TABLET_MODE
+    this.splitView = new vs_ui.SplitView ({
+      mode: vs_ui.SplitView.TABLET_MODE
     }).init ();
-    this.leftView = new vs.ui.View ().init ();
-    this.rightView = new vs.ui.View ().init ();
+    this.leftView = new vs_ui.View ().init ();
+    this.rightView = new vs_ui.View ().init ();
     this.add (this.splitView);
     this.splitView.add (this.leftView, 'second_panel');
     this.splitView.add (this.rightView, 'main_panel');
     
-    this.layout = vs.ui.View.ABSOLUTE_LAYOUT;
+    this.layout = vs_ui.View.ABSOLUTE_LAYOUT;
     
     this.panelsIndexes = [];
     
@@ -24,12 +24,12 @@ var Widgets = vs.core.createClass ({
   },
   
   setupMainNavigation : function (event) {
-    this.navBar = new vs.ui.NavigationBar ().init ();
+    this.navBar = new vs_ui.NavigationBar ().init ();
     this.leftView.add (this.navBar);
-    this.leftView.layout = vs.ui.View.ABSOLUTE_LAYOUT;
+    this.leftView.layout = vs_ui.View.ABSOLUTE_LAYOUT;
 
-    this.backButton = new vs.ui.Button ({
-      type: vs.ui.Button.NAVIGATION_BACK_TYPE,
+    this.backButton = new vs_ui.Button ({
+      type: vs_ui.Button.NAVIGATION_BACK_TYPE,
       text: "Back",
       position: [8, 6]
     }).init ();
@@ -40,7 +40,7 @@ var Widgets = vs.core.createClass ({
     this.leftController = new vs.fx.NavigationController (this.leftView, this.navBar);
     this.leftController.init ();
 
-    this.mainList = new vs.ui.List ({
+    this.mainList = new vs_ui.List ({
       position:[0, 44],
       hasArrow: true,
       scroll: true
@@ -59,7 +59,7 @@ var Widgets = vs.core.createClass ({
     
     this.mainList.bind ('itemselect', this);
     
-    this.widgetList = new vs.ui.List ({
+    this.widgetList = new vs_ui.List ({
       position:[0, 44],
       scroll: true
     }).init ();
@@ -85,7 +85,7 @@ var Widgets = vs.core.createClass ({
   },
   
   setupWidgetsPanels : function (event) {
-    var navBar = new vs.ui.NavigationBar ().init ();
+    var navBar = new vs_ui.NavigationBar ().init ();
     this.rightView.add (navBar);
 
     var controller = new vs.fx.SlideController (this.rightView);
@@ -144,26 +144,26 @@ var Widgets = vs.core.createClass ({
   
   setupSplitViewMode : function ()
   {
-    this.mainBackButton = new vs.ui.Button ({
-      type: vs.ui.Button.NAVIGATION_BACK_TYPE,
+    this.mainBackButton = new vs_ui.Button ({
+      type: vs_ui.Button.NAVIGATION_BACK_TYPE,
       text: "Back",
       position: [8, 6]
     }).init ();
     
     this.splitView.hideMainPanelButton = this.mainBackButton;
    
-    this.menuButton = new vs.ui.Button ({
-      type: vs.ui.Button.NAVIGATION_TYPE,
+    this.menuButton = new vs_ui.Button ({
+      type: vs_ui.Button.NAVIGATION_TYPE,
       text: "=",
       position: [8, 6]
     }).init ();
      
     this.splitView.showPopOverButton = this.menuButton;
   
-    if (window.deviceConfiguration.screenSize === vs.core.DeviceConfiguration.SS_4_INCH)
-      this.splitView.mode = vs.ui.SplitView.MOBILE_MODE;
+    if (window.deviceConfiguration.screenSize === vs_core.DeviceConfiguration.SS_4_INCH)
+      this.splitView.mode = vs_ui.SplitView.MOBILE_MODE;
     else
-      this.splitView.mode = vs.ui.SplitView.TABLET_MODE;
+      this.splitView.mode = vs_ui.SplitView.TABLET_MODE;
   },
 
   notify : function (e) {
@@ -176,7 +176,7 @@ var Widgets = vs.core.createClass ({
       var msg = e.data.item.title;
       if (msg === "Animations" || msg === "Transformations" || msg === "Pointer&Gesture")
       {
-        if (this.splitView.mode == vs.ui.SplitView.TABLET_MODE) {
+        if (this.splitView.mode == vs_ui.SplitView.TABLET_MODE) {
           this.mainController.goToViewAt (this.panelsIndexes.indexOf (msg));
         }
         else {
@@ -190,7 +190,7 @@ var Widgets = vs.core.createClass ({
       }
     }
     else if (e.type == 'itemselect' && e.src == this.widgetList) {
-      if (this.splitView.mode == vs.ui.SplitView.TABLET_MODE) {
+      if (this.splitView.mode == vs_ui.SplitView.TABLET_MODE) {
         this.mainController.goToViewAt (
           this.panelsIndexes.indexOf (e.data.item.title), null, false
         ); 
@@ -206,9 +206,9 @@ var Widgets = vs.core.createClass ({
 });
 
 function buildPanel (id) {
-  var view = new vs.ui.View ({
+  var view = new vs_ui.View ({
     id: id,
-    layout:vs.ui.View.ABSOLUTE_LAYOUT
+    layout:vs_ui.View.ABSOLUTE_LAYOUT
   }).init ();
   view.addClassName ('panel');  
   return view;
@@ -217,5 +217,5 @@ function buildPanel (id) {
 function loadApplication () {
   new Widgets ({id:"widgets"}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

@@ -1,14 +1,14 @@
 function testObjectNew ()
 {
-  var o1 = new vs.core.Object ({id: 'id1'});
+  var o1 = new core.Object ({id: 'id1'});
   o1.init ();
   
   assertNotUndefined ('testObjectNew 1', o1);
   assertEquals ('testObjectNew 2', 'id1', o1.id);
   assertEquals ('testObjectNew 3', 'id1', o1._id);
-  assertNotUndefined ('testObjectNew 4', vs.core.Object._obs.id1);
+  assertNotUndefined ('testObjectNew 4', core.Object._obs.id1);
   
-  var o3 = new vs.core.Object ();
+  var o3 = new core.Object ();
   o3.init ();
   assertNotUndefined ('testObjectNew 5', o3);
   assertNotNull ('testObjectNew 6', o3._id);
@@ -18,7 +18,7 @@ function testObjectNew ()
 
 function testObjectConfiguration ()
 {
-  var o1 = new vs.core.Object ({id: 'id2'});
+  var o1 = new core.Object ({id: 'id2'});
   o1.init ();
     
   var configuration = {}
@@ -36,7 +36,7 @@ function testObjectConfiguration ()
 
 // function testObjectClone ()
 // {
-//   var o1 = new vs.core.Object ({id: 'id1'});
+//   var o1 = new core.Object ({id: 'id1'});
 //   o1.init ();
 //   
 //   var configuration = {}
