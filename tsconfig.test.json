@@ -1,0 +1,9 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../build",
+    "target": "es2022",
+    "module": "es2022",
+    "emitDeclarationOnly": true,
+  }
+}
