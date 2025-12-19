@@ -10,10 +10,10 @@
  *  It specifies the source of the event (which object has generated the event),
  *  the type of the event and an event data.
  */
-import { EventSource } from './EventSource';
+import EventSource from './EventSource';
 
 export default class Event {
-  private static eventPool: Event[] = [];
+  private static readonly eventPool: Event[] = [];
 
   /**
    * The event spec. For instance 'click' for a mouse click event.
@@ -56,7 +56,7 @@ export default class Event {
 
   static retain(): Event {
     if (this.eventPool.length > 0) {
-      return this.eventPool.pop()!;
+      return this.eventPool.pop();
     }
     return new Event();
   }

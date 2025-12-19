@@ -1,4 +1,4 @@
-import { Task } from "./task";
+import Task from "./task";
 /**
  *  The core.task.Wait class
  *
@@ -19,7 +19,7 @@ import { Task } from "./task";
  * @param time The time to wait, using millisecond
  *  parameter
  */
-export declare class Wait extends Task {
+export default class Wait extends Task {
     #private;
     constructor(time: number);
     set time(v: number);

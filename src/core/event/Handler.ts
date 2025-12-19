@@ -1,10 +1,10 @@
-import { Component } from '../Component';
+import Component from '../Component';
 import { isFunction, isString } from 'vs_utils';
 
 export type HandlerFunction = string | Function;
 
-export class Handler {
-  static #pool: Handler[] = [];
+export default class Handler {
+  static readonly #pool: Handler[] = [];
   #funcName: string | undefined;
   #funcPtr: Function | undefined;
   #obj: Component | undefined;
@@ -36,8 +36,8 @@ export class Handler {
   }
 
   static retain(): Handler {
-    if (Handler.#pool.length) {
-      return Handler.#pool.pop()!;
+    if (Handler.#pool.length > 0) {
+      return Handler.#pool.pop();
     }
     return new Handler();
   }

@@ -1,6 +1,6 @@
-import { Component } from '../Component';
+import Component from '../Component';
 export type HandlerFunction = string | Function;
-export declare class Handler {
+export default class Handler {
     #private;
     get func(): string | Function | undefined;
     get obj(): Component | undefined;

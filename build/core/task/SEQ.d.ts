@@ -1,4 +1,4 @@
-import { Task, TaskAndParams } from "./task";
+import Task, { TaskAndParams } from "./task";
 /**
  *  Methods that create a SEQ group
  *
@@ -72,7 +72,7 @@ export declare const seq: (params: TaskAndParams[]) => SEQ | undefined;
  * @param list List of task to start sequentially with an optional
  *  parameter
  */
-export declare class SEQ extends Task {
+export default class SEQ extends Task {
     #private;
     constructor(tasksAndParams?: TaskAndParams[]);
     /********************************************************************

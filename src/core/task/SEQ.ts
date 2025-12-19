@@ -1,5 +1,5 @@
-import { Task, TaskAndParams } from "./task";
-import { TaskState } from "./task_state";
+import Task, { TaskAndParams } from "./task";
+import { TaskState } from "./taskState";
 import { isArray } from "vs_utils";
 
 /**
@@ -84,7 +84,7 @@ export const seq = (params: TaskAndParams[]): SEQ | undefined => {
  * @param list List of task to start sequentially with an optional
  *  parameter
  */
-export class SEQ extends Task {
+export default class SEQ extends Task {
   constructor(tasksAndParams?: TaskAndParams[]) {
     super();
 
@@ -129,27 +129,25 @@ export class SEQ extends Task {
     if (this.state !== TaskState.STOPPED) {
       return false;
     }
-    var task, param;
 
     this.#tasksAndParams.length = 0;
-    for (let i = 0; i < tasksAndParams.length; i++) {
-      const taskAndparam = tasksAndParams [i];
-      if (!taskAndparam) {
+    for (let taskAndParam of tasksAndParams) {
+      if (!taskAndParam) {
         continue;
       }
 
-      param = null;
-      task = null;
+      let param = null;
+      let task = null;
 
-      if (isArray(taskAndparam)) {
-        if (taskAndparam.length === 1) {
-          task = taskAndparam [0];
-        } else if (taskAndparam.length === 2) {
-          task = taskAndparam [0];
-          param = taskAndparam [1];
+      if (isArray(taskAndParam)) {
+        if (taskAndParam.length === 1) {
+          task = taskAndParam [0];
+        } else if (taskAndParam.length === 2) {
+          task = taskAndParam [0];
+          param = taskAndParam [1];
         }
       } else {
-        task = taskAndparam;
+        task = taskAndParam;
         param = null;
       }
 
@@ -179,10 +177,10 @@ export class SEQ extends Task {
       return false;
     }
 
-    const taskAndparam = this.#tasksAndParams [this.#nextTaskToStart];
+    const taskAndParams = this.#tasksAndParams [this.#nextTaskToStart];
     this.#nextTaskToStart++;
 
-    if (!taskAndparam) {
+    if (!taskAndParams) {
       this.#nextTaskToStart = 0;
       this.state = TaskState.STOPPED;
       return false;
@@ -191,8 +189,8 @@ export class SEQ extends Task {
     this.state = TaskState.STARTED;
     this.#startParam = param;
 
-    taskAndparam [0].delegate = this;
-    taskAndparam [0].start((taskAndparam [1]) ? taskAndparam [1] : param);
+    taskAndParams [0].delegate = this;
+    taskAndParams [0].start((taskAndParams [1]) ? taskAndParams [1] : param);
 
     return true;
   }
@@ -209,14 +207,14 @@ export class SEQ extends Task {
     }
     this.state = TaskState.STOPPED;
 
-    var taskAndparam = this.#tasksAndParams [this.#nextTaskToStart - 1];
+    const taskAndParams = this.#tasksAndParams [this.#nextTaskToStart - 1];
     this.#nextTaskToStart = 0;
 
-    if (!taskAndparam) {
+    if (!taskAndParams) {
       return false;
     }
 
-    taskAndparam [0].stop();
+    taskAndParams [0].stop();
 
     return true;
   }
@@ -234,12 +232,12 @@ export class SEQ extends Task {
     }
     this.state = TaskState.PAUSED;
 
-    var taskAndparam = this.#tasksAndParams [this.#nextTaskToStart - 1];
-    if (!taskAndparam) {
+    const taskAndParams = this.#tasksAndParams [this.#nextTaskToStart - 1];
+    if (!taskAndParams) {
       return false;
     }
 
-    taskAndparam [0].pause();
+    taskAndParams [0].pause();
 
     return true;
   }
@@ -257,7 +255,7 @@ export class SEQ extends Task {
 
     this.#nextTaskToStart = 0;
 
-    if (this.delegate && this.delegate.taskDidStop) {
+    if (this.delegate?.taskDidStop) {
       try {
         this.delegate.taskDidStop(this);
       } catch (e) {
@@ -276,7 +274,7 @@ export class SEQ extends Task {
 
     this.#nextTaskToStart = this.#nextTaskToStart - 1;
 
-    if (this.delegate && this.delegate.taskDidPause) {
+    if (this.delegate?.taskDidPause) {
       try {
         this.delegate.taskDidPause(this);
       } catch (e) {
@@ -298,7 +296,7 @@ export class SEQ extends Task {
       this.start(this.#startParam);
     } else {
       this.#nextTaskToStart = 0;
-      if (this.delegate && this.delegate.taskDidEnd) {
+      if (this.delegate?.taskDidEnd) {
         try {
           this.delegate.taskDidEnd(this);
         } catch (e) {

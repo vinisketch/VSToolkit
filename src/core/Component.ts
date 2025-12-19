@@ -120,4 +120,4 @@ interface Component extends BaseIdentifiable, EventSource {}
 
 applyMixins(Component, [EventSource]);
 
-export { Component };
+export default Component;

@@ -58,5 +58,5 @@ declare class Component extends SupportMixins implements BaseIdentifiable {
 }
 interface Component extends BaseIdentifiable, EventSource {
 }
-export { Component };
+export default Component;
 //# sourceMappingURL=Component.d.ts.map

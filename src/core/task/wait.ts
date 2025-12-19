@@ -1,5 +1,5 @@
-import { Task } from "./task";
-import { TaskState } from "./task_state";
+import Task from "./task";
+import { TaskState } from "./taskState";
 
 /**
  *  The core.task.Wait class
@@ -21,7 +21,7 @@ import { TaskState } from "./task_state";
  * @param time The time to wait, using millisecond
  *  parameter
  */
-export class Wait extends Task {
+export default class Wait extends Task {
   constructor (time: number) {
     super();
     this.#time = time;

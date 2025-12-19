@@ -1,5 +1,5 @@
-import { Task, TaskAndParams } from "./task";
-import { TaskState } from "./task_state";
+import Task, { TaskAndParams } from "./task";
+import { TaskState } from "./taskState";
 import { isArray, isNotEmpty } from "vs_utils";
 
 /**
@@ -83,7 +83,7 @@ export const par = (params: TaskAndParams[]): PAR | undefined => {
  * @param list List of task to start parallel with an optional
  *  parameter
  */
-export class PAR extends Task {
+export default class PAR extends Task {
   constructor(tasksAndParams?: TaskAndParams[]) {
     super()
     this.state = TaskState.STOPPED;
@@ -128,24 +128,23 @@ export class PAR extends Task {
     }
 
     this.#tasksAndParams.length = 0;
-    for (let i = 0; i < tasksAndParams.length; i++) {
-      const taskAndParams = tasksAndParams [i];
-      if (!taskAndParams) {
+    for (let taskAndParam of tasksAndParams) {
+      if (!taskAndParam) {
         continue;
       }
 
       let param = null;
       let task = null;
 
-      if (isArray(taskAndParams)) {
-        if (taskAndParams.length === 1) {
-          task = taskAndParams [0];
-        } else if (taskAndParams.length === 2) {
-          task = taskAndParams [0];
-          param = taskAndParams [1];
+      if (isArray(taskAndParam)) {
+        if (taskAndParam.length === 1) {
+          task = taskAndParam [0];
+        } else if (taskAndParam.length === 2) {
+          task = taskAndParam [0];
+          param = taskAndParam [1];
         }
       } else {
-        task = taskAndParams;
+        task = taskAndParam;
         param = null;
       }
 
@@ -178,9 +177,7 @@ export class PAR extends Task {
     this.#tasksWillEnded = this.#tasksAndParams.length;
     this.state = TaskState.STARTED;
 
-    for (let i = 0; i < this.#tasksAndParams.length; i++) {
-      const taskAndParams = this.#tasksAndParams [i];
-
+    for (let taskAndParams of this.#tasksAndParams) {
       taskAndParams [0].delegate = this;
       taskAndParams [0].start((taskAndParams [1]) ? taskAndParams [1] : param);
     }
@@ -200,9 +197,7 @@ export class PAR extends Task {
     }
     this.state = TaskState.STOPPED;
 
-    var taskAndParams, i;
-    for (i = 0; i < this.#tasksAndParams.length; i++) {
-      taskAndParams = this.#tasksAndParams [i];
+    for (let taskAndParams of this.#tasksAndParams) {
       taskAndParams [0].stop();
     }
 
@@ -221,9 +216,7 @@ export class PAR extends Task {
     }
     this.state = TaskState.PAUSED;
 
-    var taskAndParams, i;
-    for (i = 0; i < this.#tasksAndParams.length; i++) {
-      taskAndParams = this.#tasksAndParams [i];
+    for (let taskAndParams of this.#tasksAndParams) {
       taskAndParams [0].pause();
     }
 
@@ -243,7 +236,7 @@ export class PAR extends Task {
 
     this.#tasksWillEnded--;
     if (this.#tasksWillEnded === 0) {
-      if (this.delegate && this.delegate.taskDidStop) {
+      if (this.delegate?.taskDidStop) {
         try {
           this.delegate.taskDidStop(this);
         } catch (e) {
@@ -263,7 +256,7 @@ export class PAR extends Task {
 
     this.#tasksWillEnded--;
     if (this.#tasksWillEnded === 0) {
-      if (this.delegate && this.delegate.taskDidPause) {
+      if (this.delegate?.taskDidPause) {
         try {
           this.delegate.taskDidPause(this);
         } catch (e) {
@@ -283,7 +276,7 @@ export class PAR extends Task {
 
     this.#tasksWillEnded--;
     if (this.#tasksWillEnded === 0) {
-      if (this.delegate && this.delegate.taskDidEnd) {
+      if (this.delegate?.taskDidEnd) {
         try {
           this.delegate.taskDidEnd(this);
         } catch (e) {

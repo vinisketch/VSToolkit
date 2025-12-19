@@ -1,4 +1,4 @@
-export interface TaskDelegate {
+export default interface TaskDelegate {
   taskDidEnd?: Function;
   taskDidStart?: Function;
   taskDidStop?: Function;

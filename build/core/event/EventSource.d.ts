@@ -13,7 +13,7 @@ export declare function isEventSource(obj: unknown): obj is EventSource;
  *
  * @param {Object} config the configuration structure [mandatory]
  */
-export declare class EventSource extends Mixin {
+export default class EventSource extends Mixin {
     #private;
     protected initMixin(): void;
     protected releaseMixin(): void;

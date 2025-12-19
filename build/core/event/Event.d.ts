@@ -10,10 +10,10 @@
  *  It specifies the source of the event (which object has generated the event),
  *  the type of the event and an event data.
  */
-import { EventSource } from './EventSource';
+import EventSource from './EventSource';
 export default class Event {
     #private;
-    private static eventPool;
+    private static readonly eventPool;
     get type(): string | undefined;
     /**
      * The optional data associated to the event.

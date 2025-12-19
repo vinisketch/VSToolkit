@@ -1,6 +1,6 @@
 import Component from "../Component";
-import {TaskState} from "./task_state";
-import {TaskDelegate} from "./task_delegate";
+import { TaskState } from "./taskState";
+import TaskDelegate from "./taskDelegate";
 
 export type TaskAndParams = [Task, any[]] | [Task] | Task;
 
@@ -25,7 +25,7 @@ export type TaskAndParams = [Task, any[]] | [Task] | Task;
  *
  * @param {Object} config the configuration structure
  */
-export abstract class Task extends Component {
+export default abstract class Task extends Component {
 
   /********************************************************************
 

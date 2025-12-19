@@ -26,11 +26,10 @@ export function isEventSource(obj: unknown): obj is EventSource {
  *
  * @param {Object} config the configuration structure [mandatory]
  */
-export class EventSource extends Mixin {
+export default class EventSource extends Mixin {
   readonly #bindings = new Map<string, Handler[]>();
 
-  protected initMixin(): void {
-  }
+  protected initMixin(): void { }
 
   protected releaseMixin (): void {
     super.releaseMixin();

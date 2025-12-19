@@ -1,10 +1,3 @@
-import Event from './Event';
-import Handler from './Handler';
-
-export * from './EventSource';
-// export * from './PointerEventSource';
-
-export {
-  Handler,
-  Event,
-}
+export { default as Handler } from './Handler';
+export { default as Event } from './Event';
+export { default as  EventSource } from './EventSource';

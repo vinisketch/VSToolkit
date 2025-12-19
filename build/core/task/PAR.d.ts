@@ -1,4 +1,4 @@
-import { Task, TaskAndParams } from "./task";
+import Task, { TaskAndParams } from "./task";
 /**
  *  Methods that create a PAR group
  *
@@ -72,7 +72,7 @@ export declare const par: (params: TaskAndParams[]) => PAR | undefined;
  * @param list List of task to start parallel with an optional
  *  parameter
  */
-export declare class PAR extends Task {
+export default class PAR extends Task {
     #private;
     constructor(tasksAndParams?: TaskAndParams[]);
     /********************************************************************
