@@ -1,7 +1,6 @@
 import Component from '../Component';
 import { isFunction, isString } from 'vs_utils';
-
-export type HandlerFunction = string | Function;
+import { HandlerFunction } from './HandlerFunction';
 
 /**
  * @class

@@ -1,7 +1,8 @@
 import { isEmpty, isObject, Mixin } from 'vs_utils';
 import Component from '../Component';
 import { queueProcAsyncEvent } from '../MainLoop';
-import Handler, { HandlerFunction } from './Handler';
+import Handler from './Handler';
+import { HandlerFunction } from './HandlerFunction';
 import Container, { isContainer } from '../Container';
 import Event from './Event';
 

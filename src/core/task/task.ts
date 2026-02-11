@@ -1,6 +1,6 @@
 import Component from "../Component";
 import { TaskState } from "./taskState";
-import TaskDelegate from "./taskDelegate";
+import { TaskDelegate } from "./taskDelegate";
 
 export type TaskAndParams = [Task, any[]] | [Task] | Task;
 

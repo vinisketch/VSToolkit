@@ -1,9 +1,10 @@
 import {
-  isArray, isFunction, isNotEmpty, isNumber, isString, container, injectionToken
+  isArray, isFunction, isNotEmpty, isNumber, isString, container
 } from 'vs_utils';
 import { BaseIdentifiable, ObjectId } from './BaseIdentifiable';
 import DataflowState from './DataflowState';
 import DataflowNode from './DataflowNode';
+import { IDataFlow, DEFAULT_DATAFLOW } from './IDataFlow';
 import { LOGGER } from "./ILogger";
 
 let edgeIdCount = 1;
@@ -108,7 +109,7 @@ function generateSetters(obj: DataflowNode, properties: string[]): Setter<any>[]
  *  @author David Thevenin
  *
  */
-export class DataFlow {
+export class DataFlow implements IDataFlow {
   private static propagationCount = 0;
   private readonly logger = container.get(LOGGER);
 
@@ -571,5 +572,5 @@ export class DataFlow {
   }
 }
 
-export const DEFAULT_DATAFLOW = injectionToken<DataFlow>("DEFAULT_DATAFLOW");
+export { DEFAULT_DATAFLOW } from './IDataFlow';
 container.registerFactory(DEFAULT_DATAFLOW, () => new DataFlow())

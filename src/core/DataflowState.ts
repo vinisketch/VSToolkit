@@ -1,14 +1,14 @@
 import { ObjectId } from './BaseIdentifiable';
-import { DataFlow, DEFAULT_DATAFLOW } from './Dataflow';
+import { IDataFlow, DEFAULT_DATAFLOW } from './IDataFlow';
 import DataflowNode from './DataflowNode';
 import { container } from 'vs_utils';
 
 export default class DataflowState {
   private static readonly states = new Map<ObjectId, DataflowState>();
 
-  readonly df = new Set<DataFlow>();
+  readonly df = new Set<IDataFlow>();
 
-  private constructor(private comp: DataflowNode, df: DataFlow) {
+  private constructor(private comp: DataflowNode, df: IDataFlow) {
     this.df.add(df);
   }
 
