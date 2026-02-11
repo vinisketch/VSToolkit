@@ -41,14 +41,13 @@ export default class Event {
    */
   public srcTarget: EventSource | undefined;
 
+  private constructor() {
+  }
+
   /**
    * @param {string} type the event type [mandatory]
    * @param {Object} data complementary event data [optional]
    */
-  constructor(type?: string, data?: any) {
-    if (type) this.configure(type, data);
-  }
-
   configure(type: string, data?: any): void {
     this.#type = type;
     this.data = data;
@@ -56,12 +55,19 @@ export default class Event {
 
   static retain(): Event {
     if (this.eventPool.length > 0) {
-      return this.eventPool.pop();
+      return this.eventPool.pop()!;
     }
     return new Event();
   }
 
   static release(event: Event): void {
+    // Clean up references
+    event.#type = undefined;
+    event.data = undefined;
+    event.src = undefined;
+    event.srcTarget = undefined;
+
+    // Return to pool
     this.eventPool.push(event);
   }
 }

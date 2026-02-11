@@ -22,7 +22,7 @@ import { TaskState } from "./taskState";
  *  parameter
  */
 export default class Wait extends Task {
-  constructor (time: number) {
+  constructor(time: number) {
     super();
     this.#time = time;
     this.state = TaskState.STOPPED;
@@ -31,9 +31,9 @@ export default class Wait extends Task {
   /********************************************************************
 
    ********************************************************************/
-  #time=  0;
+  #time =  0;
   #leftTime = 0;
-  #timer: NodeJS.Timeout;
+  #timer: NodeJS.Timeout | null = null;
   #startTime = 0;
 
   set time(v: number) {
@@ -74,7 +74,7 @@ export default class Wait extends Task {
     this.#startTime = new Date().getTime();
     this.#timer = setTimeout(() => {
       this.state = TaskState.STOPPED;
-      if (this.delegate && this.delegate.taskDidEnd) {
+      if (this.delegate?.taskDidEnd) {
         try {
           this.delegate.taskDidEnd(this);
         } catch (e) {
@@ -104,7 +104,7 @@ export default class Wait extends Task {
 
     this.#leftTime = this.#time;
 
-    if (this.delegate && this.delegate.taskDidStop) {
+    if (this.delegate?.taskDidStop) {
       try {
         this.delegate.taskDidStop(this);
       } catch (e) {
@@ -129,9 +129,12 @@ export default class Wait extends Task {
     }
     this.state = TaskState.PAUSED;
 
+    clearTimeout(this.#timer);
+    this.#timer = null;
+
     this.#leftTime = this.#leftTime - new Date().getTime() + this.#startTime;
 
-    if (this.delegate && this.delegate.taskDidPause) {
+    if (this.delegate?.taskDidPause) {
       try {
         this.delegate.taskDidPause(this);
       } catch (e) {

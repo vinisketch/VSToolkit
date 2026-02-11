@@ -1,6 +1,6 @@
-import Task, { TaskAndParams } from "./task";
+import BaseTask from "./helper";
+import { TaskAndParams } from "./task";
 import { TaskState } from "./taskState";
-import { isArray, isNotEmpty } from "vs_utils";
 
 /**
  *  Methods that create a PAR group
@@ -83,84 +83,13 @@ export const par = (params: TaskAndParams[]): PAR | undefined => {
  * @param list List of task to start parallel with an optional
  *  parameter
  */
-export default class PAR extends Task {
-  constructor(tasksAndParams?: TaskAndParams[]) {
-    super()
-    this.state = TaskState.STOPPED;
-
-    throw new Error('NOT IMPLEMENTED');
-    if (isNotEmpty(tasksAndParams)) {
-      this.setTasks(tasksAndParams);
-    }
-  }
-
-  /********************************************************************
-
-   ********************************************************************/
-  /**
-   *  @private
-   */
-  readonly #tasksAndParams: [Task, any[] | null][] = [];
+export default class PAR extends BaseTask {
 
   /**
-   * taks ended
+   * task ended
    *  @private
    */
   #tasksWillEnded = 0;
-
-  /********************************************************************
-
-   ********************************************************************/
-
-  /**
-   *  Set tasks.
-   *  The task has to be stopped
-   *
-   * @name core.task.PAR#setTasks
-   * @function
-   *
-   *  parameter
-   * @param tasksAndParams
-   */
-  setTasks(tasksAndParams: TaskAndParams[]): boolean {
-    if (this.state !== TaskState.STOPPED) {
-      return false;
-    }
-
-    this.#tasksAndParams.length = 0;
-    for (let taskAndParam of tasksAndParams) {
-      if (!taskAndParam) {
-        continue;
-      }
-
-      let param = null;
-      let task = null;
-
-      if (isArray(taskAndParam)) {
-        if (taskAndParam.length === 1) {
-          task = taskAndParam [0];
-        } else if (taskAndParam.length === 2) {
-          task = taskAndParam [0];
-          param = taskAndParam [1];
-        }
-      } else {
-        task = taskAndParam;
-        param = null;
-      }
-
-      if (!task) {
-        console.warn('Undefined task');
-        continue;
-      }
-
-      if (!task.start || !task.stop || !task.pause) {
-        console.warn('Invalid task: ' + task.toString());
-        continue;
-      }
-
-      this.#tasksAndParams.push([task, param]);
-    }
-  }
 
   /**
    *  Starts the task
@@ -174,10 +103,10 @@ export default class PAR extends Task {
     if (this.state === TaskState.STARTED) {
       return false;
     }
-    this.#tasksWillEnded = this.#tasksAndParams.length;
+    this.#tasksWillEnded = this.tasksAndParams.length;
     this.state = TaskState.STARTED;
 
-    for (let taskAndParams of this.#tasksAndParams) {
+    for (let taskAndParams of this.tasksAndParams) {
       taskAndParams [0].delegate = this;
       taskAndParams [0].start((taskAndParams [1]) ? taskAndParams [1] : param);
     }
@@ -197,7 +126,7 @@ export default class PAR extends Task {
     }
     this.state = TaskState.STOPPED;
 
-    for (let taskAndParams of this.#tasksAndParams) {
+    for (let taskAndParams of this.tasksAndParams) {
       taskAndParams [0].stop();
     }
 
@@ -216,7 +145,7 @@ export default class PAR extends Task {
     }
     this.state = TaskState.PAUSED;
 
-    for (let taskAndParams of this.#tasksAndParams) {
+    for (let taskAndParams of this.tasksAndParams) {
       taskAndParams [0].pause();
     }
 
@@ -228,14 +157,12 @@ export default class PAR extends Task {
    ********************************************************************/
 
   /**
-   * @protected
-   * @function
    */
   taskDidStop(): void {
-    this.state = TaskState.STOPPED;
-
     this.#tasksWillEnded--;
     if (this.#tasksWillEnded === 0) {
+      this.state = TaskState.STOPPED;
+
       if (this.delegate?.taskDidStop) {
         try {
           this.delegate.taskDidStop(this);
@@ -248,14 +175,12 @@ export default class PAR extends Task {
   }
 
   /**
-   * @protected
-   * @function
    */
   taskDidPause(): void {
-    this.state = TaskState.STOPPED;
-
     this.#tasksWillEnded--;
     if (this.#tasksWillEnded === 0) {
+      this.state = TaskState.PAUSED;
+
       if (this.delegate?.taskDidPause) {
         try {
           this.delegate.taskDidPause(this);
@@ -268,14 +193,12 @@ export default class PAR extends Task {
   }
 
   /**
-   * @protected
-   * @function
    */
   taskDidEnd(): void {
-    this.state = TaskState.STOPPED;
-
     this.#tasksWillEnded--;
     if (this.#tasksWillEnded === 0) {
+      this.state = TaskState.STOPPED;
+
       if (this.delegate?.taskDidEnd) {
         try {
           this.delegate.taskDidEnd(this);

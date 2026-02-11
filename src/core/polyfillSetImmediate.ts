@@ -56,19 +56,21 @@ function doAllActions () {
 function installPostMessageImplementation():() => void {
   const MESSAGE_PREFIX = `_scheduler_${Date.now()}_${Math.random()}`;
 
-  function onGlobalMessage(event: Event) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+  function onGlobalMessage(event: MessageEvent) {
+    // Verify origin matches current window for security
+    if (event.origin !== globalThis.location.origin) {
+      return;
+    }
     if (event.data === MESSAGE_PREFIX) {
       doAllActions();
     }
   }
 
-  if (window.addEventListener) {
-    window.addEventListener('message', onGlobalMessage, false);
+  if (globalThis.addEventListener) {
+    globalThis.addEventListener('message', onGlobalMessage, false);
   }
 
-  return () => window.postMessage(MESSAGE_PREFIX, '*');
+  return () => globalThis.postMessage(MESSAGE_PREFIX, globalThis.location.origin);
 }
 
 // scheduleDoActions, asynchronously execute pending actions.

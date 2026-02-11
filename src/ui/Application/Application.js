@@ -269,7 +269,7 @@ Application.prototype = {
    */
   buildDataflow: function ()
   {
-    vs_core.DataFlow._default_df_.build ();
+    container.get(DEFAULT_DATAFLOW).build ();
   },
     
   /**
@@ -629,7 +629,7 @@ Application.start = function ()
     obj.applicationStarted ();
     vs_core.scheduleAction (function () {obj.refresh ();});
   }
-  vs_core.scheduleAction (function () {vs_core.DataFlow._default_df_.build ();});
+  vs_core.scheduleAction (function () {container.get(DEFAULT_DATAFLOW).build ();});
 };
 
 /**

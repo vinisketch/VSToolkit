@@ -139,23 +139,23 @@ export function scheduleAction(action: Action, delay?: number) {
  *
  * @private
  * @param {Object} burst a event burst structure
- * @param {Boolean} isSynchron if its true the callbacks are executed
+ * @param {Boolean} isSynchro if its true the callbacks are executed
  *             synchronously, otherwise they are executed within a setImmediate
  */
-function doOneEvent(burst: EventBurst, isSynchron?: boolean): void {
-  const { handlerList: handlerList } = burst;
+function doOneEvent(burst: EventBurst, isSynchro?: boolean): void {
+  const { handlerList } = burst;
   const len = handlerList.length;
   let l = len;
   const event = burst.event;
 
-  if (isSynchron) isSyncEventsPropagating = true;
+  if (isSynchro) isSyncEventsPropagating = true;
   else isAsyncEventsPropagating = true;
 
   // Test is all observers have been called
   function endPropagation() {
     l--;
     if (l <= 0) {
-      if (isSynchron) isSyncEventsPropagating = false;
+      if (isSynchro) isSyncEventsPropagating = false;
       else isAsyncEventsPropagating = false;
     }
   }
@@ -187,7 +187,7 @@ function doOneEvent(burst: EventBurst, isSynchron?: boolean): void {
 
   // For each observer, schedule the handler call (callback execution)
   for (let i = 0; i < len; i++) {
-    if (isSynchron) doOneHandler(handlerList[i]);
+    if (isSynchro) doOneHandler(handlerList[i]);
     else {
       ((handler: EventHandler) => loopSetImmediate(() => doOneHandler(handler)))(handlerList[i]);
     }

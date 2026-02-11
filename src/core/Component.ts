@@ -21,10 +21,10 @@ export type InitFunction = () => void;
  * @param {Object} config the configuration structure
 */
 class Component extends SupportMixins implements BaseIdentifiable {
-  public static instances: { [id: string]: Component; } = {};
+  public static readonly instances: { [id: string]: Component; } = {};
 
   #initialised = false;
-  #initFunctions = new Set<InitFunction>();
+  readonly #initFunctions = new Set<InitFunction>();
   readonly id: string;
 
   constructor(id?: ObjectId) {
@@ -121,3 +121,5 @@ interface Component extends BaseIdentifiable, EventSource {}
 applyMixins(Component, [EventSource]);
 
 export default Component;
+
+

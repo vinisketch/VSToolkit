@@ -4,7 +4,7 @@ import Component from './Component';
 const childToParent = new WeakMap<Component, Container>();
 
 export default class Container {
-  #children: Component[] = [];
+  readonly #children: Component[] = [];
 
   static getParent(comp: Component): Container | undefined {
     return childToParent.get(comp);
@@ -21,7 +21,7 @@ export default class Container {
    * @return {boolean}
    */
   isChild(child: Component): boolean {
-    return this.#children.indexOf(child) !== -1;
+    return this.#children.includes(child);
   }
 
   /**

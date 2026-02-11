@@ -19,7 +19,7 @@ export function Input(value: any, { name, addInitializer, ...rest}: any) {
 }
 
 export default class DataflowNode extends SupportMixins implements BaseIdentifiable  {
-  #configParams: ObjectConfig | undefined;
+  readonly #configParams: ObjectConfig | undefined;
   readonly id: string;
   static readonly #nodes = new Map<string, DataflowNode>();
   static get(id: string): DataflowNode | undefined {

@@ -65,7 +65,7 @@ type InputInfo = [string, string, EventSource];
  *  <br />
  *  Known limitations:
  *  <ul>
- *   <li />only one output lexem can be generated when crossing a transition.
+ *   <li />only one output lexeme can be generated when crossing a transition.
  *  </ul>
  *
  *  Simple example to create a automata:
@@ -103,19 +103,18 @@ type InputInfo = [string, string, EventSource];
  */
 export class Fsm extends Component {
 
-  #listOfState = new Map<string, State>();   ///< List of fsm state : Q
-  #listInput = new Set<string>();   ///< List of input lexem (alphabet) : I
-  #listOutput = new Set<string>();  ///< List of output lexem (alphabet) : O
+  readonly #listOfState = new Map<string, State>();   ///< List of fsm state : Q
+  readonly #listInput = new Set<string>();   ///< List of input lexeme (alphabet) : I
+  readonly #listOutput = new Set<string>();  ///< List of output lexeme (alphabet) : O
 
   #initialState = "";  ///< initial state name
   #currentState = "";  ///< current state name
 
-  #inputs = new Map<EventSource, InputInfo[]>();
-  #outputAction = new Map<string, string | Function>();
+  readonly #inputs = new Map<EventSource, InputInfo[]>();
+  readonly #outputAction = new Map<string, string | Function>();
 
-  constructor(private owner: Component) {
+  constructor(private readonly owner: Component) {
     super(createId());
-    this.constructor = Fsm;
   }
 
   /**
@@ -222,19 +221,19 @@ export class Fsm extends Component {
    */
   initWithMatrix(matrix: string[][]) {
     // add state
-    for (var i = 1; i < matrix[0].length; i++) {
+    for (let i = 1; i < matrix[0].length; i++) {
       this.addState(matrix[0] [i]);
     }
 
     // add transition (add input / output)
-    for (var i = 1; i < matrix.length; i++) {
-      var from = matrix[i][0]
+    for (let i = 1; i < matrix.length; i++) {
+      let from = matrix[i][0]
 
-      for (var j = 1; j < matrix[0].length; j++) {
-        var to = matrix[0][j];
-        var i_o = matrix [i][j];
+      for (let j = 1; j < matrix[0].length; j++) {
+        let to = matrix[0][j];
+        let i_o = matrix [i][j];
         if (i_o) {
-          var io_a = i_o.split('/');
+          let io_a = i_o.split('/');
           if (io_a[0]) this.addInput(io_a[0]);
           if (io_a[1]) this.addOutput(io_a[1]);
 
@@ -299,16 +298,16 @@ export class Fsm extends Component {
   }
 
   /**
-   *  Return the ouput alphabet of the fsm
+   *  Return the output alphabet of the fsm
    *
-   * @return the alphanet as a set of String
+   * @return the alphabet as a set of String
    */
   getOutputs(): IterableIterator<string> {
     return this.#listOutput.values();
   }
 
   /**
-   *  Test if a word in include in ouput alphabet
+   *  Test if a word in include in output alphabet
    *
    * @param {string} output the output
    * @return true is exists
@@ -372,7 +371,7 @@ export class Fsm extends Component {
 
     // change all transition to state with the new name
     for (const state of this.#listOfState.values()) {
-      for (const t of state?.transitionEvents.values()) {
+      for (const t of state?.transitionEvents.values() ?? []) {
         if (t.to === oldName) {
           t.to = newName;
         }
@@ -392,7 +391,7 @@ export class Fsm extends Component {
   }
 
   /**
-   *  Test existance of a state
+   *  Test existence of a state
    *
    * @param {string} state the state
    * @return true if state exists
@@ -409,7 +408,7 @@ export class Fsm extends Component {
    *
    * @param {string} from State from
    * @param {string} to State to
-   * @param {string} on input lexem which cause the crossing of transition
+   * @param {string} on input lexeme which cause the crossing of transition
    * @param output
    *    crossing
    */
@@ -429,14 +428,14 @@ export class Fsm extends Component {
       to: to,
       output: output,
     };
-    this.#listOfState.get(from)!.transitionEvents.set(on, arc);
+    this.#listOfState.get(from).transitionEvents.set(on, arc);
   }
 
   /**
    *  Remove a transition from the state "from".
    *
    * @param {string} from State from
-   * @param {string} on input lexem which cause the crossing of transition
+   * @param {string} on input lexeme which cause the crossing of transition
    */
   removeTransitionFrom(from: string, on: string) {
     if (!from || !this.existState(from) || !on || !this.existInput(on)) {
@@ -451,7 +450,7 @@ export class Fsm extends Component {
    *  Remove a transition to the state "to".
    *
    * @param {string} tp State tp
-   * @param {string} on input lexem which cause the crossing of transition
+   * @param {string} on input lexeme which cause the crossing of transition
    */
   removeTransitionTo(to: string, on: string) {
     if (!to || !this.existState(to)) {
@@ -464,7 +463,7 @@ export class Fsm extends Component {
     for (const from in this.#listOfState) {
       const state = this.#listOfState.get(from);
       const t = state.transitionEvents.get(on);
-      if (!t || t.to !== to) {
+      if (t?.to !== to) {
         continue;
       }
 
@@ -486,7 +485,7 @@ export class Fsm extends Component {
     const result: Transition[] = [];
 
     for (const [stateId, state] of this.#listOfState.entries()) {
-      for (const t of state?.transitionEvents.values()) {
+      for (const t of state?.transitionEvents.values() ?? []) {
         if (t.to !== to) {
           continue;
         }
@@ -579,45 +578,33 @@ export class Fsm extends Component {
     }
 
     // 2) remove all these transitions in order to reconfigure the fsm
-    for (let i = 0; i < t_to_state1.length; i++) {
-      const t = t_to_state1 [i];
+    for (let t of t_to_state1) {
       this.removeTransitionFrom(t.from, t.on);
     }
-    for (let i = 0; i < t_from_state1.length; i++) {
-      const t = t_from_state1 [i];
+    for (let t of t_from_state1) {
       this.removeTransitionFrom(t.from, t.on);
     }
-    for (let i = 0; i < t_to_state2.length; i++) {
-      const t = t_to_state2 [i];
+    for (let t of t_to_state2) {
       this.removeTransitionFrom(t.from, t.on);
     }
-    for (let i = 0; i < t_from_state2.length; i++) {
-      const t = t_from_state2 [i];
+    for (let t of t_from_state2) {
       this.removeTransitionFrom(t.from, t.on);
     }
 
     // 3) reconfigure the fsm
-    for (let i = 0; i < t_to_state1.length; i++) {
-      const t = t_to_state1 [i];
-
+    for (let t of t_to_state1) {
       const from = (t.from === stateId2) ? stateId1 : t.from;
       this.addTransition(from, stateId2, t.on, t.output);
     }
-    for (let i = 0; i < t_from_state1.length; i++) {
-      const t = t_from_state1 [i];
-
+    for (let t of t_from_state1) {
       const to = (t.from === stateId2) ? stateId1 : t.to;
       this.addTransition(stateId2, to, t.on, t.output);
     }
-    for (let i = 0; i < t_to_state2.length; i++) {
-      const t = t_to_state2 [i];
-
+    for (let t of t_to_state2) {
       const from = (t.from === stateId1) ? stateId2 : t.from;
       this.addTransition(from, stateId1, t.on, t.output);
     }
-    for (let i = 0; i < t_from_state2.length; i++) {
-      const t = t_from_state2 [i];
-
+    for (let t of t_from_state2) {
       const to = (t.to === stateId1) ? stateId2 : t.to;
       this.addTransition(stateId1, to, t.on, t.output);
     }
@@ -633,17 +620,17 @@ export class Fsm extends Component {
    Managing Call
    *******************************************/
   /**
-   *   Build a event binding to an input lexem.
-   *  To control the fsm and make it passes trought a transition, the
-   *  programmer is able to directly fsmNotify a entry lexem to the fsm (see the
+   *   Build a event binding to an input lexeme.
+   *  To control the fsm and make it passes through a transition, the
+   *  programmer is able to directly fsmNotify a entry lexeme to the fsm (see the
    *  general fsm documentation), or associate event source and spec to an
-   *  input lexem, like event binding. <br /><br />
+   *  input lexeme, like event binding. <br /><br />
    *
    *  This method takes as parameter a pointer on the event source and the
    *  specification of the event.
    *
    *
-   * @param {string} on input lexem on which is associated the event
+   * @param {string} on input lexeme on which is associated the event
    * @param {core.EventSource} src the object source of the event
    * @param eventSpec
    */
@@ -670,16 +657,16 @@ export class Fsm extends Component {
 
 
   /**
-   *   Associate an action to the generation of an output lexem.
+   *   Associate an action to the generation of an output lexeme.
    *  To make able the fsm to control the application, the programmer can
-   *  associate an action to the generation of an ouput lexem when the fsm
+   *  associate an action to the generation of an output lexeme when the fsm
    *  cross a transition.<br /><br />
    *
    *  This method takes as parameter a pointer on an action object and a
    *  optional user data.
    *
    *
-   * @param {string}output output lexem on which is associated the action
+   * @param {string}output output lexeme on which is associated the action
    * @param {function|string} action the function's name a function of the
    *        fsm owner
    */
@@ -692,7 +679,7 @@ export class Fsm extends Component {
   }
 
   /*******************************************
-   Event managing methodes
+   Event managing methods
    *******************************************/
 
   /**
@@ -714,7 +701,7 @@ export class Fsm extends Component {
 
   /**
    *  Private method use by the fsm to cross a transition.
-   *  @note for the moment only one ouput lexem can be generation when
+   *  @note for the moment only one output lexeme can be generation when
    *  crossing a transition
    *  @private
    *
@@ -771,9 +758,8 @@ export class Fsm extends Component {
     this.#initialState = "";
 
     // remove input event bindings
-    for (const [key, a] of this.#inputs.entries()) {
-      for (let i = 0; i < a.length; i++) {
-        const [eventSpec, on, src] = a[i];
+    for (const [, a] of this.#inputs.entries()) {
+      for (let [eventSpec, , src] of a) {
         if (src.bind) {
           src.unbind(eventSpec, this, this.handleEvent)
         // } else if (src.addEventListener) {
@@ -791,15 +777,14 @@ export class Fsm extends Component {
    *
    * @param {Object} event the event
    */
-  private handleEvent = (event: Event): void => {
+  private readonly handleEvent = (event: Event): void => {
     // @ts-ignore
     const a = this.#inputs.get(event.src);
     if (!a) {
       return;
     }
 
-    for (let i = 0; i < a.length; i++) {
-      const [spec, on, src] = a[i];
+    for (let [spec, on,] of a) {
       if (event.type !== spec) continue;
 
       if (!this.#listOfState.has(this.#currentState)) {

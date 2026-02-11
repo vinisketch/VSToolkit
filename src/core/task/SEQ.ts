@@ -1,6 +1,6 @@
-import Task, { TaskAndParams } from "./task";
+import BaseTask from "./helper";
+import { TaskAndParams } from "./task";
 import { TaskState } from "./taskState";
-import { isArray } from "vs_utils";
 
 /**
  *  Methods that create a SEQ group
@@ -84,25 +84,12 @@ export const seq = (params: TaskAndParams[]): SEQ | undefined => {
  * @param list List of task to start sequentially with an optional
  *  parameter
  */
-export default class SEQ extends Task {
-  constructor(tasksAndParams?: TaskAndParams[]) {
-    super();
-
-    this.#tasksAndParams = [];
-    this.state = TaskState.STOPPED;
-
-    if (tasksAndParams.length) {
-      this.setTasks(tasksAndParams);
-    }
-  }
+export default class SEQ extends BaseTask {
 
   /********************************************************************
 
    ********************************************************************/
-  /**
-   *  @private
-   */
-  readonly #tasksAndParams: [Task, any[] | null][] = [];
+
   /**
    *  @private
    */
@@ -111,59 +98,11 @@ export default class SEQ extends Task {
    *  @private
    */
   #startParam: any[] | null = null;
+
   /********************************************************************
 
    ********************************************************************/
 
-  /**
-   *  Set tasks.
-   *  The task has to be stopped
-   *
-   * @name core.task.SEQ#setTasks
-   * @function
-   *
-   *  parameter
-   * @param tasksAndParams
-   */
-  setTasks(tasksAndParams: TaskAndParams[]): boolean {
-    if (this.state !== TaskState.STOPPED) {
-      return false;
-    }
-
-    this.#tasksAndParams.length = 0;
-    for (let taskAndParam of tasksAndParams) {
-      if (!taskAndParam) {
-        continue;
-      }
-
-      let param = null;
-      let task = null;
-
-      if (isArray(taskAndParam)) {
-        if (taskAndParam.length === 1) {
-          task = taskAndParam [0];
-        } else if (taskAndParam.length === 2) {
-          task = taskAndParam [0];
-          param = taskAndParam [1];
-        }
-      } else {
-        task = taskAndParam;
-        param = null;
-      }
-
-      if (!task) {
-        console.warn('Undefined task');
-        continue;
-      }
-
-      if (!task.start || !task.stop || !task.pause) {
-        console.warn('Invalid task: ' + task.toString());
-        continue;
-      }
-
-      this.#tasksAndParams.push([task, param]);
-    }
-  }
 
   /**
    *  Starts the task
@@ -177,7 +116,7 @@ export default class SEQ extends Task {
       return false;
     }
 
-    const taskAndParams = this.#tasksAndParams [this.#nextTaskToStart];
+    const taskAndParams = this.tasksAndParams [this.#nextTaskToStart];
     this.#nextTaskToStart++;
 
     if (!taskAndParams) {
@@ -207,7 +146,7 @@ export default class SEQ extends Task {
     }
     this.state = TaskState.STOPPED;
 
-    const taskAndParams = this.#tasksAndParams [this.#nextTaskToStart - 1];
+    const taskAndParams = this.tasksAndParams [this.#nextTaskToStart - 1];
     this.#nextTaskToStart = 0;
 
     if (!taskAndParams) {
@@ -232,7 +171,7 @@ export default class SEQ extends Task {
     }
     this.state = TaskState.PAUSED;
 
-    const taskAndParams = this.#tasksAndParams [this.#nextTaskToStart - 1];
+    const taskAndParams = this.tasksAndParams [this.#nextTaskToStart - 1];
     if (!taskAndParams) {
       return false;
     }
@@ -247,8 +186,6 @@ export default class SEQ extends Task {
    ********************************************************************/
 
   /**
-   * @protected
-   * @function
    */
   taskDidStop(): void {
     this.state = TaskState.STOPPED;
@@ -266,8 +203,6 @@ export default class SEQ extends Task {
   }
 
   /**
-   * @protected
-   * @function
    */
   taskDidPause(): void {
     this.state = TaskState.PAUSED;
@@ -285,13 +220,11 @@ export default class SEQ extends Task {
   }
 
   /**
-   * @protected
-   * @function
    */
   taskDidEnd(): void {
     this.state = TaskState.STOPPED;
 
-    if (this.#nextTaskToStart < this.#tasksAndParams.length) {
+    if (this.#nextTaskToStart < this.tasksAndParams.length) {
       // start the next task
       this.start(this.#startParam);
     } else {

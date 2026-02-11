@@ -114,11 +114,11 @@ export class DataFlow {
 
   #isPropagating = false;
   // edges from components Object[component.id] => Array[3] <Object, , properties>
-  #optimizedEdges = new Map<ObjectId, CompiledConnection[]>();
+  readonly #optimizedEdges = new Map<ObjectId, CompiledConnection[]>();
   // ordered node list Array<Object>
   #nodes: any[] = [];
 
-  #edgesFrom = new Map<ObjectId, Connections>();
+  readonly #edgesFrom = new Map<ObjectId, Connections>();
   #listNode: Array<ObjectId> = [];
   #shouldNotPropagate = 0;
 
@@ -137,16 +137,14 @@ export class DataFlow {
       return;
     }
 
-    for (let i = 0; i < cConnections.length; i++) {
-      const cConnection = cConnections[i];
+    for (let cConnection of cConnections) {
       const objTrg = cConnection.obj;
-      for (let j = 0; j < cConnection.cEdges.length; j++) {
-        const edge = cConnection.cEdges[j];
+      for (let edge of cConnection.cEdges) {
         let params = [];
 
         // get properties out values
-        for (let l = 0; l < edge.getters.length; l++) {
-          params.push(edge.getters[l].call(objSrc));
+        for (let getter of edge.getters) {
+          params.push(getter.call(objSrc));
         }
 
         if (isFunction(edge.func)) {
@@ -275,8 +273,8 @@ export class DataFlow {
       throw new Error('DataFlow.connect, parameter error');
     }
 
-    if (this.#listNode.indexOf(srcObj.id) !== -1) this.#listNode.push(srcObj.id);
-    if (this.#listNode.indexOf(trgObj.id) !== -1) this.#listNode.push(trgObj.id);
+    if (this.#listNode.includes(srcObj.id)) this.#listNode.push(srcObj.id);
+    if (this.#listNode.includes(trgObj.id)) this.#listNode.push(trgObj.id);
 
     let connections = this.#edgesFrom.get(srcObj.id);
     if (!connections) {
@@ -432,9 +430,9 @@ export class DataFlow {
     this.#edgesFrom.forEach(connections => {
       // FIXME: For more efficiency, store indexes into edges to avoid node
       // search.
-      for (let j = 0; j < connections.length; j++) {
+      for (let connection of connections) {
         // find the index of the node in the node list
-        const cid = connections[j][0];
+        const cid = connection[0];
         const index = this.#listNode.indexOf(cid);
         if (index === -1) {
           throw new Error('Sort, unknown id');
@@ -468,8 +466,8 @@ export class DataFlow {
       /// Use an adjacency matrix implementation ?
       const connections = this.#edgesFrom.get(nId);
       if (connections !== undefined) {
-        for (let j = 0; j < connections.length; j++) {
-          const mi = pending.indexOf(connections[j][0]);
+        for (let connection of connections) {
+          const mi = pending.indexOf(connection[0]);
           if (mi !== -1) {
             indegrees[mi]--;
           }
@@ -483,12 +481,12 @@ export class DataFlow {
     this.#isCyclic = violationCount > 0;
 
     if (violationCount > 0) {
-      const edgecount = this.#edgesFrom.size;
+      const edgeCount = this.#edgesFrom.size;
       this.logger.warn(
         'WARNING: Cycles detected during topological sort.'
         + '%d dependencies out of %d have been violated.\n',
         violationCount,
-        edgecount,
+        edgeCount,
       );
     }
     return !this.#isCyclic;
@@ -520,8 +518,7 @@ export class DataFlow {
    */
   private optimize(edgeRefs: Map<ObjectId, Connections>, nodeList: ObjectId[]) {
     this.#dataflowNodes.length = 0;
-    for (let i = 0; i < nodeList.length; i++) {
-      const id = nodeList[i];
+    for (let id of nodeList) {
       const obj = DataflowNode.get(id);
       if (obj) {
         this.#dataflowNodes.push(obj);
@@ -538,8 +535,7 @@ export class DataFlow {
       const compiledConnections: CompiledConnection[] = [];
       this.#optimizedEdges.set(id, compiledConnections);
 
-      for (let i = 0; i < data.length; i++) {
-        const connections = data[i];
+      for (let connections of data) {
         const cid = connections[0];
         const objTrg = DataflowNode.get(cid);
         // if (!objTrg) {
@@ -555,8 +551,7 @@ export class DataFlow {
         compiledConnections.push(compiledConnection);
 
         const edges = connections[2];
-        for (let j = 0; j < edges.length; j++) {
-          const edge = edges[j];
+        for (let edge of edges) {
           const compiledEdge: CompiledEdge = {
             id: edge.id,
             getters: [],

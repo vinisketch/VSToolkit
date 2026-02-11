@@ -34,7 +34,7 @@ export default class EventSource extends Mixin {
   protected releaseMixin (): void {
     super.releaseMixin();
     for (const [spec, handlerList] of this.#bindings.entries()) {
-      handlerList.forEach(handler => handler.release());
+      handlerList.forEach(handler => Handler.release(handler));
       handlerList.length = 0;
       this.#bindings.delete(spec);
     }
@@ -91,7 +91,7 @@ export default class EventSource extends Mixin {
       const idx = handlerList.findIndex(handler => handler.func === func);
       if (idx !== -1) {
         const handlers = handlerList.splice(idx, 1);
-        handlers.forEach(handle => handle.release());
+        handlers.forEach(handle => Handler.release(handle));
       }
     }
 
@@ -118,7 +118,7 @@ export default class EventSource extends Mixin {
       const idx = handlerList.findIndex(handler => handler.func === func && handler.obj === obj);
       if (idx !== -1) {
         const handlers = handlerList.splice(idx, 1);
-        handlers.forEach(handle => handle.release());
+        handlers.forEach(handle => Handler.release(handle));
       }
     }
 
@@ -129,27 +129,22 @@ export default class EventSource extends Mixin {
    *  Dispatches an Event at the specified EventSource, invoking the affected
    *  EventListeners in the appropriate order.
    */
-  dispatchEvent(this: typeof EventSource, event: Event): boolean {
+  dispatchEvent(this: EventSource, event: Event): boolean {
     if (!event.type) return false;
-    // @ts-ignore
     const handlerList = this.#bindings.get(event.type);
 
     // bubbling
     if (isEmpty(handlerList)) {
       if (isContainer(this)) {
-        // @ts-ignore
-        const parent = Container.getParent(this);
+        const parent = Container.getParent(this as unknown as Component);
         if (isEventSource(parent)) {
-          // @ts-ignore
           parent.dispatchEvent(event);
         }
       }
       return true;
     }
 
-    // @ts-ignore
     event.src = this;
-    // @ts-ignore
     event.srcTarget = this;
     queueProcAsyncEvent(event, handlerList);
     return true;

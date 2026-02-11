@@ -3,10 +3,14 @@
  *  @private
  */
 export class Action {
-  private static pool: Action[] = [];
+  private static readonly pool: Action[] = [];
 
   private func: ((...arg: unknown[]) => void) | undefined;
   private ctx: any | undefined;
+
+  private constructor() {
+    // empty
+  }
 
   configure(func: (...args: any[]) => void, ctx?: any) {
     this.func = func;
@@ -21,12 +25,17 @@ export class Action {
 
   static retain(): Action {
     if (Action.pool.length > 0) {
-      return Action.pool.pop()!;
+      return Action.pool.pop();
     }
     return new Action();
   }
 
   static release(action: Action): void {
+    // reset action
+    action.func = undefined;
+    action.ctx = undefined;
+
+    // put back in pool
     Action.pool.push(action);
   }
 }

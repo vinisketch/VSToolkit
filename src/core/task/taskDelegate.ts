@@ -1,6 +1,6 @@
 export default interface TaskDelegate {
-  taskDidEnd?: Function;
-  taskDidStart?: Function;
-  taskDidStop?: Function;
-  taskDidPause?: Function;
+  taskDidEnd?: (task: any) => void;
+  taskDidStart?: (task: any) => void;
+  taskDidStop?: (task: any) => void;
+  taskDidPause?: (task: any) => void;
 }
