@@ -269,7 +269,7 @@ export class DataFlow implements IDataFlow {
     if (!state) {
       throw new Error(`Src component is not a Dataflow component: ${src.toString()}`);
     }
-    state.df.add(this);
+    state.dataflows.add(this);
 
     if (!this.#listNode.includes(srcObj.id)) this.#listNode.push(srcObj.id);
     if (!this.#listNode.includes(trgObj.id)) this.#listNode.push(trgObj.id);

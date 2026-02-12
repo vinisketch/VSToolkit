@@ -1,5 +1,5 @@
 import { isFunction, isString } from 'vs_utils';
-import { createId } from './Core';
+import { createId } from './helpers';
 import { EventSource, Event } from "./event";
 import Component from "./Component";
 

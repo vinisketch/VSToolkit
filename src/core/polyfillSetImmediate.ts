@@ -1,11 +1,19 @@
 // Actions queue. This array contains all actions (Action object)
 // that have to be executed.
+import { container } from 'vs_utils';
 import { Action } from './Action';
+import { ILogger, LOGGER } from './ILogger';
 
 let mainActionsQueue: Action[] = [];
 let tmpActionsQueue: Action[] = [];
 let scheduleDoActions: () => void;
 let areActionsScheduled = false;
+
+let _logger: ILogger | null = null;
+const getLogger = () => {
+  _logger = _logger ?? container.get(LOGGER);
+  return _logger;
+}
 
 function queueAction(func: ()=> void, ctx?: any) {
   const action = Action.retain();
@@ -20,28 +28,32 @@ function queueAction(func: ()=> void, ctx?: any) {
 }
 
 function doAllActions () {
-  var queue = mainActionsQueue;
+  const queue = mainActionsQueue;
+  const logger = getLogger();
 
   areActionsScheduled = false;
 
   if (queue.length) {
-
     // switch queues
     mainActionsQueue = tmpActionsQueue;
     tmpActionsQueue = queue;
 
-    try {
-      // execute actions
-      var i = 0, l = queue.length, func;
-      for (; i < l; i++) {
-        func = queue [i];
-        func.run();
+    // execute actions
+    let i = 0;
+    const l = queue.length;
+    for (; i < l; i++) {
+      const action = queue [i];
+      try {
+        action.run();
+      }
+      catch (e) {
+        if (e.stack) logger.error (e.stack);
+        else logger.error (e);
+      } finally {
+        Action.release(action);
       }
     }
-    catch (e) {
-      if (e.stack) console.error (e.stack);
-      else console.error (e);
-    }
+
     // clean the queue
     queue.length = 0;
   }

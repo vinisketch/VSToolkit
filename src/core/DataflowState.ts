@@ -6,15 +6,15 @@ import { container } from 'vs_utils';
 export default class DataflowState {
   private static readonly states = new Map<ObjectId, DataflowState>();
 
-  readonly df = new Set<IDataFlow>();
+  readonly dataflows = new Set<IDataFlow>();
 
   private constructor(private comp: DataflowNode, df: IDataFlow) {
-    this.df.add(df);
+    DataflowState.states.set(comp.id, this);
   }
 
   static add(comp: DataflowNode, df = container.get(DEFAULT_DATAFLOW)): DataflowState {
-    const state = new DataflowState(comp, df);
-    DataflowState.states.set(comp.id, state);
+    const state = DataflowState.states.get(comp.id) ?? new DataflowState(comp, df);
+    state.dataflows.add(df);
     return state;
   }
 
@@ -23,11 +23,11 @@ export default class DataflowState {
   }
 
   propagate(): void {
-    this.df.forEach(df => df.propagate(this.comp));
+    this.dataflows.forEach(df => df.propagate(this.comp));
   }
 
   /**
-   * Manually tel an input property change.
+   * Manually tell an input property change.
    * <br/>
    * It will generate a call to propertiesDidChange.
    * @name core.Object#inPropertyDidChange
@@ -52,9 +52,6 @@ export default class DataflowState {
    * properties have been modified.
    *
    * @name core.Object#outPropertyChange
-   * @function
-   *
-   * @param {String} property the name of the modified property.[optional]
    */
   outPropertyChange(): void {
     this.inputPropertyDidChange = true;
@@ -74,11 +71,11 @@ export default class DataflowState {
   }
 
   pausePropagation(): void {
-    this.df.forEach(df => df.pausePropagation());
+    this.dataflows.forEach(df => df.pausePropagation());
   }
 
   restartPropagation(): void {
-    this.df.forEach(df => df.restartPropagation());
+    this.dataflows.forEach(df => df.restartPropagation());
   }
 
   inputPropertyDidChange = false;

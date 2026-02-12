@@ -7,8 +7,6 @@ import { BaseIdentifiable, ObjectId } from "./BaseIdentifiable";
 
 const nodesBis = new Map<object, DataflowNode>();
 export function Input(value: any, { name, addInitializer, ...rest}: any) {
-  console.log(addInitializer)
-  console.log(rest)
   addInitializer(function () {
     let node = nodesBis.get(this);
     if (!node) {
@@ -19,7 +17,7 @@ export function Input(value: any, { name, addInitializer, ...rest}: any) {
 }
 
 export default class DataflowNode extends SupportMixins implements BaseIdentifiable  {
-  readonly #configParams: ObjectConfig | undefined;
+  // readonly #configParams: ObjectConfig | undefined;
   readonly id: string;
   static readonly #nodes = new Map<string, DataflowNode>();
   static get(id: string): DataflowNode | undefined {
@@ -31,10 +29,10 @@ export default class DataflowNode extends SupportMixins implements BaseIdentifia
     this.id = isString(id)? id : createUniqueId();
     // DataflowState.add(this);
     DataflowNode.#nodes.set(this.id, this);
-    if (this.#configParams) {
-      this.configure(this.#configParams);
-      this.#configParams = undefined;
-    }
+    // if (this.#configParams) {
+    //   this.configure(this.#configParams);
+    //   this.#configParams = undefined;
+    // }
   }
 
   /**
@@ -60,7 +58,7 @@ export default class DataflowNode extends SupportMixins implements BaseIdentifia
    * @param {Object} config the associated array used for configuring the
    *        object.
    */
-  protected configure(config: Exclude<ObjectConfig, 'id'>) {
+  // protected configure(config: Exclude<ObjectConfig, 'id'>) {
     // let shouldPropagate = false;
     // // let props; let key; let i; ; let
     // //   desc;
@@ -103,7 +101,7 @@ export default class DataflowNode extends SupportMixins implements BaseIdentifia
     //   this.propertiesDidChange();
     //   state.propagate();
     // }
-  }
+  // }
 
   /**
    *  This method is called by the dataflow algorithm when input properties have

@@ -1,4 +1,14 @@
-let idIndex = 1;
+let idIndex = 0;
+
+/**
+ * Returns a local unique Id <p>
+ * The algorithm is based on an index initialized when the page is loaded.
+ *
+ * @return {String}
+ */
+export function createId (): string {
+  return `vs_id_${idIndex++}`;
+}
 
 /**
  * Returns a local unique Id <p>

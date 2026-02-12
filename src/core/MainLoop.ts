@@ -1,10 +1,11 @@
-import { isFunction } from 'vs_utils';
+import { container, isFunction } from 'vs_utils';
 import {
   initSetImmediatePolyfill,
   runImmediatePolyfill
 } from './polyfillSetImmediate';
 import { Event } from './event';
 import { Action } from "./Action";
+import { ILogger, LOGGER } from './ILogger';
 
 /**
  * Schedule your action on next frame.
@@ -23,6 +24,12 @@ export const ON_NEXT_FRAME = -1;
 // type Action = (...args: any[]) => void;
 
 type EventHandler = any;
+
+let _logger: ILogger | null = null;
+const getLogger = () => {
+  _logger = _logger ?? container.get(LOGGER);
+  return _logger;
+}
 
 interface EventBurst {
   handlerList: EventHandler[],
@@ -147,6 +154,7 @@ function doOneEvent(burst: EventBurst, isSynchro?: boolean): void {
   const len = handlerList.length;
   let l = len;
   const event = burst.event;
+  const logger = getLogger();
 
   if (isSynchro) isSyncEventsPropagating = true;
   else isAsyncEventsPropagating = true;
@@ -176,8 +184,8 @@ function doOneEvent(burst: EventBurst, isSynchro?: boolean): void {
           handler.handleEvent.call(handler, event);
         }
       } catch (e: any) {
-        // if (e.stack) logger.error(e.stack);
-        // else logger.error(e);
+        if (e.stack) logger.error(e.stack);
+        else logger.error(e);
       }
     }
     endPropagation();
@@ -200,7 +208,11 @@ function doOneEvent(burst: EventBurst, isSynchro?: boolean): void {
  * @private
  */
 function doOneAsyncEvent() {
-  if (isAsyncEventsPropagating || isSyncEventsPropagating) return;
+  if (
+    isAsyncEventsPropagating ||
+    isSyncEventsPropagating ||
+    asyncEventsQueue.length === 0
+  ) return;
 
   // dequeue the next event burst and do it
   doOneEvent(asyncEventsQueue.shift()!);
