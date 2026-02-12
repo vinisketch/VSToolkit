@@ -15,7 +15,7 @@ export default class Container {
   }
 
   /**
-   *  Return true if the set component is a child o the current component
+   *  Return true if the set component is a child of the current component
    *
    * @param {Component} child The component to be removed.
    * @return {boolean}
@@ -32,7 +32,7 @@ export default class Container {
    *  In case of vs.ui.Group its mandatory to set the extension.
    *  <p>
    *  The add is a lazy add! The child's view can be already in
-   *  the HTML DOM. In that case, the add methode do not modify the DOM.
+   *  the HTML DOM. In that case, the add method do not modify the DOM.
    *  <p>
    *  @example
    *  var myButton = new Button (conf);
@@ -59,10 +59,6 @@ export default class Container {
    * @param {Component} child The component to be removed.
    */
   remove(child: Component): void {
-    if (!this.isChild(child)) {
-      return;
-    }
-
     const idx = this.#children.indexOf(child);
     if (idx === -1) {
       throw new Error('Not a child of this component');
@@ -86,5 +82,5 @@ export default class Container {
 
 export function isContainer(obj: unknown): obj is Container {
   if (obj instanceof Container) return true;
-  return isObject(obj) && 'add' in obj && 'remove' in obj;
+  return isObject(obj) && 'add' in obj && 'remove' in obj && 'isChild' in obj;
 }

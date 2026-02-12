@@ -1,8 +1,7 @@
-import { toJSON, parseJSON, applyMixins, isString, SupportMixins } from 'vs_utils';
+import { toJSON, parseJSON, applyMixins, SupportMixins } from 'vs_utils';
 import { BaseIdentifiable,  ObjectId } from './BaseIdentifiable';
-import DataflowNode from "./DataflowNode";
 import { EventSource } from './event';
-import { createUniqueId, ObjectConfig } from './helpers';
+import { createUniqueId } from './helpers';
 
 
 export type InitFunction = () => void;
@@ -23,13 +22,14 @@ export type InitFunction = () => void;
 class Component extends SupportMixins implements BaseIdentifiable {
   public static readonly instances: { [id: string]: Component; } = {};
 
-  #initialised = false;
+  #state: 'non-initialized' | 'initialized' | 'deleted' = 'non-initialized';
+  #deleted = false;
   readonly #initFunctions = new Set<InitFunction>();
   readonly id: string;
 
   constructor(id?: ObjectId) {
     super();
-    this.id = isString(id) ? id : createUniqueId();
+    this.id = id ?? createUniqueId();
     // save the current object
     Component.instances[this.id] = this;
   }
@@ -43,19 +43,19 @@ class Component extends SupportMixins implements BaseIdentifiable {
    *  @return {Object} this
    */
   init(): this {
-    if (this.#initialised) {
+    if (this.#state !== 'non-initialized') {
       throw new Error('impossible to re-initialise a component');
     }
 
     try {
       this.initComponent();
       this.#initFunctions.forEach(func => func());
-      this.#initialised = true;
+      this.#state = 'initialized';
 
       // Call optional end initialization method
       this.componentDidInitialize();
     } catch (e) {
-      throw new Error('Component init failed with the error: ' + e);
+      throw new Error('Component init failed with the error: ' + e, { cause: e });
     }
 
     return this;
@@ -69,13 +69,13 @@ class Component extends SupportMixins implements BaseIdentifiable {
 
   protected destructor(): void {
     // remove the current object
-    delete Component.instances[this.id];
+    Component.instances[this.id] = undefined;
 
-    this.#initialised = false;
+    this.#state = 'deleted';
   }
 
   isDeleted() {
-    return !this.#initialised;
+    return this.#state === 'deleted';
   }
 
   /**

@@ -1,8 +1,7 @@
 import { isFunction, isString } from 'vs_utils';
 import { createId } from './Core';
-import { EventSource } from "./event";
+import { EventSource, Event } from "./event";
 import Component from "./Component";
-import { Action } from "./Action";
 
 interface Arc {
   to: string;
@@ -33,12 +32,12 @@ type InputInfo = [string, string, EventSource];
  *    <li />there is only one transition for a given input and a given state.
  *  </ul>
  *
- *    A fsm is specified as flollowing :
+ *    A fsm is specified as following :
  *  <ul>
  *    <li />the set Q, is the set of state;
  *    <li />the set I, is the input alphabet, i.e. a set of word that ca be
  *      generate a transition between two states;
- *    <li />the set O, is the ouput alphabet. It containts the set of word
+ *    <li />the set O, is the output alphabet. It contains the set of word
  *      produced when a transition is crossed;
  *    <li />the set E, is the list of transition <QxIxQxO>;
  *    <li />an initial state.
@@ -61,7 +60,7 @@ type InputInfo = [string, string, EventSource];
  *  the fsm emit event defined by an string (the output lexem) or call an
  *  action associated to the output lexem.
  *  The event can be received by setting a Binding on this fsm.
- *  Otherwise for specifying the action use the setOuput () method.<br />
+ *  Otherwise for specifying the action use the setOutput () method.<br />
  *  <br />
  *  Known limitations:
  *  <ul>
@@ -78,7 +77,7 @@ type InputInfo = [string, string, EventSource];
  *   // Input lexems declaration
  *   my_fsm.addInput ("a");
  *   my_fsm.addInput ("b");
- *   // Ouptut lexems declaration
+ *   // Output lexems declaration
  *   my_fsm.addOutput ("c");
  *   my_fsm.addOutput ("d");
  *   // transitions declaration
@@ -107,8 +106,8 @@ export class Fsm extends Component {
   readonly #listInput = new Set<string>();   ///< List of input lexeme (alphabet) : I
   readonly #listOutput = new Set<string>();  ///< List of output lexeme (alphabet) : O
 
-  #initialState = "";  ///< initial state name
-  #currentState = "";  ///< current state name
+  #initialState = '';  ///< initial state name
+  #currentState = '';  ///< current state name
 
   readonly #inputs = new Map<EventSource, InputInfo[]>();
   readonly #outputAction = new Map<string, string | Function>();
@@ -118,7 +117,7 @@ export class Fsm extends Component {
   }
 
   /**
-   *   Define the initiale state
+   *   Define the initial state
    *   Generate an exception if the state was not already defined
    *
    *   @name core.Fsm#initialState
@@ -126,7 +125,7 @@ export class Fsm extends Component {
    */
   set initialState(stateId: string) {
     if (!stateId) {
-      this.#initialState = undefined;
+      this.#initialState = '';
       return;
     }
 
@@ -150,7 +149,7 @@ export class Fsm extends Component {
    ****************************************************************/
 
   /**
-   * @priva
+   * @private
    *
    * @param {core.Object} obj The cloned object
    * @param {Object} map Map of cloned objects
@@ -266,12 +265,12 @@ export class Fsm extends Component {
    *
    * @return {Array} the alphabet as a set of String
    */
-  getInputs(): Iterator<string> {
+  getInputs(): IterableIterator<string> {
     return this.#listInput.values();
   }
 
   /**
-   *  Test if a word in inlcude in imput alphabet
+   *  Test if a word in include in input alphabet
    *
    * @param {string} input the input
    * @return true is exists
@@ -460,8 +459,7 @@ export class Fsm extends Component {
       return;
     }
 
-    for (const from in this.#listOfState) {
-      const state = this.#listOfState.get(from);
+    for (const state of this.#listOfState.values()) {
       const t = state.transitionEvents.get(on);
       if (t?.to !== to) {
         continue;
@@ -519,9 +517,7 @@ export class Fsm extends Component {
       return undefined;
     }
 
-    for (const input in state.transitionEvents) {
-      const t = state.transitionEvents.get(input);
-
+    for (const t of state.transitionEvents.values()) {
       const tt: Transition = {
         ...t,
         from: from,
@@ -725,7 +721,6 @@ export class Fsm extends Component {
       state = this.#listOfState.get(this.#currentState);
     }
 
-    ///
     this.#currentState = stateId;
 
     if (output && this.#outputAction.get(output)) {
@@ -736,7 +731,7 @@ export class Fsm extends Component {
         // @ts-ignore
         const func = this.owner[clb];
         if (isFunction(func)) {
-          func(event);
+          func.call(this.owner, event);
         }
       }
     }
@@ -826,20 +821,24 @@ export class Fsm extends Component {
    * @param {String} on input
    * @return {Object} data associate to the event
    */
-  fsmNotify(on: string, data: any) {
+  fsmNotify(on: string, data: any): boolean {
     if (!this.#listOfState.has(this.#currentState)) {
-      return;
+      return false;
     }
 
-    const transition =
-      this.#listOfState.get(this.#currentState).transitionEvents.get(on);
-
+    const transition = this.#listOfState.get(this.#currentState).transitionEvents.get(on);
     if (!transition) {
       return false;
     }
 
-    // @ts-ignore
-    this.goTo(transition.to, transition.output, { on, data: data });
+    const event = Event.retain();
+    event.configure(on, data);
+    event.src = this;
+    event.srcTarget = this;
+
+    this.goTo(transition.to, transition.output, event);
+    Event.release(event);
+
     return true;
   }
 }

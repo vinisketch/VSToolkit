@@ -1,5 +1,6 @@
 import {
-  isArray, isFunction, isNotEmpty, isNumber, isString, container
+  isArray, isFunction, isNotEmpty, isNumber, isString, container,
+  defined
 } from 'vs_utils';
 import { BaseIdentifiable, ObjectId } from './BaseIdentifiable';
 import DataflowState from './DataflowState';
@@ -13,7 +14,7 @@ interface Edge {
   id: number;
   out: string[];
   in: string[];
-  func: any;
+  func: Function;
 }
 
 type Getter<T> = () => T;
@@ -23,7 +24,7 @@ interface CompiledEdge {
   id: number;
   getters: Getter<any>[];
   setters: Setter<any>[];
-  func?: any;
+  func: Function;
 }
 
 interface CompiledConnection {
@@ -205,7 +206,7 @@ export class DataFlow implements IDataFlow {
       while (i < l && this.#dataflowNodes[i] !== obj) { i++; }
 
       // the node was found. First data propagation
-      if (i < l - 1) {
+      if (i < l) {
         if (!outputPropagation && obj.propertiesDidChange()) {
           // true means output properties were not changed.
           // => stop propagation
@@ -260,7 +261,7 @@ export class DataFlow implements IDataFlow {
     outDesc: string | string[],
     trg: ObjectId | DataflowNode,
     inDesc: string | string[],
-    func?: unknown,
+    func: Function,
   ): number {
     const [srcObj, propertiesOut, trgObj, propertiesIn] = buildConnectParameters(src, outDesc, trg, inDesc);
 
@@ -270,12 +271,8 @@ export class DataFlow implements IDataFlow {
     }
     state.df.add(this);
 
-    if (!func) {
-      throw new Error('DataFlow.connect, parameter error');
-    }
-
-    if (this.#listNode.includes(srcObj.id)) this.#listNode.push(srcObj.id);
-    if (this.#listNode.includes(trgObj.id)) this.#listNode.push(trgObj.id);
+    if (!this.#listNode.includes(srcObj.id)) this.#listNode.push(srcObj.id);
+    if (!this.#listNode.includes(trgObj.id)) this.#listNode.push(trgObj.id);
 
     let connections = this.#edgesFrom.get(srcObj.id);
     if (!connections) {
@@ -350,7 +347,7 @@ export class DataFlow implements IDataFlow {
     function removeProperties(sources: string[], list: string[]) {
       list.forEach(data => {
         const index = sources.indexOf(data);
-        if (index !== -1) sources.slice(index, 1);
+        if (index !== -1) sources.splice(index, 1);
       });
     }
 
@@ -453,7 +450,7 @@ export class DataFlow implements IDataFlow {
       const minI = arrayMin(indegrees);
       const indegree = indegrees[minI];
 
-      indegrees.splice(minI, 0);
+      indegrees.splice(minI, 1);
       const nId = pending[minI];
       pending.splice(minI, 1);
 
@@ -528,20 +525,14 @@ export class DataFlow implements IDataFlow {
 
     this.#optimizedEdges.clear();
     for (const [id, data] of edgeRefs.entries()) {
-      const objSrc = DataflowNode.get(id);
-      // if (!objSrc) {
-      //   continue;
-      // }
+      const objSrc = defined(DataflowNode.get(id));
 
       const compiledConnections: CompiledConnection[] = [];
       this.#optimizedEdges.set(id, compiledConnections);
 
       for (let connections of data) {
         const cid = connections[0];
-        const objTrg = DataflowNode.get(cid);
-        // if (!objTrg) {
-        //   continue;
-        // }
+        const objTrg = defined(DataflowNode.get(cid));
 
         const compiledConnection: CompiledConnection = {
           obj: objTrg,
