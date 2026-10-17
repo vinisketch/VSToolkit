@@ -1,26 +1,70 @@
-import { isFunction, isString, isObject, Mixin, isEmpty, container, injectionToken, isArray, isNumber, isNotEmpty, SupportMixins, applyMixins, toJSON, parseJSON } from 'vs_utils';
+import { isFunction, isString, injectionToken, container, isObject, Mixin, isEmpty, applyMixins, SupportMixins, createUniqueId, toJSON, parseJSON, isArray } from 'vs_utils';
+
+var __typeError$9 = (msg) => {
+  throw TypeError(msg);
+};
+var __accessCheck$9 = (obj, member, msg) => member.has(obj) || __typeError$9("Cannot " + msg);
+var __privateGet$9 = (obj, member, getter) => (__accessCheck$9(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
+var __privateAdd$9 = (obj, member, value) => member.has(obj) ? __typeError$9("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+var __privateSet$6 = (obj, member, value, setter) => (__accessCheck$9(obj, member, "write to private field"), member.set(obj, value), value);
+var _pool, _funcName, _funcPtr, _obj;
+const _Handler = class _Handler {
+  constructor() {
+    __privateAdd$9(this, _funcName);
+    __privateAdd$9(this, _funcPtr);
+    __privateAdd$9(this, _obj);
+  }
+  get func() {
+    return __privateGet$9(this, _funcPtr) || __privateGet$9(this, _funcName);
+  }
+  get obj() {
+    return __privateGet$9(this, _obj);
+  }
+  configure(obj, func) {
+    __privateSet$6(this, _obj, obj);
+    if (isFunction(func)) {
+      __privateSet$6(this, _funcPtr, func);
+    } else if (isString(func)) {
+      __privateSet$6(this, _funcName, func);
+    }
+  }
+  static retain() {
+    if (__privateGet$9(_Handler, _pool).length > 0) {
+      return __privateGet$9(_Handler, _pool).pop();
+    }
+    return new _Handler();
+  }
+  static release(handler) {
+    __privateSet$6(handler, _obj, void 0);
+    __privateSet$6(handler, _funcName, void 0);
+    __privateSet$6(handler, _funcPtr, void 0);
+    __privateGet$9(_Handler, _pool).push(handler);
+  }
+};
+_pool = new WeakMap();
+_funcName = new WeakMap();
+_funcPtr = new WeakMap();
+_obj = new WeakMap();
+__privateAdd$9(_Handler, _pool, []);
+let Handler = _Handler;
 
 var __defProp$6 = Object.defineProperty;
-var __typeError$6 = (msg) => {
+var __typeError$8 = (msg) => {
   throw TypeError(msg);
 };
 var __defNormalProp$6 = (obj, key, value) => key in obj ? __defProp$6(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
 var __publicField$6 = (obj, key, value) => __defNormalProp$6(obj, typeof key !== "symbol" ? key + "" : key, value);
-var __accessCheck$6 = (obj, member, msg) => member.has(obj) || __typeError$6("Cannot " + msg);
-var __privateGet$6 = (obj, member, getter) => (__accessCheck$6(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
-var __privateAdd$6 = (obj, member, value) => member.has(obj) ? __typeError$6("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-var __privateSet$4 = (obj, member, value, setter) => (__accessCheck$6(obj, member, "write to private field"), member.set(obj, value), value);
+var __accessCheck$8 = (obj, member, msg) => member.has(obj) || __typeError$8("Cannot " + msg);
+var __privateGet$8 = (obj, member, getter) => (__accessCheck$8(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
+var __privateAdd$8 = (obj, member, value) => member.has(obj) ? __typeError$8("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+var __privateSet$5 = (obj, member, value, setter) => (__accessCheck$8(obj, member, "write to private field"), member.set(obj, value), value);
 var _type;
 const _Event = class _Event {
-  /**
-   * @param {string} type the event type [mandatory]
-   * @param {Object} data complementary event data [optional]
-   */
-  constructor(type, data) {
+  constructor() {
     /**
      * The event spec. For instance 'click' for a mouse click event.
      */
-    __privateAdd$6(this, _type);
+    __privateAdd$8(this, _type);
     /**
      * The optional data associated to the event.
      */
@@ -36,13 +80,16 @@ const _Event = class _Event {
      * @deprecated
      */
     __publicField$6(this, "srcTarget");
-    if (type) this.configure(type, data);
   }
   get type() {
-    return __privateGet$6(this, _type);
+    return __privateGet$8(this, _type);
   }
+  /**
+   * @param {string} type the event type [mandatory]
+   * @param {Object} data complementary event data [optional]
+   */
   configure(type, data) {
-    __privateSet$4(this, _type, type);
+    __privateSet$5(this, _type, type);
     this.data = data;
   }
   static retain() {
@@ -52,61 +99,16 @@ const _Event = class _Event {
     return new _Event();
   }
   static release(event) {
+    __privateSet$5(event, _type, void 0);
+    event.data = void 0;
+    event.src = void 0;
+    event.srcTarget = void 0;
     this.eventPool.push(event);
   }
 };
 _type = new WeakMap();
 __publicField$6(_Event, "eventPool", []);
 let Event = _Event;
-
-var __typeError$5 = (msg) => {
-  throw TypeError(msg);
-};
-var __accessCheck$5 = (obj, member, msg) => member.has(obj) || __typeError$5("Cannot " + msg);
-var __privateGet$5 = (obj, member, getter) => (__accessCheck$5(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
-var __privateAdd$5 = (obj, member, value) => member.has(obj) ? __typeError$5("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-var __privateSet$3 = (obj, member, value, setter) => (__accessCheck$5(obj, member, "write to private field"), member.set(obj, value), value);
-var _pool, _funcName, _funcPtr, _obj;
-const _Handler = class _Handler {
-  constructor() {
-    __privateAdd$5(this, _funcName);
-    __privateAdd$5(this, _funcPtr);
-    __privateAdd$5(this, _obj);
-    __privateGet$5(_Handler, _pool).push(this);
-  }
-  get func() {
-    return __privateGet$5(this, _funcPtr) || __privateGet$5(this, _funcName);
-  }
-  get obj() {
-    return __privateGet$5(this, _obj);
-  }
-  configure(obj, func) {
-    __privateSet$3(this, _obj, obj);
-    if (isFunction(func)) {
-      __privateSet$3(this, _funcPtr, func);
-    } else if (isString(func)) {
-      __privateSet$3(this, _funcName, func);
-    }
-  }
-  release() {
-    __privateGet$5(_Handler, _pool).push(this);
-  }
-  static retain() {
-    if (__privateGet$5(_Handler, _pool).length > 0) {
-      return __privateGet$5(_Handler, _pool).pop();
-    }
-    return new _Handler();
-  }
-  static release(handler) {
-    __privateGet$5(_Handler, _pool).push(handler);
-  }
-};
-_pool = new WeakMap();
-_funcName = new WeakMap();
-_funcPtr = new WeakMap();
-_obj = new WeakMap();
-__privateAdd$5(_Handler, _pool, []);
-let Handler = _Handler;
 
 var __defProp$5 = Object.defineProperty;
 var __defNormalProp$5 = (obj, key, value) => key in obj ? __defProp$5(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
@@ -132,16 +134,25 @@ const _Action = class _Action {
     return new _Action();
   }
   static release(action) {
+    action.func = void 0;
+    action.ctx = void 0;
     _Action.pool.push(action);
   }
 };
 __publicField$5(_Action, "pool", []);
 let Action = _Action;
 
+const LOGGER = injectionToken("LOGGER");
+
 let mainActionsQueue = [];
 let tmpActionsQueue = [];
 let scheduleDoActions;
 let areActionsScheduled = false;
+let _logger$1 = null;
+const getLogger$1 = () => {
+  _logger$1 = _logger$1 ?? container.get(LOGGER);
+  return _logger$1;
+};
 function queueAction(func, ctx) {
   const action = Action.retain();
   action.configure(func, ctx);
@@ -152,20 +163,24 @@ function queueAction(func, ctx) {
   }
 }
 function doAllActions() {
-  var queue = mainActionsQueue;
+  const queue = mainActionsQueue;
+  const logger = getLogger$1();
   areActionsScheduled = false;
   if (queue.length) {
     mainActionsQueue = tmpActionsQueue;
     tmpActionsQueue = queue;
-    try {
-      var i = 0, l = queue.length, func;
-      for (; i < l; i++) {
-        func = queue[i];
-        func.run();
+    let i = 0;
+    const l = queue.length;
+    for (; i < l; i++) {
+      const action = queue[i];
+      try {
+        action.run();
+      } catch (e) {
+        if (e.stack) logger.error(e.stack);
+        else logger.error(e);
+      } finally {
+        Action.release(action);
       }
-    } catch (e) {
-      if (e.stack) console.error(e.stack);
-      else console.error(e);
     }
     queue.length = 0;
   }
@@ -173,14 +188,17 @@ function doAllActions() {
 function installPostMessageImplementation() {
   const MESSAGE_PREFIX = `_scheduler_${Date.now()}_${Math.random()}`;
   function onGlobalMessage(event) {
+    if (event.origin !== globalThis.location.origin) {
+      return;
+    }
     if (event.data === MESSAGE_PREFIX) {
       doAllActions();
     }
   }
-  if (window.addEventListener) {
-    window.addEventListener("message", onGlobalMessage, false);
+  if (globalThis.addEventListener) {
+    globalThis.addEventListener("message", onGlobalMessage, false);
   }
-  return () => window.postMessage(MESSAGE_PREFIX, "*");
+  return () => globalThis.postMessage(MESSAGE_PREFIX, globalThis.location.origin);
 }
 function initSetImmediatePolyfill() {
   scheduleDoActions = window.postMessage ? installPostMessageImplementation() : function() {
@@ -192,16 +210,22 @@ function runImmediatePolyfill() {
   if (mainActionsQueue.length) scheduleDoActions();
 }
 
+let _logger = null;
+const getLogger = () => {
+  _logger = _logger ?? container.get(LOGGER);
+  return _logger;
+};
 const asyncEventsQueue = [];
 let isAsyncEventsPropagating = false;
 let isSyncEventsPropagating = false;
 let isWaiting = false;
 const loopSetImmediate = typeof setImmediate !== "undefined" ? setImmediate : typeof window !== "undefined" && window.setImmediate ? window.setImmediate.bind(window) : initSetImmediatePolyfill();
-function doOneEvent(burst, isSynchron) {
+function doOneEvent(burst, isSynchro) {
   const { handlerList } = burst;
   const len = handlerList.length;
   let l = len;
   const event = burst.event;
+  const logger = getLogger();
   isAsyncEventsPropagating = true;
   function endPropagation() {
     l--;
@@ -218,6 +242,8 @@ function doOneEvent(burst, isSynchron) {
           handler.handleEvent.call(handler, event);
         }
       } catch (e) {
+        if (e.stack) logger.error(e.stack);
+        else logger.error(e);
       }
     }
     endPropagation();
@@ -230,7 +256,7 @@ function doOneEvent(burst, isSynchron) {
   }
 }
 function doOneAsyncEvent() {
-  if (isAsyncEventsPropagating || isSyncEventsPropagating) return;
+  if (isAsyncEventsPropagating || isSyncEventsPropagating || asyncEventsQueue.length === 0) return;
   doOneEvent(asyncEventsQueue.shift());
 }
 function serviceLoop() {
@@ -255,17 +281,17 @@ function queueProcAsyncEvent(event, handlerList) {
   serviceLoop();
 }
 
-var __typeError$4 = (msg) => {
+var __typeError$7 = (msg) => {
   throw TypeError(msg);
 };
-var __accessCheck$4 = (obj, member, msg) => member.has(obj) || __typeError$4("Cannot " + msg);
-var __privateGet$4 = (obj, member, getter) => (__accessCheck$4(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
-var __privateAdd$4 = (obj, member, value) => member.has(obj) ? __typeError$4("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+var __accessCheck$7 = (obj, member, msg) => member.has(obj) || __typeError$7("Cannot " + msg);
+var __privateGet$7 = (obj, member, getter) => (__accessCheck$7(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
+var __privateAdd$7 = (obj, member, value) => member.has(obj) ? __typeError$7("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
 var _children;
 const childToParent = /* @__PURE__ */ new WeakMap();
 class Container {
   constructor() {
-    __privateAdd$4(this, _children, []);
+    __privateAdd$7(this, _children, []);
   }
   static getParent(comp) {
     return childToParent.get(comp);
@@ -274,13 +300,13 @@ class Container {
     this.removeAllChildren();
   }
   /**
-   *  Return true if the set component is a child o the current component
+   *  Return true if the set component is a child of the current component
    *
    * @param {Component} child The component to be removed.
    * @return {boolean}
    */
   isChild(child) {
-    return __privateGet$4(this, _children).indexOf(child) !== -1;
+    return __privateGet$7(this, _children).includes(child);
   }
   /**
    *  Add the specified child component to this component.
@@ -290,7 +316,7 @@ class Container {
    *  In case of vs.ui.Group its mandatory to set the extension.
    *  <p>
    *  The add is a lazy add! The child's view can be already in
-   *  the HTML DOM. In that case, the add methode do not modify the DOM.
+   *  the HTML DOM. In that case, the add method do not modify the DOM.
    *  <p>
    *  @example
    *  var myButton = new Button (conf);
@@ -301,7 +327,7 @@ class Container {
     if (childToParent.has(child)) {
       throw new Error("Component is already a child of another Container");
     }
-    __privateGet$4(this, _children).push(child);
+    __privateGet$7(this, _children).push(child);
     childToParent.set(child, this);
   }
   /**
@@ -314,14 +340,11 @@ class Container {
    * @param {Component} child The component to be removed.
    */
   remove(child) {
-    if (!this.isChild(child)) {
-      return;
-    }
-    const idx = __privateGet$4(this, _children).indexOf(child);
+    const idx = __privateGet$7(this, _children).indexOf(child);
     if (idx === -1) {
       throw new Error("Not a child of this component");
     }
-    __privateGet$4(this, _children).splice(idx, 1);
+    __privateGet$7(this, _children).splice(idx, 1);
     childToParent.delete(child);
   }
   /**
@@ -332,22 +355,22 @@ class Container {
    *
    */
   removeAllChildren() {
-    __privateGet$4(this, _children).forEach((child) => childToParent.delete(child));
-    __privateGet$4(this, _children).length = 0;
+    __privateGet$7(this, _children).forEach((child) => childToParent.delete(child));
+    __privateGet$7(this, _children).length = 0;
   }
 }
 _children = new WeakMap();
 function isContainer(obj) {
   if (obj instanceof Container) return true;
-  return isObject(obj) && "add" in obj && "remove" in obj;
+  return isObject(obj) && "add" in obj && "remove" in obj && "isChild" in obj;
 }
 
-var __typeError$3 = (msg) => {
+var __typeError$6 = (msg) => {
   throw TypeError(msg);
 };
-var __accessCheck$3 = (obj, member, msg) => member.has(obj) || __typeError$3("Cannot " + msg);
-var __privateGet$3 = (obj, member, getter) => (__accessCheck$3(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
-var __privateAdd$3 = (obj, member, value) => member.has(obj) ? __typeError$3("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+var __accessCheck$6 = (obj, member, msg) => member.has(obj) || __typeError$6("Cannot " + msg);
+var __privateGet$6 = (obj, member, getter) => (__accessCheck$6(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
+var __privateAdd$6 = (obj, member, value) => member.has(obj) ? __typeError$6("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
 var _bindings;
 function isEventSource(obj) {
   return isObject(obj) && "dispatchEvent" in obj && "bind" in obj && "unbind" in obj && "addEventListener" in obj && "removeEventListener" in obj;
@@ -355,24 +378,24 @@ function isEventSource(obj) {
 class EventSource extends Mixin {
   constructor() {
     super(...arguments);
-    __privateAdd$3(this, _bindings, /* @__PURE__ */ new Map());
+    __privateAdd$6(this, _bindings, /* @__PURE__ */ new Map());
   }
   initMixin() {
   }
   releaseMixin() {
     super.releaseMixin();
-    for (const [spec, handlerList] of __privateGet$3(this, _bindings).entries()) {
-      handlerList.forEach((handler) => handler.release());
+    for (const [spec, handlerList] of __privateGet$6(this, _bindings).entries()) {
+      handlerList.forEach((handler) => Handler.release(handler));
       handlerList.length = 0;
-      __privateGet$3(this, _bindings).delete(spec);
+      __privateGet$6(this, _bindings).delete(spec);
     }
   }
   bind(spec, obj, func) {
     if (!spec || !obj) return;
-    let handlerList = __privateGet$3(this, _bindings).get(spec);
+    let handlerList = __privateGet$6(this, _bindings).get(spec);
     if (!handlerList) {
       handlerList = [];
-      __privateGet$3(this, _bindings).set(spec, handlerList);
+      __privateGet$6(this, _bindings).set(spec, handlerList);
     }
     const handler = Handler.retain();
     handler.configure(obj, func);
@@ -387,10 +410,10 @@ class EventSource extends Mixin {
    * @param {HandlerFunction} handler the object interested to catch the event [mandatory]
    */
   addEventListener(type, func) {
-    let handlerList = __privateGet$3(this, _bindings).get(type);
+    let handlerList = __privateGet$6(this, _bindings).get(type);
     if (!handlerList) {
       handlerList = [];
-      __privateGet$3(this, _bindings).set(type, handlerList);
+      __privateGet$6(this, _bindings).set(type, handlerList);
     }
     const handler = Handler.retain();
     handler.configure(void 0, func);
@@ -406,15 +429,15 @@ class EventSource extends Mixin {
    *          wishes to initiate captured [optional]
    */
   removeEventListener(type, func) {
-    if (!__privateGet$3(this, _bindings).has(type)) return;
+    if (!__privateGet$6(this, _bindings).has(type)) return;
     function unbind(handlerList) {
       const idx = handlerList.findIndex((handler) => handler.func === func);
       if (idx !== -1) {
         const handlers = handlerList.splice(idx, 1);
-        handlers.forEach((handle) => handle.release());
+        handlers.forEach((handle) => Handler.release(handle));
       }
     }
-    unbind(__privateGet$3(this, _bindings).get(type));
+    unbind(__privateGet$6(this, _bindings).get(type));
   }
   /**
    *  The event unbind method
@@ -430,15 +453,15 @@ class EventSource extends Mixin {
    *        all binding with <spec, obj> will be removed
    */
   unbind(spec, obj, func) {
-    if (!__privateGet$3(this, _bindings).has(spec)) return;
+    if (!__privateGet$6(this, _bindings).has(spec)) return;
     function unbind(handlerList) {
       const idx = handlerList.findIndex((handler) => handler.func === func && handler.obj === obj);
       if (idx !== -1) {
         const handlers = handlerList.splice(idx, 1);
-        handlers.forEach((handle) => handle.release());
+        handlers.forEach((handle) => Handler.release(handle));
       }
     }
-    unbind(__privateGet$3(this, _bindings).get(spec));
+    unbind(__privateGet$6(this, _bindings).get(spec));
   }
   /**
    *  Dispatches an Event at the specified EventSource, invoking the affected
@@ -446,7 +469,7 @@ class EventSource extends Mixin {
    */
   dispatchEvent(event) {
     if (!event.type) return false;
-    const handlerList = __privateGet$3(this, _bindings).get(event.type);
+    const handlerList = __privateGet$6(this, _bindings).get(event.type);
     if (isEmpty(handlerList)) {
       if (isContainer(this)) {
         const parent = Container.getParent(this);
@@ -468,9 +491,105 @@ var index$1 = /*#__PURE__*/Object.freeze({
   __proto__: null,
   Event: Event,
   EventSource: EventSource,
-  Handler: Handler,
-  isEventSource: isEventSource
+  Handler: Handler
 });
+
+var __defProp$4 = Object.defineProperty;
+var __typeError$5 = (msg) => {
+  throw TypeError(msg);
+};
+var __defNormalProp$4 = (obj, key, value) => key in obj ? __defProp$4(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$4 = (obj, key, value) => __defNormalProp$4(obj, typeof key !== "symbol" ? key + "" : key, value);
+var __accessCheck$5 = (obj, member, msg) => member.has(obj) || __typeError$5("Cannot " + msg);
+var __privateGet$5 = (obj, member, getter) => (__accessCheck$5(obj, member, "read from private field"), member.get(obj));
+var __privateAdd$5 = (obj, member, value) => member.has(obj) ? __typeError$5("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+var __privateSet$4 = (obj, member, value, setter) => (__accessCheck$5(obj, member, "write to private field"), member.set(obj, value), value);
+var _state$1, _deleted, _initFunctions;
+const _Component = class _Component extends SupportMixins {
+  constructor(id) {
+    super();
+    __privateAdd$5(this, _state$1, "non-initialized");
+    __privateAdd$5(this, _deleted, false);
+    __privateAdd$5(this, _initFunctions, /* @__PURE__ */ new Set());
+    __publicField$4(this, "id");
+    this.id = id ?? createUniqueId();
+    _Component.instances[this.id] = this;
+  }
+  /**
+   *  Object default init. <p>
+   *
+   *  @example
+   *  myObject = new core.Object (core.createId ());
+   *  myObject.init ();
+   *  @return {Object} this
+   */
+  init() {
+    if (__privateGet$5(this, _state$1) !== "non-initialized") {
+      throw new Error("impossible to re-initialise a component");
+    }
+    try {
+      this.initComponent();
+      __privateGet$5(this, _initFunctions).forEach((func) => func());
+      __privateSet$4(this, _state$1, "initialized");
+      this.componentDidInitialize();
+    } catch (e) {
+      throw new Error("Component init failed with the error: " + e, { cause: e });
+    }
+    return this;
+  }
+  // eslint-disable-next-line class-methods-use-this
+  initComponent() {
+  }
+  // eslint-disable-next-line class-methods-use-this
+  componentDidInitialize() {
+  }
+  destructor() {
+    _Component.instances[this.id] = void 0;
+    __privateSet$4(this, _state$1, "deleted");
+  }
+  isDeleted() {
+    return __privateGet$5(this, _state$1) === "deleted";
+  }
+  /**
+   *  Returns a copy of the objet's properties for JSON stringification.<p/>
+   *  This can be used for persistence or serialization.
+   *
+   * @return {Object} the object value for stringify
+   */
+  toJSON() {
+    return toJSON(this.serialize());
+  }
+  /**
+   *  Set objet's properties from JSON stringification.<p/>
+   *  This can be used when retrieve data from serialization.
+   *
+   * @param {String} json The JSON String
+   */
+  parseJSON(json) {
+    try {
+      const rawData = parseJSON(json);
+      this.deserialize(rawData);
+    } catch (e) {
+      throw new Error("parseJSON failed with error: " + e);
+    }
+  }
+  /**
+   *  Returns a copy of the objet's properties for JSON stringification.<p/>
+   *  This can be used for persistence or serialization.
+   */
+  serialize() {
+    return { id: this.id };
+  }
+  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
+  deserialize(data) {
+  }
+};
+_state$1 = new WeakMap();
+_deleted = new WeakMap();
+_initFunctions = new WeakMap();
+__publicField$4(_Component, "instances", {});
+let Component = _Component;
+applyMixins(Component, [EventSource]);
 
 var TaskState = /* @__PURE__ */ ((TaskState2) => {
   TaskState2[TaskState2["STARTED"] = 1] = "STARTED";
@@ -479,506 +598,606 @@ var TaskState = /* @__PURE__ */ ((TaskState2) => {
   return TaskState2;
 })(TaskState || {});
 
-var index = /*#__PURE__*/Object.freeze({
-  __proto__: null,
-  TaskState: TaskState
-});
-
-let idIndex = 1;
-const createUniqueId = () => `vs_id_${idIndex++}_${Date.now()}_${Math.floor(Math.random() * 1e6)}`;
-
-var __defProp$4 = Object.defineProperty;
-var __defNormalProp$4 = (obj, key, value) => key in obj ? __defProp$4(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$4 = (obj, key, value) => __defNormalProp$4(obj, typeof key !== "symbol" ? key + "" : key, value);
-const _DataflowState = class _DataflowState {
-  constructor(comp, df) {
-    this.comp = comp;
-    __publicField$4(this, "df", /* @__PURE__ */ new Set());
-    __publicField$4(this, "inputPropertyDidChange", false);
-    this.df.add(df);
-  }
-  static add(comp, df = container.get(DEFAULT_DATAFLOW)) {
-    const state = new _DataflowState(comp, df);
-    _DataflowState.states.set(comp.id, state);
-    return state;
-  }
-  static get(id) {
-    return _DataflowState.states.get(id);
-  }
-  propagate() {
-    this.df.forEach((df) => df.propagate(this.comp));
-  }
-  /**
-   * Manually tel an input property change.
-   * <br/>
-   * It will generate a call to propertiesDidChange.
-   * @name core.Object#inPropertyDidChange
-   * @function
-   *
-   */
-  inPropertyDidChange() {
-    this.inputPropertyDidChange = true;
-    this.comp.propertiesDidChange();
-    this.propagate();
-  }
-  /**
-   * Manually force out properties change propagation.
-   * <br/>
-   * If no property name is specified, the system will assume all component's
-   * properties have been modified.
-   *
-   * @name core.Object#outPropertyChange
-   * @function
-   *
-   * @param {String} property the name of the modified property.[optional]
-   */
-  outPropertyChange() {
-    this.inputPropertyDidChange = true;
-    this.propagate();
-  }
-  /**
-   * Manually force properties change propagation.
-   * <br/>
-   * If no property name is specified, the system will assume all component's
-   * properties have been modified.
-   *
-   * alias for inPropertyDidChange
-   */
-  propertyChange() {
-    this.inPropertyDidChange();
-  }
-  pausePropagation() {
-    this.df.forEach((df) => df.pausePropagation());
-  }
-  restartPropagation() {
-    this.df.forEach((df) => df.restartPropagation());
-  }
-};
-__publicField$4(_DataflowState, "states", /* @__PURE__ */ new Map());
-let DataflowState = _DataflowState;
-
-const LOGGER = injectionToken("LOGGER");
-
 var __defProp$3 = Object.defineProperty;
-var __typeError$2 = (msg) => {
+var __typeError$4 = (msg) => {
   throw TypeError(msg);
 };
 var __defNormalProp$3 = (obj, key, value) => key in obj ? __defProp$3(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$3 = (obj, key, value) => __defNormalProp$3(obj, typeof key !== "symbol" ? key + "" : key, value);
+var __publicField$3 = (obj, key, value) => __defNormalProp$3(obj, key + "" , value);
+var __accessCheck$4 = (obj, member, msg) => member.has(obj) || __typeError$4("Cannot " + msg);
+var __privateGet$4 = (obj, member, getter) => (__accessCheck$4(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
+var __privateAdd$4 = (obj, member, value) => member.has(obj) ? __typeError$4("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+var __privateSet$3 = (obj, member, value, setter) => (__accessCheck$4(obj, member, "write to private field"), member.set(obj, value), value);
+var _state;
+class Task extends Component {
+  constructor() {
+    super(...arguments);
+    /********************************************************************
+    
+       ********************************************************************/
+    /**
+     * TaskDelegate.
+     * Methods are called when state changes (stop | pause)
+     *
+     *  <p>
+     *  @example
+     *  var delegate = {};
+     *  delegate.taskDidEnd = function () { ... }
+     *
+     *  // Declare a PAR task including a SEC Task
+     *  var task = new Task (...)
+     *  task.delegate = delegate;
+     *  task.start ();
+     *
+     * @name core.Task#delegate
+     *
+     * @property {object}
+     */
+    __publicField$3(this, "delegate");
+    /********************************************************************
+     States
+     ********************************************************************/
+    /**
+     *	@private
+     */
+    __privateAdd$4(this, _state, TaskState.STOPPED);
+  }
+  /**
+   *  Return the task State. <br />
+   *  Possible values: {@link core.Task.STARTED},
+   *  {@link core.Task.STOPPED},
+   *  {@link core.Task.PAUSED}
+   */
+  get state() {
+    return __privateGet$4(this, _state);
+  }
+  set state(state) {
+    __privateSet$3(this, _state, state);
+  }
+  /********************************************************************
+  
+     ********************************************************************/
+  /**
+   *  Default task destructor
+   *
+   * @name core.Task#destructor
+   * @function
+   */
+  destructor() {
+    this.stop();
+    super.destructor();
+  }
+  // /**
+  //  * @name core.Task#_clone
+  //  * @function
+  //  * @private
+  //  *
+  //  * @param {vs.VSObject} obj The cloned object
+  //  * @param {Object} map Map of cloned objects
+  //  */
+  // override _clone (obj, cloned_map)
+  // {
+  //   super(obj, cloned_map);
+  //
+  //   obj.#state = this.#state;
+  // }
+  /**
+   *  Starts the task
+   *
+   * @name core.Task#start
+   * @function
+   *
+   * @param {any} param any parameter (scalar, Array, Object)
+   */
+  start(param) {
+  }
+  /**
+   *  Stops the task.<br />
+   *  When the task is stopped, it calls the TaskDelegate.taskDidStop
+   *  if it declared.
+   *
+   * @name core.Task#stop
+   * @function
+   */
+  stop() {
+  }
+  /**
+   *  Pause the task.<br />
+   *  When the task is paused, it calls the TaskDelegate.taskDidPause
+   *  if it declared.
+   *
+   * @name core.Task#pause
+   * @function
+   */
+  pause() {
+  }
+}
+_state = new WeakMap();
+
+var __defProp$2 = Object.defineProperty;
+var __defNormalProp$2 = (obj, key, value) => key in obj ? __defProp$2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$2 = (obj, key, value) => __defNormalProp$2(obj, key + "" , value);
+class BaseTask extends Task {
+  constructor(tasksAndParams) {
+    super();
+    /********************************************************************
+    
+       ********************************************************************/
+    /**
+     *  @private
+     */
+    __publicField$2(this, "tasksAndParams", []);
+    this.state = TaskState.STOPPED;
+    if (tasksAndParams && tasksAndParams.length) {
+      this.setTasks(tasksAndParams);
+    }
+    throw new Error("NOT IMPLEMENTED");
+  }
+  /**
+   *  Set tasks.
+   *  The task has to be stopped
+   *
+   * @name core.task.SEQ#setTasks
+   * @function
+   *
+   *  parameter
+   * @param tasksAndParams
+   */
+  setTasks(tasksAndParams) {
+    if (this.state !== TaskState.STOPPED) {
+      return false;
+    }
+    this.tasksAndParams.length = 0;
+    for (let taskAndParam of tasksAndParams) {
+      if (!taskAndParam) {
+        continue;
+      }
+      let param = null;
+      let task = null;
+      if (isArray(taskAndParam)) {
+        if (taskAndParam.length === 1) {
+          task = taskAndParam[0];
+        } else if (taskAndParam.length === 2) {
+          task = taskAndParam[0];
+          param = taskAndParam[1];
+        }
+      } else {
+        task = taskAndParam;
+        param = null;
+      }
+      if (!task) {
+        console.warn("Undefined task");
+        continue;
+      }
+      if (!task.start || !task.stop || !task.pause) {
+        console.warn("Invalid task: " + task.toString());
+        continue;
+      }
+      this.tasksAndParams.push([task, param]);
+    }
+    return true;
+  }
+}
+
+var __typeError$3 = (msg) => {
+  throw TypeError(msg);
+};
+var __accessCheck$3 = (obj, member, msg) => member.has(obj) || __typeError$3("Cannot " + msg);
+var __privateGet$3 = (obj, member, getter) => (__accessCheck$3(obj, member, "read from private field"), member.get(obj));
+var __privateAdd$3 = (obj, member, value) => member.has(obj) ? __typeError$3("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+var __privateSet$2 = (obj, member, value, setter) => (__accessCheck$3(obj, member, "write to private field"), member.set(obj, value), value);
+var __privateWrapper$1 = (obj, member, setter, getter) => ({
+  set _(value) {
+    __privateSet$2(obj, member, value);
+  },
+  get _() {
+    return __privateGet$3(obj, member);
+  }
+});
+var _nextTaskToStart, _startParam;
+class SEQ extends BaseTask {
+  constructor() {
+    super(...arguments);
+    /********************************************************************
+    
+       ********************************************************************/
+    /**
+     *  @private
+     */
+    __privateAdd$3(this, _nextTaskToStart, 0);
+    /**
+     *  @private
+     */
+    __privateAdd$3(this, _startParam, null);
+  }
+  /********************************************************************
+  
+     ********************************************************************/
+  /**
+   *  Starts the task
+   *
+   * @param {any} param any parameter (scalar, Array, Object)
+   * @ignore
+   * @function
+   */
+  start(param) {
+    if (this.state === TaskState.STARTED) {
+      return false;
+    }
+    const taskAndParams = this.tasksAndParams[__privateGet$3(this, _nextTaskToStart)];
+    __privateWrapper$1(this, _nextTaskToStart)._++;
+    if (!taskAndParams) {
+      __privateSet$2(this, _nextTaskToStart, 0);
+      this.state = TaskState.STOPPED;
+      return false;
+    }
+    this.state = TaskState.STARTED;
+    __privateSet$2(this, _startParam, param);
+    taskAndParams[0].delegate = this;
+    taskAndParams[0].start(taskAndParams[1] ? taskAndParams[1] : param);
+    return true;
+  }
+  /**
+   *  Stops the task.<br />
+   *  When the task is stopped, it calls the taskDidStop if it exits.
+   * @ignore
+   * @function
+   */
+  stop() {
+    if (this.state === TaskState.STOPPED) {
+      return false;
+    }
+    this.state = TaskState.STOPPED;
+    const taskAndParams = this.tasksAndParams[__privateGet$3(this, _nextTaskToStart) - 1];
+    __privateSet$2(this, _nextTaskToStart, 0);
+    if (!taskAndParams) {
+      return false;
+    }
+    taskAndParams[0].stop();
+    return true;
+  }
+  /**
+   *  Pause the task.<br />
+   *  When the task is paused, it calls
+   *  the TaskDelegate.taskDidPause if it exits.
+   * @ignore
+   * @function
+   */
+  pause() {
+    if (this.state === TaskState.PAUSED) {
+      return false;
+    }
+    this.state = TaskState.PAUSED;
+    const taskAndParams = this.tasksAndParams[__privateGet$3(this, _nextTaskToStart) - 1];
+    if (!taskAndParams) {
+      return false;
+    }
+    taskAndParams[0].pause();
+    return true;
+  }
+  /********************************************************************
+   delegate methodes
+   ********************************************************************/
+  /**
+   */
+  taskDidStop() {
+    this.state = TaskState.STOPPED;
+    __privateSet$2(this, _nextTaskToStart, 0);
+    if (this.delegate?.taskDidStop) {
+      try {
+        this.delegate.taskDidStop(this);
+      } catch (e) {
+        if (e.stack) console.log(e.stack);
+        console.error(e);
+      }
+    }
+  }
+  /**
+   */
+  taskDidPause() {
+    this.state = TaskState.PAUSED;
+    __privateSet$2(this, _nextTaskToStart, __privateGet$3(this, _nextTaskToStart) - 1);
+    if (this.delegate?.taskDidPause) {
+      try {
+        this.delegate.taskDidPause(this);
+      } catch (e) {
+        if (e.stack) console.log(e.stack);
+        console.error(e);
+      }
+    }
+  }
+  /**
+   */
+  taskDidEnd() {
+    this.state = TaskState.STOPPED;
+    if (__privateGet$3(this, _nextTaskToStart) < this.tasksAndParams.length) {
+      this.start(__privateGet$3(this, _startParam));
+    } else {
+      __privateSet$2(this, _nextTaskToStart, 0);
+      if (this.delegate?.taskDidEnd) {
+        try {
+          this.delegate.taskDidEnd(this);
+        } catch (e) {
+          if (e.stack) console.log(e.stack);
+          console.error(e);
+        }
+      }
+    }
+  }
+}
+_nextTaskToStart = new WeakMap();
+_startParam = new WeakMap();
+
+var __typeError$2 = (msg) => {
+  throw TypeError(msg);
+};
 var __accessCheck$2 = (obj, member, msg) => member.has(obj) || __typeError$2("Cannot " + msg);
 var __privateGet$2 = (obj, member, getter) => (__accessCheck$2(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
 var __privateAdd$2 = (obj, member, value) => member.has(obj) ? __typeError$2("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-var __privateSet$2 = (obj, member, value, setter) => (__accessCheck$2(obj, member, "write to private field"), member.set(obj, value), value);
+var __privateSet$1 = (obj, member, value, setter) => (__accessCheck$2(obj, member, "write to private field"), member.set(obj, value), value);
 var __privateWrapper = (obj, member, setter, getter) => ({
   set _(value) {
-    __privateSet$2(obj, member, value);
+    __privateSet$1(obj, member, value);
   },
   get _() {
     return __privateGet$2(obj, member, getter);
   }
 });
-var _isPropagating, _optimizedEdges, _nodes$1, _edgesFrom, _listNode, _shouldNotPropagate, _dataflowNodes, _isSorted, _isCyclic;
-let edgeIdCount = 1;
-function buildConnectParameters(src, outDesc, trg, inDesc) {
-  const srcObj = isString(src) ? DataflowNode.get(src) : src;
-  if (!srcObj || !DataflowState.get(srcObj.id)) {
-    throw new Error(`Unknown component or not data flow compatible, with id ${src}`);
-  }
-  const trgObj = isString(trg) ? DataflowNode.get(trg) : trg;
-  if (!trgObj || !DataflowState.get(trgObj.id)) {
-    throw new Error(`Unknown component or not data flow compatible, with id ${trg}`);
-  }
-  const propertiesOut = isString(outDesc) ? [outDesc] : outDesc;
-  const propertiesIn = isString(inDesc) ? [inDesc] : inDesc;
-  if (propertiesIn.length !== propertiesOut.length) {
-    throw new Error("DataFlow.[dis]connect, parameter error");
-  }
-  return [srcObj, propertiesOut, trgObj, propertiesIn];
-}
-function arrayMin(indegrees) {
-  const count = indegrees.length;
-  if (count === 0) return -1;
-  if (count === 1) return 0;
-  let minIndex = 0;
-  let min = indegrees[minIndex];
-  for (let i = 1; i < indegrees.length; i++) {
-    if (indegrees[i] < min) {
-      min = indegrees[i];
-      minIndex = i;
-    }
-  }
-  return minIndex;
-}
-function generateGetters(obj, properties) {
-  return properties.map((pName) => {
-    const descriptor = obj.getPropertyDescriptor(pName);
-    return descriptor?.get;
-  }).filter(isNotEmpty);
-}
-function generateSetters(obj, properties) {
-  return properties.map((pName) => {
-    const descriptor = obj.getPropertyDescriptor(pName);
-    return descriptor?.set;
-  }).filter(isNotEmpty);
-}
-const _DataFlow = class _DataFlow {
+var _tasksWillEnded;
+class PAR extends BaseTask {
   constructor() {
-    __publicField$3(this, "logger", container.get(LOGGER));
-    __privateAdd$2(this, _isPropagating, false);
-    // edges from components Object[component.id] => Array[3] <Object, , properties>
-    __privateAdd$2(this, _optimizedEdges, /* @__PURE__ */ new Map());
-    // ordered node list Array<Object>
-    __privateAdd$2(this, _nodes$1, []);
-    __privateAdd$2(this, _edgesFrom, /* @__PURE__ */ new Map());
-    __privateAdd$2(this, _listNode, []);
-    __privateAdd$2(this, _shouldNotPropagate, 0);
-    __privateAdd$2(this, _dataflowNodes, []);
-    __privateAdd$2(this, _isSorted, false);
-    __privateAdd$2(this, _isCyclic, false);
-  }
-  // constructor() {
-  //   //  this._node_link = {};
-  // }
-  propagateValues(objSrc) {
-    const cConnections = __privateGet$2(this, _optimizedEdges).get(objSrc.id);
-    if (!cConnections) {
-      return;
-    }
-    for (let i = 0; i < cConnections.length; i++) {
-      const cConnection = cConnections[i];
-      const objTrg = cConnection.obj;
-      for (let j = 0; j < cConnection.cEdges.length; j++) {
-        const edge = cConnection.cEdges[j];
-        let params = [];
-        for (let l = 0; l < edge.getters.length; l++) {
-          params.push(edge.getters[l].call(objSrc));
-        }
-        if (isFunction(edge.func)) {
-          params = edge.func.apply(void 0, params);
-          if (!isArray(params)) {
-            params = [params];
-          }
-        }
-        if (params.length !== edge.setters.length) {
-          this.logger.error("Dataflow, invalid parameters");
-          return;
-        }
-        for (let l = 0; l < edge.setters.length; l++) {
-          edge.setters[l].call(objTrg, params[l]);
-        }
-        cConnection.state.inputPropertyDidChange = true;
-      }
-    }
+    super(...arguments);
+    /**
+     * task ended
+     *  @private
+     */
+    __privateAdd$2(this, _tasksWillEnded, 0);
   }
   /**
-   * Propagates values along the dataflow graph
+   *  Starts the task
    *
-   * @protected
-   *
-   *                 propagation
-   * @param obj
-   * @param {Boolean} outputPropagation, do a propagation, starting from
-   *         output property instead of input property (default configuration)
-   */
-  propagate(obj, outputPropagation = false) {
-    if (__privateGet$2(this, _isPropagating) || __privateGet$2(this, _shouldNotPropagate)) {
-      return;
-    }
-    __privateSet$2(this, _isPropagating, true);
-    _DataFlow.propagationCount++;
-    let i = 0;
-    const l = __privateGet$2(this, _dataflowNodes).length;
-    if (obj) {
-      while (i < l && __privateGet$2(this, _dataflowNodes)[i] !== obj) {
-        i++;
-      }
-      if (i < l - 1) {
-        if (!outputPropagation && obj.propertiesDidChange()) {
-          _DataFlow.propagationCount--;
-          __privateSet$2(this, _isPropagating, false);
-          return;
-        }
-        this.propagateValues(obj);
-        i++;
-      } else {
-        i = 0;
-      }
-    }
-    for (; i < l; i++) {
-      const nextObj = __privateGet$2(this, _dataflowNodes)[i];
-      const state = DataflowState.get(nextObj.id);
-      if (state?.inputPropertyDidChange) {
-        state.inputPropertyDidChange = false;
-        if (nextObj.propertiesDidChange?.() !== true) {
-          this.propagateValues(nextObj);
-        }
-      }
-    }
-    _DataFlow.propagationCount--;
-    __privateSet$2(this, _isPropagating, false);
-  }
-  /**
-   * Connect two components within the dataflow.
-   * After a connection, you have to call build method to compile the dataflow.
-   * Build can (should) be call when all connection are done (to avoid
-   * un-necessary calculation)
-   *
+   * @name task.PAR#start
    * @function
-   * @public
-   * @param src
-   * @param outDesc
-   * @param trg
-   * @param inDesc
-   * @param func
+   * @ignore
+   * @param {any} param any parameter (scalar, Array, Object)
    */
-  connect(src, outDesc, trg, inDesc, func) {
-    const [srcObj, propertiesOut, trgObj, propertiesIn] = buildConnectParameters(src, outDesc, trg, inDesc);
-    const state = DataflowState.get(srcObj.id);
-    if (!state) {
-      throw new Error(`Src component is not a Dataflow component: ${src.toString()}`);
+  start(param) {
+    if (this.state === TaskState.STARTED) {
+      return false;
     }
-    state.df.add(this);
-    if (!func) {
-      throw new Error("DataFlow.connect, parameter error");
+    __privateSet$1(this, _tasksWillEnded, this.tasksAndParams.length);
+    this.state = TaskState.STARTED;
+    for (let taskAndParams of this.tasksAndParams) {
+      taskAndParams[0].delegate = this;
+      taskAndParams[0].start(taskAndParams[1] ? taskAndParams[1] : param);
     }
-    if (__privateGet$2(this, _listNode).indexOf(srcObj.id) !== -1) __privateGet$2(this, _listNode).push(srcObj.id);
-    if (__privateGet$2(this, _listNode).indexOf(trgObj.id) !== -1) __privateGet$2(this, _listNode).push(trgObj.id);
-    let connections = __privateGet$2(this, _edgesFrom).get(srcObj.id);
-    if (!connections) {
-      connections = [];
-      __privateGet$2(this, _edgesFrom).set(srcObj.id, connections);
-    }
-    let edges = connections.find((connection) => connection[0] === trgObj.id)?.[2];
-    if (!edges) {
-      edges = [];
-      connections.push([trgObj.id, 1, edges]);
-    }
-    const edgeId = edgeIdCount++;
-    edges.push({
-      id: edgeId,
-      out: propertiesOut.slice(),
-      in: propertiesIn.slice(),
-      func
-    });
-    return edgeId;
-  }
-  disconnect(src, outDesc, trg, inDesc) {
-    if (isNumber(src)) {
-      this.disconnectById(src);
-    } else {
-      const [srcObj, propertiesOut, trgObj, propertiesIn] = buildConnectParameters(src, outDesc, trg, inDesc);
-      this.disconnectByParams(srcObj, propertiesOut, trgObj, propertiesIn);
-    }
+    return true;
   }
   /**
-   * Remove a dataflow connection using a edge parameters
-   *
-   * @private
-   * @param {String|Object} obj_src the DataflowNode (or Id) source.
-   * @param {String|Array} property_out one or an array of output property name(s)
-   * @param {String|Object} obj_trg the DataflowNode (or Id) target.
-   * @param {String|Array} property_in one or an array of input property name(s)
+   *  Stops the task.<br />
+   *  When the task is stopped, it calls the taskDidStop if it exits.
+   * @function
+   * @ignore
    */
-  disconnectByParams(srcObj, propertiesOut, trgObj, propertiesIn) {
-    const connections = __privateGet$2(this, _edgesFrom).get(srcObj.id);
-    if (!connections) {
-      return;
+  stop() {
+    if (this.state === TaskState.STOPPED) {
+      return false;
     }
-    function removeProperties(sources, list) {
-      list.forEach((data) => {
-        const index = sources.indexOf(data);
-        if (index !== -1) sources.slice(index, 1);
-      });
+    this.state = TaskState.STOPPED;
+    for (let taskAndParams of this.tasksAndParams) {
+      taskAndParams[0].stop();
     }
-    for (let i = 0; i < connections.length; i++) {
-      const connection = connections[i];
-      if (connection[0] === trgObj.id) {
-        const edges = connection[2];
-        for (let j = 0; j < edges.length; ) {
-          const edge = edges[j];
-          removeProperties(edge.out, propertiesOut);
-          removeProperties(edge.in, propertiesIn);
-          if (edge.out.length === 0 || edge.in.length === 0) {
-            edges.splice(j, 1);
-          } else j++;
-        }
-        if (edges.length === 0) {
-          connections.splice(i, 1);
-        } else i++;
-      } else i++;
-    }
+    return true;
   }
   /**
-   * Remove a dataflow connection using a edge ids
-   *
-   * @param {Number} edgeId the id of the edge to remove
+   *  Pause the task.<br />
+   *  When the task is paused, it calls the taskDidPause if it exits.
+   *  @ignore
+   * @function
    */
-  disconnectById(edgeId) {
-    __privateGet$2(this, _edgesFrom).forEach((connections, cid) => {
-      if (connections) {
-        for (let i = 0; i < connections.length; i++) {
-          const connection = connections[i];
-          const edges = connection[2];
-          for (let j = 0; j < edges.length; j++) {
-            const edge = edges[j];
-            if (edge.id === edgeId) {
-              edges.splice(j, 1);
-              if (edges.length === 0) {
-                connections.splice(i, 1);
-                if (connections.length === 0) {
-                  __privateGet$2(this, _edgesFrom).delete(cid);
-                }
-              }
-              return;
-            }
-          }
-        }
-      }
-    });
-  }
-  /**
-   * Performs a topological sort on this DAG, so that getNodes returns the
-   * ordered list of nodes.<p>
-   * Returns true if the graph is acyclic, false otherwise. When the graph is
-   * cyclic, the algorithm does at it best to partially order it and issues a
-   * warning.
-   *
-   * @private
-   * @return {boolean}
-   */
-  sort() {
-    const indegrees = new Array(__privateGet$2(this, _listNode).length).fill(0);
-    __privateGet$2(this, _edgesFrom).forEach((connections) => {
-      for (let j = 0; j < connections.length; j++) {
-        const cid = connections[j][0];
-        const index = __privateGet$2(this, _listNode).indexOf(cid);
-        if (index === -1) {
-          throw new Error("Sort, unknown id");
-        }
-        indegrees[index]++;
-      }
-    });
-    const pending = __privateGet$2(this, _listNode).slice();
-    const sorted = [];
-    let violationCount = 0;
-    while (pending.length !== 0) {
-      const minI = arrayMin(indegrees);
-      const indegree = indegrees[minI];
-      indegrees.splice(minI, 0);
-      const nId = pending[minI];
-      pending.splice(minI, 1);
-      if (indegree > 0) {
-        violationCount++;
-      }
-      sorted.push(nId);
-      const connections = __privateGet$2(this, _edgesFrom).get(nId);
-      if (connections !== void 0) {
-        for (let j = 0; j < connections.length; j++) {
-          const mi = pending.indexOf(connections[j][0]);
-          if (mi !== -1) {
-            indegrees[mi]--;
-          }
-        }
-      }
+  pause() {
+    if (this.state === TaskState.PAUSED) {
+      return false;
     }
-    __privateSet$2(this, _listNode, sorted);
-    __privateSet$2(this, _isSorted, true);
-    __privateSet$2(this, _isCyclic, violationCount > 0);
-    if (violationCount > 0) {
-      const edgecount = __privateGet$2(this, _edgesFrom).size;
-      this.logger.warn(
-        "WARNING: Cycles detected during topological sort.%d dependencies out of %d have been violated.\n",
-        violationCount,
-        edgecount
-      );
+    this.state = TaskState.PAUSED;
+    for (let taskAndParams of this.tasksAndParams) {
+      taskAndParams[0].pause();
     }
-    return !__privateGet$2(this, _isCyclic);
+    return true;
   }
-  build() {
-    this.sort();
-    this.optimize(__privateGet$2(this, _edgesFrom), __privateGet$2(this, _listNode));
-  }
-  /**
-   * @private
-   */
-  pausePropagation() {
-    __privateWrapper(this, _shouldNotPropagate)._++;
-  }
-  /**
-   * @private
-   */
-  restartPropagation() {
-    __privateWrapper(this, _shouldNotPropagate)._--;
-    if (__privateGet$2(this, _shouldNotPropagate) < 0) {
-      __privateSet$2(this, _shouldNotPropagate, 0);
-    }
-  }
+  /********************************************************************
+   delegate methods
+   ********************************************************************/
   /**
    */
-  optimize(edgeRefs, nodeList) {
-    __privateGet$2(this, _dataflowNodes).length = 0;
-    for (let i = 0; i < nodeList.length; i++) {
-      const id = nodeList[i];
-      const obj = DataflowNode.get(id);
-      if (obj) {
-        __privateGet$2(this, _dataflowNodes).push(obj);
-      }
-    }
-    __privateGet$2(this, _optimizedEdges).clear();
-    for (const [id, data] of edgeRefs.entries()) {
-      const objSrc = DataflowNode.get(id);
-      const compiledConnections = [];
-      __privateGet$2(this, _optimizedEdges).set(id, compiledConnections);
-      for (let i = 0; i < data.length; i++) {
-        const connections = data[i];
-        const cid = connections[0];
-        const objTrg = DataflowNode.get(cid);
-        const compiledConnection = {
-          obj: objTrg,
-          other: connections[1],
-          cEdges: [],
-          state: DataflowState.get(objTrg.id)
-        };
-        compiledConnections.push(compiledConnection);
-        const edges = connections[2];
-        for (let j = 0; j < edges.length; j++) {
-          const edge = edges[j];
-          const compiledEdge = {
-            id: edge.id,
-            getters: [],
-            setters: [],
-            func: edge.func
-          };
-          compiledConnection.cEdges.push(compiledEdge);
-          compiledEdge.getters = generateGetters(objSrc, edge.out);
-          compiledEdge.setters = generateSetters(objTrg, edge.in);
+  taskDidStop() {
+    __privateWrapper(this, _tasksWillEnded)._--;
+    if (__privateGet$2(this, _tasksWillEnded) === 0) {
+      this.state = TaskState.STOPPED;
+      if (this.delegate?.taskDidStop) {
+        try {
+          this.delegate.taskDidStop(this);
+        } catch (e) {
+          if (e.stack) console.log(e.stack);
+          console.error(e);
         }
       }
     }
   }
-};
-_isPropagating = new WeakMap();
-_optimizedEdges = new WeakMap();
-_nodes$1 = new WeakMap();
-_edgesFrom = new WeakMap();
-_listNode = new WeakMap();
-_shouldNotPropagate = new WeakMap();
-_dataflowNodes = new WeakMap();
-_isSorted = new WeakMap();
-_isCyclic = new WeakMap();
-__publicField$3(_DataFlow, "propagationCount", 0);
-let DataFlow = _DataFlow;
-const DEFAULT_DATAFLOW = injectionToken("DEFAULT_DATAFLOW");
-container.registerFactory(DEFAULT_DATAFLOW, () => new DataFlow());
+  /**
+   */
+  taskDidPause() {
+    __privateWrapper(this, _tasksWillEnded)._--;
+    if (__privateGet$2(this, _tasksWillEnded) === 0) {
+      this.state = TaskState.PAUSED;
+      if (this.delegate?.taskDidPause) {
+        try {
+          this.delegate.taskDidPause(this);
+        } catch (e) {
+          if (e.stack) console.log(e.stack);
+          console.error(e);
+        }
+      }
+    }
+  }
+  /**
+   */
+  taskDidEnd() {
+    __privateWrapper(this, _tasksWillEnded)._--;
+    if (__privateGet$2(this, _tasksWillEnded) === 0) {
+      this.state = TaskState.STOPPED;
+      if (this.delegate?.taskDidEnd) {
+        try {
+          this.delegate.taskDidEnd(this);
+        } catch (e) {
+          if (e.stack) console.log(e.stack);
+          console.error(e);
+        }
+      }
+    }
+  }
+}
+_tasksWillEnded = new WeakMap();
 
-var __defProp$2 = Object.defineProperty;
-var __defNormalProp$2 = (obj, key, value) => key in obj ? __defProp$2(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$2 = (obj, key, value) => __defNormalProp$2(obj, key + "" , value);
+var __typeError$1 = (msg) => {
+  throw TypeError(msg);
+};
+var __accessCheck$1 = (obj, member, msg) => member.has(obj) || __typeError$1("Cannot " + msg);
+var __privateGet$1 = (obj, member, getter) => (__accessCheck$1(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
+var __privateAdd$1 = (obj, member, value) => member.has(obj) ? __typeError$1("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+var __privateSet = (obj, member, value, setter) => (__accessCheck$1(obj, member, "write to private field"), member.set(obj, value), value);
+var _time, _leftTime, _timer, _startTime;
+class Wait extends Task {
+  constructor(time) {
+    super();
+    /********************************************************************
+    
+       ********************************************************************/
+    __privateAdd$1(this, _time, 0);
+    __privateAdd$1(this, _leftTime, 0);
+    __privateAdd$1(this, _timer, null);
+    __privateAdd$1(this, _startTime, 0);
+    __privateSet(this, _time, time);
+    this.state = TaskState.STOPPED;
+  }
+  set time(v) {
+    if (this.state !== TaskState.STOPPED) {
+      throw new Error("Stop the task before changing the time");
+    }
+    __privateSet(this, _time, v);
+  }
+  get time() {
+    return __privateGet$1(this, _time);
+  }
+  /********************************************************************
+  
+     ********************************************************************/
+  /**
+   *  Starts the task
+   *
+   * @param {any} param any parameter (scalar, Array, Object)
+   * @ignore
+   * @function
+   */
+  start() {
+    let time = __privateGet$1(this, _time);
+    if (this.state === TaskState.STARTED) {
+      return false;
+    }
+    if (this.state === TaskState.PAUSED) {
+      time = __privateGet$1(this, _leftTime);
+    } else {
+      __privateSet(this, _leftTime, time);
+    }
+    this.state = TaskState.STARTED;
+    __privateSet(this, _startTime, (/* @__PURE__ */ new Date()).getTime());
+    __privateSet(this, _timer, setTimeout(() => {
+      this.state = TaskState.STOPPED;
+      if (this.delegate?.taskDidEnd) {
+        try {
+          this.delegate.taskDidEnd(this);
+        } catch (e) {
+          if (e.stack) console.log(e.stack);
+          console.error(e);
+        }
+      }
+    }, time));
+    return true;
+  }
+  /**
+   *  Stops the task.<br />
+   *  When the task is stopped, it calls the taskDidStop if it exits.
+   * @ignore
+   * @function
+   */
+  stop() {
+    if (this.state === TaskState.STOPPED) {
+      return false;
+    }
+    this.state = TaskState.STOPPED;
+    clearTimeout(__privateGet$1(this, _timer));
+    __privateSet(this, _timer, null);
+    __privateSet(this, _leftTime, __privateGet$1(this, _time));
+    if (this.delegate?.taskDidStop) {
+      try {
+        this.delegate.taskDidStop(this);
+      } catch (e) {
+        if (e.stack) console.log(e.stack);
+        console.error(e);
+      }
+    }
+    return true;
+  }
+  /**
+   *  Pause the task.<br />
+   *  When the task is paused, it calls
+   *  the TaskDelegate.taskDidPause if it exits.
+   * @ignore
+   * @function
+   */
+  pause() {
+    if (this.state === TaskState.PAUSED) {
+      return false;
+    }
+    this.state = TaskState.PAUSED;
+    clearTimeout(__privateGet$1(this, _timer));
+    __privateSet(this, _timer, null);
+    __privateSet(this, _leftTime, __privateGet$1(this, _leftTime) - (/* @__PURE__ */ new Date()).getTime() + __privateGet$1(this, _startTime));
+    if (this.delegate?.taskDidPause) {
+      try {
+        this.delegate.taskDidPause(this);
+      } catch (e) {
+        if (e.stack) console.log(e.stack);
+        console.error(e);
+      }
+    }
+    return true;
+  }
+}
+_time = new WeakMap();
+_leftTime = new WeakMap();
+_timer = new WeakMap();
+_startTime = new WeakMap();
+
+var index = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  PAR: PAR,
+  SEQ: SEQ,
+  Task: Task,
+  TaskState: TaskState,
+  Wait: Wait
+});
+
+const DEFAULT_DATAFLOW = injectionToken("DEFAULT_DATAFLOW");
+
+var __defProp$1 = Object.defineProperty;
+var __defNormalProp$1 = (obj, key, value) => key in obj ? __defProp$1(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField$1 = (obj, key, value) => __defNormalProp$1(obj, key + "" , value);
 class Connector {
   constructor(objId, pOut) {
     this.objId = objId;
     this.pOut = pOut;
-    __publicField$2(this, "intermediateObjId");
+    __publicField$1(this, "intermediateObjId");
   }
   /**
    * @param {Component} objId the Component the connector will be connected
@@ -1002,21 +1221,18 @@ class Connector {
   }
 }
 
-var __defProp$1 = Object.defineProperty;
-var __typeError$1 = (msg) => {
+var __defProp = Object.defineProperty;
+var __typeError = (msg) => {
   throw TypeError(msg);
 };
-var __defNormalProp$1 = (obj, key, value) => key in obj ? __defProp$1(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField$1 = (obj, key, value) => __defNormalProp$1(obj, key + "" , value);
-var __accessCheck$1 = (obj, member, msg) => member.has(obj) || __typeError$1("Cannot " + msg);
-var __privateGet$1 = (obj, member, getter) => (__accessCheck$1(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
-var __privateAdd$1 = (obj, member, value) => member.has(obj) ? __typeError$1("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-var __privateSet$1 = (obj, member, value, setter) => (__accessCheck$1(obj, member, "write to private field"), member.set(obj, value), value);
-var _configParams, _nodes;
+var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
+var __publicField = (obj, key, value) => __defNormalProp(obj, key + "" , value);
+var __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
+var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), getter ? getter.call(obj) : member.get(obj));
+var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
+var _nodes;
 const nodesBis = /* @__PURE__ */ new Map();
 function Input(value, { name, addInitializer, ...rest }) {
-  console.log(addInitializer);
-  console.log(rest);
   addInitializer(function() {
     let node = nodesBis.get(this);
     if (!node) {
@@ -1028,17 +1244,13 @@ function Input(value, { name, addInitializer, ...rest }) {
 const _DataflowNode = class _DataflowNode extends SupportMixins {
   constructor(id) {
     super();
-    __privateAdd$1(this, _configParams);
-    __publicField$1(this, "id");
+    // readonly #configParams: ObjectConfig | undefined;
+    __publicField(this, "id");
     this.id = isString(id) ? id : createUniqueId();
-    __privateGet$1(_DataflowNode, _nodes).set(this.id, this);
-    if (__privateGet$1(this, _configParams)) {
-      this.configure(__privateGet$1(this, _configParams));
-      __privateSet$1(this, _configParams, void 0);
-    }
+    __privateGet(_DataflowNode, _nodes).set(this.id, this);
   }
   static get(id) {
-    return __privateGet$1(_DataflowNode, _nodes).get(id);
+    return __privateGet(_DataflowNode, _nodes).get(id);
   }
   /**
    *  Object configuration method. <p>
@@ -1063,8 +1275,50 @@ const _DataflowNode = class _DataflowNode extends SupportMixins {
    * @param {Object} config the associated array used for configuring the
    *        object.
    */
-  configure(config) {
-  }
+  // protected configure(config: Exclude<ObjectConfig, 'id'>) {
+  // let shouldPropagate = false;
+  // // let props; let key; let i; ; let
+  // //   desc;
+  // const state = DataflowState.get(this.id)!;
+  // state.pausePropagation();
+  //
+  // // Manage model
+  // // if (config instanceof Model) {
+  // //   desc = this.getPropertyDescriptor ('model');
+  // //   if (desc && desc.set) {
+  // //     // model property assignation
+  // //     this.model = config;
+  // //     shouldPropagate = true;
+  // //   }
+  // //   else {
+  // //     // one by one property copy
+  // //     props = config.getModelProperties ();
+  // //     for (i = 0; i < props.length; i += 1)
+  // //     {
+  // //       key = props [i];
+  // //       if (key === 'id') continue;
+  // //       this [key] = config [key];
+  // //       shouldPropagate = true;
+  // //     }
+  // //   }
+  // // }
+  // // else {
+  // if (config) {
+  //   const properties = this.getModelProperties();
+  //   properties.forEach(key => {
+  //     // @ts-ignore
+  //     this[key] = config[key];
+  //     shouldPropagate = true;
+  //   });
+  // }
+  // // }
+  //
+  // state.restartPropagation();
+  // if (shouldPropagate) {
+  //   this.propertiesDidChange();
+  //   state.propagate();
+  // }
+  // }
   /**
    *  This method is called by the dataflow algorithm when input properties have
    *  been changed.
@@ -1248,105 +1502,9 @@ const _DataflowNode = class _DataflowNode extends SupportMixins {
   //   }
   // }
 };
-_configParams = new WeakMap();
 _nodes = new WeakMap();
-__privateAdd$1(_DataflowNode, _nodes, /* @__PURE__ */ new Map());
+__privateAdd(_DataflowNode, _nodes, /* @__PURE__ */ new Map());
 let DataflowNode = _DataflowNode;
-
-var __defProp = Object.defineProperty;
-var __typeError = (msg) => {
-  throw TypeError(msg);
-};
-var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "symbol" ? key + "" : key, value);
-var __accessCheck = (obj, member, msg) => member.has(obj) || __typeError("Cannot " + msg);
-var __privateGet = (obj, member, getter) => (__accessCheck(obj, member, "read from private field"), member.get(obj));
-var __privateAdd = (obj, member, value) => member.has(obj) ? __typeError("Cannot add the same private member more than once") : member instanceof WeakSet ? member.add(obj) : member.set(obj, value);
-var __privateSet = (obj, member, value, setter) => (__accessCheck(obj, member, "write to private field"), member.set(obj, value), value);
-var _initialised, _initFunctions;
-const _Component = class _Component extends SupportMixins {
-  constructor(id) {
-    super();
-    __privateAdd(this, _initialised, false);
-    __privateAdd(this, _initFunctions, /* @__PURE__ */ new Set());
-    __publicField(this, "id");
-    this.id = isString(id) ? id : createUniqueId();
-    _Component.instances[this.id] = this;
-  }
-  /**
-   *  Object default init. <p>
-   *
-   *  @example
-   *  myObject = new core.Object (core.createId ());
-   *  myObject.init ();
-   *  @return {Object} this
-   */
-  init() {
-    if (__privateGet(this, _initialised)) {
-      throw new Error("impossible to re-initialise a component");
-    }
-    try {
-      this.initComponent();
-      __privateGet(this, _initFunctions).forEach((func) => func());
-      __privateSet(this, _initialised, true);
-      this.componentDidInitialize();
-    } catch (e) {
-      throw new Error("Component init failed with the error: " + e);
-    }
-    return this;
-  }
-  // eslint-disable-next-line class-methods-use-this
-  initComponent() {
-  }
-  // eslint-disable-next-line class-methods-use-this
-  componentDidInitialize() {
-  }
-  destructor() {
-    delete _Component.instances[this.id];
-    __privateSet(this, _initialised, false);
-  }
-  isDeleted() {
-    return !__privateGet(this, _initialised);
-  }
-  /**
-   *  Returns a copy of the objet's properties for JSON stringification.<p/>
-   *  This can be used for persistence or serialization.
-   *
-   * @return {Object} the object value for stringify
-   */
-  toJSON() {
-    return toJSON(this.serialize());
-  }
-  /**
-   *  Set objet's properties from JSON stringification.<p/>
-   *  This can be used when retrieve data from serialization.
-   *
-   * @param {String} json The JSON String
-   */
-  parseJSON(json) {
-    try {
-      const rawData = parseJSON(json);
-      this.deserialize(rawData);
-    } catch (e) {
-      throw new Error("parseJSON failed with error: " + e);
-    }
-  }
-  /**
-   *  Returns a copy of the objet's properties for JSON stringification.<p/>
-   *  This can be used for persistence or serialization.
-   */
-  serialize() {
-    return { id: this.id };
-  }
-  // eslint-disable-next-line class-methods-use-this,@typescript-eslint/no-unused-vars
-  deserialize(data) {
-  }
-};
-_initialised = new WeakMap();
-_initFunctions = new WeakMap();
-__publicField(_Component, "instances", {});
-let Component = _Component;
-applyMixins(Component, [EventSource]);
 
 export { Input, LOGGER, index$1 as event, index as task };
 //# sourceMappingURL=vs_core.es.js.map

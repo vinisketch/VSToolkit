@@ -260,7 +260,7 @@
 //    * @param {String} property the name of the modified property.[optional]
 //    */
 //   propertyChange (property) {
-//     if (vs._default_df_) vs._default_df_.propagate (this, property);
+//     container.get(DEFAULT_DATAFLOW).propagate (this, property);
 //
 //     if (this.#shouldPropagateChanges) {
 //       var l = this.#links.length, obj;

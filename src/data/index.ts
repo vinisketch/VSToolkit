@@ -16,11 +16,7 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import GoogleSearch from './GoogleSearch';
-import URL from './URL';
-
+export GoogleSearch from './GoogleSearch';
+export URL from './URL';
 export * from './RSSRequester';
-export {
-  GoogleSearch,
-  URL
-};
+

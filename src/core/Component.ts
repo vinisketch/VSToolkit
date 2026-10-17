@@ -1,8 +1,6 @@
-import { toJSON, parseJSON, applyMixins, SupportMixins } from 'vs_utils';
+import { toJSON, parseJSON, applyMixins, SupportMixins, createUniqueId } from 'vs_utils';
 import { BaseIdentifiable,  ObjectId } from './BaseIdentifiable';
 import { EventSource } from './event';
-import { createUniqueId } from './helpers';
-
 
 export type InitFunction = () => void;
 

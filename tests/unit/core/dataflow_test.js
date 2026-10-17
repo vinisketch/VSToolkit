@@ -14,7 +14,7 @@ function testDataFlowPropagation1 () {
   var item2 = new TestObject ().init ();
   var item3 = new TestObject ().init ();
   
-  var df = vs._default_df_;
+  var df = container.get(DEFAULT_DATAFLOW);
   
   df.connect (item1, "inOut1", item2, "inOut1")
   df.connect (item1, "inOut2", item2, "inOut2")
@@ -55,7 +55,7 @@ function testDataFlowPropagation2 () {
   var item2 = new TestObject ().init ();
   var item3 = new TestObject ().init ();
   
-  var df = vs._default_df_;
+  var df = container.get(DEFAULT_DATAFLOW);
   
   df.connect (item1, ["inOut1", "inOut2"], item2, ["inOut1", "inOut2"]);
   df.connect (item2, ["inOut1", "inOut2"], item3, ["inOut1", "inOut2"]);
@@ -97,7 +97,7 @@ function testDataFlowPropagation3 () {
   var item2 = new TestObject ().init ();
   var item3 = new TestObject ().init ();
   
-  var df = vs._default_df_;
+  var df = container.get(DEFAULT_DATAFLOW);
   
   df.connect (item1, ["out"], item2, ["in"]);
   df.connect (item2, ["out"], item3, ["in"]);
@@ -131,7 +131,7 @@ function testDataFlowFunction1 () {
   var item4 = new TestObject ().init ();
   var item5 = new TestObject ().init ();
 
-  var df = vs._default_df_;
+  var df = container.get(DEFAULT_DATAFLOW);
 
   var foisDeux = function (v) {
     return v * 2
@@ -175,7 +175,7 @@ function testDataFlowFunction2 () {
     return [v2 * 2, v1 * 3];
   };
 
-  var df = vs._default_df_;
+  var df = container.get(DEFAULT_DATAFLOW);
   
   df.connect (item1, ["inOut1", "inOut2"], item2, ["inOut1", "inOut2"], func);
   df.connect (item2, ["inOut1", "inOut2"], item3, ["inOut1", "inOut2"], func);
@@ -229,7 +229,7 @@ function testDataFlowFunction3 () {
     return [v * 2, v * 3];
   };
 
-  var df = vs._default_df_;
+  var df = container.get(DEFAULT_DATAFLOW);
   
   df.connect (item1, ["inOut1", "inOut2"], item2, "inOut", func1);
   df.connect (item2, "inOut", item3, ["inOut1", "inOut2"], func2);
@@ -266,7 +266,7 @@ function testDataFlowUnconnectAPI_ID_1 () {
   var item2 = new TestObject ().init ();
   var item3 = new TestObject ().init ();
   
-  var df = vs._default_df_;
+  var df = container.get(DEFAULT_DATAFLOW);
   
   var t11_id = df.connect (item1, "inOut1", item2, "inOut1")
   var t21_id = df.connect (item1, "inOut2", item2, "inOut2")
@@ -326,7 +326,7 @@ function testDataFlowUnconnectAPI_ID_2 () {
   var item2 = new TestObject ().init ();
   var item3 = new TestObject ().init ();
   
-  var df = vs._default_df_;
+  var df = container.get(DEFAULT_DATAFLOW);
   
   var t11_id = df.connect (item1, "inOut1", item2, "inOut1")
   var t21_id = df.connect (item1, "inOut2", item2, "inOut2")
@@ -385,7 +385,7 @@ function testDataFlowUnconnectAPI_PM_1 () {
   var item2 = new TestObject ().init ();
   var item3 = new TestObject ().init ();
   
-  var df = vs._default_df_;
+  var df = container.get(DEFAULT_DATAFLOW);
   
   df.connect (item1, ["inOut1", "inOut2"], item2, ["inOut1", "inOut2"])
   df.connect (item2, ["inOut1", "inOut2"], item3, ["inOut1", "inOut2"])
@@ -442,7 +442,7 @@ function testDataFlowReconnect () {
   var item2 = new TestObject ().init ();
   var item3 = new TestObject ().init ();
   
-  var df = vs._default_df_;
+  var df = container.get(DEFAULT_DATAFLOW);
   
   var t11_id = df.connect (item1, "inOut1", item2, "inOut1")
   var t21_id = df.connect (item1, "inOut2", item2, "inOut2")

@@ -16,12 +16,10 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import vs_utils from 'vs_utils';
-import vs_core from 'vs_core';
-import {
-  addPointerListener, removePointerListener,
-  POINTER_START, POINTER_END, POINTER_MOVE
-} from 'vs_gesture';
+import vs_utils, { applyMixins } from 'vs_utils';
+import vs_ui_utils from 'vs_ui_utils';
+import { Component } from 'vs_toolkit/vs_core';
+import { PointerEventType, isPointerEventType, addPointerListener, removePointerListener } from 'vs_gesture';
 import { Animation } from '../Animation';
 
 import RecognizerManager from '../Recognizers/RecognizerManager';
@@ -29,11 +27,44 @@ import Template from '../Template';
 import html_template from './View.html';
 
 /**
+ * Configuration interface for View
+ */
+interface ViewConfig {
+  id?: string;
+  node?: HTMLElement;
+  node_id?: string;
+  node_ref?: string;
+  root_ref?: string;
+  template_ref?: string;
+  template?: string;
+  [key: string]: any;
+}
+
+/**
+ * Animation options interface
+ */
+interface AnimationOptions {
+  duration?: number;
+  timing?: string;
+  origin?: string;
+  iterationCount?: number;
+  delay?: number;
+}
+
+/**
+ * Transform origin interface
+ */
+interface TransformOrigin {
+  x: number;
+  y: number;
+}
+
+/**
  * @private
  */
-function _findNodeRef (node, ref)
+function _findNodeRef(node: Element | null, ref: string): Element | false
 {
-  if (!node.getAttribute) { return false; }
+  if (!node?.getAttribute) { return false; }
 
   if (node.getAttribute ('x-hag-ref') === ref) { return node; }
   if (node.getAttribute ('x-hag-comp') === ref) { return node; }
@@ -56,12 +87,12 @@ function _findNodeRef (node, ref)
  *  @extends vs_core.EventSource
  *  @class
  *  vs.ui.View is a class that defines the basic drawing, event-handling, of
- *  an application. You typically don’t interact with the vs.ui.View API
+ *  an application. You typically don't interact with the vs.ui.View API
  *  directly; rather, your custom view classes inherit from vs.ui.View and
  *  override many of its methods., Its also supports 2D
  *  transformations (translate, rotate, scale).
  *  <p>
- *  If you’re not creating a custom view class, there are few methods you
+ *  If you're not creating a custom view class, there are few methods you
  *  need to use
  *
  *  Events:
@@ -71,7 +102,7 @@ function _findNodeRef (node, ref)
  *    <li /> POINTER_MOVE: Fired after the user move the mouse/his finger on
  *           the view.
  *    <li /> POINTER_END: Fired after the user click/tap on the view, when
- *           the user release the mouse/ the pressur on screen.
+ *           the user release the mouse/ the press on screen.
  *  </ul>
  *  <p>
  *
@@ -84,300 +115,243 @@ function _findNodeRef (node, ref)
  *
  * @param {Object} config the configuration structure [mandatory]
  */
-function View (config)
-{
-  this.parent = vs_core.EventSource;
-  this.parent (config);
-  this.constructor = View;
-  
-  // init recognizer support
-  this.__pointer_recognizers = [];
+class View extends vs_core.Component {
+  // DOM and template properties
+  view: HTMLElement | null = null;
+  html_template = html_template;
 
-  // position and size : according autosizing rules, can change
-  // automaticaly if the parent container is resized
-  this._pos = [-1, -1];
-  this._size = [-1, -1];
-  
-  // init transformation
-  this._translation = [0, 0, 0];
-  this._rotation = [0, 0, 0];
-  this._transform_origin = [0, 0];
+  // Private instance properties
+  private _pos: number[];
+  private _size: number[];
+  private _visible: boolean;
+  private _magnet: number;
+  private _pointerevent_handlers: any;
+  private _enable: boolean;
+  private _opacity: number;
+  private _scaling: number;
+  private _min_scale: number;
+  private _max_scale: number;
+  private _layout: string | null;
+  private _autosizing: number[];
+  private _translation: number[];
+  private _rotation: number[];
+  private _transform_origin: number[];
+  private _transforms_stack: any;
+  private _show_animation: any;
+  private __show_clb: any;
+  private _hide_animation: any;
+  private __hide_clb: any;
+  private __pointer_recognizers: any[];
+  private _bubbling: boolean;
+  private __parent: any;
+  private __children: any;
+  private _holes: any;
+  private __config__: any;
+  private __visibility_anim: any;
+  private __view_display: any;
+  private __is_showing: boolean;
+  private __is_hidding: boolean;
 
-  // rules for positionning a object
-  this._autosizing = [4,4];
-}
+  private static refTemplatereg = /(\w+)#(\w+)/;
 
-/********************************************************************
+  // static getDeviceCSSCode () {
+  //   const el = document.createElement('div');
+  //   el.className = 'device_test';
+  //   document.body.appendChild (el);
+    
+  //   const val = document.defaultView.getComputedStyle (el,null).getPropertyValue("margin-top");
+
+  //   document.body.removeChild (el);
+
+  //   return parseInt (val || 0, 10);
+  // }
+
+  constructor(config: ViewConfig = {}) {
+    super(config);
+
+    // init recognizer support
+    this.__pointer_recognizers = [];
+
+    // position and size : according autosizing rules, can change
+    // automatically if the parent container is resized
+    this._pos = [-1, -1];
+    this._size = [-1, -1];
+
+    // init transformation
+    this._translation =[0, 0, 0];
+    this._rotation =[0, 0, 0];
+    this._transform_origin =[0, 0];
+
+    // rules for positionning a object
+    this._autosizing = [4,4];
+
+    // Initialize instance properties from old prototype defaults
+    this._visible = true;
+    this._magnet = View.MAGNET_NONE;
+    this._pointerevent_handlers = null;
+    this._enable = true;
+    this._opacity = 1;
+    this._scaling = 1;
+    this._min_scale = 0.5;
+    this._max_scale = 3;
+    this._layout = null;
+    this._transforms_stack = null;
+    this._show_animation = null;
+    this.__show_clb = null;
+    this._hide_animation = null;
+    this.__hide_clb = null;
+    this._bubbling = false;
+    this.__is_showing = false;
+    this.__is_hidding = false;
+  }
+
+  /********************************************************************
                     Layout constant
-*********************************************************************/
-
-/**
- * No particular layout
- * @see vs.ui.View#layout
- * @name vs.ui.View.DEFAULT_LAYOUT
- * @const
- */
-View.DEFAULT_LAYOUT = null;
-
-/**
- * Horizontal layout
- * @see vs.ui.View#layout
- * @name vs.ui.View.HORIZONTAL_LAYOUT
- * @const
- */
-View.HORIZONTAL_LAYOUT = 'horizontal';
-/** @private */
-View.LEGACY_HORIZONTAL_LAYOUT = 'horizontal_layout';
-
-/**
- * Vertical layout
- * @see vs.ui.View#layout
- * @name vs.ui.View.VERTICAL_LAYOUT
- * @const
- */
-View.VERTICAL_LAYOUT = 'vertical';
-/** @private */
-View.LEGACY_VERTICAL_LAYOUT = 'vertical_layout';
-
-/**
- * Absolute layout
- * @see vs.ui.View#layout
- * @name vs.ui.View.ABSOLUTE_LAYOUT
- * @const
- */
-View.ABSOLUTE_LAYOUT = 'absolute';
-/** @private */
-View.LEGACY_ABSOLUTE_LAYOUT = 'absolute_layout';
-
-/**
- * Html flow layout
- * @see vs.ui.View#layout
- * @name vs.ui.View.FLOW_LAYOUT
- * @const
- */
-View.FLOW_LAYOUT = 'flow';
-/** @private */
-View.LEGACY_FLOW_LAYOUT = 'flow_layout';
-
-/********************************************************************
-                    Delay constant
-*********************************************************************/
-
-/**
- * Threshold in px  use to unselect a item when pointer move
- * @name vs.ui.View.MOVE_THRESHOLD
- * @const
- */
-View.MOVE_THRESHOLD = 20;
-
-/********************************************************************
-                    Magnet contants
-*********************************************************************/
-
-/**
- * No magnet
- * @name vs.ui.View.MAGNET_NONE
- * @const
- */
-View.MAGNET_NONE = 0;
-
-/**
- * The widget will be fixed on left
- * @name vs.ui.View.MAGNET_LEFT
- * @const
- */
-View.MAGNET_LEFT = 3;
-
-/**
- * The widget will be fixed on bottom
- * @name vs.ui.View.MAGNET_BOTTOM
- * @const
- */
-View.MAGNET_BOTTOM = 2;
-
-/**
- * The widget will be fixed on top
- * @name vs.ui.View.MAGNET_TOP
- * @const
- */
-View.MAGNET_TOP = 1;
-
-/**
- * The widget will be fixed on right
- * @name vs.ui.View.MAGNET_RIGHT
- * @const
- */
-View.MAGNET_RIGHT = 4;
-
-/**
- * The widget will centered
- * @name vs.ui.View.MAGNET_CENTER
- * @const
- */
-View.MAGNET_CENTER = 5;
-
-/********************************************************************
-
-*********************************************************************/
-
-/**
- * @private
- */
-View.NON_G_OBJECT = '_non_g_object';
-/**
- * @private
- */
-View.ANY_PLACE = 'children';
-/**
- * @private
- */
-View._positionStyle = undefined;
-/**
- * @private
- */
-View.__comp_templates = {};
-
-/**
- * @private
- */
-View._propagate_pointer_event = function (obj, func_ptr, event)
-{
-  var event_name = "";
-  if (event.type === POINTER_START) { event_name = 'POINTER_START'; }
-  if (event.type === POINTER_END) { event_name = 'POINTER_END'; }
-  if (event.type === POINTER_MOVE) { event_name = 'POINTER_MOVE'; }
-
-  event.type = event_name;
-
-  func_ptr.call (obj, event);
-};
-
-/**
- * @private
- */
-var _template_nodes = null;
-
-View.prototype = {
-
-  html_template: html_template,
-
-  /*****************************************************************
-   *                Private members
-   ****************************************************************/
-  /**
-   * @protected
-   * @type {boolean}
-   */
-  _visible: true,
+  *********************************************************************/
 
   /**
-   * @protected
-   * @type {number}
+   * No particular layout
+   * @see vs.ui.View#layout
+   * @name vs.ui.View.DEFAULT_LAYOUT
+   * @const
    */
-  _magnet: View.MAGNET_NONE,
+  static DEFAULT_LAYOUT = null;
+
+  /**
+   * Horizontal layout
+   * @see vs.ui.View#layout
+   * @name vs.ui.View.HORIZONTAL_LAYOUT
+   * @const
+   */
+  static HORIZONTAL_LAYOUT = 'horizontal';
+  /** @private */
+  static LEGACY_HORIZONTAL_LAYOUT = 'horizontal_layout';
+
+  /**
+   * Vertical layout
+   * @see vs.ui.View#layout
+   * @name vs.ui.View.VERTICAL_LAYOUT
+   * @const
+   */
+  static VERTICAL_LAYOUT = 'vertical';
+  /** @private */
+  static LEGACY_VERTICAL_LAYOUT = 'vertical_layout';
+
+  /**
+   * Absolute layout
+   * @see vs.ui.View#layout
+   * @name vs.ui.View.ABSOLUTE_LAYOUT
+   * @const
+   */
+  static ABSOLUTE_LAYOUT = 'absolute';
+  /** @private */
+  static LEGACY_ABSOLUTE_LAYOUT = 'absolute_layout';
+
+  /**
+   * Html flow layout
+   * @see vs.ui.View#layout
+   * @name vs.ui.View.FLOW_LAYOUT
+   * @const
+   */
+  static FLOW_LAYOUT = 'flow';
+  /** @private */
+  static LEGACY_FLOW_LAYOUT = 'flow_layout';
+
+  /********************************************************************
+                      Delay constant
+  *********************************************************************/
+
+  /**
+   * Threshold in px  use to unselect a item when pointer move
+   * @name vs.ui.View.MOVE_THRESHOLD
+   * @const
+   */
+  static MOVE_THRESHOLD = 20;
+
+  /********************************************************************
+                      Magnet contants
+  *********************************************************************/
+
+  /**
+   * No magnet
+   * @name vs.ui.View.MAGNET_NONE
+   * @const
+   */
+  static MAGNET_NONE = 0;
+
+  /**
+   * The widget will be fixed on left
+   * @name vs.ui.View.MAGNET_LEFT
+   * @const
+   */
+  static MAGNET_LEFT = 3;
+
+  /**
+   * The widget will be fixed on bottom
+   * @name vs.ui.View.MAGNET_BOTTOM
+   * @const
+   */
+  static MAGNET_BOTTOM = 2;
+
+  /**
+   * The widget will be fixed on top
+   * @name vs.ui.View.MAGNET_TOP
+   * @const
+   */
+  static MAGNET_TOP = 1;
+
+  /**
+   * The widget will be fixed on right
+   * @name vs.ui.View.MAGNET_RIGHT
+   * @const
+   */
+  static MAGNET_RIGHT = 4;
+
+  /**
+   * The widget will centered
+   * @name vs.ui.View.MAGNET_CENTER
+   * @const
+   */
+  static MAGNET_CENTER = 5;
+
+  /********************************************************************
+
+  *********************************************************************/
 
   /**
    * @private
-   * @type {Array.<int>}
    */
-  _autosizing: null,
-
+  static NON_G_OBJECT = '_non_g_object';
   /**
-   * @protected
-   * @type {Object}
-   */
-  _pointerevent_handlers: null,
-
-  /**
-   *
-   * @protected
-   * @type {boolean}
-   */
-  _enable: true,
-
-  /**
-   * @protected
-   * @type {Array}
-   */
-  _pos : null,
-
-  /**
-   * View translate
    * @private
-   * @type {Array}
    */
-  _translation : null,
+  static ANY_PLACE = 'children';
+  /**
+   * @private
+   */
+  static _positionStyle = undefined;
+  /**
+   * @private
+   */
+  static __comp_templates = {};
 
   /**
-   * @protected
-   * @type {Array}
+   * @private
    */
-  _size : null,
+  static _propagate_pointer_event(obj: any, func_ptr: Function, event: PointerEvent): void {
+    // let event_name = "";
+    // if (event.type === POINTER_START) { event_name = 'POINTER_START'; }
+    // if (event.type === POINTER_END) { event_name = 'POINTER_END'; }
+    // if (event.type === POINTER_MOVE) { event_name = 'POINTER_MOVE'; }
 
-   /**
-   * Opacity value
-   * @protected
-   * @type {number}
-   */
-  _opacity : 1,
+    // event.type = event_name;
 
-   /**
-   * Scale value
-   * @protected
-   * @type {number}
-   */
-  _scaling : 1,
+    func_ptr.call (obj, event);
+  }
 
-   /**
-   * Rotation value
-   * @protected
-   * @type {Array}
-   */
-  _rotation : null,
-
-  /**
-   * @protected
-   * @type {number}
-   */
-  _min_scale : 0.5,
-
-  /**
-   * @protected
-   * @type {number}
-   */
-  _max_scale : 3,
-
-   /**
-   * @protected
-   * @type {String}
-   */
-  _layout: null,
-
-  /**
-   * @protected
-   * @type {Array.<number>}
-   */
-  _transform_origin: null,
-
-  /**
-   * @protected
-   * @type {vs.CSSMatrix}
-   */
-  _transforms_stack: null,
-
-  /**
-   * @protected
-   * @type {vs.fx.Animation}
-   */
-  _show_animation: null,
-  __show_clb: null,
-
-  /**
-   * @protected
-   * @type {vs.fx.Animation}
-   */
-  _hide_animation: null,
-  __hide_clb: null,
+  /********************************************************************
+                    Instance properties and methods
+  *********************************************************************/
 
   /*****************************************************************
    *
@@ -387,9 +361,9 @@ View.prototype = {
    * @protected
    * @function
    */
-  destructor : function ()
+  destructor(): void
   {
-    var key, a, i, child;
+    let key: string, a: any, i: number, child: View;
     if (this.__parent)
     {
       this.__parent.remove (this);
@@ -412,27 +386,27 @@ View.prototype = {
       delete (this.__children [key]);
     }
     this.__children = {};
-    delete (this.view);
+    this.view = null;
 
     this.clearTransformStack ();
 
-    vs_core.EventSource.prototype.destructor.call (this);
-  },
+    super.destructor();
+  }
 
   /**
    * @protected
    * @function
    */
-  refresh : function ()
+  refresh(): void
   {
-    var key, a, i, child, view = this.view;
+    let key: string, a: any, i: number, child: any, view = this.view;
 
     // refresh element real size and position
     if (view && view.parentElement)
     {
-      this._size [0] = view.offsetWidth;
+      this._size[0] = view.offsetWidth;
       this._size [1] = view.offsetHeight;
-      this._pos [0] = view.offsetLeft;
+      this._pos[0] = view.offsetLeft;
       this._pos [1] = view.offsetTop;
     }
 
@@ -453,7 +427,7 @@ View.prototype = {
       else if (a.refresh)
       { a.refresh (); }
     }
-  },
+  }
 
   /**
    * @name vs.ui.View#clone
@@ -463,88 +437,89 @@ View.prototype = {
    * @param {vs_core.VSObject} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
-  clone : function (config, cloned_map)
+  clone(config: ViewConfig, cloned_map: any):  View
   {
-    function _getPaths (root, nodes)
-    {
-      var paths = [], i = 0, l = nodes.length, node;
-      for (; i < l; i++)
-      {
-        node = nodes[i];
-        paths.push ([node, _getPath (root, node)]);
-      }
-      return paths;
-    }
+    throw new Error('View clone is not supported yet');
+    // function _getPaths (root, nodes)
+    // {
+    //   var paths = [], i = 0, l = nodes.length, node;
+    //   for (; i < l; i++)
+    //   {
+    //     node = nodes[i];
+    //     paths.push ([node, _getPath (root, node)]);
+    //   }
+    //   return paths;
+    // }
 
-    function _evalPaths (root, paths, clonedViews)
-    {
-      var nodes = [], i = 0, l = paths.length, path;
-      for (; i < l; i++)
-      {
-        path = paths[i];
-        if (!path.id) path.id = vs_core.createId ();
-        clonedViews [path[0].id] = _evalPath (root, path[1]);
-      }
-    }
+    // function _evalPaths (root, paths, clonedViews)
+    // {
+    //   var nodes = [], i = 0, l = paths.length, path;
+    //   for (; i < l; i++)
+    //   {
+    //     path = paths[i];
+    //     if (!path.id) path.id = vs_core.createId ();
+    //     clonedViews [path[0].id] = _evalPath (root, path[1]);
+    //   }
+    // }
 
-    function makeClonedNodeMap (comp, clonedViews)
-    {
-      var
-        clonedNode = comp.view.cloneNode (true),
-        nodes = [], paths;
+    // function makeClonedNodeMap (comp, clonedViews)
+    // {
+    //   var
+    //     clonedNode = comp.view.cloneNode (true),
+    //     nodes = [], paths;
         
-      function manageChild (child)
-      {
-        if (child.__gui_object__hack_view__)
-        { nodes.push (child.__gui_object__hack_view__); }
-        else if (child.view) { nodes.push (child.view); }
+    //   function manageChild (child)
+    //   {
+    //     if (child.__gui_object__hack_view__)
+    //     { nodes.push (child.__gui_object__hack_view__); }
+    //     else if (child.view) { nodes.push (child.view); }
       
-        retreiveChildNodes (child);
-      }
+    //     retreiveChildNodes (child);
+    //   }
         
-      function retreiveChildNodes (comp)
-      {
-        var key, a, i, l, child;
-        for (key in comp.__children)
-        {
-          a = comp.__children [key];
-          if (!a) { continue; }
+    //   function retreiveChildNodes (comp)
+    //   {
+    //     var key, a, i, l, child;
+    //     for (key in comp.__children)
+    //     {
+    //       a = comp.__children [key];
+    //       if (!a) { continue; }
           
-          if (vs_utils.isArray (a))
-          {
-            l = a.length;
-            for (i = 0; i < l; i++)
-            {
-              manageChild (a [i]);
-            }
-          }
-          else manageChild (a);
-        }
-      }
+    //       if (vs_utils.isArray (a))
+    //       {
+    //         l = a.length;
+    //         for (i = 0; i < l; i++)
+    //         {
+    //           manageChild (a [i]);
+    //         }
+    //       }
+    //       else manageChild (a);
+    //     }
+    //   }
       
-      retreiveChildNodes (comp);
+    //   retreiveChildNodes (comp);
       
-      paths = _getPaths (comp.view, nodes);
-      _evalPaths (clonedNode, paths, clonedViews);
+    //   paths = _getPaths (comp.view, nodes);
+    //   _evalPaths (clonedNode, paths, clonedViews);
       
-      return clonedNode;
-    }
+    //   return clonedNode;
+    // }
     
-    if (!cloned_map) { cloned_map = {}; }
-    if (!cloned_map.__views__) { cloned_map.__views__ = {}; }    
-    if (!config) { config = {}; }
-    if (!config.node)
-    {
-      var node = cloned_map.__views__ [this.view.id];
-      if (!node)
-      {
-        node = makeClonedNodeMap (this, cloned_map.__views__);
-      }
-      config.node = node;
-    }
+    // if (!cloned_map) { cloned_map = {}; }
+    // if (!cloned_map.__views__) { cloned_map.__views__ = {}; }    
+    // if (!config) { config = {}; }
+    // if (!config.node)
+    // {
+    //   var node = cloned_map.__views__ [this.view.id];
+    //   if (!node)
+    //   {
+    //     node = makeClonedNodeMap (this, cloned_map.__views__);
+    //   }
+    //   config.node = node;
+    // }
 
-    return vs_core.EventSource.prototype.clone.call (this, config, cloned_map);
-  },
+    // return super.clone( config, cloned_map);
+  }
 
    /**
    * @name vs_core.VSObject#_clone_properties_value
@@ -554,7 +529,7 @@ View.prototype = {
    * @param {vs_core.VSObject} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
-  _clone_properties_value : function (obj, cloned_map)
+  _clone_properties_value(obj: View, cloned_map?: any): void
   {
     var key;
 
@@ -574,7 +549,7 @@ View.prototype = {
       if (this.isProperty (key))
       { vs_core.VSObject.__propertyCloneValue (key, this, obj); }
     }
-  },
+  }
 
   /**
    * @name vs.ui.View#_clone
@@ -584,11 +559,11 @@ View.prototype = {
    * @param {vs_core.VSObject} obj The cloned object
    * @param {Object} map Map of cloned objects
    */
-  _clone : function (obj, cloned_map)
+  _clone(obj: View, cloned_map?: any): void
   {
     var anim, a, key, child, l, hole, cloned_comp;
 
-    vs_core.EventSource.prototype._clone.call (this, obj, cloned_map);
+    super._clone( obj, cloned_map);
 
     // animations clone
     if (this._show_animation)
@@ -659,144 +634,145 @@ View.prototype = {
         }
       }
     }
-  },
+  }
 
   /**
    * @protected
    * @function
    */
-  _getGUInode : function (config)
-  {
-    var node = this.__getGUInode (config), compName, doc, doc_elem;
-    if (node) { return node; }
+  _getGUInode(config: ViewConfig): HTMLElement | null {
+    throw new Error('View _getGUInode is not supported yet');
+    // var node = this.__getGUInode (config), compName, doc, doc_elem;
+    // if (node) { return node; }
 
-    var _template = (config.template)?config.template:this.template;
-    if (_template)
-    {
-      var template = new Template (_template);
-      var node = template.__extend_component (this);
-      vs_utils.free (template);
-      return node;
-    }
+    // var _template = (config.template)?config.template:this.template;
+    // if (_template)
+    // {
+    //   var template = new Template (_template);
+    //   var node = template.__extend_component (this);
+    //   vs_utils.free (template);
+    //   return node;
+    // }
 
-    // 4) no node exists, generate a warning a create a div node.
-    if (this.html_template)
-    {
-      node = Template.parseHTML (this.html_template);
-      if (node) return node;
-    }
-    if (vs_utils.isFunction (this.constructor))
-    { compName = this.constructor.name; }
-    else if (vs_utils.isString (this.constructor))
-    { compName = this.constructor; }
-    else
-    { compName = View; }
+    // // 4) no node exists, generate a warning a create a div node.
+    // if (this.html_template)
+    // {
+    //   node = Template.parseHTML (this.html_template);
+    //   if (node) return node;
+    // }
+    // if (vs_utils.isFunction (this.constructor))
+    // { compName = this.constructor.name; }
+    // else if (vs_utils.isString (this.constructor))
+    // { compName = this.constructor; }
+    // else
+    // { compName = View; }
 
-    console.warn ("Impossible to instance view of component '" + compName + ", id [" + config.id +
-      "]. A default one is created");
-    node = document.createElement ('div');
+    // console.warn ("Impossible to instance view of component '" + compName + ", id [" + config.id +
+    //   "]. A default one is created");
+    // node = document.createElement ('div');
 
-    return node;
-  },
+    // return node;
+  }
 
   /**
    * @protected
    * @function
    */
-  __getGUInode : function (config)
-  {
-    // 1) the node is passed within config object
-    if (config.node)// && config.node instanceof HTMLElement)
-    {
-      return config.node;
-    }
+  __getGUInode(config: ViewConfig): HTMLElement | null {
+    throw new Error('View __getGUInode is not supported yet');
 
-    var node = null, node_ref, root_id, root_node, obj, regexp_result;
-    // find a direct reference
-    if (config.node_id)
-    {
-      node = document.getElementById (config.node_id);
-      if (node) { return node; }
-    }
+    // // 1) the node is passed within config object
+    // if (config.node)// && config.node instanceof HTMLElement)
+    // {
+    //   return config.node;
+    // }
 
-    // 2) find a template node in a view
-    node_ref = config.node_ref;
-    if (node_ref)
-    {
-      regexp_result = View._ref_template_reg.exec (node_ref);
-      // node ref with the new syntax : ref = root_id'#'node_ref
-      if (regexp_result && regexp_result.length == 3)
-      {
-        root_id = regexp_result [1];
-        node_ref = regexp_result [2];
-      }
-      // old syntax
-      else root_id = config.root_ref;
+    // var node = null, node_ref, root_id, root_node, obj, regexp_result;
+    // // find a direct reference
+    // if (config.node_id)
+    // {
+    //   node = document.getElementById (config.node_id);
+    //   if (node) { return node; }
+    // }
 
-      if (node_ref && root_id)
-      {
-        root_node = null;
-        obj = vs_core.VSObject._obs [root_id];
+    // // 2) find a template node in a view
+    // node_ref = config.node_ref;
+    // if (node_ref)
+    // {
+    //   regexp_result = View.refTemplatereg.exec (node_ref);
+    //   // node ref with the new syntax : ref = root_id'#'node_ref
+    //   if (regexp_result && regexp_result.length == 3)
+    //   {
+    //     root_id = regexp_result [1];
+    //     node_ref = regexp_result [2];
+    //   }
+    //   // old syntax
+    //   else root_id = config.root_ref;
 
-        if (obj && obj.view) { root_node = obj.view; }
-        else
-        {
-          root_node = document.getElementById (this.id);
-        }
-        if (root_node)
-        {
-          node = _findNodeRef (root_node, node_ref);
-        }
+    //   if (node_ref && root_id)
+    //   {
+    //     root_node = null;
+    //     obj = vs_core.VSObject._obs [root_id];
 
-        if (node) { return node; }
-      }
-    }
+    //     if (obj && obj.view) { root_node = obj.view; }
+    //     else
+    //     {
+    //       root_node = document.getElementById (this.id);
+    //     }
+    //     if (root_node)
+    //     {
+    //       node = _findNodeRef (root_node, node_ref);
+    //     }
 
-    // 3) find a template node
-    if (config.template_ref)
-    {
-      node = this._getTemplateNode (config.template_ref);
-      if (node) { return node; }
-    }
+    //     if (node) { return node; }
+    //   }
+    // }
 
-    // last case : find a direct reference with component id
-    if (config.id)
-    {
-      node = document.getElementById (config.id);
-      if (node) { return node; }
-    }
+    // // 3) find a template node
+    // if (config.template_ref)
+    // {
+    //   node = this._getTemplateNode (config.template_ref);
+    //   if (node) { return node; }
+    // }
 
-    return undefined;
-  },
+    // // last case : find a direct reference with component id
+    // if (config.id)
+    // {
+    //   node = document.getElementById (config.id);
+    //   if (node) { return node; }
+    // }
+
+    // return undefined;
+  }
 
   /**
    * @private
    * @function
    */
-  _getTemplateNode : function (ref)
+  _getTemplateNode(ref: string): Node | undefined
   {
-    var node = null;
-    
+    var node: Element | null = null;
+
     if (!_template_nodes) {
       _template_nodes = document.querySelector (".application_templates");
-      if (_template_nodes) {
+      if (_template_nodes && _template_nodes.parentElement) {
         _template_nodes.parentElement.removeChild (_template_nodes);
       }
     }
     if (_template_nodes) {
-      var node = _template_nodes.querySelector ("." + ref);
-    }   
-      
+      node = _template_nodes.querySelector ("." + ref);
+    }
+
     if (node) { return document.importNode (node, true); }
-  },
+  }
 
   /**
    * @protected
    * @function
    */
-  initComponent : function ()
+  initComponent(): void
   {
-    vs_core.EventSource.prototype.initComponent.call (this);
+    super.initComponent();
 
     this._holes = {};
     this.__children = {};
@@ -817,23 +793,25 @@ View.prototype = {
     this.view.setAttribute ('x-hag-comp', this.id);
 
     this._parse_view (this.view);
-  },
+  }
 
   /**
    * @protected
    * @function
    */
-  componentDidInitialize : function ()
+  componentDidInitialize(): void
   {
-    vs_core.EventSource.prototype.componentDidInitialize.call (this);
-    if (this._magnet) this.view.style.setProperty ('position', 'absolute', null);
+    super.componentDidInitialize();
+    if (this._magnet) {
+      this.view?.style.setProperty ('position', 'absolute');
+    }
 
     if (this._magnet === View.MAGNET_CENTER)
     {
       this._updateSizeAndPos ();
       this._applyTransformation ();
     }
-  },
+  }
 
   /**
    * Notifies that the component's view was added to the DOM.<br/>
@@ -844,31 +822,31 @@ View.prototype = {
    * @name vs.ui.View#viewDidAdd
    * @function
    */
-  viewDidAdd : function ()
+  viewDidAdd(): void
   {
-    var view = this.view, self = this;
+    const view = this.view;
     if (!view || !view.parentElement) return;
 
     // update the real element size and position
-    vs_core.scheduleAction (function () {
-      self._size [0] = view.offsetWidth;
-      self._size [1] = view.offsetHeight;
-      self._pos [0] = view.offsetLeft;
-      self._pos [1] = view.offsetTop;
+    vs_core.scheduleAction (()=> {
+      this._size[0] = view.offsetWidth;
+      this._size [1] = view.offsetHeight;
+      this._pos[0] = view.offsetLeft;
+      this._pos [1] = view.offsetTop;
     });
-  },
+  }
 
   /**
    * @protected
    * @function
    */
-  notify : function (event) {},
+  notify(event: any): void {}
 
   /**
    * @protected
    * @function
    */
-  _parse_view : function (node)
+  _parse_view(node: Element | null): void
   {
     if (!node || node.nodeType === 3) { return; }
 
@@ -890,7 +868,7 @@ View.prototype = {
       this._parse_view (child);
       child = child.nextElementSibling;
     }
-  },
+  }
 
   /**
    *  Instantiate, init and add the specified child component to this component.
@@ -910,7 +888,7 @@ View.prototype = {
    * @param {String} extension The hole into the vs.ui.View will be insert.
    * @return {vs_core.VSObject} the created component
    */
-  createAndAddComponent : function (comp_name, config, extension)
+  createAndAddComponent(comp_name: string, config?: any, extension?: string): any
   {
     var comp_class = window [comp_name];
     if (!comp_class) {
@@ -1020,7 +998,7 @@ View.prototype = {
     obj.refresh ();
 
     return obj;
-  },
+  }
 
   /**
    *  Return true if the set component is a child o the current component
@@ -1031,7 +1009,7 @@ View.prototype = {
    * @param {vs_core.EventSource} child The component to be removed.
    * @return {boolean}
    */
-  isChild : function (child)
+  isChild(child: any): boolean
   {
     if (!child) { return false; }
 
@@ -1049,7 +1027,7 @@ View.prototype = {
     }
 
     return false;
-  },
+  }
 
   /**
    *  Add the specified child component to this component.
@@ -1072,7 +1050,7 @@ View.prototype = {
    * @param {String} extension [optional] The hole into a vs.ui.View will be
    *       insert.
    */
-  add : function (child, extension, view /** hack view */)
+  add(child: any, extension?: string, view?: HTMLElement): void
   {
     if (!child) { return; }
     if (!view) { view = child.view; }
@@ -1115,7 +1093,7 @@ View.prototype = {
 
       if (child.viewDidAdd) child.viewDidAdd ();
     }
-  },
+  }
 
   /**
    *  Remove the specified child component from this component.
@@ -1128,7 +1106,7 @@ View.prototype = {
    *
    * @param {vs_core.EventSource} child The component to be removed.
    */
-  remove : function (child)
+  remove(child: any): void
   {
     if (!child) { return; }
 
@@ -1164,7 +1142,7 @@ View.prototype = {
         }
       }
     }
-  },
+  }
 
   /**
    *  Remove all children components from this component and free them.
@@ -1179,7 +1157,7 @@ View.prototype = {
    *   removed
    * @return {Array} list of removed child if not should_free
    */
-  removeAllChildren : function (should_free, extension)
+  removeAllChildren(should_free?: boolean, extension?: string): any[] | undefined
   {
     var key, self = this, children = [];
 
@@ -1195,7 +1173,7 @@ View.prototype = {
       {
         while (a.length)
         {
-          child = a [0];
+          child = a[0];
           self.remove (child);
           if (should_free) vs_utils.free (child);
           else children.push (child);
@@ -1224,18 +1202,18 @@ View.prototype = {
     }
     
     return (should_free)?undefined:children;
-  },
+  }
 
   /**
    * @protected
    * @function
    */
-  findNodeRef : function (ref)
+  findNodeRef(ref: string): Element | false
   {
     if (!this.view) { return; }
 
     return _findNodeRef (this.view, ref);
-  },
+  }
 
 /********************************************************************
                   GUI Utilities
@@ -1266,65 +1244,44 @@ View.prototype = {
    * @param {boolean} delay if true the callback 'func' will be call within
    *        an other "simili thread".
    */
-  bind : function (spec, obj, func, delay)
+  bind(spec: PointerEventType | string, obj: any, func?: string | Function, delay?: boolean): any
   {
-    if (spec === 'POINTER_START' || spec === 'POINTER_END' ||
-        spec === 'POINTER_MOVE' || spec === POINTER_START ||
-        spec === POINTER_END || spec === POINTER_MOVE)
-    {
+    if (isPointerEventType(spec)) {
       if (!this.view) { return; }
 
-      var func_ptr, self = this, handler;
       if (!func) { func = 'notify'; }
-      if (vs_utils.isFunction (func)) { func_ptr = func; }
-      else if (vs_utils.isString (func) &&
-               vs_utils.isFunction (obj [func]))
-      {
-        func_ptr = obj [func];
-      }
-      else
-      {
-        console.error ('Invalid bind arguments.');
-        return;
-      }
+      const func_ptr = vs_utils.isFunction (func) ? func : obj [func];
 
       if (!func_ptr)
       {
-        console.warn ('Invalid bind arguments. Unknown func: ' + func);
-        return;
+        throw new Error('Invalid bind arguments. Unknown func: ' + func);
       }
 
-      var self = this;
-      handler = function (event)
-      {
-        if (vs_core.EVENT_SUPPORT_TOUCH && event.changedTouches &&
-            event.changedTouches.length > 1) { return; }
+      const handler = (event: Event) => {
+        if (vs_core.EVENT_SUPPORT_TOUCH && (event as any).changedTouches &&
+            (event as any).changedTouches.length > 1) { return; }
 
 //        event.stopPropagation ();
 //        event.preventDefault ();
 
-        event.src = self;
+        event.src = this;
         if (vs_core.EVENT_SUPPORT_TOUCH && event.changedTouches)
         {
           event.pageX = event.changedTouches[0].pageX;
           event.pageY = event.changedTouches[0].pageY;
-          var rec = vs_utils.getElementAbsolutePosition (self.view);
+          var rec = vs_ui_utils.getElementAbsolutePosition (this.view);
           event.offsetX = event.changedTouches[0].pageX - rec.x;
           event.offsetY = event.changedTouches[0].pageY - rec.y;
         }
         View._propagate_pointer_event (obj, func_ptr, event);
       };
 
-      if (spec === 'POINTER_START') { spec = POINTER_START; }
-      if (spec === 'POINTER_MOVE') { spec = POINTER_MOVE; }
-      if (spec === 'POINTER_END') { spec = POINTER_END; }
-
       this._pointerevent_handlers [obj.id + spec] = handler;
 
       addPointerListener (this.view, spec, handler);
     }
-    return vs_core.EventSource.prototype.bind.call (this, spec, obj, func, delay);
-  },
+    return super.bind( spec, obj, func, delay);
+  }
 
   /**
    *  The event unbind method
@@ -1337,19 +1294,17 @@ View.prototype = {
    * @param {string} spec the event specification [mandatory]
    * @param {vs_core.VSObject} obj the object you want unbind [mandatory]
    */
-  unbind : function (spec, obj)
+  unbind(spec: string, obj: any): void
   {
     if (!spec || !obj) { return; }
-    if (spec === POINTER_START || spec === POINTER_END ||
-        spec === POINTER_MOVE)
-    {
+    if (isPointerEventType(spec)) {
       var handler = this._pointerevent_handlers [obj.id + spec];
       if (!handler || !this.view) { return; }
 
-      removePointerListener (this.view, POINTER_END, handler);
+      removePointerListener (this.view, spec, handler);
     }
-    vs_core.EventSource.prototype.unbind.call (this, spec, obj);
-  },
+    super.unbind( spec, obj);
+  }
 
 /********************************************************************
                   GUI Utilities
@@ -1359,40 +1314,44 @@ View.prototype = {
    * @protected
    * @function
    */
-  _setMagnet : function (code)
+  _setMagnet(code: number): void
   {
     this._magnet = code;
+    if (!this.view) { return; }
+
     if (this._magnet)
-    { this.view.style.setProperty ('position', 'absolute', null); }
+    { this.view.style.setProperty ('position', 'absolute'); }
     else
     { this.view.style.removeProperty ('position'); }
 
     this._updateSizeAndPos ();
     this._applyTransformation ();
-  },
+  }
 
   /**
    * @protected
    * @function
    * This function cost a lot!
    */
-  _updateSizeAndPos : function ()
+  _updateSizeAndPos(): void
   {
-    var
-      x = this._pos [0], y = this._pos [1],
-      w = this._size [0], h = this._size [1],
-      width, height, pWidth = 0, pHeight = 0,
-      left = 'auto', top = 'auto', right = 'auto', bottom = 'auto',
-      aH = this._autosizing [0], aV = this._autosizing [1],
-      view = this.view, parentElement, style;
+    const x = this._pos[0], w = this._size[0];
+    let y = this._pos [1], h = this._size [1];
+
+    let width: string, height: string, pWidth = 0, pHeight = 0,
+      left = 'auto', top = 'auto', right = 'auto', bottom = 'auto';
+
+    const aH = this._autosizing[0], aV = this._autosizing [1],
+      view = this.view;
+      
+    let parentElement: HTMLElement | null;
 
     if (!view) { return; }
 //     if (w < 0) { w = 0; }
 //     if (h < 0) { h = 0; }
 
     parentElement = view.parentElement;
-    if (parentElement)
-    {
+    if (parentElement) {
       pWidth = parentElement.offsetWidth;
       pHeight = parentElement.offsetHeight;
     }
@@ -1403,24 +1362,19 @@ View.prototype = {
     if (w < 0) { width = ''; }
     else if (aH === 5 || aH === 7) { width = 'auto'; }
     else if (aH === 4 || aH === 1) { width = w + 'px'; }
-    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0)
-    {
-      if (pWidth)
-      {
+    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0) {
+      if (pWidth) {
         width = (w / pWidth * 100) + '%';
       }
       else { width = w + 'px'; }
     }
-
     else { width = '100%'; }
 
     if (h < 0) { height = ''; }
     else if (aV === 5 || aV === 7) { height = 'auto'; }
     else if (aV === 4 || aV === 1) { height = h + 'px'; }
-    else if (aV === 2 || aV === 3 || aV === 6 || aV === 0)
-    {
-      if (pHeight)
-      {
+    else if (aV === 2 || aV === 3 || aV === 6 || aV === 0) {
+      if (pHeight) {
         height = (h / pHeight * 100) + '%';
       }
       else { height = h + 'px'; }
@@ -1434,9 +1388,8 @@ View.prototype = {
 
     if ((w >=0) && (aH === 1 || aH === 3 || aH === 5 || aH === 7))
     {
-      right = pWidth - (x + w);
-      if (right < 0) right = 0;
-      right += 'px';
+      const r = pWidth - (x + w);
+      right = (r >= 0) ? r + 'px' : '0';
     }
 
     if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
@@ -1446,9 +1399,8 @@ View.prototype = {
 
     if ((h >= 0) && (aV === 1 || aV === 3 || aV === 5 || aV === 7))
     {
-      bottom = pHeight - (y + h);
-      if (bottom < 0) bottom = 0;
-      bottom += 'px';
+      const b = pHeight - (y + h);
+      bottom = (b >= 0) ? b + 'px' : '0';
     }
 
     if (this._magnet === View.MAGNET_BOTTOM) { top = 'auto'; bottom = '0px'; }
@@ -1459,14 +1411,13 @@ View.prototype = {
       left = '50%'; right = 'auto';
     }
 
-    style = view.style;
-    style.left = left;
-    style.right = right;
-    style.top = top;
-    style.bottom = bottom;
-    style.width = width;
-    style.height = height;
-  },
+    view.style.left = left;
+    view.style.right = right;
+    view.style.top = top;
+    view.style.bottom = bottom;
+    view.style.width = width;
+    view.style.height = height;
+  }
 
 /********************************************************************
  CSS manipulation
@@ -1486,17 +1437,16 @@ View.prototype = {
    * @function
    *
    * @param {String} property the property name
-   * @return {String} value the property value or null if
+   * @return {String} value the property value or undefined
    */
-  getStyle : function (property)
-  {
+  getStyle(property: string): string | number | undefined {
     if (!this.view) { return undefined; }
-    var css = this.view.style, value, _view;
-    if (css) { value = css [property]; }
+    const css = this.view.style
+    const value = css.getPropertyValue(property);
 
     if (property === 'opacity') { return value ? parseFloat (value) : 1.0; }
-    return value === 'auto' ? null : value;
-  },
+    return value === 'auto' ? undefined : value;
+  }
 
   /**
    *  Returns the given CSS property computed value the vs.ui.View view.
@@ -1514,11 +1464,13 @@ View.prototype = {
    * @param {String} property the property name
    * @return {String} value the property value or null if
    */
-  getComputedStyle : function (property)
-  {
-    var css = this._getComputedStyle (this.view);
-    return value = css ? css [property] : null;
-  },
+  getComputedStyle(property: string): string | number | undefined {
+    var css = this._getComputedStyle(this.view);
+    const value = css?.getPropertyValue(property);
+
+    if (property === 'opacity') { return value ? parseFloat (value) : 1.0; }
+    return value === 'auto' ? undefined : value;
+  }
 
   /**
    * @private
@@ -1526,17 +1478,15 @@ View.prototype = {
    * @parent {DivHTMLElement} elem the element to get style
    * @return the computed CCS if it exists
    */
-  _getComputedStyle : function (elem)
-  {
-    if (!elem) { elem = this.view; }
-    if (!elem) { return undefined; }
+  private _getComputedStyle(elem?: HTMLElement | null): CSSStyleDeclaration | undefined {
+    if (!this.view) { return undefined; }
 
-    var doc = elem.ownerDocument;
+    var doc = this.view.ownerDocument;
     if (!doc || !doc.defaultView) { doc = document; }
     if (!doc || !doc.defaultView) { return undefined;}
 
-    return doc.defaultView.getComputedStyle (elem, null);
-  },
+    return doc.defaultView.getComputedStyle(this.view, null);
+  }
 
   /**
    *  Modifies vs.ui.View view CSS style property.
@@ -1556,8 +1506,7 @@ View.prototype = {
    * @param {String} property the property name
    * @param {String} value the property value
    */
-  setStyle : function (property, value)
-  {
+  setStyle(property: string, value?: string | number): void {
     if (!property) { return; }
     if (!this.view || !this.view.style ||
         !this.view.style.removeProperty || !this.view.style.setProperty)
@@ -1568,9 +1517,9 @@ View.prototype = {
     else
     {
       if (vs_utils.isNumber (value)) value = '' + value; // IE need string
-      this.view.style.setProperty (property, value, null);
+      this.view.style.setProperty (property, value);
     }
-  },
+  }
 
   /**
    *  Modifies vs.ui.View view CSS style properties.Styles are passed as a hash
@@ -1585,7 +1534,7 @@ View.prototype = {
    *
    *  @example
    *  myObject.setStyles ({
-   *    left: '0px', top: '0px', bottom: 'auto', 
+   *    left: '0px', top: '0px', bottom: 'auto',
    *    width: '100%', height: '50px'
    *  });
    *
@@ -1594,14 +1543,13 @@ View.prototype = {
    *
    * @param {Object} style The style to modify
    */
-  setStyles : function (style)
-  {
+  setStyles(style: Record<string, number | string | null | undefined>): void {
     if (!style) { return; }
     if (!this.view || !this.view.style)
     { return; }
 
-    vs_utils.setElementStyle (this.view, style);
-  },
+    vs_ui_utils.setElementStyle (this.view, style);
+  }
 
   /**
    *  Add new CSS rules related to this component.
@@ -1609,7 +1557,7 @@ View.prototype = {
    *  @example
    *  myObject.addCssRules ('.classname1', ['color: red', 'margin: 0px']);
    *  <=> to
-   *  vs_utilsaddCssRules ('#' + myObject.id + ' .classname1', ['color: red', 'margin: 0px']);
+   *  vs_ui_utils.addCssRules ('#' + myObject.id + ' .classname1', ['color: red', 'margin: 0px']);
    *
    * @name vs.ui.View#addCssRules
    * @function
@@ -1617,10 +1565,9 @@ View.prototype = {
    * @param {String} selector CSS Selector
    * @param {Array} rules the array of rules
    */
-  addCssRules : function (selector, rules)
-  {
-    vs_utils.addCssRules ('#' + this._id + ' ' + selector, rules);
-  },
+  addCssRules(selector: string, rules: string[]): void {
+    vs_ui_utils.addCssRules ('#' + this._id + ' ' + selector, rules);
+  }
 
   /**
    *  Add new CSS rule related to this component.
@@ -1628,7 +1575,7 @@ View.prototype = {
    *  @example
    *  myObject.addCssRule ('.classname1', 'color: red');
    *  <=> to
-   *  vs_utilsaddCssRule ('#' + myObject.id + ' .classname1', 'color: red');
+   *  vs_ui_utils.addCssRule ('#' + myObject.id + ' .classname1', 'color: red');
    *
    * @name vs.ui.View#addCssRule
    * @function
@@ -1637,10 +1584,9 @@ View.prototype = {
    * @param {String} rule the rule using the following format:
    *   "prop_name: value"
    */
-  addCssRule : function (selector, rule)
-  {
-    vs_utils.addCssRule ('#' + this._id + ' ' + selector, rule);
-  },
+  addCssRule(selector: string, rule: string): void {
+    vs_ui_utils.addCssRule ('#' + this._id + ' ' + selector, rule);
+  }
 
 /********************************************************************
 
@@ -1659,7 +1605,7 @@ View.prototype = {
    *
    * @param {Function} clb Optional function to call after the redraw
    */
-  redraw : function (clb)
+  redraw(clb?: Function): void
   {
     if (!this.view) { return; }
     var n = this.view, display = n.style.display, self = this;
@@ -1678,7 +1624,7 @@ View.prototype = {
         if (clb && vs_utils.isFunction (clb)) clb.call (self);
       });
     });
-  },
+  }
 
   /**
    *  Displays the GUI Object
@@ -1687,18 +1633,16 @@ View.prototype = {
    * @param {Function} clb a function to call a the end of show process
    * @function
    */
-  show : function (clb)
+  show(clb?: Function): void
   {
     if (!this.view) { return; }
     if (this._visible) { return; }
     if (!vs_utils.isFunction (clb)) clb = undefined; 
 
-    if (this.__view_display)
-    {
+    if (this.__view_display) {
       this.view.style.display = this.__view_display;
     }
-    else
-    {
+    else {
       this.view.style.removeProperty ('display');
     }
     this.__view_display = undefined;
@@ -1706,17 +1650,15 @@ View.prototype = {
     this.__is_hidding = false;
     this.__is_showing = true;
 
-    if (this._show_animation)
-    {
+    if (this._show_animation) {
       this._show_animation.process (this, function () {
         this._show_object (clb);
       }, this);
     }
-    else
-    {
+    else {
       this._show_object (clb);
     }
-  },
+  }
 
   /**
    *  Show the GUI Object
@@ -1725,7 +1667,7 @@ View.prototype = {
    * @param {Function} clb a function to call a the end of show process
    * @function
    */
-  _show_object : function (clb)
+  _show_object(clb?: Function): void
   {
     if (!this.view) { return; }
     this.__visibility_anim = undefined;
@@ -1754,7 +1696,7 @@ View.prototype = {
         }
       }
     }
-  },
+  }
 
   /**
    *  Set the animation used when the view will be shown.
@@ -1787,14 +1729,11 @@ View.prototype = {
    * @return {String} return the identifier of the animation process. You can
    *       use it to stop the animation.
    */
-  setShowAnimation:function (animations, options, clb)
-  {
-    if (typeof animations === "undefined" || animations === null)
-    {
+  setShowAnimation(animations?: any[] | Animation | null, options?: AnimationOptions, clb?: Function): void {
+    if (typeof animations === "undefined" || animations === null) {
       this._show_animation = null;
     }
-    else
-    {
+    else {
       if (animations instanceof Animation)
       {
         this._show_animation = animations.clone ();
@@ -1811,21 +1750,26 @@ View.prototype = {
       }
       if (options)
       {
-        if (options.duration)
-        { this._show_animation.duration = options.duration; }
-        if (options.timing)
-        { this._show_animation.timing = options.timing; }
-        if (options.origin)
-        { this._show_animation.origin = options.origin; }
-        if (options.iterationCount)
-        { this._show_animation.iterationCount = options.iterationCount; }
-        if (options.delay)
-        { this._show_animation.delay = options.delay; }
+        if (options.duration) {
+          this._show_animation.duration = options.duration;
+        }
+        if (options.timing) {
+          this._show_animation.timing = options.timing;
+        }
+        if (options.origin) {
+          this._show_animation.origin = options.origin;
+        }
+        if (options.iterationCount) {
+          this._show_animation.iterationCount = options.iterationCount;
+        }
+        if (options.delay) {
+          this._show_animation.delay = options.delay;
+        }
       }
     }
     if (vs_utils.isFunction (clb)) { this.__show_clb = clb; }
     else { this.__show_clb = clb; }
-  },
+  }
 
   /**
    *  Hides the GUI Object
@@ -1834,7 +1778,7 @@ View.prototype = {
    * @param {Function} clb a function to call a the end of show process
    * @function
    */
-  hide : function (clb)
+  hide(clb?: Function): void
   {
     if (!this.view) { return; }
     if (!this._visible && !this.__is_showing) { return; }
@@ -1847,7 +1791,7 @@ View.prototype = {
     
     if (this._hide_animation)
     {
-      this._hide_animation.process (this, function () {
+      this._hide_animation.process (this, () => {
         this._hide_object (clb);
       }, this);
     }
@@ -1855,7 +1799,7 @@ View.prototype = {
     {
       this._hide_object (clb);
     }
-  },
+  }
 
   /**
    *  Hides the GUI Object
@@ -1864,7 +1808,7 @@ View.prototype = {
    * @function
    * @param {Function} clb a function to call a the end of show process
    */
-  _hide_object: function (clb)
+  _hide_object(clb?: Function): void
   {
     if (!this.view || this._visible) { return; }
     this.__visibility_anim = undefined;
@@ -1901,7 +1845,7 @@ View.prototype = {
       }
     }
     this.propertyChange ();
-  },
+  }
 
   /**
    *  Set the animation used when the view will be hidden.
@@ -1934,7 +1878,7 @@ View.prototype = {
    * @return {String} return the identifier of the animation process. You can
    *       use it to stop the animation.
    */
-  setHideAnimation: function (animations, options, clb)
+  setHideAnimation(animations?: any[] | Animation | null, options?: AnimationOptions, clb?: Function): void
   {
     if (typeof animations === "undefined" || animations === null)
     {
@@ -1972,7 +1916,7 @@ View.prototype = {
     }
     if (vs_utils.isFunction (clb)) { this.__hide_clb = clb; }
     else { this.__hide_clb = clb; }
-  },
+  }
 
 /********************************************************************
                   state management
@@ -1990,12 +1934,12 @@ View.prototype = {
    *
    * @param {Boolean} visibility The visibility can be 'true' or 'false'.
    */
-  setVisible: function (visibility)
+  setVisible(visibility: boolean): void
   {
     if (!this.view) { return; }
 
-    vs_utils.setElementVisibility (this.view, visibility);
-  },
+    vs_ui_utils.setElementVisibility (this.view, visibility);
+  }
 
 /********************************************************************
 
@@ -2014,12 +1958,12 @@ View.prototype = {
    * @param {String} className the className to check
    * @return {Boolean} true if the view has the given className
    */
-  hasClassName: function (className)
+  hasClassName(className: string): boolean
   {
     if (!this.view) { return false; }
 
-    return vs_utils.hasClassName (this.view, className);
-  },
+    return vs_ui_utils.hasClassName (this.view, className);
+  }
 
   /**
    *  Adds a CSS classname to vs.ui.View view.
@@ -2034,14 +1978,9 @@ View.prototype = {
    *
    * @param {String} className the className to add
    */
-  addClassName: function ()
-  {
-    if (!this.view) { return; }
-
-    var args = Array.prototype.slice.call (arguments);
-    args.unshift (this.view);
-    vs_utils.addClassName.apply (this.view, args);
-  },
+  addClassName(...classNames: string[]): void {
+    this.view?.classList.add(...classNames);
+  }
 
   /**
    *  Removes CSS className
@@ -2056,14 +1995,9 @@ View.prototype = {
    *
    * @param {String} className the className to add
    */
-  removeClassName: function (className)
-  {
-    if (!this.view) { return; }
-
-    var args = Array.prototype.slice.call (arguments);
-    args.unshift (this.view);
-    vs_utils.removeClassName.apply (this.view, args);
-  },
+  removeClassName(...classNames: string[]): void {
+    this.view?.classList.remove(...classNames);
+  }
 
   /**
    *  Toggle CSS className
@@ -2077,12 +2011,9 @@ View.prototype = {
    *
    * @param {String} className the className to add/remove
    */
-  toggleClassName: function (className)
-  {
-    if (!this.view || !vs_utils.isString (className)) { return; }
-
-    vs_utils.toggleClassName (this.view, className);
-  },
+  toggleClassName(className: string): void{
+    this.view?.classList.toggle(className);
+  }
 
 /********************************************************************
 
@@ -2092,19 +2023,19 @@ View.prototype = {
    * @protected
    * @function
    */
-  _propagateToParent : function (e)
+  _propagateToParent(e: any): void
   {
     if (this._bubbling && this.__parent && this.__parent.handleEvent)
     {
       this.__parent.handleEvent (e);
     }
-  },
+  }
 
   /**
    * @name vs.ui.View#notifyToParent
    * @function
    */
-  notifyToParent : function (e)
+  notifyToParent(e: any): void
   {
     if (!this.__parent) { return; }
     if (this.__parent.handleEvent)
@@ -2115,14 +2046,14 @@ View.prototype = {
     {
       this.__parent.notify (e);
     }
-  },
+  }
 
   /**
    * Did enable delegate
    * @name vs.ui.View#_didEnable
    * @protected
    */
-   _didEnable : function () {},
+   _didEnable(): void {}
 
   /*****************************************************************
    *                Animation methods
@@ -2159,7 +2090,7 @@ View.prototype = {
    * @return {String} return the identifier of the animation process. You can
    *       use it to stop the animation.
    */
-  animate: function (animations, options, clb)
+  animate(animations: any[] | Animation, options?: AnimationOptions, clb?: Function): string | undefined
   {
     var anim;
     if (animations instanceof Animation)
@@ -2186,7 +2117,7 @@ View.prototype = {
       if (options.delay) { anim.delay = options.delay; }
     }
     return anim.process (this, clb, this);
-  },
+  }
 
   /*****************************************************************
    *                Transformation methods
@@ -2202,7 +2133,7 @@ View.prototype = {
    * @param y {int} translation over the y axis
    * @param z {int} translation over the x axis
    */
-  translate: function (x, y, z)
+  translate(x: number, y: number, z?: number): void
   {
     if (!vs_utils.isNumber (x) || !vs_utils.isNumber (y)) { return };
     if (!vs_utils.isNumber (z)) z = 0;
@@ -2211,7 +2142,7 @@ View.prototype = {
     this._translation[1] = y;
     this._translation[2] = z;
     this._applyTransformation ();
-  },
+  }
 
   /**
    *  Rotate the view about the horizontal and vertical axes.
@@ -2222,7 +2153,7 @@ View.prototype = {
    *
    * @param r {{float|array}} rotion angle
    */
-  rotate: function (r)
+  rotate(r: number | number[]): void
   {
     if (vs_utils.isNumber (r)) {
       this._rotation[0] = 0;
@@ -2240,7 +2171,7 @@ View.prototype = {
     }
 
     this._applyTransformation ();
-  },
+  }
 
   /**
    *  Scale the view
@@ -2251,7 +2182,7 @@ View.prototype = {
    *
    * @param s {float} scale value
    */
-  scale: function (s)
+  scale(s: number): void
   {
     if (!vs_utils.isNumber (s)) { return };
 
@@ -2262,7 +2193,7 @@ View.prototype = {
     this._scaling = s;
 
     this._applyTransformation ();
-  },
+  }
 
   /**
    *  Define a new transformation matrix, using the transformation origin
@@ -2272,7 +2203,7 @@ View.prototype = {
    *
    * @param {Object} origin is a object reference a x and y position
    */
-  setNewTransformOrigin : function (origin)
+  setNewTransformOrigin(origin: TransformOrigin): void
   {
     if (!origin) { return; }
     if (!vs_utils.isNumber (origin.x) || !vs_utils.isNumber (origin.y)) { return; }
@@ -2281,26 +2212,26 @@ View.prototype = {
     
     this._transform_origin[0] = origin.x;
     this._transform_origin[1] = origin.y;
-  },
+  }
 
   /**
    *  Flush all current transformation, into the transformation stack.
    * @public
    * @function
    */
-  flushTransformStack : function ()
+  flushTransformStack(): void
   {
     // Save current transform into a matrix
     var matrix = new vs_utils.CSSMatrix ();
     matrix = matrix.translate
-      (this._transform_origin [0], this._transform_origin [1], 0);
+      (this._transform_origin[0], this._transform_origin [1], 0);
     matrix = matrix.translate
       (this._translation[0], this._translation[1], this._translation[2]);
     matrix = matrix.rotate
       (this._rotation[0], this._rotation[1], this._rotation[2]);
     matrix = matrix.scale (this._scaling, this._scaling, 1);
     matrix = matrix.translate
-      (-this._transform_origin [0], -this._transform_origin [1], 0);
+      (-this._transform_origin[0], -this._transform_origin [1], 0);
 
     if (!this._transforms_stack) this._transforms_stack = matrix;
     {
@@ -2318,7 +2249,7 @@ View.prototype = {
 
     this._transform_origin[0] = 0;
     this._transform_origin[1] = 0;
-  },
+  }
 
   /**
    * Push a new transformation matrix into your component transformation
@@ -2329,7 +2260,7 @@ View.prototype = {
    *
    * @param {vs.CSSMatrix} matrix the matrix you want to add
    */
-  pushNewTransform : function (matrix)
+  pushNewTransform(matrix: any): void
   {
     if (!matrix) { return; }
 
@@ -2338,18 +2269,18 @@ View.prototype = {
     {
       this._transforms_stack = matrix.multiply (this._transforms_stack);
     }
-  },
+  }
 
   /**
    *  Remove all previous transformations set for this view
    * @public
    * @function
    */
-  clearTransformStack : function ()
+  clearTransformStack(): void
   {
     if (this._transforms_stack) delete (this._transforms_stack);
     this._transforms_stack = undefined;
-  },
+  }
 
   /**
    *  Return the current transform matrix apply to this graphic Object.
@@ -2357,13 +2288,13 @@ View.prototype = {
    * @function
    * @return {vs.CSSMatrix} the current transform matrix
    */
-  getCTM: function ()
+  getCTM(): any
   {
     var matrix, identity = new vs_utils.CSSMatrix ();
 
     // apply current transformation
     matrix = identity.translate (
-      this._transform_origin [0] + this._translation[0],
+      this._transform_origin[0] + this._translation[0],
       this._transform_origin [1] + this._translation[1],
       this._translation[2]
     );
@@ -2372,7 +2303,7 @@ View.prototype = {
     );
     matrix = matrix.scale (this._scaling, this._scaling, 1);
     matrix = matrix.translate (
-      -this._transform_origin [0],
+      -this._transform_origin[0],
       -this._transform_origin [1],
       0
     );
@@ -2380,7 +2311,7 @@ View.prototype = {
     // apply previous transformations and return the matrix
     if (this._transforms_stack) return matrix.multiply (this._transforms_stack);
     else return matrix;
-  },
+  }
 
   /**
    *  Returns the current transform combination matrix generate by the
@@ -2392,7 +2323,7 @@ View.prototype = {
    * @function
    * @return {vs.CSSMatrix} the current transform matrix
    */
-  getParentCTM: function ()
+  getParentCTM(): any
   {
 
     function multiplyParentTCM (parent)
@@ -2404,13 +2335,13 @@ View.prototype = {
     }
 
     return multiplyParentTCM (this.__parent);
-  },
+  }
 
   /**
    * @protected
    * @function
    */
-  _applyTransformation: function ()
+  _applyTransformation(): void
   {
     var
       matrix = this.getCTM (),
@@ -2421,468 +2352,401 @@ View.prototype = {
       transform += " translate(-50%,-50%)";
     }
 
-    vs_utils.setElementTransform (this.view, transform);
+    vs_ui_utils.setElementTransform (this.view, transform);
   }
-};
+
+  /********************************************************************
+                    Property getters and setters
+  ********************************************************************/
+
+  /**
+   * Getter|Setter for size. Gives access to the size of the GUI Object
+   * @name vs.ui.View#size
+   *
+   * @type {Array.<number>}
+   */
+  set size(v: number[])
+  {
+    if (!vs_utils.isArray (v) || v.length !== 2) { return; }
+    if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
+
+    this._size[0] = v[0];
+    this._size [1] = v [1];
+
+    if (!this.view) { return; }
+    this._updateSizeAndPos ();
+  }
+
+  /**
+   * @ignore
+   * @type {Array.<number>}
+   */
+  get size(): number[]
+  {
+    return this._size.slice ();
+  }
+
+  /**
+   * Getter|Setter for position. Gives access to the position of the GUI
+   * Object
+   * @name vs.ui.View#position
+   *
+   * @type Array
+   */
+  set position(v: number[])
+  {
+    if (!v) { return; }
+    if (!vs_utils.isArray (v) || v.length != 2) { return; }
+    if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
+
+    this._pos[0] = v[0];
+    this._pos [1] = v [1];
+
+    if (!this.view) { return; }
+    this._updateSizeAndPos ();
+  }
+
+  /**
+   * @ignore
+   * @type {Array.<number>}
+   */
+  get position(): number[]
+  {
+    return this._pos.slice ();
+  }
+
+  /**
+   * Set size and position behavior according parent size.
+   * @name vs.ui.View#autosizing
+   *
+   * @type Array
+   */
+  set autosizing(v: number[])
+  {
+    if (!v) { return; }
+    if (!vs_utils.isArray (v) || v.length != 2) { return; }
+    if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
+
+    if (this._autosizing[0] === v[0] && this._autosizing [1] === v [1])
+    { return; }
+
+    this._autosizing[0] = v[0];
+    this._autosizing [1] = v [1];
+
+    if (!this.view) { return; }
+    this._updateSizeAndPos ();
+  }
+
+  /**
+   * Set magnet
+   * @name vs.ui.View#magnet
+   *
+   * @type Number
+   */
+  set magnet(code: number)
+  {
+    if (this._magnet === code) return;
+    if (!vs_utils.isNumber (code) || code < 0 || code > 5) return;
+    this._setMagnet (code);
+  }
+
+  /**
+   * Hide or show the object.
+   * obj.visible = true <=> obj.show (), obj.visible = false <=> obj.hide (),
+   * @name vs.ui.View#visible
+   * @type {boolean}
+   */
+  set visible(v: boolean)
+  {
+    if (v)
+    { this.show (); }
+    else
+    { this.hide (); }
+  }
+
+  /**
+   * Return true is the object is visible. False otherwise.
+   * @ignore
+   * @type {boolean}
+   */
+  get visible(): boolean
+  {
+    return this._visible;
+  }
+
+  /**
+   * Allow pointer event bubbling between views (by default set to false)
+   * @name vs.ui.View#bubbling
+   * @type boolean
+   */
+  set bubbling(v: boolean)
+  {
+    if (v) { this._bubbling = true; }
+    else { this._bubbling = false; }
+  }
+
+  /**
+   * Activate or deactivate a view.
+   * @name vs.ui.View#enable
+   * @type {boolean}
+   */
+  set enable(v: boolean)
+  {
+    if (v && !this._enable)
+    {
+      this._enable = true;
+      this.removeClassName ('disabled');
+      this._didEnable ();
+    }
+    else if (!v && this._enable)
+    {
+      this._enable = false;
+      this.addClassName ('disabled');
+      this._didEnable ();
+    }
+  }
+
+  /**
+   * @ignore
+   * @return {boolean}
+   */
+  get enable(): boolean
+  {
+    return this._enable;
+  }
+
+  /**
+   * Change view opacity.
+   * value is include in this range[0, 1]
+   * @name vs.ui.View#opacity
+   * @type {number}
+   */
+  set opacity(v: number)
+  {
+    if (!vs_utils.isNumber (v)) return;
+    if (v < 0 || v > 1) return;
+
+    if (this.view) this.view.style.opacity = v.toString();
+    this._opacity = v;
+  }
+
+  /**
+   * Translation vector [tx, ty, tz]
+   * <=> obj.translate (tx, ty, tz)
+   * @name vs.ui.View#translation
+   * @type {Array}
+   */
+  set translation(v: number[])
+  {
+    if (!vs_utils.isArray (v)) { return };
+
+    this.translate (v[0], v[1], v[2]);
+  }
+
+  /**
+   * @ignore
+   * @type {Array}
+   */
+  get translation(): number[]
+  {
+    return this._translation.slice ();
+  }
+
+  /**
+   * Rotation angle in degre
+   * @name vs.ui.View#rotation
+   * @type {{float|array}}
+   */
+  set rotation(v: number | number[])
+  {
+    this.rotate (v);
+  }
+
+  /**
+   * @ignore
+   * @type {Array}
+   */
+  get rotation(): number[]
+  {
+    return this._rotation.slice ();
+  }
+
+  /**
+   * Scale the view
+   * @name vs.ui.View#scaling
+   * @type {float}
+   */
+  set scaling(v: number)
+  {
+    this.scale (v);
+  }
+
+  /**
+   * @ignore
+   * @type {float}
+   */
+  get scaling(): number
+  {
+    return this._scaling;
+  }
+
+  /**
+   * Set the minimun scale value (default value is 0.5)
+   * @name vs.ui.View#minScale
+   * @type {float}
+   */
+  set minScale(v: number)
+  {
+    if (!vs_utils.isNumber (v)) { return };
+    this._min_scale = v;
+
+    if (this._scaling < this._min_scale) { this.scale (this._min_scale); }
+  }
+
+  /**
+   * @ignore
+   * @type {float}
+   */
+  get minScale(): number
+  {
+    return this._min_scale;
+  }
+
+  /**
+   * Set the maximum scale value (default value is 3)
+   * @name vs.ui.View#maxScale
+   * @type {float}
+   */
+  set maxScale(v: number)
+  {
+    if (!vs_utils.isNumber (v)) { return };
+    this._max_scale = v;
+
+    if (this._scaling > this._max_scale) { this.scale (this._max_scale); }
+  }
+
+  /**
+   * @ignore
+   * @type {float}
+   */
+  get maxScale(): number
+  {
+    return this._max_scale;
+  }
+
+  /**
+   * This property allows you to specify the origin of the 2D transformations.
+   * Values are pourcentage of the view size.
+   * <p>
+   * The property is set by default to [50, 50], which is the center of
+   * the view.
+   * @name vs.ui.View#transformOrigin
+   * @type Array.<number>
+   */
+  set transformOrigin(v: number[])
+  {
+    if (!vs_utils.isArray (v) || v.length !== 2) { return; }
+    if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber (v[1])) { return; }
+
+    this._transform_origin[0] = v[0];
+    this._transform_origin [1] = v [1];
+
+//      var origin_str = this._transform_origin[0] + '% ';
+//      origin_str += this._transform_origin [1] + '%';
+//      this.view.style ['-webkit-transform-origin'] = origin_str;
+  }
+
+  /**
+   * @ignore
+   * @return {Array}
+   */
+  get transformOrigin(): number[]
+  {
+    return this._transform_origin.slice ();
+  }
+
+  /**
+   * Set the Animation when the view is shown
+   * @name vs.ui.View#showAnimmation
+   * @type {vs.fx.Animation}
+   */
+  set showAnimmation(v: any)
+  {
+    this.setShowAnimation (v);
+  }
+
+  /**
+   * Set the Animation when the view is hidden
+   * @name vs.ui.View#hideAnimation
+   * @type {vs.fx.Animation}
+   */
+  set hideAnimation(v: any)
+  {
+    this.setHideAnimation (v);
+  }
+
+  /**
+   * This property allows you to specify a layout for the children
+   * <p>
+   * <ul>
+   *    <li /> vs.ui.View.DEFAULT_LAYOUT
+   *    <li /> vs.ui.View.HORIZONTAL_LAYOUT
+   *    <li /> vs.ui.View.VERTICAL_LAYOUT
+   *    <li /> vs.ui.View.ABSOLUTE_LAYOUT
+   *    <li /> vs.ui.View.FLOW_LAYOUT
+   * </ul>
+   * @name vs.ui.View#layout
+   * @type String
+   */
+  set layout(v: string | null)
+  {
+    if (v !== View.HORIZONTAL_LAYOUT &&
+        v !== View.DEFAULT_LAYOUT &&
+        v !== View.ABSOLUTE_LAYOUT &&
+        v !== View.VERTICAL_LAYOUT &&
+        v !== View.FLOW_LAYOUT &&
+        v !== View.LEGACY_HORIZONTAL_LAYOUT &&
+        v !== View.LEGACY_ABSOLUTE_LAYOUT &&
+        v !== View.LEGACY_VERTICAL_LAYOUT &&
+        v !== View.LEGACY_FLOW_LAYOUT && v)
+    {
+      console.error ("Unsupported layout '" + v + "'!");
+      return;
+    }
+
+    if (this._layout)
+    {
+      this.removeClassName (this._layout);
+    }
+    if (!v || v.indexOf ("_layout") !== -1) this._layout = v;
+    else this._layout = v + "_layout";
+    if (this._layout)
+    {
+      this.addClassName (this._layout);
+    }
+  }
+
+  /**
+   * This property allows to define both the HTML code and the text
+   * @name vs.ui.View#innerHTML
+   * @type String
+   */
+  set innerHTML(v: string)
+  {
+    if (!this.view) return;
+
+    vs_utils.safeInnerHTML (this.view, v);
+  }
+}
+
+applyMixins(View, [vs_core.Container]);
+
+/**
+ * @private
+ */
+var _template_nodes: Element | null = null;
+
+// Apply RecognizerManager mixin
 vs_utils.extend (View.prototype, RecognizerManager);
 vs_utils.extendClass (View, vs_core.EventSource);
 
-/********************************************************************
-                  Define class properties
-********************************************************************/
-
-vs_utils.defineClassProperties (View, {
-
-  'size': {
-    /**
-     * Getter|Setter for size. Gives access to the size of the GUI Object
-     * @name vs.ui.View#size
-     *
-     * @type {Array.<number>}
-     */
-    set : function (v)
-    {
-      if (!vs_utils.isArray (v) || v.length !== 2) { return; }
-      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
-
-      this._size [0] = v [0];
-      this._size [1] = v [1];
-
-      if (!this.view) { return; }
-      this._updateSizeAndPos ();
-    },
-
-    /**
-     * @ignore
-     * @type {Array.<number>}
-     */
-    get : function ()
-    {
-      return this._size.slice ();
-    }
-  },
-
-  'position': {
-    /**
-     * Getter|Setter for position. Gives access to the position of the GUI
-     * Object
-     * @name vs.ui.View#position
-     *
-     * @type Array
-     */
-    set : function (v)
-    {
-      if (!v) { return; }
-      if (!vs_utils.isArray (v) || v.length != 2) { return; }
-      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
-
-      this._pos [0] = v [0];
-      this._pos [1] = v [1];
-
-      if (!this.view) { return; }
-      this._updateSizeAndPos ();
-    },
-
-    /**
-     * @ignore
-     * @type {Array.<number>}
-     */
-    get : function ()
-    {
-      return this._pos.slice ();
-    }
-  },
-
-  'autosizing': {
-
-    /**
-     * Set size and position behavior according parent size.
-     * @name vs.ui.View#autosizing
-     *
-     * @type Array
-     */
-    set : function (v)
-    {
-      if (!v) { return; }
-      if (!vs_utils.isArray (v) || v.length != 2) { return; }
-      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
-
-      if (this._autosizing [0] === v [0] && this._autosizing [1] === v [1])
-      { return; }
-
-      this._autosizing [0] = v [0];
-      this._autosizing [1] = v [1];
-
-      if (!this.view) { return; }
-      this._updateSizeAndPos ();
-    }
-  },
-
-  'magnet': {
-
-    /**
-     * Set magnet
-     * @name vs.ui.View#magnet
-     *
-     * @type Number
-     */
-    set : function (code)
-    {
-      if (this._magnet === code) return;
-      if (!vs_utils.isNumber (code) || code < 0 || code > 5) return;
-      this._setMagnet (code);
-    }
-  },
-
-  'visible': {
-
-    /**
-     * Hide or show the object.
-     * obj.visible = true <=> obj.show (), obj.visible = false <=> obj.hide (),
-     * @name vs.ui.View#visible
-     * @type {boolean}
-     */
-    set : function (v)
-    {
-      if (v)
-      { this.show (); }
-      else
-      { this.hide (); }
-    },
-
-    /**
-     * Return true is the object is visible. False otherwise.
-     * @ignore
-     * @type {boolean}
-     */
-    get : function ()
-    {
-      return this._visible;
-    }
-  },
-
-  'bubbling': {
-
-    /**
-     * Allow pointer event bubbling between views (by default set to false)
-     * @name vs.ui.View#bubbling
-     * @type boolean
-     */
-    set : function (v)
-    {
-      if (v) { this._bubbling = true; }
-      else { this._bubbling = false; }
-    }
-  },
-
-  'enable': {
-
-    /**
-     * Activate or deactivate a view.
-     * @name vs.ui.View#enable
-     * @type {boolean}
-     */
-    set : function (v)
-    {
-      if (v && !this._enable)
-      {
-        this._enable = true;
-        this.removeClassName ('disabled');
-        this._didEnable ();
-      }
-      else if (!v && this._enable)
-      {
-        this._enable = false;
-        this.addClassName ('disabled');
-        this._didEnable ();
-      }
-    },
-
-    /**
-     * @ignore
-     * @return {boolean}
-     */
-    get : function ()
-    {
-      return this._enable;
-    }
-  },
-
-  'opacity': {
-
-    /**
-     * Change view opacity.
-     * value is include in this range [0, 1]
-     * @name vs.ui.View#opacity
-     * @type {number}
-     */
-    set : function (v)
-    {
-      if (!vs_utils.isNumber (v)) return;
-      if (v < 0 || v > 1) return;
-
-      if (this.view) this.view.style.opacity = v;
-      this._opacity = v;
-    }
-  },
-
-  'translation': {
-
-    /**
-     * Translation vector [tx, ty, tz]
-     * <=> obj.translate (tx, ty, tz)
-     * @name vs.ui.View#translation
-     * @type {Array}
-     */
-    set : function (v)
-    {
-      if (!vs_utils.isArray (v)) { return };
-
-      this.translate (v[0], v[1], v[2]);
-    },
-
-    /**
-     * @ignore
-     * @type {Array}
-     */
-    get : function ()
-    {
-      return this._translation.slice ();
-    }
-  },
-
-  'rotation': {
-
-    /**
-     * Rotation angle in degre
-     * @name vs.ui.View#rotation
-     * @type {{float|array}}
-     */
-    set : function (v)
-    {
-      this.rotate (v);
-    },
-
-    /**
-     * @ignore
-     * @type {Array}
-     */
-    get : function ()
-    {
-      return this._rotation.slice;
-    }
-  },
-
-  'scaling': {
-
-    /**
-     * Scale the view
-     * @name vs.ui.View#scaling
-     * @type {float}
-     */
-    set : function (v)
-    {
-      this.scale (v);
-    },
-
-    /**
-     * @ignore
-     * @type {float}
-     */
-    get : function ()
-    {
-      return this._scaling;
-    }
-  },
-
-  'minScale': {
-
-    /**
-     * Set the minimun scale value (default value is 0.5)
-     * @name vs.ui.View#minScale
-     * @type {float}
-     */
-    set : function (v)
-    {
-      if (!vs_utils.isNumber (v)) { return };
-      this._min_scale = v;
-      
-      if (this._scaling < this._min_scale) { this.scale (this._min_scale); }
-    },
-
-    /**
-     * @ignore
-     * @type {float}
-     */
-    get : function ()
-    {
-      return this._min_scale;
-    }
-  },
-
-  'maxScale': {
-
-    /**
-     * Set the maximum scale value (default value is 3)
-     * @name vs.ui.View#maxScale
-     * @type {float}
-     */
-    set : function (v)
-    {
-      if (!vs_utils.isNumber (v)) { return };
-      this._max_scale = v;
-      
-      if (this._scaling > this._max_scale) { this.scale (this._max_scale); }
-    },
-
-    /**
-     * @ignore
-     * @type {float}
-     */
-    get : function ()
-    {
-      return this._max_scale;
-    }
-  },
-
-  'transformOrigin': {
-
-    /**
-     * This property allows you to specify the origin of the 2D transformations.
-     * Values are pourcentage of the view size.
-     * <p>
-     * The property is set by default to [50, 50], which is the center of
-     * the view.
-     * @name vs.ui.View#transformOrigin
-     * @type Array.<number>
-     */
-    set : function (v)
-    {
-      if (!vs_utils.isArray (v) || v.length !== 2) { return; }
-      if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber (v[1])) { return; }
-
-      this._transform_origin [0] = v [0];
-      this._transform_origin [1] = v [1];
-
-//      var origin_str = this._transform_origin [0] + '% ';
-//      origin_str += this._transform_origin [1] + '%';
-//      this.view.style ['-webkit-transform-origin'] = origin_str;
-    },
-
-    /**
-     * @ignore
-     * @return {Array}
-     */
-    get : function ()
-    {
-      return this._transform_origin.slice ();
-    }
-  },
-
-  'showAnimmation': {
-
-    /**
-     * Set the Animation when the view is shown
-     * @name vs.ui.View#showAnimmation
-     * @type {vs.fx.Animation}
-     */
-    set : function (v)
-    {
-      this.setShowAnimation (v);
-    }
-  },
-
-  'hideAnimation': {
-
-    /**
-     * Set the Animation when the view is hidden
-     * @name vs.ui.View#hideAnimation
-     * @type {vs.fx.Animation}
-     */
-    set : function (v)
-    {
-      this.setHideAnimation (v);
-    }
-  },
-
-  'layout': {
-
-    /**
-     * This property allows you to specify a layout for the children
-     * <p>
-     * <ul>
-     *    <li /> vs.ui.View.DEFAULT_LAYOUT
-     *    <li /> vs.ui.View.HORIZONTAL_LAYOUT
-     *    <li /> vs.ui.View.VERTICAL_LAYOUT
-     *    <li /> vs.ui.View.ABSOLUTE_LAYOUT
-     *    <li /> vs.ui.View.FLOW_LAYOUT
-     * </ul>
-     * @name vs.ui.View#layout
-     * @type String
-     */
-    set : function (v)
-    {
-      if (v !== View.HORIZONTAL_LAYOUT &&
-          v !== View.DEFAULT_LAYOUT &&
-          v !== View.ABSOLUTE_LAYOUT &&
-          v !== View.VERTICAL_LAYOUT &&
-          v !== View.FLOW_LAYOUT &&
-          v !== View.LEGACY_HORIZONTAL_LAYOUT &&
-          v !== View.LEGACY_ABSOLUTE_LAYOUT &&
-          v !== View.LEGACY_VERTICAL_LAYOUT &&
-          v !== View.LEGACY_FLOW_LAYOUT && v)
-      {
-        console.error ("Unsupported layout '" + v + "'!");
-        return;
-      }
-
-      if (this._layout)
-      {
-        this.removeClassName (this._layout);
-      }
-      if (!v || v.indexOf ("_layout") !== -1) this._layout = v;
-      else this._layout = v + "_layout";
-      if (this._layout)
-      {
-        this.addClassName (this._layout);
-      }
-    },
-  },
-
-  'innerHTML': {
-
-    /**
-     * This property allows to define both the HTML code and the text
-     * @name vs.ui.View#innerHTML
-     * @type String
-     */
-    set : function (v)
-    {
-      if (!this.view) return;
-
-      vs_utils.safeInnerHTML (this.view, v);
-    },
-  }
-});
-
-View._ref_template_reg = /(\w+)#(\w+)/;
-
-function getDeviceCSSCode ()
-{	
-	var el = document.createElement('div'), val;
-	el.className = 'device_test';
-	document.body.appendChild (el);
-	
-	val = document.defaultView.getComputedStyle (el,null).getPropertyValue("margin-top");
-
-	document.body.removeChild (el);
-
-	return parseInt (val || 0, 10);
-}
-
-/********************************************************************
-                      Export
-*********************************************************************/
-/** @private */
-export default View;
-View.getDeviceCSSCode = getDeviceCSSCode;

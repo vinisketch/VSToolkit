@@ -12,9 +12,7 @@
     "declaration": true,
     "declarationMap": true,
     "incremental": true,
+    "isolatedModules": true
   },
-  "include": ["./core/**/*",
-    "./core/ILogger.ts"
-  ],
   "exclude": ["node_modules"]
 }

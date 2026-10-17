@@ -1,374 +1,374 @@
-// import { free, underscore, isArray, container } from 'vs_utils';
+import { free, underscore, isArray, container } from 'vs_utils';
 
-// import { Event, EventSource, HandlerFunction } from './event';
-// import { DataFlow, DEFAULT_DATAFLOW } from './Dataflow';
-// import { queueProcSyncEvent } from './MainLoop';
-// import Component from './Component';
-// import { ObjectId } from './BaseIdentifiable';
+import { Event, EventSource, HandlerFunction } from './event';
+import { DataFlow, DEFAULT_DATAFLOW } from './Dataflow';
+import { queueProcSyncEvent } from './MainLoop';
+import Component from './Component';
+import { ObjectId } from './BaseIdentifiable';
 
-// export function In<T>(target: any, name: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
-//   return descriptor;
-// }
+export function In<T>(target: any, name: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
+  return descriptor;
+}
 
-// export function InOut<T>(target: any, name: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
-//   return descriptor;
-// }
+export function InOut<T>(target: any, name: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
+  return descriptor;
+}
 
-// export function Out<T>(target: any, name: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
-//   return descriptor;
-// }
+export function Out<T>(target: any, name: string, descriptor: TypedPropertyDescriptor<T>): TypedPropertyDescriptor<T> {
+  return descriptor;
+}
 
-// /**
-//  * The core.Model class
-//  *
-//  * @extends core.Component
-//  * @class
-//  * core.Model is a class that defines the basic Model mechanisms to implement
-//  * a MVC like architecture. If you need to implement a MVC component, you
-//  * should extend this class.<br/><br/> >>>> THIS CODE IS STILL UNDER BETA AND
-//  * THE API MAY CHANGE IN THE FUTURE <<< <p>
-//  * WikiPedia gives this following definition of a model:<br>
-//  * "The model manages the behavior and data of the application, responds to
-//  * requests for information about its state (usually from the view), and
-//  * responds to instructions to change state (usually from the controller)"
-//  * <p>
-//  * The Model class exposes 2 kinds of mechanisms you will need:
-//  * <ul>
-//  *  <li> Change event binding
-//  *  <li> Properties change propagation
-//  * </ul>
-//  *
-//  * <p/>
-//  *
-//  * <p/>
-//  * The fallowing example show a TodoModel class with three properties
-//  * @example
-//  *  class TodoModel extends Model {
-//  *
-//  *  @Out
-//  *  date = new Date ();
-//  *  @InOut
-//  *  done = false;
-//  *  @InOut
-//  *  content = "";
-//  * }
-//  *
-//  * const myModel = new TodoModel ({content:"Something to do"});
-//  * myModel.init ();
-//  *
-//  * @see core.DataStorage
-//  * @author David Thevenin
-//  *
-//  *  @constructor
-//  *  Main constructor
-//  *
-//  * @name core.Model
-//  *
-//  * @param {Object} config the configuration structure
-//  */
-// export class Model extends Component {
-//   private defaultDataflow = container.get(DEFAULT_DATAFLOW);
+/**
+ * The core.Model class
+ *
+ * @extends core.Component
+ * @class
+ * core.Model is a class that defines the basic Model mechanisms to implement
+ * a MVC like architecture. If you need to implement a MVC component, you
+ * should extend this class.<br/><br/> >>>> THIS CODE IS STILL UNDER BETA AND
+ * THE API MAY CHANGE IN THE FUTURE <<< <p>
+ * WikiPedia gives this following definition of a model:<br>
+ * "The model manages the behavior and data of the application, responds to
+ * requests for information about its state (usually from the view), and
+ * responds to instructions to change state (usually from the controller)"
+ * <p>
+ * The Model class exposes 2 kinds of mechanisms you will need:
+ * <ul>
+ *  <li> Change event binding
+ *  <li> Properties change propagation
+ * </ul>
+ *
+ * <p/>
+ *
+ * <p/>
+ * The fallowing example show a TodoModel class with three properties
+ * @example
+ *  class TodoModel extends Model {
+ *
+ *  @Out
+ *  date = new Date ();
+ *  @InOut
+ *  done = false;
+ *  @InOut
+ *  content = "";
+ * }
+ *
+ * const myModel = new TodoModel ({content:"Something to do"});
+ * myModel.init ();
+ *
+ * @see core.DataStorage
+ * @author David Thevenin
+ *
+ *  @constructor
+ *  Main constructor
+ *
+ * @name core.Model
+ *
+ * @param {Object} config the configuration structure
+ */
+export class Model extends Component {
+  private defaultDataflow = container.get(DEFAULT_DATAFLOW);
 
-//   constructor() {
-//     super();
-//   }
+  constructor() {
+    super();
+  }
 
-//   /*****************************************************************
-//    *
-//    ****************************************************************/
+  /*****************************************************************
+   *
+   ****************************************************************/
 
-//    #links = new Set<Component>();
+   #links = new Set<Component>();
 
-//    #shouldPropagateChanges = true;
+   #shouldPropagateChanges = true;
 
-//   // /**
-//   //  * @protected
-//   //  * @type {core.DataStorage}
-//   //  */
-//   //  _sync_service_ = null;
+  // /**
+  //  * @protected
+  //  * @type {core.DataStorage}
+  //  */
+  //  _sync_service_ = null;
 
-//   /*****************************************************************
-//    *
-//    ****************************************************************/
+  /*****************************************************************
+   *
+   ****************************************************************/
 
-//   /**
-//    * The event bind method to listen model changes
-//    * <p/>
-//    * When you want listen modification event generated by this object, you can
-//    * bind your object (the observer) to this object using 'bindChange' method.
-//    * <p/>
-//    *
-//    * @name core.Model#bindChange
-//    * @function
-//    * @example
-//    *  // Listen every change of the model
-//    *  myModel.bindChange ('', this, this.onChange);
-//    *  // Listen all the 'add' change of the model
-//    *  myModel.bindChange ('add', this, this.onChange);
-//    *
-//    * @param {string} action the event specification [optional]
-//    * @param {core.Object} obj the object interested to catch the event [mandatory]
-//    * @param {string} func the name of a callback. If its not defined
-//    *        notify method will be called [optional]
-//    */
-//   bindChange(spec: string, obj: Component, func: HandlerFunction) {
-//     if (!obj) { return; }
+  /**
+   * The event bind method to listen model changes
+   * <p/>
+   * When you want listen modification event generated by this object, you can
+   * bind your object (the observer) to this object using 'bindChange' method.
+   * <p/>
+   *
+   * @name core.Model#bindChange
+   * @function
+   * @example
+   *  // Listen every change of the model
+   *  myModel.bindChange ('', this, this.onChange);
+   *  // Listen all the 'add' change of the model
+   *  myModel.bindChange ('add', this, this.onChange);
+   *
+   * @param {string} action the event specification [optional]
+   * @param {core.Object} obj the object interested to catch the event [mandatory]
+   * @param {string} func the name of a callback. If its not defined
+   *        notify method will be called [optional]
+   */
+  bindChange(spec: string, obj: Component, func: HandlerFunction) {
+    if (!obj) { return; }
 
-//     this.bind((spec)? 'change:' + spec : 'change', obj, func);
-//   }
+    this.bind((spec)? 'change:' + spec : 'change', obj, func);
+  }
 
-//   /**
-//    *  The event unbind change method
-//    *  <p>
-//    *  Should be call when you want stop event listening on this object
-//    *
-//    * @name core.Model#unbindChange
-//    * @function
-//    *
-//    * @param {string} spec the event specification [optional]
-//    * @param {core.Object} obj the object you want to unbind [mandatory]
-//    * @param {string} func the name of a callback. If it's not defined
-//    *        all binding with <spec, obj> will be removed
-//    */
-//   unbindChange(spec: string, obj: Component, func: HandlerFunction) {
-//     this.unbind((spec)? 'change:' + spec : 'change', obj, func);
-//   }
+  /**
+   *  The event unbind change method
+   *  <p>
+   *  Should be call when you want stop event listening on this object
+   *
+   * @name core.Model#unbindChange
+   * @function
+   *
+   * @param {string} spec the event specification [optional]
+   * @param {core.Object} obj the object you want to unbind [mandatory]
+   * @param {string} func the name of a callback. If it's not defined
+   *        all binding with <spec, obj> will be removed
+   */
+  unbindChange(spec: string, obj: Component, func: HandlerFunction) {
+    this.unbind((spec)? 'change:' + spec : 'change', obj, func);
+  }
 
-//   /**
-//    * Configure the model to do not propagate event change.<br/>
-//    * In order to aggregate rapid changes to a model, you will deactivate
-//    * change event propagate.
-//    * After all change are finish you can manual call model.change () to
-//    * trigger the event.
-//    * <p>
-//    * Calling model.change () will reactivate event propagation.
-//    *
-//    * @name core.Model#stopPropagation
-//    * @function
-//    */
-//   stopPropagation(): void {
-//     this.#shouldPropagateChanges = false;
-//   }
+  /**
+   * Configure the model to do not propagate event change.<br/>
+   * In order to aggregate rapid changes to a model, you will deactivate
+   * change event propagate.
+   * After all change are finish you can manual call model.change () to
+   * trigger the event.
+   * <p>
+   * Calling model.change () will reactivate event propagation.
+   *
+   * @name core.Model#stopPropagation
+   * @function
+   */
+  stopPropagation(): void {
+    this.#shouldPropagateChanges = false;
+  }
 
-//   /**
-//    *  When you override a Model, you should call this.hasToPropagateChange ()
-//    *  before calling this.change ().
-//    *  <p>
-//    *  Calling model.change () will reactivate event propagation.
-//    *
-//    * @name core.Model#hasToPropagateChange
-//    * @function
-//    * @protected
-//    */
-//   hasToPropagateChange(): boolean {
-//     return this.#shouldPropagateChanges;
-//   }
+  /**
+   *  When you override a Model, you should call this.hasToPropagateChange ()
+   *  before calling this.change ().
+   *  <p>
+   *  Calling model.change () will reactivate event propagation.
+   *
+   * @name core.Model#hasToPropagateChange
+   * @function
+   * @protected
+   */
+  protected hasToPropagateChange(): boolean {
+    return this.#shouldPropagateChanges;
+  }
 
-//   /**
-//    * Manually trigger the "change" event.
-//    * If you have deactivated propagation using myModel.stopPropagation ()
-//    * in order to aggregate changes to a model, you will want to call
-//    * myModel.change () when you're all finished.
-//    * <p>
-//    * Calling myModel.change () reactivate automatic change propagation
-//    *
-//    * @name core.Model#change
-//    * @function
-//    *
-//    * @param {String} action the event specification [optional]
-//    */
-//   change(spec: string, data: any, doNotManageLinks: boolean) {
-//     var list_bind, event, handler;
+  /**
+   * Manually trigger the "change" event.
+   * If you have deactivated propagation using myModel.stopPropagation ()
+   * in order to aggregate changes to a model, you will want to call
+   * myModel.change () when you're all finished.
+   * <p>
+   * Calling myModel.change () reactivate automatic change propagation
+   *
+   * @name core.Model#change
+   * @function
+   *
+   * @param {String} action the event specification [optional]
+   */
+  change(spec: string, data: any, doNotManageLinks: boolean) {
+    var list_bind, event, handler;
 
-//     this.#shouldPropagateChanges = true;
+    this.#shouldPropagateChanges = true;
 
-//     spec = (spec)? 'change:' + spec : 'change';
-//     event = new Event (this, spec, data);
+    spec = (spec)? 'change:' + spec : 'change';
+    event = new Event (this, spec, data);
 
-//     try
-//     {
-//       // 1) manage links propagation
-//       if (!doNotManageLinks) {
-//         for(const comp of this.#links) {
-//           comp.configure(this);
-//         }
-//       }
+    try
+    {
+      // 1) manage links propagation
+      if (!doNotManageLinks) {
+        for(const comp of this.#links) {
+          comp.configure(this);
+        }
+      }
 
-//       //propagate retrictive bindings
-//       if (spec !== 'change') {
-//         queueProcSyncEvent (event, this.__bindings__ [spec]);
-//       }
+      //propagate retrictive bindings
+      if (spec !== 'change') {
+        queueProcSyncEvent (event, this.__bindings__ [spec]);
+      }
 
-//       //propagate general change
-//       queueProcSyncEvent (event, this.__bindings__ ['change']);
-//     }
-//     catch (e) {
-//       if (e.stack) console.error (e.stack);
-//       console.error (e);
-//     }
-//   }
+      //propagate general change
+      queueProcSyncEvent (event, this.__bindings__ ['change']);
+    }
+    catch (e) {
+      if (e.stack) console.error (e.stack);
+      console.error (e);
+    }
+  }
 
-//   /**
-//    * Removes all elements of this Model.<br/>
-//    * This is an abstract method, and should be implemented with your own
-//    * object.
-//    * @name core.Model#clear
-//    * @param {Boolean} should_free free content items
-//    * @function
-//    */
-//   clear(should_free: boolean): void {
-//     var
-//       _properties_ = this.getModelProperties (),
-//       _prop_name;
+  /**
+   * Removes all elements of this Model.<br/>
+   * This is an abstract method, and should be implemented with your own
+   * object.
+   * @name core.Model#clear
+   * @param {Boolean} should_free free content items
+   * @function
+   */
+  clear(should_free: boolean): void {
+    var
+      _properties_ = this.getModelProperties (),
+      _prop_name;
 
-//     _properties_.forEach ((prop_name: string) => {
-//       _prop_name = '_' + underscore (prop_name);
+    _properties_.forEach ((prop_name: string) => {
+      _prop_name = '_' + underscore (prop_name);
 
-//       // free the property
-//       if (should_free) free (this[_prop_name]);
+      // free the property
+      if (should_free) free (this[_prop_name]);
 
-//       // set the property to null
-//       this[_prop_name] = undefined;
+      // set the property to null
+      this[_prop_name] = undefined;
 
-//       // remove property if its dynamic
-//       // deactivate
-//       // if (self.__properties__ &&
-//       //     self.__properties__.indexOf (prop_name) !== -1) {
-//       //   delete (self [prop_name]);
-//       // }
-//     });
-//   }
+      // remove property if its dynamic
+      // deactivate
+      // if (self.__properties__ &&
+      //     self.__properties__.indexOf (prop_name) !== -1) {
+      //   delete (self [prop_name]);
+      // }
+    });
+  }
 
-//   /**
-//    *  Propagate an event
-//    *  <p>
-//    *  All Object listening this EventSource will receive this new handled
-//    *  event.
-//    *
-//    * @name core.EventSource#propagate
-//    * @function
-//    *
-//    * @param {String} spec the event specification [mandatory]
-//    * @param {Object} data an optional data event [optional]
-//    * @param {core.Object} srcTarget a event source, By default this object
-//    *        is the event source [mandatory]
-//    */
-//   propagate(type: string, data: any, srcTarget) {
-//     this.#shouldPropagateChanges = true;
+  /**
+   *  Propagate an event
+   *  <p>
+   *  All Object listening this EventSource will receive this new handled
+   *  event.
+   *
+   * @name core.EventSource#propagate
+   * @function
+   *
+   * @param {String} spec the event specification [mandatory]
+   * @param {Object} data an optional data event [optional]
+   * @param {core.Object} srcTarget a event source, By default this object
+   *        is the event source [mandatory]
+   */
+  propagate(type: string, data: any, srcTarget) {
+    this.#shouldPropagateChanges = true;
 
-//     super.propagate(type, data, srcTarget);
-//   }
+    super.propagate(type, data, srcTarget);
+  }
 
-//   /**
-//    * @protected
-//    *
-//    * @name core.Model#linkTo
-//    * @function
-//    *
-//    * @param obj
-//    */
-//   linkTo(obj: Component): void {
-//     this.#links.add(obj);
-//   }
+  /**
+   * @protected
+   *
+   * @name core.Model#linkTo
+   * @function
+   *
+   * @param obj
+   */
+  linkTo(obj: Component): void {
+    this.#links.add(obj);
+  }
 
-//   /**
-//    * @protected
-//    *
-//    * @name core.Model#unlinkTo
-//    * @function
-//    *
-//    * @param obj
-//    */
-//   unlinkTo(obj: Component): void {
-//     this.#links.delete(obj);
-//   }
+  /**
+   * @protected
+   *
+   * @name core.Model#unlinkTo
+   * @function
+   *
+   * @param obj
+   */
+  unlinkTo(obj: Component): void {
+    this.#links.delete(obj);
+  }
 
-//   /**
-//    * Manually force dataflow properties change propagation.
-//    * <br/>
-//    * If no property name is specified, the system will assume all component's
-//    * input properties have been modified.
-//    *
-//    * @name core.Model#propertyChange
-//    * @function
-//    *
-//    * @param {String} property the name of the modified property.[optional]
-//    */
-//   propertyChange(property: string) {
-//     this.defaultDataflow.propagate (this, property);
+  /**
+   * Manually force dataflow properties change propagation.
+   * <br/>
+   * If no property name is specified, the system will assume all component's
+   * input properties have been modified.
+   *
+   * @name core.Model#propertyChange
+   * @function
+   *
+   * @param {String} property the name of the modified property.[optional]
+   */
+  propertyChange(property: string) {
+    this.defaultDataflow.propagate (this, property);
 
-//     if (this.#shouldPropagateChanges)
-//     {
-//       var l = this.#links.size, obj;
-//       if (property) while (l--)
-//       { this.#links [l] [property] = this [property]; }
-//       else while (l--) { this.#links [l].configure (this); }
+    if (this.#shouldPropagateChanges)
+    {
+      var l = this.#links.size, obj;
+      if (property) while (l--)
+      { this.#links [l] [property] = this [property]; }
+      else while (l--) { this.#links [l].configure (this); }
 
-//       this.change (null, null, true);
-//     }
-//   }
+      this.change (null, null, true);
+    }
+  }
 
-//   /**
-//    * @protected
-//    */
-//   parseData(obj) {
-//     var prop_name;
+  /**
+   * @protected
+   */
+  parseData(obj) {
+    var prop_name;
 
-//     this.stopPropagation ();
-//     for (prop_name in obj) {
-//       this._parse_property (prop_name, obj [prop_name]);
-//     }
-//     this.change ();
-//   }
+    this.stopPropagation ();
+    for (prop_name in obj) {
+      this._parse_property (prop_name, obj [prop_name]);
+    }
+    this.change ();
+  }
 
-//   /**
-//    * @protected
-//    */
-//   _parse_property(prop_name: string, value: any): void {
-//     var
-//       _properties_ = this.getModelProperties (),
-//       desc, _prop_name = '_' + underscore (prop_name), model;
+  /**
+   * @protected
+   */
+  _parse_property(prop_name: string, value: any): void {
+    var
+      _properties_ = this.getModelProperties (),
+      desc, _prop_name = '_' + underscore (prop_name), model;
 
-//     if ((value && value.data) || isArray (value))
-//     {
-//       model = new VSArray ({id: value.id}).init ();
-//       model.parseData (value);
-//     }
-//     else model = value;
+    if ((value && value.data) || isArray (value))
+    {
+      model = new VSArray ({id: value.id}).init ();
+      model.parseData (value);
+    }
+    else model = value;
 
-//     if (_properties_.indexOf (prop_name) === -1) {
-//       // add propperty
-//       desc = {};
-//       _prop_name = '_' + underscore (prop_name);
-//       desc.set = ((prop_name, _prop_name) => {
-//         return (v: any): void => {
-//           this[_prop_name] = v;
-//           this.propertyChange (prop_name);
-//         };
-//       }(prop_name, _prop_name));
+    if (_properties_.indexOf (prop_name) === -1) {
+      // add propperty
+      desc = {};
+      _prop_name = '_' + underscore (prop_name);
+      desc.set = ((prop_name, _prop_name) => {
+        return (v: any): void => {
+          this[_prop_name] = v;
+          this.propertyChange (prop_name);
+        };
+      }(prop_name, _prop_name));
 
-//       desc.get = (function (_prop_name)
-//       {
-//         return function ()
-//         {
-//           return this[_prop_name];
-//         };
-//       }(_prop_name));
+      desc.get = (function (_prop_name)
+      {
+        return function ()
+        {
+          return this[_prop_name];
+        };
+      }(_prop_name));
 
-//       this.defineProperty (prop_name, desc);
-//     }
+      this.defineProperty (prop_name, desc);
+    }
 
 
-//     // if (isString (value))
-//     // {
-//     //   result = vs_utils.__date_reg_exp.exec (value);
-//     //   if (result && result [1]) // JSON Date -> Date generation
-//     //   {
-//     //     this ['_' + key] = new Date (parseInt (result [1]));
-//     //   }
-//     //   else this ['_' + key] = value; // String
-//     // }
+    // if (isString (value))
+    // {
+    //   result = vs_utils.__date_reg_exp.exec (value);
+    //   if (result && result [1]) // JSON Date -> Date generation
+    //   {
+    //     this ['_' + key] = new Date (parseInt (result [1]));
+    //   }
+    //   else this ['_' + key] = value; // String
+    // }
 
-//     this [_prop_name] = model;
-//   }
-// }
+    this [_prop_name] = model;
+  }
+}

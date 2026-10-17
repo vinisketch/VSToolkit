@@ -113,8 +113,8 @@ function initSliderProgress (app) {
 
   progress.setStyle ("margin", "15px");
   
-  vs._default_df_.connect (slider, "value", progress, "index");
-  vs._default_df_.build ();
+  container.get(DEFAULT_DATAFLOW).connect (slider, "value", progress, "index");
+  container.get(DEFAULT_DATAFLOW).build ();
 }
 
 var previous;

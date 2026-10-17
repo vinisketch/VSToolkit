@@ -5,5 +5,8 @@
     "target": "es2022",
     "module": "es2022",
     "emitDeclarationOnly": true,
-  }
+  },
+  "include": [
+    "./core/**/*.ts",
+  ],
 }

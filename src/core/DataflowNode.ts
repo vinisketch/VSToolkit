@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { isString, SupportMixins } from 'vs_utils';
-import { createUniqueId, ObjectConfig } from './helpers';
+import { createUniqueId, isString, SupportMixins } from 'vs_utils';
 // import DataflowState from './DataflowState';
 import Connector from './Connector';
 import { BaseIdentifiable, ObjectId } from "./BaseIdentifiable";
