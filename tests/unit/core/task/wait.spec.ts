@@ -24,6 +24,16 @@ describe('Wait', function () {
       assert.strictEqual(wait.state, TaskState.STOPPED);
       assert.strictEqual(wait.time, 100);
     });
+
+    it('should accept 0', function () {
+      assert.strictEqual(new Wait(0).time, 0);
+    });
+
+    for (const time of [-1, NaN, Infinity]) {
+      it(`should throw a RangeError for ${time}`, function () {
+        assert.throws(() => new Wait(time), RangeError);
+      });
+    }
   });
 
   describe('time', function () {
@@ -31,6 +41,12 @@ describe('Wait', function () {
       const wait = new Wait(100);
       wait.time = 250;
       assert.strictEqual(wait.time, 250);
+    });
+
+    it('should throw a RangeError for an invalid time', function () {
+      const wait = new Wait(100);
+      assert.throws(() => { wait.time = -5; }, RangeError);
+      assert.strictEqual(wait.time, 100);
     });
 
     it('should throw when changed while started', function () {
@@ -59,6 +75,18 @@ describe('Wait', function () {
       const wait = new Wait(100);
       wait.start();
       assert.strictEqual(wait.start(), false);
+    });
+
+    it('should call taskDidStart when started and when resumed', function () {
+      const wait = new Wait(100);
+      const delegate = recordingDelegate({ withStart: true });
+      wait.delegate = delegate;
+
+      wait.start();
+      wait.pause();
+      wait.start();
+      assert.deepStrictEqual(delegate.events.map(([name]) => name),
+        ['taskDidStart', 'taskDidPause', 'taskDidStart']);
     });
 
     it('should call taskDidEnd once the time has elapsed', function () {

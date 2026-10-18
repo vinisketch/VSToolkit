@@ -4,7 +4,7 @@ import { TaskDelegate } from '../../../../src/core/task/taskDelegate';
 
 /**
  * A task fully driven by the test: start/stop/pause behave like a real task
- * (stop and pause notify the delegate synchronously, as Wait does) and
+ * (they notify the delegate and groups synchronously, as Wait does) and
  * `end()` simulates the task reaching its natural end.
  */
 export class FakeTask extends Task {
@@ -19,26 +19,27 @@ export class FakeTask extends Task {
     this.calls.push('start');
     this.startParams.push(param);
     this.state = TaskState.STARTED;
+    this.notify('taskDidStart');
     return true;
   }
 
   override stop(): boolean {
     this.calls.push('stop');
     this.state = TaskState.STOPPED;
-    this.delegate?.taskDidStop?.(this);
+    this.notify('taskDidStop');
     return true;
   }
 
   override pause(): boolean {
     this.calls.push('pause');
     this.state = TaskState.PAUSED;
-    this.delegate?.taskDidPause?.(this);
+    this.notify('taskDidPause');
     return true;
   }
 
   end(): void {
     this.state = TaskState.STOPPED;
-    this.delegate?.taskDidEnd?.(this);
+    this.notify('taskDidEnd');
   }
 
   override toString(): string {
@@ -50,15 +51,20 @@ export type DelegateEvent = [keyof TaskDelegate, unknown];
 
 /**
  * A delegate that records every callback it receives, in order.
+ * taskDidStart is only recorded when `withStart` is set.
  */
-export function recordingDelegate(): TaskDelegate & { events: DelegateEvent[] } {
+export function recordingDelegate({ withStart = false } = {}): TaskDelegate & { events: DelegateEvent[] } {
   const events: DelegateEvent[] = [];
-  return {
+  const delegate: TaskDelegate & { events: DelegateEvent[] } = {
     events,
     taskDidEnd: (task) => { events.push(['taskDidEnd', task]); },
     taskDidStop: (task) => { events.push(['taskDidStop', task]); },
     taskDidPause: (task) => { events.push(['taskDidPause', task]); },
   };
+  if (withStart) {
+    delegate.taskDidStart = (task) => { events.push(['taskDidStart', task]); };
+  }
+  return delegate;
 }
 
 /**

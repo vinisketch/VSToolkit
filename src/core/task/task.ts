@@ -1,8 +1,34 @@
+import { asError } from "vs_utils";
 import Component from "../Component";
 import { TaskState } from "./taskState";
 import { TaskDelegate } from "./taskDelegate";
 
-export type TaskAndParams = [Task, any[]] | [Task] | Task;
+/**
+ * The parameter given to a task when it starts (scalar, Array, Object)
+ */
+export type TaskParam = unknown;
+
+export type TaskAndParams = [Task, TaskParam] | [Task] | Task;
+
+/**
+ * Groups (SEQ, PAR) each task belongs to. Groups are notified of the task
+ * state changes without taking the task's delegate.
+ * Internal: not exported from the task module index.
+ */
+const taskGroups = new WeakMap<Task, Set<TaskDelegate>>();
+
+export function attachToGroup(task: Task, group: TaskDelegate): void {
+  let groups = taskGroups.get(task);
+  if (!groups) {
+    groups = new Set();
+    taskGroups.set(task, groups);
+  }
+  groups.add(group);
+}
+
+export function detachFromGroup(task: Task, group: TaskDelegate): void {
+  taskGroups.get(task)?.delete(group);
+}
 
 /**
  *  The core.Task class
@@ -83,9 +109,34 @@ export default abstract class Task extends Component {
    * @name core.Task#destructor
    * @function
    */
-  override destructor() {
+  protected override destructor() {
     this.stop ();
     super.destructor();
+  }
+
+  /**
+   *  Notifies the task's delegate and groups of a state change.
+   *  An exception thrown by a callback is logged and does not propagate.
+   *
+   * @name core.Task#notify
+   * @function
+   * @protected
+   */
+  protected notify(method: keyof TaskDelegate): void {
+    const listeners = [this.delegate, ...(taskGroups.get(this) ?? [])];
+
+    for (const listener of listeners) {
+      const callback = listener?.[method];
+      if (!callback) continue;
+
+      try {
+        callback.call(listener, this);
+      } catch (e) {
+        const err = asError(e);
+        if (err.stack) console.log(err.stack)
+        console.error(err);
+      }
+    }
   }
 
   // /**
@@ -111,7 +162,7 @@ export default abstract class Task extends Component {
    *
    * @param {any} param any parameter (scalar, Array, Object)
    */
-  abstract start(param?: any[]): boolean;
+  abstract start(param?: TaskParam): boolean;
 
   /**
    *  Stops the task.<br />

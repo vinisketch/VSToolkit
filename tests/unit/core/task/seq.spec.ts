@@ -31,8 +31,10 @@ describe('SEQ', function () {
   });
 
   describe('seq()', function () {
-    it('should return undefined for an empty list', function () {
-      assert.strictEqual(seq([]), undefined);
+    it('should return an empty SEQ for an empty list', function () {
+      const group = seq([]);
+      assert.ok(group instanceof SEQ);
+      assert.strictEqual(group.start(), false);
     });
 
     it('should return a stopped SEQ running the given tasks', function () {
@@ -73,6 +75,40 @@ describe('SEQ', function () {
       assert.deepStrictEqual(b.calls, ['start']);
     });
 
+    it('should keep a falsy param of its own instead of the group param', function () {
+      const a = new FakeTask('a');
+      const b = new FakeTask('b');
+      const c = new FakeTask('c');
+      const group = new SEQ([[a, 0], [b, ''], [c, false]]);
+
+      group.start('shared');
+      a.end();
+      b.end();
+      assert.deepStrictEqual([...a.startParams, ...b.startParams, ...c.startParams], [0, '', false]);
+    });
+
+    it('should warn about entries that are not [task] or [task, param]', function () {
+      const a = new FakeTask('a');
+      const group = new SEQ();
+
+      group.setTasks([[a, 1, 2] as any]);
+      assert.match(String(console_.output.warn[0]), /expected \[task\] or \[task, param\], got 3 items/);
+      assert.strictEqual(group.start(), false);
+    });
+
+    it('should no longer react to tasks it replaced', function () {
+      const a = new FakeTask('a');
+      const b = new FakeTask('b');
+      const group = new SEQ([a]);
+      const delegate = recordingDelegate();
+      group.delegate = delegate;
+
+      group.setTasks([b]);
+      a.start();
+      a.end();
+      assert.deepStrictEqual(delegate.events, []);
+    });
+
     it('should skip empty entries and invalid tasks with a warning', function () {
       const a = new FakeTask('a');
       const group = new SEQ();
@@ -98,7 +134,7 @@ describe('SEQ', function () {
   });
 
   describe('start', function () {
-    it('should start only the first task and become its delegate', function () {
+    it('should start only the first task', function () {
       const a = new FakeTask('a');
       const b = new FakeTask('b');
       const group = new SEQ([a, b]);
@@ -107,7 +143,55 @@ describe('SEQ', function () {
       assert.strictEqual(group.state, TaskState.STARTED);
       assert.deepStrictEqual(a.calls, ['start']);
       assert.deepStrictEqual(b.calls, []);
-      assert.strictEqual(a.delegate, group);
+    });
+
+    it('should call taskDidStart once when started and when resumed', function () {
+      const a = new FakeTask('a');
+      const b = new FakeTask('b');
+      const group = new SEQ([a, b]);
+      const delegate = recordingDelegate({ withStart: true });
+      group.delegate = delegate;
+
+      group.start();
+      a.end();
+      assert.deepStrictEqual(delegate.events, [['taskDidStart', group]]);
+
+      group.pause();
+      group.start();
+      assert.deepStrictEqual(delegate.events.map(([name]) => name),
+        ['taskDidStart', 'taskDidPause', 'taskDidStart']);
+    });
+
+    it('should keep the delegate of its tasks, and both are notified', function () {
+      const a = new FakeTask('a');
+      const b = new FakeTask('b');
+      const taskDelegate = recordingDelegate();
+      a.delegate = taskDelegate;
+      const group = new SEQ([a, b]);
+
+      group.start();
+      a.end();
+      assert.strictEqual(a.delegate, taskDelegate);
+      assert.deepStrictEqual(taskDelegate.events, [['taskDidEnd', a]]);
+      assert.deepStrictEqual(b.calls, ['start']);
+    });
+
+    it('should ignore a shared task when it is run by another group', function () {
+      const shared = new FakeTask('shared');
+      const b = new FakeTask('b');
+      const first = new SEQ([b, shared]);
+      const second = new SEQ([shared]);
+      const delegate = recordingDelegate();
+      first.delegate = delegate;
+
+      first.start();
+      second.start();
+      shared.end();
+
+      // first is still waiting for b
+      assert.strictEqual(first.state, TaskState.STARTED);
+      assert.deepStrictEqual(delegate.events, []);
+      assert.deepStrictEqual(b.calls, ['start']);
     });
 
     it('should return false when already started', function () {

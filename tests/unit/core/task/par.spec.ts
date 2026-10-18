@@ -31,8 +31,11 @@ describe('PAR', function () {
   });
 
   describe('par()', function () {
-    it('should return undefined for an empty list', function () {
-      assert.strictEqual(par([]), undefined);
+    it('should return an empty PAR for an empty list', function () {
+      const group = par([]);
+      assert.ok(group instanceof PAR);
+      assert.strictEqual(group.start(), false);
+      assert.strictEqual(group.state, TaskState.STOPPED);
     });
 
     it('should return a stopped PAR running the given tasks', function () {
@@ -46,7 +49,7 @@ describe('PAR', function () {
   });
 
   describe('start', function () {
-    it('should start every task and become their delegate', function () {
+    it('should start every task', function () {
       const a = new FakeTask('a');
       const b = new FakeTask('b');
       const group = new PAR([a, b]);
@@ -55,8 +58,53 @@ describe('PAR', function () {
       assert.strictEqual(group.state, TaskState.STARTED);
       assert.deepStrictEqual(a.calls, ['start']);
       assert.deepStrictEqual(b.calls, ['start']);
-      assert.strictEqual(a.delegate, group);
-      assert.strictEqual(b.delegate, group);
+    });
+
+    it('should keep a falsy param of its own instead of the group param', function () {
+      const a = new FakeTask('a');
+      const b = new FakeTask('b');
+      const group = new PAR([[a, 0], [b, false]]);
+
+      group.start('shared');
+      assert.deepStrictEqual([...a.startParams, ...b.startParams], [0, false]);
+    });
+
+    it('should call taskDidStart once', function () {
+      const group = new PAR([new FakeTask('a'), new FakeTask('b')]);
+      const delegate = recordingDelegate({ withStart: true });
+      group.delegate = delegate;
+
+      group.start();
+      assert.deepStrictEqual(delegate.events, [['taskDidStart', group]]);
+    });
+
+    it('should keep the delegate of its tasks, and both are notified', function () {
+      const a = new FakeTask('a');
+      const taskDelegate = recordingDelegate();
+      a.delegate = taskDelegate;
+      const group = new PAR([a]);
+      const delegate = recordingDelegate();
+      group.delegate = delegate;
+
+      group.start();
+      a.end();
+      assert.strictEqual(a.delegate, taskDelegate);
+      assert.deepStrictEqual(taskDelegate.events, [['taskDidEnd', a]]);
+      assert.deepStrictEqual(delegate.events, [['taskDidEnd', group]]);
+    });
+
+    it('should ignore the end of a task it is not running', function () {
+      const a = new FakeTask('a');
+      const b = new FakeTask('b');
+      const group = new PAR([a, b]);
+      const delegate = recordingDelegate();
+      group.delegate = delegate;
+
+      group.start();
+      a.end();
+      a.end();
+      assert.strictEqual(group.state, TaskState.STARTED);
+      assert.deepStrictEqual(delegate.events, []);
     });
 
     it('should pass its param, unless a task has its own', function () {

@@ -1,6 +1,5 @@
-import { asError } from "vs_utils";
 import BaseTask from "./helper";
-import { TaskAndParams } from "./task";
+import Task, { TaskAndParams, TaskParam } from "./task";
 import { TaskState } from "./taskState";
 
 /**
@@ -18,14 +17,7 @@ import { TaskState } from "./taskState";
  *  parameter
  * @param params
  */
-export const seq = (params: TaskAndParams[]): SEQ | undefined => {
-  if (params.length === 0) return;
-
-  const task = new SEQ();
-  task.setTasks(params);
-
-  return task;
-};
+export const seq = (params: TaskAndParams[]): SEQ => new SEQ(params);
 
 
 /**
@@ -99,7 +91,7 @@ export default class SEQ extends BaseTask {
   /**
    *  @private
    */
-  #startParam: any[] | undefined = undefined;
+  #startParam: TaskParam = undefined;
 
   /********************************************************************
 
@@ -113,7 +105,7 @@ export default class SEQ extends BaseTask {
    * @ignore
    * @function
    */
-  start(param?: any[]) {
+  start(param?: TaskParam) {
     if (this.state === TaskState.STARTED) {
       return false;
     }
@@ -140,7 +132,7 @@ export default class SEQ extends BaseTask {
 
     // the task callback is ignored, since this sequence is already stopped
     taskAndParams?.[0].stop();
-    this.#notify('taskDidStop');
+    this.notify('taskDidStop');
 
     return true;
   }
@@ -161,7 +153,7 @@ export default class SEQ extends BaseTask {
 
     // the task callback is ignored, since this sequence is already paused
     this.tasksAndParams [this.#currentTask]?.[0].pause();
-    this.#notify('taskDidPause');
+    this.notify('taskDidPause');
 
     return true;
   }
@@ -169,7 +161,7 @@ export default class SEQ extends BaseTask {
   /**
    *  @private
    */
-  #startTask(index: number, param?: any[]): boolean {
+  #startTask(index: number, param?: TaskParam): boolean {
     const taskAndParams = this.tasksAndParams [index];
 
     if (!taskAndParams) {
@@ -178,61 +170,56 @@ export default class SEQ extends BaseTask {
       return false;
     }
 
+    const isGroupStart = this.state !== TaskState.STARTED;
+
     this.#currentTask = index;
     this.state = TaskState.STARTED;
     this.#startParam = param;
 
-    taskAndParams [0].delegate = this;
-    taskAndParams [0].start((taskAndParams [1]) ? taskAndParams [1] : param);
+    taskAndParams [0].start(this.paramFor(taskAndParams, param));
+    if (isGroupStart) this.notify('taskDidStart');
 
     return true;
   }
 
   /**
+   *  Callbacks from tasks this sequence is not running are ignored (a task
+   *  may belong to several groups)
    *  @private
    */
-  #notify(method: 'taskDidEnd' | 'taskDidStop' | 'taskDidPause'): void {
-    const callback = this.delegate?.[method];
-    if (!callback) return;
-
-    try {
-      callback.call(this.delegate, this);
-    } catch (e) {
-      const err = asError(e);
-      if (err.stack) console.log(err.stack)
-      console.error(err);
-    }
+  #isCurrent(task: Task): boolean {
+    return this.tasksAndParams [this.#currentTask]?.[0] === task;
   }
 
   /********************************************************************
-   delegate methodes
+   delegate methods
    ********************************************************************/
 
   /**
    *  The running task was stopped by someone else than this sequence
    */
-  taskDidStop(): void {
-    if (this.state === TaskState.STOPPED) return;
+  taskDidStop(task: Task): void {
+    if (this.state === TaskState.STOPPED || !this.#isCurrent(task)) return;
 
     this.state = TaskState.STOPPED;
     this.#currentTask = -1;
-    this.#notify('taskDidStop');
+    this.notify('taskDidStop');
   }
 
   /**
    *  The running task was paused by someone else than this sequence
    */
-  taskDidPause(): void {
-    if (this.state !== TaskState.STARTED) return;
+  taskDidPause(task: Task): void {
+    if (this.state !== TaskState.STARTED || !this.#isCurrent(task)) return;
 
     this.state = TaskState.PAUSED;
-    this.#notify('taskDidPause');
+    this.notify('taskDidPause');
   }
 
   /**
    */
-  taskDidEnd(): void {
-    if (this.state !== TaskState.STARTED) return;
+  taskDidEnd(task: Task): void {
+    if (this.state !== TaskState.STARTED || !this.#isCurrent(task)) return;
 
     if (this.#currentTask + 1 < this.tasksAndParams.length) {
       // start the next task
@@ -240,7 +227,7 @@ export default class SEQ extends BaseTask {
     } else {
       this.#currentTask = -1;
       this.state = TaskState.STOPPED;
-      this.#notify('taskDidEnd');
+      this.notify('taskDidEnd');
     }
   }
 }

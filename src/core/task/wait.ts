@@ -1,4 +1,3 @@
-import { asError } from "vs_utils";
 import Task from "./task";
 import { TaskState } from "./taskState";
 
@@ -25,8 +24,7 @@ import { TaskState } from "./taskState";
 export default class Wait extends Task {
   constructor(time: number) {
     super();
-    this.#time = time;
-    this.state = TaskState.STOPPED;
+    this.#time = Wait.#checkTime(time);
   }
 
   /********************************************************************
@@ -34,18 +32,25 @@ export default class Wait extends Task {
    ********************************************************************/
   #time =  0;
   #leftTime = 0;
-  #timer: NodeJS.Timeout | null = null;
+  #timer: ReturnType<typeof setTimeout> | null = null;
   #startTime = 0;
 
   set time(v: number) {
     if (this.state !== TaskState.STOPPED) {
       throw new Error('Stop the task before changing the time');
     }
-    this.#time = v;
+    this.#time = Wait.#checkTime(v);
   }
 
   get time(): number {
     return this.#time;
+  }
+
+  static #checkTime(time: number): number {
+    if (!Number.isFinite(time) || time < 0) {
+      throw new RangeError(`Invalid wait time: ${time}, expected a positive number of milliseconds`);
+    }
+    return time;
   }
 
   /********************************************************************
@@ -72,19 +77,13 @@ export default class Wait extends Task {
 
     this.state = TaskState.STARTED;
 
-    this.#startTime = new Date().getTime();
+    this.#startTime = Date.now();
     this.#timer = setTimeout(() => {
+      this.#timer = null;
       this.state = TaskState.STOPPED;
-      if (this.delegate?.taskDidEnd) {
-        try {
-          this.delegate.taskDidEnd(this);
-        } catch (e) {
-          const err = asError(e);
-          if (err.stack) console.log(err.stack)
-          console.error(err);
-        }
-      }
+      this.notify('taskDidEnd');
     }, time);
+    this.notify('taskDidStart');
 
     return true;
   }
@@ -105,19 +104,10 @@ export default class Wait extends Task {
     this.#timer = null;
 
     this.#leftTime = this.#time;
-
-    if (this.delegate?.taskDidStop) {
-      try {
-        this.delegate.taskDidStop(this);
-      } catch (e) {
-        const err = asError(e);
-        if (err.stack) console.log(err.stack)
-        console.error(err);
-      }
-    }
+    this.notify('taskDidStop');
 
     return true;
-  };
+  }
 
   /**
    *  Pause the task.<br />
@@ -136,17 +126,9 @@ export default class Wait extends Task {
     if (this.#timer) clearTimeout(this.#timer);
     this.#timer = null;
 
-    this.#leftTime = this.#leftTime - new Date().getTime() + this.#startTime;
+    this.#leftTime = this.#leftTime - Date.now() + this.#startTime;
+    this.notify('taskDidPause');
 
-    if (this.delegate?.taskDidPause) {
-      try {
-        this.delegate.taskDidPause(this);
-      } catch (e) {
-        const err = asError(e);
-        if (err.stack) console.log(err.stack)
-        console.error(err);
-      }
-    }
     return true;
   }
 }
