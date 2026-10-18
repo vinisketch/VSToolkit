@@ -11,8 +11,6 @@ export default abstract class BaseTask extends Task {
     if (tasksAndParams && tasksAndParams.length) {
       this.setTasks(tasksAndParams);
     }
-
-    throw new Error('NOT IMPLEMENTED');
   }
 
   /********************************************************************

@@ -1,4 +1,4 @@
-import { isEmpty, isObject, Mixin } from 'vs_utils';
+import { isEmpty, isNotEmpty, isObject, Mixin } from 'vs_utils';
 import Component from '../Component';
 import { queueProcAsyncEvent } from '../MainLoop';
 import Handler from './Handler';
@@ -134,20 +134,19 @@ export default class EventSource extends Mixin {
     if (!event.type) return false;
     const handlerList = this.#bindings.get(event.type);
 
-    // bubbling
-    if (isEmpty(handlerList)) {
+    if (isNotEmpty(handlerList)) {
+      event.src = this;
+      event.srcTarget = this;
+      queueProcAsyncEvent(event, handlerList);
+    } else {
+      // bubbling
       if (isContainer(this)) {
         const parent = Container.getParent(this as unknown as Component);
         if (isEventSource(parent)) {
           parent.dispatchEvent(event);
         }
       }
-      return true;
     }
-
-    event.src = this;
-    event.srcTarget = this;
-    queueProcAsyncEvent(event, handlerList);
     return true;
   }
 }

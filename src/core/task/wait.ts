@@ -1,3 +1,4 @@
+import { asError } from "vs_utils";
 import Task from "./task";
 import { TaskState } from "./taskState";
 
@@ -78,8 +79,9 @@ export default class Wait extends Task {
         try {
           this.delegate.taskDidEnd(this);
         } catch (e) {
-          if (e.stack) console.log(e.stack)
-          console.error(e);
+          const err = asError(e);
+          if (err.stack) console.log(err.stack)
+          console.error(err);
         }
       }
     }, time);
@@ -99,7 +101,7 @@ export default class Wait extends Task {
     }
     this.state = TaskState.STOPPED;
 
-    clearTimeout(this.#timer);
+    if (this.#timer) clearTimeout(this.#timer);
     this.#timer = null;
 
     this.#leftTime = this.#time;
@@ -108,8 +110,9 @@ export default class Wait extends Task {
       try {
         this.delegate.taskDidStop(this);
       } catch (e) {
-        if (e.stack) console.log(e.stack)
-        console.error(e);
+        const err = asError(e);
+        if (err.stack) console.log(err.stack)
+        console.error(err);
       }
     }
 
@@ -129,7 +132,7 @@ export default class Wait extends Task {
     }
     this.state = TaskState.PAUSED;
 
-    clearTimeout(this.#timer);
+    if (this.#timer) clearTimeout(this.#timer);
     this.#timer = null;
 
     this.#leftTime = this.#leftTime - new Date().getTime() + this.#startTime;
@@ -138,8 +141,9 @@ export default class Wait extends Task {
       try {
         this.delegate.taskDidPause(this);
       } catch (e) {
-        if (e.stack) console.log(e.stack)
-        console.error(e);
+        const err = asError(e);
+        if (err.stack) console.log(err.stack)
+        console.error(err);
       }
     }
     return true;

@@ -10,14 +10,19 @@
     "prepublish": "npm run clean && npm run build",
     "tsc:core": "tsc -p src/tsconfig.core.json",
     "tsc:data": "tsc -p src/tsconfig.data.json",
+    "tsc": "npm run tsc:core && npm run tsc:data",
     "btest": "tsc -p tsconfig.test.json",
     "prebuild": "npm run tsc",
     "build:core": "rollup -c ./rollup.config/core.mjs",
     "build:data": "rollup -c ./rollup.config/data.mjs",
-    "build": "npm run build:core"
+    "build": "npm run build:core",
+    "test": "mocha",
+    "typecheck:test": "tsc -p tests/tsconfig.json"
   },
   "devDependencies": {
     "@rollup/plugin-typescript": "^12.3.0",
+    "@types/mocha": "^10.0.10",
+    "@types/node": "^26.6.5",
     "@typescript/typescript6": "^6.0.2",
     "jest": "^30.5.2",
     "mocha": "^11.8.0",
@@ -28,6 +33,7 @@
     "rollup-plugin-esbuild": "^6.2.1",
     "rollup-plugin-html": "^0.2.1",
     "rollup-plugin-visualizer": "^7.1.1",
+    "tsx": "^4.23.15",
     "typescript": "^7.0.2"
   },
   "dependencies": {
@@ -46,5 +52,6 @@
   },
   "engines": {
     "node": ">=15.0.0"
-  }
+  },
+  "type": "module"
 }

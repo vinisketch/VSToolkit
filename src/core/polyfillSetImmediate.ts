@@ -1,6 +1,6 @@
 // Actions queue. This array contains all actions (Action object)
 // that have to be executed.
-import { container } from 'vs_utils';
+import { asError, container } from 'vs_utils';
 import { Action } from './Action';
 import { ILogger, LOGGER } from './ILogger';
 
@@ -47,7 +47,8 @@ function doAllActions () {
         action.run();
       }
       catch (e) {
-        if (e.stack) logger.error (e.stack);
+        const err = asError(e);
+        if (err.stack) logger.error (err.stack);
         else logger.error (e);
       } finally {
         Action.release(action);
@@ -69,7 +70,7 @@ function installPostMessageImplementation():() => void {
   const MESSAGE_PREFIX = `_scheduler_${Date.now()}_${Math.random()}`;
 
   function onGlobalMessage(event: MessageEvent) {
-    // Verify origin matches current window for security
+    // Verify origin matches current globalThis for security
     if (event.origin !== globalThis.location.origin) {
       return;
     }
@@ -89,10 +90,7 @@ function installPostMessageImplementation():() => void {
 // if postMessage exists, use it (this is the faster way)
 // otherwise use traditional setTimeout (f, 0) that add a minimum 4ms delay
 export function initSetImmediatePolyfill(): (func: () => void) => void {
-  scheduleDoActions = (window.postMessage)?
-    installPostMessageImplementation ():
-    function () { setTimeout (doAllActions, 0) };
-
+  scheduleDoActions = installPostMessageImplementation();
   return queueAction;
 }
 

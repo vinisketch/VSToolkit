@@ -1,0 +1,92 @@
+import Task from '../../../../src/core/task/task';
+import { TaskState } from '../../../../src/core/task/taskState';
+import { TaskDelegate } from '../../../../src/core/task/taskDelegate';
+
+/**
+ * A task fully driven by the test: start/stop/pause behave like a real task
+ * (stop and pause notify the delegate synchronously, as Wait does) and
+ * `end()` simulates the task reaching its natural end.
+ */
+export class FakeTask extends Task {
+  readonly calls: string[] = [];
+  readonly startParams: unknown[] = [];
+
+  constructor(readonly name = 'fake') {
+    super();
+  }
+
+  override start(param?: unknown): boolean {
+    this.calls.push('start');
+    this.startParams.push(param);
+    this.state = TaskState.STARTED;
+    return true;
+  }
+
+  override stop(): boolean {
+    this.calls.push('stop');
+    this.state = TaskState.STOPPED;
+    this.delegate?.taskDidStop?.(this);
+    return true;
+  }
+
+  override pause(): boolean {
+    this.calls.push('pause');
+    this.state = TaskState.PAUSED;
+    this.delegate?.taskDidPause?.(this);
+    return true;
+  }
+
+  end(): void {
+    this.state = TaskState.STOPPED;
+    this.delegate?.taskDidEnd?.(this);
+  }
+
+  override toString(): string {
+    return this.name;
+  }
+}
+
+export type DelegateEvent = [keyof TaskDelegate, unknown];
+
+/**
+ * A delegate that records every callback it receives, in order.
+ */
+export function recordingDelegate(): TaskDelegate & { events: DelegateEvent[] } {
+  const events: DelegateEvent[] = [];
+  return {
+    events,
+    taskDidEnd: (task) => { events.push(['taskDidEnd', task]); },
+    taskDidStop: (task) => { events.push(['taskDidStop', task]); },
+    taskDidPause: (task) => { events.push(['taskDidPause', task]); },
+  };
+}
+
+/**
+ * A delegate whose callbacks all throw, to check errors are contained.
+ */
+export function throwingDelegate(): TaskDelegate {
+  const fail = () => { throw new Error('delegate failure'); };
+  return { taskDidEnd: fail, taskDidStop: fail, taskDidPause: fail };
+}
+
+type ConsoleMethod = 'log' | 'warn' | 'error';
+
+/**
+ * Replaces console.log/warn/error with recorders for the duration of a test.
+ * Call the returned `restore` in afterEach.
+ */
+export function captureConsole() {
+  const output: Record<ConsoleMethod, unknown[][]> = { log: [], warn: [], error: [] };
+  const originals = { log: console.log, warn: console.warn, error: console.error };
+
+  (Object.keys(output) as ConsoleMethod[]).forEach((method) => {
+    console[method] = (...args: unknown[]) => { output[method].push(args); };
+  });
+
+  return {
+    output,
+    restore() {
+      Object.assign(console, originals);
+    },
+  };
+}

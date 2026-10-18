@@ -67,7 +67,7 @@ class Component extends SupportMixins implements BaseIdentifiable {
 
   protected destructor(): void {
     // remove the current object
-    Component.instances[this.id] = undefined;
+    delete Component.instances[this.id];
 
     this.#state = 'deleted';
   }

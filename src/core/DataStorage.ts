@@ -1,5 +1,5 @@
 // import Component from "./Component";
-//
+
 // /**
 //  *  @extends core.EventSource
 //  *  @class core.DataStorage
@@ -18,13 +18,13 @@
 //  * @param {Object} config the configuration structure
 //  */
 // export class DataStorage extends Component {
-//
+
 //   private models = new Map<string, Model>();
-//
+
 //   constructor(config) {
 //     super(config)
 //   }
-//
+
 //   /**
 //    * Register a model into the sync service.
 //    *
@@ -35,15 +35,15 @@
 //    */
 //   registerModel(name, model) {
 //     if (!name || !model) return;
-//
+
 //     if (this.__models__ [name])
 //       error.log("Model with the name already registered.");
-//
+
 //     this.__models__ [name] = model;
-//
+
 //     model._sync_service_ = this;
 //   }
-//
+
 //   /**
 //    * Remove a model from the sync service. <br/>
 //    * If the you want also delete delete data you have to call before the
@@ -55,16 +55,16 @@
 //    */
 //   removeModel(name) {
 //     if (!name) return;
-//
+
 //     if (!this.__models__ [name]) return;
-//
+
 //     delete (this.__models__ [name]);
 //   }
-//
+
 //   /*****************************************************************
 //    *
 //    ****************************************************************/
-//
+
 //   /**
 //    * Save models. If a name is specified, it save only the model
 //    * associated to the name.
@@ -75,7 +75,7 @@
 //    */
 //   save(name) {
 //   }
-//
+
 //   /**
 //    * Load models. If a name is specified, it load only the model
 //    * associated to the name.
@@ -86,7 +86,7 @@
 //    */
 //   load(name) {
 //   }
-//
+
 //   /*****************************************************************
 //    *
 //    ****************************************************************/

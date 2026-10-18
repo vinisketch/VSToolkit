@@ -1,3 +1,5 @@
+import { defined } from 'vs_utils';
+
 /**
  *  Structure used for managing events
  *  @private
@@ -25,7 +27,7 @@ export class Action {
 
   static retain(): Action {
     if (Action.pool.length > 0) {
-      return Action.pool.pop();
+      return defined(Action.pool.pop());
     }
     return new Action();
   }

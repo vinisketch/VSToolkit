@@ -1,3 +1,4 @@
+import { asError } from "vs_utils";
 import BaseTask from "./helper";
 import { TaskAndParams } from "./task";
 import { TaskState } from "./taskState";
@@ -167,8 +168,9 @@ export default class PAR extends BaseTask {
         try {
           this.delegate.taskDidStop(this);
         } catch (e) {
-          if (e.stack) console.log(e.stack)
-          console.error(e);
+          const err = asError(e);
+          if (err.stack) console.log(err.stack)
+          console.error(err);
         }
       }
     }
@@ -185,8 +187,9 @@ export default class PAR extends BaseTask {
         try {
           this.delegate.taskDidPause(this);
         } catch (e) {
-          if (e.stack) console.log(e.stack)
-          console.error(e);
+          const err = asError(e);
+          if (err.stack) console.log(err.stack)
+          console.error(err);
         }
       }
     }
@@ -203,8 +206,9 @@ export default class PAR extends BaseTask {
         try {
           this.delegate.taskDidEnd(this);
         } catch (e) {
-          if (e.stack) console.log(e.stack)
-          console.error(e);
+          const err = asError(e);
+          if (err.stack) console.log(err.stack)
+          console.error(err);
         }
       }
     }

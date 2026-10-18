@@ -2,11 +2,14 @@
   "compilerOptions": {
     "sourceMap": true,
     "noImplicitAny": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "allowJs": false,
     "lib": [
       "ES2022",
       "DOM"
+    ],
+    "types": [
+      "node"
     ],
     "composite": true,
     "declaration": true,

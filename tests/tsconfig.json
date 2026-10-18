@@ -1,0 +1,14 @@
+{
+  "extends": "../src/tsconfig.base.json",
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "es2022",
+    "noEmit": true,
+    "composite": false,
+    "incremental": false,
+    "declaration": false,
+    "declarationMap": false,
+    "types": ["node", "mocha"]
+  },
+  "include": ["./**/*.ts"]
+}
