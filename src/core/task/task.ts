@@ -29,6 +29,26 @@ export interface TaskOptions {
   signal?: AbortSignal;
 }
 
+/**
+ * The events emitted by a task (see Task#on)
+ */
+export type TaskEvent = 'start' | 'pause' | 'resume' | 'stop' | 'end';
+
+export type TaskListener = (task: Task) => void;
+
+const EVENT_OF: Record<keyof TaskDelegate, TaskEvent> = {
+  taskDidStart: 'start',
+  taskDidPause: 'pause',
+  taskDidResume: 'resume',
+  taskDidStop: 'stop',
+  taskDidEnd: 'end',
+};
+
+interface ListenerEntry {
+  listener: TaskListener;
+  once: boolean;
+}
+
 interface TaskRun {
   promise: Promise<TaskResult>;
   resolve: (result: TaskResult) => void;
@@ -155,6 +175,7 @@ export default abstract class Task extends Component {
   protected override destructor() {
     this.#signal?.removeEventListener('abort', this.#onAbort);
     this.stop ();
+    this.#listeners.clear();
     super.destructor();
   }
 
@@ -172,19 +193,117 @@ export default abstract class Task extends Component {
     if (method === 'taskDidEnd') this.#settleRun('ended');
     else if (method === 'taskDidStop') this.#settleRun('stopped');
 
-    const listeners = [this.delegate, ...(taskGroups.get(this) ?? [])];
+    // 1) the delegate
+    const delegateCallback = this.delegate?.[method];
+    if (delegateCallback) this.#safeCall(delegateCallback, this.delegate);
 
-    for (const listener of listeners) {
-      const callback = listener?.[method];
-      if (!callback) continue;
+    // 2) the event listeners
+    this.#emit(EVENT_OF[method]);
 
-      try {
-        callback.call(listener, this);
-      } catch (e) {
-        const err = asError(e);
-        if (err.stack) console.log(err.stack)
-        console.error(err);
-      }
+    // 3) the groups of the task
+    for (const group of taskGroups.get(this) ?? []) {
+      const callback = group[method];
+      if (callback) this.#safeCall(callback, group);
+    }
+  }
+
+  /**
+   *  Calls a listener, logging an exception instead of propagating it
+   *  @private
+   */
+  #safeCall(callback: (task: Task) => void, thisArg: unknown): void {
+    try {
+      callback.call(thisArg, this);
+    } catch (e) {
+      const err = asError(e);
+      if (err.stack) console.log(err.stack)
+      console.error(err);
+    }
+  }
+
+  /********************************************************************
+   Events
+   ********************************************************************/
+
+  /**
+   *  @private
+   */
+  readonly #listeners = new Map<TaskEvent, ListenerEntry[]>();
+
+  /**
+   *  Adds a listener called (synchronously) each time the task emits the
+   *  event, right after its delegate. A listener is added only once per
+   *  event.
+   *
+   *  @example
+   *  const unsubscribe = task.on('end', () => console.log('done'));
+   *  unsubscribe();
+   *
+   * @name core.Task#on
+   * @function
+   *
+   * @param {TaskEvent} event 'start' | 'pause' | 'resume' | 'stop' | 'end'
+   * @param {TaskListener} listener called with the task
+   * @return {Function} a function removing the listener
+   */
+  on(event: TaskEvent, listener: TaskListener): () => void {
+    return this.#addListener(event, listener, false);
+  }
+
+  /**
+   *  Same as on(), but the listener is removed after its first call.
+   *
+   * @name core.Task#once
+   * @function
+   *
+   * @param {TaskEvent} event 'start' | 'pause' | 'resume' | 'stop' | 'end'
+   * @param {TaskListener} listener called with the task
+   * @return {Function} a function removing the listener
+   */
+  once(event: TaskEvent, listener: TaskListener): () => void {
+    return this.#addListener(event, listener, true);
+  }
+
+  /**
+   *  Removes a listener added with on() or once().
+   *  Without listener, removes all the listeners of the event.
+   *
+   * @name core.Task#off
+   * @function
+   *
+   * @param {TaskEvent} event 'start' | 'pause' | 'resume' | 'stop' | 'end'
+   * @param {TaskListener} listener the listener to remove [optional]
+   */
+  off(event: TaskEvent, listener?: TaskListener): void {
+    if (!listener) {
+      this.#listeners.delete(event);
+      return;
+    }
+    const entries = this.#listeners.get(event);
+    const index = entries?.findIndex(entry => entry.listener === listener) ?? -1;
+    if (index !== -1) entries!.splice(index, 1);
+  }
+
+  #addListener(event: TaskEvent, listener: TaskListener, once: boolean): () => void {
+    let entries = this.#listeners.get(event);
+    if (!entries) {
+      entries = [];
+      this.#listeners.set(event, entries);
+    }
+    if (!entries.some(entry => entry.listener === listener)) {
+      entries.push({ listener, once });
+    }
+    return () => this.off(event, listener);
+  }
+
+  #emit(event: TaskEvent): void {
+    const entries = this.#listeners.get(event);
+    if (!entries?.length) return;
+
+    // a listener may add or remove listeners: iterate over a copy
+    for (const entry of [...entries]) {
+      if (entry.once) this.off(event, entry.listener);
+      this.#safeCall(entry.listener, undefined);
     }
   }
 
