@@ -37,11 +37,11 @@ export default abstract class Task extends Component {
    *
    *  <p>
    *  @example
-   *  var delegate = {};
+   *  const delegate = {};
    *  delegate.taskDidEnd = function () { ... }
    *
    *  // Declare a PAR task including a SEC Task
-   *  var task = new Task (...)
+   *  const task = new Task (...)
    *  task.delegate = delegate;
    *  task.start ();
    *
@@ -111,7 +111,7 @@ export default abstract class Task extends Component {
    *
    * @param {any} param any parameter (scalar, Array, Object)
    */
-  start(param: any) {}
+  abstract start(param?: any[]): boolean;
 
   /**
    *  Stops the task.<br />
@@ -121,7 +121,7 @@ export default abstract class Task extends Component {
    * @name core.Task#stop
    * @function
    */
-  stop() {}
+  abstract stop(): boolean;
 
   /**
    *  Pause the task.<br />
@@ -131,5 +131,5 @@ export default abstract class Task extends Component {
    * @name core.Task#pause
    * @function
    */
-  pause() {}
+  abstract pause(): boolean;
 }

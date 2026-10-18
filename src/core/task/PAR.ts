@@ -10,7 +10,7 @@ import { TaskState } from "./taskState";
  *  @example
  *
  *  // Declare the task.PAR
- *  var group = vs.par ([rotate, comp1], [scale, comp2]);
+ *  const group = vs.par ([rotate, comp1], [scale, comp2]);
  *
  *  // Start the task => start animations
  *  group.start ();
@@ -55,19 +55,19 @@ export const par = (params: TaskAndParams[]): PAR | undefined => {
  *  <p>
  *  @example
  *  // Declare two tasks (animations)
- *  var rotate = new vs.fx.RotateXYZAnimation (30, 50, 100);
+ *  const rotate = new vs.fx.RotateXYZAnimation (30, 50, 100);
  *  rotate.durations = '3s';
- *  var scale = new vs.fx.ScaleAnimation (2,0.5);
+ *  const scale = new vs.fx.ScaleAnimation (2,0.5);
  *  scale.durations = '2s';
  *
  *  // Declare the task.PAR
- *  var par = task.PAR ([rotate, comp1], [scale, comp2]);
+ *  const par = task.PAR ([rotate, comp1], [scale, comp2]);
  *
  *  // Start the task => start animations
  *  par.start ();
  *
  *  // Declare a PAR task including a SEC Task
- *  var seq = new Task_SEQ
+ *  const seq = new Task_SEQ
  *    ([scale, comp0], new task.PAR ([rotate, comp1], [rotate, comp2]));
  *  seq.delegate = this;
  *  seq.start ();
@@ -100,7 +100,7 @@ export default class PAR extends BaseTask {
    * @ignore
    * @param {any} param any parameter (scalar, Array, Object)
    */
-  start(param: any[]): boolean {
+  start(param?: any[]): boolean {
     if (this.state === TaskState.STARTED) {
       return false;
     }

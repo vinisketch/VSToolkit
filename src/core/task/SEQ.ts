@@ -10,7 +10,7 @@ import { TaskState } from "./taskState";
  *  @example
  *
  *  // Declare the Task_PAR
- *  var group = vs.seq ([scale, comp0], [rotate, comp0]);
+ *  const group = vs.seq ([scale, comp0], [rotate, comp0]);
  *
  *  // Start the task => start animations
  *  group.start ();
@@ -58,19 +58,19 @@ export const seq = (params: TaskAndParams[]): SEQ | undefined => {
  *
  *  @example
  *  // Declare two tasks (animations)
- *  var rotate = new vs.fx.RotateXYZAnimation (30, 50, 100);
+ *  const rotate = new vs.fx.RotateXYZAnimation (30, 50, 100);
  *  rotate.durations = '3s';
- *  var scale = new vs.fx.ScaleAnimation (2,0.5);
+ *  const scale = new vs.fx.ScaleAnimation (2,0.5);
  *  scale.durations = '2s';
  *
  *  // Declare the task.SEQ
- *  var seq = task.SEQ ([rotate, comp1], [scale, comp2]);
+ *  const seq = task.SEQ ([rotate, comp1], [scale, comp2]);
  *
  *  // Start the task => start animations sequentially
  *  seq.start ();
  *
  *  // Declare a PAR task including a SEC Task
- *  var seq = new task.SEQ
+ *  const seq = new task.SEQ
  *    ([scale, comp0], new Task_PAR ([rotate, comp1], [rotate, comp2]));
  *  seq.delegate = this;
  *  seq.start ();
