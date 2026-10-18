@@ -37,6 +37,13 @@ export class FakeTask extends Task {
     return true;
   }
 
+  override resume(): boolean {
+    this.calls.push('resume');
+    this.state = TaskState.STARTED;
+    this.notify('taskDidResume');
+    return true;
+  }
+
   end(): void {
     this.state = TaskState.STOPPED;
     this.notify('taskDidEnd');
@@ -51,7 +58,7 @@ export type DelegateEvent = [keyof TaskDelegate, unknown];
 
 /**
  * A delegate that records every callback it receives, in order.
- * taskDidStart is only recorded when `withStart` is set.
+ * taskDidStart and taskDidResume are only recorded when `withStart` is set.
  */
 export function recordingDelegate({ withStart = false } = {}): TaskDelegate & { events: DelegateEvent[] } {
   const events: DelegateEvent[] = [];
@@ -63,6 +70,7 @@ export function recordingDelegate({ withStart = false } = {}): TaskDelegate & { 
   };
   if (withStart) {
     delegate.taskDidStart = (task) => { events.push(['taskDidStart', task]); };
+    delegate.taskDidResume = (task) => { events.push(['taskDidResume', task]); };
   }
   return delegate;
 }

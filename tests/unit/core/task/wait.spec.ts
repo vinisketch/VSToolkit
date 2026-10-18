@@ -71,26 +71,34 @@ describe('Wait', function () {
       assert.strictEqual(wait.state, TaskState.STARTED);
     });
 
-    it('should not restart when already started, and return the current promise', function () {
+    it('should throw when already started', function () {
       const wait = new Wait(100);
       const delegate = recordingDelegate({ withStart: true });
       wait.delegate = delegate;
 
-      const run = wait.start();
-      assert.strictEqual(wait.start(), run);
+      wait.start();
+      assert.throws(() => wait.start(), /already started/);
       assert.strictEqual(delegate.events.length, 1);
     });
 
-    it('should call taskDidStart when started and when resumed', function () {
+    it('should throw when paused, pointing to resume()', function () {
+      const wait = new Wait(100);
+      wait.start();
+      wait.pause();
+      assert.throws(() => wait.start(), /call resume\(\)/);
+      assert.strictEqual(wait.state, TaskState.PAUSED);
+    });
+
+    it('should call taskDidStart when started, and taskDidResume when resumed', function () {
       const wait = new Wait(100);
       const delegate = recordingDelegate({ withStart: true });
       wait.delegate = delegate;
 
       wait.start();
       wait.pause();
-      wait.start();
+      wait.resume();
       assert.deepStrictEqual(delegate.events.map(([name]) => name),
-        ['taskDidStart', 'taskDidPause', 'taskDidStart']);
+        ['taskDidStart', 'taskDidPause', 'taskDidResume']);
     });
 
     it('should call taskDidEnd once the time has elapsed', function () {
@@ -247,7 +255,7 @@ describe('Wait', function () {
       wait.pause();
       mock.timers.tick(500);
 
-      wait.start();
+      assert.strictEqual(wait.resume(), true);
       assert.strictEqual(wait.state, TaskState.STARTED);
       mock.timers.tick(69);
       assert.strictEqual(wait.state, TaskState.STARTED);
@@ -261,14 +269,25 @@ describe('Wait', function () {
       wait.start();
       mock.timers.tick(30);
       wait.pause();
-      wait.start();
+      wait.resume();
       mock.timers.tick(30);
       wait.pause();
-      wait.start();
+      wait.resume();
       mock.timers.tick(39);
       assert.strictEqual(wait.state, TaskState.STARTED);
       mock.timers.tick(1);
       assert.strictEqual(wait.state, TaskState.STOPPED);
+    });
+
+    it('should return false from resume() when not paused', function () {
+      const wait = new Wait(100);
+      const delegate = recordingDelegate({ withStart: true });
+      wait.delegate = delegate;
+
+      assert.strictEqual(wait.resume(), false);
+      wait.start();
+      assert.strictEqual(wait.resume(), false);
+      assert.deepStrictEqual(delegate.events.map(([name]) => name), ['taskDidStart']);
     });
 
     it('should contain and log an exception thrown by taskDidPause', function () {

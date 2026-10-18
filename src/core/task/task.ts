@@ -204,12 +204,13 @@ export default abstract class Task extends Component {
   // }
 
   /**
-   *  Starts the task, or resumes it when paused.<br />
+   *  Starts the task from its beginning.<br />
+   *  The task must be stopped: never started, ended or stopped. Starting a
+   *  started or paused task throws an Error (use resume() for a paused
+   *  task).<br />
    *  Returns a promise resolved when this run finishes, with 'ended' when the
    *  task reached its end or 'stopped' when it was stopped before. It stays
-   *  pending while the task is paused.<br />
-   *  When the task is already started, it is not restarted (param is
-   *  ignored) and the promise of the current run is returned.
+   *  pending while the task is paused.
    *
    *  When the task abort signal (see TaskOptions) is aborted, the task is
    *  not started and the promise is resolved with 'stopped'.
@@ -229,14 +230,19 @@ export default abstract class Task extends Component {
    * @return {Promise<TaskResult>}
    */
   start(param?: TaskParam): Promise<TaskResult> {
+    if (this.state === TaskState.STARTED) {
+      throw new Error(`Task ${this.id} is already started`);
+    }
+    if (this.state === TaskState.PAUSED) {
+      throw new Error(`Task ${this.id} is paused, call resume() to resume it`);
+    }
     if (this.#signal?.aborted) {
       return Promise.resolve('stopped');
     }
 
-    const run = this.#run ?? this.#createRun();
+    const run = this.#createRun();
 
-    if (this.state !== TaskState.STARTED && !this.doStart(param)
-        && this.state === TaskState.STOPPED) {
+    if (!this.doStart(param) && this.state === TaskState.STOPPED) {
       // nothing to run (e.g. an empty group): the run is already over
       this.#settleRun('ended');
     }
@@ -245,8 +251,8 @@ export default abstract class Task extends Component {
   }
 
   /**
-   *  Implements the task start (or resume when paused).
-   *  Called by start() when the task is not started.
+   *  Implements the task start, from its beginning.
+   *  Called by start() when the task is stopped.
    *
    * @name core.Task#doStart
    * @function
@@ -276,6 +282,17 @@ export default abstract class Task extends Component {
    * @function
    */
   abstract pause(): boolean;
+
+  /**
+   *  Resumes a paused task.<br />
+   *  When the task is resumed, it calls the TaskDelegate.taskDidResume
+   *  if it declared. The promise returned by start() keeps tracking the run.
+   *
+   * @name core.Task#resume
+   * @function
+   * @return {boolean} false if the task was not paused
+   */
+  abstract resume(): boolean;
 
   /**
    *  The current run, from start() until the task ends or is stopped

@@ -62,7 +62,7 @@ describe('Task.start promise', function () {
       mock.timers.tick(1000);
       assert.strictEqual(await stateOf(run), 'pending');
 
-      assert.strictEqual(wait.start(), run);
+      assert.strictEqual(wait.resume(), true);
       mock.timers.tick(60);
       assert.strictEqual(await stateOf(run), 'ended');
     });
@@ -154,14 +154,20 @@ describe('Task.start promise', function () {
       assert.strictEqual(await run, 'stopped');
     });
 
-    it('should resolve the run of a task stopped by its group with "stopped"', async function () {
-      const wait = new Wait(100);
-      const group = new PAR([wait]);
-      group.start();
-      const run = wait.start();
-
+    it('should start again from the beginning after a stop, with a new promise', async function () {
+      const group = new SEQ([new Wait(50), new Wait(100)]);
+      const first = group.start();
+      mock.timers.tick(50);
       group.stop();
-      assert.strictEqual(await run, 'stopped');
+      assert.strictEqual(await first, 'stopped');
+
+      const second = group.start();
+      assert.notStrictEqual(second, first);
+      mock.timers.tick(50);
+      mock.timers.tick(99);
+      assert.strictEqual(await stateOf(second), 'pending');
+      mock.timers.tick(1);
+      assert.strictEqual(await stateOf(second), 'ended');
     });
   });
 

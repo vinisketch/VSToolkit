@@ -94,28 +94,42 @@ export default class PAR extends BaseTask {
    * @param {any} param any parameter (scalar, Array, Object)
    */
   protected override doStart(param?: TaskParam): boolean {
-    if (this.state === TaskState.STARTED) {
-      return false;
-    }
+    this.checkTasksStopped();
 
-    // when resuming, only restart the tasks which have not ended yet
-    if (this.state !== TaskState.PAUSED) {
-      this.#runningTasks.clear();
-      this.tasksAndParams.forEach(([task]) => this.#runningTasks.add(task));
-    }
+    this.#runningTasks.clear();
+    this.tasksAndParams.forEach(([task]) => this.#runningTasks.add(task));
 
     if (this.#runningTasks.size === 0) {
-      this.state = TaskState.STOPPED;
       return false;
     }
     this.state = TaskState.STARTED;
 
     for (let taskAndParams of this.tasksAndParams) {
-      if (!this.#runningTasks.has(taskAndParams [0])) continue;
-
       taskAndParams [0].start(this.paramFor(taskAndParams, param));
     }
     this.notify('taskDidStart');
+
+    return true;
+  }
+
+  /**
+   *  Resumes the tasks which have not ended yet
+   */
+  resume(): boolean {
+    if (this.state !== TaskState.PAUSED) {
+      return false;
+    }
+    this.state = TaskState.STARTED;
+
+    // the tasks callbacks are ignored, since this group is already started
+    this.#runningTasks.forEach(task => task.resume());
+    this.notify('taskDidResume');
+
+    // tasks resumed by someone else may have ended while the group was paused
+    if (this.#runningTasks.size === 0) {
+      this.state = TaskState.STOPPED;
+      this.notify('taskDidEnd');
+    }
 
     return true;
   }
@@ -185,6 +199,12 @@ export default class PAR extends BaseTask {
    *  running and waits for the task to be resumed.
    */
   taskDidPause(_task: Task): void {}
+
+  /**
+   *  A task was resumed by someone else than this group: nothing to do,
+   *  the group only tracks the end of its tasks.
+   */
+  taskDidResume(_task: Task): void {}
 
   /**
    */

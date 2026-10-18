@@ -146,7 +146,7 @@ describe('SEQ', function () {
       assert.deepStrictEqual(b.calls, []);
     });
 
-    it('should call taskDidStart once when started and when resumed', function () {
+    it('should call taskDidStart once when started, and taskDidResume when resumed', function () {
       const a = new FakeTask('a');
       const b = new FakeTask('b');
       const group = new SEQ([a, b]);
@@ -158,9 +158,9 @@ describe('SEQ', function () {
       assert.deepStrictEqual(delegate.events, [['taskDidStart', group]]);
 
       group.pause();
-      group.start();
+      group.resume();
       assert.deepStrictEqual(delegate.events.map(([name]) => name),
-        ['taskDidStart', 'taskDidPause', 'taskDidStart']);
+        ['taskDidStart', 'taskDidPause', 'taskDidResume']);
     });
 
     it('should keep the delegate of its tasks, and both are notified', function () {
@@ -195,12 +195,30 @@ describe('SEQ', function () {
       assert.deepStrictEqual(b.calls, ['start']);
     });
 
-    it('should not restart when already started, and return the current promise', function () {
+    it('should throw when already started', function () {
       const a = new FakeTask();
       const group = new SEQ([a]);
-      const run = group.start();
-      assert.strictEqual(group.start(), run);
+      group.start();
+      assert.throws(() => group.start(), /already started/);
       assert.deepStrictEqual(a.calls, ['start']);
+    });
+
+    it('should throw when paused', function () {
+      const group = new SEQ([new FakeTask()]);
+      group.start();
+      group.pause();
+      assert.throws(() => group.start(), /call resume\(\)/);
+    });
+
+    it('should throw, and start no task, when one of its tasks is running', function () {
+      const a = new FakeTask('a');
+      const b = new FakeTask('b');
+      const group = new SEQ([a, b]);
+
+      b.start();
+      assert.throws(() => group.start(), /is already running/);
+      assert.deepStrictEqual(a.calls, []);
+      assert.strictEqual(group.state, TaskState.STOPPED);
     });
 
     it('should resolve with "ended" and stay stopped when it has no tasks', async function () {
@@ -363,10 +381,34 @@ describe('SEQ', function () {
 
       group.start(['p']);
       group.pause();
-      group.start();
+      assert.strictEqual(group.resume(), true);
       assert.strictEqual(group.state, TaskState.STARTED);
-      assert.deepStrictEqual(a.calls, ['start', 'pause', 'start']);
+      assert.deepStrictEqual(a.calls, ['start', 'pause', 'resume']);
       assert.deepStrictEqual(b.calls, []);
+
+      a.end();
+      assert.deepStrictEqual(b.calls, ['start']);
+    });
+
+    it('should return false from resume() when not paused', function () {
+      const group = new SEQ([new FakeTask()]);
+      assert.strictEqual(group.resume(), false);
+      group.start();
+      assert.strictEqual(group.resume(), false);
+    });
+
+    it('should resume when its paused task is resumed by someone else', function () {
+      const a = new FakeTask('a');
+      const b = new FakeTask('b');
+      const group = new SEQ([a, b]);
+      const delegate = recordingDelegate();
+      group.delegate = { ...delegate, taskDidResume: (task) => { delegate.events.push(['taskDidResume', task]); } };
+
+      group.start();
+      a.pause();        // paused by someone else: the sequence pauses
+      a.resume();       // resumed by someone else: the sequence resumes
+      assert.strictEqual(group.state, TaskState.STARTED);
+      assert.deepStrictEqual(delegate.events.map(([name]) => name), ['taskDidPause', 'taskDidResume']);
 
       a.end();
       assert.deepStrictEqual(b.calls, ['start']);
@@ -418,7 +460,7 @@ describe('SEQ', function () {
       mock.timers.tick(30);
       group.pause();
       mock.timers.tick(1000);
-      group.start();
+      group.resume();
       mock.timers.tick(69);
       assert.strictEqual(group.state, TaskState.STARTED);
       mock.timers.tick(1);

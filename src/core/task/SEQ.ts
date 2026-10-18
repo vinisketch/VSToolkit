@@ -106,13 +106,28 @@ export default class SEQ extends BaseTask {
    * @function
    */
   protected override doStart(param?: TaskParam): boolean {
-    if (this.state === TaskState.STARTED) {
+    this.checkTasksStopped();
+
+    if (!this.#startTask(0, param)) return false;
+    this.notify('taskDidStart');
+
+    return true;
+  }
+
+  /**
+   *  Resumes the paused task of the sequence
+   */
+  resume(): boolean {
+    if (this.state !== TaskState.PAUSED) {
       return false;
     }
+    this.state = TaskState.STARTED;
 
-    // resume the paused task, otherwise start from the first one
-    const index = (this.state === TaskState.PAUSED) ? this.#currentTask : 0;
-    return this.#startTask(index, param);
+    // the task callback is ignored, since this sequence is already started
+    this.tasksAndParams [this.#currentTask]?.[0].resume();
+    this.notify('taskDidResume');
+
+    return true;
   }
 
   /**
@@ -170,14 +185,11 @@ export default class SEQ extends BaseTask {
       return false;
     }
 
-    const isGroupStart = this.state !== TaskState.STARTED;
-
     this.#currentTask = index;
     this.state = TaskState.STARTED;
     this.#startParam = param;
 
     taskAndParams [0].start(this.paramFor(taskAndParams, param));
-    if (isGroupStart) this.notify('taskDidStart');
 
     return true;
   }
@@ -214,6 +226,16 @@ export default class SEQ extends BaseTask {
 
     this.state = TaskState.PAUSED;
     this.notify('taskDidPause');
+  }
+
+  /**
+   *  The paused task was resumed by someone else than this sequence
+   */
+  taskDidResume(task: Task): void {
+    if (this.state !== TaskState.PAUSED || !this.#isCurrent(task)) return;
+
+    this.state = TaskState.STARTED;
+    this.notify('taskDidResume');
   }
 
   /**

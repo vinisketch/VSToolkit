@@ -94,6 +94,19 @@ export default abstract class BaseTask extends Task implements TaskDelegate {
   abstract taskDidEnd(task: Task): void;
   abstract taskDidStop(task: Task): void;
   abstract taskDidPause(task: Task): void;
+  abstract taskDidResume(task: Task): void;
+
+  /**
+   *  Throws if one of the group tasks is running, since it could not be
+   *  started by the group.
+   *  @protected
+   */
+  protected checkTasksStopped(): void {
+    const running = this.tasksAndParams.find(([task]) => task.state !== TaskState.STOPPED);
+    if (running) {
+      throw new Error(`Cannot start the group ${this.id}: its task ${running[0].id} is already running`);
+    }
+  }
 
   /**
    *  Stops the group and releases its tasks

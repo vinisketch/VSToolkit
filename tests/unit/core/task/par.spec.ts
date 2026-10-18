@@ -117,12 +117,43 @@ describe('PAR', function () {
       assert.deepStrictEqual(b.startParams, [['own']]);
     });
 
-    it('should not restart when already started, and return the current promise', function () {
+    it('should throw when already started', function () {
       const a = new FakeTask();
       const group = new PAR([a]);
-      const run = group.start([]);
-      assert.strictEqual(group.start([]), run);
+      group.start([]);
+      assert.throws(() => group.start([]), /already started/);
       assert.deepStrictEqual(a.calls, ['start']);
+    });
+
+    it('should throw when paused', function () {
+      const group = new PAR([new FakeTask()]);
+      group.start([]);
+      group.pause();
+      assert.throws(() => group.start([]), /call resume\(\)/);
+    });
+
+    it('should throw, and start no task, when one of its tasks is running', function () {
+      const a = new FakeTask('a');
+      const b = new FakeTask('b');
+      const group = new PAR([a, b]);
+
+      b.start();
+      assert.throws(() => group.start(), /is already running/);
+      assert.deepStrictEqual(a.calls, []);
+      assert.strictEqual(group.state, TaskState.STOPPED);
+    });
+
+    it('should start again from the beginning after a stop', function () {
+      const a = new FakeTask('a');
+      const b = new FakeTask('b');
+      const group = new PAR([a, b]);
+
+      group.start();
+      a.end();
+      group.stop();
+      group.start();
+      assert.deepStrictEqual(a.calls, ['start', 'start']);
+      assert.deepStrictEqual(b.calls, ['start', 'stop', 'start']);
     });
 
     it('should call taskDidEnd once, after every task ended', function () {
@@ -246,7 +277,7 @@ describe('PAR', function () {
       assert.strictEqual(group.pause(), false);
     });
 
-    it('should resume every task on start', function () {
+    it('should resume every task', function () {
       const a = new FakeTask('a');
       const b = new FakeTask('b');
       const group = new PAR([a, b]);
@@ -255,12 +286,61 @@ describe('PAR', function () {
 
       group.start([]);
       group.pause();
-      group.start([]);
+      assert.strictEqual(group.resume(), true);
       assert.strictEqual(group.state, TaskState.STARTED);
-      assert.deepStrictEqual(a.calls, ['start', 'pause', 'start']);
+      assert.deepStrictEqual(a.calls, ['start', 'pause', 'resume']);
 
       a.end();
       b.end();
+      assert.deepStrictEqual(delegate.events.at(-1), ['taskDidEnd', group]);
+    });
+
+    it('should resume only the tasks which have not ended', function () {
+      const a = new FakeTask('a');
+      const b = new FakeTask('b');
+      const group = new PAR([a, b]);
+
+      group.start();
+      a.end();
+      group.pause();
+      group.resume();
+      assert.deepStrictEqual(a.calls, ['start']);
+      assert.deepStrictEqual(b.calls, ['start', 'pause', 'resume']);
+    });
+
+    it('should call taskDidResume once', function () {
+      const group = new PAR([new FakeTask('a'), new FakeTask('b')]);
+      const delegate = recordingDelegate({ withStart: true });
+      group.delegate = delegate;
+
+      group.start();
+      group.pause();
+      group.resume();
+      assert.deepStrictEqual(delegate.events.map(([name]) => name),
+        ['taskDidStart', 'taskDidPause', 'taskDidResume']);
+    });
+
+    it('should return false from resume() when not paused', function () {
+      const group = new PAR([new FakeTask()]);
+      assert.strictEqual(group.resume(), false);
+      group.start();
+      assert.strictEqual(group.resume(), false);
+    });
+
+    it('should end on resume when its tasks ended while it was paused', function () {
+      const a = new FakeTask('a');
+      const group = new PAR([a]);
+      const delegate = recordingDelegate();
+      group.delegate = delegate;
+
+      group.start();
+      group.pause();
+      a.resume();       // resumed by someone else
+      a.end();
+      assert.strictEqual(group.state, TaskState.PAUSED);
+
+      group.resume();
+      assert.strictEqual(group.state, TaskState.STOPPED);
       assert.deepStrictEqual(delegate.events.at(-1), ['taskDidEnd', group]);
     });
 
@@ -305,7 +385,7 @@ describe('PAR', function () {
       group.pause();
       assert.deepStrictEqual(delegate.events, [['taskDidPause', group]]);
 
-      group.start([]);
+      group.resume();
       mock.timers.tick(39);
       assert.strictEqual(group.state, TaskState.STARTED);
       mock.timers.tick(1);

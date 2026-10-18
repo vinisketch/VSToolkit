@@ -66,16 +66,27 @@ export default class Wait extends Task {
    * @function
    */
   protected override doStart(): boolean {
-    let time = this.#time;
-    if (this.state === TaskState.STARTED) {
+    this.#leftTime = this.#time;
+    this.#schedule();
+    this.notify('taskDidStart');
+
+    return true;
+  }
+
+  /**
+   *  Resumes the task for the time left
+   */
+  resume(): boolean {
+    if (this.state !== TaskState.PAUSED) {
       return false;
     }
-    if (this.state === TaskState.PAUSED) {
-      time = this.#leftTime;
-    } else {
-      this.#leftTime = time;
-    }
+    this.#schedule();
+    this.notify('taskDidResume');
 
+    return true;
+  }
+
+  #schedule(): void {
     this.state = TaskState.STARTED;
 
     this.#startTime = Date.now();
@@ -83,10 +94,7 @@ export default class Wait extends Task {
       this.#timer = null;
       this.state = TaskState.STOPPED;
       this.notify('taskDidEnd');
-    }, time);
-    this.notify('taskDidStart');
-
-    return true;
+    }, this.#leftTime);
   }
 
   /**
