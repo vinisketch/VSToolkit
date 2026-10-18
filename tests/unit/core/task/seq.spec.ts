@@ -250,6 +250,18 @@ describe('SEQ', function () {
       assert.deepStrictEqual(delegate.events, [['taskDidPause', group]]);
     });
 
+    it('should do nothing when stopped', function () {
+      const a = new FakeTask('a');
+      const group = new SEQ([a]);
+      const delegate = recordingDelegate();
+      group.delegate = delegate;
+
+      assert.strictEqual(group.pause(), false);
+      assert.strictEqual(group.state, TaskState.STOPPED);
+      assert.deepStrictEqual(a.calls, []);
+      assert.deepStrictEqual(delegate.events, []);
+    });
+
     it('should return false when already paused', function () {
       const group = new SEQ([new FakeTask()]);
       group.start();

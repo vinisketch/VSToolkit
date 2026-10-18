@@ -127,7 +127,8 @@ export default class Wait extends Task {
    * @function
    */
   pause(): boolean {
-    if (this.state === TaskState.PAUSED) {
+    // only a running task can be paused
+    if (this.state !== TaskState.STARTED) {
       return false;
     }
     this.state = TaskState.PAUSED;

@@ -1,6 +1,6 @@
 import { asError } from "vs_utils";
 import BaseTask from "./helper";
-import { TaskAndParams } from "./task";
+import Task, { TaskAndParams } from "./task";
 import { TaskState } from "./taskState";
 
 /**
@@ -87,10 +87,10 @@ export const par = (params: TaskAndParams[]): PAR | undefined => {
 export default class PAR extends BaseTask {
 
   /**
-   * task ended
+   * Tasks started and not yet ended (running or paused)
    *  @private
    */
-  #tasksWillEnded = 0;
+  readonly #runningTasks = new Set<Task>();
 
   /**
    *  Starts the task
@@ -104,10 +104,22 @@ export default class PAR extends BaseTask {
     if (this.state === TaskState.STARTED) {
       return false;
     }
-    this.#tasksWillEnded = this.tasksAndParams.length;
+
+    // when resuming, only restart the tasks which have not ended yet
+    if (this.state !== TaskState.PAUSED) {
+      this.#runningTasks.clear();
+      this.tasksAndParams.forEach(([task]) => this.#runningTasks.add(task));
+    }
+
+    if (this.#runningTasks.size === 0) {
+      this.state = TaskState.STOPPED;
+      return false;
+    }
     this.state = TaskState.STARTED;
 
     for (let taskAndParams of this.tasksAndParams) {
+      if (!this.#runningTasks.has(taskAndParams [0])) continue;
+
       taskAndParams [0].delegate = this;
       taskAndParams [0].start((taskAndParams [1]) ? taskAndParams [1] : param);
     }
@@ -127,9 +139,11 @@ export default class PAR extends BaseTask {
     }
     this.state = TaskState.STOPPED;
 
-    for (let taskAndParams of this.tasksAndParams) {
-      taskAndParams [0].stop();
-    }
+    // the tasks callbacks are ignored, since this group is already stopped
+    const tasks = [...this.#runningTasks];
+    this.#runningTasks.clear();
+    tasks.forEach(task => task.stop());
+    this.#notify('taskDidStop');
 
     return true;
   }
@@ -141,16 +155,33 @@ export default class PAR extends BaseTask {
    * @function
    */
   pause() {
-    if (this.state === TaskState.PAUSED) {
+    // only a running group can be paused
+    if (this.state !== TaskState.STARTED) {
       return false;
     }
     this.state = TaskState.PAUSED;
 
-    for (let taskAndParams of this.tasksAndParams) {
-      taskAndParams [0].pause();
-    }
+    // the tasks callbacks are ignored, since this group is already paused
+    this.#runningTasks.forEach(task => task.pause());
+    this.#notify('taskDidPause');
 
     return true;
+  }
+
+  /**
+   *  @private
+   */
+  #notify(method: 'taskDidEnd' | 'taskDidStop' | 'taskDidPause'): void {
+    const callback = this.delegate?.[method];
+    if (!callback) return;
+
+    try {
+      callback.call(this.delegate, this);
+    } catch (e) {
+      const err = asError(e);
+      if (err.stack) console.log(err.stack)
+      console.error(err);
+    }
   }
 
   /********************************************************************
@@ -158,59 +189,34 @@ export default class PAR extends BaseTask {
    ********************************************************************/
 
   /**
+   *  A task was stopped by someone else than this group: it will not end,
+   *  so the group stops when no other task is running.
    */
-  taskDidStop(): void {
-    this.#tasksWillEnded--;
-    if (this.#tasksWillEnded === 0) {
-      this.state = TaskState.STOPPED;
+  taskDidStop(task: Task): void {
+    if (this.state === TaskState.STOPPED) return;
 
-      if (this.delegate?.taskDidStop) {
-        try {
-          this.delegate.taskDidStop(this);
-        } catch (e) {
-          const err = asError(e);
-          if (err.stack) console.log(err.stack)
-          console.error(err);
-        }
-      }
+    this.#runningTasks.delete(task);
+    if (this.#runningTasks.size === 0) {
+      this.state = TaskState.STOPPED;
+      this.#notify('taskDidStop');
     }
   }
 
   /**
+   *  A task was paused by someone else than this group: the group keeps
+   *  running and waits for the task to be resumed.
    */
-  taskDidPause(): void {
-    this.#tasksWillEnded--;
-    if (this.#tasksWillEnded === 0) {
-      this.state = TaskState.PAUSED;
-
-      if (this.delegate?.taskDidPause) {
-        try {
-          this.delegate.taskDidPause(this);
-        } catch (e) {
-          const err = asError(e);
-          if (err.stack) console.log(err.stack)
-          console.error(err);
-        }
-      }
-    }
-  }
+  taskDidPause(): void {}
 
   /**
    */
-  taskDidEnd(): void {
-    this.#tasksWillEnded--;
-    if (this.#tasksWillEnded === 0) {
-      this.state = TaskState.STOPPED;
+  taskDidEnd(task: Task): void {
+    if (this.state === TaskState.STOPPED) return;
 
-      if (this.delegate?.taskDidEnd) {
-        try {
-          this.delegate.taskDidEnd(this);
-        } catch (e) {
-          const err = asError(e);
-          if (err.stack) console.log(err.stack)
-          console.error(err);
-        }
-      }
+    this.#runningTasks.delete(task);
+    if (this.state === TaskState.STARTED && this.#runningTasks.size === 0) {
+      this.state = TaskState.STOPPED;
+      this.#notify('taskDidEnd');
     }
   }
 }
