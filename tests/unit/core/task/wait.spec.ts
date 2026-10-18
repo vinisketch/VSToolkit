@@ -67,14 +67,18 @@ describe('Wait', function () {
   describe('start', function () {
     it('should start the task', function () {
       const wait = new Wait(100);
-      assert.strictEqual(wait.start(), true);
+      wait.start();
       assert.strictEqual(wait.state, TaskState.STARTED);
     });
 
-    it('should return false when already started', function () {
+    it('should not restart when already started, and return the current promise', function () {
       const wait = new Wait(100);
-      wait.start();
-      assert.strictEqual(wait.start(), false);
+      const delegate = recordingDelegate({ withStart: true });
+      wait.delegate = delegate;
+
+      const run = wait.start();
+      assert.strictEqual(wait.start(), run);
+      assert.strictEqual(delegate.events.length, 1);
     });
 
     it('should call taskDidStart when started and when resumed', function () {
@@ -118,7 +122,8 @@ describe('Wait', function () {
 
       wait.start();
       mock.timers.tick(100);
-      assert.strictEqual(wait.start(), true);
+      wait.start();
+      assert.strictEqual(wait.state, TaskState.STARTED);
       mock.timers.tick(100);
       assert.strictEqual(delegate.events.length, 2);
     });
@@ -242,7 +247,8 @@ describe('Wait', function () {
       wait.pause();
       mock.timers.tick(500);
 
-      assert.strictEqual(wait.start(), true);
+      wait.start();
+      assert.strictEqual(wait.state, TaskState.STARTED);
       mock.timers.tick(69);
       assert.strictEqual(wait.state, TaskState.STARTED);
       mock.timers.tick(1);

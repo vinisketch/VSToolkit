@@ -1,4 +1,4 @@
-import Task, { TaskAndParams, TaskParam, attachToGroup, detachFromGroup } from "./task";
+import Task, { TaskAndParams, TaskOptions, TaskParam, attachToGroup, detachFromGroup } from "./task";
 import { TaskState } from "./taskState";
 import { TaskDelegate } from "./taskDelegate";
 import { isArray } from "vs_utils";
@@ -10,8 +10,8 @@ import { isArray } from "vs_utils";
  * several groups.
  */
 export default abstract class BaseTask extends Task implements TaskDelegate {
-  constructor(tasksAndParams?: TaskAndParams[]) {
-    super();
+  constructor(tasksAndParams?: TaskAndParams[], options?: TaskOptions) {
+    super(options);
 
     if (tasksAndParams && tasksAndParams.length) {
       this.setTasks(tasksAndParams);

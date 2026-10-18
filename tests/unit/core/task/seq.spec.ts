@@ -31,10 +31,10 @@ describe('SEQ', function () {
   });
 
   describe('seq()', function () {
-    it('should return an empty SEQ for an empty list', function () {
+    it('should return an empty SEQ for an empty list', async function () {
       const group = seq([]);
       assert.ok(group instanceof SEQ);
-      assert.strictEqual(group.start(), false);
+      assert.strictEqual(await group.start(), 'ended');
     });
 
     it('should return a stopped SEQ running the given tasks', function () {
@@ -48,13 +48,13 @@ describe('SEQ', function () {
   });
 
   describe('setTasks', function () {
-    it('should accept a task, [task] and [task, params]', function () {
+    it('should accept a task and [task, params]', function () {
       const a = new FakeTask('a');
       const b = new FakeTask('b');
       const c = new FakeTask('c');
       const group = new SEQ();
 
-      assert.strictEqual(group.setTasks([a, [b], [c, ['own']]]), true);
+      assert.strictEqual(group.setTasks([a, b, [c, ['own']]]), true);
 
       group.start(['shared']);
       a.end();
@@ -87,13 +87,14 @@ describe('SEQ', function () {
       assert.deepStrictEqual([...a.startParams, ...b.startParams, ...c.startParams], [0, '', false]);
     });
 
-    it('should warn about entries that are not [task] or [task, param]', function () {
+    it('should warn about entries that are not [task] or [task, param]', async function () {
       const a = new FakeTask('a');
       const group = new SEQ();
 
       group.setTasks([[a, 1, 2] as any]);
       assert.match(String(console_.output.warn[0]), /expected \[task\] or \[task, param\], got 3 items/);
-      assert.strictEqual(group.start(), false);
+      assert.strictEqual(await group.start(), 'ended');
+      assert.deepStrictEqual(a.calls, []);
     });
 
     it('should no longer react to tasks it replaced', function () {
@@ -139,7 +140,7 @@ describe('SEQ', function () {
       const b = new FakeTask('b');
       const group = new SEQ([a, b]);
 
-      assert.strictEqual(group.start(), true);
+      group.start();
       assert.strictEqual(group.state, TaskState.STARTED);
       assert.deepStrictEqual(a.calls, ['start']);
       assert.deepStrictEqual(b.calls, []);
@@ -194,15 +195,17 @@ describe('SEQ', function () {
       assert.deepStrictEqual(b.calls, ['start']);
     });
 
-    it('should return false when already started', function () {
-      const group = new SEQ([new FakeTask()]);
-      group.start();
-      assert.strictEqual(group.start(), false);
+    it('should not restart when already started, and return the current promise', function () {
+      const a = new FakeTask();
+      const group = new SEQ([a]);
+      const run = group.start();
+      assert.strictEqual(group.start(), run);
+      assert.deepStrictEqual(a.calls, ['start']);
     });
 
-    it('should return false and stay stopped when it has no tasks', function () {
+    it('should resolve with "ended" and stay stopped when it has no tasks', async function () {
       const group = new SEQ();
-      assert.strictEqual(group.start(), false);
+      assert.strictEqual(await group.start(), 'ended');
       assert.strictEqual(group.state, TaskState.STOPPED);
     });
 
@@ -360,7 +363,8 @@ describe('SEQ', function () {
 
       group.start(['p']);
       group.pause();
-      assert.strictEqual(group.start(), true);
+      group.start();
+      assert.strictEqual(group.state, TaskState.STARTED);
       assert.deepStrictEqual(a.calls, ['start', 'pause', 'start']);
       assert.deepStrictEqual(b.calls, []);
 

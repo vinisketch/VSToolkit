@@ -1,4 +1,4 @@
-import Task from "./task";
+import Task, { TaskOptions } from "./task";
 import { TaskState } from "./taskState";
 
 /**
@@ -19,11 +19,12 @@ import { TaskState } from "./taskState";
  * @name core.task.Wait
  *
  * @param time The time to wait, using millisecond
+ * @param options optional delegate and abort signal
  *  parameter
  */
 export default class Wait extends Task {
-  constructor(time: number) {
-    super();
+  constructor(time: number, options?: TaskOptions) {
+    super(options);
     this.#time = Wait.#checkTime(time);
   }
 
@@ -64,7 +65,7 @@ export default class Wait extends Task {
    * @ignore
    * @function
    */
-  start(): boolean {
+  protected override doStart(): boolean {
     let time = this.#time;
     if (this.state === TaskState.STARTED) {
       return false;

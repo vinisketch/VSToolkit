@@ -1,5 +1,5 @@
 import BaseTask from "./helper";
-import Task, { TaskAndParams, TaskParam } from "./task";
+import Task, { TaskAndParams, TaskOptions, TaskParam } from "./task";
 import { TaskState } from "./taskState";
 
 /**
@@ -16,8 +16,9 @@ import { TaskState } from "./taskState";
  *
  *  parameter
  * @param params
+ * @param options optional delegate and abort signal
  */
-export const par = (params: TaskAndParams[]): PAR => new PAR(params);
+export const par = (params: TaskAndParams[], options?: TaskOptions): PAR => new PAR(params, options);
 
 /**
  *  The core.task.PAR class
@@ -92,7 +93,7 @@ export default class PAR extends BaseTask {
    * @ignore
    * @param {any} param any parameter (scalar, Array, Object)
    */
-  start(param?: TaskParam): boolean {
+  protected override doStart(param?: TaskParam): boolean {
     if (this.state === TaskState.STARTED) {
       return false;
     }

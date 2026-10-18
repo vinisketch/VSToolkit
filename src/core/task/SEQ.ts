@@ -1,5 +1,5 @@
 import BaseTask from "./helper";
-import Task, { TaskAndParams, TaskParam } from "./task";
+import Task, { TaskAndParams, TaskOptions, TaskParam } from "./task";
 import { TaskState } from "./taskState";
 
 /**
@@ -16,9 +16,9 @@ import { TaskState } from "./taskState";
  *
  *  parameter
  * @param params
+ * @param options optional delegate and abort signal
  */
-export const seq = (params: TaskAndParams[]): SEQ => new SEQ(params);
-
+export const seq = (params: TaskAndParams[], options?: TaskOptions): SEQ => new SEQ(params, options);
 
 /**
  *  The task.SEQ class
@@ -105,7 +105,7 @@ export default class SEQ extends BaseTask {
    * @ignore
    * @function
    */
-  start(param?: TaskParam) {
+  protected override doStart(param?: TaskParam): boolean {
     if (this.state === TaskState.STARTED) {
       return false;
     }

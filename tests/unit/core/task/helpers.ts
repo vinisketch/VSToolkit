@@ -1,4 +1,4 @@
-import Task from '../../../../src/core/task/task';
+import Task, { TaskOptions } from '../../../../src/core/task/task';
 import { TaskState } from '../../../../src/core/task/taskState';
 import { TaskDelegate } from '../../../../src/core/task/taskDelegate';
 
@@ -11,11 +11,11 @@ export class FakeTask extends Task {
   readonly calls: string[] = [];
   readonly startParams: unknown[] = [];
 
-  constructor(readonly name = 'fake') {
-    super();
+  constructor(readonly name = 'fake', options?: TaskOptions) {
+    super(options);
   }
 
-  override start(param?: unknown): boolean {
+  protected override doStart(param?: unknown): boolean {
     this.calls.push('start');
     this.startParams.push(param);
     this.state = TaskState.STARTED;

@@ -31,10 +31,10 @@ describe('PAR', function () {
   });
 
   describe('par()', function () {
-    it('should return an empty PAR for an empty list', function () {
+    it('should return an empty PAR for an empty list', async function () {
       const group = par([]);
       assert.ok(group instanceof PAR);
-      assert.strictEqual(group.start(), false);
+      assert.strictEqual(await group.start(), 'ended');
       assert.strictEqual(group.state, TaskState.STOPPED);
     });
 
@@ -54,7 +54,7 @@ describe('PAR', function () {
       const b = new FakeTask('b');
       const group = new PAR([a, b]);
 
-      assert.strictEqual(group.start([]), true);
+      group.start([]);
       assert.strictEqual(group.state, TaskState.STARTED);
       assert.deepStrictEqual(a.calls, ['start']);
       assert.deepStrictEqual(b.calls, ['start']);
@@ -117,10 +117,12 @@ describe('PAR', function () {
       assert.deepStrictEqual(b.startParams, [['own']]);
     });
 
-    it('should return false when already started', function () {
-      const group = new PAR([new FakeTask()]);
-      group.start([]);
-      assert.strictEqual(group.start([]), false);
+    it('should not restart when already started, and return the current promise', function () {
+      const a = new FakeTask();
+      const group = new PAR([a]);
+      const run = group.start([]);
+      assert.strictEqual(group.start([]), run);
+      assert.deepStrictEqual(a.calls, ['start']);
     });
 
     it('should call taskDidEnd once, after every task ended', function () {
@@ -147,7 +149,8 @@ describe('PAR', function () {
 
       group.start([]);
       a.end();
-      assert.strictEqual(group.start([]), true);
+      group.start([]);
+      assert.strictEqual(group.state, TaskState.STARTED);
       a.end();
       assert.strictEqual(delegate.events.length, 2);
     });
@@ -252,7 +255,8 @@ describe('PAR', function () {
 
       group.start([]);
       group.pause();
-      assert.strictEqual(group.start([]), true);
+      group.start([]);
+      assert.strictEqual(group.state, TaskState.STARTED);
       assert.deepStrictEqual(a.calls, ['start', 'pause', 'start']);
 
       a.end();

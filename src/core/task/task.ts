@@ -8,7 +8,31 @@ import { TaskDelegate } from "./taskDelegate";
  */
 export type TaskParam = unknown;
 
-export type TaskAndParams = [Task, TaskParam] | [Task] | Task;
+export type TaskAndParams = [Task, TaskParam] | Task;
+
+/**
+ * How a task run finished: 'ended' when the task reached its end,
+ * 'stopped' when it was stopped before (by stop() or the task abort signal).
+ */
+export type TaskResult = 'ended' | 'stopped';
+
+export interface TaskOptions {
+  /**
+   * The task delegate (see Task#delegate)
+   */
+  delegate?: TaskDelegate;
+
+  /**
+   * Stops the task whenever the signal is aborted, which has the same
+   * effect as calling stop(). Once aborted, the task cannot be started.
+   */
+  signal?: AbortSignal;
+}
+
+interface TaskRun {
+  promise: Promise<TaskResult>;
+  resolve: (result: TaskResult) => void;
+}
 
 /**
  * Groups (SEQ, PAR) each task belongs to. Groups are notified of the task
@@ -49,9 +73,28 @@ export function detachFromGroup(task: Task, group: TaskDelegate): void {
  *
  * @name core.Task
  *
- * @param {Object} config the configuration structure
+ * @param {TaskOptions} options optional delegate and abort signal
  */
 export default abstract class Task extends Component {
+  constructor({ delegate, signal }: TaskOptions = {}) {
+    super();
+    this.delegate = delegate;
+
+    if (signal) {
+      this.#signal = signal;
+      signal.addEventListener('abort', this.#onAbort, { once: true });
+    }
+  }
+
+  /**
+   *  @private
+   */
+  readonly #signal: AbortSignal | undefined;
+
+  /**
+   *  @private
+   */
+  readonly #onAbort = (): void => { this.stop(); };
 
   /********************************************************************
 
@@ -110,6 +153,7 @@ export default abstract class Task extends Component {
    * @function
    */
   protected override destructor() {
+    this.#signal?.removeEventListener('abort', this.#onAbort);
     this.stop ();
     super.destructor();
   }
@@ -123,6 +167,11 @@ export default abstract class Task extends Component {
    * @protected
    */
   protected notify(method: keyof TaskDelegate): void {
+    // settle the start() promise before the callbacks, so a callback
+    // restarting the task gets a new one
+    if (method === 'taskDidEnd') this.#settleRun('ended');
+    else if (method === 'taskDidStop') this.#settleRun('stopped');
+
     const listeners = [this.delegate, ...(taskGroups.get(this) ?? [])];
 
     for (const listener of listeners) {
@@ -155,14 +204,58 @@ export default abstract class Task extends Component {
   // }
 
   /**
-   *  Starts the task
+   *  Starts the task, or resumes it when paused.<br />
+   *  Returns a promise resolved when this run finishes, with 'ended' when the
+   *  task reached its end or 'stopped' when it was stopped before. It stays
+   *  pending while the task is paused.<br />
+   *  When the task is already started, it is not restarted (param is
+   *  ignored) and the promise of the current run is returned.
+   *
+   *  When the task abort signal (see TaskOptions) is aborted, the task is
+   *  not started and the promise is resolved with 'stopped'.
+   *
+   *  @example
+   *  const result = await seq([fadeOut, new Wait(200), fadeIn]).start(view);
+   *
+   *  // aborting the signal has the same effect as calling stop()
+   *  const controller = new AbortController();
+   *  par([rotate, scale], { signal: controller.signal }).start(view);
+   *  controller.abort();
    *
    * @name core.Task#start
    * @function
    *
    * @param {any} param any parameter (scalar, Array, Object)
+   * @return {Promise<TaskResult>}
    */
-  abstract start(param?: TaskParam): boolean;
+  start(param?: TaskParam): Promise<TaskResult> {
+    if (this.#signal?.aborted) {
+      return Promise.resolve('stopped');
+    }
+
+    const run = this.#run ?? this.#createRun();
+
+    if (this.state !== TaskState.STARTED && !this.doStart(param)
+        && this.state === TaskState.STOPPED) {
+      // nothing to run (e.g. an empty group): the run is already over
+      this.#settleRun('ended');
+    }
+
+    return run.promise;
+  }
+
+  /**
+   *  Implements the task start (or resume when paused).
+   *  Called by start() when the task is not started.
+   *
+   * @name core.Task#doStart
+   * @function
+   * @protected
+   *
+   * @param {any} param any parameter (scalar, Array, Object)
+   * @return {boolean} false if the task could not be started
+   */
+  protected abstract doStart(param?: TaskParam): boolean;
 
   /**
    *  Stops the task.<br />
@@ -183,4 +276,26 @@ export default abstract class Task extends Component {
    * @function
    */
   abstract pause(): boolean;
+
+  /**
+   *  The current run, from start() until the task ends or is stopped
+   *  @private
+   */
+  #run: TaskRun | undefined;
+
+  #createRun(): TaskRun {
+    let resolve!: (result: TaskResult) => void;
+    const promise = new Promise<TaskResult>((res) => { resolve = res; });
+
+    this.#run = { promise, resolve };
+    return this.#run;
+  }
+
+  #settleRun(result: TaskResult): void {
+    const run = this.#run;
+    if (!run) return;
+
+    this.#run = undefined;
+    run.resolve(result);
+  }
 }
