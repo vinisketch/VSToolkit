@@ -18,6 +18,25 @@ export function isEventSource(obj: unknown): obj is EventSource {
 }
 
 /**
+ * Bindings of each event source: event spec => handlers.
+ *
+ * EventSource is used as a mixin (see Component): its methods are copied on
+ * the target class prototype, but not its fields. A #private field would not
+ * exist on the target instances (reading it throws), so the bindings are
+ * stored here, by instance.
+ */
+const sourceBindings = new WeakMap<object, Map<string, Handler[]>>();
+
+function bindingsOf(source: object): Map<string, Handler[]> {
+  let bindings = sourceBindings.get(source);
+  if (!bindings) {
+    bindings = new Map();
+    sourceBindings.set(source, bindings);
+  }
+  return bindings;
+}
+
+/**
  *  @class
  *  EventSource is a class that forms the basis of event and command
  *  processing. All class that handles events must inherit form EventSource.
@@ -28,26 +47,40 @@ export function isEventSource(obj: unknown): obj is EventSource {
  * @param {Object} config the configuration structure [mandatory]
  */
 export default class EventSource extends Mixin {
-  readonly #bindings = new Map<string, Handler[]>();
-
   protected initMixin(): void { }
 
   protected releaseMixin (): void {
     super.releaseMixin();
-    for (const [spec, handlerList] of this.#bindings.entries()) {
+
+    const bindings = sourceBindings.get(this);
+    if (!bindings) return;
+
+    for (const handlerList of bindings.values()) {
       handlerList.forEach(handler => Handler.release(handler));
       handlerList.length = 0;
-      this.#bindings.delete(spec);
     }
+    sourceBindings.delete(this);
   }
 
+  /**
+   *  Binds a callback of an object to an event of this source.
+   *
+   * @name core.EventSource#bind
+   * @function
+   *
+   * @param {string} spec the event specification [mandatory]
+   * @param {core.Object} obj the object interested to catch the event [mandatory]
+   * @param {Function|string} func the callback, or the name of a method of obj,
+   *        called with obj as this [mandatory]
+   */
   bind(spec: string, obj: Component, func: HandlerFunction): void {
-    if (!spec || !obj) return;
+    if (!spec || !obj || !func) return;
 
-    let handlerList = this.#bindings.get(spec);
+    const bindings = bindingsOf(this);
+    let handlerList = bindings.get(spec);
     if (!handlerList) {
       handlerList = [];
-      this.#bindings.set(spec, handlerList);
+      bindings.set(spec, handlerList);
     }
 
     const handler = Handler.retain();
@@ -64,11 +97,13 @@ export default class EventSource extends Mixin {
    * @param {HandlerFunction} handler the object interested to catch the event [mandatory]
    */
   addEventListener(type: string, func: (e: Event) => void): void {
-    let handlerList = this.#bindings.get(type);
+    if (!type || !func) return;
 
+    const bindings = bindingsOf(this);
+    let handlerList = bindings.get(type);
     if (!handlerList) {
       handlerList = [];
-      this.#bindings.set(type, handlerList);
+      bindings.set(type, handlerList);
     }
 
     const handler = Handler.retain();
@@ -86,17 +121,13 @@ export default class EventSource extends Mixin {
    *          wishes to initiate captured [optional]
    */
   removeEventListener(type: string, func: (e: Event) => void): void {
-    if (!this.#bindings.has(type)) return;
+    const handlerList = sourceBindings.get(this)?.get(type);
+    if (!handlerList) return;
 
-    function unbind(handlerList: any[]): void {
-      const idx = handlerList.findIndex(handler => handler.func === func);
-      if (idx !== -1) {
-        const handlers = handlerList.splice(idx, 1);
-        handlers.forEach(handle => Handler.release(handle));
-      }
+    const idx = handlerList.findIndex(handler => !handler.obj && handler.func === func);
+    if (idx !== -1) {
+      Handler.release(handlerList.splice(idx, 1)[0]);
     }
-
-    unbind(this.#bindings.get(type)!);
   }
 
   /**
@@ -112,18 +143,24 @@ export default class EventSource extends Mixin {
    * @param {string} func the name of a callback. If it's not defined
    *        all binding with <spec, obj> will be removed
    */
-  unbind(spec: string, obj: Component, func: HandlerFunction) {
-    if (!this.#bindings.has(spec)) return;
+  unbind(spec: string, obj: Component, func?: HandlerFunction) {
+    const handlerList = sourceBindings.get(this)?.get(spec);
+    if (!handlerList) return;
 
-    function unbind(handlerList: any[]): void {
-      const idx = handlerList.findIndex(handler => handler.func === func && handler.obj === obj);
+    if (func) {
+      const idx = handlerList.findIndex(handler => handler.obj === obj && handler.func === func);
       if (idx !== -1) {
-        const handlers = handlerList.splice(idx, 1);
-        handlers.forEach(handle => Handler.release(handle));
+        Handler.release(handlerList.splice(idx, 1)[0]);
       }
+      return;
     }
 
-    unbind(this.#bindings.get(spec)!);
+    // no callback: remove all the bindings of obj
+    for (let i = handlerList.length - 1; i >= 0; i--) {
+      if (handlerList[i].obj === obj) {
+        Handler.release(handlerList.splice(i, 1)[0]);
+      }
+    }
   }
 
   /**
@@ -132,12 +169,15 @@ export default class EventSource extends Mixin {
    */
   dispatchEvent(this: EventSource, event: Event): boolean {
     if (!event.type) return false;
-    const handlerList = this.#bindings.get(event.type);
+    const handlerList = sourceBindings.get(this)?.get(event.type);
 
     if (isNotEmpty(handlerList)) {
       event.src = this;
       event.srcTarget = this;
-      queueProcAsyncEvent(event, handlerList);
+      // the event is delivered asynchronously: deliver it to the handlers
+      // bound at dispatch time, as plain functions, since a handler unbound
+      // meanwhile is released to the pool and may be reused by another binding
+      queueProcAsyncEvent(event, handlerList!.map(handler => handler.toListener()));
     } else {
       // bubbling
       if (isContainer(this)) {

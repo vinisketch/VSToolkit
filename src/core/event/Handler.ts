@@ -1,6 +1,7 @@
 import Component from '../Component';
 import { isFunction, isString } from 'vs_utils';
 import { HandlerFunction } from './HandlerFunction';
+import type Event from './Event';
 
 /**
  * @class
@@ -35,6 +36,24 @@ export default class Handler {
     } else if (isString(func)) {
       this.#funcName = func;
     }
+  }
+
+  /**
+   * Returns a function calling the handler callback with the event, as it
+   * is now: later changes of the handler (release, reuse) do not affect it.
+   * A callback given by name is looked up on the object when called.
+   */
+  toListener(): (event: Event) => void {
+    const obj = this.#obj;
+    const funcPtr = this.#funcPtr;
+    const funcName = this.#funcName;
+
+    return (event: Event): void => {
+      const func = funcPtr ?? (obj && funcName ? (obj as unknown as Record<string, unknown>)[funcName] : undefined);
+      if (isFunction(func)) {
+        func.call(obj, event);
+      }
+    };
   }
 
   static retain(): Handler {
