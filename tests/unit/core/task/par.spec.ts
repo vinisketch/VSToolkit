@@ -1,6 +1,8 @@
 import assert from 'assert';
 import { mock } from 'node:test';
 
+import '../../../di_config';
+
 import PAR, { par } from '../../../../src/core/task/par';
 import Wait from '../../../../src/core/task/wait';
 import { TaskState } from '../../../../src/core/task/taskState';

@@ -1,6 +1,8 @@
 import assert from 'assert';
 import { mock } from 'node:test';
 
+import '../../../di_config';
+
 import { TaskEvent } from '../../../../src/core/task/task';
 import Wait from '../../../../src/core/task/wait';
 import SEQ from '../../../../src/core/task/seq';

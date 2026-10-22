@@ -1,6 +1,8 @@
 import assert from 'assert';
 import { mock } from 'node:test';
 
+import '../../../di_config';
+
 import Wait from '../../../../src/core/task/wait';
 import { TaskState } from '../../../../src/core/task/taskState';
 import { captureConsole, recordingDelegate, throwingDelegate } from './helpers';

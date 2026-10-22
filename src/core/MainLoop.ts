@@ -25,20 +25,6 @@ export const ON_NEXT_FRAME = -1;
 
 type EventHandler = any;
 
-let _logger: ILogger | null = null;
-// resolved when first needed (an error to log), console when no LOGGER is
-// registered
-const getLogger = (): ILogger => {
-  if (!_logger) {
-    try {
-      _logger = container.get(LOGGER);
-    } catch {
-      _logger = consoleLogger;
-    }
-  }
-  return _logger;
-}
-
 interface EventBurst {
   handlerList: EventHandler[],
   event: Event;
@@ -162,7 +148,7 @@ function doOneEvent(burst: EventBurst, isSynchro?: boolean): void {
   const len = handlerList.length;
   let l = len;
   const event = burst.event;
-  const logger = getLogger();
+  const logger = container.get(LOGGER);
 
   if (isSynchro) isSyncEventsPropagating = true;
   else isAsyncEventsPropagating = true;
