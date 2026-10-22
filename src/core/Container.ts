@@ -1,4 +1,3 @@
-import { isObject } from 'vs_utils';
 import Component from './Component';
 
 const childToParent = new WeakMap<Component, Container>();
@@ -82,5 +81,6 @@ export default class Container {
 
 export function isContainer(obj: unknown): obj is Container {
   if (obj instanceof Container) return true;
-  return isObject(obj) && 'add' in obj && 'remove' in obj && 'isChild' in obj;
+  // any object: vs_utils isObject() only accepts plain objects
+  return typeof obj === 'object' && obj !== null && 'add' in obj && 'remove' in obj && 'isChild' in obj;
 }

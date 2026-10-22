@@ -4,6 +4,8 @@ import '../../../di_config';
 
 import Component from '../../../../src/core/Component';
 import Event from '../../../../src/core/event/Event';
+import EventSource from '../../../../src/core/event/EventSource';
+import Container from '../../../../src/core/Container';
 import { Fsm } from '../../../../src/core/FSM';
 
 class Source extends Component {}
@@ -28,6 +30,27 @@ function makeEvent(type: string, data?: unknown): Event {
  * Events are delivered asynchronously by the main loop (setImmediate):
  * let it run.
  */
+/**
+ * A container which is also an event source, to receive bubbling events
+ * (EventSource methods copied on it, as applyMixins does for Component).
+ */
+class Group extends Container {}
+interface Group extends EventSource {}
+for (const name of Object.getOwnPropertyNames(EventSource.prototype)) {
+  if (name === 'constructor') continue;
+  Object.defineProperty(Group.prototype, name, Object.getOwnPropertyDescriptor(EventSource.prototype, name)!);
+}
+
+/**
+ * A component which is also a container (has add/remove/isChild).
+ */
+class Panel extends Source {
+  readonly #children = new Set<Component>();
+  add(child: Component) { this.#children.add(child); }
+  remove(child: Component) { this.#children.delete(child); }
+  isChild(child: Component) { return this.#children.has(child); }
+}
+
 async function flush(): Promise<void> {
   for (let i = 0; i < 10; i++) {
     await new Promise(resolve => setImmediate(resolve));
@@ -251,6 +274,62 @@ describe('EventSource (mixed in Component)', function () {
       source.dispatchEvent(makeEvent('tap'));
       await flush();
       assert.strictEqual(crossed, true);
+    });
+  });
+  describe('bubbling', function () {
+    it('should bubble an event without handler from a child to its parent', async function () {
+      const group = new Group();
+      const child = new Source();
+      group.add(child);
+      const types: (string | undefined)[] = [];
+      group.addEventListener('select', (event) => types.push(event.type));
+
+      child.dispatchEvent(makeEvent('select'));
+      await flush();
+      assert.deepStrictEqual(types, ['select']);
+    });
+
+    it('should bubble from a child which is itself a container', async function () {
+      const group = new Group();
+      const panel = new Panel();
+      group.add(panel);
+      const types: (string | undefined)[] = [];
+      group.addEventListener('select', (event) => types.push(event.type));
+
+      panel.dispatchEvent(makeEvent('select'));
+      await flush();
+      assert.deepStrictEqual(types, ['select']);
+    });
+
+    it('should keep the child as the event source when bubbling', async function () {
+      const group = new Group();
+      const panel = new Panel();
+      group.add(panel);
+      const sources: unknown[] = [];
+      group.addEventListener('select', (event) => sources.push(event.src));
+
+      panel.dispatchEvent(makeEvent('select'));
+      await flush();
+      assert.deepStrictEqual(sources, [panel]);
+    });
+
+    it('should not bubble an event handled by the child', async function () {
+      const group = new Group();
+      const panel = new Panel();
+      group.add(panel);
+      const log: string[] = [];
+      group.addEventListener('select', () => log.push('parent'));
+      panel.addEventListener('select', () => log.push('child'));
+
+      panel.dispatchEvent(makeEvent('select'));
+      await flush();
+      assert.deepStrictEqual(log, ['child']);
+    });
+
+    it('should not bubble from a child without parent', async function () {
+      const panel = new Panel();
+      assert.strictEqual(panel.dispatchEvent(makeEvent('select')), true);
+      await flush();
     });
   });
 });

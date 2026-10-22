@@ -10,7 +10,7 @@
  *  It specifies the source of the event (which object has generated the event),
  *  the type of the event and an event data.
  */
-import EventSource from './EventSource';
+import type EventSource from './EventSource';
 
 export default class Event {
   private static readonly eventPool: Event[] = [];
@@ -41,6 +41,8 @@ export default class Event {
    */
   public srcTarget: EventSource | undefined;
 
+  #isPooled = false;
+
   private constructor() {
   }
 
@@ -54,13 +56,16 @@ export default class Event {
   }
 
   static retain(): Event {
-    if (this.eventPool.length > 0) {
-      return this.eventPool.pop()!;
-    }
-    return new Event();
+    const event = Event.eventPool.pop() ?? new Event();
+    event.#isPooled = false;
+    return event;
   }
 
   static release(event: Event): void {
+    // already in the pool: releasing it again would make two retain() return it
+    if (event.#isPooled) return;
+    event.#isPooled = true;
+
     // Clean up references
     event.#type = undefined;
     event.data = undefined;
@@ -68,6 +73,6 @@ export default class Event {
     event.srcTarget = undefined;
 
     // Return to pool
-    this.eventPool.push(event);
+    Event.eventPool.push(event);
   }
 }

@@ -1,14 +1,15 @@
-import { isEmpty, isNotEmpty, isObject, Mixin } from 'vs_utils';
+import { isNotEmpty, Mixin } from 'vs_utils';
 import Component from '../Component';
 import { queueProcAsyncEvent } from '../MainLoop';
 import Handler from './Handler';
 import { HandlerFunction } from './HandlerFunction';
-import Container, { isContainer } from '../Container';
+import Container from '../Container';
 import Event from './Event';
 
 export function isEventSource(obj: unknown): obj is EventSource {
   return (
-    isObject(obj) &&
+    // any object: vs_utils isObject() only accepts plain objects
+    typeof obj === 'object' && obj !== null &&
     'dispatchEvent' in obj &&
     'bind' in obj &&
     'unbind' in obj &&
@@ -166,27 +167,42 @@ export default class EventSource extends Mixin {
   /**
    *  Dispatches an Event at the specified EventSource, invoking the affected
    *  EventListeners in the appropriate order.
+   *  <p>
+   *  When this source has no handler for the event, the event bubbles up to
+   *  its parent Container (if it is an EventSource), and so on. The event src
+   *  stays this source.
    */
   dispatchEvent(this: EventSource, event: Event): boolean {
     if (!event.type) return false;
-    const handlerList = sourceBindings.get(this)?.get(event.type);
 
-    if (isNotEmpty(handlerList)) {
-      event.src = this;
-      event.srcTarget = this;
-      // the event is delivered asynchronously: deliver it to the handlers
-      // bound at dispatch time, as plain functions, since a handler unbound
-      // meanwhile is released to the pool and may be reused by another binding
-      queueProcAsyncEvent(event, handlerList!.map(handler => handler.toListener()));
-    } else {
-      // bubbling
-      if (isContainer(this)) {
-        const parent = Container.getParent(this as unknown as Component);
-        if (isEventSource(parent)) {
-          parent.dispatchEvent(event);
-        }
-      }
-    }
+    event.src = this;
+    event.srcTarget = this;
+    deliver(this, event);
+
     return true;
+  }
+}
+
+/**
+ * Delivers the event to the handlers of the source, or bubbles it up to the
+ * first parent having handlers for it.
+ * (a module function, not a #private method, which would not exist on the
+ * classes EventSource is mixed in)
+ */
+function deliver(source: EventSource, event: Event): void {
+  const handlerList = sourceBindings.get(source)?.get(event.type!);
+
+  if (isNotEmpty(handlerList)) {
+    // the event is delivered asynchronously: deliver it to the handlers
+    // bound at dispatch time, as plain functions, since a handler unbound
+    // meanwhile is released to the pool and may be reused by another binding
+    queueProcAsyncEvent(event, handlerList!.map(handler => handler.toListener()));
+    return;
+  }
+
+  // bubbling
+  const parent = Container.getParent(source as unknown as Component);
+  if (isEventSource(parent)) {
+    deliver(parent, event);
   }
 }

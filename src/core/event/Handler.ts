@@ -16,6 +16,7 @@ export default class Handler {
   #funcName: string | undefined;
   #funcPtr: Function | undefined;
   #obj: Component | undefined;
+  #isPooled = false;
 
   get func(): string | Function | undefined {
     return this.#funcPtr || this.#funcName;
@@ -30,12 +31,8 @@ export default class Handler {
 
   configure(obj?: Component, func?: HandlerFunction): void {
     this.#obj = obj;
-
-    if (isFunction(func)) {
-      this.#funcPtr = func;
-    } else if (isString(func)) {
-      this.#funcName = func;
-    }
+    this.#funcPtr = isFunction(func) ? func : undefined;
+    this.#funcName = isString(func) ? func : undefined;
   }
 
   /**
@@ -57,13 +54,16 @@ export default class Handler {
   }
 
   static retain(): Handler {
-    if (Handler.#pool.length > 0) {
-      return Handler.#pool.pop()!;
-    }
-    return new Handler();
+    const handler = Handler.#pool.pop() ?? new Handler();
+    handler.#isPooled = false;
+    return handler;
   }
 
   static release(handler: Handler) {
+    // already in the pool: releasing it again would make two retain() return it
+    if (handler.#isPooled) return;
+    handler.#isPooled = true;
+
     // Clean up references
     handler.#obj = undefined;
     handler.#funcName = undefined;
