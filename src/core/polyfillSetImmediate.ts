@@ -2,7 +2,7 @@
 // that have to be executed.
 import { asError, container } from 'vs_utils';
 import { Action } from './Action';
-import { ILogger, LOGGER } from './ILogger';
+import { ILogger, LOGGER, consoleLogger } from './ILogger';
 
 let mainActionsQueue: Action[] = [];
 let tmpActionsQueue: Action[] = [];
@@ -10,8 +10,16 @@ let scheduleDoActions: () => void;
 let areActionsScheduled = false;
 
 let _logger: ILogger | null = null;
-const getLogger = () => {
-  _logger = _logger ?? container.get(LOGGER);
+// resolved when first needed (an error to log), console when no LOGGER is
+// registered
+const getLogger = (): ILogger => {
+  if (!_logger) {
+    try {
+      _logger = container.get(LOGGER);
+    } catch {
+      _logger = consoleLogger;
+    }
+  }
   return _logger;
 }
 

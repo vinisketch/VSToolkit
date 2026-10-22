@@ -5,7 +5,7 @@ import {
 } from './polyfillSetImmediate';
 import { Event } from './event';
 import { Action } from "./Action";
-import { ILogger, LOGGER } from './ILogger';
+import { ILogger, LOGGER, consoleLogger } from './ILogger';
 
 /**
  * Schedule your action on next frame.
@@ -26,8 +26,16 @@ export const ON_NEXT_FRAME = -1;
 type EventHandler = any;
 
 let _logger: ILogger | null = null;
-const getLogger = () => {
-  _logger = _logger ?? container.get(LOGGER);
+// resolved when first needed (an error to log), console when no LOGGER is
+// registered
+const getLogger = (): ILogger => {
+  if (!_logger) {
+    try {
+      _logger = container.get(LOGGER);
+    } catch {
+      _logger = consoleLogger;
+    }
+  }
   return _logger;
 }
 
