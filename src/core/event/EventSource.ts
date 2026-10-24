@@ -38,6 +38,49 @@ function bindingsOf(source: object): Map<string, Handler[]> {
 }
 
 /**
+ * Sources each object is bound to (see bind()): observer => sources.
+ * Used to remove the bindings of an observer when it is released.
+ */
+const observerSources = new WeakMap<object, Set<object>>();
+
+function trackObserver(source: object, observer: object): void {
+  let sources = observerSources.get(observer);
+  if (!sources) {
+    sources = new Set();
+    observerSources.set(observer, sources);
+  }
+  sources.add(source);
+}
+
+/**
+ * Forgets the source for the observer, unless the observer is still bound to
+ * one of its events.
+ */
+function untrackObserver(source: object, observer: object): void {
+  const bindings = sourceBindings.get(source);
+  for (const handlerList of bindings?.values() ?? []) {
+    if (handlerList.some(handler => handler.obj === observer)) return;
+  }
+  observerSources.get(observer)?.delete(source);
+}
+
+/**
+ * Removes all the bindings of the observer, on every source.
+ */
+function unbindObserver(observer: object): void {
+  for (const source of observerSources.get(observer) ?? []) {
+    for (const handlerList of sourceBindings.get(source)?.values() ?? []) {
+      for (let i = handlerList.length - 1; i >= 0; i--) {
+        if (handlerList[i].obj === observer) {
+          Handler.release(handlerList.splice(i, 1)[0]);
+        }
+      }
+    }
+  }
+  observerSources.delete(observer);
+}
+
+/**
  *  @class
  *  EventSource is a class that forms the basis of event and command
  *  processing. All class that handles events must inherit form EventSource.
@@ -50,14 +93,25 @@ function bindingsOf(source: object): Map<string, Handler[]> {
 export default class EventSource extends Mixin {
   protected initMixin(): void { }
 
+  /**
+   *  Releases the bindings of this object: the ones of its events (as
+   *  source), and the ones on the events of other sources (as observer).
+   */
   protected releaseMixin (): void {
     super.releaseMixin();
 
+    // as observer
+    unbindObserver(this);
+
+    // as source
     const bindings = sourceBindings.get(this);
     if (!bindings) return;
 
     for (const handlerList of bindings.values()) {
-      handlerList.forEach(handler => Handler.release(handler));
+      handlerList.forEach(handler => {
+        if (handler.obj) observerSources.get(handler.obj)?.delete(this);
+        Handler.release(handler);
+      });
       handlerList.length = 0;
     }
     sourceBindings.delete(this);
@@ -87,6 +141,7 @@ export default class EventSource extends Mixin {
     const handler = Handler.retain();
     handler.configure(obj, func);
     handlerList.push(handler);
+    trackObserver(this, obj);
   }
 
   /**
@@ -153,15 +208,16 @@ export default class EventSource extends Mixin {
       if (idx !== -1) {
         Handler.release(handlerList.splice(idx, 1)[0]);
       }
-      return;
-    }
-
-    // no callback: remove all the bindings of obj
-    for (let i = handlerList.length - 1; i >= 0; i--) {
-      if (handlerList[i].obj === obj) {
-        Handler.release(handlerList.splice(i, 1)[0]);
+    } else {
+      // no callback: remove all the bindings of obj
+      for (let i = handlerList.length - 1; i >= 0; i--) {
+        if (handlerList[i].obj === obj) {
+          Handler.release(handlerList.splice(i, 1)[0]);
+        }
       }
     }
+
+    untrackObserver(this, obj);
   }
 
   /**

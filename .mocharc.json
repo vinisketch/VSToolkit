@@ -1,4 +1,11 @@
 {
-  "require": ["tsx"],
-  "spec": ["tests/**/*.spec.ts"]
+  "require": [
+    "tsx"
+  ],
+  "spec": [
+    "tests/**/*.spec.ts"
+  ],
+  "node-option": [
+    "expose-gc"
+  ]
 }

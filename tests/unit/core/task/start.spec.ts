@@ -47,6 +47,15 @@ describe('Task.start promise', function () {
       assert.strictEqual(wait.state, TaskState.STOPPED);
     });
 
+    it('should resolve with "stopped" when the task is destroyed', async function () {
+      const wait = new Wait(100);
+      const run = wait.start();
+
+      wait.destroy();
+      assert.strictEqual(await run, 'stopped');
+      assert.strictEqual(wait.isDeleted(), true);
+    });
+
     it('should resolve with "stopped" when the task is stopped', async function () {
       const wait = new Wait(100);
       const run = wait.start();

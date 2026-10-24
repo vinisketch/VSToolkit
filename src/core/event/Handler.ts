@@ -39,6 +39,8 @@ export default class Handler {
    * Returns a function calling the handler callback with the event, as it
    * is now: later changes of the handler (release, reuse) do not affect it.
    * A callback given by name is looked up on the object when called.
+   * Nothing is called when the object was deleted meanwhile (the event
+   * is delivered asynchronously).
    */
   toListener(): (event: Event) => void {
     const obj = this.#obj;
@@ -46,6 +48,8 @@ export default class Handler {
     const funcName = this.#funcName;
 
     return (event: Event): void => {
+      if (obj?.isDeleted?.()) return;
+
       const func = funcPtr ?? (obj && funcName ? (obj as unknown as Record<string, unknown>)[funcName] : undefined);
       if (isFunction(func)) {
         func.call(obj, event);
