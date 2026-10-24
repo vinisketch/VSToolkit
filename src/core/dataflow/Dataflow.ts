@@ -58,10 +58,6 @@ function buildConnectParameters(
   const propertiesOut = isString(outDesc) ? [outDesc] : outDesc;
   const propertiesIn = isString(inDesc) ? [inDesc] : inDesc;
 
-  if (propertiesIn.length !== propertiesOut.length) {
-    throw new Error('DataFlow.[dis]connect, parameter error');
-  }
-
   return [srcObj, propertiesOut, trgObj, propertiesIn];
 }
 
@@ -295,6 +291,12 @@ export class DataFlow implements IDataFlow {
     func?: Function,
   ): number {
     const [srcObj, propertiesOut, trgObj, propertiesIn] = buildConnectParameters(src, outDesc, trg, inDesc);
+
+    // without function, each out property is copied to an in property; a
+    // function can map any number of out values to any number of in values
+    if (!func && propertiesIn.length !== propertiesOut.length) {
+      throw new Error('DataFlow.connect, parameter error: as many out as in properties are needed without function');
+    }
 
     // throws for an unknown property
     generateGetters(srcObj, propertiesOut);
