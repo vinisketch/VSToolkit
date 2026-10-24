@@ -24,9 +24,12 @@ export default class Event {
   }
 
   /**
-   * The optional data associated to the event.
+   * The optional data associated to the event (read only, see configure).
    */
-  private data: any | undefined;
+  #data: any | undefined;
+  get data(): any | undefined {
+    return this.#data;
+  }
 
   /**
    * The component which produce the event
@@ -52,7 +55,7 @@ export default class Event {
    */
   configure(type: string, data?: any): void {
     this.#type = type;
-    this.data = data;
+    this.#data = data;
   }
 
   static retain(): Event {
@@ -68,7 +71,7 @@ export default class Event {
 
     // Clean up references
     event.#type = undefined;
-    event.data = undefined;
+    event.#data = undefined;
     event.src = undefined;
     event.srcTarget = undefined;
 

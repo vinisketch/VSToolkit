@@ -37,6 +37,19 @@ describe('Event', function () {
       assert.strictEqual(event.type, 'select');
     });
 
+    it('should set the data', function () {
+      const event = Event.retain();
+      const data = { value: 1 };
+      event.configure('select', data);
+      assert.strictEqual(event.data, data);
+    });
+
+    it('should have no data by default', function () {
+      const event = Event.retain();
+      event.configure('select');
+      assert.strictEqual(event.data, undefined);
+    });
+
     it('should replace the type of a configured event', function () {
       const event = Event.retain();
       event.configure('select');
@@ -55,6 +68,7 @@ describe('Event', function () {
 
       Event.release(event);
       assert.strictEqual(event.type, undefined);
+      assert.strictEqual(event.data, undefined);
       assert.strictEqual(event.src, undefined);
       assert.strictEqual(event.srcTarget, undefined);
     });

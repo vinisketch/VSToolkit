@@ -41,9 +41,9 @@ function arcs(fsm: Fsm, states: string[]): string[] {
     .sort();
 }
 
-function makeEvent(type: string): Event {
+function makeEvent(type: string, data?: unknown): Event {
   const event = Event.retain();
-  event.configure(type);
+  event.configure(type, data);
   return event;
 }
 
@@ -54,7 +54,21 @@ async function flush(): Promise<void> {
 }
 
 describe('Fsm', function () {
+  describe('id', function () {
+    it('should get a generated unique id', function () {
+      const first = new Fsm(new Owner());
+      const second = new Fsm(new Owner());
+      assert.ok(first.id);
+      assert.notStrictEqual(first.id, second.id);
+      assert.strictEqual(Component.instances.get(first.id), first);
+    });
+  });
+
   describe('states', function () {
+    it('should list the names of the states', function () {
+      assert.deepStrictEqual([...makeCycle().getListState()], ['1', '2', '3']);
+    });
+
     it('should add, test and remove states', function () {
       const fsm = new Fsm(new Owner());
       assert.strictEqual(fsm.addState('1'), true);
@@ -248,9 +262,58 @@ describe('Fsm', function () {
       assert.throws(() => fsm.initWithData(['1'], ['a'], [], undefined as any), TypeError);
     });
 
-    it('should throw for a transition with an unknown state', function () {
+    it('should throw for a transition with an unknown state, input or output', function () {
       const fsm = new Fsm(new Owner());
       assert.throws(() => fsm.initWithData(['1'], ['a'], [], [transition('1', '2', 'a')]), /unknown state "2"/);
+      assert.throws(() => fsm.initWithData(['1'], ['a'], [], [transition('1', '1', 'b')]), /unknown input "b"/);
+      assert.throws(() => fsm.initWithData(['1'], ['a'], [], [transition('1', '1', 'a', 'x')]), /unknown output "x"/);
+    });
+
+    it('should throw for a state listed twice', function () {
+      const fsm = new Fsm(new Owner());
+      assert.throws(() => fsm.initWithData(['1', '2', '1'], [], [], []), /duplicate state "1"/);
+    });
+
+    it('should throw for a state already declared', function () {
+      const fsm = new Fsm(new Owner());
+      fsm.addState('1');
+      assert.throws(() => fsm.initWithData(['1'], [], [], []), /duplicate state "1"/);
+    });
+
+    it('should throw for an empty state, input or output', function () {
+      const fsm = new Fsm(new Owner());
+      assert.throws(() => fsm.initWithData([''], [], [], []), /a state is empty/);
+      assert.throws(() => fsm.initWithData(['1'], [''], [], []), /an input is empty/);
+      assert.throws(() => fsm.initWithData(['1'], [], [''], []), /an output is empty/);
+    });
+
+    it('should not change the fsm when it throws', function () {
+      const fsm = new Fsm(new Owner());
+      assert.throws(() => fsm.initWithData(['1', '2'], ['a'], ['x'], [
+        transition('1', '2', 'a', 'x'),
+        transition('2', '3', 'a'),
+      ]));
+      assert.strictEqual(fsm.existState('1'), false);
+      assert.deepStrictEqual([...fsm.getInputs()], []);
+      assert.deepStrictEqual([...fsm.getOutputs()], []);
+    });
+
+    it('should accept inputs and outputs already declared or listed twice', function () {
+      const fsm = new Fsm(new Owner());
+      fsm.addInput('a');
+      fsm.initWithData(['1', '2'], ['a', 'b', 'b'], ['x', 'x'], [transition('1', '2', 'b', 'x')]);
+      assert.deepStrictEqual([...fsm.getInputs()], ['a', 'b']);
+      assert.deepStrictEqual([...fsm.getOutputs()], ['x']);
+      assert.deepStrictEqual(arcs(fsm, ['1']), ['1-b->2']);
+    });
+
+    it('should accept transitions using the states, inputs and outputs already declared', function () {
+      const fsm = new Fsm(new Owner());
+      fsm.addState('1');
+      fsm.addInput('a');
+      fsm.addOutput('x');
+      fsm.initWithData(['2'], [], [], [transition('1', '2', 'a', 'x')]);
+      assert.deepStrictEqual(arcs(fsm, ['1']), ['1-a->2']);
     });
   });
 
@@ -266,6 +329,26 @@ describe('Fsm', function () {
         ['', '1', '2'],
         ['1', '', '/x'],
       ]), /"\/x" from "1" to "2" has no input/);
+    });
+
+    it('should throw for a state twice in the first row, without changing the fsm', function () {
+      const fsm = new Fsm(new Owner());
+      assert.throws(() => fsm.initWithMatrix([
+        ['', '1', '2', '1'],
+        ['1', '', 'a', ''],
+      ]), /duplicate state "1"/);
+      assert.deepStrictEqual([...fsm.getListState()], []);
+      assert.deepStrictEqual([...fsm.getInputs()], []);
+    });
+
+    it('should throw for a state twice in the first column', function () {
+      const fsm = new Fsm(new Owner());
+      assert.throws(() => fsm.initWithMatrix([
+        ['', '1', '2'],
+        ['1', '', 'a'],
+        ['1', 'b', ''],
+      ]), /"1" has two rows/);
+      assert.deepStrictEqual([...fsm.getListState()], []);
     });
 
     it('should throw for a row of a state missing in the first row', function () {
@@ -331,8 +414,12 @@ describe('Fsm', function () {
     it('should give the state accessible on an input', function () {
       const fsm = makeCycle();
       fsm.activate();
-      assert.ok(fsm.getAccessibleStateOn('a'));
+      assert.strictEqual(fsm.getAccessibleStateOn('a'), '2');
       assert.strictEqual(fsm.getAccessibleStateOn('b'), undefined);
+    });
+
+    it('should give no accessible state before being activated', function () {
+      assert.strictEqual(makeCycle().getAccessibleStateOn('a'), undefined);
     });
 
     it('should go back to the initial state when activated again', function () {
@@ -487,6 +574,19 @@ describe('Fsm', function () {
       assert.deepStrictEqual(types, []);
     });
 
+    it('should give the data of the input to the action and the output event', async function () {
+      const fsm = makeCycle();
+      const data = { value: 42 };
+      const received: unknown[] = [];
+      fsm.setOutput('x', (event: Event) => received.push(['action', event.data]));
+      fsm.addEventListener('x', (event) => received.push(['event', event.data]));
+      fsm.activate();
+
+      fsm.fsmNotify('a', data);
+      await flush();
+      assert.deepStrictEqual(received, [['action', data], ['event', data]]);
+    });
+
     it('should dispatch an event named after the output', async function () {
       const fsm = makeCycle();
       const types: (string | undefined)[] = [];
@@ -519,6 +619,19 @@ describe('Fsm', function () {
       source.dispatchEvent(makeEvent('tap'));
       await flush();
       assert.strictEqual(owner.calls.length, 1);
+    });
+
+    it('should give the data of the bound event to the output action', async function () {
+      const fsm = makeCycle();
+      const source = new Source();
+      const received: unknown[] = [];
+      fsm.setOutput('x', (event: Event) => received.push(event.data));
+      fsm.activate();
+
+      fsm.setInput('a', source, 'tap');
+      source.dispatchEvent(makeEvent('tap', 'tap data'));
+      await flush();
+      assert.deepStrictEqual(received, ['tap data']);
     });
 
     it('should ignore the other events of the source', async function () {
@@ -582,6 +695,88 @@ describe('Fsm', function () {
       source.dispatchEvent(makeEvent('tap'));
       await flush();
       assert.strictEqual(owner.calls.length, 0);
+    });
+  });
+
+  describe('unsetInput', function () {
+    it('should stop receiving the input from the event', async function () {
+      const owner = new Owner();
+      const fsm = makeCycle(owner);
+      const source = new Source();
+      fsm.setOutput('x', 'onOutput');
+      fsm.activate();
+      fsm.setInput('a', source, 'tap');
+
+      fsm.unsetInput('a', source, 'tap');
+      source.dispatchEvent(makeEvent('tap'));
+      await flush();
+      assert.strictEqual(owner.calls.length, 0);
+      assert.strictEqual(fsm.currentState, '1');
+    });
+
+    it('should keep the other inputs of the same event', async function () {
+      const fsm = new Fsm(new Owner());
+      fsm.initWithData(['1', '2'], ['a', 'b'], [], [transition('1', '2', 'b')]);
+      fsm.initialState = '1';
+      fsm.activate();
+      const source = new Source();
+      fsm.setInput('a', source, 'tap');
+      fsm.setInput('b', source, 'tap');
+
+      fsm.unsetInput('a', source, 'tap');
+      source.dispatchEvent(makeEvent('tap'));
+      await flush();
+      assert.strictEqual(fsm.currentState, '2');
+    });
+
+    it('should do nothing for an association which does not exist', function () {
+      const fsm = makeCycle();
+      assert.doesNotThrow(() => fsm.unsetInput('a', new Source(), 'tap'));
+    });
+
+    it('should throw for an unknown input', function () {
+      const fsm = makeCycle();
+      assert.throws(() => fsm.unsetInput('unknown', new Source(), 'tap'), /unknown input "unknown"/);
+    });
+
+    it('should allow to associate the input again', async function () {
+      const owner = new Owner();
+      const fsm = makeCycle(owner);
+      const source = new Source();
+      fsm.setOutput('x', 'onOutput');
+      fsm.activate();
+      fsm.setInput('a', source, 'tap');
+      fsm.unsetInput('a', source, 'tap');
+
+      fsm.setInput('a', source, 'tap');
+      source.dispatchEvent(makeEvent('tap'));
+      await flush();
+      assert.strictEqual(owner.calls.length, 1);
+    });
+  });
+
+  describe('unsetOutput', function () {
+    it('should remove the action, and still dispatch the output event', async function () {
+      const owner = new Owner();
+      const fsm = makeCycle(owner);
+      const types: (string | undefined)[] = [];
+      fsm.setOutput('x', 'onOutput');
+      fsm.addEventListener('x', (event) => types.push(event.type));
+      fsm.activate();
+
+      fsm.unsetOutput('x');
+      fsm.fsmNotify('a', null);
+      await flush();
+      assert.strictEqual(owner.calls.length, 0);
+      assert.deepStrictEqual(types, ['x']);
+    });
+
+    it('should do nothing for an output without action', function () {
+      assert.doesNotThrow(() => makeCycle().unsetOutput('y'));
+    });
+
+    it('should throw for an unknown output', function () {
+      assert.throws(() => makeCycle().unsetOutput('unknown'), /unknown output "unknown"/);
     });
   });
 

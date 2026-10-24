@@ -1,4 +1,4 @@
-import { createId, isFunction, isString } from 'vs_utils';
+import { isFunction, isString } from 'vs_utils';
 import { EventSource, Event } from "./event";
 import Component from "./Component";
 
@@ -114,7 +114,7 @@ export class Fsm extends Component {
   readonly #outputAction = new Map<string, string | Function>();
 
   constructor(private readonly owner: Component) {
-    super(createId());
+    super();
   }
 
   /**
@@ -154,8 +154,15 @@ export class Fsm extends Component {
 
   /**
    *  Declares the states, inputs, outputs and transitions of the fsm.
-   *  Throws if a list is missing, or if a transition uses an unknown state,
-   *  input or output.
+   *  Throws, without changing the fsm, if:
+   *  <ul>
+   *    <li />a list is missing;
+   *    <li />a state is empty, listed twice or already declared;
+   *    <li />an input or an output is empty;
+   *    <li />a transition uses a state, an input or an output which is
+   *      neither declared nor listed.
+   *  </ul>
+   *  Inputs and outputs already declared, or listed twice, are accepted.
    *
    *  @example
    *  // 1 -a/x-> 2 -b-> 1
@@ -172,6 +179,35 @@ export class Fsm extends Component {
   initWithData(states: string[], inputs: string[], outputs: string[], transitions: Transition[]) {
     if (!states || !inputs || !outputs || !transitions) {
       throw new TypeError('Fsm.initWithData: states, inputs, outputs and transitions are mandatory');
+    }
+
+    // validate everything first: the fsm is not changed when it throws
+    const listed = new Set<string>();
+    for (const state of states) {
+      if (!state) {
+        throw new Error('Fsm.initWithData: a state is empty');
+      }
+      if (listed.has(state) || this.existState(state)) {
+        throw new Error(`Fsm.initWithData: duplicate state "${state}"`);
+      }
+      listed.add(state);
+    }
+    if (inputs.some(input => !input)) {
+      throw new Error('Fsm.initWithData: an input is empty');
+    }
+    if (outputs.some(output => !output)) {
+      throw new Error('Fsm.initWithData: an output is empty');
+    }
+
+    const allStates = new Set([...this.#listOfState.keys(), ...states]);
+    const allInputs = new Set([...this.#listInput, ...inputs]);
+    const allOutputs = new Set([...this.#listOutput, ...outputs]);
+    for (const { from, to, on, output } of transitions) {
+      for (const state of [from, to]) {
+        if (!allStates.has(state)) throw new Error(`Fsm.initWithData: unknown state "${state}"`);
+      }
+      if (!allInputs.has(on)) throw new Error(`Fsm.initWithData: unknown input "${on}"`);
+      if (output && !allOutputs.has(output)) throw new Error(`Fsm.initWithData: unknown output "${output}"`);
     }
 
     states.forEach(state => this.addState(state));
@@ -193,8 +229,10 @@ export class Fsm extends Component {
    *      the state of its row to the state of its column, as "input",
    *      "input/" or "input/output". Its input and output are declared.
    *  </ul>
-   *  Throws if the first row is missing, if a cell has no input (e.g. "/o"),
-   *  or if a row's state is not in the first row.
+   *  Throws, without changing the fsm, if the first row is missing, if a
+   *  cell has no input (e.g. "/o"), if a state is twice in the first row or
+   *  the first column, or for any reason initWithData() throws (e.g. a row's
+   *  state which is not in the first row).
    *
    *  @example
    *  // 1 -a-> 2 -b/x-> 3 -c-> 1
@@ -212,31 +250,41 @@ export class Fsm extends Component {
       throw new TypeError('Fsm.initWithMatrix: the matrix needs a first row listing the states');
     }
 
-    // add state
-    for (let i = 1; i < matrix[0].length; i++) {
-      this.addState(matrix[0] [i]);
-    }
+    // the states: the first row (the first column of the matrix is ignored)
+    const states = matrix[0].slice(1);
+    const inputs = new Set<string>();
+    const outputs = new Set<string>();
+    const transitions: Transition[] = [];
 
-    // add transition (add input / output)
+    // the transitions: the other rows
+    const rowStates = new Set<string>();
     for (let i = 1; i < matrix.length; i++) {
-      let from = matrix[i][0]
+      const from = matrix[i][0];
+      if (rowStates.has(from)) {
+        throw new Error(`Fsm.initWithMatrix: the state "${from}" has two rows`);
+      }
+      rowStates.add(from);
 
       for (let j = 1; j < matrix[0].length; j++) {
-        let to = matrix[0][j];
-        let i_o = matrix [i][j];
-        if (i_o) {
-          let io_a = i_o.split('/');
-          if (!io_a[0]) {
-            throw new Error(`Fsm.initWithMatrix: the transition "${i_o}" from "${from}" to "${to}" has no input`);
-          }
-          this.addInput(io_a[0]);
-          if (io_a[1]) this.addOutput(io_a[1]);
+        const to = matrix[0][j];
+        const i_o = matrix[i][j];
+        if (!i_o) continue;
 
-          this.addTransition(from, to, io_a[0], io_a[1]);
+        const [on, output] = i_o.split('/');
+        if (!on) {
+          throw new Error(`Fsm.initWithMatrix: the transition "${i_o}" from "${from}" to "${to}" has no input`);
         }
+        inputs.add(on);
+        if (output) outputs.add(output);
+        transitions.push({ from, to, on, output: output ?? '' });
       }
     }
+
+    // same validation as initWithData (e.g. a state listed twice in the
+    // first row), and the fsm is not changed when it throws
+    this.initWithData(states, [...inputs], [...outputs], transitions);
   }
+
 
   /*******************************************
    Managing inputs
@@ -425,12 +473,12 @@ export class Fsm extends Component {
   }
 
   /**
-   *  Returns the states (State objects, without their names)
+   *  Returns the names of the states
    *
-   * @return {Iterator<State>} the states
+   * @return {Iterator<string>} the states
    */
-  getListState(): IterableIterator<State> {
-    return this.#listOfState.values();
+  getListState(): IterableIterator<string> {
+    return this.#listOfState.keys();
   }
 
   /**
@@ -661,6 +709,47 @@ export class Fsm extends Component {
     this.#outputAction.set(output, action);
   }
 
+  /**
+   *  Removes the association of an event of a source to an input (see
+   *  setInput); the source event is unbound once no input uses it.
+   *  Nothing happens if there is no such association. Throws for an unknown
+   *  input.
+   *
+   * @param {string} on the input
+   * @param {core.EventSource} src the source of the event
+   * @param {string} eventSpec the event specification
+   */
+  unsetInput(on: string, src: EventSource, eventSpec: string): void {
+    this.#checkInput(on);
+
+    const a = this.#inputs.get(src);
+    const index = a?.findIndex(([spec, input]) => spec === eventSpec && input === on) ?? -1;
+    if (index === -1) {
+      return;
+    }
+    a!.splice(index, 1);
+
+    // no more input on this source event
+    if (!a!.some(([spec]) => spec === eventSpec)) {
+      src.unbind(eventSpec, this, this.handleEvent);
+    }
+    if (a!.length === 0) {
+      this.#inputs.delete(src);
+    }
+  }
+
+  /**
+   *  Removes the action of an output (see setOutput); the output event is
+   *  still dispatched. Nothing happens if the output has no action. Throws
+   *  for an unknown output.
+   *
+   * @param {string} output the output
+   */
+  unsetOutput(output: string): void {
+    this.#checkOutput(output);
+    this.#outputAction.delete(output);
+  }
+
   /*******************************************
    Running
    *******************************************/
@@ -683,15 +772,15 @@ export class Fsm extends Component {
   /**
    *  Goes to a state, and produces the output: calls its action, then
    *  dispatches the output event.<br />
-   *  Used by the fsm to cross a transition. It is public, but calling it
-   *  directly goes to the state without crossing any transition.
+   *  Used by the fsm to cross a transition (and by activate()).
+   *  @protected
    *
    * @param {string} stateId the state to go to
    * @param {string} output the output to produce [optional]
    * @param {Event} event the input event, given to the action [optional]
    * @return {boolean} false if the state does not exist
    */
-  goTo(stateId: string, output?: string, event?: Event): boolean {
+  protected goTo(stateId: string, output?: string, event?: Event): boolean {
     if (!this.existState(stateId)) {
       return false;
     }
@@ -715,7 +804,6 @@ export class Fsm extends Component {
 
     // 2) the output event, for the listeners of this fsm
     const outputEvent = Event.retain();
-    // @ts-ignore data is private
     outputEvent.configure(output, event?.data);
     this.dispatchEvent(outputEvent);
 
@@ -755,8 +843,7 @@ export class Fsm extends Component {
    * @param {Event} event the event
    */
   private readonly handleEvent = (event: Event): void => {
-    // @ts-ignore
-    const a = this.#inputs.get(event.src);
+    const a = event.src && this.#inputs.get(event.src);
     if (!a) {
       return;
     }
@@ -768,31 +855,20 @@ export class Fsm extends Component {
         continue;
       }
 
-      // @ts-ignore
       this.fsmNotify(on, event.data);
     }
   }
 
   /**
-   *  Returns the state the fsm would go to on the input, from its current
-   *  state (the State object, without its name); undefined if there is no
-   *  such transition or the fsm is not activated.
+   *  Returns the name of the state the fsm would go to on the input, from
+   *  its current state; undefined if there is no such transition or the fsm
+   *  is not activated.
    *
    * @param {string} on the input
-   * @return {State} the state
+   * @return {string} the state
    */
-  getAccessibleStateOn(on: string): State | undefined {
-    if (!this.#listOfState.has(this.#currentState)) {
-      return;
-    }
-
-    const transition = this.#listOfState.get(this.#currentState)?.transitionEvents.get(on);
-
-    if (!transition) {
-      return;
-    }
-
-    return this.#listOfState.get(transition.to);
+  getAccessibleStateOn(on: string): string | undefined {
+    return this.#listOfState.get(this.#currentState)?.transitionEvents.get(on)?.to;
   }
 
   /**
