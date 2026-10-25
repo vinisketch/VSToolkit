@@ -16,7 +16,8 @@
     "build": "npm run build:core",
     "test": "mocha",
     "typecheck:test": "tsc -p tests/tsconfig.json",
-    "tsc:ui": "tsc -p src/tsconfig.ui.json"
+    "tsc:ui": "tsc -p src/tsconfig.ui.json",
+    "build:ui": "npm run tsc:ui && rollup -c ./rollup.config/ui.mjs"
   },
   "devDependencies": {
     "@happy-dom/global-registrator": "^21.0.4",
@@ -48,7 +49,12 @@
     "./vs_core": {
       "import": "./dist/vs_core.es.js",
       "require": "./dist/vs_core.amd.js",
-      "types": "./dist/vs_core.d.js"
+      "types": "./dist/vs_core.d.ts"
+    },
+    "./vs_ui": {
+      "import": "./dist/vs_ui.es.js",
+      "require": "./dist/vs_ui.amd.js",
+      "types": "./dist/vs_ui.d.ts"
     }
   },
   "engines": {
