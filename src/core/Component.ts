@@ -2,6 +2,7 @@ import { toJSON, parseJSON, applyMixins, SupportMixins, createUniqueId } from 'v
 import { BaseIdentifiable,  ObjectId } from './BaseIdentifiable';
 import { EventSource } from './event';
 import { DataflowNodeMixin, type DataflowNode } from './dataflow/DataflowNode';
+import { propertyRefs, type PropertyRefs } from './dataflow/Connect';
 
 export type InitFunction = () => void;
 
@@ -170,6 +171,17 @@ class Component extends SupportMixins implements BaseIdentifiable {
     finalization.unregister(this);
 
     this.#state = 'deleted';
+  }
+
+  /**
+   *  The references to the properties of the component, to connect them in
+   *  the dataflow (see connect()).
+   *
+   *  @example
+   *  connect(slider.$.value).to(view.$.rotation);
+   */
+  get $(): PropertyRefs<this> {
+    return propertyRefs(this);
   }
 
   isDeleted() {

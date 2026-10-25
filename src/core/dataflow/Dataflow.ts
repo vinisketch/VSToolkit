@@ -5,6 +5,7 @@ import {
 import { BaseIdentifiable, ObjectId } from '../BaseIdentifiable';
 import DataflowState from './DataflowState';
 import type { DataflowNode } from './DataflowNode';
+import { createPipe, type Pipe, type PropertyRef, type ValuesOf } from './Connect';
 import Component from '../Component';
 
 /**
@@ -172,6 +173,8 @@ export class DataFlow implements IDataFlow {
   }
 
   #isPropagating = false;
+  // connections changed since the last build
+  #needsBuild = false;
   // edges from components Object[component.id] => Array[3] <Object, , properties>
   readonly #optimizedEdges = new Map<ObjectId, CompiledConnection[]>();
   // ordered node list Array<Object>
@@ -249,6 +252,11 @@ export class DataFlow implements IDataFlow {
     // 1) the dataflow is propagating values, do nothing.
     if (this.#isPropagating || this.#shouldNotPropagate) {
       return;
+    }
+
+    // the connections changed: compile them first
+    if (this.#needsBuild) {
+      this.build();
     }
 
     this.#isPropagating = true;
@@ -383,6 +391,7 @@ export class DataFlow implements IDataFlow {
       id: edgeId, out: propertiesOut.slice(), in: propertiesIn.slice(), func,
     });
 
+    this.#needsBuild = true;
     return edgeId;
   }
 
@@ -412,6 +421,7 @@ export class DataFlow implements IDataFlow {
   disconnect(src: ObjectId, outDesc: string[], trg: ObjectId, inDesc: string[]): void;
   disconnect(src: DataflowNode, outDesc: string[], trg: DataflowNode, inDesc: string[]): void;
   disconnect(src: any, outDesc?: any, trg?: any, inDesc?: any): void {
+    this.#needsBuild = true;
     if (isNumber(src)) {
       this.disconnectById(src);
     } else {
@@ -581,11 +591,44 @@ export class DataFlow implements IDataFlow {
   }
 
   /**
+   *  Starts a chain of connections from properties of a component, on this
+   *  dataflow (see connect() for the default dataflow).
+   *
+   *  @example
+   *  df.from(slider.$.value).map(v => `${v}°`).to(label.$.text);
+   *
+   * @param {PropertyRef} sources the properties to connect from
+   * @return {Pipe} the pipe from these properties
+   */
+  from<Sources extends PropertyRef<any>[]>(...sources: Sources): Pipe<ValuesOf<Sources>> {
+    return createPipe(this, sources);
+  }
+
+  /**
+   * Forgets the nodes which do not exist anymore (destroyed components),
+   * and their connections
+   */
+  #forgetMissingNodes(): void {
+    for (const id of [...this.#edgesFrom.keys()]) {
+      if (!nodeOf(id)) this.#edgesFrom.delete(id);
+    }
+    for (const connections of this.#edgesFrom.values()) {
+      for (let i = connections.length - 1; i >= 0; i--) {
+        if (!nodeOf(connections[i][0])) connections.splice(i, 1);
+      }
+    }
+    this.#listNode = this.#listNode.filter(id => nodeOf(id));
+  }
+
+  /**
    *  Compiles the dataflow: sorts the nodes and compiles the connections.
-   *  To call after connecting or disconnecting, before propagating.
-   *  Throws for a connected property which does not exist anymore.
+   *  It is done automatically by the next propagation after connecting or
+   *  disconnecting; calling it explicitly compiles the dataflow at once.
+   *  The destroyed components and their connections are forgotten.
    */
   build(): void {
+    this.#forgetMissingNodes();
+    this.#needsBuild = false;
     this.sort();
     this.optimize(this.#edgesFrom, this.#listNode);
   }

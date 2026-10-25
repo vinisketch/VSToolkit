@@ -130,9 +130,8 @@ interface ListenerEntry {
  *  // or
  *  todo.assign({ done: false, content: 'Something to do' });
  *
- *  // dataflow (on the default dataflow, see Connector)
- *  todo.connect('done').to(checkbox, 'checked');
- *  container.get(DEFAULT_DATAFLOW).build();
+ *  // dataflow
+ *  connect(todo.$.done).to(checkbox.$.checked);
  *
  * @author David Thevenin
  *

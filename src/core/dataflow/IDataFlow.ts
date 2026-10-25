@@ -1,5 +1,6 @@
 import { injectionToken } from 'vs_utils';
 import type { DataflowNode } from './DataflowNode';
+import type { Pipe, PropertyRef, ValuesOf } from './Connect';
 import { ObjectId } from '../BaseIdentifiable';
 
 /**
@@ -18,7 +19,6 @@ export interface IDataFlow {
   /**
    * Connects out properties of src to in properties of trg, through an
    * optional function; returns the id of the connection (edge).
-   * build() must be called before propagating.
    */
   connect(
     src: ObjectId | DataflowNode,
@@ -30,7 +30,6 @@ export interface IDataFlow {
 
   /**
    * Removes a connection, by its id or by its nodes and properties.
-   * build() must be called before propagating.
    */
   disconnect(edgeId: number): void;
   disconnect(src: ObjectId, outDesc: string, trg: ObjectId, inDesc: string): void;
@@ -38,7 +37,14 @@ export interface IDataFlow {
   disconnect(src: ObjectId, outDesc: string[], trg: ObjectId, inDesc: string[]): void;
   disconnect(src: DataflowNode, outDesc: string[], trg: DataflowNode, inDesc: string[]): void;
   /**
-   * Compiles the connections: to call after connecting or disconnecting
+   * Starts a chain of connections from properties of a component (see
+   * Component.$ and connect())
+   */
+  from<Sources extends PropertyRef<any>[]>(...sources: Sources): Pipe<ValuesOf<Sources>>;
+
+  /**
+   * Compiles the connections; done automatically by the next propagation
+   * after connecting or disconnecting
    */
   build(): void;
 

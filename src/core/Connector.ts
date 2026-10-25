@@ -5,13 +5,14 @@ import { DEFAULT_DATAFLOW } from './dataflow/IDataFlow';
 /**
  *  Connects an out property of a component on the default dataflow. Not to
  *  be instantiated: it is returned by the connect() method of the
- *  components. build() must be called on the default dataflow before
- *  propagating.
- *  Chaining connections is not supported yet (this API will be reworked).
+ *  components.
  *
  *  @example
  *  slider.connect('value').to(view, 'rotation');
- *  container.get(DEFAULT_DATAFLOW).build();
+ *
+ *  @deprecated use connect() and the property references (component.$),
+ *  which are typed and chain the connections:
+ *  connect(slider.$.value).to(view.$.rotation)
  */
 export default class Connector {
   private intermediateObjId: ObjectId | undefined;

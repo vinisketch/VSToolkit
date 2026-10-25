@@ -6,6 +6,8 @@ export { DataFlow, DEFAULT_DATAFLOW } from './dataflow/Dataflow';
 export type { IDataFlow } from './dataflow/IDataFlow';
 export type { DataflowNode, PropertyDirection } from './dataflow/DataflowNode';
 export { default as Connector } from './Connector';
+export { connect, PropertyRef, Pipe } from './dataflow/Connect';
+export type { PropertyRefs, ValueOf, ValuesOf, RefsOf } from './dataflow/Connect';
 export * from './ILogger';
 export * from './Model';
 
