@@ -1248,8 +1248,10 @@ export class View<Events extends ModelEvents = {}> extends Model<Events> {
   rotate(r: number | number[]): void {
     if (isNumber(r)) {
       this.#rotation = [0, 0, r];
-    } else if (isArray(r)) {
-      this.#rotation = [0, 1, 2].map(i => isNumber(r[i]) ? r[i] : 0);
+    } else if (isArray(r) && r.length >= 1 && r.length <= 3 && r.every(angle => isNumber(angle))) {
+      this.#rotation = [0, 1, 2].map(i => r[i] ?? 0);
+    } else {
+      return;
     }
     this.#applyTransformation();
   }

@@ -117,6 +117,40 @@ describe('basic components', function () {
       assert.ok(button.hasClassName(Button.DEFAULT_TYPE));
     });
 
+    it('should convert its text, displayed as text', function () {
+      const button = new Button();
+      button.init();
+      const textView = button.view!.firstElementChild!;
+      const values: [unknown, string][] = [
+        ['hello', 'hello'], [10, '10'], [10.45, '10.45'], [true, 'true'], [false, 'false'],
+        [null, ''], [undefined, ''], ['<b>hello</b>', '<b>hello</b>'],
+      ];
+      for (const [value, text] of values) {
+        button.text = value as string;
+        assert.strictEqual(button.text, text);
+        assert.strictEqual(textView.textContent, text);
+      }
+      assert.strictEqual(textView.querySelector('b'), null, 'the HTML is not parsed');
+    });
+
+    it('should set each style and type', function () {
+      const button = new Button({ style: Button.BLACK_STYLE });
+      button.init();
+      for (const style of [Button.BLACK_STYLE, Button.BLUE_STYLE, Button.DEFAULT_STYLE, Button.GREEN_STYLE,
+        Button.GREY_STYLE, Button.RED_STYLE, Button.SILVER_STYLE]) {
+        button.style = style;
+        assert.strictEqual(button.style, style);
+        assert.ok(button.hasClassName(style));
+      }
+      assert.ok(button.hasClassName(Button.DEFAULT_TYPE));
+      for (const type of [Button.NAVIGATION_BACK_TYPE, Button.NAVIGATION_FORWARD_TYPE, Button.NAVIGATION_TYPE]) {
+        button.type = type;
+        assert.strictEqual(button.type, type);
+        assert.ok(button.hasClassName(type));
+      }
+      assert.strictEqual(button.hasClassName(Button.DEFAULT_TYPE), false);
+    });
+
     it('should replace its style and type class names', function () {
       const button = new Button();
       button.init();

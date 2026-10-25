@@ -123,6 +123,12 @@ describe('View', function () {
   });
 
   describe('options', function () {
+    it('should use the id of the options', function () {
+      const view = makeView({ id: 'view1' });
+      assert.strictEqual(view.id, 'view1');
+      assert.strictEqual(view.view!.id, 'view1');
+    });
+
     it('should assign the model properties of the options once initialized', function () {
       const panel = new Panel({ title: 'Hello', size: [100, 50] });
       panel.init();
@@ -262,6 +268,33 @@ describe('View', function () {
       assert.strictEqual(view.view!.style.position, '');
     });
 
+    it('should ignore the invalid position and size values', function () {
+      const view = makeView({ position: [20, 45], size: [120, 245] });
+      for (const value of [[50], ['x', 44], 45, 'x', undefined, null]) {
+        view.position = value as number[];
+        view.size = value as number[];
+      }
+      assert.deepStrictEqual(view.position, [20, 45]);
+      assert.deepStrictEqual(view.size, [120, 245]);
+      assert.deepStrictEqual([view.view!.style.left, view.view!.style.width], ['20px', '120px']);
+    });
+
+    it('should set every layout, and remove it with the default layout', function () {
+      const view = makeView();
+      const className = view.view!.className;
+      for (const layout of [View.HORIZONTAL_LAYOUT, View.VERTICAL_LAYOUT, View.ABSOLUTE_LAYOUT, View.FLOW_LAYOUT]) {
+        view.layout = layout;
+        assert.strictEqual(view.layout, `${layout}_layout`);
+        assert.strictEqual(view.view!.className, `${className} ${layout}_layout`);
+      }
+      view.layout = View.LEGACY_VERTICAL_LAYOUT;
+      assert.strictEqual(view.layout, 'vertical_layout');
+
+      view.layout = View.DEFAULT_LAYOUT;
+      assert.strictEqual(view.layout, null);
+      assert.strictEqual(view.view!.className, className);
+    });
+
     it('should set the layout class name', function () {
       const view = makeView();
       view.layout = View.VERTICAL_LAYOUT;
@@ -331,6 +364,35 @@ describe('View', function () {
       view.rotate(90);
       assert.deepStrictEqual(view.rotation, [0, 0, 90]);
       assert.strictEqual(Math.round(view.getCTM().m12), 1);
+    });
+
+    it('should ignore the invalid transformation values', function () {
+      const view = makeView();
+      view.rotation = 45;
+      view.translation = [45, 79];
+      view.scaling = 1.4;
+      for (const value of ['string', ['array'], undefined] as unknown[]) {
+        view.rotation = value as number;
+        view.translation = value as number[];
+        view.scaling = value as number;
+      }
+      assert.deepStrictEqual(view.rotation, [0, 0, 45]);
+      assert.deepStrictEqual(view.translation, [45, 79, 0]);
+      assert.strictEqual(view.scaling, 1.4);
+    });
+
+    it('should keep the scale within its bounds when they change', function () {
+      const view = makeView({ maxScale: 6 });
+      view.scaling = 5;
+      assert.strictEqual(view.scaling, 5);
+      view.maxScale = 2;
+      assert.strictEqual(view.scaling, 2);
+
+      view.minScale = 0.1;
+      view.scaling = 0.2;
+      assert.strictEqual(view.scaling, 0.2);
+      view.minScale = 0.5;
+      assert.strictEqual(view.scaling, 0.5);
     });
 
     it('should keep the scale within its bounds', function () {
