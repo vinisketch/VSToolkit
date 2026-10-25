@@ -9,7 +9,7 @@ body {
   background-image: url("background.png");
 }
 
-body > div {
+body > .harness {
   position: absolute;
   left: 50%;
   margin-left: -410px;
@@ -72,9 +72,7 @@ body > div {
 .button {
   position: absolute;
   background-color: white;
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #EEE), color-stop(0.5, white));
-  background-image: -webkit-linear-gradient(center bottom, #EEE 0%, white 50%);
-  background-image: linear-gradient(top, #EEE 0%,white 50%);
+  background-image: linear-gradient(to top, #EEE 0%, white 50%);
   border-radius: 4px;
   border: 1px solid #AAA;
   display: block;
@@ -83,13 +81,10 @@ body > div {
   line-height: 24px;
   color: #444;
   text-decoration: none;
-  font-size: 14px;
   text-align: center;
-  
-  font:15px Trebuchet, Verdana, sans-serif;
+  font: 15px Trebuchet, Verdana, sans-serif;
   padding-top: 2px;
-  
-  box-sizing:border-box;
+  box-sizing: border-box;
   height: 26px;
 }
 
@@ -106,13 +101,17 @@ body > div {
 }
 
 .button:active {
-  background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #EEE), color-stop(0.5, #DDD));
-  background-image: -webkit-linear-gradient(center bottom, #EEE 0%, #DDD 50%);
-  background-image: linear-gradient(top, #EEE 0%,#DDD 50%);
+  background-image: linear-gradient(to top, #EEE 0%, #DDD 50%);
 }
 
 #message {
-  position:absolute;
+  position: absolute;
   top: 480px;
   left: 680px;
+}
+
+#text_view {
+  padding: 8px;
+  box-sizing: border-box;
+  font: 14px Trebuchet, Verdana, sans-serif;
 }

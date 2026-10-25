@@ -27,5 +27,9 @@
       "ext/ui/GMap.css",
       "ext/ui/Accordion.css"
     ]
-  }
+  },
+  "copy": [
+    "ui/*.png",
+    "ui/*.ttf"
+  ]
 }

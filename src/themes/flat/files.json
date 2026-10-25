@@ -13,7 +13,7 @@
       "ui/SegmentedButton.less",
       "ui/Slider.less",
       "ui/ProgressBar.less",
-      "ui/RadioButton.les",
+      "ui/RadioButton.less",
       "ui/NavigationBar.less",
       "ui/CheckBox.less",
       "ui/Picker.less",
