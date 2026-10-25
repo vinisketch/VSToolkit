@@ -4,7 +4,15 @@ import {
 } from 'vs_utils';
 import { BaseIdentifiable, ObjectId } from '../BaseIdentifiable';
 import DataflowState from './DataflowState';
-import DataflowNode from './DataflowNode';
+import type { DataflowNode } from './DataflowNode';
+import Component from '../Component';
+
+/**
+ * The node of an id: the nodes are the components (DataflowNodeMixin)
+ */
+function nodeOf(id: ObjectId): DataflowNode | undefined {
+  return Component.instances.get(id);
+}
 import { IDataFlow, DEFAULT_DATAFLOW } from './IDataFlow';
 import { ILogger, LOGGER, consoleLogger } from "../ILogger";
 
@@ -46,11 +54,11 @@ function buildConnectParameters(
   trg: ObjectId | DataflowNode,
   inDesc: string | string[],
 ): [DataflowNode, string[], DataflowNode, string[]] {
-  const srcObj = isString(src) ? DataflowNode.get(src) : src;
+  const srcObj = isString(src) ? nodeOf(src) : src;
   if (!srcObj) {
     throw new Error(`Unknown component or not data flow compatible, with id ${src}`);
   }
-  const trgObj = isString(trg) ? DataflowNode.get(trg) : trg;
+  const trgObj = isString(trg) ? nodeOf(trg) : trg;
   if (!trgObj) {
     throw new Error(`Unknown component or not data flow compatible, with id ${trg}`);
   }
@@ -302,6 +310,18 @@ export class DataFlow implements IDataFlow {
     generateGetters(srcObj, propertiesOut);
     generateSetters(trgObj, propertiesIn);
 
+    // throws for a property connected against its direction
+    for (const property of propertiesOut) {
+      if (srcObj.getPropertyDirection(property) === 'in') {
+        throw new Error(`DataFlow.connect: "${property}" of ${srcObj.id} is an in property, it can not be connected from`);
+      }
+    }
+    for (const property of propertiesIn) {
+      if (trgObj.getPropertyDirection(property) === 'out') {
+        throw new Error(`DataFlow.connect: "${property}" of ${trgObj.id} is an out property, it can not be connected to`);
+      }
+    }
+
     // the nodes take part in this dataflow
     DataflowState.add(srcObj, this);
     DataflowState.add(trgObj, this);
@@ -552,7 +572,7 @@ export class DataFlow implements IDataFlow {
   private optimize(edgeRefs: Map<ObjectId, Connections>, nodeList: ObjectId[]) {
     this.#dataflowNodes.length = 0;
     for (let id of nodeList) {
-      const obj = DataflowNode.get(id);
+      const obj = nodeOf(id);
       if (obj) {
         this.#dataflowNodes.push(obj);
       }
@@ -560,14 +580,14 @@ export class DataFlow implements IDataFlow {
 
     this.#optimizedEdges.clear();
     for (const [id, data] of edgeRefs.entries()) {
-      const objSrc = defined(DataflowNode.get(id));
+      const objSrc = defined(nodeOf(id));
 
       const compiledConnections: CompiledConnection[] = [];
       this.#optimizedEdges.set(id, compiledConnections);
 
       for (let connections of data) {
         const cid = connections[0];
-        const objTrg = defined(DataflowNode.get(cid));
+        const objTrg = defined(nodeOf(cid));
 
         const compiledConnection: CompiledConnection = {
           obj: objTrg,

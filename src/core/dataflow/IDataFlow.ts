@@ -1,5 +1,5 @@
 import { injectionToken } from 'vs_utils';
-import DataflowNode from './DataflowNode';
+import type { DataflowNode } from './DataflowNode';
 import { ObjectId } from '../BaseIdentifiable';
 
 export interface IDataFlow {

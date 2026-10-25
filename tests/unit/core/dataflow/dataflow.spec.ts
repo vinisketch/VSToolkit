@@ -4,13 +4,14 @@ import { container } from 'vs_utils';
 import '../../../di_config';
 
 import { DataFlow, DEFAULT_DATAFLOW } from '../../../../src/core/dataflow/Dataflow';
-import DataflowNode from '../../../../src/core/dataflow/DataflowNode';
+import Component from '../../../../src/core/Component';
+import type { DataflowNode } from '../../../../src/core/dataflow/DataflowNode';
 import DataflowState from '../../../../src/core/dataflow/DataflowState';
 
 /**
- * A dataflow node with two properties, a and b
+ * A dataflow node (every component is) with two properties, a and b
  */
-class Node extends DataflowNode {
+class Node extends Component {
   #a: unknown = undefined;
   #b: unknown = undefined;
   didChangeCalls = 0;
@@ -29,8 +30,8 @@ class Node extends DataflowNode {
 }
 
 /**
- * Makes the nodes usable by the dataflow (DataflowNode does not do it, see
- * the "registration" tests)
+ * Registers the nodes in the dataflow (connect() also does it, see the
+ * "registration" tests)
  */
 function register(df: DataFlow, ...nodes: DataflowNode[]): void {
   nodes.forEach(node => DataflowState.add(node, df));
@@ -298,7 +299,7 @@ describe('DataFlow', function () {
    * called without node; here the propagation starts from the changed node.
    */
   describe('legacy scenarios', function () {
-    class Item extends DataflowNode {
+    class Item extends Component {
       inOut: unknown = undefined;
       inOut1: unknown = undefined;
       inOut2: unknown = undefined;

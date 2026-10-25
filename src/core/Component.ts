@@ -1,6 +1,7 @@
 import { toJSON, parseJSON, applyMixins, SupportMixins, createUniqueId } from 'vs_utils';
 import { BaseIdentifiable,  ObjectId } from './BaseIdentifiable';
 import { EventSource } from './event';
+import { DataflowNodeMixin, type DataflowNode } from './dataflow/DataflowNode';
 
 export type InitFunction = () => void;
 
@@ -226,9 +227,9 @@ class Component extends SupportMixins implements BaseIdentifiable {
   }
 }
 
-interface Component extends BaseIdentifiable, EventSource {}
+interface Component extends BaseIdentifiable, EventSource, DataflowNode {}
 
-applyMixins(Component, [EventSource]);
+applyMixins(Component, [EventSource, DataflowNodeMixin]);
 
 export default Component;
 

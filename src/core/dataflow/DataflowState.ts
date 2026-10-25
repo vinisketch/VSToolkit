@@ -1,6 +1,6 @@
 import { ObjectId } from '../BaseIdentifiable';
 import { IDataFlow, DEFAULT_DATAFLOW } from './IDataFlow';
-import DataflowNode from './DataflowNode';
+import type { DataflowNode } from './DataflowNode';
 import { container } from 'vs_utils';
 
 export default class DataflowState {
