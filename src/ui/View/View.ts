@@ -872,7 +872,15 @@ export class View<Events extends ModelEvents = {}> extends Model<Events> {
     }
 
     Object.assign(view.style, { left, right, top, bottom, width, height });
+    this.didUpdateSizeAndPosition();
   }
+
+  /**
+   *  Called once the node style is updated from the size, position,
+   *  autosizing and magnet: a subclass can adjust it
+   */
+  // eslint-disable-next-line class-methods-use-this
+  protected didUpdateSizeAndPosition(): void {}
 
   /********************************************************************
                     CSS

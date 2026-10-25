@@ -7,6 +7,7 @@ export { default as Template } from './Template';
 export * from './Animation';
 export * from './Recognizers';
 export { toText, type TextInputEvents } from './helpers';
+export * from './theme';
 
 export { TextLabel } from './TextLabel/TextLabel';
 export { ImageView } from './ImageView/ImageView';
@@ -20,3 +21,8 @@ export { SegmentedButton, type SegmentedButtonEvents } from './SegmentedButton/S
 export { Canvas } from './Canvas/Canvas';
 export { PopOver } from './PopOver/PopOver';
 export { SplitView, type SplitViewDelegate } from './SplitView/SplitView';
+export { Switch, type SwitchEvents } from './Switch/Switch';
+export { Slider, type SliderEvents } from './Slider/Slider';
+export {
+  Picker, type PickerEvents, type PickerSlot, type PickerValues, type PickerSelection, type PickerDelegate,
+} from './Picker/Picker';
