@@ -18,6 +18,8 @@
     "typecheck:test": "tsc -p tests/tsconfig.json",
     "tsc:ui": "tsc -p src/tsconfig.ui.json",
     "build:ui": "npm run tsc:ui && rollup -c ./rollup.config/ui.mjs",
+    "tsc:fx": "tsc -p src/tsconfig.fx.json",
+    "build:fx": "npm run tsc:fx && rollup -c ./rollup.config/fx.mjs",
     "build:css": "node tools/build-themes.mjs",
     "gui": "esbuild tests/gui/harness.ts --bundle --format=esm --target=es2022 --sourcemap --loader:.html=text --tsconfig=tests/tsconfig.json --outdir=tests/gui/build --servedir=. --serve"
   },
@@ -59,6 +61,11 @@
       "types": "./dist/vs_ui.d.ts",
       "import": "./dist/vs_ui.es.js",
       "require": "./dist/vs_ui.amd.js"
+    },
+    "./vs_fx": {
+      "types": "./dist/vs_fx.d.ts",
+      "import": "./dist/vs_fx.es.js",
+      "require": "./dist/vs_fx.amd.js"
     }
   },
   "engines": {

@@ -3,7 +3,8 @@
   // the sources. The builds use src/tsconfig.*.json.
   "compilerOptions": {
     "paths": {
-      "vs_toolkit/vs_core": ["./src/core/index.ts"]
+      "vs_toolkit/vs_core": ["./src/core/index.ts"],
+      "vs_toolkit/vs_ui": ["./src/ui/index.ts"]
     }
   },
   "files": []

@@ -10,6 +10,7 @@ export { connect, PropertyRef, Pipe } from './dataflow/Connect';
 export type { PropertyRefs, ValueOf, ValuesOf, RefsOf } from './dataflow/Connect';
 export * from './ILogger';
 export * from './Model';
+export { Fsm, type Transition } from './FSM';
 
 export {
   event,
