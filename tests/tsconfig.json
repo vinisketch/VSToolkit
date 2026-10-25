@@ -8,7 +8,10 @@
     "incremental": false,
     "declaration": false,
     "declarationMap": false,
-    "types": ["node", "mocha"]
+    "types": ["node", "mocha"],
+    "paths": {
+      "vs_toolkit/vs_core": ["../src/core/index.ts"]
+    }
   },
-  "include": ["./**/*.ts"]
+  "include": ["./**/*.ts", "../src/ui/html.d.ts"]
 }

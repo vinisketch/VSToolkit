@@ -1,6 +1,7 @@
 {
   "require": [
-    "tsx"
+    "tsx",
+    "tests/html-loader.mjs"
   ],
   "spec": [
     "tests/**/*.spec.ts"

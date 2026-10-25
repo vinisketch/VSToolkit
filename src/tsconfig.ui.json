@@ -1,0 +1,18 @@
+{
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "../build",
+    "target": "es2022",
+    "module": "es2022",
+    "emitDeclarationOnly": true,
+    // the ui imports the core sources (see paths): not a composite project
+    "composite": false,
+    "incremental": false,
+    "paths": {
+      "vs_toolkit/vs_core": ["./core/index.ts"]
+    }
+  },
+  "include": [
+    "./ui/**/*.ts",
+  ],
+}

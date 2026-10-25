@@ -1,0 +1,10 @@
+{
+  // Used by the editor and by tsx (tests): maps the package specifiers to
+  // the sources. The builds use src/tsconfig.*.json.
+  "compilerOptions": {
+    "paths": {
+      "vs_toolkit/vs_core": ["./src/core/index.ts"]
+    }
+  },
+  "files": []
+}
