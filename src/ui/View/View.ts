@@ -16,2737 +16,1390 @@
   along with this program. If not, see <http://www.gnu.org/licenses/>.
 */
 
-import vs_utils, { applyMixins } from 'vs_utils';
-import vs_ui_utils from 'vs_ui_utils';
-import { Component } from 'vs_toolkit/vs_core';
-import { PointerEventType, isPointerEventType, addPointerListener, removePointerListener } from 'vs_gesture';
-import { Animation } from '../Animation';
+import { isArray, isFunction, isNumber } from 'vs_utils';
+import {
+  addCssRule as addCssRuleTo, addCssRules as addCssRulesTo, getElementAbsolutePosition,
+  setElementStyle, setElementTransform, setElementVisibility,
+} from 'vs_ui_utils';
+import { Component, Model, InOut, In, type ModelEvents } from 'vs_toolkit/vs_core';
 
-import RecognizerManager from '../Recognizers/RecognizerManager';
+import { Animation, type AnimationOptions } from '../Animation';
+import { MOVE_THRESHOLD, type PointerRecognizer } from '../Recognizers/PointerRecognizer';
 import Template from '../Template';
 import html_template from './View.html';
 
 /**
- * Configuration interface for View
+ * The options of a view: how to get its DOM node, and the initial values of
+ * its model properties (assigned once initialized, see init)
  */
-interface ViewConfig {
+export interface ViewOptions {
+  /** the component id */
   id?: string;
+  /** the DOM node of the view */
   node?: HTMLElement;
-  node_id?: string;
-  node_ref?: string;
-  root_ref?: string;
-  template_ref?: string;
+  /** the id of the DOM node of the view */
+  nodeId?: string;
+  /** a node of another view: 'rootId#ref' (x-hag-ref attribute) */
+  nodeRef?: string;
+  /** the root view of nodeRef, with the former 'ref' syntax */
+  rootRef?: string;
+  /** a template of the .application_templates node (its class name) */
+  templateRef?: string;
+  /** an HTML template */
   template?: string;
-  [key: string]: any;
+  /** the initial values of the model properties */
+  [property: string]: unknown;
 }
 
-/**
- * Animation options interface
- */
-interface AnimationOptions {
-  duration?: number;
-  timing?: string;
-  origin?: string;
-  iterationCount?: number;
-  delay?: number;
+/** the options which are not model properties */
+const NODE_OPTIONS = new Set(['id', 'node', 'nodeId', 'nodeRef', 'rootRef', 'templateRef', 'template']);
+
+export type ViewClass = new (options?: ViewOptions) => View<any>;
+
+/** something which can be a child of a view: a view, or a non graphical component */
+export type ViewChild = Component;
+
+/** the node of a child, if it is graphical */
+function nodeOfChild(child: ViewChild): HTMLElement | undefined {
+  return (child as unknown as { view?: HTMLElement | null }).view ?? undefined;
 }
 
-/**
- * Transform origin interface
- */
-interface TransformOrigin {
-  x: number;
-  y: number;
+/** the pointer events a view can bind (see bind) */
+const POINTER_EVENT_TYPES = new Set(['pointerdown', 'pointermove', 'pointerup', 'pointercancel']);
+
+/** the view (component) of each view node */
+const componentOfNode = new WeakMap<Element, View<any>>();
+
+/** the templates of the application (.application_templates), once found */
+let applicationTemplates: Element | null | undefined;
+
+/** cache of the component templates loaded by createAndAddComponent */
+const loadedTemplates = new Map<string, string>();
+
+function later(func: () => void): void {
+  setTimeout(func, 0);
 }
 
-/**
- * @private
- */
-function _findNodeRef(node: Element | null, ref: string): Element | false
-{
-  if (!node?.getAttribute) { return false; }
+function findNodeRef(node: Element | null, ref: string): Element | undefined {
+  if (!node?.getAttribute) return undefined;
+  if (node.getAttribute('x-hag-ref') === ref || node.getAttribute('x-hag-comp') === ref) return node;
 
-  if (node.getAttribute ('x-hag-ref') === ref) { return node; }
-  if (node.getAttribute ('x-hag-comp') === ref) { return node; }
-
-  var child = node.firstElementChild, result;
-  while (child)
-  {
-    result = _findNodeRef (child, ref);
-    if (result) { return result; }
-
-    child = child.nextElementSibling;
+  for (let child = node.firstElementChild; child; child = child.nextElementSibling) {
+    const result = findNodeRef(child, ref);
+    if (result) return result;
   }
+  return undefined;
+}
 
-  return false;
+function copyAnimationOptions(animation: Animation, options?: AnimationOptions): void {
+  if (!options) return;
+  animation.setOptions(options);
 }
 
 /**
- *  The vs.ui.View class
- *
- *  @extends vs_core.EventSource
  *  @class
- *  vs.ui.View is a class that defines the basic drawing, event-handling, of
- *  an application. You typically don't interact with the vs.ui.View API
- *  directly; rather, your custom view classes inherit from vs.ui.View and
- *  override many of its methods., Its also supports 2D
- *  transformations (translate, rotate, scale).
+ *  A View is the base class of the graphical components: a Model with a DOM
+ *  node (view.view).
  *  <p>
- *  If you're not creating a custom view class, there are few methods you
- *  need to use
- *
- *  Events:
- *  <ul>
- *    <li /> POINTER_START: Fired after the user click/tap on the view, when
- *           the user depresses the mouse/screen
- *    <li /> POINTER_MOVE: Fired after the user move the mouse/his finger on
- *           the view.
- *    <li /> POINTER_END: Fired after the user click/tap on the view, when
- *           the user release the mouse/ the press on screen.
- *  </ul>
+ *  Its node comes from the options (node, nodeId, nodeRef, templateRef,
+ *  template), or from its HTML template (htmlTemplate). Its template
+ *  defines holes (x-hag-hole attribute) where its children are added.
  *  <p>
+ *  It manages its children, its layout (position, size, autosizing,
+ *  magnet, layout), its transformations (translation, rotation, scaling),
+ *  its visibility (show/hide, with animations), its CSS, and its pointer
+ *  recognizers.
  *
- *  @author David Thevenin
- *
- *  @constructor
- *   Creates a new vs.ui.View.
+ *  @example
+ *  const view = new View({ position: [10, 10], size: [100, 50] });
+ *  view.init();
+ *  application.add(view);
  *
  * @name vs.ui.View
- *
- * @param {Object} config the configuration structure [mandatory]
  */
-class View extends vs_core.Component {
-  // DOM and template properties
-  view: HTMLElement | null = null;
-  html_template = html_template;
-
-  // Private instance properties
-  private _pos: number[];
-  private _size: number[];
-  private _visible: boolean;
-  private _magnet: number;
-  private _pointerevent_handlers: any;
-  private _enable: boolean;
-  private _opacity: number;
-  private _scaling: number;
-  private _min_scale: number;
-  private _max_scale: number;
-  private _layout: string | null;
-  private _autosizing: number[];
-  private _translation: number[];
-  private _rotation: number[];
-  private _transform_origin: number[];
-  private _transforms_stack: any;
-  private _show_animation: any;
-  private __show_clb: any;
-  private _hide_animation: any;
-  private __hide_clb: any;
-  private __pointer_recognizers: any[];
-  private _bubbling: boolean;
-  private __parent: any;
-  private __children: any;
-  private _holes: any;
-  private __config__: any;
-  private __visibility_anim: any;
-  private __view_display: any;
-  private __is_showing: boolean;
-  private __is_hidding: boolean;
-
-  private static refTemplatereg = /(\w+)#(\w+)/;
-
-  // static getDeviceCSSCode () {
-  //   const el = document.createElement('div');
-  //   el.className = 'device_test';
-  //   document.body.appendChild (el);
-    
-  //   const val = document.defaultView.getComputedStyle (el,null).getPropertyValue("margin-top");
-
-  //   document.body.removeChild (el);
-
-  //   return parseInt (val || 0, 10);
-  // }
-
-  constructor(config: ViewConfig = {}) {
-    super(config);
-
-    // init recognizer support
-    this.__pointer_recognizers = [];
-
-    // position and size : according autosizing rules, can change
-    // automatically if the parent container is resized
-    this._pos = [-1, -1];
-    this._size = [-1, -1];
-
-    // init transformation
-    this._translation =[0, 0, 0];
-    this._rotation =[0, 0, 0];
-    this._transform_origin =[0, 0];
-
-    // rules for positionning a object
-    this._autosizing = [4,4];
-
-    // Initialize instance properties from old prototype defaults
-    this._visible = true;
-    this._magnet = View.MAGNET_NONE;
-    this._pointerevent_handlers = null;
-    this._enable = true;
-    this._opacity = 1;
-    this._scaling = 1;
-    this._min_scale = 0.5;
-    this._max_scale = 3;
-    this._layout = null;
-    this._transforms_stack = null;
-    this._show_animation = null;
-    this.__show_clb = null;
-    this._hide_animation = null;
-    this.__hide_clb = null;
-    this._bubbling = false;
-    this.__is_showing = false;
-    this.__is_hidding = false;
-  }
-
+export class View<Events extends ModelEvents = {}> extends Model<Events> {
   /********************************************************************
-                    Layout constant
+                    Constants
   *********************************************************************/
 
-  /**
-   * No particular layout
-   * @see vs.ui.View#layout
-   * @name vs.ui.View.DEFAULT_LAYOUT
-   * @const
-   */
-  static DEFAULT_LAYOUT = null;
-
-  /**
-   * Horizontal layout
-   * @see vs.ui.View#layout
-   * @name vs.ui.View.HORIZONTAL_LAYOUT
-   * @const
-   */
+  static DEFAULT_LAYOUT: string | null = null;
   static HORIZONTAL_LAYOUT = 'horizontal';
-  /** @private */
   static LEGACY_HORIZONTAL_LAYOUT = 'horizontal_layout';
-
-  /**
-   * Vertical layout
-   * @see vs.ui.View#layout
-   * @name vs.ui.View.VERTICAL_LAYOUT
-   * @const
-   */
   static VERTICAL_LAYOUT = 'vertical';
-  /** @private */
   static LEGACY_VERTICAL_LAYOUT = 'vertical_layout';
-
-  /**
-   * Absolute layout
-   * @see vs.ui.View#layout
-   * @name vs.ui.View.ABSOLUTE_LAYOUT
-   * @const
-   */
   static ABSOLUTE_LAYOUT = 'absolute';
-  /** @private */
   static LEGACY_ABSOLUTE_LAYOUT = 'absolute_layout';
-
-  /**
-   * Html flow layout
-   * @see vs.ui.View#layout
-   * @name vs.ui.View.FLOW_LAYOUT
-   * @const
-   */
   static FLOW_LAYOUT = 'flow';
-  /** @private */
   static LEGACY_FLOW_LAYOUT = 'flow_layout';
 
-  /********************************************************************
-                      Delay constant
-  *********************************************************************/
+  /** threshold, in px, of a pointer move unselecting an item */
+  static MOVE_THRESHOLD = MOVE_THRESHOLD;
 
-  /**
-   * Threshold in px  use to unselect a item when pointer move
-   * @name vs.ui.View.MOVE_THRESHOLD
-   * @const
-   */
-  static MOVE_THRESHOLD = 20;
-
-  /********************************************************************
-                      Magnet contants
-  *********************************************************************/
-
-  /**
-   * No magnet
-   * @name vs.ui.View.MAGNET_NONE
-   * @const
-   */
   static MAGNET_NONE = 0;
-
-  /**
-   * The widget will be fixed on left
-   * @name vs.ui.View.MAGNET_LEFT
-   * @const
-   */
-  static MAGNET_LEFT = 3;
-
-  /**
-   * The widget will be fixed on bottom
-   * @name vs.ui.View.MAGNET_BOTTOM
-   * @const
-   */
-  static MAGNET_BOTTOM = 2;
-
-  /**
-   * The widget will be fixed on top
-   * @name vs.ui.View.MAGNET_TOP
-   * @const
-   */
   static MAGNET_TOP = 1;
-
-  /**
-   * The widget will be fixed on right
-   * @name vs.ui.View.MAGNET_RIGHT
-   * @const
-   */
+  static MAGNET_BOTTOM = 2;
+  static MAGNET_LEFT = 3;
   static MAGNET_RIGHT = 4;
-
-  /**
-   * The widget will centered
-   * @name vs.ui.View.MAGNET_CENTER
-   * @const
-   */
   static MAGNET_CENTER = 5;
 
-  /********************************************************************
-
-  *********************************************************************/
-
-  /**
-   * @private
-   */
+  /** the hole of the non graphical children */
   static NON_G_OBJECT = '_non_g_object';
-  /**
-   * @private
-   */
+  /** the default hole */
   static ANY_PLACE = 'children';
-  /**
-   * @private
-   */
-  static _positionStyle = undefined;
-  /**
-   * @private
-   */
-  static __comp_templates = {};
+
+  static readonly #registry = new Map<string, ViewClass>();
 
   /**
-   * @private
+   *  Registers a component class, for createAndAddComponent
    */
-  static _propagate_pointer_event(obj: any, func_ptr: Function, event: PointerEvent): void {
-    // let event_name = "";
-    // if (event.type === POINTER_START) { event_name = 'POINTER_START'; }
-    // if (event.type === POINTER_END) { event_name = 'POINTER_END'; }
-    // if (event.type === POINTER_MOVE) { event_name = 'POINTER_MOVE'; }
+  static registerComponent(name: string, Class: ViewClass): void {
+    View.#registry.set(name, Class);
+  }
 
-    // event.type = event_name;
-
-    func_ptr.call (obj, event);
+  /**
+   *  The view (component) of a view node
+   */
+  static componentOf(node: Element | null | undefined): View<any> | undefined {
+    return node ? componentOfNode.get(node) : undefined;
   }
 
   /********************************************************************
-                    Instance properties and methods
+                    Fields
   *********************************************************************/
 
-  /*****************************************************************
-   *
-   ****************************************************************/
+  /** the DOM node of the view, once initialized */
+  view: HTMLElement | null = null;
+
+  /** the HTML template of the view, used without node in the options */
+  protected htmlTemplate: string = html_template;
+
+  readonly #options: ViewOptions;
+
+  #pos = [-1, -1];
+  #size = [-1, -1];
+  #autosizing = [4, 4];
+  #magnet = View.MAGNET_NONE;
+  #layout: string | null = null;
+
+  #translation = [0, 0, 0];
+  #rotation = [0, 0, 0];
+  #transformOrigin = [0, 0];
+  #scaling = 1;
+  #minScale = 0.5;
+  #maxScale = 3;
+  #transformsStack: DOMMatrix | undefined;
+
+  #visible = true;
+  #enable = true;
+  #opacity = 1;
+  #bubbling = false;
+
+  #showAnimation: Animation | undefined;
+  #showCallback: Function | undefined;
+  #hideAnimation: Animation | undefined;
+  #hideCallback: Function | undefined;
+  #isShowing = false;
+  #isHiding = false;
+  /** set by the visible setter, which notifies the change itself */
+  #isSettingVisible = false;
+  #viewDisplay: string | undefined;
+
+  #parent: View<any> | undefined;
+  readonly #holes = new Map<string, HTMLElement>();
+  readonly #children = new Map<string, ViewChild[]>();
+  /** the children added during the initialization (see clone) */
+  readonly #initChildren = new Set<ViewChild>();
+  #isInitializing = false;
+
+  readonly #recognizers: PointerRecognizer<any>[] = [];
+  readonly #pointerHandlers = new Map<string, EventListener>();
+
+  constructor(options: ViewOptions = {}) {
+    super(options.id);
+    this.#options = options;
+  }
+
+  /********************************************************************
+                    Life cycle
+  *********************************************************************/
 
   /**
-   * @protected
-   * @function
+   *  Builds the DOM node of the view (see ViewOptions), finds its holes and
+   *  attaches its recognizers.
    */
-  destructor(): void
-  {
-    let key: string, a: any, i: number, child: View;
-    if (this.__parent)
-    {
-      this.__parent.remove (this);
-    }
-    for (key in this.__children)
-    {
-      a = this.__children [key];
-      if (!a) { continue; }
+  protected override initComponent(): void {
+    super.initComponent();
+    this.#isInitializing = true;
 
-      if (a instanceof Array)
-      {
-        for (i = 0; i < a.length; i++)
-        {
-          child = a [i];
-          vs_utils.free (child);
-        }
+    const node = this.#getNode(this.#options);
+    if (!node) {
+      throw new Error(`vs.ui.View ${this.id}: no view node`);
+    }
+    this.view = node;
+    node.id = this.id;
+    node.setAttribute('x-hag-comp', this.id);
+    componentOfNode.set(node, this);
+
+    this.#parseHoles(node);
+    this.#recognizers.forEach(recognizer => recognizer.attach(this));
+  }
+
+  /**
+   *  Applies the magnet, then assigns the initial values of the options
+   *  (once the subclasses are initialized)
+   */
+  protected override componentDidInitialize(): void {
+    super.componentDidInitialize();
+    this.#isInitializing = false;
+
+    if (this.#magnet) {
+      this.view?.style.setProperty('position', 'absolute');
+    }
+    if (this.#magnet === View.MAGNET_CENTER) {
+      this.#updateSizeAndPos();
+      this.#applyTransformation();
+    }
+
+    const values: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(this.#options)) {
+      if (!NODE_OPTIONS.has(key)) values[key] = value;
+    }
+    this.assign(values);
+  }
+
+  protected override destructor(): void {
+    this.#parent?.remove(this);
+
+    for (const children of this.#children.values()) {
+      for (const child of children) {
+        if (child instanceof View && child.#parent === this) child.#parent = undefined;
+        child.destroy();
       }
-      else
-      { vs_utils.free (a); }
-      delete (this.__children [key]);
     }
-    this.__children = {};
-    this.view = null;
+    this.#children.clear();
+    this.#recognizers.forEach(recognizer => recognizer.detach());
+    this.#recognizers.length = 0;
 
-    this.clearTransformStack ();
+    if (this.view) {
+      for (const [key, handler] of this.#pointerHandlers) {
+        this.view.removeEventListener(key.slice(key.lastIndexOf(':') + 1), handler);
+      }
+      componentOfNode.delete(this.view);
+    }
+    this.#pointerHandlers.clear();
+    this.view = null;
+    this.clearTransformStack();
 
     super.destructor();
   }
 
   /**
-   * @protected
-   * @function
+   *  Updates the size and position from the DOM, and refreshes the children
    */
-  refresh(): void
-  {
-    let key: string, a: any, i: number, child: any, view = this.view;
-
-    // refresh element real size and position
-    if (view && view.parentElement)
-    {
-      this._size[0] = view.offsetWidth;
-      this._size [1] = view.offsetHeight;
-      this._pos[0] = view.offsetLeft;
-      this._pos [1] = view.offsetTop;
-    }
-
-    for (key in this.__children)
-    {
-      a = this.__children [key];
-      if (!a) { continue; }
-
-      if (a instanceof Array)
-      {
-        for (i = 0; i < a.length; i++)
-        {
-          child = a [i];
-          if (!child || !child.refresh) { continue; }
-          child.refresh ();
-        }
-      }
-      else if (a.refresh)
-      { a.refresh (); }
-    }
-  }
-
-  /**
-   * @name vs.ui.View#clone
-   * @function
-   * @private
-   *
-   * @param {vs_core.VSObject} obj The cloned object
-   * @param {Object} map Map of cloned objects
-   */
-  clone(config: ViewConfig, cloned_map: any):  View
-  {
-    throw new Error('View clone is not supported yet');
-    // function _getPaths (root, nodes)
-    // {
-    //   var paths = [], i = 0, l = nodes.length, node;
-    //   for (; i < l; i++)
-    //   {
-    //     node = nodes[i];
-    //     paths.push ([node, _getPath (root, node)]);
-    //   }
-    //   return paths;
-    // }
-
-    // function _evalPaths (root, paths, clonedViews)
-    // {
-    //   var nodes = [], i = 0, l = paths.length, path;
-    //   for (; i < l; i++)
-    //   {
-    //     path = paths[i];
-    //     if (!path.id) path.id = vs_core.createId ();
-    //     clonedViews [path[0].id] = _evalPath (root, path[1]);
-    //   }
-    // }
-
-    // function makeClonedNodeMap (comp, clonedViews)
-    // {
-    //   var
-    //     clonedNode = comp.view.cloneNode (true),
-    //     nodes = [], paths;
-        
-    //   function manageChild (child)
-    //   {
-    //     if (child.__gui_object__hack_view__)
-    //     { nodes.push (child.__gui_object__hack_view__); }
-    //     else if (child.view) { nodes.push (child.view); }
-      
-    //     retreiveChildNodes (child);
-    //   }
-        
-    //   function retreiveChildNodes (comp)
-    //   {
-    //     var key, a, i, l, child;
-    //     for (key in comp.__children)
-    //     {
-    //       a = comp.__children [key];
-    //       if (!a) { continue; }
-          
-    //       if (vs_utils.isArray (a))
-    //       {
-    //         l = a.length;
-    //         for (i = 0; i < l; i++)
-    //         {
-    //           manageChild (a [i]);
-    //         }
-    //       }
-    //       else manageChild (a);
-    //     }
-    //   }
-      
-    //   retreiveChildNodes (comp);
-      
-    //   paths = _getPaths (comp.view, nodes);
-    //   _evalPaths (clonedNode, paths, clonedViews);
-      
-    //   return clonedNode;
-    // }
-    
-    // if (!cloned_map) { cloned_map = {}; }
-    // if (!cloned_map.__views__) { cloned_map.__views__ = {}; }    
-    // if (!config) { config = {}; }
-    // if (!config.node)
-    // {
-    //   var node = cloned_map.__views__ [this.view.id];
-    //   if (!node)
-    //   {
-    //     node = makeClonedNodeMap (this, cloned_map.__views__);
-    //   }
-    //   config.node = node;
-    // }
-
-    // return super.clone( config, cloned_map);
-  }
-
-   /**
-   * @name vs_core.VSObject#_clone_properties_value
-   * @function
-   * @protected
-   *
-   * @param {vs_core.VSObject} obj The cloned object
-   * @param {Object} map Map of cloned objects
-   */
-  _clone_properties_value(obj: View, cloned_map?: any): void
-  {
-    var key;
-
-    for (key in this)
-    {
-      if (key == 'id') continue;
-
-      if (key == "size" || key == "position")
-      {
-        var value = this.size;
-        if (!value || value.length !== 3 ||
-            (value[0] === 0 && value[1] === 0))
-        { continue; }
-      }
-  
-      // property value copy
-      if (this.isProperty (key))
-      { vs_core.VSObject.__propertyCloneValue (key, this, obj); }
-    }
-  }
-
-  /**
-   * @name vs.ui.View#_clone
-   * @function
-   * @private
-   *
-   * @param {vs_core.VSObject} obj The cloned object
-   * @param {Object} map Map of cloned objects
-   */
-  _clone(obj: View, cloned_map?: any): void
-  {
-    var anim, a, key, child, l, hole, cloned_comp;
-
-    super._clone( obj, cloned_map);
-
-    // animations clone
-    if (this._show_animation)
-    {
-      anim = cloned_map [this._show_animation._id];
-      if (anim)
-        obj._show_animation = anim;
-      else
-        obj._show_animation = this._show_animation.clone ();
-
-      obj.__show_clb = this.__show_clb;
-    }
-    if (this._hide_animation)
-    {
-      anim = cloned_map [this._hide_animation._id];
-      if (anim)
-        obj._hide_animation = anim;
-      else
-        obj._hide_animation = this._hide_animation.clone ();
-
-      obj.__hide_clb = this.__hide_clb;
-    }
-
-    // remove parent link
-    obj.__parent = undefined;
-
-    function getClonedComp (comp, cloned_map) {
-      if (!comp || !cloned_map) return null;
-      
-      if (cloned_map [comp._id]) return cloned_map [comp._id];
-      
-      var  view = cloned_map.__views__ [comp._id];
-        
-      return (view)?view._comp_:null;
-    }
-
-    for (key in this.__children)
-    {
-      a = this.__children [key];
-      hole = obj._holes [key];
-      if (!a || !hole) { continue; }
-
-      if (a instanceof Array)
-      {
-        l = a.length;
-        while (l--)
-        {
-          child = a [l];
-          cloned_comp = getClonedComp (child, cloned_map);
-          if (!cloned_comp) {
-            cloned_comp = child.clone (null, cloned_map);
-            obj.add (cloned_comp, key);
-          }
-          else {
-            cloned_map [child._id] = cloned_comp;
-          }
-        }
-      }
-      else
-      {
-        cloned_comp = getClonedComp (a, cloned_map);
-        if (!cloned_comp) {
-          cloned_comp = a.clone (null, cloned_map);
-          obj.add (cloned_comp, key);
-        }
-        else {
-          cloned_map [a._id] = cloned_comp;
-        }
-      }
-    }
-  }
-
-  /**
-   * @protected
-   * @function
-   */
-  _getGUInode(config: ViewConfig): HTMLElement | null {
-    throw new Error('View _getGUInode is not supported yet');
-    // var node = this.__getGUInode (config), compName, doc, doc_elem;
-    // if (node) { return node; }
-
-    // var _template = (config.template)?config.template:this.template;
-    // if (_template)
-    // {
-    //   var template = new Template (_template);
-    //   var node = template.__extend_component (this);
-    //   vs_utils.free (template);
-    //   return node;
-    // }
-
-    // // 4) no node exists, generate a warning a create a div node.
-    // if (this.html_template)
-    // {
-    //   node = Template.parseHTML (this.html_template);
-    //   if (node) return node;
-    // }
-    // if (vs_utils.isFunction (this.constructor))
-    // { compName = this.constructor.name; }
-    // else if (vs_utils.isString (this.constructor))
-    // { compName = this.constructor; }
-    // else
-    // { compName = View; }
-
-    // console.warn ("Impossible to instance view of component '" + compName + ", id [" + config.id +
-    //   "]. A default one is created");
-    // node = document.createElement ('div');
-
-    // return node;
-  }
-
-  /**
-   * @protected
-   * @function
-   */
-  __getGUInode(config: ViewConfig): HTMLElement | null {
-    throw new Error('View __getGUInode is not supported yet');
-
-    // // 1) the node is passed within config object
-    // if (config.node)// && config.node instanceof HTMLElement)
-    // {
-    //   return config.node;
-    // }
-
-    // var node = null, node_ref, root_id, root_node, obj, regexp_result;
-    // // find a direct reference
-    // if (config.node_id)
-    // {
-    //   node = document.getElementById (config.node_id);
-    //   if (node) { return node; }
-    // }
-
-    // // 2) find a template node in a view
-    // node_ref = config.node_ref;
-    // if (node_ref)
-    // {
-    //   regexp_result = View.refTemplatereg.exec (node_ref);
-    //   // node ref with the new syntax : ref = root_id'#'node_ref
-    //   if (regexp_result && regexp_result.length == 3)
-    //   {
-    //     root_id = regexp_result [1];
-    //     node_ref = regexp_result [2];
-    //   }
-    //   // old syntax
-    //   else root_id = config.root_ref;
-
-    //   if (node_ref && root_id)
-    //   {
-    //     root_node = null;
-    //     obj = vs_core.VSObject._obs [root_id];
-
-    //     if (obj && obj.view) { root_node = obj.view; }
-    //     else
-    //     {
-    //       root_node = document.getElementById (this.id);
-    //     }
-    //     if (root_node)
-    //     {
-    //       node = _findNodeRef (root_node, node_ref);
-    //     }
-
-    //     if (node) { return node; }
-    //   }
-    // }
-
-    // // 3) find a template node
-    // if (config.template_ref)
-    // {
-    //   node = this._getTemplateNode (config.template_ref);
-    //   if (node) { return node; }
-    // }
-
-    // // last case : find a direct reference with component id
-    // if (config.id)
-    // {
-    //   node = document.getElementById (config.id);
-    //   if (node) { return node; }
-    // }
-
-    // return undefined;
-  }
-
-  /**
-   * @private
-   * @function
-   */
-  _getTemplateNode(ref: string): Node | undefined
-  {
-    var node: Element | null = null;
-
-    if (!_template_nodes) {
-      _template_nodes = document.querySelector (".application_templates");
-      if (_template_nodes && _template_nodes.parentElement) {
-        _template_nodes.parentElement.removeChild (_template_nodes);
-      }
-    }
-    if (_template_nodes) {
-      node = _template_nodes.querySelector ("." + ref);
-    }
-
-    if (node) { return document.importNode (node, true); }
-  }
-
-  /**
-   * @protected
-   * @function
-   */
-  initComponent(): void
-  {
-    super.initComponent();
-
-    this._holes = {};
-    this.__children = {};
-    this._pointerevent_handlers = [];
-
-    if (!this.__config__) this.__config__ = {};
-    this.__config__.id = this.id;
-
-    this.view = this._getGUInode (this.__config__);
-    if (!this.view)
-    {
-      console.error ('vs.ui.View constructor failed. No view!');
-      return;
-    }
-
-    this.view.id = this._id;
-    this.view._comp_ = this;
-    this.view.setAttribute ('x-hag-comp', this.id);
-
-    this._parse_view (this.view);
-  }
-
-  /**
-   * @protected
-   * @function
-   */
-  componentDidInitialize(): void
-  {
-    super.componentDidInitialize();
-    if (this._magnet) {
-      this.view?.style.setProperty ('position', 'absolute');
-    }
-
-    if (this._magnet === View.MAGNET_CENTER)
-    {
-      this._updateSizeAndPos ();
-      this._applyTransformation ();
-    }
-  }
-
-  /**
-   * Notifies that the component's view was added to the DOM.<br/>
-   * You can override this method to perform additional tasks
-   * associated with presenting the view.<br/>
-   * If you override this method, you must call the parent method.
-   *
-   * @name vs.ui.View#viewDidAdd
-   * @function
-   */
-  viewDidAdd(): void
-  {
+  refresh(): void {
     const view = this.view;
-    if (!view || !view.parentElement) return;
+    if (view?.parentElement) {
+      this.#size[0] = view.offsetWidth;
+      this.#size[1] = view.offsetHeight;
+      this.#pos[0] = view.offsetLeft;
+      this.#pos[1] = view.offsetTop;
+    }
+    for (const children of this.#children.values()) {
+      for (const child of children) {
+        (child as unknown as { refresh?(): void }).refresh?.();
+      }
+    }
+  }
 
-    // update the real element size and position
-    vs_core.scheduleAction (()=> {
-      this._size[0] = view.offsetWidth;
-      this._size [1] = view.offsetHeight;
-      this._pos[0] = view.offsetLeft;
-      this._pos [1] = view.offsetTop;
+  /**
+   *  Notifies that the view node was added to the DOM. Override it to
+   *  perform tasks when the view is presented; call the parent method.
+   */
+  viewDidAdd(): void {
+    const view = this.view;
+    if (!view?.parentElement) return;
+
+    // the real size and position, once laid out
+    later(() => {
+      this.#size[0] = view.offsetWidth;
+      this.#size[1] = view.offsetHeight;
+      this.#pos[0] = view.offsetLeft;
+      this.#pos[1] = view.offsetTop;
     });
   }
 
-  /**
-   * @protected
-   * @function
-   */
-  notify(event: any): void {}
+  /********************************************************************
+                    View node
+  *********************************************************************/
+
+  #getNode(options: ViewOptions): HTMLElement | undefined {
+    const node = this.#findNode(options);
+    if (node) return node;
+
+    if (options.template) {
+      const templateNode = Template.parseHTML(options.template);
+      if (templateNode) return templateNode;
+    }
+    if (this.htmlTemplate) {
+      const templateNode = Template.parseHTML(this.htmlTemplate);
+      if (templateNode) return templateNode;
+    }
+
+    console.warn(`Impossible to instance view of component '${this.constructor.name}', id [${this.id}]. A default one is created`);
+    return document.createElement('div');
+  }
 
   /**
-   * @protected
-   * @function
+   * An existing node: options.node, nodeId, nodeRef, templateRef, or the
+   * DOM node with the component id
    */
-  _parse_view(node: Element | null): void
-  {
-    if (!node || node.nodeType === 3) { return; }
+  #findNode(options: ViewOptions): HTMLElement | undefined {
+    if (options.node) return options.node;
 
-    var hole_attribute, child;
+    if (options.nodeId) {
+      const node = document.getElementById(options.nodeId);
+      if (node) return node;
+    }
 
-    if (node.attributes !== null)
-    {
-      hole_attribute = node.attributes.getNamedItem ("x-hag-hole");
-      if (hole_attribute)
-      {
-        this._holes [hole_attribute.nodeValue] = node;
-        return; // hole can not include hode
+    if (options.nodeRef) {
+      let ref: string = options.nodeRef;
+      let rootId = options.rootRef;
+      const match = /(\w+)#(\w+)/.exec(ref);
+      if (match) {
+        [, rootId, ref] = match;
+      }
+      if (rootId) {
+        const root = (Component.instances.get(rootId) as View<any> | undefined)?.view ?? document.getElementById(rootId);
+        const node = findNodeRef(root, ref);
+        if (node) return node as HTMLElement;
       }
     }
 
-    child = node.firstElementChild;
-    while (child)
-    {
-      this._parse_view (child);
-      child = child.nextElementSibling;
+    if (options.templateRef) {
+      const node = View.templateNode(options.templateRef);
+      if (node) return node;
+    }
+
+    if (options.id) {
+      const node = document.getElementById(options.id);
+      if (node) return node;
+    }
+
+    return undefined;
+  }
+
+  /**
+   *  Returns a copy of a template of the application: the node of class ref
+   *  in the .application_templates node (removed from the document once
+   *  read)
+   */
+  static templateNode(ref: string): HTMLElement | undefined {
+    if (applicationTemplates === undefined || !applicationTemplates?.isConnected) {
+      applicationTemplates = document.querySelector('.application_templates');
+      applicationTemplates?.remove();
+    }
+    const node = applicationTemplates?.querySelector(`.${ref}`);
+    return node ? document.importNode(node, true) as HTMLElement : undefined;
+  }
+
+  #parseHoles(node: Element): void {
+    const hole = node.getAttribute?.('x-hag-hole');
+    if (hole) {
+      this.#holes.set(hole, node as HTMLElement);
+      return; // a hole can not include holes
+    }
+    for (let child = node.firstElementChild; child; child = child.nextElementSibling) {
+      this.#parseHoles(child);
     }
   }
 
   /**
-   *  Instantiate, init and add the specified child component to this component.
-   *  <p>
-   *  The view of the MyGUIComponent is dynamically loaded (from file),
-   *  instanciated and  added into the HTML DOM.
-   *  <p>
-   *  @example
-   *  var id =
-   *    myObject.createAndAddComponent ('MyGUIComponent', config, 'children');
-   *
-   * @name vs.ui.View#createAndAddComponent
-   * @function
-   *
-   * @param {String} comp_name The GUI component name to instanciate
-   * @param {Object} config Configuration structure need to build the component.
-   * @param {String} extension The hole into the vs.ui.View will be insert.
-   * @return {vs_core.VSObject} the created component
+   *  Returns the node of the view with the x-hag-ref (or x-hag-comp)
+   *  attribute ref
    */
-  createAndAddComponent(comp_name: string, config?: any, extension?: string): any
-  {
-    var comp_class = window [comp_name];
-    if (!comp_class) {
-      console.error ("Impossible to fund component '" + comp_name + "'.");
-      return;
-    }
+  findNodeRef(ref: string): Element | undefined {
+    return findNodeRef(this.view, ref);
+  }
 
-    // verify the component view already exists
-    if (!config) {config = {};}
+  /********************************************************************
+                    Children
+  *********************************************************************/
 
-    if (!config.id) { config.id = vs_core.createId (); }
-
-    var view = this.__getGUInode (config),
-      path, data, xmlRequest, div, children, i, len, obj, msg;
-
-
-    // Find template into the DOM
-    if (!view) { view = this._getTemplateNode (comp_name); }
-
-    // Find template into the component prototype
-    if (!view)
-    {
-      if (comp_class.prototype && comp_class.prototype.template)
-      {
-        view = Template.parseHTML (comp_class.prototype.template);
-      }
-    }
-
-    if (!view)
-    {
-      if (comp_class.prototype && comp_class.prototype.node_template)
-      {
-        view = document.importNode (comp_class.prototype.node_template, true);
-      }
-    }
-
-    // If no template was found, try to load it
-    if (!view)
-    {
-      path = comp_name + '.xhtml';
-
-      data = View.__comp_templates [path];
-      if (!data)
-      {
-        xmlRequest = new XMLHttpRequest ();
-        xmlRequest.open ("GET", path, false);
-        xmlRequest.send (null);
-
-        if (xmlRequest.readyState === 4)
-        {
-          if (xmlRequest.status === 200 || xmlRequest.status === 0)
-          {
-            data = xmlRequest.responseText;
-            View.__comp_templates [path] = data;
-          }
-          else
-          {
-            console.error ("Template file for component '" + comp_name + "' unfound.");
-            return;
-          }
-        }
-        else
-        {
-          console.error ("Pb when load the component '" + comp_name + "' template.");
-          return;
-        }
-        xmlRequest = null;
-      }
-
-      view = Template.parseHTML (data);
-    }
-    config.node = view;
-    obj = null;
-
-    // Build object
-    try { obj = new comp_class (config); }
-    catch (exp)
-    {
-      msg = "Impossible to instanciate comp: " + comp_name;
-      msg += " => " + exp.message;
-      console.error (msg);
-      if (exp.stack) console.error (exp.stack);
-      return;
-    }
-
-    // Initialize object
-    try
-    {
-      obj.init ();
-      obj.configure (config);
-    }
-    catch (exp)
-    {
-      if (exp.line && exp.sourceURL)
-      {
-        msg = "Error when initiate comp: " + comp_name;
-        msg += " => " + exp.message;
-        msg += "\n" + exp.sourceURL + ":" + exp.line;
-      }
-      else { msg = exp; }
-      console.error (msg);
-      if (exp.stack) console.error (exp.stack);
-    }
-
-    // Add object to its parent
-    this.add (obj, extension);
-    obj.refresh ();
-
-    return obj;
+  /**
+   * The parent view, once added (see add)
+   */
+  get parent(): View<any> | undefined {
+    return this.#parent;
   }
 
   /**
-   *  Return true if the set component is a child o the current component
+   *  Creates a component from its class name (see registerComponent, or a
+   *  global class), initializes it and adds it to this view.
+   *  Its node is found with the options (see ViewOptions), else in the
+   *  application templates, the template of its class, or loaded from
+   *  '<name>.xhtml'.
    *
-   * @name vs.ui.View#isChild
-   * @function
-   *
-   * @param {vs_core.EventSource} child The component to be removed.
-   * @return {boolean}
+   * @param {String} name the class name
+   * @param {Object} options the options of the component
+   * @param {String} extension the hole to add it to
+   * @return {View} the component, undefined if it could not be created
    */
-  isChild(child: any): boolean
-  {
-    if (!child) { return false; }
-
-    var key, a, hole;
-
-    for (key in this.__children)
-    {
-      a = this.__children [key];
-      if (!a) { continue; }
-
-      if (a === child || (a instanceof Array && a.indexOf (child) !== -1))
-      {
-        return true;
-      }
+  createAndAddComponent(name: string, options: ViewOptions = {}, extension?: string): View<any> | undefined {
+    const Class = View.#registry.get(name) ?? (globalThis as Record<string, unknown>)[name] as ViewClass | undefined;
+    if (!isFunction(Class)) {
+      console.error(`Impossible to find component '${name}'.`);
+      return undefined;
     }
 
+    const config: ViewOptions = { ...options };
+    let node = this.#findNode(config) ?? View.templateNode(name);
+
+    if (!node) {
+      const template = (Class as { template?: string }).template ?? (Class.prototype as { template?: string }).template;
+      if (template) node = Template.parseHTML(template);
+    }
+
+    if (!node) {
+      const path = `${name}.xhtml`;
+      let data = loadedTemplates.get(path);
+      if (data === undefined) {
+        const request = new XMLHttpRequest();
+        request.open('GET', path, false);
+        request.send(null);
+        if (request.status !== 200 && request.status !== 0) {
+          console.error(`Template file for component '${name}' unfound.`);
+          return undefined;
+        }
+        data = request.responseText;
+        loadedTemplates.set(path, data);
+      }
+      node = Template.parseHTML(data);
+    }
+    if (node) config.node = node;
+
+    let component: View<any>;
+    try {
+      component = new Class(config);
+      component.init();
+    } catch (e) {
+      console.error(`Impossible to instantiate the component ${name}`, e);
+      return undefined;
+    }
+
+    this.add(component, extension);
+    component.refresh();
+    return component;
+  }
+
+  /**
+   *  Returns true if the component is a child of this view
+   */
+  isChild(child: ViewChild | null | undefined): boolean {
+    if (!child) return false;
+    for (const children of this.#children.values()) {
+      if (children.includes(child)) return true;
+    }
     return false;
   }
 
   /**
-   *  Add the specified child component to this component.
-   *  <p>
-   *  The component can be a graphic component (vs.ui.View) or
-   *  a non graphic component (vs_core.EventSource).
-   *  In case of vs.ui.View its mandatory to set the extension.
-   *  <p>
-   *  The add is a lazy add! The child's view can be already in
-   *  the HTML DOM. In that case, the add methode do not modify the DOM.
-   *  <p>
-   *  @example
-   *  var myButton = new Button (conf);
-   *  myObject.add (myButton, 'children');
-   *
-   * @name vs.ui.View#add
-   * @function
-   *
-   * @param {vs_core.EventSource} child The component to be added.
-   * @param {String} extension [optional] The hole into a vs.ui.View will be
-   *       insert.
+   *  Returns the children of a hole (all the children without hole)
    */
-  add(child: any, extension?: string, view?: HTMLElement): void
-  {
-    if (!child) { return; }
-    if (!view) { view = child.view; }
-    else { child.__gui_object__hack_view__ = view; }
+  getChildren(extension?: string): ViewChild[] {
+    if (extension) return [...(this.#children.get(extension) ?? [])];
+    return [...this.#children.values()].flat();
+  }
 
-    if (this.isChild (child)) { return; }
+  /**
+   *  Adds a child: a view (its node is added to the hole extension, the
+   *  'children' hole by default) or a non graphical component.
+   *  The add is lazy: a view node already in the hole is not moved.
+   *
+   *  @example
+   *  view.add(button, 'children');
+   *
+   * @param {Component} child the child
+   * @param {String} extension the hole [optional]
+   * @param {HTMLElement} view the node of the child, if not child.view
+   *        [optional]
+   */
+  add(child: ViewChild, extension?: string, view?: HTMLElement): void {
+    if (!child || this.isChild(child)) return;
 
-    var key, a, b, hole;
-    if (!view) { key = View.NON_G_OBJECT; }
-    // a non graphical object
-    else if (!extension) { key = View.ANY_PLACE; }
-    else { key = extension; }
+    const node = view ?? nodeOfChild(child);
+    const key = !node ? View.NON_G_OBJECT : (extension || View.ANY_PLACE);
 
-    a = this.__children [key];
-    if (a && vs_utils.isArray (a)) { a.push (child); }
-    else if (a)
-    {
-      b = [];
-      b.push (a);
-      b.push (child);
-      this.__children [key] = b;
+    let children = this.#children.get(key);
+    if (!children) {
+      children = [];
+      this.#children.set(key, children);
     }
-    else { this.__children [key] = child; }
+    children.push(child);
+    if (this.#isInitializing) this.#initChildren.add(child);
 
-    hole = this._holes [key];
-    if (view && hole)
-    {
-      if (view.parentElement)
-      {
-        if (view.parentElement === hole)
-        {
-          child.__parent = this;
-          if (child.viewDidAdd) child.viewDidAdd ();
-          return;
-        }
-        view.parentElement.removeChild (view);
-      }
-      hole.appendChild (view);
-      child.__parent = this;
+    const hole = this.#holes.get(key);
+    if (!node || !hole) return;
 
-      if (child.viewDidAdd) child.viewDidAdd ();
+    if (node.parentElement !== hole) {
+      node.remove();
+      hole.appendChild(node);
+    }
+    if (child instanceof View) {
+      child.#parent = this;
+      child.viewDidAdd();
     }
   }
 
   /**
-   *  Remove the specified child component from this component.
-   *
-   *  @example
-   *  myObject.remove (myButton);
-   *
-   * @name vs.ui.View#remove
-   * @function
-   *
-   * @param {vs_core.EventSource} child The component to be removed.
+   *  Removes a child: its node is removed from the DOM
    */
-  remove(child: any): void
-  {
-    if (!child) { return; }
+  remove(child: ViewChild): void {
+    if (!child) return;
 
-    var key, a, view;
+    for (const [key, children] of this.#children) {
+      const index = children.indexOf(child);
+      if (index === -1) continue;
 
-    if (child.__gui_object__hack_view__)
-    {
-      view = child.__gui_object__hack_view__;
-    }
-    else { view = child.view; }
-
-    if (view)
-    {
-      for (key in this.__children)
-      {
-        a = this.__children [key];
-        if (!a) { continue; }
-
-        if (a === child || (a instanceof Array && a.indexOf (child) !== -1))
-        {
-          if (a instanceof Array) {a.remove (child);}
-          else { delete (this.__children [key]); }
-
-          if (view.parentElement)
-          {
-            view.parentElement.removeChild (view);
-          }
-//          hole = this._holes [key];
-//          if (hole) { hole.removeChild (view); }
-
-          child.__parent = null;
-          break;
-        }
-      }
+      children.splice(index, 1);
+      if (children.length === 0) this.#children.delete(key);
+      this.#initChildren.delete(child);
+      nodeOfChild(child)?.remove();
+      if (child instanceof View && child.#parent === this) child.#parent = undefined;
+      return;
     }
   }
 
   /**
-   *  Remove all children components from this component and free them.
+   *  Removes all the children (of a hole), and destroys them or returns
+   *  them
    *
-   *  @example
-   *  myObject.removeAllChildren ();
-   *
-   * @name vs.ui.View#removeAllChild
-   * @function
-   * @param {Boolean} should_free free children
-   * @param {String} extension [optional] The hole from witch all views will be
-   *   removed
-   * @return {Array} list of removed child if not should_free
+   * @param {Boolean} shouldDestroy destroy the removed children
+   * @param {String} extension the hole [optional]
+   * @return {Array} the removed children, if not destroyed
    */
-  removeAllChildren(should_free?: boolean, extension?: string): any[] | undefined
-  {
-    var key, self = this, children = [];
+  removeAllChildren(shouldDestroy = false, extension?: string): ViewChild[] | undefined {
+    const removed = this.getChildren(extension);
+    removed.forEach(child => {
+      this.remove(child);
+      if (shouldDestroy) child.destroy();
+    });
+    return shouldDestroy ? undefined : removed;
+  }
 
-    /** @private */
-    function removeChildrenInHole (ext)
-    {
-      var a, child;
+  /**
+   *  Returns a new view of the same class: its model properties, show and
+   *  hide animations are copied, and its children (except the ones it
+   *  created while initializing, created again by the clone) are cloned in
+   *  the same holes. The clone is initialized.
+   *
+   * @param {ViewOptions} options the options of the clone [optional]
+   * @return {View} the clone
+   */
+  clone(options: ViewOptions = {}): this {
+    const Class = this.constructor as new (options?: ViewOptions) => this;
+    const copy = new Class({ ...this.#nodeOptions(), ...options });
+    copy.init();
 
-      a = self.__children [ext];
-      if (!a) { return; }
+    const values: Record<string, unknown> = {};
+    for (const name of this.modelProperties) {
+      if (name in options) continue;
+      const descriptor = this.getPropertyDescriptor(name);
+      if (!descriptor?.get) continue;
+      const value = (this as unknown as Record<string, unknown>)[name];
+      if (value !== undefined) values[name] = value;
+    }
+    copy.assign(values);
 
-      if (a instanceof Array)
-      {
-        while (a.length)
-        {
-          child = a[0];
-          self.remove (child);
-          if (should_free) vs_utils.free (child);
-          else children.push (child);
-        }
+    if (this.#showAnimation) copy.setShowAnimation(this.#showAnimation, undefined, this.#showCallback);
+    if (this.#hideAnimation) copy.setHideAnimation(this.#hideAnimation, undefined, this.#hideCallback);
+
+    for (const [key, children] of this.#children) {
+      for (const child of children) {
+        if (this.#initChildren.has(child)) continue;
+        if (!(child instanceof View)) continue;
+        copy.add(child.clone(), key === View.ANY_PLACE ? undefined : key);
       }
-      else
-      {
-        self.remove (a);
-        if (should_free) vs_utils.free (a);
-        else children.push (a);
-      }
-      delete (self.__children [ext]);
+    }
+    return copy;
+  }
+
+  /** the options giving the node (a template), for a clone */
+  #nodeOptions(): ViewOptions {
+    const { template } = this.#options;
+    return template ? { template } : {};
+  }
+
+  /********************************************************************
+                    Events
+  *********************************************************************/
+
+  /**
+   *  Binds an event: a pointer event of the view node ('pointerdown',
+   *  'pointermove', 'pointerup', 'pointercancel'), or a component event
+   *  (see EventSource.bind).
+   *  The pointer events are given to func (a function, or the name of a
+   *  method of obj; 'notify' by default), with obj as this.
+   */
+  override bind(spec: string, obj: Component, func: Function | string = 'notify'): void {
+    if (!POINTER_EVENT_TYPES.has(spec)) {
+      super.bind(spec, obj, func);
+      return;
+    }
+    if (!this.view) return;
+
+    const callback = isFunction(func) ? func : (obj as unknown as Record<string, unknown>)[func];
+    if (!isFunction(callback)) {
+      throw new Error(`Invalid bind arguments. Unknown func: ${String(func)}`);
+    }
+
+    const handler = (event: Event) => {
+      callback.call(obj, event);
     };
-
-    if (extension)
-    {
-      removeChildrenInHole (extension);
-    }
-    else
-    {
-      for (key in self.__children)
-      {
-        removeChildrenInHole (key);
-      }
-      this.__children = {};
-    }
-    
-    return (should_free)?undefined:children;
+    const key = `${obj.id}:${spec}`;
+    const previous = this.#pointerHandlers.get(key);
+    if (previous) this.view.removeEventListener(spec, previous);
+    this.#pointerHandlers.set(key, handler);
+    this.view.addEventListener(spec, handler);
   }
 
   /**
-   * @protected
-   * @function
+   *  Unbinds an event (see bind)
    */
-  findNodeRef(ref: string): Element | false
-  {
-    if (!this.view) { return; }
-
-    return _findNodeRef (this.view, ref);
-  }
-
-/********************************************************************
-                  GUI Utilities
-********************************************************************/
-  /**
-   *  The event bind method to listen events
-   *  <p>
-   *  When you want listen an event generated by this object, you can
-   *  bind your object (the observer) to this object using 'bind' method.
-   *  <p>
-   *  Warning:<br>
-   *  If you know the process of your callback can take time or can be blocking
-   *  you should set delay to 'true' otherwise you application will be stuck.
-   *  But be careful this options add an overlay in the event propagation.
-   *  For debug purpose or more secure coding you can force delay to true, for
-   *  all bind using global variable vs_core.FORCE_EVENT_PROPAGATION_DELAY.<br/>
-   *  You just have set as true (vs_core.FORCE_EVENT_PROPAGATION_DELAY = true)
-   *  at beginning of your program.
-   *
-   * @name vs.ui.View#bind
-   * @function
-   *
-   * @param {string} spec the event specification [mandatory]
-   * @param {vs_core.VSObject} obj the object interested to catch the event
-   *    [mandatory]
-   * @param {string} func the name of a callback. If its not defined
-   *        notify method will be called [optional]
-   * @param {boolean} delay if true the callback 'func' will be call within
-   *        an other "simili thread".
-   */
-  bind(spec: PointerEventType | string, obj: any, func?: string | Function, delay?: boolean): any
-  {
-    if (isPointerEventType(spec)) {
-      if (!this.view) { return; }
-
-      if (!func) { func = 'notify'; }
-      const func_ptr = vs_utils.isFunction (func) ? func : obj [func];
-
-      if (!func_ptr)
-      {
-        throw new Error('Invalid bind arguments. Unknown func: ' + func);
-      }
-
-      const handler = (event: Event) => {
-        if (vs_core.EVENT_SUPPORT_TOUCH && (event as any).changedTouches &&
-            (event as any).changedTouches.length > 1) { return; }
-
-//        event.stopPropagation ();
-//        event.preventDefault ();
-
-        event.src = this;
-        if (vs_core.EVENT_SUPPORT_TOUCH && event.changedTouches)
-        {
-          event.pageX = event.changedTouches[0].pageX;
-          event.pageY = event.changedTouches[0].pageY;
-          var rec = vs_ui_utils.getElementAbsolutePosition (this.view);
-          event.offsetX = event.changedTouches[0].pageX - rec.x;
-          event.offsetY = event.changedTouches[0].pageY - rec.y;
-        }
-        View._propagate_pointer_event (obj, func_ptr, event);
-      };
-
-      this._pointerevent_handlers [obj.id + spec] = handler;
-
-      addPointerListener (this.view, spec, handler);
+  override unbind(spec: string, obj: Component, func?: Function | string): void {
+    if (!POINTER_EVENT_TYPES.has(spec)) {
+      super.unbind(spec, obj, func);
+      return;
     }
-    return super.bind( spec, obj, func, delay);
+    const key = `${obj.id}:${spec}`;
+    const handler = this.#pointerHandlers.get(key);
+    if (!handler) return;
+    this.view?.removeEventListener(spec, handler);
+    this.#pointerHandlers.delete(key);
   }
 
   /**
-   *  The event unbind method
-   *  <p>
-   *  Should be call when you want stop event listening on this object
-   *
-   * @name vs.ui.View#unbind
-   * @function
-   *
-   * @param {string} spec the event specification [mandatory]
-   * @param {vs_core.VSObject} obj the object you want unbind [mandatory]
+   *  Default handler of the bound pointer events (see bind)
    */
-  unbind(spec: string, obj: any): void
-  {
-    if (!spec || !obj) { return; }
-    if (isPointerEventType(spec)) {
-      var handler = this._pointerevent_handlers [obj.id + spec];
-      if (!handler || !this.view) { return; }
+  // eslint-disable-next-line class-methods-use-this, @typescript-eslint/no-unused-vars
+  notify(event: Event): void {}
 
-      removePointerListener (this.view, spec, handler);
+  /**
+   *  Receives the events of the children (see notifyToParent): forwards
+   *  them to the parent when bubbling is set
+   */
+  handleEvent(event: Event): void {
+    if (this.#bubbling) this.#parent?.handleEvent(event);
+  }
+
+  /**
+   *  Gives an event to the parent: to its handleEvent, else to its notify
+   */
+  notifyToParent(event: Event): void {
+    const parent = this.#parent;
+    if (!parent) return;
+    if (isFunction(parent.handleEvent)) parent.handleEvent(event);
+    else if (isFunction((parent as Partial<View<any>>).notify)) parent.notify(event);
+  }
+
+  /**
+   *  Gets an event's pointer position relatively to the view
+   */
+  getPointerPosition(event: PointerEvent): { x: number; y: number } {
+    const rect = this.view ? getElementAbsolutePosition(this.view) : { x: 0, y: 0 };
+    return { x: event.pageX - rect.x, y: event.pageY - rect.y };
+  }
+
+  /********************************************************************
+                    Pointer recognizers
+  *********************************************************************/
+
+  /**
+   *  Adds a pointer recognizer (tap, drag, pinch, rotation…); it is attached
+   *  to the view node once it exists
+   */
+  addPointerRecognizer(recognizer: PointerRecognizer<any>): void {
+    if (this.#recognizers.includes(recognizer)) return;
+    this.#recognizers.push(recognizer);
+    if (this.view) recognizer.attach(this);
+  }
+
+  /**
+   *  Removes a pointer recognizer
+   */
+  removePointerRecognizer(recognizer: PointerRecognizer<any>): void {
+    const index = this.#recognizers.indexOf(recognizer);
+    if (index === -1) return;
+    this.#recognizers.splice(index, 1);
+    recognizer.detach();
+  }
+
+  /********************************************************************
+                    Layout
+  *********************************************************************/
+
+  /**
+   * The size of the view [width, height], in px
+   */
+  @InOut set size(v: number[]) {
+    if (!isArray(v) || v.length !== 2 || !isNumber(v[0]) || !isNumber(v[1])) return;
+    this.#size[0] = v[0];
+    this.#size[1] = v[1];
+    this.#updateSizeAndPos();
+  }
+  get size(): number[] {
+    return this.#size.slice();
+  }
+
+  /**
+   * The position of the view [x, y], in px
+   */
+  @InOut set position(v: number[]) {
+    if (!isArray(v) || v.length !== 2 || !isNumber(v[0]) || !isNumber(v[1])) return;
+    this.#pos[0] = v[0];
+    this.#pos[1] = v[1];
+    this.#updateSizeAndPos();
+  }
+  get position(): number[] {
+    return this.#pos.slice();
+  }
+
+  /**
+   * The size and position behaviors according to the parent size
+   * [horizontal, vertical]
+   */
+  @InOut set autosizing(v: number[]) {
+    if (!isArray(v) || v.length !== 2 || !isNumber(v[0]) || !isNumber(v[1])) return;
+    if (this.#autosizing[0] === v[0] && this.#autosizing[1] === v[1]) return;
+    this.#autosizing[0] = v[0];
+    this.#autosizing[1] = v[1];
+    this.#updateSizeAndPos();
+  }
+  get autosizing(): number[] {
+    return this.#autosizing.slice();
+  }
+
+  /**
+   * The magnet: View.MAGNET_NONE, TOP, BOTTOM, LEFT, RIGHT or CENTER
+   */
+  @InOut set magnet(code: number) {
+    if (this.#magnet === code) return;
+    if (!isNumber(code) || code < 0 || code > 5) return;
+
+    this.#magnet = code;
+    if (!this.view) return;
+    if (code) this.view.style.setProperty('position', 'absolute');
+    else this.view.style.removeProperty('position');
+    this.#updateSizeAndPos();
+    this.#applyTransformation();
+  }
+  get magnet(): number {
+    return this.#magnet;
+  }
+
+  /**
+   * The layout of the children: View.DEFAULT_LAYOUT, HORIZONTAL_LAYOUT,
+   * VERTICAL_LAYOUT, ABSOLUTE_LAYOUT or FLOW_LAYOUT
+   */
+  @InOut set layout(v: string | null) {
+    const layouts = [
+      View.HORIZONTAL_LAYOUT, View.DEFAULT_LAYOUT, View.ABSOLUTE_LAYOUT, View.VERTICAL_LAYOUT,
+      View.FLOW_LAYOUT, View.LEGACY_HORIZONTAL_LAYOUT, View.LEGACY_ABSOLUTE_LAYOUT,
+      View.LEGACY_VERTICAL_LAYOUT, View.LEGACY_FLOW_LAYOUT,
+    ];
+    if (v && !layouts.includes(v)) {
+      console.error(`Unsupported layout '${v}'!`);
+      return;
     }
-    super.unbind( spec, obj);
+    if (this.#layout) this.removeClassName(this.#layout);
+    this.#layout = !v || v.includes('_layout') ? v : `${v}_layout`;
+    if (this.#layout) this.addClassName(this.#layout);
   }
-
-/********************************************************************
-                  GUI Utilities
-********************************************************************/
-
-  /**
-   * @protected
-   * @function
-   */
-  _setMagnet(code: number): void
-  {
-    this._magnet = code;
-    if (!this.view) { return; }
-
-    if (this._magnet)
-    { this.view.style.setProperty ('position', 'absolute'); }
-    else
-    { this.view.style.removeProperty ('position'); }
-
-    this._updateSizeAndPos ();
-    this._applyTransformation ();
+  get layout(): string | null {
+    return this.#layout;
   }
 
   /**
-   * @protected
-   * @function
-   * This function cost a lot!
+   * The CPU costly update of the node style from size, position,
+   * autosizing and magnet
    */
-  _updateSizeAndPos(): void
-  {
-    const x = this._pos[0], w = this._size[0];
-    let y = this._pos [1], h = this._size [1];
+  #updateSizeAndPos(): void {
+    const view = this.view;
+    if (!view) return;
 
-    let width: string, height: string, pWidth = 0, pHeight = 0,
-      left = 'auto', top = 'auto', right = 'auto', bottom = 'auto';
+    let x = this.#pos[0], y = this.#pos[1];
+    const w = this.#size[0], h = this.#size[1];
+    const [aH, aV] = this.#autosizing;
+    let width: string, height: string;
+    let left = 'auto', top = 'auto', right = 'auto', bottom = 'auto';
 
-    const aH = this._autosizing[0], aV = this._autosizing [1],
-      view = this.view;
-      
-    let parentElement: HTMLElement | null;
+    const parent = view.parentElement;
+    const pWidth = parent ? parent.offsetWidth : 0;
+    const pHeight = parent ? parent.offsetHeight : 0;
 
-    if (!view) { return; }
-//     if (w < 0) { w = 0; }
-//     if (h < 0) { h = 0; }
-
-    parentElement = view.parentElement;
-    if (parentElement) {
-      pWidth = parentElement.offsetWidth;
-      pHeight = parentElement.offsetHeight;
-    }
-
-    if (this._magnet === View.MAGNET_LEFT) x = 0;
-    if (this._magnet === View.MAGNET_TOP) y = 0;
+    if (this.#magnet === View.MAGNET_LEFT) x = 0;
+    if (this.#magnet === View.MAGNET_TOP) y = 0;
 
     if (w < 0) { width = ''; }
     else if (aH === 5 || aH === 7) { width = 'auto'; }
-    else if (aH === 4 || aH === 1) { width = w + 'px'; }
-    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0) {
-      if (pWidth) {
-        width = (w / pWidth * 100) + '%';
-      }
-      else { width = w + 'px'; }
-    }
+    else if (aH === 4 || aH === 1) { width = `${w}px`; }
+    else if (aH === 2 || aH === 3 || aH === 6 || aH === 0) { width = pWidth ? `${w / pWidth * 100}%` : `${w}px`; }
     else { width = '100%'; }
 
     if (h < 0) { height = ''; }
     else if (aV === 5 || aV === 7) { height = 'auto'; }
-    else if (aV === 4 || aV === 1) { height = h + 'px'; }
-    else if (aV === 2 || aV === 3 || aV === 6 || aV === 0) {
-      if (pHeight) {
-        height = (h / pHeight * 100) + '%';
-      }
-      else { height = h + 'px'; }
-    }
+    else if (aV === 4 || aV === 1) { height = `${h}px`; }
+    else if (aV === 2 || aV === 3 || aV === 6 || aV === 0) { height = pHeight ? `${h / pHeight * 100}%` : `${h}px`; }
     else { height = '100%'; }
 
-    if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth))
-    { left = x + 'px'; }
-    else if ((aH === 2 || aH === 0) && pWidth)
-    { left = (x / pWidth * 100) + '%'; }
+    if (aH === 4 || aH === 5 || aH === 6 || aH === 7 || (aH === 2 && !pWidth)) { left = `${x}px`; }
+    else if ((aH === 2 || aH === 0) && pWidth) { left = `${x / pWidth * 100}%`; }
 
-    if ((w >=0) && (aH === 1 || aH === 3 || aH === 5 || aH === 7))
-    {
+    if (w >= 0 && (aH === 1 || aH === 3 || aH === 5 || aH === 7)) {
       const r = pWidth - (x + w);
-      right = (r >= 0) ? r + 'px' : '0';
+      right = r >= 0 ? `${r}px` : '0';
     }
 
-    if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight))
-    { top = y + 'px'; }
-    else if ((aV === 2 || aV === 0) && pHeight)
-    { top = (y / pHeight * 100) + '%'; }
+    if (aV === 4 || aV === 5 || aV === 6 || aV === 7 || (aV === 2 && !pHeight)) { top = `${y}px`; }
+    else if ((aV === 2 || aV === 0) && pHeight) { top = `${y / pHeight * 100}%`; }
 
-    if ((h >= 0) && (aV === 1 || aV === 3 || aV === 5 || aV === 7))
-    {
+    if (h >= 0 && (aV === 1 || aV === 3 || aV === 5 || aV === 7)) {
       const b = pHeight - (y + h);
-      bottom = (b >= 0) ? b + 'px' : '0';
+      bottom = b >= 0 ? `${b}px` : '0';
     }
 
-    if (this._magnet === View.MAGNET_BOTTOM) { top = 'auto'; bottom = '0px'; }
-    if (this._magnet === View.MAGNET_RIGHT) { left = 'auto'; right = '0px'; }
-
-    if (this._magnet === View.MAGNET_CENTER) {
+    if (this.#magnet === View.MAGNET_BOTTOM) { top = 'auto'; bottom = '0px'; }
+    if (this.#magnet === View.MAGNET_RIGHT) { left = 'auto'; right = '0px'; }
+    if (this.#magnet === View.MAGNET_CENTER) {
       top = '50%'; bottom = 'auto';
       left = '50%'; right = 'auto';
     }
 
-    view.style.left = left;
-    view.style.right = right;
-    view.style.top = top;
-    view.style.bottom = bottom;
-    view.style.width = width;
-    view.style.height = height;
+    Object.assign(view.style, { left, right, top, bottom, width, height });
   }
 
-/********************************************************************
- CSS manipulation
-********************************************************************/
+  /********************************************************************
+                    CSS
+  *********************************************************************/
 
   /**
-   *  Returns the given CSS property value the vs.ui.View view.
-   *  <p>
-   *  This method looks up the CSS property of the vs.ui.View view whether
-   *  it was applied inline or in a stylesheet.
-   *
-   *  @example
-   *  myObject.getStyle ('color');
-   *  // -> 'red'
-   *
-   * @name vs.ui.View#getStyle
-   * @function
-   *
-   * @param {String} property the property name
-   * @return {String} value the property value or undefined
+   *  Returns the inline value of a CSS property (undefined for 'auto'); a
+   *  number for the opacity (1 by default)
    */
   getStyle(property: string): string | number | undefined {
-    if (!this.view) { return undefined; }
-    const css = this.view.style
-    const value = css.getPropertyValue(property);
-
-    if (property === 'opacity') { return value ? parseFloat (value) : 1.0; }
+    if (!this.view) return undefined;
+    const value = this.view.style.getPropertyValue(property);
+    if (property === 'opacity') return value ? parseFloat(value) : 1;
     return value === 'auto' ? undefined : value;
   }
 
   /**
-   *  Returns the given CSS property computed value the vs.ui.View view.
-   *  <p>
-   *  This method looks up the CSS property of the vs.ui.View view whether
-   *  it was applied inline or in a stylesheet.
-   *
-   *  @example
-   *  myObject.getComputedStyle ('border-left-width');
-   *  // -> '5px'
-   *
-   * @name vs.ui.View#getComputedStyle
-   * @function
-   *
-   * @param {String} property the property name
-   * @return {String} value the property value or null if
+   *  Returns the computed value of a CSS property (undefined for 'auto'); a
+   *  number for the opacity
    */
   getComputedStyle(property: string): string | number | undefined {
-    var css = this._getComputedStyle(this.view);
-    const value = css?.getPropertyValue(property);
-
-    if (property === 'opacity') { return value ? parseFloat (value) : 1.0; }
+    if (!this.view) return undefined;
+    const view = this.view.ownerDocument?.defaultView ?? window;
+    const value = view.getComputedStyle(this.view).getPropertyValue(property);
+    if (property === 'opacity') return value ? parseFloat(value) : 1;
     return value === 'auto' ? undefined : value;
   }
 
   /**
-   * @private
-   * @function
-   * @parent {DivHTMLElement} elem the element to get style
-   * @return the computed CCS if it exists
-   */
-  private _getComputedStyle(elem?: HTMLElement | null): CSSStyleDeclaration | undefined {
-    if (!this.view) { return undefined; }
-
-    var doc = this.view.ownerDocument;
-    if (!doc || !doc.defaultView) { doc = document; }
-    if (!doc || !doc.defaultView) { return undefined;}
-
-    return doc.defaultView.getComputedStyle(this.view, null);
-  }
-
-  /**
-   *  Modifies vs.ui.View view CSS style property.
-   *  <p>
-   *  The method change the css inline style of the vs.ui.View view. Then
-   *  it preempts css style defined in CSS stylesheets.
-   *  @see vs.ui.View#addCssRules
-   *  @see vs.ui.View#addCssRule if you want to
-   *  modify CSS rules.
-   *
-   *  @example
-   *  myObject.setStyle ('color', 'red');
-   *
-   * @name vs.ui.View#setStyle
-   * @function
-   *
-   * @param {String} property the property name
-   * @param {String} value the property value
+   *  Sets an inline CSS property; undefined removes it
    */
   setStyle(property: string, value?: string | number): void {
-    if (!property) { return; }
-    if (!this.view || !this.view.style ||
-        !this.view.style.removeProperty || !this.view.style.setProperty)
-    { return; }
-
-    if (typeof value === 'undefined')
-    { this.view.style.removeProperty (property); }
-    else
-    {
-      if (vs_utils.isNumber (value)) value = '' + value; // IE need string
-      this.view.style.setProperty (property, value);
-    }
+    if (!property || !this.view) return;
+    if (value === undefined) this.view.style.removeProperty(property);
+    else this.view.style.setProperty(property, String(value));
   }
 
   /**
-   *  Modifies vs.ui.View view CSS style properties.Styles are passed as a hash
-   *  of property-value pairs in which the properties are specified in their
-   *  camelized form.
-   *  <p>
-   *  The method change the css inline style of the vs.ui.View view. Then
-   *  it preempts css style defined in CSS stylesheets.
-   *  @see vs.ui.View#addCssRules
-   *  @see vs.ui.View#addCssRule if you want to
-   *  modify CSS rules.
-   *
-   *  @example
-   *  myObject.setStyles ({
-   *    left: '0px', top: '0px', bottom: 'auto',
-   *    width: '100%', height: '50px'
-   *  });
-   *
-   * @name vs.ui.View#setStyles
-   * @function
-   *
-   * @param {Object} style The style to modify
+   *  Sets inline CSS properties (camelized names)
    */
   setStyles(style: Record<string, number | string | null | undefined>): void {
-    if (!style) { return; }
-    if (!this.view || !this.view.style)
-    { return; }
-
-    vs_ui_utils.setElementStyle (this.view, style);
+    if (!style || !this.view) return;
+    setElementStyle(this.view, style);
   }
 
   /**
-   *  Add new CSS rules related to this component.
-   *
-   *  @example
-   *  myObject.addCssRules ('.classname1', ['color: red', 'margin: 0px']);
-   *  <=> to
-   *  vs_ui_utils.addCssRules ('#' + myObject.id + ' .classname1', ['color: red', 'margin: 0px']);
-   *
-   * @name vs.ui.View#addCssRules
-   * @function
-   *
-   * @param {String} selector CSS Selector
-   * @param {Array} rules the array of rules
+   *  Adds CSS rules for the elements of this view:
+   *  addCssRules('.name', ['color: red']) <=> '#<id> .name { color: red }'
    */
   addCssRules(selector: string, rules: string[]): void {
-    vs_ui_utils.addCssRules ('#' + this._id + ' ' + selector, rules);
+    addCssRulesTo(`#${this.id} ${selector}`, rules);
   }
 
   /**
-   *  Add new CSS rule related to this component.
-   *
-   *  @example
-   *  myObject.addCssRule ('.classname1', 'color: red');
-   *  <=> to
-   *  vs_ui_utils.addCssRule ('#' + myObject.id + ' .classname1', 'color: red');
-   *
-   * @name vs.ui.View#addCssRule
-   * @function
-   *
-   * @param {String} selector CSS Selector
-   * @param {String} rule the rule using the following format:
-   *   "prop_name: value"
+   *  Adds a CSS rule for the elements of this view (see addCssRules)
    */
   addCssRule(selector: string, rule: string): void {
-    vs_ui_utils.addCssRule ('#' + this._id + ' ' + selector, rule);
+    addCssRuleTo(`#${this.id} ${selector}`, rule);
   }
 
-/********************************************************************
+  hasClassName(className: string): boolean {
+    return this.view?.classList.contains(className) ?? false;
+  }
 
-********************************************************************/
+  addClassName(...classNames: string[]): void {
+    this.view?.classList.add(...classNames);
+  }
+
+  removeClassName(...classNames: string[]): void {
+    this.view?.classList.remove(...classNames);
+  }
+
+  toggleClassName(className: string): void {
+    this.view?.classList.toggle(className);
+  }
 
   /**
-   *  Force the redraw of your widget.
-   *  <p>
-   *  Some time a redraw is required to force the browser to rerender
-   *  a part of you GUI or the entire GUI.
-   *  Call redraw function on you Application object for a entire redraw or just
-   *  on a specific widget.
-   *
-   * @name vs.ui.View#redraw
-   * @function
-   *
-   * @param {Function} clb Optional function to call after the redraw
+   *  Sets the CSS visibility of the view node (see also show and hide)
    */
-  redraw(clb?: Function): void
-  {
-    if (!this.view) { return; }
-    var n = this.view, display = n.style.display, self = this;
+  setVisible(visibility: boolean): void {
+    if (this.view) setElementVisibility(this.view, visibility);
+  }
 
-    n.style.display = 'none';
-    vs_core.scheduleAction (function()
-    {
-      if (display)
-      { n.style.display = display; }
-      else
-      { n.style.removeProperty ('display'); }
+  /**
+   *  Forces the browser to render the view again, then calls clb
+   */
+  redraw(clb?: Function): void {
+    if (!this.view) return;
+    const node = this.view;
+    const display = node.style.display;
 
-      vs_core.scheduleAction (function()
-      {
-        self.refresh ();
-        if (clb && vs_utils.isFunction (clb)) clb.call (self);
+    node.style.display = 'none';
+    later(() => {
+      if (display) node.style.display = display;
+      else node.style.removeProperty('display');
+      later(() => {
+        this.refresh();
+        if (isFunction(clb)) clb.call(this);
       });
     });
   }
 
   /**
-   *  Displays the GUI Object
-   *
-   * @name vs.ui.View#show
-   * @param {Function} clb a function to call a the end of show process
-   * @function
+   * The HTML content of the view node
    */
-  show(clb?: Function): void
-  {
-    if (!this.view) { return; }
-    if (this._visible) { return; }
-    if (!vs_utils.isFunction (clb)) clb = undefined; 
-
-    if (this.__view_display) {
-      this.view.style.display = this.__view_display;
-    }
-    else {
-      this.view.style.removeProperty ('display');
-    }
-    this.__view_display = undefined;
-
-    this.__is_hidding = false;
-    this.__is_showing = true;
-
-    if (this._show_animation) {
-      this._show_animation.process (this, function () {
-        this._show_object (clb);
-      }, this);
-    }
-    else {
-      this._show_object (clb);
-    }
-  }
-
-  /**
-   *  Show the GUI Object
-   *
-   * @private
-   * @param {Function} clb a function to call a the end of show process
-   * @function
-   */
-  _show_object(clb?: Function): void
-  {
-    if (!this.view) { return; }
-    this.__visibility_anim = undefined;
-
-    if (!this.__is_showing) { return; }
-    this.__is_showing = false;
-
-    this._visible = true;
-    var self = this;
-
-    this.propertyChange ();
-    if (this.__show_clb || clb)
-    {
-      if (this._show_animation)
-      {
-        if (this.__show_clb) this.__show_clb.call (this);
-        if (clb) clb.call (this);
-      }
-      else
-      {
-        if (this.__show_clb) {
-          vs_core.scheduleAction (function () {self.__show_clb.call (self);});
-        }
-        if (clb) {
-          vs_core.scheduleAction (function () {clb.call (self);});
-        }
-      }
-    }
-  }
-
-  /**
-   *  Set the animation used when the view will be shown.
-   *  <br/>
-   * Options :
-   * <ul>
-   *   <li /> duration: animation duration for all properties
-   *   <li /> timing: animation timing for all properties
-   *   <li /> origin: Specifies the number of times an animation iterates.
-   *   <li /> iterationCount: Sets the origin for the transformations
-   *   <li /> delay: The time to begin executing an animation after it
-   *          is applied
-   * </ul>
-   *
-   *  Ex:
-   *  @example
-   *  myComp.setShowAnimation ([['translate', '0,0,0'], ['opacity', '1']]);
-   *
-   *  @example
-   *  myAnim = new ABTranslateAnimation (50, 50);
-   *  myComp.setShowAnimation (myAnim);
-   *
-   * @name vs.ui.View#setShowAnimation
-   * @function
-   *
-   * @param animations {Array|vs.fx.Animation} array of animation <property,
-   *        value>, or an vs.fx.Animation object
-   * @param options {Object} list of animation options
-   * @param clb {Function} the method to call when the animation end
-   * @return {String} return the identifier of the animation process. You can
-   *       use it to stop the animation.
-   */
-  setShowAnimation(animations?: any[] | Animation | null, options?: AnimationOptions, clb?: Function): void {
-    if (typeof animations === "undefined" || animations === null) {
-      this._show_animation = null;
-    }
-    else {
-      if (animations instanceof Animation)
-      {
-        this._show_animation = animations.clone ();
-      }
-      else if (vs_utils.isArray (animations))
-      {
-        this._show_animation = new Animation ();
-        this._show_animation.setAnimations (animations);
-      }
-      else
-      {
-        console.warn ('vs.ui.View.setShowAnimation invalid parameters!');
-        return;
-      }
-      if (options)
-      {
-        if (options.duration) {
-          this._show_animation.duration = options.duration;
-        }
-        if (options.timing) {
-          this._show_animation.timing = options.timing;
-        }
-        if (options.origin) {
-          this._show_animation.origin = options.origin;
-        }
-        if (options.iterationCount) {
-          this._show_animation.iterationCount = options.iterationCount;
-        }
-        if (options.delay) {
-          this._show_animation.delay = options.delay;
-        }
-      }
-    }
-    if (vs_utils.isFunction (clb)) { this.__show_clb = clb; }
-    else { this.__show_clb = clb; }
-  }
-
-  /**
-   *  Hides the GUI Object
-   *
-   * @name vs.ui.View#hide
-   * @param {Function} clb a function to call a the end of show process
-   * @function
-   */
-  hide(clb?: Function): void
-  {
-    if (!this.view) { return; }
-    if (!this._visible && !this.__is_showing) { return; }
-    if (!vs_utils.isFunction (clb)) clb = undefined; 
-
-    this._visible = false;
-    
-    this.__is_showing = false;
-    this.__is_hidding = true;
-    
-    if (this._hide_animation)
-    {
-      this._hide_animation.process (this, () => {
-        this._hide_object (clb);
-      }, this);
-    }
-    else
-    {
-      this._hide_object (clb);
-    }
-  }
-
-  /**
-   *  Hides the GUI Object
-   *
-   * @private
-   * @function
-   * @param {Function} clb a function to call a the end of show process
-   */
-  _hide_object(clb?: Function): void
-  {
-    if (!this.view || this._visible) { return; }
-    this.__visibility_anim = undefined;
-
-    if (!this.__is_hidding) { return; }
-    
-    this.__is_hidding = false;
-    if (this.view.style.display)
-    {
-      this.__view_display = this.view.style.display;
-      if (this.__view_display === 'none')
-      { this.__view_display = undefined; }
-    }
-    else
-    {
-      this.__view_display = undefined;
-    }
-    this.view.style.display = 'none'
-    if (this.__hide_clb || clb)
-    {
-      if (this._show_animation)
-      {
-        if (this.__hide_clb) this.__hide_clb.call (this);
-        if (clb) clb.call (this);
-      }
-      else
-      {
-        if (this.__hide_clb) {
-          vs_core.scheduleAction (function () {self.__hide_clb.call (self);});
-        }
-        if (clb) {
-          vs_core.scheduleAction (function () {clb.call (self);});
-        }
-      }
-    }
-    this.propertyChange ();
-  }
-
-  /**
-   *  Set the animation used when the view will be hidden.
-   * <br/>
-   * Options :
-   * <ul>
-   *   <li /> duration: animation duration for all properties
-   *   <li /> timing: animation timing for all properties
-   *   <li /> origin: Specifies the number of times an animation iterates.
-   *   <li /> iterationCount: Sets the origin for the transformations
-   *   <li /> delay: The time to begin executing an animation after it
-   *          is applied
-   * </ul>
-   *
-   *  Ex:
-   *  @example
-   *  myComp.setHideAnimation ([['translate', '100px,0,0'], ['opacity', '0']], options);
-   *
-   *  @example
-   *  myAnim = new ABTranslateAnimation (50, 50);
-   *  myComp.setHideAnimation (myAnim, t);
-   *
-   * @name vs.ui.View#setHideAnimation
-   * @function
-   *
-   * @param animations {Array|vs.fx.Animation} array of animation <property,
-   *        value>, or an vs.fx.Animation object
-   * @param options {Object} list of animation options
-   * @param clb {Function} the method to call when the animation end
-   * @return {String} return the identifier of the animation process. You can
-   *       use it to stop the animation.
-   */
-  setHideAnimation(animations?: any[] | Animation | null, options?: AnimationOptions, clb?: Function): void
-  {
-    if (typeof animations === "undefined" || animations === null)
-    {
-      this._hide_animation = null;
-     }
-    else
-    {
-      if (animations instanceof Animation)
-      {
-        this._hide_animation = animations.clone ();
-      }
-      else if (vs_utils.isArray (animations))
-      {
-        this._hide_animation = new Animation ();
-        this._hide_animation.setAnimations (animations);
-      }
-      else
-      {
-        console.warn ('vs.ui.View.setHideAnimation invalid parameters!');
-        return;
-      }
-      if (options)
-      {
-        if (options.duration)
-        { this._hide_animation.duration = options.duration; }
-        if (options.timing)
-        { this._hide_animation.timing = options.timing; }
-        if (options.origin)
-        { this._hide_animation.origin = options.origin; }
-        if (options.iterationCount)
-        { this._hide_animation.iterationCount = options.iterationCount; }
-        if (options.delay)
-        { this._hide_animation.delay = options.delay; }
-      }
-    }
-    if (vs_utils.isFunction (clb)) { this.__hide_clb = clb; }
-    else { this.__hide_clb = clb; }
-  }
-
-/********************************************************************
-                  state management
-********************************************************************/
-
-  /**
-   *  Set the visibility of the vs.ui.View.
-   *
-   *  <p>
-   *  @example
-   *  myObject.setVisible (false);
-   *
-   * @name vs.ui.View#setVisible
-   * @function
-   *
-   * @param {Boolean} visibility The visibility can be 'true' or 'false'.
-   */
-  setVisible(visibility: boolean): void
-  {
-    if (!this.view) { return; }
-
-    vs_ui_utils.setElementVisibility (this.view, visibility);
-  }
-
-/********************************************************************
-
-********************************************************************/
-  /**
-   *  Checks whether the vs.ui.View view has the given CSS className.
-   *
-   *  <p>
-   *  @example
-   *  myObject.hasClassName ('selected');
-   *  // -> true | false
-   *
-   * @name vs.ui.View#hasClassName
-   * @function
-   *
-   * @param {String} className the className to check
-   * @return {Boolean} true if the view has the given className
-   */
-  hasClassName(className: string): boolean
-  {
-    if (!this.view) { return false; }
-
-    return vs_ui_utils.hasClassName (this.view, className);
-  }
-
-  /**
-   *  Adds a CSS classname to vs.ui.View view.
-   *
-   *  <p>
-   *  @example
-   *  myObject.addClassName ('selected');
-   *  myObject.addClassName ('selected', 'small');
-   *
-   * @name vs.ui.View#addClassName
-   * @function
-   *
-   * @param {String} className the className to add
-   */
-  addClassName(...classNames: string[]): void {
-    this.view?.classList.add(...classNames);
-  }
-
-  /**
-   *  Removes CSS className
-   *
-   *  <p>
-   *  @example
-   *  myObject.removeClassName ('selected');
-   *  myObject.removeClassName ('selected', 'small');
-   *
-   * @name vs.ui.View#removeClassName
-   * @function
-   *
-   * @param {String} className the className to add
-   */
-  removeClassName(...classNames: string[]): void {
-    this.view?.classList.remove(...classNames);
-  }
-
-  /**
-   *  Toggle CSS className
-   *
-   *  <p>
-   *  @example
-   *  myObject.toggleClassName ('selected');
-   *
-   * @name vs.ui.View#toggleClassName
-   * @function
-   *
-   * @param {String} className the className to add/remove
-   */
-  toggleClassName(className: string): void{
-    this.view?.classList.toggle(className);
-  }
-
-/********************************************************************
-
-********************************************************************/
-
-  /**
-   * @protected
-   * @function
-   */
-  _propagateToParent(e: any): void
-  {
-    if (this._bubbling && this.__parent && this.__parent.handleEvent)
-    {
-      this.__parent.handleEvent (e);
-    }
-  }
-
-  /**
-   * @name vs.ui.View#notifyToParent
-   * @function
-   */
-  notifyToParent(e: any): void
-  {
-    if (!this.__parent) { return; }
-    if (this.__parent.handleEvent)
-    {
-      this.__parent.handleEvent (e);
-    }
-    else if (this.__parent.notify)
-    {
-      this.__parent.notify (e);
-    }
-  }
-
-  /**
-   * Did enable delegate
-   * @name vs.ui.View#_didEnable
-   * @protected
-   */
-   _didEnable(): void {}
-
-  /*****************************************************************
-   *                Animation methods
-   ****************************************************************/
-
-  /**
-   *  Animate the component view.
-   *
-   *  Ex:
-   *  @example
-   *  myComp.animate ([['translate', '100px,0,0'], ['opacity', '0']]);
-   *
-   *  @example
-   *  myAnim = new ABTranslateAnimation (50, 50);
-   *  myComp.animate (myAnim); //<=> myAnim.process (myAnim);
-   *
-   * Options :
-   * <ul>
-   *   <li /> duration: animation duration for all properties
-   *   <li /> timing: animation timing for all properties
-   *   <li /> origin: Specifies the number of times an animation iterates.
-   *   <li /> iterationCount: Sets the origin for the transformations
-   *   <li /> delay: The time to begin executing an animation after it
-   *          is applied
-   * </ul>
-   *
-   * @name vs.ui.View#animate
-   * @function
-   *
-   * @param animations {Array|vs.fx.Animation} array of animation
-   *     <property, value>, or an vs.fx.Animation object
-   * @param options {Object} list of animation options
-   * @param clb {Function} the method to call when the animation end
-   * @return {String} return the identifier of the animation process. You can
-   *       use it to stop the animation.
-   */
-  animate(animations: any[] | Animation, options?: AnimationOptions, clb?: Function): string | undefined
-  {
-    var anim;
-    if (animations instanceof Animation)
-    {
-      anim = animations
-    }
-    else if (vs_utils.isArray (animations))
-    {
-      var anim = new Animation ();
-      anim.setAnimations (animations);
-    }
-    else
-    {
-      console.warn ('vs.ui.View.animate invalid parameters!');
-      return;
-    }
-    if (options)
-    {
-      if (options.duration) { anim.duration = options.duration; }
-      if (options.timing) { anim.timing = options.timing; }
-      if (options.origin) { anim.origin = options.origin; }
-      if (options.iterationCount)
-      { anim.iterationCount = options.iterationCount; }
-      if (options.delay) { anim.delay = options.delay; }
-    }
-    return anim.process (this, clb, this);
-  }
-
-  /*****************************************************************
-   *                Transformation methods
-   ****************************************************************/
-
-  /**
-   *  Move the view in x, y.
-   *
-   * @name vs.ui.View#translate
-   * @function
-   *
-   * @param x {int} translation over the x axis
-   * @param y {int} translation over the y axis
-   * @param z {int} translation over the x axis
-   */
-  translate(x: number, y: number, z?: number): void
-  {
-    if (!vs_utils.isNumber (x) || !vs_utils.isNumber (y)) { return };
-    if (!vs_utils.isNumber (z)) z = 0;
-
-    this._translation[0] = x;
-    this._translation[1] = y;
-    this._translation[2] = z;
-    this._applyTransformation ();
-  }
-
-  /**
-   *  Rotate the view about the horizontal and vertical axes.
-   *  <p/>The angle units is radians.
-   *
-   * @name vs.ui.View#rotate
-   * @function
-   *
-   * @param r {{float|array}} rotion angle
-   */
-  rotate(r: number | number[]): void
-  {
-    if (vs_utils.isNumber (r)) {
-      this._rotation[0] = 0;
-      this._rotation[1] = 0;
-      this._rotation[2] = r;
-    }
-    else if (vs_utils.isArray (r))
-    {
-      if (vs_utils.isNumber (r[0])) this._rotation[0] = r[0];
-      else this._rotation[0] = 0;
-      if (vs_utils.isNumber (r[1])) this._rotation[1] = r[1];
-      else this._rotation[1] = 0;
-      if (vs_utils.isNumber (r[2])) this._rotation[2] = r[2];
-      else this._rotation[2] = 0;
-    }
-
-    this._applyTransformation ();
-  }
-
-  /**
-   *  Scale the view
-   *  <p/>The scale is limited by a max and min scale value.
-   *
-   * @name vs.ui.View#scale
-   * @function
-   *
-   * @param s {float} scale value
-   */
-  scale(s: number): void
-  {
-    if (!vs_utils.isNumber (s)) { return };
-
-    if (s > this._max_scale) { s = this._max_scale; }
-    if (s < this._min_scale) { s = this._min_scale; }
-    if (this._scaling === s) { return; }
-
-    this._scaling = s;
-
-    this._applyTransformation ();
-  }
-
-  /**
-   *  Define a new transformation matrix, using the transformation origin
-   *  set as parameter.
-   * @public
-   * @function
-   *
-   * @param {Object} origin is a object reference a x and y position
-   */
-  setNewTransformOrigin(origin: TransformOrigin): void
-  {
-    if (!origin) { return; }
-    if (!vs_utils.isNumber (origin.x) || !vs_utils.isNumber (origin.y)) { return; }
-
-    this.flushTransformStack ();
-    
-    this._transform_origin[0] = origin.x;
-    this._transform_origin[1] = origin.y;
-  }
-
-  /**
-   *  Flush all current transformation, into the transformation stack.
-   * @public
-   * @function
-   */
-  flushTransformStack(): void
-  {
-    // Save current transform into a matrix
-    var matrix = new vs_utils.CSSMatrix ();
-    matrix = matrix.translate
-      (this._transform_origin[0], this._transform_origin [1], 0);
-    matrix = matrix.translate
-      (this._translation[0], this._translation[1], this._translation[2]);
-    matrix = matrix.rotate
-      (this._rotation[0], this._rotation[1], this._rotation[2]);
-    matrix = matrix.scale (this._scaling, this._scaling, 1);
-    matrix = matrix.translate
-      (-this._transform_origin[0], -this._transform_origin [1], 0);
-
-    if (!this._transforms_stack) this._transforms_stack = matrix;
-    {
-      this._transforms_stack = matrix.multiply (this._transforms_stack);
-    }
-
-    // Init a new transform space
-    this._translation[0] = 0;
-    this._translation[1] = 0;
-    this._translation[2] = 0;
-    this._scaling = 1;
-    this._rotation[0] = 0;
-    this._rotation[1] = 0;
-    this._rotation[2] = 0;
-
-    this._transform_origin[0] = 0;
-    this._transform_origin[1] = 0;
-  }
-
-  /**
-   * Push a new transformation matrix into your component transformation
-   * stack.
-   *
-   * @public
-   * @function
-   *
-   * @param {vs.CSSMatrix} matrix the matrix you want to add
-   */
-  pushNewTransform(matrix: any): void
-  {
-    if (!matrix) { return; }
-
-    if (!this._transforms_stack) this._transforms_stack = matrix;
-    else
-    {
-      this._transforms_stack = matrix.multiply (this._transforms_stack);
-    }
-  }
-
-  /**
-   *  Remove all previous transformations set for this view
-   * @public
-   * @function
-   */
-  clearTransformStack(): void
-  {
-    if (this._transforms_stack) delete (this._transforms_stack);
-    this._transforms_stack = undefined;
-  }
-
-  /**
-   *  Return the current transform matrix apply to this graphic Object.
-   * @public
-   * @function
-   * @return {vs.CSSMatrix} the current transform matrix
-   */
-  getCTM(): any
-  {
-    var matrix, identity = new vs_utils.CSSMatrix ();
-
-    // apply current transformation
-    matrix = identity.translate (
-      this._transform_origin[0] + this._translation[0],
-      this._transform_origin [1] + this._translation[1],
-      this._translation[2]
-    );
-    matrix = matrix.multiply (
-      identity.rotate (this._rotation[0], this._rotation[1], this._rotation[2])
-    );
-    matrix = matrix.scale (this._scaling, this._scaling, 1);
-    matrix = matrix.translate (
-      -this._transform_origin[0],
-      -this._transform_origin [1],
-      0
-    );
-
-    // apply previous transformations and return the matrix
-    if (this._transforms_stack) return matrix.multiply (this._transforms_stack);
-    else return matrix;
-  }
-
-  /**
-   *  Returns the current transform combination matrix generate by the
-   *  hierarchical parents of this graphic Object.
-   *  Its returns the multiplication of the parent's CTM and parent of parent's
-   *  CTM etc.
-   *  If the component has no parent it returns the identity matrix.
-   * @public
-   * @function
-   * @return {vs.CSSMatrix} the current transform matrix
-   */
-  getParentCTM(): any
-  {
-
-    function multiplyParentTCM (parent)
-    {
-      // no parent return identity matrix
-      if (!parent) return new vs_utils.CSSMatrix ();
-      // apply parent transformation matrix recurcively
-      return multiplyParentTCM (parent.__parent).multiply (parent.getCTM ());
-    }
-
-    return multiplyParentTCM (this.__parent);
-  }
-
-  /**
-   * @protected
-   * @function
-   */
-  _applyTransformation(): void
-  {
-    var
-      matrix = this.getCTM (),
-      transform = matrix.getMatrix3dStr ();
-
-    if (this._magnet === View.MAGNET_CENTER)
-    {
-      transform += " translate(-50%,-50%)";
-    }
-
-    vs_ui_utils.setElementTransform (this.view, transform);
+  @In set innerHTML(v: string) {
+    if (this.view) this.view.innerHTML = v;
   }
 
   /********************************************************************
-                    Property getters and setters
-  ********************************************************************/
+                    Visibility
+  *********************************************************************/
 
   /**
-   * Getter|Setter for size. Gives access to the size of the GUI Object
-   * @name vs.ui.View#size
-   *
-   * @type {Array.<number>}
+   * Shows (true) or hides (false) the view, see show and hide
    */
-  set size(v: number[])
-  {
-    if (!vs_utils.isArray (v) || v.length !== 2) { return; }
-    if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
-
-    this._size[0] = v[0];
-    this._size [1] = v [1];
-
-    if (!this.view) { return; }
-    this._updateSizeAndPos ();
-  }
-
-  /**
-   * @ignore
-   * @type {Array.<number>}
-   */
-  get size(): number[]
-  {
-    return this._size.slice ();
-  }
-
-  /**
-   * Getter|Setter for position. Gives access to the position of the GUI
-   * Object
-   * @name vs.ui.View#position
-   *
-   * @type Array
-   */
-  set position(v: number[])
-  {
-    if (!v) { return; }
-    if (!vs_utils.isArray (v) || v.length != 2) { return; }
-    if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
-
-    this._pos[0] = v[0];
-    this._pos [1] = v [1];
-
-    if (!this.view) { return; }
-    this._updateSizeAndPos ();
-  }
-
-  /**
-   * @ignore
-   * @type {Array.<number>}
-   */
-  get position(): number[]
-  {
-    return this._pos.slice ();
-  }
-
-  /**
-   * Set size and position behavior according parent size.
-   * @name vs.ui.View#autosizing
-   *
-   * @type Array
-   */
-  set autosizing(v: number[])
-  {
-    if (!v) { return; }
-    if (!vs_utils.isArray (v) || v.length != 2) { return; }
-    if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber(v[1])) { return; }
-
-    if (this._autosizing[0] === v[0] && this._autosizing [1] === v [1])
-    { return; }
-
-    this._autosizing[0] = v[0];
-    this._autosizing [1] = v [1];
-
-    if (!this.view) { return; }
-    this._updateSizeAndPos ();
-  }
-
-  /**
-   * Set magnet
-   * @name vs.ui.View#magnet
-   *
-   * @type Number
-   */
-  set magnet(code: number)
-  {
-    if (this._magnet === code) return;
-    if (!vs_utils.isNumber (code) || code < 0 || code > 5) return;
-    this._setMagnet (code);
-  }
-
-  /**
-   * Hide or show the object.
-   * obj.visible = true <=> obj.show (), obj.visible = false <=> obj.hide (),
-   * @name vs.ui.View#visible
-   * @type {boolean}
-   */
-  set visible(v: boolean)
-  {
-    if (v)
-    { this.show (); }
-    else
-    { this.hide (); }
-  }
-
-  /**
-   * Return true is the object is visible. False otherwise.
-   * @ignore
-   * @type {boolean}
-   */
-  get visible(): boolean
-  {
-    return this._visible;
-  }
-
-  /**
-   * Allow pointer event bubbling between views (by default set to false)
-   * @name vs.ui.View#bubbling
-   * @type boolean
-   */
-  set bubbling(v: boolean)
-  {
-    if (v) { this._bubbling = true; }
-    else { this._bubbling = false; }
-  }
-
-  /**
-   * Activate or deactivate a view.
-   * @name vs.ui.View#enable
-   * @type {boolean}
-   */
-  set enable(v: boolean)
-  {
-    if (v && !this._enable)
-    {
-      this._enable = true;
-      this.removeClassName ('disabled');
-      this._didEnable ();
+  @InOut set visible(v: boolean) {
+    this.#isSettingVisible = true;
+    try {
+      if (v) this.show();
+      else this.hide();
+    } finally {
+      this.#isSettingVisible = false;
     }
-    else if (!v && this._enable)
-    {
-      this._enable = false;
-      this.addClassName ('disabled');
-      this._didEnable ();
+  }
+  get visible(): boolean {
+    return this.#visible;
+  }
+
+  /**
+   *  Displays the view, with its show animation; clb is called at the end
+   */
+  show(clb?: Function): void {
+    if (!this.view || this.#visible) return;
+    if (!isFunction(clb)) clb = undefined;
+
+    if (this.#viewDisplay) this.view.style.display = this.#viewDisplay;
+    else this.view.style.removeProperty('display');
+    this.#viewDisplay = undefined;
+
+    this.#isHiding = false;
+    this.#isShowing = true;
+
+    if (this.#hideAnimation && this.#hideAnimation.state !== 0) this.#hideAnimation.stop();
+    if (this.#showAnimation) {
+      const animation = this.#showAnimation;
+      if (animation.state !== 0) animation.stop();
+      animation.start(this).then(result => {
+        if (result === 'ended') this.#showObject(clb);
+      });
+    } else {
+      this.#showObject(clb);
+    }
+  }
+
+  #showObject(clb?: Function): void {
+    if (!this.view || !this.#isShowing) return;
+    this.#isShowing = false;
+    this.#visible = true;
+    // the visibility changes now (at the end of the show animation)
+    if (!this.#isSettingVisible) this.propertyChange('visible');
+
+    for (const callback of [this.#showCallback, clb]) {
+      if (!callback) continue;
+      if (this.#showAnimation) callback.call(this);
+      else later(() => callback.call(this));
     }
   }
 
   /**
-   * @ignore
-   * @return {boolean}
+   *  Hides the view, with its hide animation; clb is called at the end
    */
-  get enable(): boolean
-  {
-    return this._enable;
-  }
-
-  /**
-   * Change view opacity.
-   * value is include in this range[0, 1]
-   * @name vs.ui.View#opacity
-   * @type {number}
-   */
-  set opacity(v: number)
-  {
-    if (!vs_utils.isNumber (v)) return;
-    if (v < 0 || v > 1) return;
-
-    if (this.view) this.view.style.opacity = v.toString();
-    this._opacity = v;
-  }
-
-  /**
-   * Translation vector [tx, ty, tz]
-   * <=> obj.translate (tx, ty, tz)
-   * @name vs.ui.View#translation
-   * @type {Array}
-   */
-  set translation(v: number[])
-  {
-    if (!vs_utils.isArray (v)) { return };
-
-    this.translate (v[0], v[1], v[2]);
-  }
-
-  /**
-   * @ignore
-   * @type {Array}
-   */
-  get translation(): number[]
-  {
-    return this._translation.slice ();
-  }
-
-  /**
-   * Rotation angle in degre
-   * @name vs.ui.View#rotation
-   * @type {{float|array}}
-   */
-  set rotation(v: number | number[])
-  {
-    this.rotate (v);
-  }
-
-  /**
-   * @ignore
-   * @type {Array}
-   */
-  get rotation(): number[]
-  {
-    return this._rotation.slice ();
-  }
-
-  /**
-   * Scale the view
-   * @name vs.ui.View#scaling
-   * @type {float}
-   */
-  set scaling(v: number)
-  {
-    this.scale (v);
-  }
-
-  /**
-   * @ignore
-   * @type {float}
-   */
-  get scaling(): number
-  {
-    return this._scaling;
-  }
-
-  /**
-   * Set the minimun scale value (default value is 0.5)
-   * @name vs.ui.View#minScale
-   * @type {float}
-   */
-  set minScale(v: number)
-  {
-    if (!vs_utils.isNumber (v)) { return };
-    this._min_scale = v;
-
-    if (this._scaling < this._min_scale) { this.scale (this._min_scale); }
-  }
-
-  /**
-   * @ignore
-   * @type {float}
-   */
-  get minScale(): number
-  {
-    return this._min_scale;
-  }
-
-  /**
-   * Set the maximum scale value (default value is 3)
-   * @name vs.ui.View#maxScale
-   * @type {float}
-   */
-  set maxScale(v: number)
-  {
-    if (!vs_utils.isNumber (v)) { return };
-    this._max_scale = v;
-
-    if (this._scaling > this._max_scale) { this.scale (this._max_scale); }
-  }
-
-  /**
-   * @ignore
-   * @type {float}
-   */
-  get maxScale(): number
-  {
-    return this._max_scale;
-  }
-
-  /**
-   * This property allows you to specify the origin of the 2D transformations.
-   * Values are pourcentage of the view size.
-   * <p>
-   * The property is set by default to [50, 50], which is the center of
-   * the view.
-   * @name vs.ui.View#transformOrigin
-   * @type Array.<number>
-   */
-  set transformOrigin(v: number[])
-  {
-    if (!vs_utils.isArray (v) || v.length !== 2) { return; }
-    if (!vs_utils.isNumber (v[0]) || !vs_utils.isNumber (v[1])) { return; }
-
-    this._transform_origin[0] = v[0];
-    this._transform_origin [1] = v [1];
-
-//      var origin_str = this._transform_origin[0] + '% ';
-//      origin_str += this._transform_origin [1] + '%';
-//      this.view.style ['-webkit-transform-origin'] = origin_str;
-  }
-
-  /**
-   * @ignore
-   * @return {Array}
-   */
-  get transformOrigin(): number[]
-  {
-    return this._transform_origin.slice ();
-  }
-
-  /**
-   * Set the Animation when the view is shown
-   * @name vs.ui.View#showAnimmation
-   * @type {vs.fx.Animation}
-   */
-  set showAnimmation(v: any)
-  {
-    this.setShowAnimation (v);
-  }
-
-  /**
-   * Set the Animation when the view is hidden
-   * @name vs.ui.View#hideAnimation
-   * @type {vs.fx.Animation}
-   */
-  set hideAnimation(v: any)
-  {
-    this.setHideAnimation (v);
-  }
-
-  /**
-   * This property allows you to specify a layout for the children
-   * <p>
-   * <ul>
-   *    <li /> vs.ui.View.DEFAULT_LAYOUT
-   *    <li /> vs.ui.View.HORIZONTAL_LAYOUT
-   *    <li /> vs.ui.View.VERTICAL_LAYOUT
-   *    <li /> vs.ui.View.ABSOLUTE_LAYOUT
-   *    <li /> vs.ui.View.FLOW_LAYOUT
-   * </ul>
-   * @name vs.ui.View#layout
-   * @type String
-   */
-  set layout(v: string | null)
-  {
-    if (v !== View.HORIZONTAL_LAYOUT &&
-        v !== View.DEFAULT_LAYOUT &&
-        v !== View.ABSOLUTE_LAYOUT &&
-        v !== View.VERTICAL_LAYOUT &&
-        v !== View.FLOW_LAYOUT &&
-        v !== View.LEGACY_HORIZONTAL_LAYOUT &&
-        v !== View.LEGACY_ABSOLUTE_LAYOUT &&
-        v !== View.LEGACY_VERTICAL_LAYOUT &&
-        v !== View.LEGACY_FLOW_LAYOUT && v)
-    {
-      console.error ("Unsupported layout '" + v + "'!");
-      return;
-    }
-
-    if (this._layout)
-    {
-      this.removeClassName (this._layout);
-    }
-    if (!v || v.indexOf ("_layout") !== -1) this._layout = v;
-    else this._layout = v + "_layout";
-    if (this._layout)
-    {
-      this.addClassName (this._layout);
-    }
-  }
-
-  /**
-   * This property allows to define both the HTML code and the text
-   * @name vs.ui.View#innerHTML
-   * @type String
-   */
-  set innerHTML(v: string)
-  {
+  hide(clb?: Function): void {
     if (!this.view) return;
+    if (!this.#visible && !this.#isShowing) return;
+    if (!isFunction(clb)) clb = undefined;
 
-    vs_utils.safeInnerHTML (this.view, v);
+    this.#visible = false;
+    this.#isShowing = false;
+    this.#isHiding = true;
+    // the visibility changes now (before the hide animation)
+    if (!this.#isSettingVisible) this.propertyChange('visible');
+
+    if (this.#showAnimation && this.#showAnimation.state !== 0) this.#showAnimation.stop();
+    if (this.#hideAnimation) {
+      const animation = this.#hideAnimation;
+      if (animation.state !== 0) animation.stop();
+      animation.start(this).then(result => {
+        if (result === 'ended') this.#hideObject(clb);
+      });
+    } else {
+      this.#hideObject(clb);
+    }
+  }
+
+  #hideObject(clb?: Function): void {
+    if (!this.view || this.#visible || !this.#isHiding) return;
+    this.#isHiding = false;
+
+    const display = this.view.style.display;
+    this.#viewDisplay = display && display !== 'none' ? display : undefined;
+    this.view.style.display = 'none';
+
+    for (const callback of [this.#hideCallback, clb]) {
+      if (!callback) continue;
+      if (this.#hideAnimation) callback.call(this);
+      else later(() => callback.call(this));
+    }
+  }
+
+  /**
+   *  Sets the animation used to show the view: an Animation (cloned), or
+   *  [property, value] pairs; null removes it.
+   *
+   *  @example
+   *  view.setShowAnimation([['translate', '0,0,0'], ['opacity', '1']]);
+   *  view.setShowAnimation(Animation.FadeIn, { duration: '1s' });
+   */
+  setShowAnimation(animations?: [string, string][] | Animation | null, options?: AnimationOptions, clb?: Function): void {
+    this.#showAnimation = this.#makeAnimation(animations, options, 'setShowAnimation') ?? undefined;
+    this.#showCallback = isFunction(clb) ? clb : undefined;
+  }
+
+  /**
+   *  Sets the animation used to hide the view (see setShowAnimation)
+   */
+  setHideAnimation(animations?: [string, string][] | Animation | null, options?: AnimationOptions, clb?: Function): void {
+    this.#hideAnimation = this.#makeAnimation(animations, options, 'setHideAnimation') ?? undefined;
+    this.#hideCallback = isFunction(clb) ? clb : undefined;
+  }
+
+  /**
+   * The show animation (see setShowAnimation)
+   */
+  @InOut set showAnimation(v: Animation | [string, string][] | null | undefined) {
+    this.setShowAnimation(v);
+  }
+  get showAnimation(): Animation | undefined {
+    return this.#showAnimation;
+  }
+
+  /**
+   * The hide animation (see setHideAnimation)
+   */
+  @InOut set hideAnimation(v: Animation | [string, string][] | null | undefined) {
+    this.setHideAnimation(v);
+  }
+  get hideAnimation(): Animation | undefined {
+    return this.#hideAnimation;
+  }
+
+  #makeAnimation(animations: [string, string][] | Animation | null | undefined,
+    options: AnimationOptions | undefined, method: string): Animation | null {
+    if (animations === undefined || animations === null) return null;
+
+    let animation: Animation;
+    if (animations instanceof Animation) {
+      animation = animations.clone();
+    } else if (isArray(animations)) {
+      animation = new Animation(animations);
+    } else {
+      console.warn(`vs.ui.View.${method} invalid parameters!`);
+      return null;
+    }
+    copyAnimationOptions(animation, options);
+    return animation;
+  }
+
+  /**
+   *  Animates the view, with an Animation or [property, value] pairs.
+   *
+   *  @example
+   *  await view.animate([['translate', '100px,0,0'], ['opacity', '0']]);
+   *
+   * @return {Promise} the result of the animation ('ended' or 'stopped')
+   */
+  animate(animations: [string, string][] | Animation, options?: AnimationOptions, clb?: Function): Promise<'ended' | 'stopped'> | undefined {
+    let animation: Animation;
+    if (animations instanceof Animation) {
+      animation = animations;
+    } else if (isArray(animations)) {
+      animation = new Animation(animations);
+    } else {
+      console.warn('vs.ui.View.animate invalid parameters!');
+      return undefined;
+    }
+    copyAnimationOptions(animation, options);
+
+    const run = animation.start(this);
+    if (isFunction(clb)) {
+      run.then(result => { if (result === 'ended') clb.call(this); });
+    }
+    return run;
+  }
+
+  /********************************************************************
+                    State
+  *********************************************************************/
+
+  /**
+   * Activates or deactivates the view (the 'disabled' class name; the
+   * recognizers ignore a disabled view)
+   */
+  @InOut set enable(v: boolean) {
+    if (v && !this.#enable) {
+      this.#enable = true;
+      this.removeClassName('disabled');
+      this.didEnable();
+    } else if (!v && this.#enable) {
+      this.#enable = false;
+      this.addClassName('disabled');
+      this.didEnable();
+    }
+  }
+  get enable(): boolean {
+    return this.#enable;
+  }
+
+  /**
+   *  Called when the view is enabled or disabled
+   */
+  // eslint-disable-next-line class-methods-use-this
+  protected didEnable(): void {}
+
+  /**
+   * The opacity, in [0, 1]
+   */
+  @InOut set opacity(v: number) {
+    if (!isNumber(v) || v < 0 || v > 1) return;
+    if (this.view) this.view.style.opacity = String(v);
+    this.#opacity = v;
+  }
+  get opacity(): number {
+    return this.#opacity;
+  }
+
+  /**
+   * Forwards the events to the parent (see handleEvent), false by default
+   */
+  @InOut set bubbling(v: boolean) {
+    this.#bubbling = !!v;
+  }
+  get bubbling(): boolean {
+    return this.#bubbling;
+  }
+
+  /********************************************************************
+                    Transformations
+  *********************************************************************/
+
+  /**
+   *  Moves the view by (x, y, z) px
+   */
+  translate(x: number, y: number, z = 0): void {
+    if (!isNumber(x) || !isNumber(y)) return;
+    if (!isNumber(z)) z = 0;
+    this.#translation = [x, y, z];
+    this.#applyTransformation();
+  }
+
+  /**
+   *  Rotates the view, in degrees: around the z axis, or around the x, y
+   *  and z axes
+   */
+  rotate(r: number | number[]): void {
+    if (isNumber(r)) {
+      this.#rotation = [0, 0, r];
+    } else if (isArray(r)) {
+      this.#rotation = [0, 1, 2].map(i => isNumber(r[i]) ? r[i] : 0);
+    }
+    this.#applyTransformation();
+  }
+
+  /**
+   *  Scales the view, within [minScale, maxScale]
+   */
+  scale(s: number): void {
+    if (!isNumber(s)) return;
+    s = Math.min(Math.max(s, this.#minScale), this.#maxScale);
+    if (this.#scaling === s) return;
+    this.#scaling = s;
+    this.#applyTransformation();
+  }
+
+  /**
+   *  Starts a new transformation space, with a new origin: the current
+   *  transformation goes into the transformation stack
+   */
+  setNewTransformOrigin(origin: { x: number; y: number }): void {
+    if (!origin || !isNumber(origin.x) || !isNumber(origin.y)) return;
+    this.flushTransformStack();
+    this.#transformOrigin = [origin.x, origin.y];
+  }
+
+  /**
+   *  Moves the current transformation into the transformation stack
+   */
+  flushTransformStack(): void {
+    const [ox, oy] = this.#transformOrigin;
+    const matrix = new DOMMatrix()
+      .translate(ox, oy, 0)
+      .translate(this.#translation[0], this.#translation[1], this.#translation[2])
+      .rotate(this.#rotation[0], this.#rotation[1], this.#rotation[2])
+      .scale(this.#scaling, this.#scaling, 1)
+      .translate(-ox, -oy, 0);
+
+    this.#transformsStack = this.#transformsStack ? matrix.multiply(this.#transformsStack) : matrix;
+
+    this.#translation = [0, 0, 0];
+    this.#rotation = [0, 0, 0];
+    this.#scaling = 1;
+    this.#transformOrigin = [0, 0];
+  }
+
+  /**
+   *  Adds a matrix to the transformation stack
+   */
+  pushNewTransform(matrix: DOMMatrix): void {
+    if (!matrix) return;
+    this.#transformsStack = this.#transformsStack ? matrix.multiply(this.#transformsStack) : matrix;
+  }
+
+  /**
+   *  Removes the previous transformations (the transformation stack)
+   */
+  clearTransformStack(): void {
+    this.#transformsStack = undefined;
+  }
+
+  /**
+   *  The current transformation matrix of the view
+   */
+  getCTM(): DOMMatrix {
+    const [ox, oy] = this.#transformOrigin;
+    const matrix = new DOMMatrix()
+      .translate(ox + this.#translation[0], oy + this.#translation[1], this.#translation[2])
+      .multiply(new DOMMatrix().rotate(this.#rotation[0], this.#rotation[1], this.#rotation[2]))
+      .scale(this.#scaling, this.#scaling, 1)
+      .translate(-ox, -oy, 0);
+
+    return this.#transformsStack ? matrix.multiply(this.#transformsStack) : matrix;
+  }
+
+  /**
+   *  The combined transformation matrix of the parents (identity without
+   *  parent)
+   */
+  getParentCTM(): DOMMatrix {
+    const parent = this.#parent;
+    return parent ? parent.getParentCTM().multiply(parent.getCTM()) : new DOMMatrix();
+  }
+
+  #applyTransformation(): void {
+    if (!this.view) return;
+    let transform = this.getCTM().toString();
+    if (this.#magnet === View.MAGNET_CENTER) transform += ' translate(-50%,-50%)';
+    setElementTransform(this.view, transform);
+  }
+
+  /**
+   * The translation [tx, ty, tz] (see translate)
+   */
+  @InOut set translation(v: number[]) {
+    if (!isArray(v)) return;
+    this.translate(v[0], v[1], v[2]);
+  }
+  get translation(): number[] {
+    return this.#translation.slice();
+  }
+
+  /**
+   * The rotation, in degrees (see rotate)
+   */
+  @InOut set rotation(v: number | number[]) {
+    this.rotate(v);
+  }
+  get rotation(): number[] {
+    return this.#rotation.slice();
+  }
+
+  /**
+   * The scale (see scale)
+   */
+  @InOut set scaling(v: number) {
+    this.scale(v);
+  }
+  get scaling(): number {
+    return this.#scaling;
+  }
+
+  /**
+   * The minimum scale (0.5 by default)
+   */
+  @InOut set minScale(v: number) {
+    if (!isNumber(v)) return;
+    this.#minScale = v;
+    if (this.#scaling < v) this.scale(v);
+  }
+  get minScale(): number {
+    return this.#minScale;
+  }
+
+  /**
+   * The maximum scale (3 by default)
+   */
+  @InOut set maxScale(v: number) {
+    if (!isNumber(v)) return;
+    this.#maxScale = v;
+    if (this.#scaling > v) this.scale(v);
+  }
+  get maxScale(): number {
+    return this.#maxScale;
+  }
+
+  /**
+   * The origin of the transformations [x, y], in px
+   */
+  @InOut set transformOrigin(v: number[]) {
+    if (!isArray(v) || v.length !== 2 || !isNumber(v[0]) || !isNumber(v[1])) return;
+    this.#transformOrigin = [v[0], v[1]];
+  }
+  get transformOrigin(): number[] {
+    return this.#transformOrigin.slice();
   }
 }
 
-applyMixins(View, [vs_core.Container]);
-
-/**
- * @private
- */
-var _template_nodes: Element | null = null;
-
-// Apply RecognizerManager mixin
-vs_utils.extend (View.prototype, RecognizerManager);
-vs_utils.extendClass (View, vs_core.EventSource);
-
+export default View;
