@@ -19,18 +19,48 @@ function declareProperty(model: object, name: string, direction: PropertyDirecti
   properties.set(name, direction);
 }
 
-type PropertyDecorator = <This extends Model, V>(
-  target: ClassAccessorDecoratorTarget<This, V>,
-  context: ClassAccessorDecoratorContext<This, V>,
-) => ClassAccessorDecoratorResult<This, V>;
-
-function propertyDecorator(direction: PropertyDirection, decoratorName: string): PropertyDecorator {
-  return function <This extends Model, V>(
+/**
+ * A model property decorator: on an auto-accessor, or on a setter
+ */
+interface PropertyDecorator {
+  <This extends Model<any>, V>(
     target: ClassAccessorDecoratorTarget<This, V>,
     context: ClassAccessorDecoratorContext<This, V>,
-  ): ClassAccessorDecoratorResult<This, V> {
+  ): ClassAccessorDecoratorResult<This, V>;
+  <This extends Model<any>, V>(
+    target: (this: This, value: V) => void,
+    context: ClassSetterDecoratorContext<This, V>,
+  ): (this: This, value: V) => void;
+}
+
+/**
+ * Same value, for the change notification of the setters: arrays are
+ * compared item by item (getters often return a copy)
+ */
+function sameValue(a: unknown, b: unknown): boolean {
+  if (Object.is(a, b)) return true;
+  return Array.isArray(a) && Array.isArray(b) &&
+    a.length === b.length && a.every((item, i) => Object.is(item, b[i]));
+}
+
+/**
+ * The getter of a property, along the prototype chain
+ */
+function getterOf(obj: object, name: string): (() => unknown) | undefined {
+  for (let o: object | null = obj; o; o = Object.getPrototypeOf(o)) {
+    const descriptor = Object.getOwnPropertyDescriptor(o, name);
+    if (descriptor) return descriptor.get;
+  }
+  return undefined;
+}
+
+function propertyDecorator(direction: PropertyDirection, decoratorName: string): PropertyDecorator {
+  return function <This extends Model<any>, V>(
+    target: ClassAccessorDecoratorTarget<This, V> | ((this: This, value: V) => void),
+    context: ClassAccessorDecoratorContext<This, V> | ClassSetterDecoratorContext<This, V>,
+  ): any {
     if (context.static || context.private) {
-      throw new Error(`@${decoratorName}: a model property must be a public instance accessor`);
+      throw new Error(`@${decoratorName}: a model property must be a public instance accessor or setter`);
     }
     const name = String(context.name);
 
@@ -38,22 +68,40 @@ function propertyDecorator(direction: PropertyDirection, decoratorName: string):
       declareProperty(this, name, direction);
     });
 
-    return {
-      set(this: This, value: V): void {
-        const previous = target.get.call(this);
-        target.set.call(this, value);
-        if (!Object.is(previous, value)) {
-          this.propertyChange(name);
-        }
-      },
+    // an auto-accessor: notify when the stored value changes
+    if (context.kind === 'accessor') {
+      const accessor = target as ClassAccessorDecoratorTarget<This, V>;
+      return {
+        set(this: This, value: V): void {
+          const previous = accessor.get.call(this);
+          accessor.set.call(this, value);
+          if (!Object.is(previous, value)) {
+            this.propertyChange(name);
+          }
+        },
+      };
+    }
+
+    // a setter: notify when the value read by the getter changes (always,
+    // without getter)
+    const setter = target as (this: This, value: V) => void;
+    return function (this: This, value: V): void {
+      const getter = getterOf(this, name);
+      const previous = getter?.call(this);
+      setter.call(this, value);
+      if (!getter || !sameValue(previous, getter.call(this))) {
+        this.propertyChange(name);
+      }
     };
-  };
+  } as PropertyDecorator;
 }
 
 /**
  * Declares an in model property: it can be connected to, not from.
+ * On an auto-accessor, or on a setter (with side effects):
  * @example
  *  @In accessor query = '';
+ *  @In set size(v: number[]) { … }
  */
 export const In = propertyDecorator('in', 'In');
 
@@ -75,15 +123,29 @@ export const InOut = propertyDecorator('inout', 'InOut');
  * Listener of the 'change' event: called with the model and the names of
  * the changed properties.
  */
-export type ChangeListener<M extends Model = Model> = (model: M, properties: string[]) => void;
+export type ChangeListener<M extends Model<any> = Model> = (model: M, properties: string[]) => void;
 
 /**
  * Listener of the 'change:<property>' events: called with the model and the
  * name of the changed property.
  */
-export type PropertyChangeListener<M extends Model = Model> = (model: M, property: string) => void;
+export type PropertyChangeListener<M extends Model<any> = Model> = (model: M, property: string) => void;
 
 export type ModelEvent = 'change' | `change:${string}`;
+
+/**
+ * The events of a model subclass: the name of each event, with the
+ * arguments its listeners get after the model.
+ * @example
+ *  class Button extends View<{ select: [] }> { … }
+ *  button.on('select', (button) => { … });
+ */
+export type ModelEvents = Record<string, unknown[]>;
+
+/**
+ * Listener of an event of a model subclass (see ModelEvents)
+ */
+export type EventListener<M, Args extends unknown[]> = (model: M, ...args: Args) => void;
 
 interface ListenerEntry {
   listener: Function;
@@ -142,8 +204,8 @@ interface ListenerEntry {
  *
  * @param {ObjectId} id the model id [optional]
  */
-export class Model extends Component {
-  readonly #listeners = new Map<ModelEvent, ListenerEntry[]>();
+export class Model<Events extends ModelEvents = {}> extends Component {
+  readonly #listeners = new Map<string, ListenerEntry[]>();
 
   #batchDepth = 0;
   readonly #pendingChanges = new Set<string>();
@@ -241,9 +303,9 @@ export class Model extends Component {
 
     // 1) the listeners
     for (const property of properties) {
-      this.#emit(`change:${property}`, property);
+      this.#emit(`change:${property}`, [property]);
     }
-    this.#emit('change', properties);
+    this.#emit('change', [properties]);
 
     // 2) the dataflows the model is connected to
     const state = DataflowState.get(this.id);
@@ -260,14 +322,16 @@ export class Model extends Component {
 
   /**
    *  Adds a listener called (synchronously) on each change: 'change' for
-   *  any change, 'change:<property>' for the changes of a property.
+   *  any change, 'change:<property>' for the changes of a property; or on
+   *  an event of the subclass (see ModelEvents and emit).
    *  A listener is added only once per event.
    *
    * @return {Function} a function removing the listener
    */
   on(event: 'change', listener: ChangeListener<this>): () => void;
   on(event: `change:${string}`, listener: PropertyChangeListener<this>): () => void;
-  on(event: ModelEvent, listener: Function): () => void {
+  on<K extends keyof Events & string>(event: K, listener: EventListener<this, Events[K]>): () => void;
+  on(event: string, listener: Function): () => void {
     return this.#addListener(event, listener, false);
   }
 
@@ -278,7 +342,8 @@ export class Model extends Component {
    */
   once(event: 'change', listener: ChangeListener<this>): () => void;
   once(event: `change:${string}`, listener: PropertyChangeListener<this>): () => void;
-  once(event: ModelEvent, listener: Function): () => void {
+  once<K extends keyof Events & string>(event: K, listener: EventListener<this, Events[K]>): () => void;
+  once(event: string, listener: Function): () => void {
     return this.#addListener(event, listener, true);
   }
 
@@ -286,7 +351,7 @@ export class Model extends Component {
    *  Removes a listener added with on() or once(). Without listener,
    *  removes all the listeners of the event.
    */
-  off(event: ModelEvent, listener?: Function): void {
+  off(event: ModelEvent | (keyof Events & string), listener?: Function): void {
     if (!listener) {
       this.#listeners.delete(event);
       return;
@@ -296,7 +361,18 @@ export class Model extends Component {
     if (index !== -1) entries!.splice(index, 1);
   }
 
-  #addListener(event: ModelEvent, listener: Function, once: boolean): () => void {
+  /**
+   *  Emits an event of the subclass to its listeners (see on), synchronously.
+   *  An exception thrown by a listener is logged.
+   *
+   * @param {string} event the event
+   * @param {...any} args the arguments given to the listeners, after the model
+   */
+  protected emit<K extends keyof Events & string>(event: K, ...args: Events[K]): void {
+    this.#emit(event, args);
+  }
+
+  #addListener(event: string, listener: Function, once: boolean): () => void {
     let entries = this.#listeners.get(event);
     if (!entries) {
       entries = [];
@@ -308,7 +384,7 @@ export class Model extends Component {
     return () => this.off(event, listener);
   }
 
-  #emit(event: ModelEvent, argument: unknown): void {
+  #emit(event: string, args: unknown[]): void {
     const entries = this.#listeners.get(event);
     if (!entries?.length) return;
 
@@ -316,7 +392,7 @@ export class Model extends Component {
     for (const entry of [...entries]) {
       if (entry.once) this.off(event, entry.listener);
       try {
-        entry.listener(this, argument);
+        entry.listener(this, ...args);
       } catch (e) {
         const err = asError(e);
         if (err.stack) console.log(err.stack);
