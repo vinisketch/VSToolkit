@@ -437,7 +437,7 @@ export class View<Events extends ModelEvents = {}> extends Model<Events> {
    *  global class), initializes it and adds it to this view.
    *  Its node is found with the options (see ViewOptions), else in the
    *  application templates, the template of its class, or loaded from
-   *  '<name>.xhtml'.
+   *  '<name>.xhtml'; else it uses its html template.
    *
    * @param {String} name the class name
    * @param {Object} options the options of the component
@@ -466,14 +466,11 @@ export class View<Events extends ModelEvents = {}> extends Model<Events> {
         const request = new XMLHttpRequest();
         request.open('GET', path, false);
         request.send(null);
-        if (request.status !== 200 && request.status !== 0) {
-          console.error(`Template file for component '${name}' unfound.`);
-          return undefined;
-        }
-        data = request.responseText;
+        // without template file, the component uses its html template
+        data = request.status === 200 || request.status === 0 ? request.responseText : '';
         loadedTemplates.set(path, data);
       }
-      node = Template.parseHTML(data);
+      if (data) node = Template.parseHTML(data);
     }
     if (node) config.node = node;
 

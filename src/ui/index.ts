@@ -6,3 +6,11 @@ export { View, type ViewOptions, type ViewClass, type ViewChild } from './View/V
 export { default as Template } from './Template';
 export * from './Animation';
 export * from './Recognizers';
+export { toText, type TextInputEvents } from './helpers';
+
+export { TextLabel } from './TextLabel/TextLabel';
+export { ImageView } from './ImageView/ImageView';
+export { Button, type ButtonEvents } from './Button/Button';
+export { ProgressBar } from './ProgressBar/ProgressBar';
+export { TextArea } from './TextArea/TextArea';
+export { InputField, type InputFieldType } from './InputField/InputField';
