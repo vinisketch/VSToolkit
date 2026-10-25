@@ -18,6 +18,11 @@
 
 
 /**
+ * A blank image: set as src to free an image
+ */
+export const BLANK_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
+
+/**
  * Converts a value to the text of a component: '' for null or undefined,
  * the string form of the other values. Returns undefined for a value which
  * can not be converted.

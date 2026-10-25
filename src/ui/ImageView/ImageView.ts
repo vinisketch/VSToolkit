@@ -21,10 +21,8 @@ import { isArray, isNumber, isString } from 'vs_utils';
 import { InOut } from 'vs_toolkit/vs_core';
 
 import { View } from '../View/View';
+import { BLANK_IMAGE } from '../helpers';
 import html_template from './ImageView.html';
-
-/** a transparent 1x1 image, to free the image of a destroyed view */
-const BLANK_IMAGE = 'data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=';
 
 /**
  *  @class
