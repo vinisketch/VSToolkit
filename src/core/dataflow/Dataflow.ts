@@ -125,9 +125,35 @@ function generateSetters(obj: DataflowNode, properties: string[]): Setter<any>[]
  *  The Dataflow class
  *
  *  @class
+ *  A dataflow connects properties of nodes (every Component is a node), and
+ *  propagates their values along the connections:
+ *  <ol>
+ *    <li />connect() the out properties of a node to in properties of
+ *      another one, possibly through a function;
+ *    <li />build() the dataflow: it sorts the nodes (topologically) and
+ *      compiles the connections;
+ *    <li />propagate() from a node whose properties changed: the values are
+ *      copied along the connections, and each reached node gets its
+ *      propertiesDidChange() called, in the sorted order.
+ *  </ol>
+ *  The properties are accessors (getter for an out property, setter for an
+ *  in property). The Model properties propagate when they change; for the
+ *  other components, call propagate().
+ *  <p>
+ *  A default dataflow is given by container.get(DEFAULT_DATAFLOW); it is the
+ *  one used by the connect() method of the components (see Connector).
+ *  See docs/dataflow.md.
+ *
+ *  @example
+ *  const df = new DataFlow();
+ *  df.connect(slider, 'value', view, 'rotation');
+ *  df.connect(slider, 'value', label, 'text', (value) => `${value}°`);
+ *  df.build();
+ *
+ *  slider.value = 45;
+ *  df.propagate(slider);
  *
  *  @author David Thevenin
- *
  */
 export class DataFlow implements IDataFlow {
   private static propagationCount = 0;
@@ -159,10 +185,6 @@ export class DataFlow implements IDataFlow {
 
   #isSorted = false;
   #isCyclic = false;
-
-  // constructor() {
-  //   //  this._node_link = {};
-  // }
 
   private propagateValues(objSrc: BaseIdentifiable): void {
     const cConnections = this.#optimizedEdges.get(objSrc.id);
@@ -206,14 +228,17 @@ export class DataFlow implements IDataFlow {
   }
 
   /**
-   * Propagates values along the dataflow graph
+   *  Propagates the values from a node along the connections, then from each
+   *  reached node, in the sorted order: each reached node gets its
+   *  propertiesDidChange() called, before its values are propagated (unless
+   *  it returns true).<br />
+   *  Does nothing while paused, or when called during a propagation (a node
+   *  setting a property during the propagation).
    *
-   * @protected
-   *
-   *                 propagation
-   * @param obj
-   * @param {Boolean} outputPropagation, do a propagation, starting from
-   *         output property instead of input property (default configuration)
+   * @param {DataflowNode} obj the node whose properties changed
+   * @param {Boolean} outputPropagation true when only the out properties of
+   *        the node changed: its propertiesDidChange() is not called first.
+   *        False by default: its in properties changed.
    */
   propagate(obj: DataflowNode, outputPropagation = false): void {
     // The graph is sorted and save into an array.
@@ -278,18 +303,27 @@ export class DataFlow implements IDataFlow {
   }
 
   /**
-   * Connect two components within the dataflow.
-   * After a connection, you have to call build method to compile the dataflow.
-   * Build can (should) be call when all connection are done (to avoid
-   * un-necessary calculation)
+   *  Connects out properties of the source to in properties of the target.
+   *  The nodes take part in this dataflow (see DataflowState).<br />
+   *  Without function, the values are copied one by one: there must be as
+   *  many out as in properties. With a function, it is called with the out
+   *  values and returns the in values: an array, or a single value for one
+   *  in property; the numbers of properties may differ.<br />
+   *  Throws for an unknown node or property, an in property of the source
+   *  or an out property of the target (see Model), or different numbers of
+   *  properties without function.<br />
+   *  Call build() once the connections are done, before propagating.
    *
-   * @function
-   * @public
-   * @param src
-   * @param outDesc
-   * @param trg
-   * @param inDesc
-   * @param func
+   *  @example
+   *  df.connect(a, 'value', b, 'value');
+   *  df.connect(a, ['x', 'y'], b, 'distance', (x, y) => Math.hypot(x, y));
+   *
+   * @param {ObjectId|DataflowNode} src the source node, or its id
+   * @param {String|Array} outDesc the out property(ies) of the source
+   * @param {ObjectId|DataflowNode} trg the target node, or its id
+   * @param {String|Array} inDesc the in property(ies) of the target
+   * @param {Function} func maps the out values to the in values [optional]
+   * @return {number} the id of the connection (see disconnect)
    */
   connect(
     src: ObjectId | DataflowNode,
@@ -353,22 +387,24 @@ export class DataFlow implements IDataFlow {
   }
 
   /**
-   * Remove a dataflow connection
-   * After the remove, you have to call build method to compile the dataflow.
-   * Build can (should) be call when all remove are done (to avoid
-   * un-necessary calculation)
+   *  Removes a connection, by its id, or by its nodes and properties: the
+   *  given properties are removed from the connections between the two
+   *  nodes, and a connection left without out or in property is removed.
+   *  Nothing happens for a connection which does not exist; throws for an
+   *  unknown node.<br />
+   *  Call build() once the changes are done, before propagating.
    *
    *  @example
-   *  // there is two APIs:
-   *  df.disconnect(edgeId);
-   *  or
-   *  df.disconnect(obj_src, property_out, obj_trg, property_in);
+   *  const id = df.connect(a, 'value', b, 'value');
+   *  df.disconnect(id);
+   *  // or
+   *  df.disconnect(a, 'value', b, 'value');
    *
-   * @param {Number|String|Object} edgeId the id of the edge to remove (this id is returned
-   *                 by connect method) or obj_src the DataflowNode (or Id) source.
-   * @param {String|Array} property_out one or an array of output property name(s)
-   * @param {String|Object} obj_trg the DataflowNode (or Id) target.
-   * @param {String|Array} property_in one or an array of input property name(s)
+   * @param {Number|ObjectId|DataflowNode} edgeId the id returned by connect,
+   *        or the source node (or its id)
+   * @param {String|Array} outDesc the out property(ies) of the source
+   * @param {ObjectId|DataflowNode} trg the target node, or its id
+   * @param {String|Array} inDesc the in property(ies) of the target
    */
   disconnect(edgeId: number): void;
   disconnect(src: ObjectId, outDesc: string, trg: ObjectId, inDesc: string): void;
@@ -385,13 +421,13 @@ export class DataFlow implements IDataFlow {
   }
 
   /**
-   * Remove a dataflow connection using a edge parameters
+   * Removes connections by their nodes and properties (see disconnect)
    *
-   * @private
-   * @param {String|Object} obj_src the DataflowNode (or Id) source.
-   * @param {String|Array} property_out one or an array of output property name(s)
-   * @param {String|Object} obj_trg the DataflowNode (or Id) target.
-   * @param {String|Array} property_in one or an array of input property name(s)
+   * @protected
+   * @param {DataflowNode} srcObj the source node
+   * @param {Array} propertiesOut the out properties of the source
+   * @param {DataflowNode} trgObj the target node
+   * @param {Array} propertiesIn the in properties of the target
    */
   protected disconnectByParams(srcObj: DataflowNode, propertiesOut: string[], trgObj:DataflowNode, propertiesIn: string[]) {
     const connections = this.#edgesFrom.get(srcObj.id);
@@ -429,9 +465,10 @@ export class DataFlow implements IDataFlow {
   }
 
   /**
-   * Remove a dataflow connection using a edge ids
+   * Removes a connection by its id (see disconnect)
    *
-   * @param {Number} edgeId the id of the edge to remove
+   * @protected
+   * @param {Number} edgeId the id returned by connect
    */
   protected disconnectById(edgeId: number): void {
     this.#edgesFrom.forEach((connections, cid) => {
@@ -460,14 +497,12 @@ export class DataFlow implements IDataFlow {
   }
 
   /**
-   * Performs a topological sort on this DAG, so that getNodes returns the
-   * ordered list of nodes.<p>
+   * Sorts the nodes topologically, for the propagation order (see build).<p>
    * Returns true if the graph is acyclic, false otherwise. When the graph is
-   * cyclic, the algorithm does at it best to partially order it and issues a
-   * warning.
+   * cyclic, the nodes are partially ordered, and a warning is logged.
    *
-   * @private
-   * @return {boolean}
+   * @protected
+   * @return {boolean} true if the graph is acyclic
    */
   protected sort() {
     /// This method uses the classical sorting algorithm with cycle-detection.
@@ -545,20 +580,27 @@ export class DataFlow implements IDataFlow {
     return !this.#isCyclic;
   }
 
+  /**
+   *  Compiles the dataflow: sorts the nodes and compiles the connections.
+   *  To call after connecting or disconnecting, before propagating.
+   *  Throws for a connected property which does not exist anymore.
+   */
   build(): void {
     this.sort();
     this.optimize(this.#edgesFrom, this.#listNode);
   }
 
   /**
-   * @private
+   *  Pauses the propagation: propagate() does nothing until
+   *  restartPropagation() is called as many times.
    */
   pausePropagation(): void {
     this.#shouldNotPropagate++;
   }
 
   /**
-   * @private
+   *  Ends a pause (see pausePropagation). It does not propagate the changes
+   *  made during the pause: call propagate() for that.
    */
   restartPropagation(): void {
     this.#shouldNotPropagate--;
@@ -568,6 +610,8 @@ export class DataFlow implements IDataFlow {
   }
 
   /**
+   * Compiles the connections: resolves the nodes, and the getters and
+   * setters of the connected properties
    */
   private optimize(edgeRefs: Map<ObjectId, Connections>, nodeList: ObjectId[]) {
     this.#dataflowNodes.length = 0;

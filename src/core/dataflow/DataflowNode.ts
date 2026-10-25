@@ -40,15 +40,14 @@ export interface DataflowNode extends BaseIdentifiable {
   getPropertyDirection(propName: string): PropertyDirection | undefined;
 
   /**
-   * Connects an out property of this node, using the default dataflow.
+   * Connects an out property of this node, using the default dataflow
+   * (see Connector); build() must then be called on it.
    *
    * @example
-   * slider
-   *   .connect('value')       // out property
-   *   .to(view1, 'rotation')  // in property
-   *   .to(view2, 'rotation'); // in property
+   * slider.connect('value').to(view, 'rotation');
+   * container.get(DEFAULT_DATAFLOW).build();
    *
-   * @return {Connector} a connector allowing to chain the connections
+   * @return {Connector} the connector of the out property
    */
   connect(propertyName: string): Connector;
 }
