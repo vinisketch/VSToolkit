@@ -9,7 +9,7 @@
     "clean": "rimraf dist build",
     "prepublish": "npm run clean && npm run build",
     "tsc:core": "tsc -p src/tsconfig.core.json",
-    "tsc": "npm run tsc:core",
+    "tsc": "npm run tsc:core && npm run tsc:ui && npm run tsc:fx",
     "btest": "tsc -p tsconfig.test.json",
     "prebuild": "npm run tsc",
     "build:core": "rollup -c ./rollup.config/core.mjs",
