@@ -13,11 +13,11 @@
     <link rel="stylesheet" type="text/css" href="css/TodoApp.css">
     <link rel="stylesheet" type="text/css" href="css/TodoView.css">
     
-    <script type="text/javascript" src="../../lib/js/vs_util.js"></script>
-    <script type="text/javascript" src="../../lib/js/vs_core.js"></script>
-    <script type="text/javascript" src="../../lib/js/vs_data.js"></script>
-    <script type="text/javascript" src="../../lib/js/vs_ui.js"></script>
-    <script type="text/javascript" src="../../lib/js/vs_fx.js"></script>
+    <script type="text/javascript" src="../../node_modules/vs_utils/dist/vs_utils.js"></script>
+    <script type="text/javascript" src="../../dist/js/vs_core.js"></script>
+    <script type="text/javascript" src="../../dist/js/vs_data.js"></script>
+    <script type="text/javascript" src="../../dist/js/vs_ui.js"></script>
+    <script type="text/javascript" src="../../dist/js/vs_fx.js"></script>
     <script type="text/javascript" src="js/TodoApp.js"></script>
     <script type="text/javascript" src="js/TodoModel.js"></script>
     <script type="text/javascript" src="js/TodoView.js"></script>
@@ -36,7 +36,7 @@
     <div class="application_templates" style="display: none; ">
       <div class="vs_ui_view TodoView" x-hag-hole="children">
         <div class="text contentView" x-hag-ref="contentView"></div>
-        <img class="vs.ui.ImageView checkmarkView" src="resources/images/check_mark.png" width="30" height="30" x-hag-ref="checkmarkView">
+        <img class="vs_ui.ImageView checkmarkView" src="resources/images/check_mark.png" width="30" height="30" x-hag-ref="checkmarkView">
       </div>
     </div>
   </body>

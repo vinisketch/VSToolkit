@@ -1,7 +1,7 @@
 /**
  *  The vs.ext.fx.Pace class
  *
- *  @extends vs.core.Object
+ *  @extends core.Object
  *  @class
  *  vs.ext.fx.Pace class has one input in, one output out, and implements a
  *  function in the range [0,1] to [0,1].<br/>
@@ -38,7 +38,7 @@
  *
  * @param {Object} config the configuration structure [optional]
  */
-var Pace = vs.core.createClass ({
+var Pace = core.createClass ({
 
   /** @protected */
   _timing : function (i) {return i;},
@@ -54,7 +54,7 @@ var Pace = vs.core.createClass ({
      *
      * @type Function
      */
-    timing: vs.core.Object.PROPERTY_IN,
+    timing: core.Object.PROPERTY_IN,
 
     /**
      * set input tick
@@ -62,7 +62,7 @@ var Pace = vs.core.createClass ({
      *
      * @type number
      */
-    tickIn: vs.core.Object.PROPERTY_IN,
+    tickIn: core.Object.PROPERTY_IN,
 
     /**
      * get the transformed tick
@@ -70,7 +70,7 @@ var Pace = vs.core.createClass ({
      *
      * @type number
      */
-    tickOut: vs.core.Object.PROPERTY_OUT
+    tickOut: core.Object.PROPERTY_OUT
   },
 
   /**

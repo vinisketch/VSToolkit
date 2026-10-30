@@ -1,0 +1,255 @@
+import BaseTask from "./helper";
+import Task, { TaskAndParams, TaskOptions, TaskParam } from "./task";
+import { TaskState } from "./taskState";
+
+/**
+ *  Methods that create a SEQ group
+ *
+ *  <p>
+ *  @example
+ *
+ *  // Declare the Task_PAR
+ *  const group = vs.seq ([scale, comp0], [rotate, comp0]);
+ *
+ *  // Start the task => start animations
+ *  group.start ();
+ *
+ *  parameter
+ * @param params
+ * @param options optional delegate and abort signal
+ */
+export const seq = (params: TaskAndParams[], options?: TaskOptions): SEQ => new SEQ(params, options);
+
+/**
+ *  The task.SEQ class
+ *
+ *  @extends core.Task
+ *
+ *  @class
+ *  Implements {@link core.Task}.
+ *  <p>
+ *  The task.SEQ class provides a sequential group of tasks.<br />
+ *  task.SEQ is a core.Task that runs its tasks in sequence, i.e., it starts
+ *  one task after another has ended. <br />
+ *  The tasks are started in the order they are defined within the constructor.
+ *  <br />
+ *  The task.SEQ finishes when its last tasks has ended.
+ *
+ *  <p>
+ *
+ * The delegate has to implement:
+ *  <ul>
+ *    <li/>taskDidStop : function (core.Task)
+ *    <li/>taskDidPause : function (core.Task)
+ *    <li/>taskDidEnd : function (core.Task)
+ *  </ul>
+ *
+ *  Methods borrowed from class {@link core.Task}:<br />
+ *  &nbsp;&nbsp;&nbsp;&nbsp;{@link core.Task#pause}, {@link core.Task#start},
+ *  {@link core.Task#stop}
+ *
+ *  @example
+ *  // Declare two tasks (animations)
+ *  const rotate = new vs.fx.RotateXYZAnimation (30, 50, 100);
+ *  rotate.durations = '3s';
+ *  const scale = new vs.fx.ScaleAnimation (2,0.5);
+ *  scale.durations = '2s';
+ *
+ *  // Declare the task.SEQ
+ *  const seq = task.SEQ ([rotate, comp1], [scale, comp2]);
+ *
+ *  // Start the task => start animations sequentially
+ *  seq.start ();
+ *
+ *  // Declare a PAR task including a SEC Task
+ *  const seq = new task.SEQ
+ *    ([scale, comp0], new Task_PAR ([rotate, comp1], [rotate, comp2]));
+ *  seq.delegate = this;
+ *  seq.start ();
+ *
+ *  @author David Thevenin
+ *
+ *  @constructor
+ *   Creates a new core.task.SEQ.
+ *
+ * @name core.task.SEQ
+ *
+ * @param list List of task to start sequentially with an optional
+ *  parameter
+ */
+export default class SEQ extends BaseTask {
+
+  /********************************************************************
+
+   ********************************************************************/
+
+  /**
+   *  Index of the running (or paused) task, -1 when the sequence is stopped
+   *  @private
+   */
+  #currentTask = -1;
+  /**
+   *  @private
+   */
+  #startParam: TaskParam = undefined;
+
+  /********************************************************************
+
+   ********************************************************************/
+
+
+  /**
+   *  Starts the task
+   *
+   * @param {any} param any parameter (scalar, Array, Object)
+   * @ignore
+   * @function
+   */
+  protected override doStart(param?: TaskParam): boolean {
+    this.checkTasksStopped();
+
+    if (!this.#startTask(0, param)) return false;
+    this.notify('taskDidStart');
+
+    return true;
+  }
+
+  /**
+   *  Resumes the paused task of the sequence
+   */
+  resume(): boolean {
+    if (this.state !== TaskState.PAUSED) {
+      return false;
+    }
+    this.state = TaskState.STARTED;
+
+    // the task callback is ignored, since this sequence is already started
+    this.tasksAndParams [this.#currentTask]?.[0].resume();
+    this.notify('taskDidResume');
+
+    return true;
+  }
+
+  /**
+   *  Stops the task.<br />
+   *  When the task is stopped, it calls the taskDidStop if it exits.
+   * @ignore
+   * @function
+   */
+  stop() {
+    if (this.state === TaskState.STOPPED) {
+      return false;
+    }
+    this.state = TaskState.STOPPED;
+
+    const taskAndParams = this.tasksAndParams [this.#currentTask];
+    this.#currentTask = -1;
+
+    // the task callback is ignored, since this sequence is already stopped
+    taskAndParams?.[0].stop();
+    this.notify('taskDidStop');
+
+    return true;
+  }
+
+  /**
+   *  Pause the task.<br />
+   *  When the task is paused, it calls
+   *  the TaskDelegate.taskDidPause if it exits.
+   * @ignore
+   * @function
+   */
+  pause(): boolean {
+    // only a running sequence can be paused
+    if (this.state !== TaskState.STARTED) {
+      return false;
+    }
+    this.state = TaskState.PAUSED;
+
+    // the task callback is ignored, since this sequence is already paused
+    this.tasksAndParams [this.#currentTask]?.[0].pause();
+    this.notify('taskDidPause');
+
+    return true;
+  }
+
+  /**
+   *  @private
+   */
+  #startTask(index: number, param?: TaskParam): boolean {
+    const taskAndParams = this.tasksAndParams [index];
+
+    if (!taskAndParams) {
+      this.#currentTask = -1;
+      this.state = TaskState.STOPPED;
+      return false;
+    }
+
+    this.#currentTask = index;
+    this.state = TaskState.STARTED;
+    this.#startParam = param;
+
+    taskAndParams [0].start(this.paramFor(taskAndParams, param));
+
+    return true;
+  }
+
+  /**
+   *  Callbacks from tasks this sequence is not running are ignored (a task
+   *  may belong to several groups)
+   *  @private
+   */
+  #isCurrent(task: Task): boolean {
+    return this.tasksAndParams [this.#currentTask]?.[0] === task;
+  }
+
+  /********************************************************************
+   delegate methods
+   ********************************************************************/
+
+  /**
+   *  The running task was stopped by someone else than this sequence
+   */
+  taskDidStop(task: Task): void {
+    if (this.state === TaskState.STOPPED || !this.#isCurrent(task)) return;
+
+    this.state = TaskState.STOPPED;
+    this.#currentTask = -1;
+    this.notify('taskDidStop');
+  }
+
+  /**
+   *  The running task was paused by someone else than this sequence
+   */
+  taskDidPause(task: Task): void {
+    if (this.state !== TaskState.STARTED || !this.#isCurrent(task)) return;
+
+    this.state = TaskState.PAUSED;
+    this.notify('taskDidPause');
+  }
+
+  /**
+   *  The paused task was resumed by someone else than this sequence
+   */
+  taskDidResume(task: Task): void {
+    if (this.state !== TaskState.PAUSED || !this.#isCurrent(task)) return;
+
+    this.state = TaskState.STARTED;
+    this.notify('taskDidResume');
+  }
+
+  /**
+   */
+  taskDidEnd(task: Task): void {
+    if (this.state !== TaskState.STARTED || !this.#isCurrent(task)) return;
+
+    if (this.#currentTask + 1 < this.tasksAndParams.length) {
+      // start the next task
+      this.#startTask(this.#currentTask + 1, this.#startParam);
+    } else {
+      this.#currentTask = -1;
+      this.state = TaskState.STOPPED;
+      this.notify('taskDidEnd');
+    }
+  }
+}

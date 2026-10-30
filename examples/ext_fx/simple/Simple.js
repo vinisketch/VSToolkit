@@ -16,14 +16,14 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Simple = vs.core.createClass ({
+var Simple = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   applicationStarted : function () {
 
-    var view = new vs.ui.View ({id: "my_view"}).init ();   
+    var view = new vs_ui.View ({id: "my_view"}).init ();   
   
     var anim = this.createWithHelper (view);
     
@@ -60,6 +60,6 @@ var Simple = vs.core.createClass ({
 });
 
 function loadApplication () {
-  new Simple ({id:"simple", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
-  vs.ui.Application.start ();
+  new Simple ({id:"simple", layout:vs_ui.View.ABSOLUTE_LAYOUT}).init ();
+  vs_ui.Application.start ();
 }

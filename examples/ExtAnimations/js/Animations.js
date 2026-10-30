@@ -1,6 +1,6 @@
-var Animations = vs.core.createClass ({
+var Animations = vs_core.createClass ({
 
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   animations : [
   'Bounce', 'Shake', 'Swing', 'Pulse', 'FlipInX', 'FlipOutX',
@@ -9,12 +9,12 @@ var Animations = vs.core.createClass ({
   ],
 
   applicationStarted : function (event) {
-    var viewToAnimate = new vs.ui.View ({id: 'view_to_animate'}).init ();
+    var viewToAnimate = new vs_ui.View ({id: 'view_to_animate'}).init ();
     this.add (viewToAnimate);
     
     for (var i = 0; i < this.animations.length; i++) {
       var anim_name = this.animations [i];
-      var button = new vs.ui.Button ({text:anim_name, type:vs.ui.Button.NAVIGATION_TYPE}).init ();
+      var button = new vs_ui.Button ({text:anim_name, type:vs_ui.Button.NAVIGATION_TYPE}).init ();
       this.add (button, 'buttons');
       
       button.bind ('select', this, (function (anim) {
@@ -27,5 +27,5 @@ var Animations = vs.core.createClass ({
 function loadApplication () {
   new Animations ({id:"animations"}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

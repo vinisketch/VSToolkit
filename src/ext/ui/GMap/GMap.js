@@ -785,14 +785,14 @@ GMap.Annotation = function (map, id, lat, lon, info, type)
   if (template.marker.type == GMap.DEVICE_IMAGE_MARKER)
   {
     var os_device = window.deviceConfiguration.os;
-    if (os_device == vs.core.DeviceConfiguration.OS_SYMBIAN)
+    if (os_device == core.DeviceConfiguration.OS_SYMBIAN)
     {
       this.image = new google.maps.MarkerImage ('css/kit/symbian_marker.png',
         new google.maps.Size (48, 51),
         new google.maps.Point (0,0),
         new google.maps.Point (24, 48));
     }
-    else if (os_device == vs.core.DeviceConfiguration.OS_WP7)
+    else if (os_device == core.DeviceConfiguration.OS_WP7)
     {
       this.image = new google.maps.MarkerImage ('css/kit/wp7_marker.png',
         new google.maps.Size (15, 31),

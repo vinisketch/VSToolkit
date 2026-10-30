@@ -28,11 +28,11 @@
  *  <p>
  *  Delegate:
  *  <ul>
- *    <li/>controllerViewWillChange : function (from vs.ui.View, to vs.ui.View, controller), Called when the view
+ *    <li/>controllerViewWillChange : function (from vs_ui.View, to vs_ui.View, controller), Called when the view
  *        changed
  *    <li/>animationWillStart : function (PageFlipController), Called just 
  *         before the animation start
- *    <li/>controllerAnimationDidEnd : function (from vs.ui.View, to vs.ui.View, controller), Called just after 
+ *    <li/>controllerAnimationDidEnd : function (from vs_ui.View, to vs_ui.View, controller), Called just after 
  *         the animation ended
  *  </ul>
  *  <p>
@@ -49,10 +49,10 @@
  *  @author David Thevenin
  *
  *  @constructor
- *   Creates a new vs.ui.View.
+ *   Creates a new vs_ui.View.
  *
- *	@param {vs.ui.View} owner the View using this Layer [mandatory]
- *	@param {String} extension The hole into the vs.ui.View will be inserted. 
+ *	@param {vs_ui.View} owner the View using this Layer [mandatory]
+ *	@param {String} extension The hole into the vs_ui.View will be inserted. 
  *     ['children' by default]
  */
 function PageFlipController (owner, extension)
@@ -127,7 +127,7 @@ PageFlipController.prototype = {
 
       if (!this._owner_handler_event_extended)
       {
-         this._owner.view.addEventListener (vs.core.POINTER_START, this._owner);
+         this._owner.view.addEventListener (vs_core.POINTER_START, this._owner);
          this._owner_handler_event = this._owner.handleEvent;
          this._owner.handleEvent = this.handleEvent;
          this._owner_handler_event_extended = true;
@@ -139,7 +139,7 @@ PageFlipController.prototype = {
       
       if (this._owner_handler_event_extended)
       {
-        this._owner.view.removeEventListener (vs.core.POINTER_START, this._owner);
+        this._owner.view.removeEventListener (vs_core.POINTER_START, this._owner);
         this._owner.handleEvent = this._owner_handler_event;        
         this._owner_handler_event_extended = false;
       }
@@ -162,7 +162,7 @@ PageFlipController.prototype = {
   set animationDuration (time)
   {
     if (!time) { time = 0; }
-    if (!vs.util.isNumber (time)) { return };
+    if (!vs_utils.isNumber (time)) { return };
     
     this._page_flip._animation_duration = time;
   },
@@ -202,7 +202,7 @@ PageFlipController.prototype = {
   /**
    *  Add a child component to the Page Flip Manager
    *  <p>
-   *  The component must be a graphic component (vs.ui.View).
+   *  The component must be a graphic component (vs_ui.View).
    *  It will be instantiated, init and added automaticaly
    *  <p>
    *  The component instantiation is a lazy algorithm. The component will
@@ -216,7 +216,7 @@ PageFlipController.prototype = {
    *  myComp.layer.push ('AComponent1', data2);
    *  myComp.layer.push ('AComponent2', data3);
    *
-   *	@param {vs.ui.View | String} comp The GUI component or the component
+   *	@param {vs_ui.View | String} comp The GUI component or the component
    *     name to instanciate   
    *	@param {Object} config Configuration structure need to buil
    *	                the component.
@@ -227,7 +227,7 @@ PageFlipController.prototype = {
   {
     if (!comp) { return; }
     
-    if (!vs.util.isString (comp))
+    if (!vs_utils.isString (comp))
     {
       var index = this._states_array.length;
       comp.position = [0, 0];
@@ -257,7 +257,7 @@ PageFlipController.prototype = {
     
     this.__bound = this.view.getBoundingClientRect ();
     
-    if (event.type === vs.core.POINTER_START)
+    if (event.type === vs_core.POINTER_START)
     {
       if (event.changedTouches)
       {
@@ -273,8 +273,8 @@ PageFlipController.prototype = {
       if (this.__pos_x < PageFlipController.CAPTURE_WIDTH ||
           this.__pos_x > this._size [0] - PageFlipController.CAPTURE_WIDTH) 
       {
-        document.addEventListener (vs.core.POINTER_END, this, true);
-        document.addEventListener (vs.core.POINTER_MOVE, this, true);
+        document.addEventListener (vs_core.POINTER_END, this, true);
+        document.addEventListener (vs_core.POINTER_MOVE, this, true);
       }
       
       if (this.__controller__._delegate && this.__controller__._delegate.animationWillStart)
@@ -282,7 +282,7 @@ PageFlipController.prototype = {
         this.__controller__._delegate.animationWillStart (this.__controller__);
       }
     }
-    else if (event.type === vs.core.POINTER_MOVE)
+    else if (event.type === vs_core.POINTER_MOVE)
     {
       event.preventDefault ();
       state = this.__controller__._list_of_state [this.__controller__._current_state];
@@ -325,7 +325,7 @@ PageFlipController.prototype = {
         this.__controller__._page_flip._is_rendering = false;
       }
     }
-    else if (event.type === vs.core.POINTER_END)
+    else if (event.type === vs_core.POINTER_END)
     {
       state = this.__controller__._list_of_state [this.__controller__._current_state];
       index = this.__controller__._states_array.indexOf (this.__controller__._current_state)
@@ -353,8 +353,8 @@ PageFlipController.prototype = {
           this.__controller__._page_flip.processRightIn (state.comp);
         }
       }
-      document.removeEventListener (vs.core.POINTER_END, this, true);
-      document.removeEventListener (vs.core.POINTER_MOVE, this, true);
+      document.removeEventListener (vs_core.POINTER_END, this, true);
+      document.removeEventListener (vs_core.POINTER_MOVE, this, true);
     }
   },
   
@@ -447,7 +447,7 @@ PageFlipController.prototype = {
       {
         clb.call (this._owner, event);
       }
-      else if (vs.util.isString (clb))
+      else if (vs_utils.isString (clb))
       {
         this._owner [this._output_action [output]] (event);
       }
@@ -464,7 +464,7 @@ PageFlipController.prototype = {
   },
 
 /********************************************************************
-                  vs.core.Task delegate implementation
+                  vs_core.Task delegate implementation
 ********************************************************************/
   /**
    * @protected

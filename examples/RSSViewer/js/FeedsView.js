@@ -1,13 +1,13 @@
-var FeedsView = vs.core.createClass ({
+var FeedsView = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.View,
+  parent: vs_ui.View,
   
   initComponent : function ()
   {
     this._super ();
     this.addClassName ('FeedsView page');
-    this.layout = vs.ui.View.FLOW_LAYOUT; 
+    this.layout = vs_ui.View.FLOW_LAYOUT; 
     
     for (var i = 0; i < FeedsView.feeds.length; i++)
     {
@@ -19,7 +19,7 @@ var FeedsView = vs.core.createClass ({
   
   createButton : function (data)
   {
-    var button = new vs.ui.Button ({template_ref: 'feed_button'});
+    var button = new vs_ui.Button ({template_ref: 'feed_button'});
     button.init ();
     button.view.src = data.image;
     button.url = data.url;

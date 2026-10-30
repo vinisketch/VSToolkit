@@ -1,19 +1,19 @@
-var Scroll = vs.core.createClass ({
+var Scroll = vs_core.createClass ({
 
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   applicationStarted : function (event) {
-    this.layout = vs.ui.View.ABSOLUTE_LAYOUT;
+    this.layout = vs_ui.View.ABSOLUTE_LAYOUT;
     
-    var scrollView = new vs.ui.ScrollView ({
+    var scrollView = new vs_ui.ScrollView ({
       size : [300, 300],
       position: [0, 0],
-      scroll: vs.ui.ScrollView.NO_SCROLL,
-      layout : vs.ui.View.ABSOLUTE_LAYOUT
+      scroll: vs_ui.ScrollView.NO_SCROLL,
+      layout : vs_ui.View.ABSOLUTE_LAYOUT
     }).init ();
     this.add (scrollView);
 
-    var image = new vs.ui.ImageView ({
+    var image = new vs_ui.ImageView ({
       position: [0, 0],
       size : [3008, 2000],
       src: "http://z.about.com/d/cameras/1/0/u/1/bigcat.JPG"
@@ -26,15 +26,15 @@ var Scroll = vs.core.createClass ({
       scrollView.refresh ();
     }, 100);
 
-    scrollView = new vs.ui.ScrollView ({
+    scrollView = new vs_ui.ScrollView ({
       size : [300, 300],
       position: [300, 00],
-      scroll: vs.ui.ScrollView.HORIZONTAL_SCROLL,
-      layout : vs.ui.View.ABSOLUTE_LAYOUT
+      scroll: vs_ui.ScrollView.HORIZONTAL_SCROLL,
+      layout : vs_ui.View.ABSOLUTE_LAYOUT
     }).init ();
     this.add (scrollView);
 
-    var image = new vs.ui.ImageView ({
+    var image = new vs_ui.ImageView ({
       position: [0, 0],
       size : [3008, 2000],
       src: "http://z.about.com/d/cameras/1/0/u/1/bigcat.JPG"
@@ -42,15 +42,15 @@ var Scroll = vs.core.createClass ({
     scrollView.add (image);
     scrollView.refresh ();
 
-    scrollView = new vs.ui.ScrollView ({
+    scrollView = new vs_ui.ScrollView ({
       size : [300, 300],
       position: [0, 300],
-      scroll: vs.ui.ScrollView.VERTICAL_SCROLL,
-      layout : vs.ui.View.ABSOLUTE_LAYOUT
+      scroll: vs_ui.ScrollView.VERTICAL_SCROLL,
+      layout : vs_ui.View.ABSOLUTE_LAYOUT
     }).init ();
     this.add (scrollView);
 
-    var image = new vs.ui.ImageView ({
+    var image = new vs_ui.ImageView ({
       position: [0, 0],
       size : [3008, 2000],
       src: "http://z.about.com/d/cameras/1/0/u/1/bigcat.JPG"
@@ -58,15 +58,15 @@ var Scroll = vs.core.createClass ({
     scrollView.add (image);
     scrollView.refresh ();
 
-    scrollView = new vs.ui.ScrollView ({
+    scrollView = new vs_ui.ScrollView ({
       size : [300, 300],
       position: [300, 300],
-      scroll: vs.ui.ScrollView.SCROLL,
-      layout : vs.ui.View.ABSOLUTE_LAYOUT
+      scroll: vs_ui.ScrollView.SCROLL,
+      layout : vs_ui.View.ABSOLUTE_LAYOUT
     }).init ();
     this.add (scrollView);
 
-    var image = new vs.ui.ImageView ({
+    var image = new vs_ui.ImageView ({
       position: [0, 0],
       size : [3008, 2000],
       src: "http://z.about.com/d/cameras/1/0/u/1/bigcat.JPG"
@@ -78,32 +78,32 @@ var Scroll = vs.core.createClass ({
 
 
 
-    scrollView = new vs.ui.ScrollView ({
+    scrollView = new vs_ui.ScrollView ({
       size : [300, 300],
       position: [600, 0],
-      pinch : vs.ui.ScrollView.ROTATION_AND_SCALE,
-      layout : vs.ui.View.ABSOLUTE_LAYOUT
+      pinch : vs_ui.ScrollView.ROTATION_AND_SCALE,
+      layout : vs_ui.View.ABSOLUTE_LAYOUT
     }).init ();
     this.add (scrollView);
 
-    button = new vs.ui.Button ({
+    button = new vs_ui.Button ({
       position:[120, 130], text: "hello",
-      type: vs.ui.Button.NAVIGATION_TYPE,
-      style: vs.ui.Button.BLACK_STYLE
+      type: vs_ui.Button.NAVIGATION_TYPE,
+      style: vs_ui.Button.BLACK_STYLE
     }).init ();
     scrollView.add (button);
 
-    button = new vs.ui.Button ({
+    button = new vs_ui.Button ({
       position:[120, 170], text: "Back",
-      type: vs.ui.Button.NAVIGATION_BACK_TYPE,
-      style: vs.ui.Button.BLACK_STYLE
+      type: vs_ui.Button.NAVIGATION_BACK_TYPE,
+      style: vs_ui.Button.BLACK_STYLE
     }).init ();
     scrollView.add (button);
 
-    button = new vs.ui.Button ({
+    button = new vs_ui.Button ({
       position:[120, 220], text: "Forward",
-      type: vs.ui.Button.NAVIGATION_FORWARD_TYPE,
-      style: vs.ui.Button.BLACK_STYLE
+      type: vs_ui.Button.NAVIGATION_FORWARD_TYPE,
+      style: vs_ui.Button.BLACK_STYLE
     }).init ();
     scrollView.add (button);
 
@@ -118,5 +118,5 @@ var Scroll = vs.core.createClass ({
 function loadApplication () {
   new Scroll ({id:"widgets"}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

@@ -19,29 +19,29 @@
  * Credits @peutetre https://github.com/peutetre/Zanimo
  */
 
-var DisksAnimation = vs.core.createClass ({
+var DisksAnimation = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   applicationStarted : function (event) {
     window.app = this;
  
-    this.disk0 = new vs.ui.View ({id: "disk0"}).init ();
-    this.disk1 = new vs.ui.View ({id: "disk1"}).init ();
-    this.disk2 = new vs.ui.View ({id: "disk2"}).init ();
+    this.disk0 = new vs_ui.View ({id: "disk0"}).init ();
+    this.disk1 = new vs_ui.View ({id: "disk1"}).init ();
+    this.disk2 = new vs_ui.View ({id: "disk2"}).init ();
 
     this.createSeqAnimation ();
     
     // click or tap to pause/restart the animation
-    this.bind (vs.core.POINTER_START, this, function () {
+    this.bind (vs_core.POINTER_START, this, function () {
       switch (this.anim.state) {
-        case vs.core.Task.STARTED:
+        case vs_core.Task.STARTED:
           this.anim.pause ();
         break;
         
-        case vs.core.Task.PAUSED:
-        case vs.core.Task.STOPPED:
+        case vs_core.Task.PAUSED:
+        case vs_core.Task.STOPPED:
           this.anim.start ();
         break;
       }
@@ -78,7 +78,7 @@ var DisksAnimation = vs.core.createClass ({
   deletePreviousAnim : function () {
     if (this.anim) {
       this.anim.stop ();
-      vs.util.free (this.anim);
+      vs_utils.free (this.anim);
       this.anim = undefined;
     }
   },
@@ -109,8 +109,8 @@ var DisksAnimation = vs.core.createClass ({
 });
 
 function loadApplication () {
-  new DisksAnimation ({id:"disks", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
-  vs.ui.Application.start ();
+  new DisksAnimation ({id:"disks", layout:vs_ui.View.ABSOLUTE_LAYOUT}).init ();
+  vs_ui.Application.start ();
 }
 
 window.addEventListener ("message", receiveMessage, false);

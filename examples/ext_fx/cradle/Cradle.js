@@ -16,19 +16,19 @@
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-var Boulier = vs.core.createClass ({
+var Boulier = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   applicationStarted : function (event) {
   
-    this.ball1 = new vs.ui.View ({
+    this.ball1 = new vs_ui.View ({
       id:'ball1',
       transformOrigin : [25, -200]
     }).init ();
 
-    this.ball2 = new vs.ui.View ({
+    this.ball2 = new vs_ui.View ({
       id:'ball4',
       transformOrigin : [25, -200]
     }).init ();
@@ -57,8 +57,8 @@ var Boulier = vs.core.createClass ({
 });
 
 function loadApplication () {
-  new Boulier ({id:"cradle", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
-  vs.ui.Application.start ();
+  new Boulier ({id:"cradle", layout:vs_ui.View.ABSOLUTE_LAYOUT}).init ();
+  vs_ui.Application.start ();
 }
 
 window.addEventListener ("message", receiveMessage, false);

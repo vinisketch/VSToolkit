@@ -1,7 +1,7 @@
-var Selector = vs.core.createClass ({
+var Selector = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.View,
+  parent: vs_ui.View,
   
   properties : {
     items : "barSegmentedButton2#items",
@@ -16,12 +16,12 @@ var Selector = vs.core.createClass ({
     
     config.node_ref = this.id + "#barSegmentedButton2";
     config.type = "bar";
-    this.barSegmentedButton2 = new vs.ui.SegmentedButton (config);
+    this.barSegmentedButton2 = new vs_ui.SegmentedButton (config);
     this.barSegmentedButton2.init ();
     this.add (this.barSegmentedButton2);
         
     config.node_ref = this.id + "#textlabel1";
-    this.textlabel1 = new vs.ui.TextLabel (config);
+    this.textlabel1 = new vs_ui.TextLabel (config);
     this.textlabel1.init ();    
     this.add (this.textlabel1);
     

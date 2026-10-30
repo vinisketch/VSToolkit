@@ -1,7 +1,7 @@
-var Component = vs.core.createClass ({
+var Component = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   applicationStarted : function (event)
   {
@@ -11,7 +11,7 @@ var Component = vs.core.createClass ({
     this.selector.items = ['2','3','4'];
     this.selector.text = "Selection one of these 3 values";
     
-    this.listItems = new vs.ui.List ({id: 'list_items', scroll: true});
+    this.listItems = new vs_ui.List ({id: 'list_items', scroll: true});
     this.listItems.init ();
     this.add (this.listItems);
     
@@ -30,7 +30,7 @@ var Component = vs.core.createClass ({
 
 function loadApplication ()
 {
-  new Component ({id:"component", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
+  new Component ({id:"component", layout:vs_ui.View.ABSOLUTE_LAYOUT}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

@@ -1,20 +1,20 @@
-var RSSViewer = vs.core.createClass ({
+var RSSViewer = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   initComponent : function ()
   {
     this._super ();
 
     // main view
-    this.navBar = new vs.ui.NavigationBar ();
+    this.navBar = new vs_ui.NavigationBar ();
     this.navBar.init ();
     this.add (this.navBar);
 
-    this.backButton = new vs.ui.Button ({
+    this.backButton = new vs_ui.Button ({
       id:'back_button', text:'back',
-      type : vs.ui.Button.NAVIGATION_BACK_TYPE
+      type : vs_ui.Button.NAVIGATION_BACK_TYPE
     }).init ();
     this.navBar.add (this.backButton);
 
@@ -22,7 +22,7 @@ var RSSViewer = vs.core.createClass ({
     this.feedsView = new FeedsView({id:'feeds_view'}).init ();
 
     // Feeds View
-    this.feedItems = new vs.ui.List ({
+    this.feedItems = new vs_ui.List ({
       id:'feed_items',
       hasArrow : true,
       scroll : true
@@ -64,7 +64,7 @@ var RSSViewer = vs.core.createClass ({
     this.feedsView.bind ('view_feed', this);
     this.feedItems.bind ('itemselect', this);
 
-    this.feedItems.layout = vs.ui.View.VERTICAL_LAYOUT;
+    this.feedItems.layout = vs_ui.View.VERTICAL_LAYOUT;
   },
 
   applicationStarted : function (event)
@@ -101,7 +101,7 @@ var RSSViewer = vs.core.createClass ({
 
 function loadApplication ()
 {
-  new RSSViewer ({id:"rss_viewer", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
+  new RSSViewer ({id:"rss_viewer", layout:vs_ui.View.ABSOLUTE_LAYOUT}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

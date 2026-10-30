@@ -1,0 +1,12 @@
+{
+  "require": [
+    "tsx",
+    "tests/html-loader.mjs"
+  ],
+  "spec": [
+    "tests/**/*.spec.ts"
+  ],
+  "node-option": [
+    "expose-gc"
+  ]
+}

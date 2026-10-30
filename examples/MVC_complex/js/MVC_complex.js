@@ -10,33 +10,33 @@ var contact_tmp_str =
   <div class='address' x-hag-hole='addresses'></div>\
 </div>"
 
-var Contact = vs.core.createClass ({
+var Contact = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.core.Model,
+  parent: vs_core.Model,
 
   properties: {
-    firstname: vs.core.Object.PROPERTY_IN_OUT,
-    lastname: vs.core.Object.PROPERTY_IN_OUT,
-    companie: vs.core.Object.PROPERTY_IN_OUT,
-    tels: vs.core.Object.PROPERTY_IN_OUT,
-    addresses: vs.core.Object.PROPERTY_IN_OUT
+    firstname: vs_core.VSObject.PROPERTY_IN_OUT,
+    lastname: vs_core.VSObject.PROPERTY_IN_OUT,
+    companie: vs_core.VSObject.PROPERTY_IN_OUT,
+    tels: vs_core.VSObject.PROPERTY_IN_OUT,
+    addresses: vs_core.VSObject.PROPERTY_IN_OUT
   }
 });
 
 
-var MVC = vs.core.createClass ({
+var MVC = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   applicationStarted : function (event)
   {
-    var tmp = new vs.ui.Template (contact_tmp_str);
+    var tmp = new vs_ui.Template (contact_tmp_str);
     var view = tmp.compileView ();
     
-    view.tel_tmp = new vs.ui.Template (tel_tmp_str);
-    view.address_tmp = new vs.ui.Template (address_tmp_str);
+    view.tel_tmp = new vs_ui.Template (tel_tmp_str);
+    view.address_tmp = new vs_ui.Template (address_tmp_str);
     view.removeTels = function () {
       this._tels = [];
       this.removeAllChildren ('tels');
@@ -47,7 +47,7 @@ var MVC = vs.core.createClass ({
       this.removeAllChildren ('addresses');
     };
     
-    vs.util.defineProperty (view, 'tels', {
+    vs_utils.defineProperty (view, 'tels', {
       set : function (a) {
         this.removeTels ();
         if (!a) return;
@@ -61,7 +61,7 @@ var MVC = vs.core.createClass ({
       }
     });
     
-    vs.util.defineProperty (view, 'addresses', {
+    vs_utils.defineProperty (view, 'addresses', {
       set : function (a) {
         this.removeAddresses ();
         if (!a) return;
@@ -105,5 +105,5 @@ function loadApplication ()
 {
   new MVC ({id:"mvc"}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

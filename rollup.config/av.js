@@ -1,9 +1,9 @@
 export default {
   external: ['vs_utils', 'vs_core'],
-  input: 'src/av/index.js',
+  input: 'src/av/index.ts',
   output: [
     {
-      file: './dist/js/vs_av.js',
+      file: './dist/vs_av.js',
       name: 'vs_av',
       globals: { vs_utils: 'vs_utils', vs_core: 'vs_core' },
       format: 'iife',

@@ -1,25 +1,25 @@
-var DetailView = vs.core.createClass ({
+var DetailView = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.ScrollView,
+  parent: vs_ui.ScrollView,
   
   properties : {
-    title: vs.core.Object.PROPERTY_IN,
-    description: vs.core.Object.PROPERTY_IN
+    title: vs_core.VSObject.PROPERTY_IN,
+    description: vs_core.VSObject.PROPERTY_IN
   },
 
   initComponent : function ()
   {
     this._super ();
     
-    this.scroll = vs.ui.ScrollView.VERTICAL_SCROLL;
+    this.scroll = vs_ui.ScrollView.VERTICAL_SCROLL;
     this.addClassName ('DetailView page');
 
-    this.titleView = new vs.ui.TextLabel ({id:'title_view'});
+    this.titleView = new vs_ui.TextLabel ({id:'title_view'});
     this.titleView.init ();
     this.add (this.titleView);
     
-    this.contentView = new vs.ui.TextLabel ({id:'content_view'});
+    this.contentView = new vs_ui.TextLabel ({id:'content_view'});
     this.contentView.init ();
     this.add (this.contentView);
   },

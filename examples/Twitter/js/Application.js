@@ -1,33 +1,33 @@
 
 
-var TimeLine = vs.core.createClass ({
+var TimeLine = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.core.Array,
+  parent: vs_core.Array,
 
   properties : {
-    'screen_name' : vs.core.Object.PROPERTY_IN_OUT,
-    'count' : vs.core.Object.PROPERTY_IN
+    'screen_name' : vs_core.VSObject.PROPERTY_IN_OUT,
+    'count' : vs_core.VSObject.PROPERTY_IN
   }
 });
 
 
-var SearchResult = vs.core.createClass ({
+var SearchResult = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.core.Array,
+  parent: vs_core.Array,
 
   properties : {
-    'q' : vs.core.Object.PROPERTY_IN,
-    'count' : vs.core.Object.PROPERTY_IN,
-    'results' : vs.core.Object.PROPERTY_OUT
+    'q' : vs_core.VSObject.PROPERTY_IN,
+    'count' : vs_core.VSObject.PROPERTY_IN,
+    'results' : vs_core.VSObject.PROPERTY_OUT
   }
 });
 
-var TheApplication = vs.core.createClass ({
+var TheApplication = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   defaultUserName : 'd_thevenin',
 
@@ -36,9 +36,9 @@ var TheApplication = vs.core.createClass ({
     this._super (config);
     this.tweets = new TweetsModel ().init ();
 
-    this.data = new vs.core.RestStorage ({
+    this.data = new vs_core.RestStorage ({
       url : "https://api.twitter.com/1/",
-      mode : vs.core.RestStorage.JSONP
+      mode : vs_core.RestStorage.JSONP
     }).init ();
 
     this.userTimeline = new TimeLine ({
@@ -49,9 +49,9 @@ var TheApplication = vs.core.createClass ({
     this.data.registerModel ("statuses/user_timeline", this.userTimeline);
     this.data.bind ('load', this, this.timelineResult);
 
-    this.twitterSearch = new vs.core.RestStorage ({
+    this.twitterSearch = new vs_core.RestStorage ({
       url : "http://search.twitter.com/",
-      mode : vs.core.RestStorage.JSONP
+      mode : vs_core.RestStorage.JSONP
     }).init ();
 
     this.searchData = new SearchResult ({ count: 20 }).init ();
@@ -92,15 +92,15 @@ var TheApplication = vs.core.createClass ({
 
   buildMainView : function ()
   {
-    this.mainView = new vs.ui.View ().init ();
+    this.mainView = new vs_ui.View ().init ();
     this.add (this.mainView);
     this.mainView.setStyles ({width: '100%', height: '100%'});
 
-    this.navBar = new vs.ui.NavigationBar ().init ();
+    this.navBar = new vs_ui.NavigationBar ().init ();
     this.mainView.add (this.navBar);
 
-    var button = new vs.ui.Button ({
-      type: vs.ui.Button.NAVIGATION_TYPE,
+    var button = new vs_ui.Button ({
+      type: vs_ui.Button.NAVIGATION_TYPE,
       text: 'Accounts',
       position : [6, 6]
     }).init ();
@@ -108,8 +108,8 @@ var TheApplication = vs.core.createClass ({
 
     button.bind ('select', this, this.openCloseMenu);
 
-    var searchField = new vs.ui.InputField ({
-      type: vs.ui.InputField.SEARCH,
+    var searchField = new vs_ui.InputField ({
+      type: vs_ui.InputField.SEARCH,
       id: 'twitter_search',
       placeholder: 'search',
       magnet: 4
@@ -118,7 +118,7 @@ var TheApplication = vs.core.createClass ({
 
     searchField.bind ('change', this, this.searchListener);
 
-    this.list = new vs.ui.List ({id: 'tweets', scroll: true}).init ();
+    this.list = new vs_ui.List ({id: 'tweets', scroll: true}).init ();
     this.mainView.add (this.list);
 
     this.list.setItemTemplate (TweetView);
@@ -142,5 +142,5 @@ function loadApplication ()
 {
   new TheApplication ({id:"twitter"}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }

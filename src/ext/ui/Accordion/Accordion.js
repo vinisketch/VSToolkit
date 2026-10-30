@@ -32,7 +32,7 @@
  *  <p>
  *  @example
  *  var config = {};
- *  var config.id = vs.core.createId ();
+ *  var config.id = core.createId ();
  *
  *  var accordion = new vs.ext.ui.Accordion ();
  *  accordion.init ();
@@ -141,7 +141,7 @@ Accordion.prototype = {
     if (!child) { return; }
     var view, index, result;
     
-    if (!child.id) { child.id = vs.core.createId (); }
+    if (!child.id) { child.id = core.createId (); }
     
     index = this.__ab_a_items.length;
     
@@ -161,7 +161,7 @@ Accordion.prototype = {
    *
    * @name vs.ext.ui.Accordion#remove 
    * @function
-   * @param  {vs.core.EventSource} child The component to be removed.
+   * @param  {core.EventSource} child The component to be removed.
    */
   remove : function (child)
   {

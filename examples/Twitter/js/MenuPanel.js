@@ -1,7 +1,7 @@
-var MenuPanel = vs.core.createClass ({
+var MenuPanel = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.View,
+  parent: vs_ui.View,
 
   template: "\
 <div class=\"vs_ui_menu_panel\" x-hag-hole=\"children\"> \
@@ -13,14 +13,14 @@ var MenuPanel = vs.core.createClass ({
   // build the flip view
   initComponent : function (event) {
     this._super ();
-    this.list = new vs.ui.List ({node_ref:  this.id + '#list'}).init ();
+    this.list = new vs_ui.List ({node_ref:  this.id + '#list'}).init ();
     this.list.model = [
       {title: 'd_thevenin'},
       {title: 'julien_igel'},
       {title: 'robinberjon'}];
 
-    this.showAnimmation = vs.fx.Animation.SlideInLeft;
-    this.hideAnimmation = vs.fx.Animation.SlideOutLeft;
+    this.showAnimmation = vs_ui.Animation.SlideInLeft;
+    this.hideAnimmation = vs_ui.Animation.SlideOutLeft;
 
     this.list.bind ('itemselect', this);
   },

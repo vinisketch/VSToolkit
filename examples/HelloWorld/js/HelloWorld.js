@@ -1,18 +1,18 @@
-var HelloWorld = vs.core.createClass ({
+var HelloWorld = vs_core.createClass ({
 
   /** parent class */
-  parent: vs.ui.Application,
+  parent: vs_ui.Application,
 
   applicationStarted : function (event)
   {
-    var hello = new vs.ui.TextLabel ({id:'hello', text:'Hello World'});
+    var hello = new vs_ui.TextLabel ({id:'hello', text:'Hello World'});
     hello.init ();
     this.add (hello);
 
-    var animation = new vs.fx.Animation (['rotate', '720deg'], ['scale', '1']);
+    var animation = new vs_ui.Animation (['rotate', '720deg'], ['scale', '1']);
     animation.origin = [50, 50];
     animation.duration = '2s';
-    animation.timing = vs.fx.Animation.EASE;
+    animation.timing = vs_ui.Animation.EASE;
     animation.addKeyFrame (0, ['0deg', 0]);
     
     animation.process (hello);
@@ -21,7 +21,7 @@ var HelloWorld = vs.core.createClass ({
 
 function loadApplication ()
 {
-  new HelloWorld ({id:"helloworld", layout:vs.ui.View.ABSOLUTE_LAYOUT}).init ();
+  new HelloWorld ({id:"helloworld", layout:vs_ui.View.ABSOLUTE_LAYOUT}).init ();
 
-  vs.ui.Application.start ();
+  vs_ui.Application.start ();
 }
